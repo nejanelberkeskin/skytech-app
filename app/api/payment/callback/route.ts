@@ -33,7 +33,8 @@ import { createCertificate } from "@/lib/order/certificate";
 import { runPostPaymentChain } from "@/lib/order/post-payment";
 import { ensureReferralCode } from "@/lib/user/referral";
 
-const supabase = createServiceRoleClient();
+// Bu route'un build sırasında değil, isteğe gelince çalışmasını garantile.
+export const dynamic = "force-dynamic";
 
 const FALLBACK_SUCCESS = "/checkout/success";
 const FALLBACK_ERROR   = "/checkout/success";
@@ -44,6 +45,9 @@ function buildBasePath(checkoutType: string | undefined | null): string {
 }
 
 export async function POST(request: NextRequest) {
+  // Service-role client'ı isteğe gelince oluştur — build sırasında env yokken çökmesin.
+  const supabase = createServiceRoleClient();
+
   try {
     /* ── 1. Token al ──────────────────────────────────────────────────── */
     const formData = await request.formData();

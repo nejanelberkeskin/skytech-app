@@ -1,16 +1,24 @@
 import { createClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+// Build sırasında env değişkenleri olmayabilir; client'ı lazy oluştur.
+function getSupabase() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !key) {
+    throw new Error("Supabase env değişkenleri tanımlı değil.");
+  }
+  return createClient(url, key);
+}
+
+export const dynamic = "force-dynamic";
 
 export async function GET(
   _req: NextRequest,
   { params }: { params: Promise<{ slug: string }> }
 ) {
   const { slug } = await params;
+  const supabase = getSupabase();
 
   // 1. Fetch company profile by slug
   const { data: profile, error: profileErr } = await supabase

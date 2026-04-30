@@ -1,7 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { motion, useMotionTemplate, useMotionValue, useSpring } from "framer-motion";
+import {
+  motion,
+  useMotionTemplate,
+  useMotionValue,
+  useSpring,
+  type MotionValue,
+} from "framer-motion";
 import { useRef } from "react";
 import SectionWrapper from "../SectionWrapper";
 
@@ -308,8 +314,8 @@ function LiquidGlow({
   y,
   highlight,
 }: {
-  x: ReturnType<typeof useSpring>;
-  y: ReturnType<typeof useSpring>;
+  x: MotionValue<number>;
+  y: MotionValue<number>;
   highlight: boolean;
 }) {
   const background = useMotionTemplate`radial-gradient(${

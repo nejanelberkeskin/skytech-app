@@ -6,6 +6,7 @@ import {
   useScroll,
   useSpring,
   useTransform,
+  type MotionValue,
 } from "framer-motion";
 import { useRef } from "react";
 
@@ -241,8 +242,8 @@ function ImpactScene({
   shockwaveScale,
   shockwaveOpacity,
 }: {
-  shockwaveScale: ReturnType<typeof useTransform>;
-  shockwaveOpacity: ReturnType<typeof useTransform>;
+  shockwaveScale: MotionValue<number>;
+  shockwaveOpacity: MotionValue<number>;
 }) {
   return (
     <div className="absolute inset-0">
@@ -289,7 +290,7 @@ function ImpactScene({
   );
 }
 
-function SceneCaption({ progress }: { progress: ReturnType<typeof useSpring> }) {
+function SceneCaption({ progress }: { progress: MotionValue<number> }) {
   // Use opacity transforms to switch between captions
   const opacity1 = useTransform(progress, [0, 0.25, 0.4], [1, 1, 0]);
   const opacity2 = useTransform(progress, [0.3, 0.45, 0.65, 0.75], [0, 1, 1, 0]);
@@ -334,7 +335,7 @@ function Caption({ step, title, desc }: { step: string; title: string; desc: str
   );
 }
 
-function ProgressBar({ progress }: { progress: ReturnType<typeof useSpring> }) {
+function ProgressBar({ progress }: { progress: MotionValue<number> }) {
   const width = useTransform(progress, (v) => `${v * 100}%`);
   return (
     <div className="absolute bottom-12 left-12 right-12 lg:left-20 lg:right-20">

@@ -3,7 +3,57 @@
  * Refactor'da: bileşenlerdeki hardcode metinleri buradaki anahtarlara taşıyabiliriz.
  * Şu anki sürüm: yapı + ana navigasyon + footer + temel CTA + paylaşılan kelimeler.
  */
-const tr = {
+
+export interface Dictionary {
+  meta: { siteName: string; siteTagline: string };
+  nav: {
+    home: string;
+    services: string;
+    seedBall: string;
+    droneTech: string;
+    carbonProgram: string;
+    projects: string;
+    corporate: string;
+    about: string;
+    contact: string;
+  };
+  cta: {
+    orderSeed: string;
+    corporateSolutions: string;
+    login: string;
+    requestQuote: string;
+    contactUs: string;
+    discover: string;
+    learnMore: string;
+  };
+  badges: {
+    carbonNeutral: string;
+    coordinated: string;
+    annualReporting: string;
+    carbonCertificate: string;
+    comingSoon: string;
+  };
+  hero: { line1: string; line2: string; description: string };
+  footer: {
+    services: string;
+    quickLinks: string;
+    newsletter: string;
+    newsletterDesc: string;
+    subscribe: string;
+    rights: string;
+    company: string;
+    legal: {
+      privacy: string;
+      terms: string;
+      kvkk: string;
+      cookies: string;
+    };
+  };
+  status: { active: string; pilot: string; completed: string };
+  developer: { badge: string; title: string; earlyAccess: string };
+}
+
+const tr: Dictionary = {
   meta: {
     siteName: "Skytech Green",
     siteTagline: "Tohum Toplarıyla Geleceği Ekin",
@@ -66,7 +116,6 @@ const tr = {
     title: "1 Satır Tohum Eklentisi",
     earlyAccess: "Erken erişim listesine katıl",
   },
-} as const;
+};
 
 export default tr;
-export type Dictionary = typeof tr;

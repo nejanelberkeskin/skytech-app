@@ -36,6 +36,14 @@ yarn-error.log*
 # vercel
 .vercel
 
+# IDE / editor / agent workspace data
+.claude/
+.idea/
+.vscode/
+
+# Local test scripts with hard-coded sandbox credentials
+test-iyzico.js
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

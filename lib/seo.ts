@@ -49,6 +49,18 @@ export const DEFAULT_OG_IMAGE = {
   alt: `${SITE_NAME} — ${SITE_TAGLINE}`,
 };
 
+/**
+ * Build sırasında dondurulan "son güncelleme" tarihi.
+ * Footer'da kullanıcıya ve crawler'lara güncellik sinyali verir.
+ * Her deploy'da otomatik tazelenir.
+ */
+export const BUILD_DATE_ISO = new Date().toISOString();
+export const BUILD_DATE_TR = new Date().toLocaleDateString("tr-TR", {
+  day: "numeric",
+  month: "long",
+  year: "numeric",
+});
+
 /* ────────────────────────────────────────────────────────────── */
 
 /** Bir path için absolute canonical URL üretir. */
@@ -113,6 +125,11 @@ export function buildPageMetadata(input: PageMetaInput): Metadata {
     keywords: input.keywords,
     alternates: {
       canonical: url,
+      languages: {
+        "tr-TR": url,
+        // EN sürümü yayına alınınca buraya `${url}?lang=en` veya prefix path eklenecek
+        "x-default": url,
+      },
     },
     robots: input.noindex
       ? { index: false, follow: false }

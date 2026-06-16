@@ -1,7 +1,10 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import OrganizationSchema from "@/components/seo/OrganizationSchema";
 import WebSiteSchema from "@/components/seo/WebSiteSchema";
+import WebVitalsReporter from "@/components/seo/WebVitalsReporter";
 import {
   DEFAULT_OG_IMAGE,
   SITE_DESCRIPTION,
@@ -104,7 +107,12 @@ export default function RootLayout({
       >
         <OrganizationSchema />
         <WebSiteSchema />
+        <WebVitalsReporter />
         {children}
+        {/* Vercel Analytics — page views + custom events (anonim) */}
+        <Analytics />
+        {/* Speed Insights — gerçek kullanıcı Core Web Vitals ölçümü */}
+        <SpeedInsights />
       </body>
     </html>
   );

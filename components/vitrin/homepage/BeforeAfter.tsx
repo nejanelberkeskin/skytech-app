@@ -138,7 +138,6 @@ function BarrenLayer() {
         fill
         sizes="(max-width: 1024px) 100vw, 80vw"
         className="object-cover"
-        priority
       />
       <div
         className="absolute inset-0 opacity-25 mix-blend-multiply pointer-events-none"

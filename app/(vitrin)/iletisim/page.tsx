@@ -2,6 +2,7 @@ import Link from "next/link";
 import BreadCrumb from "@/components/vitrin/BreadCrumb";
 import SectionWrapper from "@/components/vitrin/SectionWrapper";
 import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
+import LocalBusinessSchema from "@/components/seo/LocalBusinessSchema";
 import { buildPageMetadata } from "@/lib/seo";
 
 export const metadata = buildPageMetadata({
@@ -43,6 +44,7 @@ export default function IletisimPage() {
   return (
     <>
       <BreadcrumbSchema items={[{ name: "İletişim", path: "/iletisim" }]} />
+      <LocalBusinessSchema />
       <BreadCrumb
         title="Bize Ulaşın"
         subtitle="Bireysel sorularınız için bilgi formumuza, kurumsal projeler için teklif sayfamıza yönelin. Sosyal medyadan da bağlantı kurabilirsiniz."

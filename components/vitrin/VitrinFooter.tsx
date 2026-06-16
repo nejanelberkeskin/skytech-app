@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import LanguageSwitcher from "./LanguageSwitcher";
+import { BUILD_DATE_ISO, BUILD_DATE_TR } from "@/lib/seo";
 
 const HIZMETLER = [
   { label: "Tohum Topu", href: "/tohum-topu" },
@@ -129,9 +130,18 @@ export default function VitrinFooter() {
       {/* Bottom bar */}
       <div className="relative border-t border-white/5">
         <div className="vitrin-container py-5 flex flex-col lg:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-[#6b8f6b]">
-            &copy; {new Date().getFullYear()} Skytech Green Teknoloji A.Ş. Tüm hakları saklıdır.
-          </p>
+          <div className="text-xs text-[#6b8f6b] flex flex-col sm:flex-row items-center gap-x-3 gap-y-1">
+            <p>
+              &copy; {new Date().getFullYear()} Skytech Green Teknoloji A.Ş. Tüm hakları saklıdır.
+            </p>
+            <span className="hidden sm:inline text-[#3d5a3d]/60">·</span>
+            <p>
+              Son güncelleme:{" "}
+              <time dateTime={BUILD_DATE_ISO} className="text-[#a7d4a7]/80">
+                {BUILD_DATE_TR}
+              </time>
+            </p>
+          </div>
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs">
             <ul className="flex flex-wrap items-center gap-x-5 gap-y-2">
               {YASAL.map((item) => (

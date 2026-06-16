@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import Image from "next/image";
 import { useRef } from "react";
 import SectionWrapper from "../SectionWrapper";
 
@@ -11,6 +12,7 @@ const VALUE_CARDS = [
       "Dronlar havadan tohum bırakır, saha tahribatı oluşmaz. Ulaşılması zor bölgelerde ekosistem el değmemiş kalır.",
     accent: "from-[#1B6B3A] to-[#22894a]",
     Icon: DroneIcon,
+    image: "/images/values/sifir-saha-izi.webp",
     stat: "%100",
     statLabel: "Doğa Korumalı",
   },
@@ -20,6 +22,7 @@ const VALUE_CARDS = [
       "Tüm tohumlar İl Orman Müdürlüğü üretim tesislerinden tedarik edilir. Parti numarası, üretim tarihi ve tür bilgisi blokchain seviyesinde kayıtlıdır.",
     accent: "from-[#22894a] to-[#34d399]",
     Icon: ShieldIcon,
+    image: "/images/values/seffaf-tedarik.webp",
     stat: "%100",
     statLabel: "İzlenebilirlik",
   },
@@ -29,6 +32,7 @@ const VALUE_CARDS = [
       "Periyodik izleme uçuşları, büyüme verisi ve karbon nötrleme metrikleri kurumsal panonuzda anlık. ESG raporlarına entegre edilebilir.",
     accent: "from-[#34d399] to-[#a3e635]",
     Icon: ChartIcon,
+    image: "/images/values/yillik-raporlama.webp",
     stat: "12 ay",
     statLabel: "İzleme",
   },
@@ -166,41 +170,47 @@ function ValueCard({ card }: { card: (typeof VALUE_CARDS)[number] }) {
         transformPerspective: 1200,
         transformStyle: "preserve-3d",
       }}
-      className="group relative spotlight-card premium-glass rounded-3xl p-7 lg:p-9 h-full overflow-hidden"
+      className="group relative spotlight-card premium-glass rounded-3xl h-full overflow-hidden flex flex-col"
     >
       {/* Animated radial glow that follows cursor */}
       <motion.div
         aria-hidden
         style={{ opacity: glow, scale: glowScale }}
-        className="absolute inset-0 pointer-events-none"
+        className="absolute inset-0 pointer-events-none z-0"
       >
         <div
           className={`absolute inset-0 rounded-3xl bg-gradient-to-br ${card.accent} opacity-[0.06] blur-2xl`}
         />
       </motion.div>
 
-      {/* Decorative corner orb */}
-      <div
-        className={`absolute -top-16 -right-16 w-40 h-40 rounded-full bg-gradient-to-br ${card.accent} opacity-[0.10] blur-2xl pointer-events-none`}
-      />
-
-      <div style={{ transform: "translateZ(40px)" }} className="relative">
-        {/* Icon with depth */}
+      {/* Hero image */}
+      <div className="relative aspect-[16/10] overflow-hidden">
+        <Image
+          src={card.image}
+          alt={card.title}
+          fill
+          sizes="(max-width: 768px) 100vw, 33vw"
+          className="object-cover transition-transform duration-700 group-hover:scale-105"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-white via-white/10 to-transparent pointer-events-none" />
+        {/* Icon overlay top-left */}
         <motion.div
           whileHover={{ scale: 1.08, rotate: -3 }}
           transition={{ type: "spring", stiffness: 300, damping: 18 }}
-          className={`inline-flex w-14 h-14 rounded-2xl bg-gradient-to-br ${card.accent} items-center justify-center shadow-lg shadow-[#1B6B3A]/25 mb-7`}
+          className={`absolute top-4 left-4 inline-flex w-12 h-12 rounded-2xl bg-gradient-to-br ${card.accent} items-center justify-center shadow-lg shadow-[#1B6B3A]/30 ring-2 ring-white/40`}
         >
-          <card.Icon className="w-7 h-7 text-white" />
+          <card.Icon className="w-6 h-6 text-white" />
         </motion.div>
+      </div>
 
+      <div style={{ transform: "translateZ(40px)" }} className="relative p-7 lg:p-8 flex-1 flex flex-col">
         {/* Title */}
         <h3 className="text-xl lg:text-2xl font-bold text-[#0e2519] mb-3 leading-tight tracking-tight">
           {card.title}
         </h3>
 
         {/* Description */}
-        <p className="text-sm lg:text-[15px] text-[#3d5a3d] leading-relaxed mb-7">
+        <p className="text-sm lg:text-[15px] text-[#3d5a3d] leading-relaxed mb-7 flex-1">
           {card.description}
         </p>
 

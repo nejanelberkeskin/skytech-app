@@ -1,6 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion, type Variants } from "framer-motion";
+import Image from "next/image";
 import { useState } from "react";
 import SectionWrapper from "../SectionWrapper";
 import SectionHeading from "../SectionHeading";
@@ -14,6 +15,7 @@ type Tab = {
   bullets: string[];
   stat: string;
   statLabel: string;
+  image: string;
 };
 
 const TABS: Tab[] = [
@@ -31,6 +33,7 @@ const TABS: Tab[] = [
     ],
     stat: "%65+",
     statLabel: "Çimlenme oranı",
+    image: "/images/impact/yangin-sonrasi.webp",
   },
   {
     id: "erozyon",
@@ -46,6 +49,7 @@ const TABS: Tab[] = [
     ],
     stat: "3×",
     statLabel: "Toprak tutuş artışı",
+    image: "/images/impact/erozyon-bolgesi.webp",
   },
   {
     id: "hazine",
@@ -61,6 +65,7 @@ const TABS: Tab[] = [
     ],
     stat: "100%",
     statLabel: "Yasal uyum",
+    image: "/images/impact/bos-hazine-alani.webp",
   },
   {
     id: "karbon",
@@ -76,6 +81,7 @@ const TABS: Tab[] = [
     ],
     stat: "ESG",
     statLabel: "Tam uyum",
+    image: "/images/impact/karbon-notreleme.webp",
   },
   {
     id: "su",
@@ -91,6 +97,7 @@ const TABS: Tab[] = [
     ],
     stat: "+40%",
     statLabel: "Su kalitesi",
+    image: "/images/impact/su-havzasi.webp",
   },
 ];
 
@@ -172,19 +179,18 @@ export default function ImpactTabs() {
           >
             {/* Visual */}
             <div className="lg:col-span-2 relative">
-              <div className="relative aspect-square rounded-3xl mesh-dark overflow-hidden">
-                <div className="aurora-bg">
-                  <div className="aurora-blob aurora-blob-1" />
-                  <div className="aurora-blob aurora-blob-2" />
-                </div>
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <motion.div
-                    initial={{ scale: 0.8, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 0.35 }}
-                    transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                  >
-                    <tab.Icon className="w-32 h-32 text-white" />
-                  </motion.div>
+              <div className="relative aspect-square rounded-3xl overflow-hidden bg-[#0a1f12]">
+                <Image
+                  src={tab.image}
+                  alt={tab.title}
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 40vw"
+                  className="object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent pointer-events-none" />
+                {/* Icon top-left */}
+                <div className="absolute top-4 left-4 w-12 h-12 rounded-2xl bg-white/15 backdrop-blur-md ring-2 ring-white/25 flex items-center justify-center">
+                  <tab.Icon className="w-6 h-6 text-white" />
                 </div>
                 <div className="absolute bottom-6 left-6 right-6 liquid-glass-dark rounded-2xl p-5 text-center">
                   <p className="text-4xl font-bold text-white tracking-tight mb-1 tabular-nums">{tab.stat}</p>

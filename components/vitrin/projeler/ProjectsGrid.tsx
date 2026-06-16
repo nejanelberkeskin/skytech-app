@@ -1,6 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
+import Image from "next/image";
 import { useState } from "react";
 import { PROJECTS, type ProjectStatus } from "@/lib/projects-data";
 
@@ -95,8 +96,15 @@ export default function ProjectsGrid() {
                 whileHover={{ y: -6 }}
                 className="group vitrin-card overflow-hidden"
               >
-                {/* GORSEL alanı: drone çekim fotoğrafı (16:10). Şimdilik gradient. */}
-                <div className="relative aspect-[16/10] bg-gradient-to-br from-[#1B6B3A] via-[#22894a] to-[#0a1f12] overflow-hidden">
+                <div className="relative aspect-[16/10] bg-[#0a1f12] overflow-hidden">
+                  <Image
+                    src={project.image}
+                    alt={`${project.city} ${project.region} — drone üst görünüm`}
+                    fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent pointer-events-none" />
                   <div
                     className={`absolute top-3 right-3 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full backdrop-blur-md border text-[10px] font-bold uppercase tracking-[0.16em] ${meta.color}`}
                   >

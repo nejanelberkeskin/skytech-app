@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import BreadCrumb from "@/components/vitrin/BreadCrumb";
 import SectionWrapper from "@/components/vitrin/SectionWrapper";
@@ -61,15 +62,15 @@ export default function HakkimizdaPage() {
             </p>
           </div>
 
-          {/* GORSEL: Ekip fotoğrafı veya saha çekimi (drone uçuşu sahnesi). 1:1 oran. */}
-          <div className="relative aspect-square rounded-3xl bg-gradient-to-br from-[#1B6B3A] via-[#22894a] to-[#0a1f12] overflow-hidden">
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="grid grid-cols-3 gap-3 p-10">
-                {Array.from({ length: 9 }).map((_, i) => (
-                  <div key={i} className="aspect-square rounded-xl bg-white/8 border border-white/10" />
-                ))}
-              </div>
-            </div>
+          <div className="relative aspect-square rounded-3xl overflow-hidden bg-[#0a1f12]">
+            <Image
+              src="/images/hakkimizda/saha.webp"
+              alt="Skytech Green saha ekibi — drone operasyon"
+              fill
+              priority
+              sizes="(max-width: 1024px) 100vw, 50vw"
+              className="object-cover"
+            />
             <div className="absolute bottom-6 left-6 right-6 liquid-glass-dark rounded-2xl p-4 text-center">
               <p className="text-xs text-[#a7d4a7] uppercase tracking-wider font-semibold">Saha Ekibimiz</p>
             </div>

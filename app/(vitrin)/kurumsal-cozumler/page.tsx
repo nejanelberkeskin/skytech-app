@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import BreadCrumb from "@/components/vitrin/BreadCrumb";
 import SectionWrapper from "@/components/vitrin/SectionWrapper";
@@ -13,8 +14,8 @@ export const metadata: Metadata = {
 };
 
 const COMPARISON = [
-  { item: "Logo Baskılı Ürün", impact: "Kısa ömürlü, çoğu çöpe gider", esg: "Yok", icon: "🎁", verdict: false },
-  { item: "Skytech Hatıra Ormanı", impact: "25+ yıl yaşar, ekosistem yaratır", esg: "Tam ESG entegrasyon", icon: "🌳", verdict: true },
+  { item: "Logo Baskılı Ürün", impact: "Kısa ömürlü, çoğu çöpe gider", esg: "Yok", icon: "🎁", verdict: false, image: "/images/kurumsal/promosyon-urunu.webp" },
+  { item: "Skytech Hatıra Ormanı", impact: "25+ yıl yaşar, ekosistem yaratır", esg: "Tam ESG entegrasyon", icon: "🌳", verdict: true, image: "/images/kurumsal/hatira-ormani.webp" },
 ];
 
 const FEATURES = [
@@ -45,13 +46,26 @@ export default function KurumsalCozumlerPage() {
           {COMPARISON.map((c) => (
             <div
               key={c.item}
-              className={`relative rounded-3xl p-7 lg:p-9 ${
+              className={`relative rounded-3xl overflow-hidden flex flex-col ${
                 c.verdict
                   ? "bg-gradient-to-br from-[#1B6B3A] to-[#22894a] text-white shadow-2xl shadow-[#1B6B3A]/20"
                   : "vitrin-card"
               }`}
             >
-              <div className="text-5xl mb-5">{c.icon}</div>
+              <div className="relative aspect-square overflow-hidden">
+                <Image
+                  src={c.image}
+                  alt={c.item}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-cover"
+                />
+                <div className={`absolute inset-0 bg-gradient-to-t ${
+                  c.verdict ? "from-[#1B6B3A]/95 via-[#1B6B3A]/30" : "from-white via-white/15"
+                } to-transparent pointer-events-none`} />
+                <div className="absolute top-4 left-4 text-4xl">{c.icon}</div>
+              </div>
+              <div className="p-7 lg:p-8 flex-1 flex flex-col">
               <h3 className={`text-xl font-bold mb-4 ${c.verdict ? "text-white" : "text-[#1a2e1a]"}`}>
                 {c.item}
               </h3>
@@ -63,6 +77,7 @@ export default function KurumsalCozumlerPage() {
                   <strong className={c.verdict ? "text-[#a3e635]" : "text-[#1B6B3A]"}>ESG:</strong> {c.esg}
                 </li>
               </ul>
+              </div>
             </div>
           ))}
         </div>

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import LanguageSwitcher from "./LanguageSwitcher";
 
@@ -33,14 +34,14 @@ export default function VitrinFooter() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8">
           {/* Brand */}
           <div className="lg:col-span-4">
-            <Link href="/" className="inline-flex items-center gap-2.5 mb-5">
-              <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[#1B6B3A] to-[#22894a] flex items-center justify-center shadow-lg shadow-[#1B6B3A]/30">
-                <LeafIcon className="w-5 h-5 text-white" />
-              </div>
-              <div className="leading-tight">
-                <p className="text-base font-bold text-white">Skytech Green</p>
-                <p className="text-[10px] text-[#6ee7b7] font-medium tracking-wider uppercase">Eco-Tech</p>
-              </div>
+            <Link href="/" aria-label="Skytech Green ana sayfa" className="inline-flex items-center mb-5">
+              <Image
+                src="/images/brand/logo.webp"
+                alt="Skytech Green"
+                width={200}
+                height={62}
+                className="h-12 w-auto brightness-0 invert"
+              />
             </Link>
             <p className="text-sm text-[#a7d4a7] leading-relaxed mb-6 max-w-sm">
               Tohum toplarıyla geleceği ekiyoruz. Dron teknolojisi, ileri tarım bilimi ve şeffaf tedarik zinciriyle ölçülebilir ağaçlandırma.

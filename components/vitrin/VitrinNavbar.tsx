@@ -1,9 +1,10 @@
 "use client";
 
+import { AnimatePresence, motion } from "framer-motion";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
 
 const NAV_ITEMS: { label: string; href: string; children?: { label: string; href: string }[] }[] = [
   { label: "Ana Sayfa", href: "/" },
@@ -56,14 +57,15 @@ export default function VitrinNavbar() {
       >
         <div className="vitrin-container flex items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2.5 group">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#1B6B3A] to-[#22894a] flex items-center justify-center shadow-lg shadow-[#1B6B3A]/20 group-hover:scale-105 transition-transform">
-              <LeafIcon className="w-5 h-5 text-white" />
-            </div>
-            <div className="leading-tight">
-              <p className="text-base font-bold text-[#1a2e1a] tracking-tight">Skytech Green</p>
-              <p className="text-[10px] text-[#6b8f6b] font-medium tracking-wider uppercase">Eco-Tech</p>
-            </div>
+          <Link href="/" aria-label="Skytech Green ana sayfa" className="flex items-center group">
+            <Image
+              src="/images/brand/logo.webp"
+              alt="Skytech Green"
+              width={180}
+              height={56}
+              priority
+              className="h-10 lg:h-11 w-auto transition-transform group-hover:scale-[1.03]"
+            />
           </Link>
 
           {/* Desktop Nav */}

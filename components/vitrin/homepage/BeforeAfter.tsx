@@ -8,6 +8,7 @@ import {
   useTransform,
   type MotionValue,
 } from "framer-motion";
+import Image from "next/image";
 import { useRef, useState } from "react";
 import SectionHeading from "../SectionHeading";
 
@@ -128,126 +129,43 @@ function ProgressLabel({ value }: { value: MotionValue<number> }) {
   return <span className="tabular-nums">%{pct}</span>;
 }
 
-/* GORSEL: yanmış arazi fotoğrafı (16:9) buraya */
 function BarrenLayer() {
   return (
     <div className="absolute inset-0 overflow-hidden">
+      <Image
+        src="/images/before-after/manavgat-2021.webp"
+        alt="Manavgat 2021 yangın sonrası"
+        fill
+        sizes="(max-width: 1024px) 100vw, 80vw"
+        className="object-cover"
+        priority
+      />
       <div
-        className="absolute inset-0"
+        className="absolute inset-0 opacity-25 mix-blend-multiply pointer-events-none"
         style={{
           background:
-            "linear-gradient(180deg, #382518 0%, #2a1810 50%, #1a0e08 100%)",
-        }}
-      />
-      {/* Charred patches */}
-      <div
-        className="absolute inset-0 opacity-50"
-        style={{
-          backgroundImage:
-            "radial-gradient(circle at 20% 80%, rgba(0,0,0,0.6), transparent 35%), radial-gradient(circle at 60% 60%, rgba(0,0,0,0.5), transparent 40%), radial-gradient(circle at 80% 30%, rgba(80,40,20,0.6), transparent 50%)",
-        }}
-      />
-      {/* Dead trees */}
-      <svg
-        className="absolute bottom-0 left-0 right-0 w-full h-2/3 opacity-60"
-        viewBox="0 0 1000 300"
-        preserveAspectRatio="none"
-      >
-        {[80, 180, 290, 400, 500, 610, 720, 840, 940].map((cx, i) => (
-          <g key={cx} stroke="#1a0e06" strokeWidth="3" fill="none">
-            <line x1={cx} y1={290} x2={cx + (i % 2 === 0 ? -3 : 4)} y2={120 - (i % 4) * 14} strokeLinecap="round" />
-            <line x1={cx} y1={200} x2={cx - 18 + i * 2} y2={170 - (i % 2) * 10} strokeLinecap="round" />
-            <line x1={cx} y1={210} x2={cx + 22 - i} y2={180} strokeLinecap="round" />
-            <line x1={cx} y1={170} x2={cx - 14} y2={140} strokeLinecap="round" />
-          </g>
-        ))}
-      </svg>
-      {/* Smoke */}
-      <div
-        className="absolute inset-0 opacity-30 mix-blend-screen"
-        style={{
-          background:
-            "linear-gradient(180deg, transparent 30%, rgba(140,90,60,0.4) 100%)",
-        }}
-      />
-      {/* Grain */}
-      <div
-        className="absolute inset-0 opacity-30 mix-blend-overlay"
-        style={{
-          backgroundImage:
-            "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E\")",
+            "linear-gradient(180deg, transparent 35%, rgba(0,0,0,0.4) 100%)",
         }}
       />
     </div>
   );
 }
 
-/* GORSEL: yenilenmiş yeşil arazi fotoğrafı (16:9) buraya */
 function ForestLayer() {
   return (
     <div className="absolute inset-0 overflow-hidden">
+      <Image
+        src="/images/before-after/manavgat-2026.webp"
+        alt="Manavgat 2026 yeşil yeniden ormanlaştırma"
+        fill
+        sizes="(max-width: 1024px) 100vw, 80vw"
+        className="object-cover"
+      />
       <div
-        className="absolute inset-0"
+        className="absolute inset-0 opacity-15 mix-blend-screen pointer-events-none"
         style={{
           background:
-            "linear-gradient(180deg, #1f6b3a 0%, #2e8b4a 60%, #0a3a1a 100%)",
-        }}
-      />
-      {/* Distant tree row */}
-      <svg
-        className="absolute bottom-0 left-0 right-0 w-full h-3/4"
-        viewBox="0 0 1000 400"
-        preserveAspectRatio="none"
-      >
-        {Array.from({ length: 20 }).map((_, i) => {
-          const cx = (i + 0.5) * (1000 / 20);
-          const r = 22 + ((i * 13) % 12);
-          return (
-            <ellipse
-              key={`bg-${i}`}
-              cx={cx}
-              cy={250}
-              rx={r}
-              ry={r * 0.85}
-              fill="#0e3d20"
-              opacity={0.7}
-            />
-          );
-        })}
-        {Array.from({ length: 14 }).map((_, i) => {
-          const cx = 30 + i * 70 + (i % 2) * 18;
-          return (
-            <g key={`mid-${i}`} fill="#1f6b3a">
-              <ellipse cx={cx} cy={310} rx={36} ry={28} />
-              <ellipse cx={cx + 14} cy={300} rx={26} ry={22} fill="#2d8a4d" />
-              <ellipse cx={cx - 10} cy={305} rx={24} ry={20} fill="#2a7d44" />
-            </g>
-          );
-        })}
-        {[120, 320, 540, 760, 920].map((cx, i) => (
-          <g key={`fg-${i}`}>
-            <rect x={cx - 3} y={355} width={6} height={45} fill="#3a2410" />
-            <ellipse cx={cx} cy={350} rx={50} ry={42} fill="#2e8b4a" />
-            <ellipse cx={cx + 12} cy={335} rx={38} ry={34} fill="#3da55a" />
-            <ellipse cx={cx - 14} cy={340} rx={32} ry={28} fill="#34944f" />
-            <ellipse cx={cx + 4} cy={325} rx={22} ry={20} fill="#5cc26d" />
-          </g>
-        ))}
-      </svg>
-      {/* Sun rays */}
-      <div
-        className="absolute inset-0 opacity-30 mix-blend-screen"
-        style={{
-          background:
-            "radial-gradient(ellipse at 70% 0%, rgba(163, 230, 53, 0.6), transparent 60%)",
-        }}
-      />
-      {/* Grain */}
-      <div
-        className="absolute inset-0 opacity-20 mix-blend-overlay"
-        style={{
-          backgroundImage:
-            "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E\")",
+            "radial-gradient(ellipse at 70% 0%, rgba(163, 230, 53, 0.5), transparent 60%)",
         }}
       />
     </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, type Variants, useMotionValue, useSpring } from "framer-motion";
+import Image from "next/image";
 import { useRef } from "react";
 import SectionWrapper from "../SectionWrapper";
 import SectionHeading from "../SectionHeading";
@@ -10,6 +11,7 @@ type Step = {
   title: string;
   description: string;
   Icon: (p: { className?: string }) => React.JSX.Element;
+  image: string;
 };
 
 const STEPS: Step[] = [
@@ -19,6 +21,7 @@ const STEPS: Step[] = [
     description:
       "Ziraat mühendislerimiz hedef bölgenin iklim ve toprak yapısına uygun tohum türlerini seçer, ileri tarım bilimiyle tohum topu formüle ederiz.",
     Icon: FlaskIcon,
+    image: "/images/steps/01-arge.webp",
   },
   {
     num: "02",
@@ -26,6 +29,7 @@ const STEPS: Step[] = [
     description:
       "Uydu ve drone görüntüleriyle bölge taranır. Eğim, toprak nemi, ekosistem analizi yapılır. İl Orman Müdürlüğü ile koordineli yasal izinler alınır.",
     Icon: MapIcon,
+    image: "/images/steps/02-analiz.webp",
   },
   {
     num: "03",
@@ -33,6 +37,7 @@ const STEPS: Step[] = [
     description:
       "GPS hassasiyetli drone filomuz, hesaplanmış noktalara tohum topları bırakır. Bir uçuşta 200+ tohum, sıfır saha tahribatıyla.",
     Icon: DroneIcon,
+    image: "/images/steps/03-dagitim.webp",
   },
   {
     num: "04",
@@ -40,6 +45,7 @@ const STEPS: Step[] = [
     description:
       "Yıllık drone uçuşlarıyla büyüme takip edilir. Karbon nötrleme metrikleri kurumsal panoda anlık görünür. ESG raporlarına entegre.",
     Icon: SatelliteIcon,
+    image: "/images/steps/04-izleme.webp",
   },
 ];
 
@@ -155,23 +161,31 @@ function StepCard({ step, isLast }: { step: Step; isLast: boolean }) {
           transformPerspective: 1000,
           transformStyle: "preserve-3d",
         }}
-        className="spotlight-card relative vitrin-card p-7 h-full z-10"
+        className="spotlight-card relative vitrin-card h-full z-10 overflow-hidden flex flex-col"
       >
-        <div style={{ transform: "translateZ(30px)" }}>
-          {/* Step number badge + icon */}
-          <div className="flex items-center justify-between mb-6">
-            <motion.div
-              whileHover={{ scale: 1.08, rotate: -3 }}
-              transition={{ type: "spring", stiffness: 280, damping: 18 }}
-              className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#1B6B3A] to-[#22894a] flex items-center justify-center shadow-lg shadow-[#1B6B3A]/25"
-            >
-              <step.Icon className="w-6 h-6 text-white" />
-            </motion.div>
-            <span className="text-3xl font-bold text-[#1B6B3A]/15 tracking-tighter tabular-nums">
-              {step.num}
-            </span>
-          </div>
+        {/* Step image */}
+        <div className="relative aspect-[16/10] overflow-hidden">
+          <Image
+            src={step.image}
+            alt={step.title}
+            fill
+            sizes="(max-width: 768px) 100vw, 25vw"
+            className="object-cover transition-transform duration-700 group-hover:scale-105"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-white via-white/10 to-transparent pointer-events-none" />
+          <motion.div
+            whileHover={{ scale: 1.08, rotate: -3 }}
+            transition={{ type: "spring", stiffness: 280, damping: 18 }}
+            className="absolute top-3 left-3 w-12 h-12 rounded-2xl bg-gradient-to-br from-[#1B6B3A] to-[#22894a] flex items-center justify-center shadow-lg shadow-[#1B6B3A]/30 ring-2 ring-white/40"
+          >
+            <step.Icon className="w-5 h-5 text-white" />
+          </motion.div>
+          <span className="absolute top-3 right-3 px-3 py-1 rounded-full bg-white/85 backdrop-blur text-xs font-bold tracking-tighter tabular-nums text-[#1B6B3A]">
+            {step.num}
+          </span>
+        </div>
 
+        <div style={{ transform: "translateZ(30px)" }} className="relative p-7 flex-1">
           <h3 className="text-lg font-bold text-[#0e2519] mb-3 leading-tight tracking-tight">
             {step.title}
           </h3>

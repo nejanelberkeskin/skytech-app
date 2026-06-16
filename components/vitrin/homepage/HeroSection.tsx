@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import Image from "next/image";
 import { useEffect, useRef } from "react";
 
 const HEADLINE_LINE_1 = "Tohum Toplarıyla";
@@ -48,6 +49,25 @@ export default function HeroSection() {
       ref={heroRef}
       className="relative overflow-hidden -mt-20 pt-32 pb-24 lg:pb-36 mesh-dark grain-overlay"
     >
+      {/* Background image — drone seeding action, subtle blend with mesh-dark */}
+      <div className="absolute inset-0 pointer-events-none">
+        <Image
+          src="/images/anasayfa/hero-bg.webp"
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover opacity-30 mix-blend-screen"
+        />
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(180deg, rgba(10,31,18,0.55) 0%, rgba(10,31,18,0.35) 50%, rgba(10,31,18,0.85) 100%)",
+          }}
+        />
+      </div>
+
       {/* Aurora layer */}
       <div className="aurora-bg">
         <motion.div

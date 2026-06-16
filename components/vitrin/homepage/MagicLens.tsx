@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, useMotionTemplate, useMotionValue, useSpring } from "framer-motion";
+import Image from "next/image";
 import { useRef, useState } from "react";
 import SectionHeading from "../SectionHeading";
 
@@ -114,71 +115,48 @@ export default function MagicLens() {
   );
 }
 
-/* GORSEL: yanmış / çorak arazi fotoğrafı buraya gelecek (16:9). Şimdilik gradient + dokular. */
 function BarrenScene() {
   return (
     <div className="absolute inset-0 overflow-hidden">
+      <Image
+        src="/images/lens/lens-burnt.webp"
+        alt="Yangın sonrası çorak arazi"
+        fill
+        sizes="(max-width: 1024px) 100vw, 80vw"
+        className="object-cover"
+        priority
+      />
       <div
-        className="absolute inset-0"
+        className="absolute inset-0 opacity-25 mix-blend-multiply pointer-events-none"
         style={{
           background:
-            "linear-gradient(180deg, #2a1a10 0%, #3d2a18 35%, #1c1208 100%)",
-        }}
-      />
-      {/* Charred ground texture */}
-      <div
-        className="absolute inset-0 opacity-50"
-        style={{
-          backgroundImage:
-            "radial-gradient(circle at 20% 80%, rgba(0,0,0,0.5), transparent 40%), radial-gradient(circle at 70% 60%, rgba(0,0,0,0.4), transparent 40%), radial-gradient(circle at 40% 30%, rgba(80,40,20,0.5), transparent 50%)",
-        }}
-      />
-      {/* Dead tree silhouettes */}
-      <DeadTrees />
-      {/* Smoke / haze */}
-      <div
-        className="absolute inset-0 opacity-30 mix-blend-screen"
-        style={{
-          background:
-            "linear-gradient(180deg, transparent 40%, rgba(120,80,50,0.4) 100%)",
-        }}
-      />
-      {/* Grain */}
-      <div
-        className="absolute inset-0 opacity-30 mix-blend-overlay"
-        style={{
-          backgroundImage:
-            "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E\")",
+            "linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.5) 100%)",
         }}
       />
     </div>
   );
 }
 
-/* GORSEL: yemyeşil orman fotoğrafı (aynı bölge, 16:9). Şimdilik gradient + dokular. */
 function ForestScene() {
   return (
     <div className="absolute inset-0 overflow-hidden">
+      <Image
+        src="/images/lens/lens-forest.webp"
+        alt="Yenilenmiş yeşil orman"
+        fill
+        sizes="(max-width: 1024px) 100vw, 80vw"
+        className="object-cover"
+      />
       <div
-        className="absolute inset-0"
+        className="absolute inset-0 opacity-20 mix-blend-screen pointer-events-none"
         style={{
           background:
-            "linear-gradient(180deg, #1a4a2a 0%, #22894a 50%, #0a3a1a 100%)",
+            "radial-gradient(ellipse at 50% 0%, rgba(163, 230, 53, 0.4), transparent 60%)",
         }}
       />
-      {/* Tree silhouettes — green canopy */}
-      <LiveTrees />
-      {/* Sunlight rays */}
+      {/* Misty highlights — kept for atmosphere */}
       <div
-        className="absolute inset-0 opacity-30 mix-blend-screen"
-        style={{
-          background:
-            "radial-gradient(ellipse at 50% 0%, rgba(163, 230, 53, 0.5), transparent 60%)",
-        }}
-      />
-      {/* Misty highlights */}
-      <div
-        className="absolute inset-0 opacity-20"
+        className="absolute inset-0 opacity-15 pointer-events-none"
         style={{
           background:
             "radial-gradient(circle at 20% 70%, rgba(255,255,255,0.4), transparent 30%), radial-gradient(circle at 75% 65%, rgba(255,255,255,0.3), transparent 30%)",
@@ -196,70 +174,3 @@ function ForestScene() {
   );
 }
 
-function DeadTrees() {
-  return (
-    <svg
-      className="absolute bottom-0 left-0 right-0 w-full h-1/2 opacity-60"
-      viewBox="0 0 1000 300"
-      preserveAspectRatio="none"
-    >
-      {[120, 240, 410, 560, 700, 820].map((cx, i) => (
-        <g key={cx} stroke="#1a0e06" strokeWidth="2.5" fill="none">
-          <line x1={cx} y1={290} x2={cx + (i % 2 === 0 ? -3 : 4)} y2={130 - (i % 3) * 20} strokeLinecap="round" />
-          <line x1={cx} y1={200} x2={cx - 18 + i * 2} y2={170 - (i % 2) * 8} strokeLinecap="round" />
-          <line x1={cx} y1={210} x2={cx + 22 - i} y2={180} strokeLinecap="round" />
-          <line x1={cx} y1={170} x2={cx - 12} y2={140} strokeLinecap="round" />
-          <line x1={cx} y1={170} x2={cx + 14} y2={150} strokeLinecap="round" />
-        </g>
-      ))}
-    </svg>
-  );
-}
-
-function LiveTrees() {
-  return (
-    <svg
-      className="absolute bottom-0 left-0 right-0 w-full h-3/4"
-      viewBox="0 0 1000 400"
-      preserveAspectRatio="none"
-    >
-      {/* Distant tree row */}
-      {Array.from({ length: 18 }).map((_, i) => {
-        const cx = (i + 0.5) * (1000 / 18);
-        const r = 20 + ((i * 13) % 12);
-        return (
-          <ellipse
-            key={`bg-${i}`}
-            cx={cx}
-            cy={260}
-            rx={r}
-            ry={r * 0.8}
-            fill="#0e3d20"
-            opacity={0.6}
-          />
-        );
-      })}
-      {/* Mid layer */}
-      {Array.from({ length: 12 }).map((_, i) => {
-        const cx = 40 + i * 80 + ((i % 2) * 24);
-        return (
-          <g key={`mid-${i}`} fill="#1f6b3a">
-            <ellipse cx={cx} cy={300} rx={36} ry={26} />
-            <ellipse cx={cx + 14} cy={290} rx={26} ry={22} fill="#2d8a4d" />
-            <ellipse cx={cx - 10} cy={295} rx={24} ry={20} fill="#2a7d44" />
-          </g>
-        );
-      })}
-      {/* Foreground hero trees */}
-      {[180, 470, 760].map((cx, i) => (
-        <g key={`fg-${i}`}>
-          <rect x={cx - 3} y={350} width={6} height={50} fill="#3a2410" />
-          <ellipse cx={cx} cy={345} rx={56} ry={48} fill="#2e8b4a" />
-          <ellipse cx={cx + 12} cy={330} rx={40} ry={36} fill="#3da55a" />
-          <ellipse cx={cx - 16} cy={336} rx={36} ry={32} fill="#34944f" />
-          <ellipse cx={cx + 4} cy={320} rx={26} ry={24} fill="#5cc26d" />
-        </g>
-      ))}
-    </svg>
-  );
-}

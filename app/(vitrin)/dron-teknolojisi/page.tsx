@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import BreadCrumb from "@/components/vitrin/BreadCrumb";
 import SectionWrapper from "@/components/vitrin/SectionWrapper";
@@ -55,18 +56,15 @@ export default function DronTeknolojisiPage() {
             </p>
           </div>
 
-          {/* GORSEL: Drone havada tohum atışı yapıyor — eylem fotoğrafı veya 3D render. 1:1 */}
-          <div className="relative aspect-square rounded-3xl bg-gradient-to-br from-[#0a1f12] via-[#1B6B3A] to-[#22894a] overflow-hidden">
-            <div className="absolute inset-0 flex items-center justify-center">
-              <svg className="w-40 h-40 text-white/30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.2}>
-                <circle cx="6" cy="6" r="2.5" />
-                <circle cx="18" cy="6" r="2.5" />
-                <circle cx="6" cy="18" r="2.5" />
-                <circle cx="18" cy="18" r="2.5" />
-                <rect x="9" y="9" width="6" height="6" rx="1" />
-                <path d="M8 8l-2-2M16 8l2-2M8 16l-2 2M16 16l2 2" strokeLinecap="round" />
-              </svg>
-            </div>
+          <div className="relative aspect-square rounded-3xl overflow-hidden bg-[#0a1f12]">
+            <Image
+              src="/images/dron-teknolojisi/hero.webp"
+              alt="Skytech Green tarımsal ekim drone — premium ürün görseli"
+              fill
+              priority
+              sizes="(max-width: 1024px) 100vw, 50vw"
+              className="object-cover"
+            />
             <div className="absolute bottom-6 left-6 right-6 liquid-glass-dark rounded-2xl p-5">
               <div className="flex items-center justify-between text-xs text-[#a7d4a7]">
                 <span>RTK GPS</span><span>•</span>

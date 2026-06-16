@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import BreadCrumb from "@/components/vitrin/BreadCrumb";
 import SectionWrapper from "@/components/vitrin/SectionWrapper";
@@ -59,14 +60,15 @@ export default function TohumTopuPage() {
             </p>
           </div>
 
-          {/* GORSEL: Tohum topu yakın çekim — kil küre, içinden tohum görünür şekilde. 1:1 oran. */}
-          <div className="relative aspect-square rounded-3xl bg-gradient-to-br from-[#1B6B3A] via-[#22894a] to-[#0a1f12] overflow-hidden">
-            <div className="absolute inset-0 flex items-center justify-center">
-              <svg className="w-48 h-48 text-white/20" viewBox="0 0 24 24" fill="currentColor">
-                <circle cx="12" cy="12" r="10" />
-                <circle cx="12" cy="12" r="3" fill="#a3e635" />
-              </svg>
-            </div>
+          <div className="relative aspect-square rounded-3xl overflow-hidden bg-[#0a1f12]">
+            <Image
+              src="/images/tohum-topu/hero.webp"
+              alt="Tohum topu yakın çekim — kil küre, çatlak ve filiz"
+              fill
+              priority
+              sizes="(max-width: 1024px) 100vw, 50vw"
+              className="object-cover"
+            />
             <div className="absolute bottom-6 left-6 right-6 liquid-glass-dark rounded-2xl p-5 text-center">
               <p className="text-xs text-[#a7d4a7] uppercase tracking-wider font-semibold mb-1">Yakın Çekim</p>
               <p className="text-sm text-white">Kil + Gübre + Yerli Tohum</p>

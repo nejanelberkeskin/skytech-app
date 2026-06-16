@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import HeroSection from "@/components/vitrin/homepage/HeroSection";
 import MarqueeStrip from "@/components/vitrin/homepage/MarqueeStrip";
 import ValueCards from "@/components/vitrin/homepage/ValueCards";
@@ -13,12 +12,14 @@ import BeforeAfter from "@/components/vitrin/homepage/BeforeAfter";
 import ServicePackages from "@/components/vitrin/homepage/ServicePackages";
 import FAQSection from "@/components/vitrin/homepage/FAQSection";
 import FinalCTA from "@/components/vitrin/homepage/FinalCTA";
+import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Skytech Green — Tohum Toplarıyla Geleceği Ekin",
+export const metadata = buildPageMetadata({
+  title: "Tohum Toplarıyla Geleceği Ekin",
   description:
     "Dron teknolojisi ve tohum topu ile karbon nötr ağaçlandırma. Bireysel ve kurumsal çözümler, ölçülebilir etki, şeffaf tedarik zinciri.",
-};
+  path: "/",
+});
 
 export default function VitrinHomePage() {
   return (

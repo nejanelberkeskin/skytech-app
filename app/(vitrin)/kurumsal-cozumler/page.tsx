@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import BreadCrumb from "@/components/vitrin/BreadCrumb";
@@ -6,12 +5,25 @@ import SectionWrapper from "@/components/vitrin/SectionWrapper";
 import SectionHeading from "@/components/vitrin/SectionHeading";
 import DashboardParallax from "@/components/vitrin/kurumsal/DashboardParallax";
 import DeveloperApi from "@/components/vitrin/kurumsal/DeveloperApi";
+import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
+import ServiceSchema from "@/components/seo/ServiceSchema";
+import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Kurumsal Çözümler — ESG Ortaklığı | Skytech Green",
+export const metadata = buildPageMetadata({
+  title: "Kurumsal Çözümler — ESG Ortaklığı",
   description:
-    "Şirketiniz için Hatıra Ormanı, çalışan sertifikası, ESG raporlama ve API entegrasyonu — tek noktadan kurumsal çözümler.",
-};
+    "Şirketinize özel Hatıra Ormanı, çalışan başına otomatik PDF sertifika, GRI/CDP/SASB uyumlu ESG raporlama ve e-ticaret API entegrasyonu.",
+  path: "/kurumsal-cozumler",
+  keywords: [
+    "kurumsal ağaçlandırma",
+    "hatıra ormanı",
+    "ESG çözümleri",
+    "çalışan karbon sertifikası",
+    "kurumsal sürdürülebilirlik partneri",
+    "B2B karbon nötrleme",
+    "API tohum entegrasyonu",
+  ],
+});
 
 const COMPARISON = [
   { item: "Logo Baskılı Ürün", impact: "Kısa ömürlü, çoğu çöpe gider", esg: "Yok", icon: "🎁", verdict: false, image: "/images/kurumsal/promosyon-urunu.webp" },
@@ -30,6 +42,13 @@ const FEATURES = [
 export default function KurumsalCozumlerPage() {
   return (
     <>
+      <BreadcrumbSchema items={[{ name: "Kurumsal Çözümler", path: "/kurumsal-cozumler" }]} />
+      <ServiceSchema
+        name="Kurumsal Hatıra Ormanı ve ESG Çözümleri"
+        description="Şirketler için hatıra ormanı kurulumu, çalışan başına PDF sertifika otomasyonu, GRI/CDP uyumlu karbon raporlama, REST API + e-ticaret eklenti entegrasyonu."
+        serviceType="Corporate ESG and reforestation partnership"
+        path="/kurumsal-cozumler"
+      />
       <BreadCrumb
         title="Promosyon Ürünleri Çöpe Gider. Kurumsal Ormanınız Sonsuza Kadar Yaşar."
         subtitle="ESG hedeflerinize ölçülebilir katkı, çalışan deneyimine somut anlam — tek bir kurumsal partner."

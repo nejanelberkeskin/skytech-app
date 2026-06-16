@@ -1,15 +1,27 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import BreadCrumb from "@/components/vitrin/BreadCrumb";
 import SectionWrapper from "@/components/vitrin/SectionWrapper";
 import SectionHeading from "@/components/vitrin/SectionHeading";
 import CarbonCalculator from "@/components/vitrin/homepage/CarbonCalculator";
+import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
+import ServiceSchema from "@/components/seo/ServiceSchema";
+import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Karbon Programı — Ölçülebilir, Şeffaf, Sertifikalı | Skytech Green",
+export const metadata = buildPageMetadata({
+  title: "Karbon Programı — Ölçülebilir, Şeffaf, Sertifikalı",
   description:
-    "Karbon nötrleme programımız: dron ekimleriyle dengelenen CO₂, şeffaf metrikler, kurumsal ESG entegrasyonu.",
-};
+    "Karbon nötrleme programımız: dron ekimleriyle dengelenen CO₂, şeffaf metrikler, GRI/CDP uyumlu ESG raporlama. Kurumsal karbon sertifikası.",
+  path: "/karbon-programi",
+  keywords: [
+    "karbon nötrleme",
+    "karbon ayak izi",
+    "ESG raporlama",
+    "karbon sertifikası",
+    "GRI CDP karbon",
+    "kurumsal sürdürülebilirlik",
+    "carbon offset Türkiye",
+  ],
+});
 
 const METRICS = [
   { value: "5kg", label: "CO₂ / Ağaç / Yıl", desc: "Olgun bir ağaç yıllık ortalama 5kg karbondioksit emer." },
@@ -33,6 +45,13 @@ const FAQ = [
 export default function KarbonProgramiPage() {
   return (
     <>
+      <BreadcrumbSchema items={[{ name: "Karbon Programı", path: "/karbon-programi" }]} />
+      <ServiceSchema
+        name="Karbon Nötrleme Programı"
+        description="GRI/CDP/SASB uyumlu, IPCC standartlarında karbon ayak izi hesaplama ve dron ağaçlandırmayla nötrleme. Kurumsal ESG raporlarına entegre."
+        serviceType="Carbon offset and ESG reporting"
+        path="/karbon-programi"
+      />
       <BreadCrumb
         title="Her Ağaç Bir Karbon Filtresi. Biz Onu Ölçüyoruz."
         subtitle="Soyut karbon kredilerine güvenmek yerine, gerçek ağaçlarla, GPS koordinatlı kayıtlarla, ölçülebilir karbon nötrleme."

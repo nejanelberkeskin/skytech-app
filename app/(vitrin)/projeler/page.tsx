@@ -1,17 +1,26 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import BreadCrumb from "@/components/vitrin/BreadCrumb";
 import SectionWrapper from "@/components/vitrin/SectionWrapper";
 import SectionHeading from "@/components/vitrin/SectionHeading";
 import ProjectsGrid from "@/components/vitrin/projeler/ProjectsGrid";
 import TurkeyMap from "@/components/vitrin/TurkeyMap";
+import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
 import { PROJECTS } from "@/lib/projects-data";
+import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Projeler & Harita — Sahadan Kanıt | Skytech Green",
+export const metadata = buildPageMetadata({
+  title: "Projeler & Harita — Sahadan Kanıt",
   description:
-    "Türkiye genelinde aktif, pilot ve tamamlanmış drone ağaçlandırma projelerimiz. İnteraktif harita ve proje detayları.",
-};
+    "Türkiye genelinde aktif, pilot ve tamamlanmış drone ağaçlandırma projelerimiz. İnteraktif Türkiye haritası, il bazlı proje detayları ve tohum sayıları.",
+  path: "/projeler",
+  keywords: [
+    "ağaçlandırma projeleri Türkiye",
+    "Manavgat ağaçlandırma",
+    "drone ekim projeleri",
+    "Marmaris ağaçlandırma",
+    "Bolu su havzası",
+  ],
+});
 
 const STATS = [
   { value: "42K+", label: "Toplam Tohum Atıldı" },
@@ -23,6 +32,7 @@ const STATS = [
 export default function ProjelerPage() {
   return (
     <>
+      <BreadcrumbSchema items={[{ name: "Projeler", path: "/projeler" }]} />
       <BreadCrumb
         title="Sahadan Kanıt"
         subtitle="Türkiye'nin dört bir yanında, gerçek dronelar — gerçek tohumlar — gerçek ormanlar."

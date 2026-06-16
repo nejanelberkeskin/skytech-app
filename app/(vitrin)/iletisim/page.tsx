@@ -1,13 +1,15 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import BreadCrumb from "@/components/vitrin/BreadCrumb";
 import SectionWrapper from "@/components/vitrin/SectionWrapper";
+import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
+import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "İletişim — Bize Ulaşın | Skytech Green",
+export const metadata = buildPageMetadata({
+  title: "İletişim — Bize Ulaşın",
   description:
-    "Skytech Green ofisi, telefon, e-posta ve sosyal medya iletişim bilgileri. Çalışma saatleri ve harita.",
-};
+    "Skytech Green Ankara ofisi, telefon, e-posta ve sosyal medya iletişim bilgileri. Çalışma saatleri 09:00-18:00, hafta içi.",
+  path: "/iletisim",
+});
 
 const CONTACTS = [
   {
@@ -40,6 +42,7 @@ const SOCIAL = [
 export default function IletisimPage() {
   return (
     <>
+      <BreadcrumbSchema items={[{ name: "İletişim", path: "/iletisim" }]} />
       <BreadCrumb
         title="Bize Ulaşın"
         subtitle="Bireysel sorularınız için bilgi formumuza, kurumsal projeler için teklif sayfamıza yönelin. Sosyal medyadan da bağlantı kurabilirsiniz."

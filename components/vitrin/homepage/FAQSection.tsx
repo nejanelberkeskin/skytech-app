@@ -2,6 +2,7 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
+import FAQSchema from "../../seo/FAQSchema";
 import SectionWrapper from "../SectionWrapper";
 import SectionHeading from "../SectionHeading";
 
@@ -45,6 +46,7 @@ export default function FAQSection() {
 
   return (
     <SectionWrapper variant="light" className="relative overflow-hidden">
+      <FAQSchema items={FAQS.map((f) => ({ question: f.q, answer: f.a }))} />
       <div aria-hidden className="absolute inset-0 mesh-gradient opacity-40 pointer-events-none" />
 
       <div className="relative">

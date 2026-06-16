@@ -1,15 +1,30 @@
-import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import BreadCrumb from "@/components/vitrin/BreadCrumb";
 import SectionWrapper from "@/components/vitrin/SectionWrapper";
 import SectionHeading from "@/components/vitrin/SectionHeading";
+import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
+import ServiceSchema from "@/components/seo/ServiceSchema";
+import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Tohum Topu — Bir Kürede Koca Bir Orman | Skytech Green",
+export const metadata = buildPageMetadata({
+  title: "Tohum Topu — Bir Kürede Koca Bir Orman",
   description:
-    "Kil, organik gübre ve seçilmiş tohumlar — tohum topu nedir, nasıl yapılır, çimlenme oranı neden %65+?",
-};
+    "Kil, organik gübre ve seçilmiş tohumlardan üretilen tohum topu nedir, nasıl yapılır? %65+ çimlenme oranı, üretim süreci ve bilimsel formülasyon.",
+  path: "/tohum-topu",
+  image: {
+    url: "/images/tohum-topu/hero.webp",
+    alt: "Tohum topu yakın çekim — kil küre, çatlak ve filiz",
+  },
+  keywords: [
+    "tohum topu",
+    "tohum topu nedir",
+    "kil tohum topu",
+    "ağaçlandırma tohum topu",
+    "tohum topu üretimi",
+    "yerli tohum",
+  ],
+});
 
 const COMPONENTS = [
   { label: "Yerli Tohum", desc: "İl Orman Müdürlüğü tedarikli, parti numarası kayıtlı.", pct: "30%" },
@@ -33,6 +48,14 @@ const STATS = [
 export default function TohumTopuPage() {
   return (
     <>
+      <BreadcrumbSchema items={[{ name: "Tohum Topu", path: "/tohum-topu" }]} />
+      <ServiceSchema
+        name="Tohum Topu Üretimi ve Tedariki"
+        description="İl Orman Müdürlüğü koordineli yerli tohumlardan, kil ve organik gübreyle formüle edilmiş, %65+ çimlenme oranına sahip tohum topu üretimi."
+        serviceType="Seed ball production for reforestation"
+        path="/tohum-topu"
+        image="/images/tohum-topu/hero.webp"
+      />
       <BreadCrumb
         title="Bir Kürede Koca Bir Orman"
         subtitle="Tohum topu — kil, organik gübre ve seçilmiş tohumların ileri tarım bilimiyle birleştiği küçük bir mucize."

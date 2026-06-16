@@ -1,12 +1,14 @@
-import type { Metadata } from "next";
 import BreadCrumb from "@/components/vitrin/BreadCrumb";
 import SectionWrapper from "@/components/vitrin/SectionWrapper";
+import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
+import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Bilgi Al — Sorularınızı Yanıtlayalım | Skytech Green",
+export const metadata = buildPageMetadata({
+  title: "Bilgi Al — Sorularınızı Yanıtlayalım",
   description:
-    "Bireysel ya da kurumsal — Skytech Green hakkında merak ettiğiniz her şeyi yanıtlayalım.",
-};
+    "Bireysel veya kurumsal Skytech Green soruları için bilgi formu — 24 saat içinde uzman ekibimizden dönüş garantisi.",
+  path: "/bilgi-al",
+});
 
 const SUBJECTS = [
   "Bireysel Tohum Sipariş",
@@ -21,6 +23,7 @@ const SUBJECTS = [
 export default function BilgiAlPage() {
   return (
     <>
+      <BreadcrumbSchema items={[{ name: "Bilgi Al", path: "/bilgi-al" }]} />
       <BreadCrumb
         title="Merak Ettiğiniz Her Şeyi Sorun"
         subtitle="Formu doldurun — 24 saat içinde uzman ekibimiz dönüş yapsın. Bireysel ya da kurumsal, fark etmez."

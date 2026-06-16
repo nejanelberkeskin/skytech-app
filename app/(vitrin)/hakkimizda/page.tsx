@@ -1,16 +1,29 @@
-import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import BreadCrumb from "@/components/vitrin/BreadCrumb";
 import SectionWrapper from "@/components/vitrin/SectionWrapper";
 import SectionHeading from "@/components/vitrin/SectionHeading";
 import Timeline from "@/components/vitrin/hakkimizda/Timeline";
+import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
+import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Hakkımızda — Bilim, Teknoloji ve Doğa | Skytech Green",
+export const metadata = buildPageMetadata({
+  title: "Hakkımızda — Bilim, Teknoloji ve Doğa",
   description:
-    "Skytech Green'in vizyonu, ekibi ve sürdürülebilir geleceğe inanan değerleri.",
-};
+    "2021 Akdeniz yangınlarından doğan vizyon, ziraat mühendisleri + drone pilotları + yazılım ekibinden oluşan 36+ kişilik aile. Skytech Green'in kuruluş hikayesi ve değerleri.",
+  path: "/hakkimizda",
+  image: {
+    url: "/images/hakkimizda/saha.webp",
+    alt: "Skytech Green saha ekibi — drone operasyon",
+  },
+  keywords: [
+    "Skytech Green hakkında",
+    "ekibimiz",
+    "vizyon misyon",
+    "ağaçlandırma şirketi Türkiye",
+    "Eco-Tech",
+  ],
+});
 
 const VALUES = [
   { title: "Bilim", desc: "Her kararımızın arkasında ziraat ve ekoloji bilimi vardır.", Icon: ScienceIcon },
@@ -36,6 +49,7 @@ const STATS = [
 export default function HakkimizdaPage() {
   return (
     <>
+      <BreadcrumbSchema items={[{ name: "Hakkımızda", path: "/hakkimizda" }]} />
       <BreadCrumb
         title="Bilim, Teknoloji ve Doğa. Üçünü Birleştiriyoruz."
         subtitle="Skytech Green; iklim kriziyle mücadeleyi havacılık, ileri tarım ve modern yazılımla birleştiren yeni nesil bir Eco-Tech platformudur."

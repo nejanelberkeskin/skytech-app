@@ -1,15 +1,30 @@
-import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import BreadCrumb from "@/components/vitrin/BreadCrumb";
 import SectionWrapper from "@/components/vitrin/SectionWrapper";
 import SectionHeading from "@/components/vitrin/SectionHeading";
+import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
+import ServiceSchema from "@/components/seo/ServiceSchema";
+import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Dron Teknolojisi — Hassas Ekim, Sıfır Ayak İzi | Skytech Green",
+export const metadata = buildPageMetadata({
+  title: "Dron Teknolojisi — Hassas Ekim, Sıfır Ayak İzi",
   description:
-    "GPS hassasiyetli drone filomuz, ulaşılması zor bölgelerde insan ayağının değmediği alanlara tohum topu ekiyor.",
-};
+    "GPS hassasiyetli drone filomuz, ulaşılması zor bölgelerde insan ayağının değmediği alanlara tohum topu ekiyor. RTK GPS, LiDAR, otonom uçuş, 200+ tohum/uçuş.",
+  path: "/dron-teknolojisi",
+  image: {
+    url: "/images/dron-teknolojisi/hero.webp",
+    alt: "Skytech Green tarımsal ekim drone — hero shot",
+  },
+  keywords: [
+    "drone ağaçlandırma",
+    "dronla tohum ekim",
+    "RTK GPS tarım drone",
+    "tarımsal drone Türkiye",
+    "otonom drone ekim",
+    "drone reforestation",
+  ],
+});
 
 const FEATURES = [
   { title: "GPS Hassasiyeti", desc: "Santimetre seviyesinde RTK GPS — her tohumun düştüğü nokta kayıtlı.", Icon: GpsIcon },
@@ -30,6 +45,14 @@ const PROCESS = [
 export default function DronTeknolojisiPage() {
   return (
     <>
+      <BreadcrumbSchema items={[{ name: "Dron Teknolojisi", path: "/dron-teknolojisi" }]} />
+      <ServiceSchema
+        name="Dron ile Ağaçlandırma Hizmeti"
+        description="GPS hassasiyetli, otonom uçuşlu profesyonel drone filomuzla bir uçuşta 200+ tohum atışı. Sıfır saha tahribatı, ulaşılması zor bölgelere erişim, tam izlenebilirlik."
+        serviceType="Drone-based aerial seeding for reforestation"
+        path="/dron-teknolojisi"
+        image="/images/dron-teknolojisi/hero.webp"
+      />
       <BreadCrumb
         title="Hassas Ekim, Sıfır Ayak İzi"
         subtitle="GPS hassasiyetli dronlarla, insan adımının ulaşamadığı bölgelere tohum topu ekiyoruz."

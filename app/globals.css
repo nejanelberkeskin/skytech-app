@@ -683,10 +683,21 @@ body {
 }
 
 /* ── Sticky Vitrin Navbar ─────────────────────────────────────────── */
+/* En üst (scrolled değil) — hafif beyazımsı liquid; logo ve menü koyu hero
+   üzerinde de okunabilir, alttaki sayfa zorunlu olduğunda yarı saydam görünür. */
+/* !important — Tailwind v4'ün transition-all utility'si backdrop-filter'ı
+   sıfırladığı için her iki state'te de zorlamak gerekiyor. */
+.vitrin-navbar-top {
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(16px) saturate(1.25) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(1.25) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+}
+/* Kaydırıldıktan sonra — daha opak ve hafif shadow ile zemine oturur. */
 .vitrin-navbar-scrolled {
   background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(20px) saturate(1.3);
-  -webkit-backdrop-filter: blur(20px) saturate(1.3);
+  backdrop-filter: blur(20px) saturate(1.3) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(1.3) !important;
   border-bottom: 1px solid rgba(0, 0, 0, 0.06);
   box-shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
   animation: header-slide-down 0.5s ease-out both;

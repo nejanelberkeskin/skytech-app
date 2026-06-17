@@ -69,8 +69,11 @@ export default function RegisterPage() {
         <div className="nature-orb nature-orb-3" />
       </div>
 
-      {/* Nav */}
-      <nav className="relative z-10 px-6 py-5">
+      {/* Nav — beyazımsı liquid şerit, logo dark hero'da net okunur */}
+      <nav
+        className="relative z-10 vitrin-navbar-top px-6 py-4"
+        style={{ backdropFilter: "blur(16px) saturate(1.25)", WebkitBackdropFilter: "blur(16px) saturate(1.25)" }}
+      >
         <Link href="/" className="flex items-center gap-2.5 w-fit group" aria-label="Skytech Green ana sayfa">
           <Image
             src="/images/brand/logo.webp"

@@ -5,15 +5,19 @@ import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase/browser";
+import {
+  BarChartIcon, PackageIcon, SproutIcon, CertificateIcon,
+  GiftIcon, TrophyIcon, SettingsIcon, AlertTriangleIcon,
+} from "@/components/ui/Icons";
 
 const NAV_ITEMS = [
-  { href: "/hesabim", label: "Genel Bakış", icon: "📊", exact: true },
-  { href: "/hesabim/siparislerim", label: "Fiziksel Siparişlerim", icon: "📦" },
-  { href: "/hesabim/rezervasyonlar", label: "Arazi Ekimlerim", icon: "🌱" },
-  { href: "/hesabim/sertifikalar", label: "Sertifikalarım", icon: "📜" },
-  { href: "/hesabim/davet-et", label: "Davet Et & Kazan", icon: "🎁" },
-  { href: "/hesabim/davet-et-kazan", label: "Ödüllerim", icon: "🏆" },
-  { href: "/hesabim/profil", label: "Profil & Ayarlar", icon: "⚙️" },
+  { href: "/hesabim", label: "Genel Bakış", Icon: BarChartIcon, exact: true },
+  { href: "/hesabim/siparislerim", label: "Fiziksel Siparişlerim", Icon: PackageIcon },
+  { href: "/hesabim/rezervasyonlar", label: "Arazi Ekimlerim", Icon: SproutIcon },
+  { href: "/hesabim/sertifikalar", label: "Sertifikalarım", Icon: CertificateIcon },
+  { href: "/hesabim/davet-et", label: "Davet Et & Kazan", Icon: GiftIcon },
+  { href: "/hesabim/davet-et-kazan", label: "Ödüllerim", Icon: TrophyIcon },
+  { href: "/hesabim/profil", label: "Profil & Ayarlar", Icon: SettingsIcon },
 ];
 
 export default function HesabimLayout({ children }: { children: React.ReactNode }) {
@@ -111,6 +115,7 @@ export default function HesabimLayout({ children }: { children: React.ReactNode 
               height={36}
               priority
               className="h-9 w-auto"
+              style={{ filter: "brightness(0) invert(1)" }}
             />
           </Link>
         </div>
@@ -146,7 +151,7 @@ export default function HesabimLayout({ children }: { children: React.ReactNode 
                     : "text-emerald-200/40 hover:text-white hover:bg-white/[0.04]"
                 }`}
               >
-                <span className="text-base">{item.icon}</span>
+                <item.Icon className="w-4 h-4 shrink-0" />
                 <span>{item.label}</span>
               </Link>
             );
@@ -160,7 +165,7 @@ export default function HesabimLayout({ children }: { children: React.ReactNode 
             onClick={() => setSidebarOpen(false)}
             className="flex items-center justify-center gap-2 w-full py-3 rounded-2xl glass-btn text-sm font-medium text-white transition-all"
           >
-            <span>🌱</span>
+            <SproutIcon className="w-4 h-4" />
             Tohum Satın Al
           </Link>
           <button
@@ -196,6 +201,7 @@ export default function HesabimLayout({ children }: { children: React.ReactNode 
             width={120}
             height={30}
             className="h-7 w-auto"
+            style={{ filter: "brightness(0) invert(1)" }}
           />
           <div className="w-10" /> {/* Spacer for centering */}
         </div>
@@ -205,7 +211,7 @@ export default function HesabimLayout({ children }: { children: React.ReactNode 
           <div className="mx-4 mt-4 lg:mx-8 rounded-2xl px-5 py-3 flex items-center justify-between gap-4"
             style={{ background: "rgba(245,158,11,0.08)", border: "1px solid rgba(245,158,11,0.2)" }}>
             <div className="flex items-center gap-2.5 min-w-0">
-              <span className="text-amber-400 text-lg shrink-0">⚠️</span>
+              <AlertTriangleIcon className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
               <p className="text-sm text-amber-300">
                 <span className="font-semibold">E-postanızı onaylayın.</span>{" "}
                 <span className="text-amber-400/60">{userEmail} adresine bir doğrulama bağlantısı gönderdik.</span>

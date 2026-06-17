@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase/browser";
+import { BuildingIcon } from "@/components/ui/Icons";
 
 export default function CorporateLogin() {
   const router = useRouter();
@@ -56,10 +57,13 @@ export default function CorporateLogin() {
         <div className="nature-orb nature-orb-2" />
       </div>
 
-      {/* Top bar */}
-      <nav className="relative z-10" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)", background: "rgba(4,11,6,0.6)", backdropFilter: "blur(20px) saturate(1.4)" }}>
-        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link href="/kurumsal" className="flex items-center gap-2.5" aria-label="Skytech Green Kurumsal">
+      {/* Top bar — beyazımsı liquid, logo dark zeminde net okunur */}
+      <nav
+        className="relative z-10 vitrin-navbar-top"
+        style={{ backdropFilter: "blur(20px) saturate(1.4)", WebkitBackdropFilter: "blur(20px) saturate(1.4)" }}
+      >
+        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between gap-3">
+          <Link href="/kurumsal" className="flex items-center gap-2.5 shrink-0" aria-label="Skytech Green Kurumsal">
             <Image
               src="/images/brand/logo.webp"
               alt="Skytech Green"
@@ -69,8 +73,8 @@ export default function CorporateLogin() {
               className="h-8 w-auto"
             />
           </Link>
-          <Link href="/kurumsal/teklif-al" className="text-sm text-emerald-200/40 hover:text-white transition-colors">
-            Henüz hesabınız yok mu? Teklif alın →
+          <Link href="/kurumsal/teklif-al" className="text-xs sm:text-sm font-semibold text-[#1a2e1a] hover:text-[#1B6B3A] transition-colors text-right">
+            <span className="hidden sm:inline">Henüz hesabınız yok mu? </span>Teklif alın →
           </Link>
         </div>
       </nav>
@@ -81,7 +85,7 @@ export default function CorporateLogin() {
           <div className="text-center">
             <div className="w-16 h-16 rounded-3xl flex items-center justify-center mx-auto mb-4"
               style={{ background: "linear-gradient(135deg, rgba(16,185,129,0.15), rgba(20,184,166,0.1))", border: "1px solid rgba(52,211,153,0.2)" }}>
-              <span className="text-3xl">🏢</span>
+              <BuildingIcon className="w-8 h-8 text-emerald-300" strokeWidth={1.6} />
             </div>
             <h1 className="text-2xl font-bold text-white">Kurumsal Giriş</h1>
             <p className="text-emerald-200/40 text-sm mt-2">

@@ -82,6 +82,7 @@ export default function CorporatePanelLayout({ children }: { children: React.Rea
               height={34}
               priority
               className="h-8 w-auto"
+              style={{ filter: "brightness(0) invert(1)" }}
             />
           </Link>
           <p className="text-xs text-emerald-200/25 mt-1.5">Kurumsal Panel</p>

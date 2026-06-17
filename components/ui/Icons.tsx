@@ -207,6 +207,29 @@ export function SettingsIcon({ className, strokeWidth }: IconProps) {
   );
 }
 
+export function BuildingIcon({ className, strokeWidth }: IconProps) {
+  return (
+    <svg {...base(strokeWidth)} className={className}>
+      <rect x="4" y="2" width="16" height="20" rx="2" />
+      <path d="M9 22v-4h6v4" />
+      <path d="M8 6h.01" /><path d="M16 6h.01" />
+      <path d="M12 6h.01" />
+      <path d="M8 10h.01" /><path d="M16 10h.01" /><path d="M12 10h.01" />
+      <path d="M8 14h.01" /><path d="M16 14h.01" /><path d="M12 14h.01" />
+    </svg>
+  );
+}
+
+export function AlertTriangleIcon({ className, strokeWidth }: IconProps) {
+  return (
+    <svg {...base(strokeWidth)} className={className}>
+      <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
+      <path d="M12 9v4" />
+      <path d="M12 17h.01" />
+    </svg>
+  );
+}
+
 export function TrophyIcon({ className, strokeWidth }: IconProps) {
   return (
     <svg {...base(strokeWidth)} className={className}>

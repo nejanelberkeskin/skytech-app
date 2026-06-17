@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
+import { PackageIcon, DroneIcon } from "@/components/ui/Icons";
 
 export default function SatinAlPage() {
   return (
@@ -34,8 +35,8 @@ export default function SatinAlPage() {
         <Link href="/bireysel/satin-al/siparis" className="group block">
           <div className="liquid-glass relative rounded-3xl p-10 overflow-hidden liquid-glass-hover h-full flex flex-col items-center text-center">
             <div className="relative z-10 flex flex-col items-center">
-              <div className="w-24 h-24 rounded-full bg-emerald-500/10 border border-emerald-500/15 flex items-center justify-center text-5xl mb-6 group-hover:scale-110 group-hover:shadow-[0_0_40px_rgba(16,185,129,0.15)] transition-all duration-500">
-                📦
+              <div className="w-24 h-24 rounded-full bg-emerald-500/10 border border-emerald-500/15 flex items-center justify-center mb-6 group-hover:scale-110 group-hover:shadow-[0_0_40px_rgba(16,185,129,0.15)] transition-all duration-500">
+                <PackageIcon className="w-11 h-11 text-emerald-300" strokeWidth={1.6} />
               </div>
               <h3 className="text-xl font-bold text-white mb-3">Tohum Sipariş Verin</h3>
               <p className="text-emerald-100/40 mb-8 leading-relaxed">
@@ -53,8 +54,8 @@ export default function SatinAlPage() {
         <Link href="/bireysel/satin-al/arazi" className="group block">
           <div className="liquid-glass relative rounded-3xl p-10 overflow-hidden liquid-glass-hover h-full flex flex-col items-center text-center">
             <div className="relative z-10 flex flex-col items-center">
-              <div className="w-24 h-24 rounded-full bg-teal-500/10 border border-teal-500/15 flex items-center justify-center text-5xl mb-6 group-hover:scale-110 group-hover:shadow-[0_0_40px_rgba(20,184,166,0.15)] transition-all duration-500">
-                🚁
+              <div className="w-24 h-24 rounded-full bg-teal-500/10 border border-teal-500/15 flex items-center justify-center mb-6 group-hover:scale-110 group-hover:shadow-[0_0_40px_rgba(20,184,166,0.15)] transition-all duration-500">
+                <DroneIcon className="w-11 h-11 text-teal-300" strokeWidth={1.6} />
               </div>
               <h3 className="text-xl font-bold text-white mb-3">Sizin Yerinize Ekelim</h3>
               <p className="text-emerald-100/40 mb-8 leading-relaxed">

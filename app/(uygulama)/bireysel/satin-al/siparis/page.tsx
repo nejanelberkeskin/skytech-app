@@ -5,6 +5,7 @@ import { fetchSeedCatalog, SEED_TYPES_FALLBACK, type SeedType } from "@/lib/seed
 import { useCart } from "@/lib/cart-context";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
+import { TreesIcon } from "@/components/ui/Icons";
 
 export default function SiparisPage() {
   const [seedTypes, setSeedTypes] = useState<SeedType[]>(SEED_TYPES_FALLBACK);
@@ -78,7 +79,7 @@ export default function SiparisPage() {
                     }`}
                   >
                     <div className="relative z-10">
-                      <span className="text-3xl block">{seed.emoji}</span>
+                      <TreesIcon className="w-7 h-7 text-emerald-300" strokeWidth={1.6} />
                       <p className="font-semibold text-white mt-2">{seed.name}</p>
                       <p className="text-xs text-emerald-200/30">{seed.latinName}</p>
                       <p className="text-sm font-bold text-emerald-400 mt-1">{seed.price} TL / tohum</p>
@@ -142,8 +143,8 @@ export default function SiparisPage() {
         {/* Sağ: Ağaç Görseli */}
         <div className="flex items-center justify-center animate-fade-in">
           <div className="liquid-glass relative w-full max-w-sm aspect-square rounded-3xl overflow-hidden flex flex-col items-center justify-center">
-            <div className="relative z-10 text-[120px] leading-none mb-4 transition-all duration-500 animate-float">
-              {selected.emoji}
+            <div className="relative z-10 mb-4 transition-all duration-500 animate-float">
+              <TreesIcon className="w-32 h-32 text-emerald-300" strokeWidth={1.2} />
             </div>
             <div className={`relative z-10 text-center px-6 py-3 rounded-2xl bg-gradient-to-r ${selected.color} text-white`}>
               <p className="text-2xl font-bold">{selected.name}</p>

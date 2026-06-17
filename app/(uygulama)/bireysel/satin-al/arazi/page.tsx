@@ -8,6 +8,7 @@ import type { ReservationInfo } from "@/lib/cart-context";
 import type { Land, GiftInfo } from "@/lib/types";
 import Link from "next/link";
 import { Input, Textarea } from "@/components/ui";
+import { SproutIcon, ClockIcon, GiftIcon, MapPinIcon, TreesIcon } from "@/components/ui/Icons";
 
 // ── Bölge → 7 coğrafi bölge eşleştirme ──────────────────────────────────────
 function getGeoRegion(region: string | null): string | null {
@@ -274,10 +275,10 @@ function CompletedLandsBanner({ lands }: { lands: Land[] }) {
             const { seed } = getRecommendedSeed(land.region ?? null);
             return (
               <span key={i} className="inline-flex items-center gap-2 text-sm font-medium text-slate-300">
-                <span className="text-emerald-400">🌱</span>
+                <SproutIcon className="w-3.5 h-3.5 text-emerald-400" />
                 <span>{land.name}</span>
                 {land.region && <span className="text-slate-500">· {land.region}</span>}
-                <span className="text-slate-500">· {land.filled_seeds.toLocaleString("tr-TR")} {seed.emoji} tohum</span>
+                <span className="inline-flex items-center gap-1 text-slate-500">· {land.filled_seeds.toLocaleString("tr-TR")} <TreesIcon className="w-3.5 h-3.5 text-emerald-400/70" /> tohum</span>
                 <span className="mx-4 text-white/10">|</span>
               </span>
             );
@@ -447,11 +448,11 @@ export default function AraziPage() {
         {/* Aktif rezervasyon uyarısı */}
         {reservation && (
           <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl px-4 py-3 text-sm text-emerald-400 flex items-center gap-2">
-            <span>⏱️</span>
+            <ClockIcon className="w-4 h-4 shrink-0" />
             <span>
               Aktif rezervasyonunuz bulunmaktadır.
               {reservation.gift && (
-                <> <span className="text-amber-400">🎁 <strong>{reservation.gift.recipientName}</strong>&apos;e hediye ekim var.</span></>
+                <> <span className="text-amber-400 inline-flex items-center gap-1"><GiftIcon className="w-3.5 h-3.5 inline" /><strong>{reservation.gift.recipientName}</strong>&apos;e hediye ekim var.</span></>
               )}
               {" "}Ödeme yapılmazsa {reservationTtlMinutes} dk içinde serbest bırakılır.
             </span>
@@ -581,11 +582,11 @@ export default function AraziPage() {
                       <h3 className="font-bold text-white text-sm leading-tight">{projectName}</h3>
                       <div className="flex items-center gap-2 mt-1">
                         {land.region && (
-                          <span className="text-xs text-slate-300/70">📍 {land.region}</span>
+                          <span className="inline-flex items-center gap-1 text-xs text-slate-300/70"><MapPinIcon className="w-3 h-3" />{land.region}</span>
                         )}
                         <span className="text-xs text-slate-300/50">·</span>
                         <span className="flex items-center gap-1 text-xs text-emerald-400/80">
-                          {recSeed.emoji} {recSeed.name}
+                          <TreesIcon className="w-3 h-3" />{recSeed.name}
                         </span>
                       </div>
                     </div>
@@ -697,7 +698,7 @@ export default function AraziPage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="text-lg font-bold text-white">{selectedLand.name}</h3>
-                    {selectedLand.region && <p className="text-sm text-slate-500 mt-0.5">📍 {selectedLand.region}</p>}
+                    {selectedLand.region && <p className="inline-flex items-center gap-1 text-sm text-slate-500 mt-0.5"><MapPinIcon className="w-3.5 h-3.5" />{selectedLand.region}</p>}
                   </div>
                   <button onClick={closeModal}
                     className="w-8 h-8 rounded-full bg-white/[0.05] hover:bg-white/[0.1] flex items-center justify-center text-slate-400 hover:text-white transition-colors shrink-0">
@@ -708,14 +709,16 @@ export default function AraziPage() {
                 <div className="bg-emerald-500/[0.06] border border-emerald-500/15 rounded-xl p-4">
                   <p className="text-xs font-semibold text-emerald-500 uppercase tracking-wide mb-2">Skytech Tohum Önerisi</p>
                   <div className="flex items-center gap-3">
-                    <span className="text-4xl">{recommended.seed.emoji}</span>
+                    <div className="w-12 h-12 rounded-xl bg-emerald-500/15 border border-emerald-500/20 flex items-center justify-center">
+                      <TreesIcon className="w-7 h-7 text-emerald-300" strokeWidth={1.6} />
+                    </div>
                     <div>
                       <p className="font-semibold text-white">{recommended.seed.name}</p>
                       <p className="text-xs text-slate-500 italic">{recommended.seed.latinName}</p>
                       <p className="text-sm font-bold text-emerald-400 mt-0.5">{recommended.seed.price} TL / tohum</p>
                     </div>
                   </div>
-                  <p className="text-xs text-slate-500 mt-3 leading-relaxed">💡 {recommended.reason}</p>
+                  <p className="text-xs text-slate-500 mt-3 leading-relaxed">{recommended.reason}</p>
                 </div>
 
                 <div>
@@ -738,10 +741,10 @@ export default function AraziPage() {
                     className="w-full px-4 py-2.5 bg-white/[0.03] border border-white/[0.08] rounded-xl text-white outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/40 transition-colors" />
                 </div>
 
-                {/* 🎁 Hediye Toggle */}
+                {/* Hediye Toggle */}
                 <div className="border-t border-white/[0.06] pt-3">
                   <ToggleSwitch checked={isGift} onChange={setIsGift}
-                    label="🎁  Bu ekimi birine hediye etmek istiyorum"
+                    label="Bu ekimi birine hediye etmek istiyorum"
                     description="Alıcı adına sertifika oluşturulur ve bildirimler ona gönderilir." />
                   <div style={{ maxHeight: isGift ? "500px" : "0", opacity: isGift ? 1 : 0, overflow: "hidden", transition: "max-height 0.35s ease, opacity 0.25s ease", marginTop: isGift ? "12px" : "0" }}>
                     <div className="p-4 bg-amber-400/[0.05] border border-amber-400/20 rounded-xl space-y-3">
@@ -756,7 +759,7 @@ export default function AraziPage() {
                         <label className="block text-xs font-medium text-slate-400 mb-1.5">
                           Hediye Notu <span className="text-slate-600">(opsiyonel)</span>
                         </label>
-                        <Textarea placeholder="Sana özel bir orman parçası hediye ettim. Sevgiyle 🌱"
+                        <Textarea placeholder="Sana özel bir orman parçası hediye ettim. Sevgiyle."
                           value={giftForm.giftNote}
                           onChange={(e) => setGiftForm((p) => ({ ...p, giftNote: e.target.value }))}
                           rows={2} />
@@ -772,7 +775,7 @@ export default function AraziPage() {
                       {(recommended.seed.price * qty).toLocaleString("tr-TR")} TL
                     </span>
                     {isGift && giftForm.recipientName && (
-                      <p className="text-xs text-amber-400/80 mt-0.5">🎁 {giftForm.recipientName} için</p>
+                      <p className="inline-flex items-center gap-1 text-xs text-amber-400/80 mt-0.5"><GiftIcon className="w-3 h-3" />{giftForm.recipientName} için</p>
                     )}
                   </div>
                 </div>
@@ -790,9 +793,9 @@ export default function AraziPage() {
                       <span className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
                       Rezerve ediliyor...
                     </>
-                  ) : isGift
-                    ? `🎁 Hediye Olarak Rezerve Et (${reservationTtlMinutes} dk)`
-                    : `Rezerve Et (${reservationTtlMinutes} dk)`}
+                  ) : isGift ? (
+                    <><GiftIcon className="w-4 h-4" />Hediye Olarak Rezerve Et ({reservationTtlMinutes} dk)</>
+                  ) : `Rezerve Et (${reservationTtlMinutes} dk)`}
                 </button>
                 <p className="text-xs text-emerald-200/30 text-center relative z-10">
                   Sepete eklediğinizde kapasite kilitlenir. {reservationTtlMinutes} dk içinde ödeme yapmazsanız tohumlar serbest bırakılır.

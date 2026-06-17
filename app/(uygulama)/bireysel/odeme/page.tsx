@@ -6,6 +6,9 @@ import { useRouter } from "next/navigation";
 import { useCart } from "@/lib/cart-context";
 import { supabase } from "@/lib/supabase/browser";
 import type { User } from "@supabase/supabase-js";
+import {
+  DroneIcon, BarChartIcon, SproutIcon, GiftIcon, ClockIcon, TreesIcon,
+} from "@/components/ui/Icons";
 
 /* ═══════════════════════════════════════════════════════════
    Sabitler
@@ -157,13 +160,13 @@ function AutopilotCard({
             </p>
             <div className="flex items-center gap-3">
               {[
-                { icon: "🔄", label: "Aylık Tekrar" },
-                { icon: "🚁", label: "Otonom Ekim" },
-                { icon: "📊", label: "CO₂ Raporu" },
-              ].map((item) => (
-                <div key={item.label} className="flex items-center gap-1 text-[11px] text-emerald-400/70">
-                  <span>{item.icon}</span>
-                  <span className="font-medium">{item.label}</span>
+                { Icon: ClockIcon, label: "Aylık Tekrar" },
+                { Icon: DroneIcon, label: "Otonom Ekim" },
+                { Icon: BarChartIcon, label: "CO₂ Raporu" },
+              ].map(({ Icon, label }) => (
+                <div key={label} className="flex items-center gap-1 text-[11px] text-emerald-400/70">
+                  <Icon className="w-3.5 h-3.5" />
+                  <span className="font-medium">{label}</span>
                 </div>
               ))}
             </div>
@@ -373,7 +376,7 @@ export default function GuestCheckoutPage() {
             {/* Dijital teslimat bilgisi */}
             {isReservationOnly && (
               <div className="glass-subtle rounded-2xl px-4 py-3 flex items-start gap-3 border border-sky-500/15">
-                <span className="text-sky-400 text-lg shrink-0">🌱</span>
+                <SproutIcon className="w-5 h-5 text-sky-400 shrink-0 mt-0.5" />
                 <div>
                   <p className="text-sm font-semibold text-sky-300">Dijital Arazi Ekimi</p>
                   <p className="text-xs text-sky-200/40 mt-0.5">
@@ -386,7 +389,7 @@ export default function GuestCheckoutPage() {
             {/* Hediye bilgi banner */}
             {hasGift && reservation?.gift && (
               <div className="glass-subtle rounded-2xl px-4 py-3 flex items-start gap-3 border border-pink-500/15">
-                <span className="text-pink-400 text-lg shrink-0">🎁</span>
+                <GiftIcon className="w-5 h-5 text-pink-400 shrink-0 mt-0.5" />
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-semibold text-pink-300">Hediye Arazi Ekimi</p>
                   <p className="text-xs text-pink-200/40 mt-0.5">
@@ -485,7 +488,7 @@ export default function GuestCheckoutPage() {
                       <p className="text-xs font-semibold text-emerald-200/30 uppercase tracking-wider">Kargo ile Gönderim</p>
                       {seedItems.map((item, i) => (
                         <div key={i} className="flex items-center justify-between text-sm">
-                          <span className="text-emerald-100/40">{item.seedType?.emoji} {item.seedType?.name} x{item.quantity}</span>
+                          <span className="inline-flex items-center gap-1.5 text-emerald-100/40"><TreesIcon className="w-3.5 h-3.5" />{item.seedType?.name} x{item.quantity}</span>
                           <span className="font-medium text-white">{item.totalPrice.toLocaleString("tr-TR")} TL</span>
                         </div>
                       ))}
@@ -497,7 +500,7 @@ export default function GuestCheckoutPage() {
                       <p className="text-xs font-semibold text-emerald-200/30 uppercase tracking-wider">Arazi Ekimi</p>
                       {reservation.items.map((item, i) => (
                         <div key={i} className="flex items-center justify-between text-sm">
-                          <span className="text-emerald-100/40">{item.seedType?.emoji} {item.landName} x{item.quantity}</span>
+                          <span className="inline-flex items-center gap-1.5 text-emerald-100/40"><TreesIcon className="w-3.5 h-3.5" />{item.landName} x{item.quantity}</span>
                           <span className="font-medium text-white">{item.totalPrice.toLocaleString("tr-TR")} TL</span>
                         </div>
                       ))}
@@ -506,7 +509,7 @@ export default function GuestCheckoutPage() {
 
                   {hasGift && reservation?.gift && (
                     <div className="glass-subtle rounded-2xl px-3 py-2.5 border border-pink-500/15">
-                      <p className="text-xs font-semibold text-pink-400">🎁 Hediye Arazi Ekimi</p>
+                      <p className="inline-flex items-center gap-1.5 text-xs font-semibold text-pink-400"><GiftIcon className="w-3.5 h-3.5" />Hediye Arazi Ekimi</p>
                       <p className="text-xs text-pink-200/40">{reservation.gift.recipientName} adına ekilecek</p>
                     </div>
                   )}

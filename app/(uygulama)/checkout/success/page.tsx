@@ -4,6 +4,9 @@ import { useState, useEffect, useRef, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase/browser";
+import {
+  CheckCircleIcon, SproutIcon, GlobeIcon, MailIcon, CertificateIcon,
+} from "@/components/ui/Icons";
 
 // ── Drone SVG component ───────────────────────────────────────────────────────
 function DroneSVG() {
@@ -38,8 +41,8 @@ function DroneSVG() {
 }
 
 // ── Seed particle ─────────────────────────────────────────────────────────────
-interface Particle { id: number; x: number; y: number; delay: number; emoji: string }
-const SEED_EMOJIS = ["🌱", "🌿", "🍀", "🌳"];
+interface Particle { id: number; x: number; y: number; delay: number; tone: string }
+const SEED_TONES = ["text-emerald-300", "text-lime-300", "text-emerald-400", "text-teal-300"];
 
 function DroneScene({ onDone }: { onDone: () => void }) {
   const [particles, setParticles] = useState<Particle[]>([]);
@@ -56,7 +59,7 @@ function DroneScene({ onDone }: { onDone: () => void }) {
           x: Math.random() * 60 + 20,
           y: Math.random() * 20 + 50,
           delay: Math.random() * 0.3,
-          emoji: SEED_EMOJIS[Math.floor(Math.random() * SEED_EMOJIS.length)],
+          tone: SEED_TONES[Math.floor(Math.random() * SEED_TONES.length)],
         },
       ]);
     }, 180);
@@ -77,9 +80,9 @@ function DroneScene({ onDone }: { onDone: () => void }) {
         <DroneSVG />
       </svg>
       {particles.map((p) => (
-        <div key={p.id} className="absolute text-lg pointer-events-none"
+        <div key={p.id} className={`absolute pointer-events-none ${p.tone}`}
           style={{ left: `${p.x}%`, top: `${p.y}%`, animation: `seedfall 1.2s ease-in forwards`, animationDelay: `${p.delay}s` }}>
-          {p.emoji}
+          <SproutIcon className="w-4 h-4" strokeWidth={2} />
         </div>
       ))}
       <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-500/40 to-transparent" />
@@ -296,7 +299,9 @@ function CheckoutSuccessPage() {
                         <animate attributeName="stroke-dashoffset" from="264" to="0" dur="0.8s" fill="freeze" />
                       </circle>
                     </svg>
-                    <span className="absolute inset-0 flex items-center justify-center text-3xl">✅</span>
+                    <span className="absolute inset-0 flex items-center justify-center">
+                      <CheckCircleIcon className="w-12 h-12 text-emerald-400" strokeWidth={2.2} />
+                    </span>
                   </div>
 
                   <div>
@@ -310,8 +315,9 @@ function CheckoutSuccessPage() {
                   {totalSeeds > 0 && (
                     <div className="glass-glow rounded-2xl py-5">
                       <p className="text-xs text-emerald-400/50 uppercase tracking-widest mb-1">Ekilen Tohum</p>
-                      <p className="text-4xl font-black text-emerald-300">
-                        🌱 <CountUp target={totalSeeds} />
+                      <p className="inline-flex items-center justify-center gap-2 text-4xl font-black text-emerald-300">
+                        <SproutIcon className="w-8 h-8" strokeWidth={2} />
+                        <CountUp target={totalSeeds} />
                       </p>
                     </div>
                   )}
@@ -326,10 +332,9 @@ function CheckoutSuccessPage() {
                   )}
 
                   {/* CO₂ fun fact */}
-                  <div className="glass-subtle rounded-2xl px-4 py-3 text-xs text-sky-300/60 text-left border border-sky-500/10">
-                    <span className="font-semibold text-sky-300">🌍 Etki: </span>
-                    Her 100 tohum, yılda ortalama 1-2 ton CO₂ emer.
-                    Katkınız için teşekkürler!
+                  <div className="glass-subtle rounded-2xl px-4 py-3 text-xs text-sky-300/60 text-left border border-sky-500/10 flex items-start gap-2">
+                    <GlobeIcon className="w-4 h-4 text-sky-300 shrink-0 mt-0.5" />
+                    <span><span className="font-semibold text-sky-300">Etki: </span>Her 100 tohum, yılda ortalama 1-2 ton CO₂ emer. Katkınız için teşekkürler!</span>
                   </div>
                 </>
               )}
@@ -349,7 +354,7 @@ function CheckoutSuccessPage() {
 
                 {orderEmail && (
                   <div className="glass-subtle rounded-2xl px-4 py-3 flex items-center gap-2.5 border border-emerald-500/15">
-                    <span className="text-emerald-400 text-base">✉️</span>
+                    <MailIcon className="w-4 h-4 text-emerald-400 shrink-0" />
                     <div className="min-w-0">
                       <p className="text-[10px] text-emerald-400/50 uppercase tracking-wider leading-none mb-0.5">Sipariş E-postası</p>
                       <p className="text-sm font-medium text-white truncate">{orderEmail}</p>
@@ -394,8 +399,8 @@ function CheckoutSuccessPage() {
           {!isError && isLoggedIn === true && (
             <div className="flex gap-3">
               <Link href="/hesabim/sertifikalar"
-                className="flex-1 py-3.5 text-center glass-glow rounded-2xl text-emerald-300 font-medium text-sm transition-all">
-                📜 Sertifikalarım
+                className="flex-1 py-3.5 inline-flex items-center justify-center gap-2 glass-glow rounded-2xl text-emerald-300 font-medium text-sm transition-all">
+                <CertificateIcon className="w-4 h-4" />Sertifikalarım
               </Link>
               <Link href="/hesabim"
                 className="flex-1 py-3.5 text-center glass-subtle rounded-2xl text-white font-medium text-sm hover:bg-white/[0.06] transition-all">

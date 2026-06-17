@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase/browser";
@@ -102,16 +103,15 @@ export default function HesabimLayout({ children }: { children: React.ReactNode 
       >
         {/* Logo */}
         <div className="px-6 py-5" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-          <Link href="/" className="flex items-center gap-2.5" onClick={() => setSidebarOpen(false)}>
-            <div className="w-8 h-8 rounded-xl flex items-center justify-center"
-              style={{ background: "linear-gradient(135deg, rgba(16,185,129,0.2), rgba(20,184,166,0.15))", border: "1px solid rgba(52,211,153,0.2)" }}>
-              <svg className="w-4 h-4 text-emerald-400" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" />
-              </svg>
-            </div>
-            <span className="text-base font-bold text-white">
-              SkyTech<span className="text-gradient-eco">Green</span>
-            </span>
+          <Link href="/" className="flex items-center gap-2.5" onClick={() => setSidebarOpen(false)} aria-label="Skytech Green ana sayfa">
+            <Image
+              src="/images/brand/logo.webp"
+              alt="Skytech Green"
+              width={140}
+              height={36}
+              priority
+              className="h-9 w-auto"
+            />
           </Link>
         </div>
 
@@ -190,9 +190,13 @@ export default function HesabimLayout({ children }: { children: React.ReactNode 
               <path strokeLinecap="round" d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
-          <span className="text-sm font-bold text-white">
-            SkyTech<span className="text-gradient-eco">Green</span>
-          </span>
+          <Image
+            src="/images/brand/logo.webp"
+            alt="Skytech Green"
+            width={120}
+            height={30}
+            className="h-7 w-auto"
+          />
           <div className="w-10" /> {/* Spacer for centering */}
         </div>
 

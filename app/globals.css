@@ -195,15 +195,18 @@ body {
    LIQUID GLASS COMPONENT CLASSES
    ═══════════════════════════════════════════════════════════════════════ */
 
-/* Liquid Glass card — the core primitive */
+/* Liquid Glass card — Skytech brand uyumlu, vitrin premium-glass-dark ile aynı dil */
 .liquid-glass {
+  position: relative;
   background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%);
-  backdrop-filter: blur(20px) saturate(1.4);
-  -webkit-backdrop-filter: blur(20px) saturate(1.4);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(28px) saturate(1.5);
+  -webkit-backdrop-filter: blur(28px) saturate(1.5);
+  border: 1px solid rgba(255, 255, 255, 0.10);
   box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    inset 0 1px 0 rgba(255, 255, 255, 0.10),
+    inset 0 0 60px rgba(255, 255, 255, 0.02),
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    0 0 80px rgba(34, 197, 94, 0.04);
 }
 .liquid-glass::before {
   content: '';
@@ -215,18 +218,18 @@ body {
   z-index: 0;
 }
 
-/* Glass hover — water droplet softening */
+/* Glass hover — brand forest-green glow */
 .liquid-glass-hover {
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease;
 }
 .liquid-glass-hover:hover {
-  background: linear-gradient(135deg, rgba(255,255,255,0.09) 0%, rgba(255,255,255,0.04) 100%);
-  border-color: rgba(255, 255, 255, 0.14);
+  border-color: rgba(34, 137, 74, 0.22);
   box-shadow:
-    0 12px 40px rgba(0, 0, 0, 0.35),
-    0 0 30px rgba(16, 185, 129, 0.06),
-    inset 0 1px 0 rgba(255, 255, 255, 0.08);
-  transform: translateY(-2px);
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    0 16px 48px rgba(0, 0, 0, 0.45),
+    0 0 60px rgba(34, 137, 74, 0.18),
+    0 0 0 1px rgba(34, 137, 74, 0.10);
+  transform: translateY(-3px);
 }
 
 /* Minimal glass — lighter version */
@@ -268,69 +271,90 @@ body {
   transform: scale(0.98) translateY(0);
 }
 
-/* ── Nature Background System ──────────────────────────────────────── */
+/* ── Nature Background System — Vitrin mesh-dark + aurora ile aynı dil */
 .nature-bg {
   position: fixed;
   inset: 0;
   z-index: 0;
   overflow: hidden;
-  background: linear-gradient(160deg, #020d07 0%, #041208 30%, #061a0d 60%, #030f08 100%);
+  background-color: #050d08;
+  background-image:
+    radial-gradient(at 18% 12%, rgba(34, 137, 74, 0.40) 0%, transparent 45%),
+    radial-gradient(at 88% 22%, rgba(74, 144, 217, 0.20) 0%, transparent 50%),
+    radial-gradient(at 8% 88%, rgba(163, 230, 53, 0.18) 0%, transparent 50%),
+    radial-gradient(at 78% 92%, rgba(27, 107, 58, 0.45) 0%, transparent 45%);
 }
 .nature-bg::before {
   content: '';
   position: absolute;
-  top: -40%;
-  left: -20%;
+  top: -10%;
+  left: -10%;
   width: 80%;
   height: 80%;
-  background: radial-gradient(ellipse, rgba(16, 185, 129, 0.07) 0%, transparent 60%);
-  animation: aurora 20s ease-in-out infinite;
+  background: radial-gradient(ellipse, rgba(34, 137, 74, 0.18) 0%, transparent 60%);
+  filter: blur(40px);
+  animation: aurora-drift 24s ease-in-out infinite;
+  mix-blend-mode: screen;
 }
 .nature-bg::after {
   content: '';
   position: absolute;
-  bottom: -30%;
-  right: -20%;
+  bottom: -10%;
+  right: -10%;
   width: 70%;
   height: 70%;
-  background: radial-gradient(ellipse, rgba(20, 184, 166, 0.05) 0%, transparent 60%);
-  animation: aurora 25s ease-in-out infinite reverse;
+  background: radial-gradient(ellipse, rgba(163, 230, 53, 0.10) 0%, transparent 60%);
+  filter: blur(40px);
+  animation: aurora-drift 28s ease-in-out infinite reverse;
+  mix-blend-mode: screen;
 }
 
-/* Floating nature orbs */
+/* Floating nature orbs — aurora-blob ile aynı palet (yeşil, mavi, lime) */
 .nature-orb {
   position: absolute;
   border-radius: 50%;
-  filter: blur(60px);
-  opacity: 0.3;
-  animation: float 8s ease-in-out infinite;
+  filter: blur(80px);
+  mix-blend-mode: screen;
   pointer-events: none;
+  animation: aurora-drift 18s ease-in-out infinite;
+  will-change: transform, opacity;
 }
 .nature-orb-1 {
-  width: 300px; height: 300px;
-  top: 10%; left: 15%;
-  background: rgba(16, 185, 129, 0.15);
+  width: 50%; height: 70%;
+  top: -10%; left: -5%;
+  background: radial-gradient(circle, rgba(34, 137, 74, 0.40) 0%, transparent 65%);
   animation-delay: 0s;
 }
 .nature-orb-2 {
-  width: 250px; height: 250px;
-  top: 50%; right: 10%;
-  background: rgba(20, 184, 166, 0.12);
-  animation-delay: -3s;
+  width: 55%; height: 70%;
+  top: 15%; right: -10%;
+  background: radial-gradient(circle, rgba(74, 144, 217, 0.30) 0%, transparent 65%);
+  animation: aurora-drift 24s ease-in-out infinite reverse;
+  animation-delay: -6s;
 }
 .nature-orb-3 {
-  width: 200px; height: 200px;
-  bottom: 15%; left: 30%;
-  background: rgba(56, 189, 248, 0.08);
-  animation-delay: -6s;
+  width: 60%; height: 70%;
+  bottom: -15%; left: 25%;
+  background: radial-gradient(circle, rgba(163, 230, 53, 0.22) 0%, transparent 65%);
+  animation-delay: -12s;
 }
 
 /* ── Gradient Text Variants ────────────────────────────────────────── */
+/* text-gradient-eco — vitrin'in text-gradient-aurora ile aynı palet
+   (yeşil → lime → mavi → yeşil shimmer). App sayfalarında brand tutarlılığı. */
 .text-gradient-eco {
-  background: linear-gradient(135deg, #34d399, #a3e635);
+  background: linear-gradient(
+    100deg,
+    #34d399 0%,
+    #a3e635 35%,
+    #4A90D9 65%,
+    #34d399 100%
+  );
+  background-size: 200% 100%;
   -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
   background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer-flow 8s ease-in-out infinite;
 }
 .text-gradient-sky {
   background: linear-gradient(135deg, #34d399, #38bdf8);

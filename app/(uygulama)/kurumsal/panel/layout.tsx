@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase/browser";
@@ -73,11 +74,17 @@ export default function CorporatePanelLayout({ children }: { children: React.Rea
       >
         {/* Logo */}
         <div className="px-6 py-5" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-          <Link href="/kurumsal" className="flex items-center gap-2" onClick={() => setSidebarOpen(false)}>
-            <span className="text-xl">🌱</span>
-            <span className="text-base font-bold text-white">Skytech<span className="text-gradient-eco">Green</span></span>
+          <Link href="/kurumsal" className="flex items-center gap-2.5" onClick={() => setSidebarOpen(false)} aria-label="Skytech Green Kurumsal">
+            <Image
+              src="/images/brand/logo.webp"
+              alt="Skytech Green"
+              width={130}
+              height={34}
+              priority
+              className="h-8 w-auto"
+            />
           </Link>
-          <p className="text-xs text-emerald-200/25 mt-1">Kurumsal Panel</p>
+          <p className="text-xs text-emerald-200/25 mt-1.5">Kurumsal Panel</p>
         </div>
 
         {/* Company info */}

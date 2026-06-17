@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase/browser";
 
@@ -58,9 +59,15 @@ export default function CorporateLogin() {
       {/* Top bar */}
       <nav className="relative z-10" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)", background: "rgba(4,11,6,0.6)", backdropFilter: "blur(20px) saturate(1.4)" }}>
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link href="/kurumsal" className="flex items-center gap-2">
-            <span className="text-xl">🌱</span>
-            <span className="text-base font-bold text-white">Skytech<span className="text-gradient-eco">Green</span></span>
+          <Link href="/kurumsal" className="flex items-center gap-2.5" aria-label="Skytech Green Kurumsal">
+            <Image
+              src="/images/brand/logo.webp"
+              alt="Skytech Green"
+              width={130}
+              height={34}
+              priority
+              className="h-8 w-auto"
+            />
           </Link>
           <Link href="/kurumsal/teklif-al" className="text-sm text-emerald-200/40 hover:text-white transition-colors">
             Henüz hesabınız yok mu? Teklif alın →

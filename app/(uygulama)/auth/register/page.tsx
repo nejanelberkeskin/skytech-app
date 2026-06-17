@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase/browser";
 
@@ -70,16 +71,15 @@ export default function RegisterPage() {
 
       {/* Nav */}
       <nav className="relative z-10 px-6 py-5">
-        <Link href="/" className="flex items-center gap-2.5 w-fit group">
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-lg shadow-emerald-500/20">
-            <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 21C12 21 4 14 4 8.5C4 5.5 7 3 9.5 3C11 3 12 4 12 4C12 4 13 3 14.5 3C17 3 20 5.5 20 8.5C20 14 12 21 12 21Z" />
-            </svg>
-          </div>
-          <span className="text-base font-bold">
-            <span className="text-white">Skytech</span>
-            <span className="text-gradient-eco">Green</span>
-          </span>
+        <Link href="/" className="flex items-center gap-2.5 w-fit group" aria-label="Skytech Green ana sayfa">
+          <Image
+            src="/images/brand/logo.webp"
+            alt="Skytech Green"
+            width={140}
+            height={36}
+            priority
+            className="h-9 w-auto transition-transform duration-300 group-hover:scale-105"
+          />
         </Link>
       </nav>
 

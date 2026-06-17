@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createServerSupabase, createServiceRoleClient } from "@/lib/supabase/server";
+import { createServerSupabase, createServiceRoleClient, createSupabaseServer } from "@/lib/supabase/server";
 import { rateLimit, getClientIP } from "@/lib/admin-auth";
 
 export async function POST(req: NextRequest) {
@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { buyer_email, preferred_land_id, requested_seeds, org_id } = body;
+    const { buyer_email, preferred_land_id, requested_seeds } = body;
 
     if (!buyer_email || !preferred_land_id || !requested_seeds) {
       return NextResponse.json(
@@ -18,11 +18,33 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (requested_seeds <= 0) {
+    if (requested_seeds <= 0 || requested_seeds > 100_000) {
       return NextResponse.json(
-        { error: "Tohum adedi 0'dan büyük olmalıdır." },
+        { error: "Tohum adedi 1-100000 aralığında olmalıdır." },
         { status: 400 }
       );
+    }
+
+    // ── Auth context: varsa session user'ın org_id'sini ekle.
+    // org_id ASLA body'den alınmaz — saldırgan başkasının org'una sipariş
+    // ekleyemesin. Login değilse org_id NULL (misafir order'ı).
+    let orgId: string | null = null;
+    let authUserId: string | null = null;
+    try {
+      const authClient = await createSupabaseServer();
+      const { data: { user } } = await authClient.auth.getUser();
+      if (user) {
+        authUserId = user.id;
+        const svc = createServiceRoleClient();
+        const { data: profile } = await svc
+          .from("profiles")
+          .select("org_id")
+          .eq("id", user.id)
+          .maybeSingle();
+        if (profile?.org_id) orgId = profile.org_id;
+      }
+    } catch {
+      // auth okunamadıysa misafir olarak devam
     }
 
     const supabase = createServerSupabase();
@@ -50,8 +72,9 @@ export async function POST(req: NextRequest) {
       .insert({
         buyer_email,
         total_seeds: requested_seeds,
-        org_id:      org_id      ?? null,
-        referred_by: referredBy  ?? null,   // Davet bağlantısı
+        org_id:      orgId,                  // session profile'dan; body'den gelmiyor
+        user_id:     authUserId,             // login ise session.user.id; misafir ise NULL
+        referred_by: referredBy ?? null,
         status: "pending",
       })
       .select("id")

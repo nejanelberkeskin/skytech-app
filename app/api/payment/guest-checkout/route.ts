@@ -47,6 +47,36 @@ export async function POST(req: NextRequest) {
       }
       finalOrderId = order.id;
     } else {
+      // ── Ownership/Hijack koruması ───────────────────────────────────
+      // Mevcut order'ı yalnızca şu koşullar altında güncelle:
+      //   1) status='pending' (henüz ödenmemiş)
+      //   2) user_id NULL (yani misafir order'ı — üye order'ı değil)
+      //   3) buyer_email ya boş ya da bu çağrıdaki email ile aynı
+      // Saldırgan başkasının reservasyon order_id'sini bilse bile farklı
+      // bir email/buyer_name ile çağırarak hijack edemez.
+      const { data: existing, error: existingErr } = await supabase
+        .from("orders")
+        .select("id, user_id, status, buyer_email, payment_status")
+        .eq("id", finalOrderId)
+        .maybeSingle();
+
+      if (existingErr || !existing) {
+        return NextResponse.json({ error: "Sipariş bulunamadı." }, { status: 404 });
+      }
+      if (existing.user_id) {
+        // Üye order'ı bu endpoint'le ödenemez
+        return NextResponse.json({ error: "Bu sipariş misafir akışına uygun değil." }, { status: 403 });
+      }
+      if (existing.status !== "pending" || existing.payment_status === "paid") {
+        return NextResponse.json({ error: "Sipariş zaten işlemde veya tamamlanmış." }, { status: 409 });
+      }
+      if (
+        existing.buyer_email &&
+        existing.buyer_email.toLowerCase() !== String(buyer.email).toLowerCase()
+      ) {
+        return NextResponse.json({ error: "Bu siparişe yetkiniz yok." }, { status: 403 });
+      }
+
       // Update existing order (from reservation) with buyer info and amount
       await supabase
         .from("orders")

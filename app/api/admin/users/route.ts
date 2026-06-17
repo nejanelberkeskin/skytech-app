@@ -1,10 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
+import { randomBytes } from "node:crypto";
 import { createServiceRoleClient } from "@/lib/supabase/server";
 import { requireAdmin, getClientIP } from "@/lib/admin-auth";
 import { auditLog } from "@/lib/admin/audit";
 import type { UserRole } from "@/lib/rbac";
 
 const VALID_ROLES: UserRole[] = ["SUPER_ADMIN", "FINANCE", "OPERATIONS", "ENGINEER"];
+
+/** Cryptographically secure temp password — Math.random tahmin edilebilir. */
+function generateTempPassword(): string {
+  // 16 base64url char ≈ 96 bit entropy. Skytech@ prefix Supabase'in karmaşıklık
+  // şartını karşılar (büyük/küçük harf + sembol + sayı garantisi).
+  return "Skytech@" + randomBytes(12).toString("base64url");
+}
 
 // ── GET — Tüm admin personeli listele ────────────────────────────────────────
 export async function GET(request: NextRequest) {
@@ -56,8 +64,8 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // Supabase Auth'ta kullanıcı oluştur
-  const tempPassword = password || `Skytech@${Math.random().toString(36).slice(2, 10)}`;
+  // Supabase Auth'ta kullanıcı oluştur (crypto-secure temp password)
+  const tempPassword = password || generateTempPassword();
 
   const { data: authUser, error: createAuthErr } = await supabase.auth.admin.createUser({
     email: email.toLowerCase().trim(),

@@ -66,16 +66,30 @@ export async function POST(req: NextRequest) {
   return NextResponse.json(data, { status: 201 });
 }
 
-// PUT — Ürün güncelle
+// PUT — Ürün güncelle (mass-assignment whitelist)
+const CATALOG_UPDATE_FIELDS = [
+  "slug", "name", "latin_name", "emoji", "color", "description",
+  "price", "stock", "max_order_qty", "is_active", "sort_order",
+] as const;
+
 export async function PUT(req: NextRequest) {
   const { admin, error: authError } = await requireAdmin(req, ["SUPER_ADMIN", "OPERATIONS"]);
   if (authError) return authError;
   const supabase = createServiceRoleClient();
   const body = await req.json();
-  const { id, ...updates } = body;
+  const { id } = body;
 
   if (!id) {
     return NextResponse.json({ error: "id zorunludur." }, { status: 400 });
+  }
+
+  // Sadece izin verilen alanları al — id/created_at/updated_at vb. silinir.
+  const updates: Record<string, unknown> = {};
+  for (const field of CATALOG_UPDATE_FIELDS) {
+    if (field in body && body[field] !== undefined) updates[field] = body[field];
+  }
+  if (Object.keys(updates).length === 0) {
+    return NextResponse.json({ error: "Güncellenecek alan yok." }, { status: 400 });
   }
 
   const { data, error } = await supabase

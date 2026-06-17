@@ -26,12 +26,18 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { randomBytes } from "node:crypto";
 import { sendOrderConfirmationEmail } from "@/lib/mail";
 import { createServiceRoleClient } from "@/lib/supabase/server";
 import iyzipay from "@/lib/iyzico";
 import { createCertificate } from "@/lib/order/certificate";
 import { runPostPaymentChain } from "@/lib/order/post-payment";
 import { ensureReferralCode } from "@/lib/user/referral";
+
+function generateSiparisNo(): string {
+  // 6 hex = 24 bit ~16M, çakışma şansı nadir. crypto entropisi tahmin edilemez.
+  return "STG-" + randomBytes(3).toString("hex").toUpperCase();
+}
 
 // Bu route'un build sırasında değil, isteğe gelince çalışmasını garantile.
 export const dynamic = "force-dynamic";
@@ -60,7 +66,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.log("[callback] 🔑 Token alındı:", token);
+    // Token logu güvenlik nedeniyle yalnız development'ta yazılır.
+    if (process.env.NODE_ENV !== "production") {
+      console.log("[callback] 🔑 Token alındı:", token.slice(0, 6) + "…");
+    }
 
     /* ── 2. Token ile DB'den ödeme kaydını bul ────────────────────────────
        conversationId'ye GÜVENME — Iyzico zaman zaman undefined döner.
@@ -70,7 +79,7 @@ export async function POST(request: NextRequest) {
     ────────────────────────────────────────────────────────────────────── */
     const { data: paymentRecord, error: dbLookupErr } = await supabase
       .from("payments")
-      .select("id, order_id, metadata")
+      .select("id, order_id, status, metadata")
       .eq("metadata->>iyzico_token", token)
       .single();
 
@@ -86,10 +95,20 @@ export async function POST(request: NextRequest) {
 
     const paymentId = paymentRecord.id as string;
     const orderId   = (paymentRecord.order_id as string | null) ?? null;
+    const paymentStatusInDb = (paymentRecord as { status?: string }).status ?? null;
     const existingMeta: Record<string, unknown> =
       (paymentRecord.metadata as Record<string, unknown>) ?? {};
     const checkoutType = existingMeta.checkout_type as string | undefined;
     const basePath     = buildBasePath(checkoutType);
+
+    // ── Idempotency: aynı token iki kez çağrıldıysa (ör. Iyzico retry veya
+    //   replay) post-payment zincirini bir kez daha tetikleme.
+    if (paymentStatusInDb === "success") {
+      console.warn("[callback] ↩ Replay tespit edildi — payment zaten success:", paymentId);
+      const params = new URLSearchParams({ status: "success" });
+      if (orderId) params.set("order_id", orderId);
+      return NextResponse.redirect(new URL(`${basePath}?${params.toString()}`, request.url));
+    }
 
     console.log("[callback] ✅ DB'den ödeme kaydı bulundu:", {
       paymentId,
@@ -170,8 +189,7 @@ export async function POST(request: NextRequest) {
               (orderRow?.metadata as Record<string, unknown>) ?? {};
 
             /* 5b. Benzersiz sipariş takip numarası üret: STG-XXXXXX */
-            siparisNo = existingOrderMeta.siparis_no as string
-              ?? "STG-" + Math.random().toString(36).substring(2, 8).toUpperCase();
+            siparisNo = (existingOrderMeta.siparis_no as string) ?? generateSiparisNo();
 
             const { error: orderUpdateErr } = await supabase
               .from("orders")

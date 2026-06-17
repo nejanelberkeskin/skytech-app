@@ -50,11 +50,15 @@ export async function requireAdmin(
       }
     );
 
+    // getUser — Supabase auth sunucusundan token doğrular (cookie'ye değil,
+    // gerçek JWT/refresh validity'ye dayanır). getSession yalnız cookie'yi
+    // okur ve sahte/bozuk cookie ile aldatılabilir.
     const {
-      data: { session },
-    } = await supabase.auth.getSession();
+      data: { user },
+      error: userErr,
+    } = await supabase.auth.getUser();
 
-    if (!session) {
+    if (userErr || !user) {
       return {
         admin: null,
         error: NextResponse.json(
@@ -69,7 +73,7 @@ export async function requireAdmin(
     const { data: adminUser, error: dbError } = await service
       .from("admin_users")
       .select("*")
-      .eq("user_id", session.user.id)
+      .eq("user_id", user.id)
       .eq("is_active", true)
       .single();
 

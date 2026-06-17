@@ -68,37 +68,40 @@ function isPublicApi(pathname: string): boolean {
 /* ════════════════════════════════════════════════════════════════════════
    Middleware
    ════════════════════════════════════════════════════════════════════════ */
+// Sadece Iyzico 3DS callback'i CSRF guard'tan muaftır.
+// Iyzico kendi domain'inden POST gönderir; Origin header app host'a uyuşmaz.
+const CSRF_EXEMPT_PREFIXES = ["/api/payment/callback"] as const;
+const MUTATION_METHODS = new Set(["POST", "PUT", "PATCH", "DELETE"]);
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  /* ── 1. Ödeme API'leri: anında geçiş (session işlemi yok) ───────────────
-     Iyzico'nun bize attığı her türlü POST (3DS callback, webhook, guest-checkout)
-     hiçbir auth veya cookie katmanına takılmamalı.
-     Matcher'a eklenmemiş olsalar da bu katman ek güvence sağlar.
-     ────────────────────────────────────────────────────────────────────── */
-  if (isPublicApi(pathname)) {
-    return NextResponse.next();
-  }
-
-  /* ── 1b. CSRF Koruması: Admin API mutation istekleri ────────────────────
-     POST/PUT/DELETE isteklerinde Origin header'ı kontrol et.
-     Origin, uygulamanın kendi origin'i ile eşleşmeli.
-     Iyzico callback'leri yukarıda isPublicApi ile zaten bypass ediliyor.
+  /* ── 1. CSRF Koruması: tüm /api mutation istekleri ─────────────────────
+     POST / PUT / PATCH / DELETE çağrılarında Origin header'ı app origin'i
+     ile eşleşmeli. Aksi halde başka site formundan gelen forge'ed istek
+     reddedilir. Iyzico 3DS callback'i bu kuraldan muaftır.
      ────────────────────────────────────────────────────────────────────── */
   if (
-    pathname.startsWith("/api/admin/") &&
-    ["POST", "PUT", "DELETE"].includes(request.method)
+    pathname.startsWith("/api/") &&
+    MUTATION_METHODS.has(request.method) &&
+    !CSRF_EXEMPT_PREFIXES.some((p) => pathname.startsWith(p))
   ) {
-    const origin  = request.headers.get("origin");
+    const origin = request.headers.get("origin");
     const appHost = request.nextUrl.origin;
-
-    // Origin header yoksa veya eşleşmiyorsa → 403
     if (!origin || origin !== appHost) {
       return NextResponse.json(
         { error: "CSRF doğrulaması başarısız. İstek reddedildi." },
         { status: 403 }
       );
     }
+  }
+
+  /* ── 1b. Ödeme API'leri / public veri uçları: anında geçiş ──────────────
+     Iyzico'nun bize attığı her türlü POST (3DS callback, webhook),
+     misafir checkout, public veri uçları hiçbir auth katmanına takılmamalı.
+     ────────────────────────────────────────────────────────────────────── */
+  if (isPublicApi(pathname)) {
+    return NextResponse.next();
   }
 
   /* ── 2. Supabase session yenileme ───────────────────────────────────────

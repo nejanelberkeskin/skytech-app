@@ -65,7 +65,7 @@ const TABS: Tab[] = [
     ],
     stat: "Sıfır",
     statLabel: "Saha tahribatı",
-    image: "/images/impact/bos-hazine-alani.webp",
+    image: "/images/impact/maden-sahasi.webp",
   },
   {
     id: "karbon",

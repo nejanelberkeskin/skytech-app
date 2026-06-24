@@ -19,7 +19,7 @@ function fmtStat(n: number): string {
 
 const SERVICES = [
   {
-    title: "Şirket Hatıra Ormanı",
+    title: "Markanıza Özel Orman",
     desc: "Markanız adına özel bir orman alanı tahsis edin. Çalışanlarınız ve müşterileriniz için yaşayan bir miras bırakın.",
     icon: "🌲",
     glow: "rgba(16,185,129,0.1)",

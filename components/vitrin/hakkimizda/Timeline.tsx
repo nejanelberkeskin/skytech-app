@@ -26,7 +26,7 @@ const MILESTONES = [
   },
   {
     year: "2025",
-    title: "Kurumsal Hatıra Ormanı Programı",
+    title: "Kurumsal Ormanlaştırma Programı",
     description:
       "İlk holding entegrasyonu: 12.500 ağaçlık kurumsal alan, çalışan sertifikası ve ESG raporlama modülü canlıya alındı.",
   },

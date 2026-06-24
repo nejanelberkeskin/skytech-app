@@ -13,7 +13,7 @@ const FAQS = [
   },
   {
     q: "Tohumlar nereden tedarik ediliyor?",
-    a: "Tüm tohumlar T.C. Tarım ve Orman Bakanlığı Orman Bölge Müdürlükleri iş birliğiyle tedarik edilir. Biyolojik çeşitliliğin korunması ve sürdürülebilirlik ilkeleri doğrultusunda; her tohum lotu (parti numarası), üretim tarihi, genetik orijini (orijin takibi) ve taksonomik (tür) bilgisiyle kayıt altına alınır. Uçtan uca şeffaf yapılandırılan tedarik zincirimiz sayesinde müşterilerimiz tohum kimlik kartlarına ve sertifikasyon verilerine diledikleri an erişebilir.",
+    a: "Tüm tohumlar T.C. Tarım ve Orman Bakanlığı Orman Bölge Müdürlükleri iş birliğiyle tedarik edilir. Biyolojik çeşitliliğin korunması ve sürdürülebilirlik ilkeleri doğrultusunda; her tohum lotunun ağaçtan toplanma tarihi, genetik orijini ve taksonomik (tür) bilgisi blok zinciri teknolojisiyle kayıt altına alınır. Uçtan uca şeffaf yapılandırılan tedarik zincirimiz sayesinde müşterilerimiz tohum kimlik kartlarına ve sertifikasyon verilerine diledikleri an erişebilir.",
   },
   {
     q: "Drone ile ekim ne kadar verimli?",

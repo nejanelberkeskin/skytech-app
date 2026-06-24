@@ -19,7 +19,7 @@ const STEPS: Step[] = [
     num: "01",
     title: "Tohum Topu Ar-Ge",
     description:
-      "Akademik literatür ve laboratuvar analizleriyle optimize edilen tohum topu teknolojimiz, doğanın en zorlu koşullarında bile maksimum çimlenme ve kök gelişimi için bilimsel olarak tasarlanmıştır. Uzman ekibimiz bölgenin iklim ve ekolojisine uygun tohumları, ormancılık bilimi ışığında formüle eder.",
+      "Ekosistem restorasyonu ile yanan alanların ve maden sahalarının rehabilitasyonu için uzman orman mühendislerimiz ve akademik danışmanlarımızla çalışıyoruz. Bölgenin iklim ve ekolojisine uygun seçtiğimiz tohumları, ormancılık bilimi ışığında en doğru materyallerle kaplayarak tohum topu formüllerimizi geliştiriyoruz.",
     Icon: FlaskIcon,
     image: "/images/steps/01-arge.webp",
   },
@@ -27,15 +27,15 @@ const STEPS: Step[] = [
     num: "02",
     title: "Hedef Alan Analizi",
     description:
-      "Uygulamamız; uydu ve drone (İHA) görüntülerini analiz ederek sahanın topografik yapısını, toprağın nem içeriğini ve ekosistemin yapısını inceler. Tohum topu atışı için en doğru hedef alanları yapay zekâ ile belirler. Orman Bölge Müdürlüğü koordinasyonuyla yasal izinler alınır.",
+      "Uygulamamız; uydu ve drone (İHA) görüntülerini analiz ederek sahanın topografik yapısını, toprağın nem içeriği ve ekosistemin yapısını inceler. Tohum topu atışı için en doğru hedef alanları yapay zekâ ile belirler. Orman Bölge Müdürlüğü koordinasyonuyla yasal izinleri alarak ormanlaştırma süreçlerini tamamen bilimsel ve güvenli hale getirir.",
     Icon: MapIcon,
     image: "/images/steps/02-analiz.webp",
   },
   {
     num: "03",
-    title: "Dronla Otonom Dağıtım",
+    title: "Dronla Dağıtım",
     description:
-      "Yüksek hassasiyetli GPS verileriyle yönlendirilen İHA filomuz, sıfır ekolojik tahribat prensibiyle tek bir uçuşta 200+ tohum topunu önceden optimize edilmiş hedef noktalara hatasız şekilde ulaştırır.",
+      "Yüksek hassasiyetli GPS verileriyle yönlendirilen İHA filomuz, sıfır ekolojik tahribat prensibiyle tek bir uçuşta 200+ tohum topunu önceden optimize edilmiş hedef noktalara hatasız şekilde ulaştırıyoruz.",
     Icon: DroneIcon,
     image: "/images/steps/03-dagitim.webp",
   },
@@ -43,7 +43,7 @@ const STEPS: Step[] = [
     num: "04",
     title: "Yıllık İzleme & ESG",
     description:
-      "Yıllık İHA fotogrametrisi ile izlenen vejetasyon büyüme verileri ve kurumsal gösterge panelinde gerçek zamanlı sunulan karbon denkleştirme metrikleri anlık olarak görülür. Doğrudan ESG raporlama süreçlerine entegre edilebilir.",
+      "Yıllık İHA fotogrametrisi ile izlenen vejetasyon büyüme verileri ve kurumsal gösterge panelinde gerçek zamanlı sunulan karbon denkleştirme metrikleri anlık olarak görülür. ESG raporlama süreçlerine entegre edilebilir.",
     Icon: SatelliteIcon,
     image: "/images/steps/04-izleme.webp",
   },

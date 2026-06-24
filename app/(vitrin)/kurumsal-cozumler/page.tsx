@@ -12,11 +12,11 @@ import { buildPageMetadata } from "@/lib/seo";
 export const metadata = buildPageMetadata({
   title: "Kurumsal Çözümler — ESG Ortaklığı",
   description:
-    "Şirketinize özel Hatıra Ormanı, çalışan başına otomatik PDF sertifika, GRI/CDP/SASB uyumlu ESG raporlama ve e-ticaret API entegrasyonu.",
+    "Şirketinize özel kurumsal ormanlaştırma, çalışan başına otomatik PDF sertifika, GRI/CDP/SASB uyumlu ESG raporlama ve e-ticaret API entegrasyonu.",
   path: "/kurumsal-cozumler",
   keywords: [
     "kurumsal ağaçlandırma",
-    "hatıra ormanı",
+    "kurumsal ormanlaştırma",
     "ESG çözümleri",
     "çalışan karbon sertifikası",
     "kurumsal sürdürülebilirlik partneri",
@@ -27,16 +27,16 @@ export const metadata = buildPageMetadata({
 
 const COMPARISON = [
   { item: "Logo Baskılı Ürün", impact: "Kısa ömürlü, çoğu çöpe gider", esg: "Yok", icon: "🎁", verdict: false, image: "/images/kurumsal/promosyon-urunu.webp" },
-  { item: "Skytech Hatıra Ormanı", impact: "25+ yıl yaşar, ekosistem yaratır", esg: "Tam ESG entegrasyon", icon: "🌳", verdict: true, image: "/images/kurumsal/hatira-ormani.webp" },
+  { item: "Markanıza Özel Orman", impact: "25+ yıl yaşar, ekosistem yaratır", esg: "Tam ESG entegrasyon", icon: "🌳", verdict: true, image: "/images/kurumsal/hatira-ormani.webp" },
 ];
 
 const FEATURES = [
   { title: "Çalışan Bazlı Sertifika", desc: "Her çalışana özel PDF sertifika otomatik üretilir, e-posta ile iletilir.", Icon: PeopleIcon },
-  { title: "Şirket Hatıra Ormanı", desc: "Kuruma özel kurumsal alan, drone çekim videoları, koordinatlı haritalama.", Icon: TreesIcon },
+  { title: "Kurumsal Ormanlaştırma", desc: "Kuruma özel kurumsal alan, drone çekim videoları, koordinatlı haritalama.", Icon: TreesIcon },
   { title: "ESG Yazılım API Entegrasyonu", desc: "Kurumsal panelimiz ile ESG yazılımınız arasında API entegrasyonu kurarak veri akışını otomatik hale getiriyoruz. GRI, CDP, SASB uyumlu.", Icon: ApiIcon },
   { title: "E-ticaret Entegrasyonu", desc: "\"Sepete 1 tohum ekle\" widget'ı — müşterilerinize ekoloji deneyimi sunun.", Icon: CartIcon },
   { title: "Karbon Ayak İzi → Markanıza Özel Orman", desc: "Sistemimiz şirketinizin karbon ayak izini hesaplar ve bu doğrultuda markanıza özel, drone teknolojisiyle desteklenen bir orman oluşturur.", Icon: CalcIcon },
-  { title: "Özel Hesap Yöneticisi", desc: "Tüm süreçlerde özel temas noktanız — onboarding'den raporlamaya.", Icon: BadgeIcon },
+  { title: "Özel Hesap Yöneticisi", desc: "Süreç boyunca özel temas noktanız.", Icon: BadgeIcon },
 ];
 
 export default function KurumsalCozumlerPage() {
@@ -44,8 +44,8 @@ export default function KurumsalCozumlerPage() {
     <>
       <BreadcrumbSchema items={[{ name: "Kurumsal Çözümler", path: "/kurumsal-cozumler" }]} />
       <ServiceSchema
-        name="Kurumsal Hatıra Ormanı ve ESG Çözümleri"
-        description="Şirketler için hatıra ormanı kurulumu, çalışan başına PDF sertifika otomasyonu, GRI/CDP uyumlu karbon raporlama, REST API + e-ticaret eklenti entegrasyonu."
+        name="Kurumsal Ormanlaştırma ve ESG Çözümleri"
+        description="Şirketler için kurumsal orman kurulumu, çalışan başına PDF sertifika otomasyonu, GRI/CDP uyumlu karbon raporlama, REST API + e-ticaret eklenti entegrasyonu."
         serviceType="Corporate ESG and reforestation partnership"
         path="/kurumsal-cozumler"
       />
@@ -106,7 +106,7 @@ export default function KurumsalCozumlerPage() {
       <SectionWrapper variant="tinted">
         <SectionHeading
           badge="Modüller"
-          title={<>Kurumsal Hatıra Ormanı <span className="text-gradient-forest">Sistem Modülleri</span></>}
+          title={<>Kurumsal Ormanlaştırma <span className="text-gradient-forest">Sistem Modülleri</span></>}
           subtitle="Her büyüklükteki şirket için altı temel kurumsal çözüm."
         />
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 max-w-6xl mx-auto stagger-children">

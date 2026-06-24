@@ -9,7 +9,7 @@ const VALUE_CARDS = [
   {
     title: "Sıfır Saha İzi",
     description:
-      "Yüksek hassasiyetli GPS verileriyle yönlendirilen İHA filomuz, sıfır ekolojik tahribat prensibiyle tek uçuşta 200+ tohum topunu önceden optimize edilmiş hedef noktalara hatasız şekilde ulaştırır. Ekosistem el değmemiş kalır.",
+      "Doğayı teknolojiyle yeşertiyoruz. Drone teknolojisi kullanarak tohum topu ekim faaliyetleri yapıyoruz. İnsansız hava araçları teknolojisi ile hem arazi tahribatını sıfıra indiriyoruz hem de sarp bölgelerde doğal yaşamı aynen koruyoruz.",
     accent: "from-[#1B6B3A] to-[#22894a]",
     Icon: DroneIcon,
     image: "/images/values/sifir-saha-izi.webp",
@@ -19,7 +19,7 @@ const VALUE_CARDS = [
   {
     title: "Şeffaf Tedarik Zinciri",
     description:
-      "Tüm tohumlar T.C. Tarım ve Orman Bakanlığı Orman Bölge Müdürlükleri iş birliğiyle tedarik edilir. Parti numarası, üretim tarihi, genetik orijin ve tür bilgisi blok zinciri teknolojisiyle güvenle kayıt altındadır.",
+      "Yöreye uygun tohumlarımız ilgili Orman Bölge Müdürlüklerinden tedarik edilmekte; tohumların tür bilgisi, ağaçlardan toplanma tarihleri, orijin bilgileri blok zinciri teknolojisiyle güvenle doğrulanmaktadır.",
     accent: "from-[#22894a] to-[#34d399]",
     Icon: ShieldIcon,
     image: "/images/values/seffaf-tedarik.webp",
@@ -29,7 +29,7 @@ const VALUE_CARDS = [
   {
     title: "Yıllık Drone Raporlama",
     description:
-      "Periyodik uçuş verileri, vejetasyon büyüme metrikleri ve karbon nötrleme sonuçlarınız kurumsal panomuzda anlık olarak güncellenir; doğrudan ESG raporlarınıza aktarılabilir.",
+      "Periyodik uçuş verileri, büyüme metrikleri ve karbon nötrleme sonuçlarınız kurumsal panomuzda anlık olarak güncellenir; doğrudan ESG raporlarınıza aktarılabilir.",
     accent: "from-[#34d399] to-[#a3e635]",
     Icon: ChartIcon,
     image: "/images/values/yillik-raporlama.webp",

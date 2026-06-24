@@ -12,7 +12,7 @@ export const metadata = buildPageMetadata({
 
 const SUBJECTS = [
   "Bireysel Tohum Sipariş",
-  "Kurumsal Hatıra Ormanı",
+  "Kurumsal Ormanlaştırma",
   "ESG / Karbon Nötrleme",
   "Drone Operasyonu",
   "Basın / Medya",

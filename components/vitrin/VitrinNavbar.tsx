@@ -13,6 +13,7 @@ const NAV_ITEMS: { label: string; href: string; children?: { label: string; href
     href: "#",
     children: [
       { label: "Tohum Topu", href: "/tohum-topu" },
+      { label: "Tohumlarımız", href: "/tohumlarimiz" },
       { label: "Dron Teknolojisi", href: "/dron-teknolojisi" },
       { label: "Karbon Programı", href: "/karbon-programi" },
     ],

@@ -27,7 +27,7 @@ export const metadata = buildPageMetadata({
 });
 
 const COMPONENTS = [
-  { label: "Yerli Tohum", desc: "T.C. Orman Bölge Müdürlükleri tedarikli, parti numarası kayıtlı.", pct: "30%" },
+  { label: "Yerli Tohum", desc: "T.C. Orman Bölge Müdürlükleri tedarikli; tür ve orijin bilgisi kayıt altında.", pct: "30%" },
   { label: "Killi Toprak", desc: "Koruyucu kabuk, hayvan yemesini engeller.", pct: "50%" },
   { label: "Organik Gübre", desc: "Çimlenme için besin desteği.", pct: "20%" },
 ];

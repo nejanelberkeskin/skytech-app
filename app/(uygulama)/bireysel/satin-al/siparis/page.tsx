@@ -5,7 +5,7 @@ import { fetchSeedCatalog, SEED_TYPES_FALLBACK, type SeedType } from "@/lib/seed
 import { useCart } from "@/lib/cart-context";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
-import { TreesIcon } from "@/components/ui/Icons";
+import { TreesIcon, ClockIcon } from "@/components/ui/Icons";
 
 export default function SiparisPage() {
   const [seedTypes, setSeedTypes] = useState<SeedType[]>(SEED_TYPES_FALLBACK);
@@ -57,6 +57,15 @@ export default function SiparisPage() {
               ← Geri
             </Link>
             <h1 className="text-2xl font-bold text-white">Tohum <span className="text-gradient-eco">Sipariş</span> Verin</h1>
+          </div>
+
+          {/* Demo aşaması bilgilendirmesi */}
+          <div className="bg-amber-500/10 border border-amber-500/25 rounded-2xl px-4 py-3 flex items-start gap-3">
+            <ClockIcon className="w-5 h-5 shrink-0 mt-0.5 text-amber-400" />
+            <div>
+              <p className="text-sm font-semibold text-amber-300">Çok Yakında</p>
+              <p className="text-xs text-amber-200/80 mt-0.5">Tohum siparişi şu anda kapalı. Altyapımız hazır olunca buradan haberdar olacaksınız.</p>
+            </div>
           </div>
 
           {/* Tohum Türü Seçimi */}
@@ -123,16 +132,13 @@ export default function SiparisPage() {
             </div>
           </div>
 
-          {/* Sepete Ekle */}
+          {/* Sepete Ekle — demo aşamasında satış kapalı */}
           <button
-            onClick={handleAdd}
-            className={`w-full py-4 rounded-2xl font-semibold text-sm transition-all duration-300 ${
-              added
-                ? "bg-emerald-500/20 border border-emerald-500/30 text-emerald-300"
-                : "glass-btn text-white"
-            }`}
+            disabled
+            aria-disabled="true"
+            className="w-full py-4 rounded-2xl font-semibold text-sm bg-white/[0.04] border border-white/[0.08] text-emerald-200/40 cursor-not-allowed"
           >
-            {added ? "✓ Sepete Eklendi!" : "Sepete Ekle"}
+            Çok Yakında
           </button>
 
           <p className="text-xs text-emerald-200/30 text-center">

@@ -16,7 +16,7 @@ const TRADITIONAL = [
 const SKYTECH = [
   "Drone teknolojisiyle her bölgeye erişim",
   "Sıfır saha izi, ekosistem korunur",
-  "Parti numarası, üretim tarihi kayıtlı",
+  "Ağaçtan toplanma tarihi + orijin blok zinciri ile doğrulanır",
   "Yıllık drone raporlama, ESG entegre",
   "Bir uçuşta 200+ tohum dağıtımı",
 ];

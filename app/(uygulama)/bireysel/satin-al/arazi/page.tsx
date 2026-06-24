@@ -8,7 +8,7 @@ import type { ReservationInfo } from "@/lib/cart-context";
 import type { Land, GiftInfo } from "@/lib/types";
 import Link from "next/link";
 import { Input, Textarea } from "@/components/ui";
-import { SproutIcon, ClockIcon, GiftIcon, MapPinIcon, TreesIcon } from "@/components/ui/Icons";
+import { SproutIcon, ClockIcon, GiftIcon, MapPinIcon, TreesIcon, AlertTriangleIcon } from "@/components/ui/Icons";
 
 // ── Bölge → 7 coğrafi bölge eşleştirme ──────────────────────────────────────
 function getGeoRegion(region: string | null): string | null {
@@ -355,7 +355,16 @@ export default function AraziPage() {
 
   const recommended = selectedLand ? getRecommendedSeed(selectedLand.region ?? null) : null;
 
+  // Demo aşaması: satış henüz açık değil. Aşağıdaki orijinal rezervasyon mantığı
+  // satış açılınca tekrar devreye alınacak; bu sırada handleReserve sadece
+  // kullanıcıyı bilgilendiren bir hata mesajı set eder.
   const handleReserve = async () => {
+    setError("Mevcutta uygun arazi yok. Demo bölgelerimizde altyapı çalışmaları sürüyor; çok yakında satışa açılacak.");
+  };
+
+  // Satış açıldığında aşağıdaki fonksiyon handleReserve yerine kullanılacak.
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const _reserveWhenLive = async () => {
     if (!selectedLand || !recommended) return;
     setReserving(true);
     setError(null);
@@ -445,6 +454,17 @@ export default function AraziPage() {
       <CompletedLandsBanner lands={lands} />
 
       <div className="max-w-6xl mx-auto px-6 py-8 space-y-6">
+        {/* Demo aşama bilgilendirmesi */}
+        <div className="bg-amber-500/10 border border-amber-500/25 rounded-2xl px-5 py-4 text-sm text-amber-200 flex items-start gap-3">
+          <AlertTriangleIcon className="w-5 h-5 shrink-0 mt-0.5 text-amber-400" />
+          <div>
+            <p className="font-semibold text-amber-300">Demo aşamasındayız</p>
+            <p className="text-amber-200/80 mt-0.5">
+              Şu anda Çanakkale, İzmir ve Bursa&apos;da demo sahalarımızı hazırlıyoruz. Tohum satışı çok yakında açılacak — sahalarımız görüntüleme amaçlı listelenmektedir.
+            </p>
+          </div>
+        </div>
+
         {/* Aktif rezervasyon uyarısı */}
         {reservation && (
           <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl px-4 py-3 text-sm text-emerald-400 flex items-center gap-2">

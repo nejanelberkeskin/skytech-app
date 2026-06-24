@@ -14,7 +14,7 @@ type Advantage = {
 const ADVANTAGES: Advantage[] = [
   { title: "Hızlı Ekim", description: "Bir drone uçuşunda 200+ tohum. Geleneksel yöntemlere kıyasla 10 kat hız.", Icon: BoltIcon },
   { title: "Sıfır Saha Tahribatı", description: "Havadan ekim, ekosistemi koruyor. İnsan ayağının değmediği bölgelere bile ulaşıyor.", Icon: LeafIcon },
-  { title: "Tam Şeffaflık", description: "Her tohumun parti numarası, üretim tarihi ve türü kayıtlı. Tedarik zinciri uçtan uca.", Icon: EyeIcon },
+  { title: "Tam Şeffaflık", description: "Her tohumun ağaçtan toplanma tarihi, orijin bilgisi ve türü blok zinciriyle doğrulanır. Tedarik zinciri uçtan uca şeffaf.", Icon: EyeIcon },
   { title: "Yıllık İzleme", description: "Periyodik drone uçuşlarıyla büyüme takip ediliyor. Veriler kurumsal panonuzda.", Icon: SatelliteIcon },
   { title: "Kurumsal Entegrasyon", description: "API entegrasyonu ile e-ticaret sepetinden ESG raporuna kadar tam uyum.", Icon: BuildingIcon },
   { title: "Yasal Uyumluluk", description: "T.C. Orman Bölge Müdürlükleri koordinasyonunda, %100 yasal izin ve mevzuat uyumluluğu çerçevesinde projeler.", Icon: ShieldIcon },

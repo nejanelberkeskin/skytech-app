@@ -13,18 +13,18 @@ interface Certificate {
 }
 
 const MOCK_CERTS: Certificate[] = [
-  { id: "CERT-001", recipientName: "Ahmet Yılmaz", recipientEmail: "ahmet@firma.com", treeCount: 5, forestName: "TechBank Hatıra Ormanı", createdAt: "10 Mar 2026", status: "sent" },
-  { id: "CERT-002", recipientName: "Elif Demir", recipientEmail: "elif@firma.com", treeCount: 10, forestName: "TechBank Hatıra Ormanı", createdAt: "10 Mar 2026", status: "sent" },
+  { id: "CERT-001", recipientName: "Ahmet Yılmaz", recipientEmail: "ahmet@firma.com", treeCount: 5, forestName: "TechBank Kurumsal Ormanı", createdAt: "10 Mar 2026", status: "sent" },
+  { id: "CERT-002", recipientName: "Elif Demir", recipientEmail: "elif@firma.com", treeCount: 10, forestName: "TechBank Kurumsal Ormanı", createdAt: "10 Mar 2026", status: "sent" },
   { id: "CERT-003", recipientName: "Can Öztürk", recipientEmail: "can@firma.com", treeCount: 5, forestName: "TechBank 50. Yıl Ormanı", createdAt: "9 Mar 2026", status: "pending" },
-  { id: "CERT-004", recipientName: "Zeynep Kaya", recipientEmail: "zeynep@musteri.com", treeCount: 3, forestName: "TechBank Hatıra Ormanı", createdAt: "8 Mar 2026", status: "sent" },
-  { id: "CERT-005", recipientName: "Mehmet Arslan", recipientEmail: "mehmet@partner.com", treeCount: 20, forestName: "TechBank Hatıra Ormanı", createdAt: "5 Mar 2026", status: "draft" },
+  { id: "CERT-004", recipientName: "Zeynep Kaya", recipientEmail: "zeynep@musteri.com", treeCount: 3, forestName: "TechBank Kurumsal Ormanı", createdAt: "8 Mar 2026", status: "sent" },
+  { id: "CERT-005", recipientName: "Mehmet Arslan", recipientEmail: "mehmet@partner.com", treeCount: 20, forestName: "TechBank Kurumsal Ormanı", createdAt: "5 Mar 2026", status: "draft" },
 ];
 
 const inputClasses = "w-full px-4 py-3 bg-white/[0.03] border border-white/[0.08] rounded-2xl text-white placeholder-emerald-200/20 outline-none focus:border-emerald-500/40 focus:ring-1 focus:ring-emerald-500/20 transition-all";
 
 export default function CertificatesPage() {
   const [tab, setTab] = useState<"list" | "single" | "bulk">("list");
-  const [singleForm, setSingleForm] = useState({ name: "", email: "", treeCount: 1, forest: "TechBank Hatıra Ormanı" });
+  const [singleForm, setSingleForm] = useState({ name: "", email: "", treeCount: 1, forest: "TechBank Kurumsal Ormanı" });
 
   return (
     <div className="p-6 lg:p-8 space-y-8 animate-fade-in-up">

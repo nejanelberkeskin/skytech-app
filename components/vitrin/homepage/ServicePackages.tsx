@@ -53,10 +53,10 @@ const PACKAGES: Package[] = [
     highlight: true,
   },
   {
-    name: "Kurumsal Hatıra Ormanı",
+    name: "Kurumsal Ormanlaştırma",
     tag: "B2B",
     description:
-      "Şirketinize özel hatıra ormanı + çalışan sertifikaları + ESG raporlama + API entegrasyonu.",
+      "Şirketinize özel kurumsal orman + çalışan sertifikaları + ESG raporlama + API entegrasyonu.",
     features: [
       "Şirket adına kurumsal alan",
       "Çalışan başına bireysel sertifika",

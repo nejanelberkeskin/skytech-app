@@ -31,7 +31,7 @@ await addSeedToCart({
 const cert = await issueCertificate({
   recipientName: "Ali Yılmaz",
   trees: 50,
-  forestName: "Manavgat Hatıra Ormanı",
+  forestName: "Manavgat Kurumsal Ormanı",
   language: "tr",
 });
 

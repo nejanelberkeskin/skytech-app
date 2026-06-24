@@ -27,7 +27,6 @@ const TABS: Tab[] = [
     description:
       "Yanan orman arazilerinin ekolojik dinamiklerini geri kazandırmak için otonom drone filoları ve yüksek çimlenme oranlarına sahip tohum toplarımızla, geniş ölçekli alanlarda hızlı ve sürdürülebilir biçimde yeniden ormanlaştırma sürdürüyoruz.",
     bullets: [
-      "Sarp arazi erişimi: İnsan ve iş makinesinin giremediği kayalık alanlara havadan ulaşır",
       "İş güvenliği: Yangın sonrası gevşeyen toprak ve heyelan riskinde insan hayatını riske atmaz",
       "Altın zaman dilimi: Toprak besin değerini kaybetmeden, erozyon başlamadan hızla müdahale",
       "GIS ile homojen dağılım: m² başına düşen tohum miktarı hassas ayarlanır",
@@ -36,22 +35,6 @@ const TABS: Tab[] = [
     stat: "%65+",
     statLabel: "Çimlenme oranı",
     image: "/images/impact/yangin-sonrasi.webp",
-  },
-  {
-    id: "erozyon",
-    label: "Erozyon Bölgesi",
-    Icon: WaveIcon,
-    title: "Toprak Kaybını Köklerle Durdurun",
-    description:
-      "Erozyon riskli yamaçlara, su havzalarına ve bozulmuş alanlara derin kök yapan yerli tohum türleri ekiyoruz. Toprak tutucu bitki örtüsü, sediment kaybını minimize eder ve bölgenin doğal gen kaynaklarını korur.",
-    bullets: [
-      "Derin kök yapan yerli türler (meşe, akçaağaç) — bölgenin ekolojik süksesyonu desteklenir",
-      "İnsanın ulaşamadığı dik ve kayalık yamaçlara dron ile erişim",
-      "5 yılda toprak tutuş kapasitesi 3 kat artar — sediment taşınımı azalır",
-    ],
-    stat: "3×",
-    statLabel: "Toprak tutuş artışı",
-    image: "/images/impact/erozyon-bolgesi.webp",
   },
   {
     id: "maden",
@@ -88,22 +71,6 @@ const TABS: Tab[] = [
     statLabel: "Tam uyum",
     image: "/images/impact/karbon-notreleme.webp",
   },
-  {
-    id: "su",
-    label: "Su Havzası",
-    Icon: DropIcon,
-    title: "Tohum Topu ile Havzalarımızı ve Suyumuzu Koruyoruz",
-    description:
-      "Baraj ve göl havzalarının çevresinde uyguladığımız tohum topu yöntemi, doğayı hızla canlandırırken su kaynaklarımızı da güvence altına alıyor. Ulaşılması zor dik yamaçları yeşillendirerek hem geleceğimize nefes oluyoruz hem de içme suyu kalitesini en üst düzeyde koruyoruz.",
-    bullets: [
-      "Erozyonu önleme: yeşeren kökler toprağı tutar, baraja çamur taşınımını engeller",
-      "Baraj ömrünü uzatma: su yatağına dolan tortuyu azaltır, ekonomik+fiziksel ömrü artırır",
-      "Doğal su filtresi: yağmurla taşınan azot, fosfor ve kirliliği bitki örtüsü süzer; alg patlamasını önler",
-    ],
-    stat: "+40%",
-    statLabel: "Su kalitesi",
-    image: "/images/impact/su-havzasi.webp",
-  },
 ];
 
 const contentVariants: Variants = {
@@ -131,7 +98,7 @@ export default function ImpactTabs() {
               <span className="text-gradient-aurora">Etkimiz Var</span>
             </>
           }
-          subtitle="Beş kritik ekosistem alanında, bilimle ve teknolojiyle ölçülebilir değişim yaratıyoruz."
+          subtitle="Üç kritik ekosistem alanında, bilimle ve teknolojiyle ölçülebilir değişim yaratıyoruz."
         />
 
         {/* Tab list */}

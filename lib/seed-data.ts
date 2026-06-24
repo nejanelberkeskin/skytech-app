@@ -68,6 +68,16 @@ export const SEED_TYPES_FALLBACK: SeedType[] = [
     color: "from-orange-500 to-red-700",
     description: "Karadeniz ormanlarının vazgeçilmezi, gölge seven tür.",
   },
+  {
+    id: "ardic",
+    name: "Ardıç",
+    latinName: "Juniperus oxycedrus",
+    price: 16,
+    maxQty: 500,
+    emoji: "🌿",
+    color: "from-emerald-600 to-emerald-800",
+    description: "Anadolu'nun sarp ve kurak yamaçlarına uyum sağlayan dayanıklı tür. Erozyon kontrolünde kritik rol oynar.",
+  },
 ];
 
 // Backward compatible export — KULLANIMI:

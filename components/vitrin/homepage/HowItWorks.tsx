@@ -19,7 +19,7 @@ const STEPS: Step[] = [
     num: "01",
     title: "Tohum Topu Ar-Ge",
     description:
-      "Orman mühendislerimiz hedef bölgenin iklim ve toprak yapısına uygun tohum türlerini seçer, ormancılık bilimiyle tohum topu formüle ederiz.",
+      "Akademik literatür ve laboratuvar analizleriyle optimize edilen tohum topu teknolojimiz, doğanın en zorlu koşullarında bile maksimum çimlenme ve kök gelişimi için bilimsel olarak tasarlanmıştır. Uzman ekibimiz bölgenin iklim ve ekolojisine uygun tohumları, ormancılık bilimi ışığında formüle eder.",
     Icon: FlaskIcon,
     image: "/images/steps/01-arge.webp",
   },
@@ -27,23 +27,23 @@ const STEPS: Step[] = [
     num: "02",
     title: "Hedef Alan Analizi",
     description:
-      "Uydu ve drone görüntüleriyle bölge taranır. Eğim, toprak nemi, ekosistem analizi yapılır. Orman Bölge Müdürlüğü ile koordineli yasal izinler alınır.",
+      "Uygulamamız; uydu ve drone (İHA) görüntülerini analiz ederek sahanın topografik yapısını, toprağın nem içeriğini ve ekosistemin yapısını inceler. Tohum topu atışı için en doğru hedef alanları yapay zekâ ile belirler. Orman Bölge Müdürlüğü koordinasyonuyla yasal izinler alınır.",
     Icon: MapIcon,
     image: "/images/steps/02-analiz.webp",
   },
   {
     num: "03",
-    title: "Dronla Dağıtım",
+    title: "Dronla Otonom Dağıtım",
     description:
-      "GPS hassasiyetli drone filomuz, hesaplanmış noktalara tohum topları bırakır. Bir uçuşta 200+ tohum, sıfır saha tahribatıyla.",
+      "Yüksek hassasiyetli GPS verileriyle yönlendirilen İHA filomuz, sıfır ekolojik tahribat prensibiyle tek bir uçuşta 200+ tohum topunu önceden optimize edilmiş hedef noktalara hatasız şekilde ulaştırır.",
     Icon: DroneIcon,
     image: "/images/steps/03-dagitim.webp",
   },
   {
     num: "04",
-    title: "Uzaktan İzleme",
+    title: "Yıllık İzleme & ESG",
     description:
-      "Yıllık drone uçuşlarıyla büyüme takip edilir. Karbon nötrleme metrikleri kurumsal panoda anlık görünür. ESG raporlarına entegre.",
+      "Yıllık İHA fotogrametrisi ile izlenen vejetasyon büyüme verileri ve kurumsal gösterge panelinde gerçek zamanlı sunulan karbon denkleştirme metrikleri anlık olarak görülür. Doğrudan ESG raporlama süreçlerine entegre edilebilir.",
     Icon: SatelliteIcon,
     image: "/images/steps/04-izleme.webp",
   },

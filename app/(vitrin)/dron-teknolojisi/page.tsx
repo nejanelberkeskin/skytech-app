@@ -37,7 +37,7 @@ const FEATURES = [
 
 const PROCESS = [
   { num: "01", title: "Bölge Taraması", desc: "Drone uydu ve LiDAR ile alan haritalanır, eğim ve toprak nem analizi yapılır." },
-  { num: "02", title: "Ekim Planı", desc: "GPS koordinatlı ekim haritası oluşturulur. Yasal izinler İl Orman Müd. ile koordine edilir." },
+  { num: "02", title: "Ekim Planı", desc: "GPS koordinatlı ekim haritası oluşturulur. Yasal izinler T.C. Orman Bölge Müdürlüğü ile koordine edilir." },
   { num: "03", title: "Otonom Ekim", desc: "Drone planlanmış rotada otonom uçar, hesaplanmış noktalara tohum topu bırakır." },
   { num: "04", title: "Raporlama", desc: "Uçuş kaydı, fotoğraflar ve GPS verileri kurumsal panonuza yansır." },
 ];
@@ -71,11 +71,10 @@ export default function DronTeknolojisiPage() {
               <span className="text-gradient-forest">Otonom Drone Filomuz</span> Sahada
             </h2>
             <p className="text-base text-[#3d5a3d] leading-relaxed mb-5">
-              Skytech Green drone filosu; 200+ tohum kapasiteli yük modülü, RTK GPS, LiDAR ve termal kamera ile donatılmıştır.
-              Önceden planlanmış GPS koordinatlarına otonom uçar, tohum topu bırakır.
+              Otonom uçuş kabiliyetine sahip insansız hava araçları (İHA), önceden tanımlanmış hedef koordinatlara yüksek hassasiyetle ulaşır ve tek operasyonda 200+ tohum topunu başarıyla yerleştirir.
             </p>
             <p className="text-base text-[#3d5a3d] leading-relaxed">
-              Tüm uçuş kayıtları gerçek zamanlı olarak kurumsal panonuza işlenir — şeffaflık ve doğrulanabilirlik için.
+              Yüksek hassasiyetli GPS verileriyle yönlendirilen İHA filomuz, <strong className="text-[#1B6B3A]">sıfır ekolojik tahribat</strong> prensibiyle çalışır. Tüm uçuş kayıtları gerçek zamanlı olarak kurumsal panonuza işlenir — şeffaflık ve doğrulanabilirlik için.
             </p>
           </div>
 

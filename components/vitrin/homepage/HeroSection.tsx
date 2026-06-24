@@ -4,14 +4,14 @@ import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import Image from "next/image";
 import { useEffect, useRef } from "react";
 
-const HEADLINE_LINE_1 = "Tohum Toplarıyla";
-const HEADLINE_LINE_2 = "Geleceği Ekin";
+const HEADLINE_LINE_1 = "Doğayı Teknolojiyle";
+const HEADLINE_LINE_2 = "Yeşertiyoruz";
 
 const SUBTEXT =
-  "Yangın sonrası alanlardan erozyon bölgelerine — dron teknolojisiyle hızlı, ölçülebilir ve şeffaf ağaçlandırma.";
+  "Drone teknolojisiyle tohum topu ekim faaliyetleri yapıyoruz. İnsansız hava araçları sayesinde arazi tahribatını sıfıra indiriyor, sarp bölgelerde doğal yaşamı aynen koruyoruz.";
 
 const TRUST_BADGES = [
-  "İl Orman Müdürlükleri ile koordineli",
+  "Orman Bölge Müdürlükleri ile koordineli",
   "Yıllık drone raporlama",
   "Karbon sertifikası",
 ];

@@ -9,15 +9,15 @@ import SectionHeading from "../SectionHeading";
 const FAQS = [
   {
     q: "Tohum topu nedir, nasıl çalışır?",
-    a: "Tohum topu; kil, organik gübre ve seçilmiş tohumların belirli oranlarda karıştırılıp küçük küre haline getirilmiş halidir. Toprağa düştüğünde dış kabuk koruyucu görev görür, yağmurla birlikte tohum çimlenir. Hayvan ve kuş yemesini engelleyerek çimlenme oranını %65+ seviyesine çıkarır.",
+    a: "Tohum topu; bitki tohumlarının kil ve organik besin maddeleriyle kaplanarak dış etkenlerden korunduğu, çimlenme başarısını %65+ üzerine çıkaran yenilikçi bir yapay kapsülleme yöntemidir. Doğa dostu bu biyoteknolojik yaklaşım, tohumları kuraklık ve canlı tüketimi gibi risklerden koruyarak toprağa güvenle tutunmalarını sağlar; yağmurla birlikte filizlenerek doğanın yenilenme hızını artırır.",
   },
   {
     q: "Tohumlar nereden tedarik ediliyor?",
-    a: "Tüm tohumlarımız Türkiye genelindeki İl Orman Müdürlükleri'nin üretim tesislerinden, parti numarası, üretim tarihi ve tür bilgisi kayıtlı şekilde tedarik edilir. Tedarik zinciri uçtan uca şeffaftır ve müşterilerimiz istedikleri an kayıtlara erişebilir.",
+    a: "Tüm tohumlar T.C. Tarım ve Orman Bakanlığı Orman Bölge Müdürlükleri iş birliğiyle tedarik edilir. Biyolojik çeşitliliğin korunması ve sürdürülebilirlik ilkeleri doğrultusunda; her tohum lotu (parti numarası), üretim tarihi, genetik orijini (orijin takibi) ve taksonomik (tür) bilgisiyle kayıt altına alınır. Uçtan uca şeffaf yapılandırılan tedarik zincirimiz sayesinde müşterilerimiz tohum kimlik kartlarına ve sertifikasyon verilerine diledikleri an erişebilir.",
   },
   {
     q: "Drone ile ekim ne kadar verimli?",
-    a: "Bir drone uçuşunda 200+ tohum dağıtılabilir — geleneksel yöntemlere kıyasla 10 kat hız. GPS hassasiyetli koordinatlarla insan ayağının ulaşamadığı eğimli, yangın sonrası tahribat görmüş alanlara bile erişebiliriz.",
+    a: "Tek bir uçuşta 200'den fazla tohum dağıtarak geleneksel yöntemlere kıyasla 10 kat hız ve yüksek maliyet etkinliği sunar. GPS hassasiyetli koordinatlar sayesinde insan ayağının ulaşamadığı eğimli ve yangın sonrası tahribat görmüş alanlara yüksek erişilebilirlik sağlar; santimetrik hassasiyetle kaynak verimliliğini maksimuma çıkarırken minimum karbon ayak iziyle sürdürülebilir bir çevresel etki yaratır.",
   },
   {
     q: "Ekilen tohumların büyümesini nasıl takip edebilirim?",
@@ -25,7 +25,7 @@ const FAQS = [
   },
   {
     q: "Karbon sertifikası ne için geçerli?",
-    a: "Sertifikalar; ESG raporlarında, GRI ve CDP gönderimlerinde, kurumsal sürdürülebilirlik beyanlarında kullanılabilir. Türkiye'de İl Orman Müdürlükleriyle koordineli yasal projeler olarak %100 doğrulanabilir bir izleme zinciri sunarız.",
+    a: "Sertifikalar; ESG raporlarında, GRI ve CDP gönderimlerinde, kurumsal sürdürülebilirlik beyanlarında kullanılabilir. Tüm ormanlaştırma ve karbon yutak alanı projeleri T.C. Orman Genel Müdürlüğü (OGM) Bölge Müdürlükleri koordinasyonunda, yasal ve bilimsel altyapıya uygun olarak yürütülür; %100 doğrulanabilir bir izleme zinciri sunarız.",
   },
   {
     q: "Minimum sipariş miktarı var mı?",

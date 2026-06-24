@@ -9,7 +9,7 @@ const VALUE_CARDS = [
   {
     title: "Sıfır Saha İzi",
     description:
-      "Dronlar havadan tohum bırakır, saha tahribatı oluşmaz. Ulaşılması zor bölgelerde ekosistem el değmemiş kalır.",
+      "Yüksek hassasiyetli GPS verileriyle yönlendirilen İHA filomuz, sıfır ekolojik tahribat prensibiyle tek uçuşta 200+ tohum topunu önceden optimize edilmiş hedef noktalara hatasız şekilde ulaştırır. Ekosistem el değmemiş kalır.",
     accent: "from-[#1B6B3A] to-[#22894a]",
     Icon: DroneIcon,
     image: "/images/values/sifir-saha-izi.webp",
@@ -29,7 +29,7 @@ const VALUE_CARDS = [
   {
     title: "Yıllık Drone Raporlama",
     description:
-      "Periyodik izleme uçuşları, büyüme verisi ve karbon nötrleme metrikleri kurumsal panonuzda anlık. ESG raporlarına entegre edilebilir.",
+      "Periyodik uçuş verileri, vejetasyon büyüme metrikleri ve karbon nötrleme sonuçlarınız kurumsal panomuzda anlık olarak güncellenir; doğrudan ESG raporlarınıza aktarılabilir.",
     accent: "from-[#34d399] to-[#a3e635]",
     Icon: ChartIcon,
     image: "/images/values/yillik-raporlama.webp",

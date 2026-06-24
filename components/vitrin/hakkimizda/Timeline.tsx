@@ -20,9 +20,9 @@ const MILESTONES = [
   },
   {
     year: "2024",
-    title: "İl Orman Müdürlükleri Protokolü",
+    title: "Orman Bölge Müdürlükleri Protokolü",
     description:
-      "Türkiye genelinde 6 il müdürlüğü ile koordinasyon protokolü imzalandı. Tedarik zinciri uçtan uca şeffaf hale geldi.",
+      "Türkiye genelinde 6 Orman Bölge Müdürlüğü ile koordinasyon protokolü imzalandı. Tedarik zinciri uçtan uca şeffaf hale geldi.",
   },
   {
     year: "2025",

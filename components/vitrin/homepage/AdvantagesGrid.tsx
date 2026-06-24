@@ -17,7 +17,7 @@ const ADVANTAGES: Advantage[] = [
   { title: "Tam Şeffaflık", description: "Her tohumun parti numarası, üretim tarihi ve türü kayıtlı. Tedarik zinciri uçtan uca.", Icon: EyeIcon },
   { title: "Yıllık İzleme", description: "Periyodik drone uçuşlarıyla büyüme takip ediliyor. Veriler kurumsal panonuzda.", Icon: SatelliteIcon },
   { title: "Kurumsal Entegrasyon", description: "API entegrasyonu ile e-ticaret sepetinden ESG raporuna kadar tam uyum.", Icon: BuildingIcon },
-  { title: "Yasal Uyumluluk", description: "İl Orman Müdürlükleriyle koordineli, %100 yasal izinler dahilinde projeler.", Icon: ShieldIcon },
+  { title: "Yasal Uyumluluk", description: "T.C. Orman Bölge Müdürlükleri koordinasyonunda, %100 yasal izin ve mevzuat uyumluluğu çerçevesinde projeler.", Icon: ShieldIcon },
 ];
 
 const containerVariants: Variants = {

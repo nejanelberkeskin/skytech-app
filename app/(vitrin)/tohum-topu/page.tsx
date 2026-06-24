@@ -74,12 +74,11 @@ export default function TohumTopuPage() {
               Doğanın <span className="text-gradient-forest">Akıllı Kapsülü</span>
             </h2>
             <p className="text-base text-[#3d5a3d] leading-relaxed mb-5">
-              Tohum topu; kil, organik gübre ve seçilmiş yerli tohumların belirli oranlarda karıştırılıp küçük küre haline getirilmiş halidir.
-              Toprağa düştüğünde dış kabuk koruyucu görev görür, yağmurla birlikte tohum çimlenir.
+              Tohum topu; bitki tohumlarının kil ve organik besin maddeleriyle kaplanarak dış etkenlerden korunduğu, çimlenme başarısını
+              <strong className="text-[#1B6B3A]"> %65+ </strong>seviyesine çıkaran yenilikçi bir yapay kapsülleme yöntemidir.
             </p>
             <p className="text-base text-[#3d5a3d] leading-relaxed">
-              Hayvan ve kuş yemesini engeller, kuraklığa dayanıklılığı artırır ve çimlenme oranını
-              <strong className="text-[#1B6B3A]"> %65+ </strong>seviyesine çıkarır — geleneksel serpme yöntemine kıyasla 3 kat daha verimli.
+              Doğa dostu bir biyoteknolojik yaklaşım olan tohum topu; tohumları kuraklık ve canlı tüketimi gibi risklerden koruyarak toprağa güvenle tutunmalarını sağlar. Yağmurla birlikte filizlenerek doğanın yenilenme hızını artırır.
             </p>
           </div>
 

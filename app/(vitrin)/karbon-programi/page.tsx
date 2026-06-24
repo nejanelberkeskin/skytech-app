@@ -36,7 +36,7 @@ const COMPARISON = [
 ];
 
 const FAQ = [
-  { q: "Karbon sertifikalarınız ne için geçerli?", a: "ESG raporlamalarında, GRI ve CDP gönderimlerinde, kurumsal sürdürülebilirlik beyanlarında kullanılabilir. T.C. Orman Genel Müdürlüğü Bölge Müdürlükleri koordinasyonunda yürütülen yasal projelerimiz uçtan uca doğrulanabilir." },
+  { q: "Karbon sertifikalarınız ne için geçerli?", a: "Sertifikalarımız ESG raporlarında, GRI ve CDP gönderimlerinde, kurumsal sürdürülebilirlik beyanlarında kullanılabilir. Kurumumuz bünyesinde gerçekleştirilen tüm ormanlaştırma ve karbon yutak alanı projeleri T.C. Orman Genel Müdürlüğü (OGM) Bölge Müdürlükleri koordinasyonunda, yasal ve bilimsel altyapıya uygun olarak yürütülmektedir." },
   { q: "Karbon hesaplaması nasıl yapılıyor?", a: "Tohum sayısı × çimlenme oranı (%65) = ağaç sayısı. Ağaç sayısı × yıllık 5kg CO₂ × izleme süresi = toplam karbon dengelemesi. Tüm parametreler uluslararası kabul gören IPCC kılavuzlarından alınmıştır." },
   { q: "Bireysel olarak da katılabilir miyim?", a: "Evet — tohum sipariş eden her kullanıcı, kendi karbon ayak izini dengelemiş olur. Dijital sertifikanızda kaç kg CO₂ dengelediğiniz net olarak gösterilir." },
   { q: "ESG entegrasyonu nasıl çalışıyor?", a: "Kurumsal panelinizde ESG yazılımınız arasında API entegrasyonu sağlayarak veri akışını otomatik hale getiriyoruz. Sistemimiz şirketinizin karbon ayak izini hesaplar ve bu doğrultuda markanıza özel, drone teknolojisiyle desteklenen bir orman oluşturur." },
@@ -53,8 +53,8 @@ export default function KarbonProgramiPage() {
         path="/karbon-programi"
       />
       <BreadCrumb
-        title="Her Ağaç Bir Karbon Filtresi. Biz Onu Ölçüyoruz."
-        subtitle="Soyut karbon kredilerine güvenmek yerine, gerçek ağaçlarla, GPS koordinatlı kayıtlarla, ölçülebilir karbon nötrleme."
+        title="Holding ve Şirketler için Uçtan Uca Karbon Nötrleme"
+        subtitle="Yıllık sera gazı emisyonlarınızı uluslararası standartlarda hesaplıyor, drone teknolojisiyle yüksek karbon yutak alanları (biyo-karbon ekosistemleri) inşa ediyor ve tüm süreci şeffaf biçimde ESG raporlarınıza entegre ediyoruz."
         items={[{ label: "Karbon Programı" }]}
       />
 

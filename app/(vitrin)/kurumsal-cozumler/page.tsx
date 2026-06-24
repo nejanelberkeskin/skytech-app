@@ -33,9 +33,9 @@ const COMPARISON = [
 const FEATURES = [
   { title: "Çalışan Bazlı Sertifika", desc: "Her çalışana özel PDF sertifika otomatik üretilir, e-posta ile iletilir.", Icon: PeopleIcon },
   { title: "Şirket Hatıra Ormanı", desc: "Kuruma özel kurumsal alan, drone çekim videoları, koordinatlı haritalama.", Icon: TreesIcon },
-  { title: "ESG Raporlama API'si", desc: "GRI, CDP, SASB uyumlu veri akışı — kendi raporlama yazılımınıza entegre.", Icon: ApiIcon },
+  { title: "ESG Yazılım API Entegrasyonu", desc: "Kurumsal panelimiz ile ESG yazılımınız arasında API entegrasyonu kurarak veri akışını otomatik hale getiriyoruz. GRI, CDP, SASB uyumlu.", Icon: ApiIcon },
   { title: "E-ticaret Entegrasyonu", desc: "\"Sepete 1 tohum ekle\" widget'ı — müşterilerinize ekoloji deneyimi sunun.", Icon: CartIcon },
-  { title: "Karbon Hesaplama", desc: "Şirket karbon ayak izi hesaplama, ona göre ekim planı oluşturma.", Icon: CalcIcon },
+  { title: "Karbon Ayak İzi → Markanıza Özel Orman", desc: "Sistemimiz şirketinizin karbon ayak izini hesaplar ve bu doğrultuda markanıza özel, drone teknolojisiyle desteklenen bir orman oluşturur.", Icon: CalcIcon },
   { title: "Özel Hesap Yöneticisi", desc: "Tüm süreçlerde özel temas noktanız — onboarding'den raporlamaya.", Icon: BadgeIcon },
 ];
 

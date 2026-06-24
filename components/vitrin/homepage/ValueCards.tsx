@@ -19,7 +19,7 @@ const VALUE_CARDS = [
   {
     title: "Şeffaf Tedarik Zinciri",
     description:
-      "Tüm tohumlar İl Orman Müdürlüğü üretim tesislerinden tedarik edilir. Parti numarası, üretim tarihi ve tür bilgisi blokchain seviyesinde kayıtlıdır.",
+      "Tüm tohumlar T.C. Tarım ve Orman Bakanlığı Orman Bölge Müdürlükleri iş birliğiyle tedarik edilir. Parti numarası, üretim tarihi, genetik orijin ve tür bilgisi blok zinciri teknolojisiyle güvenle kayıt altındadır.",
     accent: "from-[#22894a] to-[#34d399]",
     Icon: ShieldIcon,
     image: "/images/values/seffaf-tedarik.webp",

@@ -45,7 +45,7 @@ export default function VitrinFooter() {
               />
             </Link>
             <p className="text-sm text-[#a7d4a7] leading-relaxed mb-6 max-w-sm">
-              Tohum toplarıyla geleceği ekiyoruz. Dron teknolojisi, ileri tarım bilimi ve şeffaf tedarik zinciriyle ölçülebilir ağaçlandırma.
+              Tohum toplarıyla geleceği ekiyoruz. Dron teknolojisi, ormancılık bilimi ve şeffaf tedarik zinciriyle ölçülebilir ağaçlandırma.
             </p>
             <div className="flex items-center gap-3">
               <SocialIcon href="#" aria="LinkedIn"><LinkedInIcon /></SocialIcon>

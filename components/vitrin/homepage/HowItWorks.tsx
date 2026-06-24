@@ -19,7 +19,7 @@ const STEPS: Step[] = [
     num: "01",
     title: "Tohum Topu Ar-Ge",
     description:
-      "Ziraat mühendislerimiz hedef bölgenin iklim ve toprak yapısına uygun tohum türlerini seçer, ileri tarım bilimiyle tohum topu formüle ederiz.",
+      "Orman mühendislerimiz hedef bölgenin iklim ve toprak yapısına uygun tohum türlerini seçer, ormancılık bilimiyle tohum topu formüle ederiz.",
     Icon: FlaskIcon,
     image: "/images/steps/01-arge.webp",
   },
@@ -27,7 +27,7 @@ const STEPS: Step[] = [
     num: "02",
     title: "Hedef Alan Analizi",
     description:
-      "Uydu ve drone görüntüleriyle bölge taranır. Eğim, toprak nemi, ekosistem analizi yapılır. İl Orman Müdürlüğü ile koordineli yasal izinler alınır.",
+      "Uydu ve drone görüntüleriyle bölge taranır. Eğim, toprak nemi, ekosistem analizi yapılır. Orman Bölge Müdürlüğü ile koordineli yasal izinler alınır.",
     Icon: MapIcon,
     image: "/images/steps/02-analiz.webp",
   },

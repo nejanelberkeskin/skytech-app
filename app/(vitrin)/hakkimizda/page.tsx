@@ -10,7 +10,7 @@ import { buildPageMetadata } from "@/lib/seo";
 export const metadata = buildPageMetadata({
   title: "Hakkımızda — Bilim, Teknoloji ve Doğa",
   description:
-    "2021 Akdeniz yangınlarından doğan vizyon, ziraat mühendisleri + drone pilotları + yazılım ekibinden oluşan 36+ kişilik aile. Skytech Green'in kuruluş hikayesi ve değerleri.",
+    "2021 Akdeniz yangınlarından doğan vizyon, orman mühendisleri + drone pilotları + yazılım ekibinden oluşan 36+ kişilik aile. Skytech Green'in kuruluş hikayesi ve değerleri.",
   path: "/hakkimizda",
   image: {
     url: "/images/hakkimizda/saha.webp",
@@ -26,16 +26,16 @@ export const metadata = buildPageMetadata({
 });
 
 const VALUES = [
-  { title: "Bilim", desc: "Her kararımızın arkasında ziraat ve ekoloji bilimi vardır.", Icon: ScienceIcon },
+  { title: "Bilim", desc: "Her kararımızın arkasında ormancılık ve ekoloji bilimi vardır.", Icon: ScienceIcon },
   { title: "Teknoloji", desc: "Drone, GPS, uydu — en ileri araçları en iyi şekilde kullanırız.", Icon: TechIcon },
   { title: "Şeffaflık", desc: "Her tohum, her uçuş, her sertifika izlenebilir kayıt altında.", Icon: EyeIcon },
   { title: "Sürdürülebilirlik", desc: "Kısa vadeli kazanç değil, uzun vadeli ekosistem yaratıyoruz.", Icon: LeafIcon },
 ];
 
 const TEAM = [
-  { name: "Ziraat Mühendisleri", desc: "Tohum türü seçimi, formülasyon ve toprak analizi", count: 8 },
+  { name: "Orman Mühendisleri", desc: "Tohum türü seçimi, formülasyon ve toprak analizi", count: 8 },
   { name: "Drone Pilotları & Operatörler", desc: "Sertifikalı pilotlar, GPS hassasiyetli operasyon", count: 12 },
-  { name: "Proje Koordinatörleri", desc: "İl Orman Müdürlüğü ve kurumsal koordinasyon", count: 6 },
+  { name: "Proje Koordinatörleri", desc: "Orman Bölge Müdürlüğü ve kurumsal koordinasyon", count: 6 },
   { name: "Yazılım & Veri Ekibi", desc: "Platform, ESG raporlama, izleme yazılımı", count: 10 },
 ];
 
@@ -52,7 +52,7 @@ export default function HakkimizdaPage() {
       <BreadcrumbSchema items={[{ name: "Hakkımızda", path: "/hakkimizda" }]} />
       <BreadCrumb
         title="Bilim, Teknoloji ve Doğa. Üçünü Birleştiriyoruz."
-        subtitle="Skytech Green; iklim kriziyle mücadeleyi havacılık, ileri tarım ve modern yazılımla birleştiren yeni nesil bir Eco-Tech platformudur."
+        subtitle="Skytech Green; iklim kriziyle mücadeleyi havacılık, ormancılık ve modern yazılımla birleştiren yeni nesil bir Eco-Tech platformudur."
         items={[{ label: "Hakkımızda" }]}
       />
 
@@ -119,7 +119,7 @@ export default function HakkimizdaPage() {
         <SectionHeading
           badge="Ekip"
           title={<>Disiplinler Arası <span className="text-gradient-forest">Bir Aile</span></>}
-          subtitle="Ziraat mühendislerinden drone pilotlarına, yazılımcılardan proje koordinatörlerine — 36+ kişilik bir aile."
+          subtitle="Orman mühendislerinden drone pilotlarına, yazılımcılardan proje koordinatörlerine — 36+ kişilik bir aile."
         />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 max-w-4xl mx-auto stagger-children">
           {TEAM.map((t) => (

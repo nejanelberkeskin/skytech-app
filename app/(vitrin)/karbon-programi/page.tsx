@@ -36,10 +36,10 @@ const COMPARISON = [
 ];
 
 const FAQ = [
-  { q: "Karbon sertifikalarınız ne için geçerli?", a: "ESG raporlamalarında, GRI ve CDP gönderimlerinde, kurumsal sürdürülebilirlik beyanlarında kullanılabilir. İl Orman Müdürlüğü koordineli yasal projelerimiz uçtan uca doğrulanabilir." },
+  { q: "Karbon sertifikalarınız ne için geçerli?", a: "ESG raporlamalarında, GRI ve CDP gönderimlerinde, kurumsal sürdürülebilirlik beyanlarında kullanılabilir. T.C. Orman Genel Müdürlüğü Bölge Müdürlükleri koordinasyonunda yürütülen yasal projelerimiz uçtan uca doğrulanabilir." },
   { q: "Karbon hesaplaması nasıl yapılıyor?", a: "Tohum sayısı × çimlenme oranı (%65) = ağaç sayısı. Ağaç sayısı × yıllık 5kg CO₂ × izleme süresi = toplam karbon dengelemesi. Tüm parametreler uluslararası kabul gören IPCC kılavuzlarından alınmıştır." },
   { q: "Bireysel olarak da katılabilir miyim?", a: "Evet — tohum sipariş eden her kullanıcı, kendi karbon ayak izini dengelemiş olur. Dijital sertifikanızda kaç kg CO₂ dengelediğiniz net olarak gösterilir." },
-  { q: "ESG entegrasyonu nasıl çalışıyor?", a: "Kurumsal panelimizden API ile ESG yazılımınıza veri akışı kurulabilir. Şirket karbon ayak izinizi hesaplıyor, ona göre dronlu hatıra ormanı kuruyoruz." },
+  { q: "ESG entegrasyonu nasıl çalışıyor?", a: "Kurumsal panelinizde ESG yazılımınız arasında API entegrasyonu sağlayarak veri akışını otomatik hale getiriyoruz. Sistemimiz şirketinizin karbon ayak izini hesaplar ve bu doğrultuda markanıza özel, drone teknolojisiyle desteklenen bir orman oluşturur." },
 ];
 
 export default function KarbonProgramiPage() {

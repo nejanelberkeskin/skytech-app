@@ -302,7 +302,7 @@ function SceneCaption({ progress }: { progress: MotionValue<number> }) {
         <Caption
           step="01"
           title="Laboratuvar"
-          desc="Ziraat mühendisleri kil + organik gübre + yerli tohum oranlarını analiz eder, tohum topunu formüle eder."
+          desc="Orman mühendisleri kil + organik gübre + yerli tohum oranlarını analiz eder, tohum topunu formüle eder."
         />
       </motion.div>
       <motion.div style={{ opacity: opacity2 }} className="absolute">

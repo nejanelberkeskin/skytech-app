@@ -3,6 +3,7 @@
 import { motion, type Variants, useMotionValue, useSpring } from "framer-motion";
 import Image from "next/image";
 import { useRef } from "react";
+import { useTranslations } from "next-intl";
 import SectionWrapper from "../SectionWrapper";
 import SectionHeading from "../SectionHeading";
 
@@ -14,40 +15,15 @@ type Step = {
   image: string;
 };
 
-const STEPS: Step[] = [
-  {
-    num: "01",
-    title: "Tohum Topu Ar-Ge",
-    description:
-      "Ekosistem restorasyonu ile yanan alanların ve maden sahalarının rehabilitasyonu için uzman orman mühendislerimiz ve akademik danışmanlarımızla çalışıyoruz. Bölgenin iklim ve ekolojisine uygun seçtiğimiz tohumları, ormancılık bilimi ışığında en doğru materyallerle kaplayarak tohum topu formüllerimizi geliştiriyoruz.",
-    Icon: FlaskIcon,
-    image: "/images/steps/01-arge.webp",
-  },
-  {
-    num: "02",
-    title: "Hedef Alan Analizi",
-    description:
-      "Uygulamamız; uydu ve drone (İHA) görüntülerini analiz ederek sahanın topografik yapısını, toprağın nem içeriği ve ekosistemin yapısını inceler. Tohum topu atışı için en doğru hedef alanları yapay zekâ ile belirler. Orman Bölge Müdürlüğü koordinasyonuyla yasal izinleri alarak ormanlaştırma süreçlerini tamamen bilimsel ve güvenli hale getirir.",
-    Icon: MapIcon,
-    image: "/images/steps/02-analiz.webp",
-  },
-  {
-    num: "03",
-    title: "Dronla Dağıtım",
-    description:
-      "Yüksek hassasiyetli GPS verileriyle yönlendirilen İHA filomuz, sıfır ekolojik tahribat prensibiyle tek bir uçuşta 200+ tohum topunu önceden optimize edilmiş hedef noktalara hatasız şekilde ulaştırıyoruz.",
-    Icon: DroneIcon,
-    image: "/images/steps/03-dagitim.webp",
-  },
-  {
-    num: "04",
-    title: "Yıllık İzleme & ESG",
-    description:
-      "Yıllık İHA fotogrametrisi ile izlenen vejetasyon büyüme verileri ve kurumsal gösterge panelinde gerçek zamanlı sunulan karbon denkleştirme metrikleri anlık olarak görülür. ESG raporlama süreçlerine entegre edilebilir.",
-    Icon: SatelliteIcon,
-    image: "/images/steps/04-izleme.webp",
-  },
-];
+function useSteps(): Step[] {
+  const t = useTranslations("howItWorks.steps");
+  return [
+    { num: "01", title: t("research.title"), description: t("research.description"), Icon: FlaskIcon, image: "/images/steps/01-arge.webp" },
+    { num: "02", title: t("analysis.title"), description: t("analysis.description"), Icon: MapIcon, image: "/images/steps/02-analiz.webp" },
+    { num: "03", title: t("distribution.title"), description: t("distribution.description"), Icon: DroneIcon, image: "/images/steps/03-dagitim.webp" },
+    { num: "04", title: t("monitoring.title"), description: t("monitoring.description"), Icon: SatelliteIcon, image: "/images/steps/04-izleme.webp" },
+  ];
+}
 
 const containerVariants: Variants = {
   hidden: {},
@@ -60,6 +36,8 @@ const itemVariants: Variants = {
 };
 
 export default function HowItWorks() {
+  const t = useTranslations("howItWorks");
+  const STEPS = useSteps();
   return (
     <SectionWrapper variant="tinted" id="nasil-calisir" className="relative overflow-hidden">
       {/* Soft mesh wash */}
@@ -70,15 +48,15 @@ export default function HowItWorks() {
 
       <div className="relative">
         <SectionHeading
-          badge="Süreç"
+          badge={t("badge")}
           title={
             <>
-              Dört Adımda
+              {t("title")}
               <br />
-              <span className="text-gradient-aurora">Yeni Bir Orman</span>
+              <span className="text-gradient-aurora">{t("titleAccent")}</span>
             </>
           }
-          subtitle="Her adımda şeffaflık, ölçülebilirlik ve bilim. İşte tohumdan ormana giden yol."
+          subtitle={t("subtitle")}
         />
 
         <motion.div

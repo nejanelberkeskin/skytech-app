@@ -3,40 +3,41 @@
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import Image from "next/image";
 import { useRef } from "react";
+import { useTranslations } from "next-intl";
 import SectionWrapper from "../SectionWrapper";
 
-const VALUE_CARDS = [
-  {
-    title: "Sıfır Saha İzi",
-    description:
-      "Doğayı teknolojiyle yeşertiyoruz. Drone teknolojisi kullanarak tohum topu ekim faaliyetleri yapıyoruz. İnsansız hava araçları teknolojisi ile hem arazi tahribatını sıfıra indiriyoruz hem de sarp bölgelerde doğal yaşamı aynen koruyoruz.",
-    accent: "from-[#1B6B3A] to-[#22894a]",
-    Icon: DroneIcon,
-    image: "/images/values/sifir-saha-izi.webp",
-    stat: "%100",
-    statLabel: "Doğa Korumalı",
-  },
-  {
-    title: "Şeffaf Tedarik Zinciri",
-    description:
-      "Yöreye uygun tohumlarımız ilgili Orman Bölge Müdürlüklerinden tedarik edilmekte; tohumların tür bilgisi, ağaçlardan toplanma tarihleri, orijin bilgileri blok zinciri teknolojisiyle güvenle doğrulanmaktadır.",
-    accent: "from-[#22894a] to-[#34d399]",
-    Icon: ShieldIcon,
-    image: "/images/values/seffaf-tedarik.webp",
-    stat: "%100",
-    statLabel: "İzlenebilirlik",
-  },
-  {
-    title: "Yıllık Drone Raporlama",
-    description:
-      "Periyodik uçuş verileri, büyüme metrikleri ve karbon nötrleme sonuçlarınız kurumsal panomuzda anlık olarak güncellenir; doğrudan ESG raporlarınıza aktarılabilir.",
-    accent: "from-[#34d399] to-[#a3e635]",
-    Icon: ChartIcon,
-    image: "/images/values/yillik-raporlama.webp",
-    stat: "12 ay",
-    statLabel: "İzleme",
-  },
-];
+function useValueCards() {
+  const t = useTranslations("valueCards.items");
+  return [
+    {
+      title: t("zeroFootprint.title"),
+      description: t("zeroFootprint.description"),
+      accent: "from-[#1B6B3A] to-[#22894a]",
+      Icon: DroneIcon,
+      image: "/images/values/sifir-saha-izi.webp",
+      stat: t("zeroFootprint.stat"),
+      statLabel: t("zeroFootprint.statLabel"),
+    },
+    {
+      title: t("transparentSupply.title"),
+      description: t("transparentSupply.description"),
+      accent: "from-[#22894a] to-[#34d399]",
+      Icon: ShieldIcon,
+      image: "/images/values/seffaf-tedarik.webp",
+      stat: t("transparentSupply.stat"),
+      statLabel: t("transparentSupply.statLabel"),
+    },
+    {
+      title: t("annualReport.title"),
+      description: t("annualReport.description"),
+      accent: "from-[#34d399] to-[#a3e635]",
+      Icon: ChartIcon,
+      image: "/images/values/yillik-raporlama.webp",
+      stat: t("annualReport.stat"),
+      statLabel: t("annualReport.statLabel"),
+    },
+  ];
+}
 
 const containerVariants = {
   hidden: {},
@@ -64,6 +65,7 @@ const headingVariants = {
 };
 
 export default function ValueCards() {
+  const VALUE_CARDS = useValueCards();
   return (
     <SectionWrapper variant="light" className="!pt-24 !pb-20 relative overflow-hidden">
       {/* Subtle aurora behind heading */}
@@ -120,7 +122,9 @@ export default function ValueCards() {
   );
 }
 
-function ValueCard({ card }: { card: (typeof VALUE_CARDS)[number] }) {
+type ValueCardData = ReturnType<typeof useValueCards>[number];
+
+function ValueCard({ card }: { card: ValueCardData }) {
   const cardRef = useRef<HTMLDivElement>(null);
 
   // 3D tilt on hover

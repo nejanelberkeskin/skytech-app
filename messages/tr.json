@@ -1,0 +1,167 @@
+{
+  "common": {
+    "back": "Geri",
+    "more": "Daha fazla",
+    "soon": "Çok Yakında",
+    "loading": "Yükleniyor...",
+    "error": "Bir hata oluştu"
+  },
+  "nav": {
+    "home": "Ana Sayfa",
+    "services": "Hizmetler",
+    "seedBall": "Tohum Topu",
+    "ourSeeds": "Tohumlarımız",
+    "droneTech": "Dron Teknolojisi",
+    "carbonProgram": "Karbon Programı",
+    "projects": "Projeler",
+    "corporate": "Kurumsal",
+    "about": "Hakkımızda",
+    "contact": "İletişim",
+    "login": "Giriş Yap",
+    "signUp": "Hemen Başla",
+    "orderSeeds": "Tohum Sipariş Et",
+    "menu": "Menü"
+  },
+  "hero": {
+    "badge": "Karbon Nötrleme · Şeffaf · Ölçülebilir",
+    "headlineLine1": "Doğayı Teknolojiyle",
+    "headlineLine2": "Yeşertiyoruz",
+    "subtitle": "Drone teknolojisiyle tohum topu ekim faaliyetleri yapıyoruz. İnsansız hava araçları sayesinde arazi tahribatını sıfıra indiriyor, sarp bölgelerde doğal yaşamı aynen koruyoruz.",
+    "ctaPrimary": "Tohum Sipariş Et",
+    "ctaSecondary": "Kurumsal Çözümler",
+    "trustForestRegions": "Orman Bölge Müdürlükleri ile koordineli",
+    "trustAnnualReport": "Yıllık drone raporlama",
+    "trustCertificate": "Karbon sertifikası"
+  },
+  "valueCards": {
+    "badge": "Değerlerimiz",
+    "title": "Üç İlke, Bir Vizyon",
+    "subtitle": "Tüm projelerimizin temelinde bu üç ilke vardır.",
+    "items": {
+      "zeroFootprint": {
+        "title": "Sıfır Saha İzi",
+        "description": "Doğayı teknolojiyle yeşertiyoruz. Drone teknolojisi kullanarak tohum topu ekim faaliyetleri yapıyoruz. İnsansız hava araçları teknolojisi ile hem arazi tahribatını sıfıra indiriyoruz hem de sarp bölgelerde doğal yaşamı aynen koruyoruz.",
+        "stat": "%100",
+        "statLabel": "Doğa Korumalı"
+      },
+      "transparentSupply": {
+        "title": "Şeffaf Tedarik Zinciri",
+        "description": "Yöreye uygun tohumlarımız ilgili Orman Bölge Müdürlüklerinden tedarik edilmekte; tohumların tür bilgisi, ağaçlardan toplanma tarihleri, orijin bilgileri blok zinciri teknolojisiyle güvenle doğrulanmaktadır.",
+        "stat": "%100",
+        "statLabel": "İzlenebilirlik"
+      },
+      "annualReport": {
+        "title": "Yıllık Drone Raporlama",
+        "description": "Periyodik uçuş verileri, büyüme metrikleri ve karbon nötrleme sonuçlarınız kurumsal panomuzda anlık olarak güncellenir; doğrudan ESG raporlarınıza aktarılabilir.",
+        "stat": "12 ay",
+        "statLabel": "İzleme"
+      }
+    }
+  },
+  "howItWorks": {
+    "badge": "Süreç",
+    "title": "Dört Adımda",
+    "titleAccent": "Tam Otomasyon",
+    "subtitle": "Tohum seçiminden ESG raporlamasına kadar uçtan uca bilim ve teknoloji.",
+    "steps": {
+      "research": {
+        "title": "Tohum Topu Ar-Ge",
+        "description": "Ekosistem restorasyonu ile yanan alanların ve maden sahalarının rehabilitasyonu için uzman orman mühendislerimiz ve akademik danışmanlarımızla çalışıyoruz. Bölgenin iklim ve ekolojisine uygun seçtiğimiz tohumları, ormancılık bilimi ışığında en doğru materyallerle kaplayarak tohum topu formüllerimizi geliştiriyoruz."
+      },
+      "analysis": {
+        "title": "Hedef Alan Analizi",
+        "description": "Uygulamamız; uydu ve drone (İHA) görüntülerini analiz ederek sahanın topografik yapısını, toprağın nem içeriği ve ekosistemin yapısını inceler. Tohum topu atışı için en doğru hedef alanları yapay zekâ ile belirler. Orman Bölge Müdürlüğü koordinasyonuyla yasal izinleri alarak ormanlaştırma süreçlerini tamamen bilimsel ve güvenli hale getirir."
+      },
+      "distribution": {
+        "title": "Dronla Dağıtım",
+        "description": "Yüksek hassasiyetli GPS verileriyle yönlendirilen İHA filomuz, sıfır ekolojik tahribat prensibiyle tek bir uçuşta 200+ tohum topunu önceden optimize edilmiş hedef noktalara hatasız şekilde ulaştırıyoruz."
+      },
+      "monitoring": {
+        "title": "Yıllık İzleme & ESG",
+        "description": "Yıllık İHA fotogrametrisi ile izlenen vejetasyon büyüme verileri ve kurumsal gösterge panelinde gerçek zamanlı sunulan karbon denkleştirme metrikleri anlık olarak görülür. ESG raporlama süreçlerine entegre edilebilir."
+      }
+    }
+  },
+  "impactTabs": {
+    "badge": "Etki Alanları",
+    "titleLine1": "Nerelerde",
+    "titleAccent": "Etkimiz Var",
+    "subtitle": "Üç kritik ekosistem alanında, bilimle ve teknolojiyle ölçülebilir değişim yaratıyoruz.",
+    "tabs": {
+      "fire": {
+        "label": "Yangın Sonrası",
+        "title": "Yanan Ormanları Yeniden Yeşertiyoruz",
+        "description": "Yanan orman arazilerinin ekolojik dinamiklerini geri kazandırmak için otonom drone filoları ve yüksek çimlenme oranlarına sahip tohum toplarımızla, geniş ölçekli alanlarda hızlı ve sürdürülebilir biçimde yeniden ormanlaştırma sürdürüyoruz.",
+        "bullets": [
+          "İş güvenliği: Yangın sonrası gevşeyen toprak ve heyelan riskinde insan hayatını riske atmaz",
+          "Altın zaman dilimi: Toprak besin değerini kaybetmeden, erozyon başlamadan hızla müdahale",
+          "GIS ile homojen dağılım: m² başına düşen tohum miktarı hassas ayarlanır",
+          "Dijital izlenebilirlik: Her koordinat kayıt altında, çimlenme uydudan takip edilir"
+        ],
+        "stat": "%65+",
+        "statLabel": "Çimlenme oranı"
+      },
+      "mining": {
+        "label": "Maden Sahaları",
+        "title": "Maden Sahalarının Ekolojik Restorasyonu",
+        "description": "Madencilik sonucu doğal yapısı, bitki örtüsü ve toprak kalitesi bozulmuş sahaların restorasyonunu İHA ve optimize edilmiş tohum topu metodolojileriyle hızlandırıyoruz. Uzaktan algılama ve yapay zekâ ile topoğrafyası bozulmuş arazilerde vejetasyon başarısını artırıyor; kademeli ve sürdürülebilir bir orman ekosistemi kuruyoruz.",
+        "bullets": [
+          "Bir drone uçuşunda 200+ tohum — geleneksel yöntemlere göre 10 kat daha hızlı",
+          "Sıfır saha tahribatı: minimum çevresel ayak iziyle maksimum restorasyon etkisi",
+          "Tam şeffaflık: tohumun türü, orijini, çimlenme oranı uçtan uca kayıt altında",
+          "Yıllık izleme: periyodik drone uçuşlarıyla yüksek çözünürlüklü dijital veri",
+          "Yasal uyumluluk: T.C. Orman Bölge Müdürlükleri koordinasyonunda %100 yasal"
+        ],
+        "stat": "10×",
+        "statLabel": "Geleneksele göre hız"
+      },
+      "carbon": {
+        "label": "Karbon Nötrleme",
+        "title": "Holding ve Şirketler İçin Uçtan Uca Karbon Nötrleme",
+        "description": "Yıllık sera gazı emisyonlarınızı uluslararası standartlarda hesaplıyor, drone teknolojisiyle yüksek karbon yutak alanları (biyo-karbon ekosistemleri) inşa ediyor ve tüm süreci şeffaf biçimde ESG raporlarınıza entegre ediyoruz. Kurumsal panelimiz ile ESG yazılımınız arasında API entegrasyonu sağlayarak veri akışını otomatik hale getiriyoruz.",
+        "bullets": [
+          "Şirket karbon ayak izi hesaplaması — uluslararası standartlarda",
+          "Markanıza özel, drone teknolojisiyle desteklenen orman",
+          "Çalışan sertifikası — bireysel karbon atıfı",
+          "ESG, GRI, CDP raporlarına hazır veri — API ile otomatik akış"
+        ],
+        "stat": "ESG",
+        "statLabel": "Tam uyum"
+      }
+    }
+  },
+  "footer": {
+    "tagline": "Tohum toplarıyla geleceği ekiyoruz. Dron teknolojisi, ormancılık bilimi ve şeffaf tedarik zinciriyle ölçülebilir ağaçlandırma.",
+    "links": {
+      "sections": "Bölümler",
+      "company": "Şirket",
+      "support": "Destek",
+      "legal": "Yasal"
+    },
+    "copyright": "© {year} Skytech Green. Tüm hakları saklıdır."
+  },
+  "ourSeeds": {
+    "breadcrumbTitle": "Yerli Tohumlarımız",
+    "breadcrumbSubtitle": "Her tohum, bölgenin iklimine ve ekosistemine uygun olarak seçilir. Skytech Green tohum topu projelerinde kullanılan beş yerli türün özellikleri.",
+    "sectionBadge": "Türler",
+    "sectionTitleLine": "Beş Yerli",
+    "sectionTitleAccent": "Türümüz",
+    "sectionSubtitle": "Her tür, ekildiği bölgenin iklim ve toprak yapısına göre seçilir. Tohumlarımız T.C. Orman Bölge Müdürlükleri tedariklidir.",
+    "footnote": "Yöreye uygun tohumlarımız ilgili Orman Bölge Müdürlüklerinden tedarik edilmekte; tohumların tür bilgisi, ağaçlardan toplanma tarihleri ve orijin bilgileri blok zinciri teknolojisiyle güvenle doğrulanmaktadır.",
+    "labels": {
+      "type": "Tür",
+      "region": "Bölge",
+      "climate": "İklim",
+      "rootDepth": "Kök Yapısı",
+      "germination": "Çimlenme",
+      "lifespan": "Ortalama Ömrü",
+      "ecologicalRole": "Ekolojik Rolü"
+    }
+  },
+  "languageSwitcher": {
+    "label": "Dil",
+    "tr": "Türkçe",
+    "en": "English",
+    "ru": "Русский"
+  }
+}

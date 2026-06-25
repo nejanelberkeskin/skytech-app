@@ -2,29 +2,36 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
+import { Link, usePathname } from "@/i18n/navigation";
+import LanguageSwitcher from "./LanguageSwitcher";
 
-const NAV_ITEMS: { label: string; href: string; children?: { label: string; href: string }[] }[] = [
-  { label: "Ana Sayfa", href: "/" },
-  {
-    label: "Hizmetler",
-    href: "#",
-    children: [
-      { label: "Tohum Topu", href: "/tohum-topu" },
-      { label: "Tohumlarımız", href: "/tohumlarimiz" },
-      { label: "Dron Teknolojisi", href: "/dron-teknolojisi" },
-      { label: "Karbon Programı", href: "/karbon-programi" },
-    ],
-  },
-  { label: "Projeler", href: "/projeler" },
-  { label: "Kurumsal", href: "/kurumsal-cozumler" },
-  { label: "Hakkımızda", href: "/hakkimizda" },
-  { label: "İletişim", href: "/iletisim" },
-];
+function useNavItems() {
+  const t = useTranslations("nav");
+  return [
+    { label: t("home"), href: "/" },
+    {
+      label: t("services"),
+      href: "#",
+      children: [
+        { label: t("seedBall"), href: "/tohum-topu" },
+        { label: t("ourSeeds"), href: "/tohumlarimiz" },
+        { label: t("droneTech"), href: "/dron-teknolojisi" },
+        { label: t("carbonProgram"), href: "/karbon-programi" },
+      ],
+    },
+    { label: t("projects"), href: "/projeler" },
+    { label: t("corporate"), href: "/kurumsal-cozumler" },
+    { label: t("about"), href: "/hakkimizda" },
+    { label: t("contact"), href: "/iletisim" },
+  ];
+}
 
 export default function VitrinNavbar() {
+  const NAV_ITEMS = useNavItems();
+  const tNav = useTranslations("nav");
+  const tCommon = useTranslations("common");
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
@@ -141,14 +148,15 @@ export default function VitrinNavbar() {
 
           {/* CTAs */}
           <div className="hidden lg:flex items-center gap-3">
+            <LanguageSwitcher />
             <Link
               href="/auth/login"
               className="px-4 py-2 text-sm font-semibold text-[#1a2e1a] hover:text-[#1B6B3A] transition-colors"
             >
-              Giriş Yap
+              {tNav("login")}
             </Link>
             <Link href="/bireysel/satin-al" className="vitrin-cta-primary !py-2.5 !px-5 !text-sm">
-              Tohum Sipariş Et
+              {tNav("orderSeeds")}
             </Link>
           </div>
 
@@ -156,7 +164,7 @@ export default function VitrinNavbar() {
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
             className="lg:hidden w-10 h-10 rounded-xl flex items-center justify-center text-[#1a2e1a] hover:bg-[#1B6B3A]/8 transition-colors"
-            aria-label="Menü"
+            aria-label={tNav("menu")}
           >
             {mobileOpen ? <CloseIcon className="w-5 h-5" /> : <MenuIcon className="w-5 h-5" />}
           </button>
@@ -199,12 +207,12 @@ export default function VitrinNavbar() {
                 className="relative flex items-center justify-between p-5 border-b border-white/8"
               >
                 <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#a7d4a7]">
-                  Menü
+                  {tNav("menu")}
                 </p>
                 <button
                   onClick={() => setMobileOpen(false)}
                   className="w-10 h-10 rounded-xl premium-glass-dark flex items-center justify-center"
-                  aria-label="Kapat"
+                  aria-label={tCommon("back")}
                 >
                   <CloseIcon className="w-4 h-4 text-white" />
                 </button>
@@ -273,17 +281,20 @@ export default function VitrinNavbar() {
                 transition={{ delay: 0.55, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                 className="absolute bottom-0 left-0 right-0 p-5 border-t border-white/8 space-y-3 mesh-dark"
               >
+                <div className="flex justify-center pb-1">
+                  <LanguageSwitcher dark />
+                </div>
                 <Link
                   href="/auth/login"
                   className="block w-full text-center py-3 rounded-xl premium-glass-dark text-sm font-bold text-white"
                 >
-                  Giriş Yap
+                  {tNav("login")}
                 </Link>
                 <Link
                   href="/bireysel/satin-al"
                   className="block w-full text-center py-3 rounded-xl bg-gradient-to-br from-[#1B6B3A] via-[#22894a] to-[#1B6B3A] text-white text-sm font-bold shadow-lg shadow-[#1B6B3A]/30"
                 >
-                  Tohum Sipariş Et →
+                  {tNav("orderSeeds")} →
                 </Link>
               </motion.div>
             </motion.div>

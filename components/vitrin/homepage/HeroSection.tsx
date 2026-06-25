@@ -3,20 +3,19 @@
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import Image from "next/image";
 import { useEffect, useRef } from "react";
-
-const HEADLINE_LINE_1 = "Doğayı Teknolojiyle";
-const HEADLINE_LINE_2 = "Yeşertiyoruz";
-
-const SUBTEXT =
-  "Drone teknolojisiyle tohum topu ekim faaliyetleri yapıyoruz. İnsansız hava araçları sayesinde arazi tahribatını sıfıra indiriyor, sarp bölgelerde doğal yaşamı aynen koruyoruz.";
-
-const TRUST_BADGES = [
-  "Orman Bölge Müdürlükleri ile koordineli",
-  "Yıllık drone raporlama",
-  "Karbon sertifikası",
-];
+import { useTranslations } from "next-intl";
 
 export default function HeroSection() {
+  const t = useTranslations("hero");
+  const HEADLINE_LINE_1 = t("headlineLine1");
+  const HEADLINE_LINE_2 = t("headlineLine2");
+  const SUBTEXT = t("subtitle");
+  const TRUST_BADGES = [
+    t("trustForestRegions"),
+    t("trustAnnualReport"),
+    t("trustCertificate"),
+  ];
+
   const heroRef = useRef<HTMLElement>(null);
 
   // Mouse-tracked aurora parallax
@@ -110,7 +109,7 @@ export default function HeroSection() {
               <span className="relative inline-flex w-2 h-2 rounded-full bg-[#34d399]" />
             </span>
             <span className="text-[11px] font-semibold tracking-[0.18em] uppercase text-[#a7d4a7]">
-              Karbon Nötrleme · Şeffaf · Ölçülebilir
+              {t("badge")}
             </span>
           </motion.div>
 
@@ -139,7 +138,7 @@ export default function HeroSection() {
             className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16"
           >
             <MagneticCTA href="/bireysel/satin-al" variant="primary">
-              <span>Tohum Sipariş Et</span>
+              <span>{t("ctaPrimary")}</span>
               <motion.svg
                 className="w-5 h-5"
                 viewBox="0 0 24 24"
@@ -155,7 +154,7 @@ export default function HeroSection() {
               </motion.svg>
             </MagneticCTA>
             <MagneticCTA href="/kurumsal-cozumler" variant="ghost">
-              Kurumsal Çözümler
+              {t("ctaSecondary")}
             </MagneticCTA>
           </motion.div>
 

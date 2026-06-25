@@ -1,36 +1,54 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import createIntlMiddleware from "next-intl/middleware";
+import { routing } from "@/i18n/routing";
 import { updateSession } from "@/lib/supabase/middleware";
 
 /**
  * ════════════════════════════════════════════════════════════════════════
- * SSR Middleware — Supabase session yönetimi + rota koruma
+ * Middleware — Locale routing + Supabase session + Auth + CSRF
  * ════════════════════════════════════════════════════════════════════════
  *
  * Akış:
- *   1. API ödeme rotaları → anında NextResponse.next() (Iyzico callback/webhook)
- *   2. updateSession()   → Supabase cookie token yenileme (tüm sayfalar için şart)
- *   3. Herkese açık rotalar → response döner, auth redirect YOK
- *   4. Bakım modu kontrolü (/bireysel/*)
- *   5. Korumalı rotalar → oturum yoksa login'e yönlendir
- *   6. Auth sayfaları → oturum varsa ilgili panele yönlendir
+ *   1. /api/* rotaları için CSRF + public API bypass + auth (mevcut)
+ *   2. Sayfa rotaları için önce next-intl ile locale routing
+ *   3. Locale prefix'i strip ederek mevcut auth/redirect logic'i uygula
+ *   4. Korumalı rotalar (hesabim, kurumsal/panel, admin) auth zorunlu
  */
 
-/* ── Herkese açık sayfa rotaları ─────────────────────────────────────────
-   Bu kalıplardan birine uyan rota; updateSession() çalıştırılır (cookie
-   yenileme), ancak "oturum yok → redirect" kuralı UYGULANMAZ.
-   Misafir kullanıcılar bu sayfalara oturumsuz erişebilir.
-   ──────────────────────────────────────────────────────────────────────── */
+const intlMiddleware = createIntlMiddleware(routing);
+
+// Locale prefix'i pathname'den kaldır → "/en/hesabim" → "/hesabim"
+function stripLocale(pathname: string): string {
+  const match = pathname.match(/^\/(tr|en|ru)(\/|$)(.*)$/);
+  if (!match) return pathname;
+  const rest = match[3] || "";
+  return "/" + rest;
+}
+
+// Aktif locale'i pathname'den çıkar; default "tr"
+function getLocaleFromPath(pathname: string): string {
+  const match = pathname.match(/^\/(tr|en|ru)(\/|$)/);
+  return match ? match[1] : "tr";
+}
+
+// /en/hesabim, /ru/auth/login gibi yolları doğru locale prefix'i ile rebuild
+function localePath(path: string, locale: string): string {
+  if (locale === "tr") return path;
+  return `/${locale}${path}`;
+}
+
+/* ── Herkese açık sayfa rotaları (locale prefix'siz canonik form) ────── */
 const PUBLIC_PAGE_PATTERNS: RegExp[] = [
-  /^\/$/,                          // Vitrin ana sayfa
-  /^\/checkout(\/.*)?$/,           // Ödeme başarı / hata ekranları
-  /^\/sertifika(\/.*)?$/,          // Herkese açık dinamik sertifika sayfaları
-  /^\/kargo-takip(\/.*)?$/,        // Misafir kargo takip portalı (Magic Link)
-  /^\/bireysel\/odeme(\/.*)?$/,    // Misafir ödeme formu — Iyzico 3DS geri dönüşü
-  /^\/davet(\/.*)?$/,              // Referral / davet landing sayfaları
-  /^\/fatura(\/.*)?$/,             // Fatura görüntüleme (auth API route koruyor)
-  // Vitrin (pazarlama) sayfaları — herkese açık, auth gerektirmez
+  /^\/$/,
+  /^\/checkout(\/.*)?$/,
+  /^\/sertifika(\/.*)?$/,
+  /^\/kargo-takip(\/.*)?$/,
+  /^\/bireysel\/odeme(\/.*)?$/,
+  /^\/davet(\/.*)?$/,
+  /^\/fatura(\/.*)?$/,
   /^\/tohum-topu(\/.*)?$/,
+  /^\/tohumlarimiz(\/.*)?$/,
   /^\/dron-teknolojisi(\/.*)?$/,
   /^\/karbon-programi(\/.*)?$/,
   /^\/projeler(\/.*)?$/,
@@ -40,89 +58,75 @@ const PUBLIC_PAGE_PATTERNS: RegExp[] = [
   /^\/bilgi-al(\/.*)?$/,
 ];
 
-/* ── Herkese açık API önekleri ───────────────────────────────────────────
-   Bu öneklerle başlayan API istekleri; updateSession() bile çalıştırılmaz,
-   doğrudan NextResponse.next() ile geçirilir.
-   Kritik: Iyzico 3DS callback ve webhook POST istekleri auth engeline
-   çarptırılmamalı; aksi halde 401/500 alınır ve ödeme kaydı oluşmaz.
-   ──────────────────────────────────────────────────────────────────────── */
 const PUBLIC_API_PREFIXES: string[] = [
-  "/api/payment/callback",       // Iyzico 3DS callback/webhook
-  "/api/payment/guest-checkout", // Misafir ödeme başlatma
-  "/api/payment/checkout",       // Üye ödeme başlatma
-  "/api/payment/b2b-checkout",   // B2B ödeme başlatma
-  "/api/payment/status",         // Ödeme durum sorgulama
-  "/api/public/",                // Herkese açık veri endpoint'leri (ayarlar, referral, track)
-  "/api/auth/",                  // claim-order — signUp sonrası session henüz oturmamış olabilir
+  "/api/payment/callback",
+  "/api/payment/guest-checkout",
+  "/api/payment/checkout",
+  "/api/payment/b2b-checkout",
+  "/api/payment/status",
+  "/api/public/",
+  "/api/auth/",
 ];
 
-/* ── Yardımcı fonksiyonlar ──────────────────────────────────────────────── */
 function isPublicPage(pathname: string): boolean {
   return PUBLIC_PAGE_PATTERNS.some((re) => re.test(pathname));
 }
-
 function isPublicApi(pathname: string): boolean {
   return PUBLIC_API_PREFIXES.some((prefix) => pathname.startsWith(prefix));
 }
 
-/* ════════════════════════════════════════════════════════════════════════
-   Middleware
-   ════════════════════════════════════════════════════════════════════════ */
-// Sadece Iyzico 3DS callback'i CSRF guard'tan muaftır.
-// Iyzico kendi domain'inden POST gönderir; Origin header app host'a uyuşmaz.
 const CSRF_EXEMPT_PREFIXES = ["/api/payment/callback"] as const;
 const MUTATION_METHODS = new Set(["POST", "PUT", "PATCH", "DELETE"]);
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  /* ── 1. CSRF Koruması: tüm /api mutation istekleri ─────────────────────
-     POST / PUT / PATCH / DELETE çağrılarında Origin header'ı app origin'i
-     ile eşleşmeli. Aksi halde başka site formundan gelen forge'ed istek
-     reddedilir. Iyzico 3DS callback'i bu kuraldan muaftır.
-     ────────────────────────────────────────────────────────────────────── */
-  if (
-    pathname.startsWith("/api/") &&
-    MUTATION_METHODS.has(request.method) &&
-    !CSRF_EXEMPT_PREFIXES.some((p) => pathname.startsWith(p))
-  ) {
-    const origin = request.headers.get("origin");
-    const appHost = request.nextUrl.origin;
-    if (!origin || origin !== appHost) {
-      return NextResponse.json(
-        { error: "CSRF doğrulaması başarısız. İstek reddedildi." },
-        { status: 403 }
-      );
+  /* ── 1. API rotaları: locale prefix yok, mevcut logic ──────────────── */
+  if (pathname.startsWith("/api/")) {
+    // CSRF
+    if (
+      MUTATION_METHODS.has(request.method) &&
+      !CSRF_EXEMPT_PREFIXES.some((p) => pathname.startsWith(p))
+    ) {
+      const origin = request.headers.get("origin");
+      const appHost = request.nextUrl.origin;
+      if (!origin || origin !== appHost) {
+        return NextResponse.json(
+          { error: "CSRF doğrulaması başarısız. İstek reddedildi." },
+          { status: 403 }
+        );
+      }
     }
-  }
-
-  /* ── 1b. Ödeme API'leri / public veri uçları: anında geçiş ──────────────
-     Iyzico'nun bize attığı her türlü POST (3DS callback, webhook),
-     misafir checkout, public veri uçları hiçbir auth katmanına takılmamalı.
-     ────────────────────────────────────────────────────────────────────── */
-  if (isPublicApi(pathname)) {
-    return NextResponse.next();
-  }
-
-  /* ── 2. Supabase session yenileme ───────────────────────────────────────
-     Token rotation için updateSession her rota için çalıştırılmalı.
-     "user" null olabilir — aşağıdaki guard'lar buna göre karar verir.
-     ────────────────────────────────────────────────────────────────────── */
-  const { user, response } = await updateSession(request);
-
-  /* ── 3. Herkese açık sayfa rotaları: auth redirect YOK ─────────────────
-     Session yenileme tamamlandı, ancak oturum yoksa bile misafirler geçebilir.
-     Örnekler: /checkout/success, /bireysel/odeme, /kargo-takip, /sertifika/xxx
-     ────────────────────────────────────────────────────────────────────── */
-  if (isPublicPage(pathname)) {
+    if (isPublicApi(pathname)) {
+      return NextResponse.next();
+    }
+    // /api/admin/* için session refresh + downstream guard
+    const { response } = await updateSession(request);
     return response;
   }
 
-  /* ── 4. Bakım Modu: B2C sayfalarını bloke et ────────────────────────────
-     /bireysel/* rotaları maintenance_mode aktifse /bakim'e yönlenir.
-     Not: /bireysel/odeme yukarıda public olarak yakalanır; buraya ulaşamaz.
-     ────────────────────────────────────────────────────────────────────── */
-  if (pathname.startsWith("/bireysel")) {
+  /* ── 2. Sayfa rotaları: önce next-intl locale routing ───────────────── */
+  const intlResponse = intlMiddleware(request);
+
+  // Locale-aware path normalize: "/en/hesabim" → "/hesabim"
+  const cleanPath = stripLocale(pathname);
+  const locale = getLocaleFromPath(pathname);
+
+  /* ── 3. Public sayfa rotaları: auth redirect yok ────────────────────── */
+  if (isPublicPage(cleanPath)) {
+    // Supabase session refresh yine yapılır (cookie rotation için)
+    const { response } = await updateSession(request);
+    // intl response cookie'lerini koru
+    intlResponse.headers.forEach((value, key) => {
+      if (key === "x-middleware-rewrite" || key === "location" || key.startsWith("x-")) {
+        response.headers.set(key, value);
+      }
+    });
+    return response;
+  }
+
+  /* ── 4. Bakım Modu: /bireysel/* ─────────────────────────────────────── */
+  if (cleanPath.startsWith("/bireysel")) {
     try {
       const settingsRes = await fetch(
         `${request.nextUrl.origin}/api/public/settings`,
@@ -131,108 +135,66 @@ export async function middleware(request: NextRequest) {
       if (settingsRes.ok) {
         const settings = (await settingsRes.json()) as { maintenance_mode?: boolean };
         if (settings.maintenance_mode) {
-          return NextResponse.rewrite(new URL("/bakim", request.url));
+          return NextResponse.rewrite(new URL(localePath("/bakim", locale), request.url));
         }
       }
     } catch {
-      // Ayarlar çekilemezse geç — siteyi bloke etme
+      // ignore
     }
   }
 
-  /* ── 5. Korumalı rotalar ─────────────────────────────────────────────── */
+  /* ── 5. Auth flow + korumalı rotalar ────────────────────────────────── */
+  const { user, response } = await updateSession(request);
 
-  // /hesabim/* — bireysel üye paneli
-  if (pathname.startsWith("/hesabim")) {
+  if (cleanPath.startsWith("/hesabim")) {
     if (!user) {
-      const loginUrl = new URL("/auth/login", request.url);
+      const loginUrl = new URL(localePath("/auth/login", locale), request.url);
       loginUrl.searchParams.set("redirect", pathname);
       return NextResponse.redirect(loginUrl);
     }
     return response;
   }
 
-  // /admin/* (giriş sayfası hariç) — yönetici paneli
-  if (pathname.startsWith("/admin") && !pathname.startsWith("/admin/giris")) {
+  if (cleanPath.startsWith("/admin") && !cleanPath.startsWith("/admin/giris")) {
     if (!user) {
-      return NextResponse.redirect(new URL("/admin/giris", request.url));
+      return NextResponse.redirect(new URL(localePath("/admin/giris", locale), request.url));
     }
-    // Rol kontrolü client-side AdminProvider + RoleGuard ile yapılıyor
     return response;
   }
 
-  // /kurumsal/panel/* — kurumsal panel (giriş sayfası bu bloka girmez)
-  if (pathname.startsWith("/kurumsal/panel")) {
+  if (cleanPath.startsWith("/kurumsal/panel")) {
     if (!user) {
-      return NextResponse.redirect(new URL("/kurumsal/giris", request.url));
+      return NextResponse.redirect(new URL(localePath("/kurumsal/giris", locale), request.url));
     }
     return response;
   }
 
-  /* ── 6. Auth yönlendirme sayfaları ──────────────────────────────────────
-     Oturum açıksa kullanıcıyı ilgili panele yönlendir.
-     ────────────────────────────────────────────────────────────────────── */
-
-  // /auth/login veya /auth/register → hesabim
-  if (pathname.startsWith("/auth/login") || pathname.startsWith("/auth/register")) {
+  /* ── 6. Auth yönlendirme sayfaları ──────────────────────────────────── */
+  if (cleanPath.startsWith("/auth/login") || cleanPath.startsWith("/auth/register")) {
     if (user) {
-      return NextResponse.redirect(new URL("/hesabim", request.url));
+      return NextResponse.redirect(new URL(localePath("/hesabim", locale), request.url));
     }
     return response;
   }
-
-  // /admin/giris → admin panel
-  if (pathname === "/admin/giris") {
+  if (cleanPath === "/admin/giris") {
     if (user) {
-      return NextResponse.redirect(new URL("/admin", request.url));
+      return NextResponse.redirect(new URL(localePath("/admin", locale), request.url));
     }
     return response;
   }
-
-  // /kurumsal/giris → kurumsal panel
-  if (pathname === "/kurumsal/giris") {
+  if (cleanPath === "/kurumsal/giris") {
     if (user) {
-      return NextResponse.redirect(new URL("/kurumsal/panel", request.url));
+      return NextResponse.redirect(new URL(localePath("/kurumsal/panel", locale), request.url));
     }
     return response;
   }
 
-  return response;
+  return intlResponse;
 }
 
-/* ════════════════════════════════════════════════════════════════════════
-   Matcher — middleware'in hangi rota kalıplarında çalışacağını belirler.
-
-   KURAL: Matcher'a eklenen rotalar için middleware çalışır.
-          Matcher'a EKLENMEYENler için middleware hiç çalışmaz
-          (en verimli yol — /sertifika, /kargo-takip, /davet, /api/* bunlarda).
-          Yine de PUBLIC_PAGE_PATTERNS ve PUBLIC_API_PREFIXES listeleri
-          matcher genişletildiğinde savunma katmanı olarak koruma sağlar.
-   ════════════════════════════════════════════════════════════════════════ */
 export const config = {
   matcher: [
-    /*
-     * Şu ön ekleri HARİÇ TUT (Next.js static dosya ve sistem rotaları):
-     *   - _next/static  (statik dosyalar)
-     *   - _next/image   (resim optimizasyon)
-     *   - favicon.ico
-     *   - .svg / .png / .jpg gibi statik kaynaklar
-     *
-     * Sonra aşağıdaki uygulama rotaları için middleware çalıştır:
-     */
+    // Static assets ve favicon'u hariç tut
     "/((?!_next/static|_next/image|favicon\\.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|woff2?)$).*)",
-    /*
-     * Alternatif: eğer performans kritikse daha dar bir matcher kullanılabilir:
-     *
-     * "/hesabim/:path*",
-     * "/admin/:path*",
-     * "/kurumsal/:path*",
-     * "/auth/:path*",
-     * "/bireysel/:path*",
-     * "/checkout/:path*",
-     *
-     * Dar matcher'da /sertifika, /kargo-takip, /davet, /fatura rotaları
-     * matcher dışında kalır (middleware çalışmaz = zaten public).
-     * Ancak PUBLIC_PAGE_PATTERNS güvencesi de çalışmaz — iki seçenek de doğru.
-     */
   ],
 };

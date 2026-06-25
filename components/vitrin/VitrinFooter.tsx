@@ -152,7 +152,7 @@ export default function VitrinFooter() {
                 </li>
               ))}
             </ul>
-            <LanguageSwitcher variant="dark" />
+            <LanguageSwitcher dark />
           </div>
         </div>
       </div>

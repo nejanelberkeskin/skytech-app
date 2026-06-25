@@ -41,17 +41,30 @@ const APP_ENTRY_PAGES: SitemapEntry[] = [
   // dahil etmiyoruz (robots.txt disallow'da da var).
 ];
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  // Build sırasında deploy zamanını "lastModified" olarak kullanıyoruz —
-  // sayfa içerik güncellendiğinde rebuild olduğu için sinyali doğru.
-  const lastModified = new Date();
+const LOCALES = ["tr", "en", "ru"] as const;
+const DEFAULT_LOCALE = "tr";
 
+function localizedUrl(path: string, locale: string): string {
+  if (locale === DEFAULT_LOCALE) return `${SITE_URL}${path}`;
+  return `${SITE_URL}/${locale}${path}`;
+}
+
+export default function sitemap(): MetadataRoute.Sitemap {
+  const lastModified = new Date();
   const all: SitemapEntry[] = [...VITRIN_PAGES, ...APP_ENTRY_PAGES];
 
-  return all.map((entry) => ({
-    url: `${SITE_URL}${entry.path}`,
-    lastModified,
-    changeFrequency: entry.changeFrequency,
-    priority: entry.priority,
-  }));
+  // Her sayfa için 3 dilde URL üret + alternates ile hreflang sinyali ver
+  return all.flatMap((entry) =>
+    LOCALES.map((locale) => ({
+      url: localizedUrl(entry.path, locale),
+      lastModified,
+      changeFrequency: entry.changeFrequency,
+      priority: entry.priority,
+      alternates: {
+        languages: Object.fromEntries(
+          LOCALES.map((l) => [l, localizedUrl(entry.path, l)])
+        ),
+      },
+    }))
+  );
 }

@@ -3,6 +3,7 @@
 import { AnimatePresence, motion, type Variants } from "framer-motion";
 import Image from "next/image";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import SectionWrapper from "../SectionWrapper";
 import SectionHeading from "../SectionHeading";
 
@@ -18,60 +19,45 @@ type Tab = {
   image: string;
 };
 
-const TABS: Tab[] = [
-  {
-    id: "yangin",
-    label: "Yangın Sonrası",
-    Icon: FlameIcon,
-    title: "Yanan Ormanları Yeniden Yeşertiyoruz",
-    description:
-      "Yanan orman arazilerinin ekolojik dinamiklerini geri kazandırmak için otonom drone filoları ve yüksek çimlenme oranlarına sahip tohum toplarımızla, geniş ölçekli alanlarda hızlı ve sürdürülebilir biçimde yeniden ormanlaştırma sürdürüyoruz.",
-    bullets: [
-      "İş güvenliği: Yangın sonrası gevşeyen toprak ve heyelan riskinde insan hayatını riske atmaz",
-      "Altın zaman dilimi: Toprak besin değerini kaybetmeden, erozyon başlamadan hızla müdahale",
-      "GIS ile homojen dağılım: m² başına düşen tohum miktarı hassas ayarlanır",
-      "Dijital izlenebilirlik: Her koordinat kayıt altında, çimlenme uydudan takip edilir",
-    ],
-    stat: "%65+",
-    statLabel: "Çimlenme oranı",
-    image: "/images/impact/yangin-sonrasi.webp",
-  },
-  {
-    id: "maden",
-    label: "Maden Sahaları",
-    Icon: LandIcon,
-    title: "Maden Sahalarının Ekolojik Restorasyonu",
-    description:
-      "Madencilik sonucu doğal yapısı, bitki örtüsü ve toprak kalitesi bozulmuş sahaların restorasyonunu İHA ve optimize edilmiş tohum topu metodolojileriyle hızlandırıyoruz. Uzaktan algılama ve yapay zekâ ile topoğrafyası bozulmuş arazilerde vejetasyon başarısını artırıyor; kademeli ve sürdürülebilir bir orman ekosistemi kuruyoruz.",
-    bullets: [
-      "Bir drone uçuşunda 200+ tohum — geleneksel yöntemlere göre 10 kat daha hızlı",
-      "Sıfır saha tahribatı: minimum çevresel ayak iziyle maksimum restorasyon etkisi",
-      "Tam şeffaflık: tohumun türü, orijini, çimlenme oranı uçtan uca kayıt altında",
-      "Yıllık izleme: periyodik drone uçuşlarıyla yüksek çözünürlüklü dijital veri",
-      "Yasal uyumluluk: T.C. Orman Bölge Müdürlükleri koordinasyonunda %100 yasal",
-    ],
-    stat: "10×",
-    statLabel: "Geleneksele göre hız",
-    image: "/images/impact/maden-sahasi.webp",
-  },
-  {
-    id: "karbon",
-    label: "Karbon Nötrleme",
-    Icon: AtomIcon,
-    title: "Holding ve Şirketler İçin Uçtan Uca Karbon Nötrleme",
-    description:
-      "Yıllık sera gazı emisyonlarınızı uluslararası standartlarda hesaplıyor, drone teknolojisiyle yüksek karbon yutak alanları (biyo-karbon ekosistemleri) inşa ediyor ve tüm süreci şeffaf biçimde ESG raporlarınıza entegre ediyoruz. Kurumsal panelimiz ile ESG yazılımınız arasında API entegrasyonu sağlayarak veri akışını otomatik hale getiriyoruz.",
-    bullets: [
-      "Şirket karbon ayak izi hesaplaması — uluslararası standartlarda",
-      "Markanıza özel, drone teknolojisiyle desteklenen orman",
-      "Çalışan sertifikası — bireysel karbon atıfı",
-      "ESG, GRI, CDP raporlarına hazır veri — API ile otomatik akış",
-    ],
-    stat: "ESG",
-    statLabel: "Tam uyum",
-    image: "/images/impact/karbon-notreleme.webp",
-  },
-];
+function useTabs(): Tab[] {
+  const t = useTranslations("impactTabs.tabs");
+  return [
+    {
+      id: "yangin",
+      label: t("fire.label"),
+      Icon: FlameIcon,
+      title: t("fire.title"),
+      description: t("fire.description"),
+      bullets: t.raw("fire.bullets") as string[],
+      stat: t("fire.stat"),
+      statLabel: t("fire.statLabel"),
+      image: "/images/impact/yangin-sonrasi.webp",
+    },
+    {
+      id: "maden",
+      label: t("mining.label"),
+      Icon: LandIcon,
+      title: t("mining.title"),
+      description: t("mining.description"),
+      bullets: t.raw("mining.bullets") as string[],
+      stat: t("mining.stat"),
+      statLabel: t("mining.statLabel"),
+      image: "/images/impact/maden-sahasi.webp",
+    },
+    {
+      id: "karbon",
+      label: t("carbon.label"),
+      Icon: AtomIcon,
+      title: t("carbon.title"),
+      description: t("carbon.description"),
+      bullets: t.raw("carbon.bullets") as string[],
+      stat: t("carbon.stat"),
+      statLabel: t("carbon.statLabel"),
+      image: "/images/impact/karbon-notreleme.webp",
+    },
+  ];
+}
+
 
 const contentVariants: Variants = {
   initial: { opacity: 0, y: 12 },
@@ -80,6 +66,8 @@ const contentVariants: Variants = {
 };
 
 export default function ImpactTabs() {
+  const tSection = useTranslations("impactTabs");
+  const TABS = useTabs();
   const [active, setActive] = useState(TABS[0].id);
   const tab = TABS.find((t) => t.id === active) ?? TABS[0];
 
@@ -90,15 +78,15 @@ export default function ImpactTabs() {
 
       <div className="relative">
         <SectionHeading
-          badge="Etki Alanları"
+          badge={tSection("badge")}
           title={
             <>
-              Nerelerde
+              {tSection("titleLine1")}
               <br />
-              <span className="text-gradient-aurora">Etkimiz Var</span>
+              <span className="text-gradient-aurora">{tSection("titleAccent")}</span>
             </>
           }
-          subtitle="Üç kritik ekosistem alanında, bilimle ve teknolojiyle ölçülebilir değişim yaratıyoruz."
+          subtitle={tSection("subtitle")}
         />
 
         {/* Tab list */}

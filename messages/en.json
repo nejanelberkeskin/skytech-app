@@ -99,7 +99,50 @@
           "Digital traceability: Every coordinate is logged, germination is monitored from satellites"
         ],
         "stat": "65%+",
-        "statLabel": "Germination rate"
+        "statLabel": "Germination rate",
+        "showDetails": "Show Details",
+        "hideDetails": "Hide Details",
+        "detailIntro": "The scientific foundation of UAV + seed ball rehabilitation in burned areas:",
+        "detailGroups": [
+          {
+            "title": "Accessibility and Logistical Advantages",
+            "items": [
+              { "title": "Labor Savings", "description": "Work that would take hundreds of laborers weeks of manual planting is completed by autonomous drone fleets in a fraction of the time." },
+              { "title": "Worker Safety", "description": "Planting is carried out on loose post-fire soil, fallen trees and landslide-prone terrain without putting human lives at risk." }
+            ]
+          },
+          {
+            "title": "Higher Germination and Survival Rate",
+            "items": [
+              { "title": "Protective Coating", "description": "The clay, compost and nutrients inside seed balls shield the seed from birds, rodents and ants." },
+              { "title": "Micro-Habitat Support", "description": "The seed ball carries the moisture and organic nutrients needed for germination right in its first layer." },
+              { "title": "Natural Adaptation", "description": "Because seeds are not buried deep in the soil, they germinate at the right time and in their natural cycle, together with the rain." }
+            ]
+          },
+          {
+            "title": "Time and Cost Efficiency",
+            "items": [
+              { "title": "Speed and Wide-Area Coverage", "description": "A single drone can drop thousands of seed balls homogeneously over a wide hectarage in a day." },
+              { "title": "Lower Cost", "description": "Optimizes reforestation budgets by removing seedling growing, transport, hole digging and planting labor costs." },
+              { "title": "Critical Time Management", "description": "Allows fast intervention right after the fire — in the critical \"golden window\" before the soil loses nutrients and erosion begins." }
+            ]
+          },
+          {
+            "title": "Technological and Scientific Precision",
+            "items": [
+              { "title": "GIS and Mapping Integration", "description": "Thanks to 3D maps prepared in advance, seeds are not dropped randomly but placed precisely on micro-basins and moist points where germination probability is highest." },
+              { "title": "Homogeneous Distribution", "description": "Sensors and autonomous algorithms finely tune the seed count per m²; over-density or gaps are prevented." },
+              { "title": "Digital Traceability", "description": "Since drop coordinates are logged in the system, germination success and vegetation development are easily tracked by satellites or drones in the following months." }
+            ]
+          },
+          {
+            "title": "Maximum Restoration with Minimum Environmental Footprint",
+            "items": [
+              { "title": "Soil Protection", "description": "Prevents heavy machinery and intense human traffic from compacting the soil, protecting the post-fire sensitive topsoil from erosion." },
+              { "title": "Ecosystem-Friendly", "description": "Using only native flora seeds preserves the region's natural gene pool and supports ecological succession without disruption." }
+            ]
+          }
+        ]
       },
       "mining": {
         "label": "Mining Sites",
@@ -110,6 +153,7 @@
           "Zero ground footprint: maximum restoration with the smallest environmental footprint",
           "Full transparency: seed species, origin and germination rates logged end-to-end",
           "Annual monitoring: high-resolution digital data via periodic drone flights",
+          "Corporate integration: every sale on your e-commerce site flows straight into your ESG reports via API",
           "Legal compliance: 100% compliant, coordinated with Regional Forestry Directorates"
         ],
         "stat": "10×",

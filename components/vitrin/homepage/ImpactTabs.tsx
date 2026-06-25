@@ -65,11 +65,24 @@ const contentVariants: Variants = {
   exit: { opacity: 0, y: -8, transition: { duration: 0.25 } },
 };
 
+type DetailItem = { title: string; description: string };
+type DetailGroup = { title: string; items: DetailItem[] };
+
 export default function ImpactTabs() {
   const tSection = useTranslations("impactTabs");
+  const tFire = useTranslations("impactTabs.tabs.fire");
   const TABS = useTabs();
   const [active, setActive] = useState(TABS[0].id);
+  const [detailsOpen, setDetailsOpen] = useState(false);
   const tab = TABS.find((t) => t.id === active) ?? TABS[0];
+
+  // Yalnız yangın tab'ı seçili olduğunda accordion render edilir
+  const fireDetailGroups = active === "yangin"
+    ? (tFire.raw("detailGroups") as DetailGroup[])
+    : null;
+  const fireIntro = active === "yangin" ? tFire("detailIntro") : "";
+  const fireShow = active === "yangin" ? tFire("showDetails") : "";
+  const fireHide = active === "yangin" ? tFire("hideDetails") : "";
 
   return (
     <SectionWrapper variant="light" className="relative overflow-hidden">
@@ -195,6 +208,60 @@ export default function ImpactTabs() {
                   </motion.li>
                 ))}
               </ul>
+
+              {/* Yangın tab'ı için detaylı 5 başlık × 14 alt madde accordion */}
+              {fireDetailGroups && (
+                <div className="mt-8 pt-6 border-t border-[#1B6B3A]/15">
+                  <button
+                    type="button"
+                    onClick={() => setDetailsOpen((v) => !v)}
+                    aria-expanded={detailsOpen}
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#1B6B3A]/8 hover:bg-[#1B6B3A]/12 text-[#1B6B3A] text-xs font-bold uppercase tracking-[0.14em] transition-colors"
+                  >
+                    {detailsOpen ? fireHide : fireShow}
+                    <svg
+                      className={`w-3.5 h-3.5 transition-transform ${detailsOpen ? "rotate-180" : ""}`}
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth={2.5}
+                    >
+                      <polyline points="6 9 12 15 18 9" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </button>
+
+                  <AnimatePresence>
+                    {detailsOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                        className="overflow-hidden"
+                      >
+                        <p className="text-sm italic text-[#3d5a3d]/80 mt-5 mb-4">{fireIntro}</p>
+                        <div className="space-y-5">
+                          {fireDetailGroups.map((group, gi) => (
+                            <div key={group.title} className="vitrin-card p-5">
+                              <h4 className="text-sm font-bold uppercase tracking-[0.14em] text-[#1B6B3A] mb-3">
+                                {gi + 1}. {group.title}
+                              </h4>
+                              <ul className="space-y-2.5">
+                                {group.items.map((item) => (
+                                  <li key={item.title} className="text-sm">
+                                    <strong className="text-[#1a2e1a]">{item.title}:</strong>{" "}
+                                    <span className="text-[#3d5a3d] leading-relaxed">{item.description}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          ))}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              )}
             </div>
           </motion.div>
         </AnimatePresence>

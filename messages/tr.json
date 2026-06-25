@@ -99,7 +99,50 @@
           "Dijital izlenebilirlik: Her koordinat kayıt altında, çimlenme uydudan takip edilir"
         ],
         "stat": "%65+",
-        "statLabel": "Çimlenme oranı"
+        "statLabel": "Çimlenme oranı",
+        "showDetails": "Detayları Göster",
+        "hideDetails": "Detayları Gizle",
+        "detailIntro": "Yanan alanların rehabilitasyonunda İHA + tohum topu yönteminin bilimsel temelleri:",
+        "detailGroups": [
+          {
+            "title": "Erişilebilirlik ve Lojistik Avantajlar",
+            "items": [
+              { "title": "İş Gücü Tasarrufu", "description": "İnsan gücüyle yapılacak ekim yöntemiyle yüzlerce işçinin haftalarca süren çalışmasını, otonom dron filoları çok kısa sürede tamamlar." },
+              { "title": "İş Güvenliği", "description": "Yangın sonrası gevşeyen toprak, devrilen ağaçlar ve heyelan riski barındıran tehlikeli arazilerde insan hayatını riske atmadan ekim yapar." }
+            ]
+          },
+          {
+            "title": "Yüksek Çimlenme ve Hayatta Kalma Oranı",
+            "items": [
+              { "title": "Koruyucu Katman", "description": "Tohum toplarındaki kil, kompost ve besin maddeleri; tohumu kuşlar, kemirgenler ve karıncalardan korur." },
+              { "title": "Mikro Habitat Desteği", "description": "Tohum topu, çimlenme için gereken nemi ve organik besini ilk aşamada kendi içinde barındırır." },
+              { "title": "Doğal Adaptasyon", "description": "Tohumlar toprak derinliğine gömülmediği için yağmurlarla birlikte en doğru zamanda ve doğal döngüsünde çimlenir." }
+            ]
+          },
+          {
+            "title": "Zaman ve Maliyet Verimliliği",
+            "items": [
+              { "title": "Hız ve Geniş Alan Kapsamı", "description": "Bir dron, günde binlerce tohum topunu çok geniş bir hektara homojen şekilde bırakır." },
+              { "title": "Düşük Maliyet", "description": "Fidan yetiştirme, nakliye, çukur kazma ve dikim işçiliği maliyetlerini ortadan kaldırarak ağaçlandırma bütçesini optimize eder." },
+              { "title": "Kritik Zaman Yönetimi", "description": "Yangından hemen sonra, toprağın besin değerini kaybetmediği ve erozyonun başlamadığı kritik 'altın zaman diliminde' hızla müdahale imkanı tanır." }
+            ]
+          },
+          {
+            "title": "Teknolojik ve Bilimsel Hassasiyet",
+            "items": [
+              { "title": "GIS ve Haritalama Entegrasyonu", "description": "Alanın önceden çıkarılan 3 boyutlu haritaları sayesinde tohumlar rastgele değil, çimlenme olasılığı en yüksek mikro havzalara ve nemli noktalara nokta atışı bırakılır." },
+              { "title": "Homojen Dağılım", "description": "Sensörler ve otonom algoritmalarla m² başına düşecek tohum miktarı hassas ayarlanır; aşırı sıkışıklık veya boşluklar önlenir." },
+              { "title": "Dijital İzlenebilirlik", "description": "Tohumların atıldığı koordinatlar sisteme kaydedildiği için, çimlenme başarısı ve bitki örtüsü gelişimi uydular veya dronlarla kolayca takip edilir." }
+            ]
+          },
+          {
+            "title": "Minimum Çevresel Ayak İziyle Maksimum Restorasyon Etkisi",
+            "items": [
+              { "title": "Toprak Koruması", "description": "Ağır iş makineleri ve yoğun insan trafiğinin toprağı sıkıştırmasını, yangın sonrası hassaslaşan üst toprak tabakasının erozyona uğramasını engeller." },
+              { "title": "Ekosistem Dostu", "description": "Yalnızca yerel floraya ait tohumlar kullanılarak bölgenin doğal gen kaynakları korunur ve ekolojik süksesyon bozulmadan desteklenir." }
+            ]
+          }
+        ]
       },
       "mining": {
         "label": "Maden Sahaları",
@@ -110,6 +153,7 @@
           "Sıfır saha tahribatı: minimum çevresel ayak iziyle maksimum restorasyon etkisi",
           "Tam şeffaflık: tohumun türü, orijini, çimlenme oranı uçtan uca kayıt altında",
           "Yıllık izleme: periyodik drone uçuşlarıyla yüksek çözünürlüklü dijital veri",
+          "Kurumsal entegrasyon: API ile e-ticaret sitenizdeki her satış doğrudan ESG raporlarınıza aktarılır",
           "Yasal uyumluluk: T.C. Orman Bölge Müdürlükleri koordinasyonunda %100 yasal"
         ],
         "stat": "10×",

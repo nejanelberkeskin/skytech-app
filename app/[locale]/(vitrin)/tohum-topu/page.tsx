@@ -99,8 +99,26 @@ export default function TohumTopuPage() {
         </div>
       </SectionWrapper>
 
+      {/* Akademik literatür + laboratuvar analiziyle bilimsel tasarım */}
+      <SectionWrapper variant="tinted" className="!py-16">
+        <div className="max-w-3xl mx-auto text-center">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#1B6B3A]/8 text-[#1B6B3A] mb-5 text-xs font-semibold uppercase tracking-wider">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#1B6B3A]" />
+            Bilimsel Tasarım
+          </div>
+          <h2 className="text-3xl lg:text-4xl font-bold text-[#1a2e1a] leading-tight mb-5">
+            <span className="text-gradient-forest">Akademik Literatür + Laboratuvar</span> Analizleri
+          </h2>
+          <p className="text-base text-[#3d5a3d] leading-relaxed">
+            Akademik literatür ve laboratuvar analizleriyle optimize edilen tohum topu teknolojimiz;
+            uzman ekibimizin araştırmaları sonucunda, doğadaki en zorlu koşullarda bile maksimum
+            çimlenme ve kök gelişimi başarısı sunmak üzere bilimsel olarak tasarlanmıştır.
+          </p>
+        </div>
+      </SectionWrapper>
+
       {/* Bileşenler */}
-      <SectionWrapper variant="tinted">
+      <SectionWrapper variant="light">
         <SectionHeading
           badge="Formülasyon"
           title={<>Üç Bileşen, <span className="text-gradient-forest">Mükemmel Denge</span></>}

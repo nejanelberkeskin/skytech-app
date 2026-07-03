@@ -15,9 +15,9 @@ const ADVANTAGES: Advantage[] = [
   { title: "Hızlı Ekim", description: "Bir drone uçuşunda 200+ tohum. Geleneksel yöntemlere kıyasla 10 kat hız.", Icon: BoltIcon },
   { title: "Sıfır Saha Tahribatı", description: "Havadan ekim, ekosistemi koruyor. İnsan ayağının değmediği bölgelere bile ulaşıyor.", Icon: LeafIcon },
   { title: "Tam Şeffaflık", description: "Her tohumun ağaçtan toplanma tarihi, orijin bilgisi ve türü blok zinciriyle doğrulanır. Tedarik zinciri uçtan uca şeffaf.", Icon: EyeIcon },
-  { title: "Yıllık İzleme", description: "Periyodik drone uçuşlarıyla büyüme takip ediliyor. Veriler kurumsal panonuzda.", Icon: SatelliteIcon },
+  { title: "Yıllık İzleme", description: "Periyodik uçuş verileri, büyüme metrikleri ve karbon nötrleme sonuçlarınız kurumsal panomuzda anlık olarak güncellenir.", Icon: SatelliteIcon },
   { title: "Kurumsal Entegrasyon", description: "API entegrasyonu ile e-ticaret sepetinden ESG raporuna kadar tam uyum.", Icon: BuildingIcon },
-  { title: "Yasal Uyumluluk", description: "T.C. Orman Bölge Müdürlükleri koordinasyonunda, %100 yasal izin ve mevzuat uyumluluğu çerçevesinde projeler.", Icon: ShieldIcon },
+  { title: "Yasal Uyumluluk", description: "Orman Bölge Müdürlükleri koordinasyonunda, %100 yasal izin ve mevzuat uyumluluğu çerçevesinde projeler.", Icon: ShieldIcon },
 ];
 
 const containerVariants: Variants = {
@@ -54,7 +54,7 @@ export default function AdvantagesGrid() {
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-6"
         >
           {ADVANTAGES.map((adv) => (
-            <motion.div key={adv.title} variants={itemVariants}>
+            <motion.div key={adv.title} variants={itemVariants} className="h-full">
               <AdvantageCard adv={adv} />
             </motion.div>
           ))}
@@ -92,7 +92,7 @@ function AdvantageCard({ adv }: { adv: Advantage }) {
       onMouseMove={handleMove}
       onMouseLeave={handleLeave}
       style={{ rotateX, rotateY, transformPerspective: 1000, transformStyle: "preserve-3d" }}
-      className="spotlight-card relative vitrin-card p-7 flex items-start gap-5 group"
+      className="spotlight-card relative vitrin-card p-7 flex items-start gap-5 group h-full"
     >
       <motion.div
         whileHover={{ scale: 1.1, rotate: -3 }}

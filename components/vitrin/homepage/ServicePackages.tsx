@@ -47,7 +47,6 @@ const PACKAGES: Package[] = [
       "Yıllık drone takip raporları",
       "Karbon nötrleme sertifikası",
       "Hediyeleştirme + paylaşılabilir profil",
-      "Hatıra ormanı opsiyonu",
     ],
     cta: { label: "Profesyonel Ekim Başlat", href: "/bireysel/satin-al" },
     highlight: true,

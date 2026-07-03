@@ -37,6 +37,8 @@ export default function OrganizationSchema() {
         },
         address: {
           "@type": "PostalAddress",
+          streetAddress: ORG_ADDRESS.street,
+          addressRegion: ORG_ADDRESS.district,
           addressLocality: ORG_ADDRESS.city,
           addressCountry: ORG_ADDRESS.countryCode,
         },

@@ -13,28 +13,16 @@ const MILESTONES = [
       "Manavgat ve Marmaris yangınları sonrası, drone teknolojisinin yangın bölgelerinde nasıl etkili olabileceği üzerine ar-ge çalışmaları başladı.",
   },
   {
-    year: "2023",
-    title: "Pilot Drone Filomuz",
-    description:
-      "İlk RTK GPS donanımlı drone filomuz hizmete girdi. Bolu Mengen'de pilot ekim projesi — 1.500 tohum, %68 çimlenme.",
-  },
-  {
-    year: "2024",
-    title: "Orman Bölge Müdürlükleri Protokolü",
-    description:
-      "Türkiye genelinde 6 Orman Bölge Müdürlüğü ile koordinasyon protokolü imzalandı. Tedarik zinciri uçtan uca şeffaf hale geldi.",
-  },
-  {
     year: "2025",
-    title: "Kurumsal Ormanlaştırma Programı",
+    title: "Orman Genel Müdürlüğü ile Görüşmeler",
     description:
-      "İlk holding entegrasyonu: 12.500 ağaçlık kurumsal alan, çalışan sertifikası ve ESG raporlama modülü canlıya alındı.",
+      "Orman Genel Müdürlüğü ile görüşmeler başladı; ormanlaştırma sahalarında iş birliği için zemin hazırlandı.",
   },
   {
     year: "2026",
-    title: "Ölçek & Otomasyon",
+    title: "Çalışmalar ve Protokoller",
     description:
-      "API entegrasyonu, e-ticaret \"sepete tohum ekle\" widget'ı ve otonom drone görev sistemi devreye girdi. 4 ilde aktif operasyon.",
+      "Orman Genel Müdürlüğü ile çalışmalar başlatıldı ve protokoller imzalandı. Çanakkale, İzmir ve Bursa'da demo sahalar hayata geçirildi.",
   },
 ];
 

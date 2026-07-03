@@ -83,7 +83,7 @@
     }
   },
   "impactTabs": {
-    "badge": "Impact Areas",
+    "badge": "Advantages",
     "titleLine1": "Where We",
     "titleAccent": "Make a Difference",
     "subtitle": "We create measurable change in three critical ecosystem domains, powered by science and technology.",
@@ -107,39 +107,78 @@
           {
             "title": "Accessibility and Logistical Advantages",
             "items": [
-              { "title": "Labor Savings", "description": "Work that would take hundreds of laborers weeks of manual planting is completed by autonomous drone fleets in a fraction of the time." },
-              { "title": "Worker Safety", "description": "Planting is carried out on loose post-fire soil, fallen trees and landslide-prone terrain without putting human lives at risk." }
+              {
+                "title": "Labor Savings",
+                "description": "Work that would take hundreds of laborers weeks of manual planting is completed by autonomous drone fleets in a fraction of the time."
+              },
+              {
+                "title": "Worker Safety",
+                "description": "Planting is carried out on loose post-fire soil, fallen trees and landslide-prone terrain without putting human lives at risk."
+              }
             ]
           },
           {
             "title": "Higher Germination and Survival Rate",
             "items": [
-              { "title": "Protective Coating", "description": "The clay, compost and nutrients inside seed balls shield the seed from birds, rodents and ants." },
-              { "title": "Micro-Habitat Support", "description": "The seed ball carries the moisture and organic nutrients needed for germination right in its first layer." },
-              { "title": "Natural Adaptation", "description": "Because seeds are not buried deep in the soil, they germinate at the right time and in their natural cycle, together with the rain." }
+              {
+                "title": "Protective Coating",
+                "description": "The clay, compost and nutrients inside seed balls shield the seed from birds, rodents and ants."
+              },
+              {
+                "title": "Micro-Habitat Support",
+                "description": "The seed ball carries the moisture and organic nutrients needed for germination right in its first layer."
+              },
+              {
+                "title": "Natural Adaptation",
+                "description": "Because seeds are not buried deep in the soil, they germinate at the right time and in their natural cycle, together with the rain."
+              }
             ]
           },
           {
             "title": "Time and Cost Efficiency",
             "items": [
-              { "title": "Speed and Wide-Area Coverage", "description": "A single drone can drop thousands of seed balls homogeneously over a wide hectarage in a day." },
-              { "title": "Lower Cost", "description": "Optimizes reforestation budgets by removing seedling growing, transport, hole digging and planting labor costs." },
-              { "title": "Critical Time Management", "description": "Allows fast intervention right after the fire — in the critical \"golden window\" before the soil loses nutrients and erosion begins." }
+              {
+                "title": "Speed and Wide-Area Coverage",
+                "description": "A single drone can drop thousands of seed balls homogeneously over a wide hectarage in a day."
+              },
+              {
+                "title": "Lower Cost",
+                "description": "Optimizes reforestation budgets by removing seedling growing, transport, hole digging and planting labor costs."
+              },
+              {
+                "title": "Critical Time Management",
+                "description": "Allows fast intervention right after the fire — in the critical \"golden window\" before the soil loses nutrients and erosion begins."
+              }
             ]
           },
           {
             "title": "Technological and Scientific Precision",
             "items": [
-              { "title": "GIS and Mapping Integration", "description": "Thanks to 3D maps prepared in advance, seeds are not dropped randomly but placed precisely on micro-basins and moist points where germination probability is highest." },
-              { "title": "Homogeneous Distribution", "description": "Sensors and autonomous algorithms finely tune the seed count per m²; over-density or gaps are prevented." },
-              { "title": "Digital Traceability", "description": "Since drop coordinates are logged in the system, germination success and vegetation development are easily tracked by satellites or drones in the following months." }
+              {
+                "title": "GIS and Mapping Integration",
+                "description": "Thanks to 3D maps prepared in advance, seeds are not dropped randomly but placed precisely on micro-basins and moist points where germination probability is highest."
+              },
+              {
+                "title": "Homogeneous Distribution",
+                "description": "Sensors and autonomous algorithms finely tune the seed count per m²; over-density or gaps are prevented."
+              },
+              {
+                "title": "Digital Traceability",
+                "description": "Since drop coordinates are logged in the system, germination success and vegetation development are easily tracked by satellites or drones in the following months."
+              }
             ]
           },
           {
             "title": "Maximum Restoration with Minimum Environmental Footprint",
             "items": [
-              { "title": "Soil Protection", "description": "Prevents heavy machinery and intense human traffic from compacting the soil, protecting the post-fire sensitive topsoil from erosion." },
-              { "title": "Ecosystem-Friendly", "description": "Using only native flora seeds preserves the region's natural gene pool and supports ecological succession without disruption." }
+              {
+                "title": "Soil Protection",
+                "description": "Prevents heavy machinery and intense human traffic from compacting the soil, protecting the post-fire sensitive topsoil from erosion."
+              },
+              {
+                "title": "Ecosystem-Friendly",
+                "description": "Using only native flora seeds preserves the region's natural gene pool and supports ecological succession without disruption."
+              }
             ]
           }
         ]
@@ -186,9 +225,9 @@
   },
   "ourSeeds": {
     "breadcrumbTitle": "Our Native Seeds",
-    "breadcrumbSubtitle": "Each seed is chosen for the climate and ecosystem of its region. The properties of the five native species used in Skytech Green seed ball projects.",
+    "breadcrumbSubtitle": "Each seed is chosen for the climate and ecosystem of its region. The properties of the four native species used in Skytech Green seed ball projects.",
     "sectionBadge": "Species",
-    "sectionTitleLine": "Five Native",
+    "sectionTitleLine": "Four Native",
     "sectionTitleAccent": "Species",
     "sectionSubtitle": "Each species is matched to the climate and soil of its planting region. Our seeds are sourced from Republic of Türkiye Regional Forestry Directorates.",
     "footnote": "Our regionally-suited seeds are sourced from the relevant Regional Forestry Directorates; species, collection dates, and origin of every seed are securely verified by blockchain technology.",

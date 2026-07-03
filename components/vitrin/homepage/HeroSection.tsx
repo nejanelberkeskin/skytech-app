@@ -114,7 +114,7 @@ export default function HeroSection() {
           </motion.div>
 
           {/* Headline — word-by-word reveal */}
-          <h1 className="display-headline text-6xl sm:text-7xl lg:text-8xl xl:text-[9.5rem] font-bold mb-10">
+          <h1 className="display-headline text-6xl sm:text-7xl lg:text-8xl xl:text-[9.5rem] font-bold mb-10 leading-[1.05]">
             <WordReveal text={HEADLINE_LINE_1} className="text-white" delay={0.15} />
             <br />
             <WordReveal text={HEADLINE_LINE_2} gradient delay={0.5} />
@@ -222,7 +222,7 @@ function WordReveal({
   return (
     <span className={`${gradient ? "text-gradient-aurora" : ""} ${className}`}>
       {words.map((word, i) => (
-        <span key={i} className="inline-block overflow-hidden align-bottom">
+        <span key={i} className="inline-block overflow-hidden align-bottom py-[0.1em]">
           <motion.span
             className="inline-block"
             initial={{ y: "110%", opacity: 0 }}

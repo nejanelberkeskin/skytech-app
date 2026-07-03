@@ -24,10 +24,37 @@ export const metadata = buildPageMetadata({
 });
 
 const METRICS = [
-  { value: "5kg", label: "CO₂ / Ağaç / Yıl", desc: "Olgun bir ağaç yıllık ortalama 5kg karbondioksit emer." },
-  { value: "0,025t", label: "CO₂ / Tohum", desc: "Bir tohum topu 25 yılda 0,025 ton CO₂ tutar." },
-  { value: "%65+", label: "Çimlenme", desc: "Ağaca dönüşen tohum oranı, geleneksel ekimin 3 katı." },
-  { value: "GRI/CDP", label: "Uyumlu", desc: "Veri formatlarımız uluslararası raporlama standartlarına uygun." },
+  { value: "10–25 kg", label: "CO₂ / Ağaç / Yıl", desc: "Bir ağacın ortalama yıllık karbondioksit emilimi; tür, yaş ve iklime göre değişir.", ref: 1 },
+  { value: "4,5–40,7 t", label: "CO₂ / ha / Yıl", desc: "Genç ağaçlandırma alanlarının ilk 20 yıldaki hektar başına karbon giderim aralığı.", ref: 2 },
+  { value: "~550 g", label: "CO₂ / m² / Yıl", desc: "Akdeniz çam ormanlarında ölçülen organik karbon tutum hızı (2/3 toprak, 1/3 biyokütle).", ref: 3 },
+  { value: "GRI/CDP", label: "Uyumlu", desc: "Veri formatlarımız uluslararası raporlama standartlarına uygundur." },
+];
+
+const REFERENCES = [
+  {
+    id: 1,
+    text: "Ortalama ağaç başına yıllık CO₂ emilim aralığı — bağımsız karbon hesaplama derlemeleri ve orman yönetimi karbon muhasebesi kaynakları.",
+    source: "Penn State Extension — Carbon Accounting in Forest Management",
+    url: "https://extension.psu.edu/carbon-accounting-in-forest-management",
+  },
+  {
+    id: 2,
+    text: "Ağaçlandırma ve fidanlıkların ilk 20 yıldaki hektar başına karbon giderim hızı (4,5–40,7 t CO₂ ha⁻¹ yıl⁻¹).",
+    source: "Bernal et al., Carbon Balance and Management (2018) — Global carbon dioxide removal rates from forest landscape restoration",
+    url: "https://cbmjournal.biomedcentral.com/articles/10.1186/s13021-018-0110-8",
+  },
+  {
+    id: 3,
+    text: "Akdeniz çam ormanında organik karbon tutum hızı (~550 g CO₂ m⁻² yıl⁻¹).",
+    source: "Disentangling the soil and atmospheric stress on carbon sequestration in a Mediterranean pine forest, arXiv (2025)",
+    url: "https://arxiv.org/pdf/2511.22720",
+  },
+  {
+    id: 4,
+    text: "Tohum topu kompozisyonu, atış yüksekliği ve çimlenme başarısı üzerine İHA tabanlı hassas ekim araştırması.",
+    source: "UAV-Based Precision Seed Dropping for Automated Reforestation, Authorea (2025)",
+    url: "https://www.authorea.com/doi/full/10.22541/au.175622436.63027828/v1",
+  },
 ];
 
 const COMPARISON = [
@@ -36,8 +63,8 @@ const COMPARISON = [
 ];
 
 const FAQ = [
-  { q: "Karbon sertifikalarınız ne için geçerli?", a: "Sertifikalarımız ESG raporlarında, GRI ve CDP gönderimlerinde, kurumsal sürdürülebilirlik beyanlarında kullanılabilir. Kurumumuz bünyesinde gerçekleştirilen tüm ormanlaştırma ve karbon yutak alanı projeleri T.C. Orman Genel Müdürlüğü (OGM) Bölge Müdürlükleri koordinasyonunda, yasal ve bilimsel altyapıya uygun olarak yürütülmektedir." },
-  { q: "Karbon hesaplaması nasıl yapılıyor?", a: "Tohum sayısı × çimlenme oranı (%65) = ağaç sayısı. Ağaç sayısı × yıllık 5kg CO₂ × izleme süresi = toplam karbon dengelemesi. Tüm parametreler uluslararası kabul gören IPCC kılavuzlarından alınmıştır." },
+  { q: "Karbon sertifikalarınız ne için geçerli?", a: "Sertifikalarımız ESG raporlarında, GRI ve CDP gönderimlerinde, kurumsal sürdürülebilirlik beyanlarında kullanılabilir. Kurumumuz bünyesinde gerçekleştirilen tüm ormanlaştırma ve karbon yutak alanı projeleri Orman Genel Müdürlüğü (OGM) Bölge Müdürlükleri koordinasyonunda, yasal ve bilimsel altyapıya uygun olarak yürütülmektedir." },
+  { q: "Karbon hesaplaması nasıl yapılıyor?", a: "Tohum sayısı × çimlenme oranı = ağaç sayısı; ağaç sayısı × ağaç başına yıllık CO₂ emilimi × izleme süresi = toplam karbon dengelemesi. Ağaç başına emilim aralığı (10–25 kg/yıl) ve hektar bazlı giderim hızları (4,5–40,7 t CO₂/ha/yıl) sayfanın altında listelenen akademik kaynaklara dayanır; tür, yaş ve iklime göre saha bazında güncellenir." },
   { q: "Bireysel olarak da katılabilir miyim?", a: "Evet — tohum sipariş eden her kullanıcı, kendi karbon ayak izini dengelemiş olur. Dijital sertifikanızda kaç kg CO₂ dengelediğiniz net olarak gösterilir." },
   { q: "ESG entegrasyonu nasıl çalışıyor?", a: "Kurumsal panelinizde ESG yazılımınız arasında API entegrasyonu sağlayarak veri akışını otomatik hale getiriyoruz. Sistemimiz şirketinizin karbon ayak izini hesaplar ve bu doğrultuda markanıza özel, drone teknolojisiyle desteklenen bir orman oluşturur." },
 ];
@@ -142,8 +169,46 @@ export default function KarbonProgramiPage() {
         </div>
       </SectionWrapper>
 
-      {/* CTA */}
+      {/* Akademik Kaynaklar */}
       <SectionWrapper variant="light">
+        <SectionHeading
+          badge="Bilimsel Kaynaklar"
+          title={<>Verilerimizin <span className="text-gradient-forest">Dayanakları</span></>}
+          subtitle="Karbon hesaplama parametrelerimiz, hakemli akademik yayınlara ve bağımsız kurum kaynaklarına dayanır."
+        />
+        <ol className="max-w-3xl mx-auto space-y-4">
+          {REFERENCES.map((ref) => (
+            <li key={ref.id} className="vitrin-card p-5 flex gap-4">
+              <span className="shrink-0 w-8 h-8 rounded-full bg-[#1B6B3A]/8 text-[#1B6B3A] font-bold flex items-center justify-center text-sm">
+                {ref.id}
+              </span>
+              <div className="min-w-0">
+                <p className="text-sm text-[#3d5a3d] leading-relaxed mb-1.5">{ref.text}</p>
+                <a
+                  href={ref.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#1B6B3A] hover:text-[#22894a] transition-colors break-words"
+                >
+                  {ref.source}
+                  <svg className="w-3 h-3 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" strokeLinecap="round" strokeLinejoin="round" />
+                    <polyline points="15 3 21 3 21 9" strokeLinecap="round" strokeLinejoin="round" />
+                    <line x1="10" y1="14" x2="21" y2="3" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </a>
+              </div>
+            </li>
+          ))}
+        </ol>
+        <p className="max-w-3xl mx-auto text-xs text-[#6b8f6b] mt-6 text-center leading-relaxed">
+          Not: Karbon giderim değerleri tür, yaş, iklim ve saha koşullarına göre değişir. Sunulan aralıklar
+          bilimsel literatürdeki ortalamalardır; kurumsal projelerde saha bazlı ölçümlerle güncellenir.
+        </p>
+      </SectionWrapper>
+
+      {/* CTA */}
+      <SectionWrapper variant="tinted">
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="text-3xl lg:text-4xl font-bold text-[#1a2e1a] leading-tight mb-5">
             Karbon Nötrleme <span className="text-gradient-forest">Programına Katılın</span>

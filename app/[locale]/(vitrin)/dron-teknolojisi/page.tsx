@@ -31,13 +31,13 @@ const FEATURES = [
   { title: "200+ Tohum / Uçuş", desc: "Gelişmiş kapasite ile büyük alanları tek seferde tarayabiliyoruz.", Icon: BoxIcon },
   { title: "10x Hız", desc: "Geleneksel ekime göre on kat daha hızlı, ekim süresini günlerden saatlere indiriyor.", Icon: BoltIcon },
   { title: "Otonom Görev", desc: "Önceden planlanan rota; drone otonom uçar, görevi tamamlar, baz istasyonuna döner.", Icon: AutoIcon },
-  { title: "Saha Kayıtsız Erişim", desc: "İnsan ayağının ulaşamadığı eğimli, yangın bölgesi, erozyon alanlarına erişim.", Icon: PathIcon },
-  { title: "Yıllık Takip", desc: "Aynı drone, periyodik uçuşlarla büyüme verisi toplar — şeffaf izleme.", Icon: ChartIcon },
+  { title: "Ulaşılması Zor Bölgelere Erişim", desc: "Fiziki olarak ulaşılması zor olan yangın bölgesi ve erozyon alanlarına erişim.", Icon: PathIcon },
+  { title: "Yıllık Takip", desc: "Periyodik uçuş verileri, büyüme metrikleri ve karbon nötrleme sonuçlarınız kurumsal panomuzda anlık olarak güncellenir; doğrudan ESG raporlarınıza aktarılabilir.", Icon: ChartIcon },
 ];
 
 const PROCESS = [
   { num: "01", title: "Bölge Taraması", desc: "Drone uydu ve LiDAR ile alan haritalanır, eğim ve toprak nem analizi yapılır." },
-  { num: "02", title: "Ekim Planı", desc: "GPS koordinatlı ekim haritası oluşturulur. Yasal izinler T.C. Orman Bölge Müdürlüğü ile koordine edilir." },
+  { num: "02", title: "Ekim Planı", desc: "GPS koordinatlı ekim haritası oluşturulur. Yasal izinler Orman Bölge Müdürlüğü ile koordine edilir." },
   { num: "03", title: "Otonom Ekim", desc: "Drone planlanmış rotada otonom uçar, hesaplanmış noktalara tohum topu bırakır." },
   { num: "04", title: "Raporlama", desc: "Uçuş kaydı, fotoğraflar ve GPS verileri kurumsal panonuza yansır." },
 ];

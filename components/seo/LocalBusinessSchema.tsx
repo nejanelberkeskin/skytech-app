@@ -34,9 +34,10 @@ export default function LocalBusinessSchema() {
           "Ankara merkezli, Türkiye geneli operasyon.",
         address: {
           "@type": "PostalAddress",
+          streetAddress: ORG_ADDRESS.street,
           addressLocality: ORG_ADDRESS.city,
+          addressRegion: ORG_ADDRESS.district,
           addressCountry: ORG_ADDRESS.countryCode,
-          addressRegion: "İç Anadolu",
         },
         // Ankara genel koordinatı — gerçek ofis adresi belirlenince güncellenmeli
         geo: {

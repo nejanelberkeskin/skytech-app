@@ -27,8 +27,8 @@ export const metadata = buildPageMetadata({
 });
 
 const COMPONENTS = [
-  { label: "Yerli Tohum", desc: "T.C. Orman Bölge Müdürlükleri tedarikli; tür ve orijin bilgisi kayıt altında.", pct: "30%" },
-  { label: "Killi Toprak", desc: "Koruyucu kabuk, hayvan yemesini engeller.", pct: "50%" },
+  { label: "Yerli Tohum", desc: "Orman Bölge Müdürlükleri tedarikli; tür ve orijin bilgisi kayıt altında.", pct: "30%" },
+  { label: "Killi Toprak", desc: "Tohumu biyotik ve abiyotik zararlardan korur.", pct: "50%" },
   { label: "Organik Gübre", desc: "Çimlenme için besin desteği.", pct: "20%" },
 ];
 
@@ -51,7 +51,7 @@ export default function TohumTopuPage() {
       <BreadcrumbSchema items={[{ name: "Tohum Topu", path: "/tohum-topu" }]} />
       <ServiceSchema
         name="Tohum Topu Üretimi ve Tedariki"
-        description="T.C. Orman Bölge Müdürlükleri koordineli yerli tohumlardan, kil ve organik gübreyle formüle edilmiş, %65+ çimlenme oranına sahip tohum topu üretimi."
+        description="Orman Bölge Müdürlükleri koordineli yerli tohumlardan, kil ve organik gübreyle formüle edilmiş, %65+ çimlenme oranına sahip tohum topu üretimi."
         serviceType="Seed ball production for reforestation"
         path="/tohum-topu"
         image="/images/tohum-topu/hero.webp"

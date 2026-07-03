@@ -120,7 +120,7 @@ export default function VitrinFooter() {
               </p>
               <p className="flex items-start gap-2">
                 <PinIcon className="w-4 h-4 text-[#22894a] mt-0.5 shrink-0" />
-                <span>Ankara, Türkiye</span>
+                <span>Saray Mah. 60 Cad. No:22<br />Kahramankazan / Ankara, Türkiye</span>
               </p>
             </div>
           </div>

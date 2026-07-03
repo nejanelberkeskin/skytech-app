@@ -11,21 +11,20 @@ import { buildPageMetadata } from "@/lib/seo";
 export const metadata = buildPageMetadata({
   title: "Projeler & Harita — Sahadan Kanıt",
   description:
-    "Türkiye genelinde aktif, pilot ve tamamlanmış drone ağaçlandırma projelerimiz. İnteraktif Türkiye haritası, il bazlı proje detayları ve tohum sayıları.",
+    "Çanakkale, İzmir ve Bursa'da sürdürdüğümüz pilot drone ağaçlandırma çalışmalarımız. İnteraktif Türkiye haritası ve il bazlı pilot saha detayları.",
   path: "/projeler",
   keywords: [
     "ağaçlandırma projeleri Türkiye",
-    "Manavgat ağaçlandırma",
+    "pilot ağaçlandırma",
     "drone ekim projeleri",
-    "Marmaris ağaçlandırma",
-    "Bolu su havzası",
+    "Çanakkale İzmir Bursa ağaçlandırma",
+    "Orman Genel Müdürlüğü ağaçlandırma",
   ],
 });
 
 const STATS = [
-  { value: "42K+", label: "Toplam Tohum Atıldı" },
-  { value: "6", label: "Aktif Bölge" },
-  { value: "4", label: "İl" },
+  { value: "3", label: "Pilot Bölge" },
+  { value: "3", label: "İl" },
   { value: "%100", label: "Yasal Uyum" },
 ];
 
@@ -35,13 +34,13 @@ export default function ProjelerPage() {
       <BreadcrumbSchema items={[{ name: "Projeler", path: "/projeler" }]} />
       <BreadCrumb
         title="Sahadan Kanıt"
-        subtitle="Türkiye'nin dört bir yanında, gerçek dronelar — gerçek tohumlar — gerçek ormanlar."
+        subtitle="Çanakkale, İzmir ve Bursa'da pilot sahalarımızda çalışmalarımız sürüyor — gerçek dronelar, gerçek tohumlar."
         items={[{ label: "Projeler" }]}
       />
 
       {/* Stats */}
       <SectionWrapper variant="light" className="!py-12">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 max-w-5xl mx-auto">
+        <div className="grid grid-cols-3 gap-5 max-w-3xl mx-auto">
           {STATS.map((s) => (
             <div key={s.label} className="vitrin-card p-6 text-center">
               <p className="text-3xl lg:text-4xl font-bold bg-gradient-to-br from-[#1B6B3A] to-[#22894a] bg-clip-text text-transparent mb-1 tabular-nums">
@@ -62,10 +61,10 @@ export default function ProjelerPage() {
           title={
             <>
               Türkiye{" "}
-              <span className="text-gradient-aurora">Proje Haritası</span>
+              <span className="text-gradient-aurora">Pilot Saha Haritası</span>
             </>
           }
-          subtitle="Aktif, pilot ve tamamlanmış projelerimizi harita üzerinden keşfedin. İllerin üzerine gelin, detayları görün."
+          subtitle="Pilot sahalarımızı harita üzerinden keşfedin. İllerin üzerine gelin, detayları görün."
         />
         <TurkeyMap
           projects={PROJECTS.map((p) => ({
@@ -79,11 +78,12 @@ export default function ProjelerPage() {
         />
       </SectionWrapper>
 
-      {/* Proje listesi */}
+      {/* Pilot saha listesi */}
       <SectionWrapper variant="light">
         <SectionHeading
-          badge="Tüm Projeler"
+          badge="Pilot Sahalar"
           title={<>Sahada <span className="text-gradient-aurora">Aktif Olduğumuz Bölgeler</span></>}
+          subtitle="Şu anda Çanakkale, İzmir ve Bursa'da pilot çalışmalarımız sürüyor. Alan çoğaldıkça yeni sahalar burada listelenecek."
         />
         <ProjectsGrid />
       </SectionWrapper>

@@ -27,6 +27,8 @@ export const ORG_LEGAL_NAME = "Skytech Green Teknoloji A.Ş.";
 export const ORG_FOUNDED = "2021";
 export const ORG_AREA_SERVED = "Türkiye";
 export const ORG_ADDRESS = {
+  street: "Saray Mah. 60 Cad. No:22",
+  district: "Kahramankazan",
   city: "Ankara",
   country: "Türkiye",
   countryCode: "TR",

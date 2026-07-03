@@ -13,7 +13,7 @@ const FAQS = [
   },
   {
     q: "Tohumlar nereden tedarik ediliyor?",
-    a: "Tüm tohumlar T.C. Tarım ve Orman Bakanlığı Orman Bölge Müdürlükleri iş birliğiyle tedarik edilir. Biyolojik çeşitliliğin korunması ve sürdürülebilirlik ilkeleri doğrultusunda; her tohum lotunun ağaçtan toplanma tarihi, genetik orijini ve taksonomik (tür) bilgisi blok zinciri teknolojisiyle kayıt altına alınır. Uçtan uca şeffaf yapılandırılan tedarik zincirimiz sayesinde müşterilerimiz tohum kimlik kartlarına ve sertifikasyon verilerine diledikleri an erişebilir.",
+    a: "Tüm tohumlar Orman Bölge Müdürlükleri iş birliğiyle tedarik edilir. Biyolojik çeşitliliğin korunması ve sürdürülebilirlik ilkeleri doğrultusunda; her tohum lotunun ağaçtan toplanma tarihi, genetik orijini ve taksonomik (tür) bilgisi blok zinciri teknolojisiyle kayıt altına alınır. Uçtan uca şeffaf yapılandırılan tedarik zincirimiz sayesinde müşterilerimiz tohum kimlik kartlarına ve sertifikasyon verilerine diledikleri an erişebilir.",
   },
   {
     q: "Drone ile ekim ne kadar verimli?",
@@ -25,7 +25,7 @@ const FAQS = [
   },
   {
     q: "Karbon sertifikası ne için geçerli?",
-    a: "Sertifikalar; ESG raporlarında, GRI ve CDP gönderimlerinde, kurumsal sürdürülebilirlik beyanlarında kullanılabilir. Tüm ormanlaştırma ve karbon yutak alanı projeleri T.C. Orman Genel Müdürlüğü (OGM) Bölge Müdürlükleri koordinasyonunda, yasal ve bilimsel altyapıya uygun olarak yürütülür; %100 doğrulanabilir bir izleme zinciri sunarız.",
+    a: "Sertifikalar; ESG raporlarında, GRI ve CDP gönderimlerinde, kurumsal sürdürülebilirlik beyanlarında kullanılabilir. Tüm ormanlaştırma ve karbon yutak alanı projeleri Orman Genel Müdürlüğü (OGM) Bölge Müdürlükleri koordinasyonunda, yasal ve bilimsel altyapıya uygun olarak yürütülür; %100 doğrulanabilir bir izleme zinciri sunarız.",
   },
   {
     q: "Minimum sipariş miktarı var mı?",

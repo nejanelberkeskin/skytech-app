@@ -83,9 +83,9 @@
     }
   },
   "impactTabs": {
-    "badge": "Etki Alanları",
+    "badge": "Avantajlar",
     "titleLine1": "Nerelerde",
-    "titleAccent": "Etkimiz Var",
+    "titleAccent": "Fark Yaratıyoruz",
     "subtitle": "Üç kritik ekosistem alanında, bilimle ve teknolojiyle ölçülebilir değişim yaratıyoruz.",
     "tabs": {
       "fire": {
@@ -107,39 +107,78 @@
           {
             "title": "Erişilebilirlik ve Lojistik Avantajlar",
             "items": [
-              { "title": "İş Gücü Tasarrufu", "description": "İnsan gücüyle yapılacak ekim yöntemiyle yüzlerce işçinin haftalarca süren çalışmasını, otonom dron filoları çok kısa sürede tamamlar." },
-              { "title": "İş Güvenliği", "description": "Yangın sonrası gevşeyen toprak, devrilen ağaçlar ve heyelan riski barındıran tehlikeli arazilerde insan hayatını riske atmadan ekim yapar." }
+              {
+                "title": "İş Gücü Tasarrufu",
+                "description": "İnsan gücüyle yapılacak ekim yöntemiyle yüzlerce işçinin haftalarca süren çalışmasını, otonom dron filoları çok kısa sürede tamamlar."
+              },
+              {
+                "title": "İş Güvenliği",
+                "description": "Yangın sonrası gevşeyen toprak, devrilen ağaçlar ve heyelan riski barındıran tehlikeli arazilerde insan hayatını riske atmadan ekim yapar."
+              }
             ]
           },
           {
             "title": "Yüksek Çimlenme ve Hayatta Kalma Oranı",
             "items": [
-              { "title": "Koruyucu Katman", "description": "Tohum toplarındaki kil, kompost ve besin maddeleri; tohumu kuşlar, kemirgenler ve karıncalardan korur." },
-              { "title": "Mikro Habitat Desteği", "description": "Tohum topu, çimlenme için gereken nemi ve organik besini ilk aşamada kendi içinde barındırır." },
-              { "title": "Doğal Adaptasyon", "description": "Tohumlar toprak derinliğine gömülmediği için yağmurlarla birlikte en doğru zamanda ve doğal döngüsünde çimlenir." }
+              {
+                "title": "Koruyucu Katman",
+                "description": "Tohum toplarındaki kil, kompost ve besin maddeleri; tohumu kuşlar, kemirgenler ve karıncalardan korur."
+              },
+              {
+                "title": "Mikro Habitat Desteği",
+                "description": "Tohum topu, çimlenme için gereken nemi ve organik besini ilk aşamada kendi içinde barındırır."
+              },
+              {
+                "title": "Doğal Adaptasyon",
+                "description": "Tohumlar toprak derinliğine gömülmediği için yağmurlarla birlikte en doğru zamanda ve doğal döngüsünde çimlenir."
+              }
             ]
           },
           {
             "title": "Zaman ve Maliyet Verimliliği",
             "items": [
-              { "title": "Hız ve Geniş Alan Kapsamı", "description": "Bir dron, günde binlerce tohum topunu çok geniş bir hektara homojen şekilde bırakır." },
-              { "title": "Düşük Maliyet", "description": "Fidan yetiştirme, nakliye, çukur kazma ve dikim işçiliği maliyetlerini ortadan kaldırarak ağaçlandırma bütçesini optimize eder." },
-              { "title": "Kritik Zaman Yönetimi", "description": "Yangından hemen sonra, toprağın besin değerini kaybetmediği ve erozyonun başlamadığı kritik 'altın zaman diliminde' hızla müdahale imkanı tanır." }
+              {
+                "title": "Hız ve Geniş Alan Kapsamı",
+                "description": "Bir dron, günde binlerce tohum topunu çok geniş bir hektara homojen şekilde bırakır."
+              },
+              {
+                "title": "Düşük Maliyet",
+                "description": "Fidan yetiştirme, nakliye, çukur kazma ve dikim işçiliği maliyetlerini ortadan kaldırarak ağaçlandırma bütçesini optimize eder."
+              },
+              {
+                "title": "Kritik Zaman Yönetimi",
+                "description": "Yangından hemen sonra, toprağın besin değerini kaybetmediği ve erozyonun başlamadığı kritik 'altın zaman diliminde' hızla müdahale imkanı tanır."
+              }
             ]
           },
           {
             "title": "Teknolojik ve Bilimsel Hassasiyet",
             "items": [
-              { "title": "GIS ve Haritalama Entegrasyonu", "description": "Alanın önceden çıkarılan 3 boyutlu haritaları sayesinde tohumlar rastgele değil, çimlenme olasılığı en yüksek mikro havzalara ve nemli noktalara nokta atışı bırakılır." },
-              { "title": "Homojen Dağılım", "description": "Sensörler ve otonom algoritmalarla m² başına düşecek tohum miktarı hassas ayarlanır; aşırı sıkışıklık veya boşluklar önlenir." },
-              { "title": "Dijital İzlenebilirlik", "description": "Tohumların atıldığı koordinatlar sisteme kaydedildiği için, çimlenme başarısı ve bitki örtüsü gelişimi uydular veya dronlarla kolayca takip edilir." }
+              {
+                "title": "GIS ve Haritalama Entegrasyonu",
+                "description": "Alanın önceden çıkarılan 3 boyutlu haritaları sayesinde tohumlar rastgele değil, çimlenme olasılığı en yüksek mikro havzalara ve nemli noktalara nokta atışı bırakılır."
+              },
+              {
+                "title": "Homojen Dağılım",
+                "description": "Sensörler ve otonom algoritmalarla m² başına düşecek tohum miktarı hassas ayarlanır; aşırı sıkışıklık veya boşluklar önlenir."
+              },
+              {
+                "title": "Dijital İzlenebilirlik",
+                "description": "Tohumların atıldığı koordinatlar sisteme kaydedildiği için, çimlenme başarısı ve bitki örtüsü gelişimi uydular veya dronlarla kolayca takip edilir."
+              }
             ]
           },
           {
             "title": "Minimum Çevresel Ayak İziyle Maksimum Restorasyon Etkisi",
             "items": [
-              { "title": "Toprak Koruması", "description": "Ağır iş makineleri ve yoğun insan trafiğinin toprağı sıkıştırmasını, yangın sonrası hassaslaşan üst toprak tabakasının erozyona uğramasını engeller." },
-              { "title": "Ekosistem Dostu", "description": "Yalnızca yerel floraya ait tohumlar kullanılarak bölgenin doğal gen kaynakları korunur ve ekolojik süksesyon bozulmadan desteklenir." }
+              {
+                "title": "Toprak Koruması",
+                "description": "Ağır iş makineleri ve yoğun insan trafiğinin toprağı sıkıştırmasını, yangın sonrası hassaslaşan üst toprak tabakasının erozyona uğramasını engeller."
+              },
+              {
+                "title": "Ekosistem Dostu",
+                "description": "Yalnızca yerel floraya ait tohumlar kullanılarak bölgenin doğal gen kaynakları korunur ve ekolojik süksesyon bozulmadan desteklenir."
+              }
             ]
           }
         ]
@@ -154,7 +193,7 @@
           "Tam şeffaflık: tohumun türü, orijini, çimlenme oranı uçtan uca kayıt altında",
           "Yıllık izleme: periyodik drone uçuşlarıyla yüksek çözünürlüklü dijital veri",
           "Kurumsal entegrasyon: API ile e-ticaret sitenizdeki her satış doğrudan ESG raporlarınıza aktarılır",
-          "Yasal uyumluluk: T.C. Orman Bölge Müdürlükleri koordinasyonunda %100 yasal"
+          "Yasal uyumluluk: Orman Bölge Müdürlükleri koordinasyonunda %100 yasal"
         ],
         "stat": "10×",
         "statLabel": "Geleneksele göre hız"
@@ -186,11 +225,11 @@
   },
   "ourSeeds": {
     "breadcrumbTitle": "Yerli Tohumlarımız",
-    "breadcrumbSubtitle": "Her tohum, bölgenin iklimine ve ekosistemine uygun olarak seçilir. Skytech Green tohum topu projelerinde kullanılan beş yerli türün özellikleri.",
+    "breadcrumbSubtitle": "Her tohum, bölgenin iklimine ve ekosistemine uygun olarak seçilir. Skytech Green tohum topu projelerinde kullanılan dört yerli türün özellikleri.",
     "sectionBadge": "Türler",
-    "sectionTitleLine": "Beş Yerli",
+    "sectionTitleLine": "Dört Yerli",
     "sectionTitleAccent": "Türümüz",
-    "sectionSubtitle": "Her tür, ekildiği bölgenin iklim ve toprak yapısına göre seçilir. Tohumlarımız T.C. Orman Bölge Müdürlükleri tedariklidir.",
+    "sectionSubtitle": "Her tür, ekildiği bölgenin iklim ve toprak yapısına göre seçilir. Tohumlarımız Orman Bölge Müdürlükleri tedariklidir.",
     "footnote": "Yöreye uygun tohumlarımız ilgili Orman Bölge Müdürlüklerinden tedarik edilmekte; tohumların tür bilgisi, ağaçlardan toplanma tarihleri ve orijin bilgileri blok zinciri teknolojisiyle güvenle doğrulanmaktadır.",
     "labels": {
       "type": "Tür",

@@ -35,13 +35,12 @@ const VALUES = [
 const TEAM = [
   { name: "Orman Mühendisleri", desc: "Tohum türü seçimi, formülasyon ve toprak analizi", count: 8 },
   { name: "Drone Pilotları & Operatörler", desc: "Sertifikalı pilotlar, GPS hassasiyetli operasyon", count: 12 },
-  { name: "Proje Koordinatörleri", desc: "Orman Bölge Müdürlüğü ve kurumsal koordinasyon", count: 6 },
+  { name: "Proje Koordinatörleri", desc: "Orman Genel Müdürlüğü, Karadeniz Teknik Üniversitesi ve Artvin Çoruh Üniversitesi koordinasyonu", count: 6 },
   { name: "Yazılım & Veri Ekibi", desc: "Platform, ESG raporlama, izleme yazılımı", count: 10 },
 ];
 
 const STATS = [
-  { value: "42K+", label: "Tohum Atıldı" },
-  { value: "6", label: "Aktif Bölge" },
+  { value: "3", label: "Aktif Bölge" },
   { value: "36+", label: "Ekip Üyesi" },
   { value: "%100", label: "Yasal Uyum" },
 ];

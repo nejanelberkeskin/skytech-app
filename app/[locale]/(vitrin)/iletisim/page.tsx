@@ -16,8 +16,8 @@ const CONTACTS = [
   {
     Icon: PinIcon,
     title: "Adres",
-    primary: "Ankara, Türkiye",
-    secondary: "Skytech Green Teknoloji A.Ş.\nDetaylı adres iletişim formundan iletilir.",
+    primary: "Saray Mah. 60 Cad. No:22",
+    secondary: "Kahramankazan / Ankara, Türkiye\nSkytech Green Teknoloji A.Ş.",
   },
   {
     Icon: PhoneIcon,

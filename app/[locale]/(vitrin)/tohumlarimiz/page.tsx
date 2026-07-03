@@ -8,14 +8,13 @@ import { buildPageMetadata } from "@/lib/seo";
 export const metadata = buildPageMetadata({
   title: "Tohumlarımız — Yerli Türler ve Özellikleri",
   description:
-    "Skytech Green tohum topu projelerinde kullandığımız yerli türler: Kızılçam, Meşe, Sedir, Kayın, Ardıç. Her türün iklim adaptasyonu, kök yapısı, çimlenme süresi ve ekolojik rolü.",
+    "Skytech Green tohum topu projelerinde kullandığımız yerli türler: Kızılçam, Karaçam, Sedir, Ardıç. Her türün iklim adaptasyonu, kök yapısı, çimlenme süresi ve ekolojik rolü.",
   path: "/tohumlarimiz",
   keywords: [
     "yerli ağaç türleri",
     "kızılçam tohumu",
-    "meşe tohumu",
+    "karaçam tohumu",
     "sedir tohumu",
-    "kayın tohumu",
     "ardıç tohumu",
     "Türkiye ormancılık",
     "endemik türler",
@@ -54,18 +53,18 @@ const SEEDS: Seed[] = [
     accent: "from-[#1B6B3A] to-[#22894a]",
   },
   {
-    id: "mese",
-    name: "Meşe",
-    latin: "Quercus robur",
-    family: "Fagaceae (Kayıngiller)",
-    region: "Karadeniz, İç Anadolu, Trakya",
-    climate: "Karasal iklim, soğuk kışlara dayanıklı",
-    rootDepth: "Çok derin kazık kök sistemi",
-    germination: "30–60 gün",
-    lifespan: "300–500+ yıl",
-    ecologicalRole: "Toprak tutma kapasitesi en yüksek tür. Meşe palamutları yaban hayatı için kritik besin kaynağı.",
+    id: "karacam",
+    name: "Karaçam",
+    latin: "Pinus nigra",
+    family: "Pinaceae (Çamgiller)",
+    region: "İç Anadolu, Batı Karadeniz, Toroslar",
+    climate: "Karasal iklim; kuraklığa ve soğuğa toleranslı",
+    rootDepth: "Derin kazık kök sistemi",
+    germination: "20–40 gün",
+    lifespan: "300–500 yıl",
+    ecologicalRole: "Yüksek rakım ormanlaştırmasının öncü türü. Erozyon kontrolünde ve bozkır-orman geçiş kuşağında kritik rol oynar.",
     description:
-      "Anadolu'nun en uzun ömürlü ve güçlü ağaçlarından. Derin kök yapısıyla erozyon kontrolünde vazgeçilmezdir; biyoçeşitliliği artıran 'anahtar tür'dür.",
+      "Anadolu'nun yüksek kesimlerine dayanıklı yerli çam türü. Kuraklığa ve dona toleransı sayesinde zorlu iklimlerde güvenle kullanılır; uzun ömürlü ve dayanıklı odunuyla bilinir.",
     accent: "from-[#22894a] to-[#34d399]",
   },
   {
@@ -84,24 +83,9 @@ const SEEDS: Seed[] = [
     accent: "from-[#34d399] to-[#a3e635]",
   },
   {
-    id: "kayin",
-    name: "Kayın",
-    latin: "Fagus orientalis",
-    family: "Fagaceae (Kayıngiller)",
-    region: "Karadeniz, Kuzeydoğu Anadolu",
-    climate: "Nemli ılıman iklim, gölge seven",
-    rootDepth: "Yüzeysel-orta seviye",
-    germination: "30–45 gün",
-    lifespan: "200–300 yıl",
-    ecologicalRole: "Karadeniz ormanlarının baskın türü. Yaprak döküntüsüyle toprağı humusla zenginleştirir.",
-    description:
-      "Karadeniz ormanlarının kraliçesi. Nemli ve gölgeli ortamlarda saf veya karışık meşcereler oluşturur; tohum yılları periyodik olduğu için doğal yenilenmesi planlı destek ister.",
-    accent: "from-[#a3e635] to-[#facc15]",
-  },
-  {
     id: "ardic",
     name: "Ardıç",
-    latin: "Juniperus oxycedrus",
+    latin: "Juniperus",
     family: "Cupressaceae (Servigiller)",
     region: "Anadolu geneli, özellikle iç bölgeler",
     climate: "Kurak ve yarı-kurak iklim, taşlı topraklar",
@@ -121,15 +105,15 @@ export default function TohumlarimizPage() {
       <BreadcrumbSchema items={[{ name: "Tohumlarımız", path: "/tohumlarimiz" }]} />
       <BreadCrumb
         title="Yerli Tohumlarımız"
-        subtitle="Her tohum, bölgenin iklimine ve ekosistemine uygun olarak seçilir. Skytech Green tohum topu projelerinde kullanılan beş yerli türün özellikleri."
+        subtitle="Her tohum, bölgenin iklimine ve ekosistemine uygun olarak seçilir. Skytech Green tohum topu projelerinde kullanılan dört yerli türün özellikleri."
         items={[{ label: "Tohumlarımız" }]}
       />
 
       <SectionWrapper variant="light">
         <SectionHeading
           badge="Türler"
-          title={<>Beş Yerli <span className="text-gradient-forest">Türümüz</span></>}
-          subtitle="Her tür, ekildiği bölgenin iklim ve toprak yapısına göre seçilir. Tohumlarımız T.C. Orman Bölge Müdürlükleri tedariklidir."
+          title={<>Dört Yerli <span className="text-gradient-forest">Türümüz</span></>}
+          subtitle="Her tür, ekildiği bölgenin iklim ve toprak yapısına göre seçilir. Tohumlarımız Orman Bölge Müdürlükleri tedariklidir."
         />
 
         <div className="space-y-12 max-w-5xl mx-auto">

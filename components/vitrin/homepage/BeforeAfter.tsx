@@ -115,9 +115,6 @@ export default function BeforeAfter() {
           </motion.div>
         </div>
 
-        <p className="mt-6 text-center text-xs text-[#6b8f6b] uppercase tracking-[0.2em] font-bold">
-          Manavgat · 50 hektar · 12.000 tohum
-        </p>
       </div>
     </section>
   );

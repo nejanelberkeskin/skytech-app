@@ -12,16 +12,30 @@ import BeforeAfter from "@/components/vitrin/homepage/BeforeAfter";
 import ServicePackages from "@/components/vitrin/homepage/ServicePackages";
 import FAQSection from "@/components/vitrin/homepage/FAQSection";
 import FinalCTA from "@/components/vitrin/homepage/FinalCTA";
+import type { Metadata } from "next";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata = buildPageMetadata({
-  title: "Tohum Toplarıyla Geleceği Ekin",
-  description:
-    "Dron teknolojisi ve tohum topu ile karbon nötr ağaçlandırma. Bireysel ve kurumsal çözümler, ölçülebilir etki, şeffaf tedarik zinciri.",
-  path: "/",
-});
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "homeMeta" });
+  return buildPageMetadata(
+    { title: t("title"), description: t("description"), path: "/" },
+    locale
+  );
+}
 
-export default function VitrinHomePage() {
+export default async function VitrinHomePage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  setRequestLocale(locale);
   return (
     <>
       <HeroSection />

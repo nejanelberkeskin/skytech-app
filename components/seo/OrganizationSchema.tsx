@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server";
 import JsonLd from "./JsonLd";
 import {
   ORG_ADDRESS,
@@ -12,9 +13,10 @@ import {
 /**
  * Organization schema — şirket varlık bilgisi.
  * Root layout'a koyulmalı; her sayfada otomatik render olur ve Google'ın
- * "Knowledge Graph" entity'sini güçlendirir.
+ * "Knowledge Graph" entity'sini güçlendirir. Açıklama aktif locale'e göre.
  */
-export default function OrganizationSchema() {
+export default async function OrganizationSchema() {
+  const t = await getTranslations("homeMeta");
   return (
     <JsonLd
       id="organization"
@@ -27,9 +29,7 @@ export default function OrganizationSchema() {
         url: SITE_URL,
         logo: absoluteUrl("/images/brand/logo.png"),
         image: absoluteUrl("/images/brand/logo.png"),
-        description:
-          "Dron teknolojisi ve tohum topu ile karbon nötr ağaçlandırma platformu. " +
-          "Bireysel ve kurumsal çözümler, şeffaf tedarik zinciri, yıllık drone raporlama.",
+        description: t("description"),
         foundingDate: "2021",
         areaServed: {
           "@type": "Country",

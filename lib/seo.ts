@@ -68,6 +68,18 @@ export const DEFAULT_OG_IMAGE = {
   alt: `${SITE_NAME} — ${SITE_TAGLINE}`,
 };
 
+/** Varsayılan OG görseli alt metni — aktif locale'e göre. */
+export const DEFAULT_OG_ALT: Record<string, string> = {
+  tr: `${SITE_NAME} — Tohum Toplarıyla Geleceği Ekin`,
+  en: `${SITE_NAME} — Plant the Future with Seed Balls`,
+  ru: `${SITE_NAME} — Сажайте будущее семенными шарами`,
+};
+
+/** Locale'e göre varsayılan OG alt metni (fallback tr). */
+export function defaultOgAlt(locale: string): string {
+  return DEFAULT_OG_ALT[locale] ?? DEFAULT_OG_ALT.tr;
+}
+
 /**
  * Build sırasında dondurulan "son güncelleme" tarihi.
  * Footer'da kullanıcıya ve crawler'lara güncellik sinyali verir.
@@ -147,7 +159,7 @@ export function buildPageMetadata(
 ): Metadata {
   const url = localeUrl(input.path, locale);
   const titleFull =
-    input.path === "/" ? `${SITE_NAME} — ${SITE_TAGLINE}` : `${input.title} | ${SITE_NAME}`;
+    input.path === "/" ? `${SITE_NAME} — ${input.title}` : `${input.title} | ${SITE_NAME}`;
 
   const image = input.image
     ? {
@@ -160,7 +172,7 @@ export function buildPageMetadata(
         url: absoluteUrl(DEFAULT_OG_IMAGE.url),
         width: DEFAULT_OG_IMAGE.width,
         height: DEFAULT_OG_IMAGE.height,
-        alt: DEFAULT_OG_IMAGE.alt,
+        alt: defaultOgAlt(locale),
       };
 
   return {

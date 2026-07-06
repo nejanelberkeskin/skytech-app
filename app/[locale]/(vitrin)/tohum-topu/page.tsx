@@ -22,14 +22,6 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
         url: "/images/tohum-topu/hero.webp",
         alt: t("meta.imageAlt"),
       },
-      keywords: [
-        "tohum topu",
-        "tohum topu nedir",
-        "kil tohum topu",
-        "ağaçlandırma tohum topu",
-        "tohum topu üretimi",
-        "yerli tohum",
-      ],
     },
     locale
   );

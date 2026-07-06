@@ -8,6 +8,7 @@
  */
 
 import type { Metadata } from "next";
+import { seoKeywords } from "./seo-keywords";
 
 export const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
@@ -178,7 +179,9 @@ export function buildPageMetadata(
   return {
     title: titleFull,
     description: input.description,
-    keywords: input.keywords,
+    // Sayfa açıkça keyword vermezse locale'e göre merkezi kümeden doldur
+    // (Yandex + GEO crawler'ları için üç dilde ayrı listeler).
+    keywords: input.keywords ?? seoKeywords(input.path, locale),
     alternates: {
       canonical: url,
       languages: hreflangMap(input.path),

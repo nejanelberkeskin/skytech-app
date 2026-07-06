@@ -1,12 +1,23 @@
 "use client";
 
 import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 
 export default function DashboardParallax() {
   const t = useTranslations("corporatePage.dashboard");
   const ref = useRef<HTMLDivElement>(null);
+
+  // Parallax yalnızca lg+ ekranda: dar ekranda mutlak konumlu kartlar
+  // metin sarınca üst üste binip okunmaz hale geliyordu.
+  const [isLg, setIsLg] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 1024px)");
+    const update = () => setIsLg(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
 
   const PORTAL_FEATURES = [
     t("features.upload"),
@@ -103,16 +114,16 @@ export default function DashboardParallax() {
             </motion.ul>
           </div>
 
-          {/* 3D Stacked Mockup */}
-          <div className="lg:col-span-3 relative h-[520px] lg:h-[620px]" style={{ perspective: 1400 }}>
+          {/* 3D Stacked Mockup — lg+: mutlak konum + parallax; mobil: normal akış */}
+          <div className="lg:col-span-3 relative space-y-4 lg:space-y-0 lg:h-[620px]" style={{ perspective: 1400 }}>
             {/* Back card — drone feed */}
             <motion.div
-              style={{
-                y: yBack,
-                rotate: rotateBack,
-                transformStyle: "preserve-3d",
-              }}
-              className="absolute top-8 right-0 w-[78%] aspect-[4/3] rounded-3xl mesh-dark grain-overlay overflow-hidden shadow-2xl"
+              style={
+                isLg
+                  ? { y: yBack, rotate: rotateBack, transformStyle: "preserve-3d" }
+                  : undefined
+              }
+              className="relative w-full lg:absolute lg:top-8 lg:right-0 lg:w-[78%] aspect-[4/3] rounded-3xl mesh-dark grain-overlay overflow-hidden shadow-2xl"
             >
               <div className="aurora-bg">
                 <div className="aurora-blob aurora-blob-1" />
@@ -139,12 +150,12 @@ export default function DashboardParallax() {
 
             {/* Mid card — ESG metrics */}
             <motion.div
-              style={{
-                y: yMid,
-                rotate: rotateMid,
-                transformStyle: "preserve-3d",
-              }}
-              className="absolute top-32 left-0 w-[68%] rounded-3xl premium-glass overflow-hidden shadow-2xl p-5"
+              style={
+                isLg
+                  ? { y: yMid, rotate: rotateMid, transformStyle: "preserve-3d" }
+                  : undefined
+              }
+              className="relative w-full lg:absolute lg:top-32 lg:left-0 lg:w-[68%] rounded-3xl premium-glass overflow-hidden shadow-2xl p-5"
             >
               <div className="flex items-center justify-between mb-4">
                 <div>
@@ -184,13 +195,17 @@ export default function DashboardParallax() {
 
             {/* Front card — alert / certificate */}
             <motion.div
-              style={{
-                y: yFront,
-                rotate: rotateFront,
-                scale: scaleFront,
-                transformStyle: "preserve-3d",
-              }}
-              className="absolute bottom-0 right-12 w-[60%] rounded-3xl premium-glass overflow-hidden shadow-2xl p-5"
+              style={
+                isLg
+                  ? {
+                      y: yFront,
+                      rotate: rotateFront,
+                      scale: scaleFront,
+                      transformStyle: "preserve-3d",
+                    }
+                  : undefined
+              }
+              className="relative w-full lg:absolute lg:bottom-0 lg:right-12 lg:w-[60%] rounded-3xl premium-glass overflow-hidden shadow-2xl p-5"
             >
               <div className="flex items-start gap-3 mb-3">
                 <div className="shrink-0 w-10 h-10 rounded-xl bg-gradient-to-br from-[#1B6B3A] to-[#22894a] flex items-center justify-center">

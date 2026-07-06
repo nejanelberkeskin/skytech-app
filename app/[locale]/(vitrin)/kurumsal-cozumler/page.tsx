@@ -20,15 +20,6 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       title: t("meta.title"),
       description: t("meta.description"),
       path: "/kurumsal-cozumler",
-      keywords: [
-        "kurumsal ağaçlandırma",
-        "kurumsal ormanlaştırma",
-        "ESG çözümleri",
-        "çalışan karbon sertifikası",
-        "kurumsal sürdürülebilirlik partneri",
-        "B2B karbon nötrleme",
-        "API tohum entegrasyonu",
-      ],
     },
     locale
   );

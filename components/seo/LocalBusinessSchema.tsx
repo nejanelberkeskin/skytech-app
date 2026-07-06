@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server";
 import JsonLd from "./JsonLd";
 import {
   ORG_ADDRESS,
@@ -12,11 +13,10 @@ import {
 /**
  * LocalBusiness schema — yerel SEO için. İletişim sayfasında render edilir.
  * Google Maps'te bulunabilirlik ve local pack görünürlüğü için kritik.
- *
- * NOT: Custom domain bağlanınca, geoCoordinates ve openingHours
- * gerçek değerlerle güncellenmeli. Şu an placeholder.
+ * Açıklama aktif locale'e göre gelir (Yandex/Google çok dilli entity).
  */
-export default function LocalBusinessSchema() {
+export default async function LocalBusinessSchema() {
+  const t = await getTranslations("homeMeta");
   return (
     <JsonLd
       id="localbusiness"
@@ -29,9 +29,7 @@ export default function LocalBusinessSchema() {
         url: SITE_URL,
         logo: absoluteUrl("/images/brand/logo.png"),
         image: absoluteUrl("/og.jpg"),
-        description:
-          "Dron teknolojisi ve tohum topu ile karbon nötr ağaçlandırma platformu. " +
-          "Ankara merkezli, Türkiye geneli operasyon.",
+        description: t("description"),
         address: {
           "@type": "PostalAddress",
           streetAddress: ORG_ADDRESS.street,
@@ -39,11 +37,11 @@ export default function LocalBusinessSchema() {
           addressRegion: ORG_ADDRESS.district,
           addressCountry: ORG_ADDRESS.countryCode,
         },
-        // Ankara genel koordinatı — gerçek ofis adresi belirlenince güncellenmeli
+        // Kahramankazan ilçe merkezi yaklaşık koordinatı (Saray Mah. çevresi)
         geo: {
           "@type": "GeoCoordinates",
-          latitude: 39.9334,
-          longitude: 32.8597,
+          latitude: 40.2211,
+          longitude: 32.6858,
         },
         telephone: ORG_CONTACT.phone,
         email: ORG_CONTACT.email,

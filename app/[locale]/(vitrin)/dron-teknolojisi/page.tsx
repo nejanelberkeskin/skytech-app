@@ -21,14 +21,6 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
         url: "/images/dron-teknolojisi/hero.webp",
         alt: t("meta.imageAlt"),
       },
-      keywords: [
-        "drone ağaçlandırma",
-        "dronla tohum ekim",
-        "RTK GPS tarım drone",
-        "tarımsal drone Türkiye",
-        "otonom drone ekim",
-        "drone reforestation",
-      ],
     },
     locale
   );

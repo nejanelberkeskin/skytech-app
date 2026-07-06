@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import BreadCrumb from "@/components/vitrin/BreadCrumb";
 import SectionWrapper from "@/components/vitrin/SectionWrapper";
@@ -15,15 +16,6 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       title: t("meta.title"),
       description: t("meta.description"),
       path: "/tohumlarimiz",
-      keywords: [
-        "yerli ağaç türleri",
-        "kızılçam tohumu",
-        "karaçam tohumu",
-        "sedir tohumu",
-        "ardıç tohumu",
-        "Türkiye ormancılık",
-        "endemik türler",
-      ],
     },
     locale
   );
@@ -80,18 +72,29 @@ export default async function TohumlarimizPage({ params }: { params: Promise<{ l
               key={seed.id}
               className="vitrin-card overflow-hidden grid grid-cols-1 md:grid-cols-12 gap-0"
             >
-              {/* Sol — Tür kartı (renkli) */}
-              <div className={`md:col-span-4 bg-gradient-to-br ${seed.accent} text-white p-8 flex flex-col justify-between`}>
-                <div>
-                  <span className="text-xs font-bold uppercase tracking-widest text-white/70">
-                    {t("typeLabel", { number: String(i + 1).padStart(2, "0") })}
-                  </span>
-                  <h3 className="text-3xl font-bold mt-2 leading-tight">{seed.name}</h3>
-                  <p className="text-sm italic text-white/80 mt-1">{seed.latin}</p>
-                </div>
-                <div className="mt-8 flex items-center gap-3 text-sm text-white/90">
-                  <TreesIcon className="w-10 h-10 shrink-0" strokeWidth={1.4} />
-                  <span className="text-xs leading-relaxed">{seed.family}</span>
+              {/* Sol — Tür kartı: gerçek ağaç görseli + okunabilirlik gradyanı */}
+              <div className="relative md:col-span-4 min-h-[340px] text-white overflow-hidden">
+                <Image
+                  src={`/images/tohumlar/${seed.id}.webp`}
+                  alt={`${seed.name} — ${seed.latin}`}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                  className="object-cover"
+                />
+                {/* Üst + alt koyu gradyan — metin fotoğrafın üstünde okunur kalsın */}
+                <div className="absolute inset-0 bg-gradient-to-b from-[#0a1f12]/70 via-[#0a1f12]/10 to-[#0a1f12]/85 pointer-events-none" />
+                <div className="relative h-full p-8 flex flex-col justify-between">
+                  <div>
+                    <span className="text-xs font-bold uppercase tracking-widest text-white/80">
+                      {t("typeLabel", { number: String(i + 1).padStart(2, "0") })}
+                    </span>
+                    <h3 className="text-3xl font-bold mt-2 leading-tight drop-shadow-md">{seed.name}</h3>
+                    <p className="text-sm italic text-white/85 mt-1">{seed.latin}</p>
+                  </div>
+                  <div className="mt-8 flex items-center gap-3 text-sm text-white/95">
+                    <TreesIcon className="w-10 h-10 shrink-0" strokeWidth={1.4} />
+                    <span className="text-xs leading-relaxed">{seed.family}</span>
+                  </div>
                 </div>
               </div>
 

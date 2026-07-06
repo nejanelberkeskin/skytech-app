@@ -102,14 +102,35 @@ export default async function IletisimPage({
             <h2 className="text-2xl lg:text-3xl font-bold text-[#1a2e1a]">{t("map.title")}</h2>
           </div>
 
-          {/* GORSEL: Google Maps embed iframe — Ankara ofis lokasyonu, 16:9 oran. */}
-          <div className="relative aspect-[16/9] rounded-3xl bg-gradient-to-br from-[#0a1f12] via-[#0c2a17] to-[#0a1f12] overflow-hidden border border-black/5 shadow-xl flex items-center justify-center">
-            <div className="text-center">
-              <div className="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-white/5 border border-white/10 mb-5">
-                <PinIcon className="w-10 h-10 text-[#34d399]" />
+          {/* Google Maps embed — Kahramankazan/Ankara ofis + adres kartı */}
+          <div className="relative aspect-[16/9] rounded-3xl overflow-hidden border border-black/5 shadow-xl bg-[#0a1f12]">
+            {/* OpenStreetMap embed — keyless + her yerde frameable
+                (Google'ın keyless ?output=embed formatı kaldırıldı: 404 + SAMEORIGIN).
+                Yol tarifi linki yine Google Maps'e gider. */}
+            <iframe
+              src="https://www.openstreetmap.org/export/embed.html?bbox=32.6558%2C40.1911%2C32.7158%2C40.2511&layer=mapnik&marker=40.2211%2C32.6858"
+              title={t("map.title")}
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              className="absolute inset-0 w-full h-full border-0"
+            />
+            {/* Adres kartı — haritanın üzerinde */}
+            <div className="absolute bottom-4 left-4 right-4 sm:right-auto sm:max-w-sm rounded-2xl px-5 py-4 flex items-start gap-3 pointer-events-none bg-[#0a1f12]/92 backdrop-blur-md border border-white/10 shadow-xl">
+              <PinIcon className="w-5 h-5 text-[#34d399] shrink-0 mt-0.5" />
+              <div>
+                <p className="text-sm font-bold text-white leading-snug">Saray Mah. 60 Cad. No:22</p>
+                <p className="text-xs text-[#a7d4a7]">Kahramankazan / Ankara, Türkiye</p>
+                <a
+                  href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
+                    "Saray Mah. 60. Cadde No:22, Kahramankazan, Ankara"
+                  )}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 mt-2 text-xs font-semibold text-[#a3e635] hover:text-white transition-colors pointer-events-auto"
+                >
+                  {t("map.directions")} →
+                </a>
               </div>
-              <p className="text-white text-xl font-bold mb-2">{t("map.placeholderTitle")}</p>
-              <p className="text-[#a7d4a7] text-sm">{t("map.placeholderSubtitle")}</p>
             </div>
           </div>
         </div>

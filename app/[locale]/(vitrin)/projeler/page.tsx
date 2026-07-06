@@ -18,13 +18,6 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       title: t("meta.title"),
       description: t("meta.description"),
       path: "/projeler",
-      keywords: [
-        "ağaçlandırma projeleri Türkiye",
-        "pilot ağaçlandırma",
-        "drone ekim projeleri",
-        "Çanakkale İzmir Bursa ağaçlandırma",
-        "Orman Genel Müdürlüğü ağaçlandırma",
-      ],
     },
     locale
   );

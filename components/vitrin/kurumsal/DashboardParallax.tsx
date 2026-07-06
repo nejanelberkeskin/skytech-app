@@ -121,7 +121,7 @@ export default function DashboardParallax() {
                 <div className="flex items-center gap-2 mb-4">
                   <span className="w-2 h-2 rounded-full bg-[#34d399] animate-pulse" />
                   <span className="text-[10px] uppercase tracking-[0.18em] text-[#a7d4a7] font-bold">
-                    Drone — Manavgat
+                    Drone — Çanakkale
                   </span>
                 </div>
                 <div className="flex-1 grid grid-cols-3 gap-2">
@@ -207,7 +207,7 @@ export default function DashboardParallax() {
                 <div className="min-w-0">
                   <p className="text-sm font-bold text-[#0e2519] truncate">Yeni Sertifika</p>
                   <p className="text-xs text-[#3d5a3d] truncate">
-                    Holding A.Ş. — 12.500 ağaç sertifikası
+                    Örnek Kurum A.Ş. — kurumsal orman sertifikası
                   </p>
                 </div>
               </div>

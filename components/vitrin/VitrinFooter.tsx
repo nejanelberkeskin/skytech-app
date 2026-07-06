@@ -116,7 +116,7 @@ export default function VitrinFooter() {
               </p>
               <p className="flex items-start gap-2">
                 <PhoneIcon className="w-4 h-4 text-[#22894a] mt-0.5 shrink-0" />
-                <span>+90 (XXX) XXX XX XX</span>
+                <span>+90 530 127 64 35</span>
               </p>
               <p className="flex items-start gap-2">
                 <PinIcon className="w-4 h-4 text-[#22894a] mt-0.5 shrink-0" />

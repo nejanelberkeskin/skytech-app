@@ -35,7 +35,7 @@ export const ORG_ADDRESS = {
 };
 export const ORG_CONTACT = {
   email: "info@skytechgreen.com",
-  phone: "+90 (XXX) XXX XX XX",
+  phone: "+90 530 127 64 35",
 };
 export const ORG_SAMEAS = [
   // İleride sosyal medya hesapları eklenince burayı doldurabiliriz

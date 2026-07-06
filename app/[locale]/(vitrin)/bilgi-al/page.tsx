@@ -107,7 +107,7 @@ export default function BilgiAlPage() {
             />
             <InfoCard
               icon={<PhoneIcon className="w-6 h-6 text-[#1B6B3A]" />}
-              title="+90 (XXX) XXX XX XX"
+              title="+90 530 127 64 35"
               desc="Hafta içi 09:00 - 18:00 arası telefonla erişim."
             />
           </div>

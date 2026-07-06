@@ -22,7 +22,7 @@ const CONTACTS = [
   {
     Icon: PhoneIcon,
     title: "Telefon",
-    primary: "+90 (XXX) XXX XX XX",
+    primary: "+90 530 127 64 35",
     secondary: "Hafta içi 09:00 - 18:00\nWhatsApp Business üzerinden de erişilebilir.",
   },
   {

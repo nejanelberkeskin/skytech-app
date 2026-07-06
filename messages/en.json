@@ -1,0 +1,251 @@
+{
+  "common": {
+    "back": "Back",
+    "more": "Learn more",
+    "soon": "Coming Soon",
+    "loading": "Loading...",
+    "error": "Something went wrong"
+  },
+  "nav": {
+    "home": "Home",
+    "services": "Services",
+    "seedBall": "Seed Ball",
+    "ourSeeds": "Our Seeds",
+    "droneTech": "Drone Technology",
+    "carbonProgram": "Carbon Program",
+    "projects": "Projects",
+    "corporate": "Corporate",
+    "about": "About",
+    "contact": "Contact",
+    "login": "Sign In",
+    "signUp": "Get Started",
+    "orderSeeds": "Order Seeds",
+    "menu": "Menu",
+    "comingSoon": "Coming Soon"
+  },
+  "hero": {
+    "badge": "Carbon Neutral · Transparent · Measurable",
+    "headlineLine1": "We Are Greening Nature",
+    "headlineLine2": "with Technology",
+    "subtitle": "We carry out seed ball planting with drone technology. Thanks to unmanned aerial vehicles, we reduce land disturbance to zero and preserve wildlife on steep terrain.",
+    "ctaPrimary": "Order Seeds",
+    "ctaSecondary": "Corporate Solutions",
+    "trustForestRegions": "Coordinated with Regional Forestry Directorates",
+    "trustAnnualReport": "Annual drone reporting",
+    "trustCertificate": "Carbon certificate"
+  },
+  "valueCards": {
+    "badge": "Our Values",
+    "title": "Three Principles, One Vision",
+    "subtitle": "These three principles are at the core of all our projects.",
+    "items": {
+      "zeroFootprint": {
+        "title": "Zero Ground Footprint",
+        "description": "We green nature with technology. Using drone technology, we carry out seed ball planting operations. With unmanned aerial vehicles, we reduce land disturbance to zero and preserve wildlife in steep terrain.",
+        "stat": "100%",
+        "statLabel": "Nature-Safe"
+      },
+      "transparentSupply": {
+        "title": "Transparent Supply Chain",
+        "description": "Our regionally-suited seeds are sourced from the relevant Regional Forestry Directorates; species, collection dates, and origin of every seed are securely verified by blockchain technology.",
+        "stat": "100%",
+        "statLabel": "Traceability"
+      },
+      "annualReport": {
+        "title": "Annual Drone Reporting",
+        "description": "Periodic flight data, growth metrics and your carbon neutralization results are updated live on our corporate dashboard and can be exported directly to your ESG reports.",
+        "stat": "12 mo",
+        "statLabel": "Monitoring"
+      }
+    }
+  },
+  "howItWorks": {
+    "badge": "Process",
+    "title": "Four Steps to",
+    "titleAccent": "Full Automation",
+    "subtitle": "End-to-end science and technology, from seed selection to ESG reporting.",
+    "steps": {
+      "research": {
+        "title": "Seed Ball R&D",
+        "description": "We work with our expert forest engineers and academic advisors to drive ecosystem restoration and the rehabilitation of burned areas and mining sites. We develop our seed ball formulas in line with forestry science — selecting seeds suited to the region's climate and ecology and coating them with the most appropriate materials."
+      },
+      "analysis": {
+        "title": "Target Site Analysis",
+        "description": "Our application analyses satellite and drone (UAV) imagery to study the site's topography, soil moisture and ecosystem structure. It uses artificial intelligence to determine the most suitable target points for seed ball drops. Coordinated with the Regional Forestry Directorate, all legal permits are obtained to make the afforestation process fully scientific and safe."
+      },
+      "distribution": {
+        "title": "Drone Distribution",
+        "description": "Guided by high-precision GPS data, our UAV fleet delivers 200+ seed balls in a single flight to pre-optimized target points — flawlessly and with zero ecological impact."
+      },
+      "monitoring": {
+        "title": "Annual Monitoring & ESG",
+        "description": "Vegetation growth data tracked through annual UAV photogrammetry and real-time carbon offset metrics on the corporate dashboard are available instantly. Ready to be integrated into ESG reporting workflows."
+      }
+    }
+  },
+  "impactTabs": {
+    "badge": "Advantages",
+    "titleLine1": "Where We",
+    "titleAccent": "Make a Difference",
+    "subtitle": "We create measurable change in three critical ecosystem domains, powered by science and technology.",
+    "tabs": {
+      "fire": {
+        "label": "Post-Fire",
+        "title": "Regreening Burned Forests",
+        "description": "To restore the ecological dynamics of burned forest land, we run large-scale, fast and sustainable reforestation campaigns using autonomous drone fleets and high-germination seed balls.",
+        "bullets": [
+          "Worker safety: Avoids risking lives on loose, landslide-prone terrain after fires",
+          "Golden time window: Rapid intervention before topsoil loses nutrients or erosion begins",
+          "GIS-driven homogeneous distribution: Seed density per m² is finely tuned",
+          "Digital traceability: Every coordinate is logged, germination is monitored from satellites"
+        ],
+        "stat": "65%+",
+        "statLabel": "Germination rate",
+        "showDetails": "Show Details",
+        "hideDetails": "Hide Details",
+        "detailIntro": "The scientific foundation of UAV + seed ball rehabilitation in burned areas:",
+        "detailGroups": [
+          {
+            "title": "Accessibility and Logistical Advantages",
+            "items": [
+              {
+                "title": "Labor Savings",
+                "description": "Work that would take hundreds of laborers weeks of manual planting is completed by autonomous drone fleets in a fraction of the time."
+              },
+              {
+                "title": "Worker Safety",
+                "description": "Planting is carried out on loose post-fire soil, fallen trees and landslide-prone terrain without putting human lives at risk."
+              }
+            ]
+          },
+          {
+            "title": "Higher Germination and Survival Rate",
+            "items": [
+              {
+                "title": "Protective Coating",
+                "description": "The clay, compost and nutrients inside seed balls shield the seed from birds, rodents and ants."
+              },
+              {
+                "title": "Micro-Habitat Support",
+                "description": "The seed ball carries the moisture and organic nutrients needed for germination right in its first layer."
+              },
+              {
+                "title": "Natural Adaptation",
+                "description": "Because seeds are not buried deep in the soil, they germinate at the right time and in their natural cycle, together with the rain."
+              }
+            ]
+          },
+          {
+            "title": "Time and Cost Efficiency",
+            "items": [
+              {
+                "title": "Speed and Wide-Area Coverage",
+                "description": "A single drone can drop thousands of seed balls homogeneously over a wide hectarage in a day."
+              },
+              {
+                "title": "Lower Cost",
+                "description": "Optimizes reforestation budgets by removing seedling growing, transport, hole digging and planting labor costs."
+              },
+              {
+                "title": "Critical Time Management",
+                "description": "Allows fast intervention right after the fire — in the critical \"golden window\" before the soil loses nutrients and erosion begins."
+              }
+            ]
+          },
+          {
+            "title": "Technological and Scientific Precision",
+            "items": [
+              {
+                "title": "GIS and Mapping Integration",
+                "description": "Thanks to 3D maps prepared in advance, seeds are not dropped randomly but placed precisely on micro-basins and moist points where germination probability is highest."
+              },
+              {
+                "title": "Homogeneous Distribution",
+                "description": "Sensors and autonomous algorithms finely tune the seed count per m²; over-density or gaps are prevented."
+              },
+              {
+                "title": "Digital Traceability",
+                "description": "Since drop coordinates are logged in the system, germination success and vegetation development are easily tracked by satellites or drones in the following months."
+              }
+            ]
+          },
+          {
+            "title": "Maximum Restoration with Minimum Environmental Footprint",
+            "items": [
+              {
+                "title": "Soil Protection",
+                "description": "Prevents heavy machinery and intense human traffic from compacting the soil, protecting the post-fire sensitive topsoil from erosion."
+              },
+              {
+                "title": "Ecosystem-Friendly",
+                "description": "Using only native flora seeds preserves the region's natural gene pool and supports ecological succession without disruption."
+              }
+            ]
+          }
+        ]
+      },
+      "mining": {
+        "label": "Mining Sites",
+        "title": "Ecological Restoration of Mining Sites",
+        "description": "We accelerate the restoration of sites whose natural structure, vegetation and soil quality have been disturbed by mining. Using remote sensing and AI, we boost vegetation success in degraded topographies, building a gradual and sustainable forest ecosystem.",
+        "bullets": [
+          "200+ seeds per drone flight — 10× faster than traditional methods",
+          "Zero ground footprint: maximum restoration with the smallest environmental footprint",
+          "Full transparency: seed species, origin and germination rates logged end-to-end",
+          "Annual monitoring: high-resolution digital data via periodic drone flights",
+          "Corporate integration: every sale on your e-commerce site flows straight into your ESG reports via API",
+          "Legal compliance: 100% compliant, coordinated with Regional Forestry Directorates"
+        ],
+        "stat": "10×",
+        "statLabel": "Speed vs. traditional"
+      },
+      "carbon": {
+        "label": "Carbon Neutral",
+        "title": "End-to-End Carbon Neutrality for Holdings and Companies",
+        "description": "We calculate your annual greenhouse gas emissions to international standards, build high-carbon-sink areas (bio-carbon ecosystems) with drone technology, and integrate the entire process transparently into your ESG reports. By providing API integration between our corporate dashboard and your ESG software, we automate the data flow.",
+        "bullets": [
+          "Corporate carbon footprint assessment — to international standards",
+          "Brand-dedicated forest, supported by drone technology",
+          "Employee certificate — individual carbon attribution",
+          "Data ready for ESG, GRI, CDP reports — automatic flow via API"
+        ],
+        "stat": "ESG",
+        "statLabel": "Full compliance"
+      }
+    }
+  },
+  "footer": {
+    "tagline": "We plant the future with seed balls. Measurable reforestation through drone technology, forestry science, and a transparent supply chain.",
+    "links": {
+      "sections": "Sections",
+      "company": "Company",
+      "support": "Support",
+      "legal": "Legal"
+    },
+    "copyright": "© {year} Skytech Green. All rights reserved."
+  },
+  "ourSeeds": {
+    "breadcrumbTitle": "Our Native Seeds",
+    "breadcrumbSubtitle": "Each seed is chosen for the climate and ecosystem of its region. The properties of the four native species used in Skytech Green seed ball projects.",
+    "sectionBadge": "Species",
+    "sectionTitleLine": "Four Native",
+    "sectionTitleAccent": "Species",
+    "sectionSubtitle": "Each species is matched to the climate and soil of its planting region. Our seeds are sourced from Republic of Türkiye Regional Forestry Directorates.",
+    "footnote": "Our regionally-suited seeds are sourced from the relevant Regional Forestry Directorates; species, collection dates, and origin of every seed are securely verified by blockchain technology.",
+    "labels": {
+      "type": "Species",
+      "region": "Region",
+      "climate": "Climate",
+      "rootDepth": "Root System",
+      "germination": "Germination",
+      "lifespan": "Average Lifespan",
+      "ecologicalRole": "Ecological Role"
+    }
+  },
+  "languageSwitcher": {
+    "label": "Language",
+    "tr": "Türkçe",
+    "en": "English",
+    "ru": "Русский"
+  }
+}

@@ -45,7 +45,7 @@ export const ORG_LEGAL_NAME = "Skytech Havacılık A.Ş.";
 export const ORG_FOUNDED = "2021";
 export const ORG_AREA_SERVED = "Türkiye";
 export const ORG_ADDRESS = {
-  street: "Saray Mah. 60 Cad. No:22",
+  street: "Saray Mah. 60 Cad. No:32",
   district: "Kahramankazan",
   city: "Ankara",
   country: "Türkiye",

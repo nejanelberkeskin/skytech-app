@@ -38,7 +38,7 @@ export default async function IletisimPage({
     {
       Icon: PinIcon,
       title: t("contacts.address.title"),
-      primary: "Saray Mah. 60 Cad. No:22",
+      primary: "Saray Mah. 60 Cad. No:32",
       secondary: t("contacts.address.secondary"),
     },
     {
@@ -118,11 +118,11 @@ export default async function IletisimPage({
             <div className="absolute bottom-4 left-4 right-4 sm:right-auto sm:max-w-sm rounded-2xl px-5 py-4 flex items-start gap-3 pointer-events-none bg-[#0a1f12]/92 backdrop-blur-md border border-white/10 shadow-xl">
               <PinIcon className="w-5 h-5 text-[#34d399] shrink-0 mt-0.5" />
               <div>
-                <p className="text-sm font-bold text-white leading-snug">Saray Mah. 60 Cad. No:22</p>
+                <p className="text-sm font-bold text-white leading-snug">Saray Mah. 60 Cad. No:32</p>
                 <p className="text-xs text-[#a7d4a7]">Kahramankazan / Ankara, Türkiye</p>
                 <a
                   href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
-                    "Saray Mah. 60. Cadde No:22, Kahramankazan, Ankara"
+                    "Saray Mah. 60. Cadde No:32, Kahramankazan, Ankara"
                   )}`}
                   target="_blank"
                   rel="noopener noreferrer"

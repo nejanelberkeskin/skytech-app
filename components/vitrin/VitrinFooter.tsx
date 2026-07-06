@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import LanguageSwitcher from "./LanguageSwitcher";
-import { BUILD_DATE_ISO, BUILD_DATE_TR } from "@/lib/seo";
+import { ORG_LEGAL_NAME } from "@/lib/seo";
 
 export default async function VitrinFooter() {
   const t = await getTranslations("footer");
@@ -22,10 +22,10 @@ export default async function VitrinFooter() {
   ];
 
   const YASAL = [
-    { label: t("legal.privacy"), href: "#" },
-    { label: t("legal.terms"), href: "#" },
-    { label: t("legal.kvkk"), href: "#" },
-    { label: t("legal.cookies"), href: "#" },
+    { label: t("legal.privacy"), href: "/gizlilik-politikasi" },
+    { label: t("legal.terms"), href: "/kullanim-kosullari" },
+    { label: t("legal.kvkk"), href: "/kvkk" },
+    { label: t("legal.cookies"), href: "/cerez-politikasi" },
   ];
 
   return (
@@ -133,16 +133,9 @@ export default async function VitrinFooter() {
       {/* Bottom bar */}
       <div className="relative border-t border-white/5">
         <div className="vitrin-container py-5 flex flex-col lg:flex-row items-center justify-between gap-4">
-          <div className="text-xs text-[#6b8f6b] flex flex-col sm:flex-row items-center gap-x-3 gap-y-1">
+          <div className="text-xs text-[#6b8f6b]">
             <p>
-              &copy; {new Date().getFullYear()} Skytech Green Teknoloji A.Ş. {t("rightsReserved")}
-            </p>
-            <span className="hidden sm:inline text-[#3d5a3d]/60">·</span>
-            <p>
-              {t("lastUpdated")}{" "}
-              <time dateTime={BUILD_DATE_ISO} className="text-[#a7d4a7]/80">
-                {BUILD_DATE_TR}
-              </time>
+              &copy; {new Date().getFullYear()} {ORG_LEGAL_NAME} {t("rightsReserved")}
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs">

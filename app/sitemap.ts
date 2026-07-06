@@ -28,6 +28,10 @@ const VITRIN_PAGES: SitemapEntry[] = [
   { path: "/hakkimizda", changeFrequency: "monthly", priority: 0.7 },
   { path: "/iletisim", changeFrequency: "yearly", priority: 0.6 },
   { path: "/bilgi-al", changeFrequency: "yearly", priority: 0.6 },
+  { path: "/gizlilik-politikasi", changeFrequency: "yearly", priority: 0.3 },
+  { path: "/kullanim-kosullari", changeFrequency: "yearly", priority: 0.3 },
+  { path: "/kvkk", changeFrequency: "yearly", priority: 0.3 },
+  { path: "/cerez-politikasi", changeFrequency: "yearly", priority: 0.3 },
 ];
 
 const APP_ENTRY_PAGES: SitemapEntry[] = [

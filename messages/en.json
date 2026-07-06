@@ -224,7 +224,6 @@
     "newsletterTitle": "Join Our Newsletter",
     "newsletterDesc": "For news about new projects and carbon neutralization.",
     "subscribe": "Subscribe",
-    "lastUpdated": "Last updated:",
     "rightsReserved": "All rights reserved.",
     "services": {
       "seedBall": "Seed Ball",
@@ -695,7 +694,7 @@
     "contacts": {
       "address": {
         "title": "Address",
-        "secondary": "Kahramankazan / Ankara, Türkiye\nSkytech Green Teknoloji A.Ş."
+        "secondary": "Kahramankazan / Ankara, Türkiye\nSkytech Havacılık A.Ş."
       },
       "phone": {
         "title": "Phone",

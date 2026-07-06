@@ -58,6 +58,10 @@ const PUBLIC_PAGE_PATTERNS: RegExp[] = [
   /^\/iletisim(\/.*)?$/,
   /^\/bilgi-al(\/.*)?$/,
   /^\/yakinda(\/.*)?$/,
+  /^\/gizlilik-politikasi$/,
+  /^\/kullanim-kosullari$/,
+  /^\/kvkk$/,
+  /^\/cerez-politikasi$/,
 ];
 
 const PUBLIC_API_PREFIXES: string[] = [

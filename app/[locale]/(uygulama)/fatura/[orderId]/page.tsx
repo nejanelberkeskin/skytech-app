@@ -22,7 +22,7 @@ import { useParams } from "next/navigation";
  * client-side render edilen fatura sayfasında görünür.
  */
 const SELLER = {
-  name:       process.env.NEXT_PUBLIC_COMPANY_NAME      || "Skytech Green Teknoloji A.Ş.",
+  name:       process.env.NEXT_PUBLIC_COMPANY_NAME      || "Skytech Havacılık A.Ş.",
   taxOffice:  process.env.NEXT_PUBLIC_COMPANY_TAX_OFFICE || "Ankara Vergi Dairesi",
   taxNo:      process.env.NEXT_PUBLIC_COMPANY_TAX_NO     || "123 456 7890",
   address:    process.env.NEXT_PUBLIC_COMPANY_ADDRESS    || "Çankaya Mah. Yeşil Vadi Sok. No:12, Çankaya / Ankara",
@@ -531,7 +531,7 @@ export default function FaturaPage() {
               <p className="text-[10px] text-gray-400 leading-relaxed max-w-lg">
                 Bu belge 5070 sayılı Elektronik İmza Kanunu ve 213 sayılı Vergi Usul Kanunu
                 kapsamında düzenlenmiş elektronik arşiv faturası niteliğindedir.
-                Geçerlilik için yetkili imza aranmaz. Tüm hakları Skytech Green Teknoloji A.Ş.{" "}
+                Geçerlilik için yetkili imza aranmaz. Tüm hakları Skytech Havacılık A.Ş.{" "}
                 tarafından saklıdır.
               </p>
               <div className="flex items-center gap-4 pt-1">

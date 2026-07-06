@@ -211,7 +211,9 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    // Static assets ve favicon'u hariç tut
-    "/((?!_next/static|_next/image|favicon\\.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|woff2?)$).*)",
+    // Static asset'ler, favicon ve metadata route'larını (sitemap/robots/manifest)
+    // hariç tut. Bu dosyalar next-intl locale rewrite'ına girmemeli — aksi halde
+    // /tr/sitemap.xml'e yönlenip 404 döner.
+    "/((?!_next/static|_next/image|favicon\\.ico|sitemap\\.xml|robots\\.txt|manifest\\.webmanifest|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|woff2?)$).*)",
   ],
 };

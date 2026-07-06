@@ -4,7 +4,8 @@
     "more": "Daha fazla",
     "soon": "Çok Yakında",
     "loading": "Yükleniyor...",
-    "error": "Bir hata oluştu"
+    "error": "Bir hata oluştu",
+    "scrollTop": "Yukarı çık"
   },
   "nav": {
     "home": "Ana Sayfa",
@@ -32,12 +33,12 @@
     "ctaSecondary": "Kurumsal Çözümler",
     "trustForestRegions": "Orman Bölge Müdürlükleri ile koordineli",
     "trustAnnualReport": "Yıllık drone raporlama",
-    "trustCertificate": "Karbon sertifikası"
+    "trustCertificate": "Karbon sertifikası",
+    "discover": "Keşfet"
   },
   "valueCards": {
-    "badge": "Değerlerimiz",
-    "title": "Üç İlke, Bir Vizyon",
-    "subtitle": "Tüm projelerimizin temelinde bu üç ilke vardır.",
+    "badge": "Neden Skytech Green?",
+    "subtitle": "Üç temel prensip üzerine inşa edilmiş, ölçülebilir ve sürdürülebilir bir ağaçlandırma sistemi.",
     "items": {
       "zeroFootprint": {
         "title": "Sıfır Saha İzi",
@@ -57,7 +58,9 @@
         "stat": "12 ay",
         "statLabel": "İzleme"
       }
-    }
+    },
+    "titleLine1": "Geleneksel Ağaçlandırmanın",
+    "titleAccent": "Sınırlarını Aşıyoruz"
   },
   "howItWorks": {
     "badge": "Süreç",
@@ -1294,5 +1297,9 @@
         "desc": "Ekosistem restorasyonu odaklı pilot saha hazırlıkları."
       }
     }
+  },
+  "homeMeta": {
+    "title": "Tohum Toplarıyla Geleceği Ekin",
+    "description": "Dron teknolojisi ve tohum topu ile karbon nötr ağaçlandırma. Bireysel ve kurumsal çözümler, ölçülebilir etki, şeffaf tedarik zinciri."
   }
 }

@@ -65,6 +65,7 @@ const headingVariants = {
 };
 
 export default function ValueCards() {
+  const t = useTranslations("valueCards");
   const VALUE_CARDS = useValueCards();
   return (
     <SectionWrapper variant="light" className="!pt-24 !pb-20 relative overflow-hidden">
@@ -84,7 +85,7 @@ export default function ValueCards() {
         <motion.div variants={headingVariants}>
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#1B6B3A]/8 border border-[#1B6B3A]/15 mb-6 text-[11px] font-bold uppercase tracking-[0.18em] text-[#1B6B3A]">
             <span className="w-1.5 h-1.5 rounded-full bg-[#1B6B3A]" />
-            Neden Skytech Green?
+            {t("badge")}
           </div>
         </motion.div>
 
@@ -92,16 +93,16 @@ export default function ValueCards() {
           variants={headingVariants}
           className="display-headline text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-[#0e2519] mb-6"
         >
-          Geleneksel Ağaçlandırmanın
+          {t("titleLine1")}
           <br />
-          <span className="text-gradient-aurora">Sınırlarını Aşıyoruz</span>
+          <span className="text-gradient-aurora">{t("titleAccent")}</span>
         </motion.h2>
 
         <motion.p
           variants={headingVariants}
           className="text-base lg:text-lg text-[#3d5a3d] max-w-2xl mx-auto leading-relaxed"
         >
-          Üç temel prensip üzerine inşa edilmiş, ölçülebilir ve sürdürülebilir bir ağaçlandırma sistemi.
+          {t("subtitle")}
         </motion.p>
       </motion.div>
 

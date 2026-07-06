@@ -187,7 +187,7 @@ export default function HeroSection() {
         className="absolute bottom-8 left-1/2 -translate-x-1/2 hidden lg:flex flex-col items-center gap-2"
       >
         <span className="text-[10px] uppercase tracking-[0.2em] text-[#6b8f6b] font-semibold">
-          Keşfet
+          {t("discover")}
         </span>
         <motion.div
           animate={{ y: [0, 8, 0] }}

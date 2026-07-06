@@ -4,7 +4,8 @@
     "more": "Learn more",
     "soon": "Coming Soon",
     "loading": "Loading...",
-    "error": "Something went wrong"
+    "error": "Something went wrong",
+    "scrollTop": "Scroll to top"
   },
   "nav": {
     "home": "Home",
@@ -32,12 +33,12 @@
     "ctaSecondary": "Corporate Solutions",
     "trustForestRegions": "Coordinated with Regional Forestry Directorates",
     "trustAnnualReport": "Annual drone reporting",
-    "trustCertificate": "Carbon certificate"
+    "trustCertificate": "Carbon certificate",
+    "discover": "Explore"
   },
   "valueCards": {
-    "badge": "Our Values",
-    "title": "Three Principles, One Vision",
-    "subtitle": "These three principles are at the core of all our projects.",
+    "badge": "Why Skytech Green?",
+    "subtitle": "A measurable and sustainable reforestation system built on three core principles.",
     "items": {
       "zeroFootprint": {
         "title": "Zero Ground Footprint",
@@ -57,7 +58,9 @@
         "stat": "12 mo",
         "statLabel": "Monitoring"
       }
-    }
+    },
+    "titleLine1": "We are Pushing Past the Limits of",
+    "titleAccent": "Traditional Reforestation"
   },
   "howItWorks": {
     "badge": "Process",
@@ -1294,5 +1297,9 @@
         "desc": "Pilot site preparations focused on ecosystem restoration."
       }
     }
+  },
+  "homeMeta": {
+    "title": "Plant the Future with Seed Balls",
+    "description": "Carbon-neutral reforestation with drone technology and seed balls. Individual and corporate solutions, measurable impact, transparent supply chain."
   }
 }

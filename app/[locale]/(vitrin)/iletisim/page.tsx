@@ -1,4 +1,6 @@
 import Link from "next/link";
+import type { Metadata } from "next";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import BreadCrumb from "@/components/vitrin/BreadCrumb";
 import SectionWrapper from "@/components/vitrin/SectionWrapper";
 import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
@@ -6,50 +8,68 @@ import LocalBusinessSchema from "@/components/seo/LocalBusinessSchema";
 import { buildPageMetadata } from "@/lib/seo";
 import { TRANSACTIONS_ENABLED } from "@/lib/site-config";
 
-export const metadata = buildPageMetadata({
-  title: "İletişim — Bize Ulaşın",
-  description:
-    "Skytech Green Ankara ofisi, telefon, e-posta ve sosyal medya iletişim bilgileri. Çalışma saatleri 09:00-18:00, hafta içi.",
-  path: "/iletisim",
-});
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "contactPage" });
+  return buildPageMetadata(
+    {
+      title: t("meta.title"),
+      description: t("meta.description"),
+      path: "/iletisim",
+    },
+    locale
+  );
+}
 
-const CONTACTS = [
-  {
-    Icon: PinIcon,
-    title: "Adres",
-    primary: "Saray Mah. 60 Cad. No:22",
-    secondary: "Kahramankazan / Ankara, Türkiye\nSkytech Green Teknoloji A.Ş.",
-  },
-  {
-    Icon: PhoneIcon,
-    title: "Telefon",
-    primary: "+90 530 127 64 35",
-    secondary: "Hafta içi 09:00 - 18:00\nWhatsApp Business üzerinden de erişilebilir.",
-  },
-  {
-    Icon: MailIcon,
-    title: "E-posta",
-    primary: "info@skytechgreen.com",
-    secondary: "kurumsal@skytechgreen.com\npress@skytechgreen.com",
-  },
-];
+export default async function IletisimPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+  const t = await getTranslations("contactPage");
 
-const SOCIAL = [
-  { name: "LinkedIn", href: "#", Icon: LinkedInIcon },
-  { name: "Instagram", href: "#", Icon: InstagramIcon },
-  { name: "X (Twitter)", href: "#", Icon: XIcon },
-  { name: "YouTube", href: "#", Icon: YouTubeIcon },
-];
+  const CONTACTS = [
+    {
+      Icon: PinIcon,
+      title: t("contacts.address.title"),
+      primary: "Saray Mah. 60 Cad. No:22",
+      secondary: t("contacts.address.secondary"),
+    },
+    {
+      Icon: PhoneIcon,
+      title: t("contacts.phone.title"),
+      primary: "+90 530 127 64 35",
+      secondary: t("contacts.phone.secondary"),
+    },
+    {
+      Icon: MailIcon,
+      title: t("contacts.email.title"),
+      primary: "info@skytechgreen.com",
+      secondary: "kurumsal@skytechgreen.com\npress@skytechgreen.com",
+    },
+  ];
 
-export default function IletisimPage() {
+  const SOCIAL = [
+    { name: "LinkedIn", href: "#", Icon: LinkedInIcon },
+    { name: "Instagram", href: "#", Icon: InstagramIcon },
+    { name: "X (Twitter)", href: "#", Icon: XIcon },
+    { name: "YouTube", href: "#", Icon: YouTubeIcon },
+  ];
+
   return (
     <>
-      <BreadcrumbSchema items={[{ name: "İletişim", path: "/iletisim" }]} />
+      <BreadcrumbSchema items={[{ name: t("breadcrumb.label"), path: "/iletisim" }]} />
       <LocalBusinessSchema />
       <BreadCrumb
-        title="Bize Ulaşın"
-        subtitle="Bireysel sorularınız için bilgi formumuza, kurumsal projeler için teklif sayfamıza yönelin. Sosyal medyadan da bağlantı kurabilirsiniz."
-        items={[{ label: "İletişim" }]}
+        title={t("hero.title")}
+        subtitle={t("hero.subtitle")}
+        items={[{ label: t("breadcrumb.label") }]}
       />
 
       {/* İletişim Kartları */}
@@ -77,9 +97,9 @@ export default function IletisimPage() {
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-8">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#1B6B3A]/8 text-[#1B6B3A] mb-3 text-xs font-semibold uppercase tracking-wider">
-              Konum
+              {t("map.badge")}
             </div>
-            <h2 className="text-2xl lg:text-3xl font-bold text-[#1a2e1a]">Bizi Ziyaret Edin</h2>
+            <h2 className="text-2xl lg:text-3xl font-bold text-[#1a2e1a]">{t("map.title")}</h2>
           </div>
 
           {/* GORSEL: Google Maps embed iframe — Ankara ofis lokasyonu, 16:9 oran. */}
@@ -88,8 +108,8 @@ export default function IletisimPage() {
               <div className="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-white/5 border border-white/10 mb-5">
                 <PinIcon className="w-10 h-10 text-[#34d399]" />
               </div>
-              <p className="text-white text-xl font-bold mb-2">Harita Yakında</p>
-              <p className="text-[#a7d4a7] text-sm">Google Maps embed buraya gelecek</p>
+              <p className="text-white text-xl font-bold mb-2">{t("map.placeholderTitle")}</p>
+              <p className="text-[#a7d4a7] text-sm">{t("map.placeholderSubtitle")}</p>
             </div>
           </div>
         </div>
@@ -99,11 +119,11 @@ export default function IletisimPage() {
       <SectionWrapper variant="light">
         <div className="max-w-3xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#1B6B3A]/8 text-[#1B6B3A] mb-4 text-xs font-semibold uppercase tracking-wider">
-            Sosyal Medya
+            {t("social.badge")}
           </div>
-          <h2 className="text-2xl lg:text-3xl font-bold text-[#1a2e1a] mb-3">Hikayemizi Takip Edin</h2>
+          <h2 className="text-2xl lg:text-3xl font-bold text-[#1a2e1a] mb-3">{t("social.title")}</h2>
           <p className="text-base text-[#3d5a3d] mb-8">
-            Drone uçuşları, saha videoları, ekip hikayeleri ve teknolojik atılımlar — sosyal medyada.
+            {t("social.subtitle")}
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-3">
@@ -125,15 +145,17 @@ export default function IletisimPage() {
       <SectionWrapper variant="tinted">
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="text-3xl lg:text-4xl font-bold text-[#1a2e1a] leading-tight mb-5">
-            Hangi Yoldan <span className="text-gradient-forest">İlerleyelim?</span>
+            {t.rich("cta.title", {
+              accent: (chunks) => <span className="text-gradient-forest">{chunks}</span>,
+            })}
           </h2>
           <p className="text-base text-[#3d5a3d] mb-8">
-            İhtiyacınıza en uygun temas noktası için aşağıdan seçin.
+            {t("cta.subtitle")}
           </p>
           <div className="flex flex-col sm:flex-row gap-3 items-center justify-center">
-            <Link href="/bilgi-al" className="vitrin-cta-primary">Bilgi Almak İstiyorum</Link>
+            <Link href="/bilgi-al" className="vitrin-cta-primary">{t("cta.primary")}</Link>
             {TRANSACTIONS_ENABLED && (
-              <Link href="/kurumsal/teklif-al" className="vitrin-cta-secondary">Kurumsal Teklif</Link>
+              <Link href="/kurumsal/teklif-al" className="vitrin-cta-secondary">{t("cta.secondary")}</Link>
             )}
           </div>
         </div>

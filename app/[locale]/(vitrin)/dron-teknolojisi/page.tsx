@@ -1,5 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
+import type { Metadata } from "next";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import BreadCrumb from "@/components/vitrin/BreadCrumb";
 import SectionWrapper from "@/components/vitrin/SectionWrapper";
 import SectionHeading from "@/components/vitrin/SectionHeading";
@@ -7,56 +9,66 @@ import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
 import ServiceSchema from "@/components/seo/ServiceSchema";
 import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata = buildPageMetadata({
-  title: "Dron Teknolojisi — Hassas Ekim, Sıfır Ayak İzi",
-  description:
-    "GPS hassasiyetli drone filomuz, ulaşılması zor bölgelerde insan ayağının değmediği alanlara tohum topu ekiyor. RTK GPS, LiDAR, otonom uçuş, 200+ tohum/uçuş.",
-  path: "/dron-teknolojisi",
-  image: {
-    url: "/images/dron-teknolojisi/hero.webp",
-    alt: "Skytech Green tarımsal ekim drone — hero shot",
-  },
-  keywords: [
-    "drone ağaçlandırma",
-    "dronla tohum ekim",
-    "RTK GPS tarım drone",
-    "tarımsal drone Türkiye",
-    "otonom drone ekim",
-    "drone reforestation",
-  ],
-});
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "droneTechPage" });
+  return buildPageMetadata(
+    {
+      title: t("meta.title"),
+      description: t("meta.description"),
+      path: "/dron-teknolojisi",
+      image: {
+        url: "/images/dron-teknolojisi/hero.webp",
+        alt: t("meta.imageAlt"),
+      },
+      keywords: [
+        "drone ağaçlandırma",
+        "dronla tohum ekim",
+        "RTK GPS tarım drone",
+        "tarımsal drone Türkiye",
+        "otonom drone ekim",
+        "drone reforestation",
+      ],
+    },
+    locale
+  );
+}
 
-const FEATURES = [
-  { title: "GPS Hassasiyeti", desc: "Santimetre seviyesinde RTK GPS — her tohumun düştüğü nokta kayıtlı.", Icon: GpsIcon },
-  { title: "200+ Tohum / Uçuş", desc: "Gelişmiş kapasite ile büyük alanları tek seferde tarayabiliyoruz.", Icon: BoxIcon },
-  { title: "10x Hız", desc: "Geleneksel ekime göre on kat daha hızlı, ekim süresini günlerden saatlere indiriyor.", Icon: BoltIcon },
-  { title: "Otonom Görev", desc: "Önceden planlanan rota; drone otonom uçar, görevi tamamlar, baz istasyonuna döner.", Icon: AutoIcon },
-  { title: "Ulaşılması Zor Bölgelere Erişim", desc: "Fiziki olarak ulaşılması zor olan yangın bölgesi ve erozyon alanlarına erişim.", Icon: PathIcon },
-  { title: "Yıllık Takip", desc: "Periyodik uçuş verileri, büyüme metrikleri ve karbon nötrleme sonuçlarınız kurumsal panomuzda anlık olarak güncellenir; doğrudan ESG raporlarınıza aktarılabilir.", Icon: ChartIcon },
-];
+export default async function DronTeknolojisiPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+  const t = await getTranslations("droneTechPage");
 
-const PROCESS = [
-  { num: "01", title: "Bölge Taraması", desc: "Drone uydu ve LiDAR ile alan haritalanır, eğim ve toprak nem analizi yapılır." },
-  { num: "02", title: "Ekim Planı", desc: "GPS koordinatlı ekim haritası oluşturulur. Yasal izinler Orman Bölge Müdürlüğü ile koordine edilir." },
-  { num: "03", title: "Otonom Ekim", desc: "Drone planlanmış rotada otonom uçar, hesaplanmış noktalara tohum topu bırakır." },
-  { num: "04", title: "Raporlama", desc: "Uçuş kaydı, fotoğraflar ve GPS verileri kurumsal panonuza yansır." },
-];
+  const FEATURES = [
+    { title: t("features.gps.title"), desc: t("features.gps.desc"), Icon: GpsIcon },
+    { title: t("features.capacity.title"), desc: t("features.capacity.desc"), Icon: BoxIcon },
+    { title: t("features.speed.title"), desc: t("features.speed.desc"), Icon: BoltIcon },
+    { title: t("features.autonomous.title"), desc: t("features.autonomous.desc"), Icon: AutoIcon },
+    { title: t("features.access.title"), desc: t("features.access.desc"), Icon: PathIcon },
+    { title: t("features.tracking.title"), desc: t("features.tracking.desc"), Icon: ChartIcon },
+  ];
 
-export default function DronTeknolojisiPage() {
+  const PROCESS = [
+    { num: "01", title: t("process.survey.title"), desc: t("process.survey.desc") },
+    { num: "02", title: t("process.plan.title"), desc: t("process.plan.desc") },
+    { num: "03", title: t("process.seeding.title"), desc: t("process.seeding.desc") },
+    { num: "04", title: t("process.reporting.title"), desc: t("process.reporting.desc") },
+  ];
+
   return (
     <>
-      <BreadcrumbSchema items={[{ name: "Dron Teknolojisi", path: "/dron-teknolojisi" }]} />
+      <BreadcrumbSchema items={[{ name: t("breadcrumb.label"), path: "/dron-teknolojisi" }]} />
       <ServiceSchema
-        name="Dron ile Ağaçlandırma Hizmeti"
-        description="GPS hassasiyetli, otonom uçuşlu profesyonel drone filomuzla bir uçuşta 200+ tohum atışı. Sıfır saha tahribatı, ulaşılması zor bölgelere erişim, tam izlenebilirlik."
+        name={t("schema.name")}
+        description={t("schema.description")}
         serviceType="Drone-based aerial seeding for reforestation"
         path="/dron-teknolojisi"
         image="/images/dron-teknolojisi/hero.webp"
       />
       <BreadCrumb
-        title="Hassas Ekim, Sıfır Ayak İzi"
-        subtitle="GPS hassasiyetli dronlarla, insan adımının ulaşamadığı bölgelere tohum topu ekiyoruz."
-        items={[{ label: "Dron Teknolojisi" }]}
+        title={t("hero.title")}
+        subtitle={t("hero.subtitle")}
+        items={[{ label: t("breadcrumb.label") }]}
       />
 
       {/* Hero card */}
@@ -65,23 +77,27 @@ export default function DronTeknolojisiPage() {
           <div>
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#1B6B3A]/8 text-[#1B6B3A] mb-5 text-xs font-semibold uppercase tracking-wider">
               <span className="w-1.5 h-1.5 rounded-full bg-[#1B6B3A]" />
-              Drone Sistemi
+              {t("system.badge")}
             </div>
             <h2 className="text-3xl lg:text-4xl font-bold text-[#1a2e1a] leading-tight mb-5">
-              <span className="text-gradient-forest">Otonom Drone Filomuz</span> Sahada
+              {t.rich("system.heading", {
+                grad: (chunks) => <span className="text-gradient-forest">{chunks}</span>,
+              })}
             </h2>
             <p className="text-base text-[#3d5a3d] leading-relaxed mb-5">
-              Otonom uçuş kabiliyetine sahip insansız hava araçları (İHA), önceden tanımlanmış hedef koordinatlara yüksek hassasiyetle ulaşır ve tek operasyonda 200+ tohum topunu başarıyla yerleştirir.
+              {t("system.p1")}
             </p>
             <p className="text-base text-[#3d5a3d] leading-relaxed">
-              Yüksek hassasiyetli GPS verileriyle yönlendirilen İHA filomuz, <strong className="text-[#1B6B3A]">sıfır ekolojik tahribat</strong> prensibiyle çalışır. Tüm uçuş kayıtları gerçek zamanlı olarak kurumsal panonuza işlenir — şeffaflık ve doğrulanabilirlik için.
+              {t.rich("system.p2", {
+                strong: (chunks) => <strong className="text-[#1B6B3A]">{chunks}</strong>,
+              })}
             </p>
           </div>
 
           <div className="relative aspect-square rounded-3xl overflow-hidden bg-[#0a1f12]">
             <Image
               src="/images/dron-teknolojisi/hero.webp"
-              alt="Skytech Green tarımsal ekim drone — premium ürün görseli"
+              alt={t("system.imageAlt")}
               fill
               priority
               sizes="(max-width: 1024px) 100vw, 50vw"
@@ -91,7 +107,7 @@ export default function DronTeknolojisiPage() {
               <div className="flex items-center justify-between text-xs text-[#a7d4a7]">
                 <span>RTK GPS</span><span>•</span>
                 <span>LiDAR</span><span>•</span>
-                <span>Termal Kamera</span>
+                <span>{t("system.thermalCamera")}</span>
               </div>
             </div>
           </div>
@@ -101,8 +117,10 @@ export default function DronTeknolojisiPage() {
       {/* Özellikler */}
       <SectionWrapper variant="tinted">
         <SectionHeading
-          badge="Teknik Özellikler"
-          title={<>Endüstri Lideri <span className="text-gradient-forest">Drone Donanımı</span></>}
+          badge={t("featuresSection.badge")}
+          title={t.rich("featuresSection.title", {
+            grad: (chunks) => <span className="text-gradient-forest">{chunks}</span>,
+          })}
         />
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 max-w-6xl mx-auto stagger-children">
           {FEATURES.map((f) => (
@@ -122,8 +140,10 @@ export default function DronTeknolojisiPage() {
       {/* Operasyon Süreci */}
       <SectionWrapper variant="light">
         <SectionHeading
-          badge="Operasyon"
-          title={<>Dört Aşamada <span className="text-gradient-forest">Drone Ekimi</span></>}
+          badge={t("processSection.badge")}
+          title={t.rich("processSection.title", {
+            grad: (chunks) => <span className="text-gradient-forest">{chunks}</span>,
+          })}
         />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 max-w-6xl mx-auto stagger-children">
           {PROCESS.map((p) => (
@@ -140,14 +160,16 @@ export default function DronTeknolojisiPage() {
       <SectionWrapper variant="tinted">
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="text-3xl lg:text-4xl font-bold text-[#1a2e1a] leading-tight mb-5">
-            Projeniz İçin <span className="text-gradient-forest">Drone Ekimi</span> Planlayalım
+            {t.rich("cta.title", {
+              grad: (chunks) => <span className="text-gradient-forest">{chunks}</span>,
+            })}
           </h2>
           <p className="text-base text-[#3d5a3d] mb-8 max-w-xl mx-auto">
-            Bölge analizi, yasal izin koordinasyonu ve operasyon planlaması — tek noktadan.
+            {t("cta.subtitle")}
           </p>
           <div className="flex flex-col sm:flex-row gap-3 items-center justify-center">
-            <Link href="/bilgi-al" className="vitrin-cta-primary">Teklif Al</Link>
-            <Link href="/projeler" className="vitrin-cta-secondary">Aktif Projeler</Link>
+            <Link href="/bilgi-al" className="vitrin-cta-primary">{t("cta.buttonPrimary")}</Link>
+            <Link href="/projeler" className="vitrin-cta-secondary">{t("cta.buttonSecondary")}</Link>
           </div>
         </div>
       </SectionWrapper>

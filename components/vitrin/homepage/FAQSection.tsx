@@ -2,46 +2,33 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import FAQSchema from "../../seo/FAQSchema";
 import SectionWrapper from "../SectionWrapper";
 import SectionHeading from "../SectionHeading";
 
-const FAQS = [
-  {
-    q: "Tohum topu nedir, nasıl çalışır?",
-    a: "Tohum topu; bitki tohumlarının kil ve organik besin maddeleriyle kaplanarak dış etkenlerden korunduğu, çimlenme başarısını %65+ üzerine çıkaran yenilikçi bir yapay kapsülleme yöntemidir. Doğa dostu bu biyoteknolojik yaklaşım, tohumları kuraklık ve canlı tüketimi gibi risklerden koruyarak toprağa güvenle tutunmalarını sağlar; yağmurla birlikte filizlenerek doğanın yenilenme hızını artırır.",
-  },
-  {
-    q: "Tohumlar nereden tedarik ediliyor?",
-    a: "Tüm tohumlar Orman Bölge Müdürlükleri iş birliğiyle tedarik edilir. Biyolojik çeşitliliğin korunması ve sürdürülebilirlik ilkeleri doğrultusunda; her tohum lotunun ağaçtan toplanma tarihi, genetik orijini ve taksonomik (tür) bilgisi blok zinciri teknolojisiyle kayıt altına alınır. Uçtan uca şeffaf yapılandırılan tedarik zincirimiz sayesinde müşterilerimiz tohum kimlik kartlarına ve sertifikasyon verilerine diledikleri an erişebilir.",
-  },
-  {
-    q: "Drone ile ekim ne kadar verimli?",
-    a: "Tek bir uçuşta 200'den fazla tohum dağıtarak geleneksel yöntemlere kıyasla 10 kat hız ve yüksek maliyet etkinliği sunar. GPS hassasiyetli koordinatlar sayesinde insan ayağının ulaşamadığı eğimli ve yangın sonrası tahribat görmüş alanlara yüksek erişilebilirlik sağlar; santimetrik hassasiyetle kaynak verimliliğini maksimuma çıkarırken minimum karbon ayak iziyle sürdürülebilir bir çevresel etki yaratır.",
-  },
-  {
-    q: "Ekilen tohumların büyümesini nasıl takip edebilirim?",
-    a: "Yıllık periyodik drone uçuşlarıyla bölge yeniden taranır, büyüme verisi kurumsal panonuza işlenir. Bireysel kullanıcılar dijital sertifikalarındaki QR kodla bölge görsellerine erişebilir. Kurumsal partnerler API ile gerçek zamanlı veriye ulaşır.",
-  },
-  {
-    q: "Karbon sertifikası ne için geçerli?",
-    a: "Sertifikalar; ESG raporlarında, GRI ve CDP gönderimlerinde, kurumsal sürdürülebilirlik beyanlarında kullanılabilir. Tüm ormanlaştırma ve karbon yutak alanı projeleri Orman Genel Müdürlüğü (OGM) Bölge Müdürlükleri koordinasyonunda, yasal ve bilimsel altyapıya uygun olarak yürütülür; %100 doğrulanabilir bir izleme zinciri sunarız.",
-  },
-  {
-    q: "Minimum sipariş miktarı var mı?",
-    a: "Bireysel kullanıcılar için minimum 10 tohum, kurumsal partnerler için minimum 1.000 tohum başlangıç limiti vardır. 50 tohum ve üzeri bireysel siparişlerde kargo ücretsizdir. Kurumsal projelerde teklif fiyatlandırması yapılır.",
-  },
-  {
-    q: "B2B kurumsal entegrasyon nasıl çalışır?",
-    a: "Kurumsal panelimiz; çalışan listesi yükleme, otomatik PDF sertifika üretimi, e-ticaret \"sepete tohum ekle\" entegrasyonu, ESG raporlama API'si gibi modüller içerir. Özel hesap yöneticisi atanır ve kurum ihtiyaçlarına göre özelleştirme yapılır.",
-  },
-  {
-    q: "Hediye olarak gönderebilir miyim?",
-    a: "Evet — bireysel sipariş akışında \"hediye et\" seçeneği vardır. Alıcı, dijital sertifikayı e-posta ile alır. Üyelik kazandığında, gönderici otomatik tohum bonusu kazanır (viral büyüme programımız).",
-  },
-];
+const FAQ_SLUGS = [
+  "seedBall",
+  "sourcing",
+  "droneEfficiency",
+  "tracking",
+  "certificate",
+  "minOrder",
+  "b2bIntegration",
+  "gift",
+] as const;
+
+function useFaqs() {
+  const t = useTranslations("faqSection");
+  return FAQ_SLUGS.map((slug) => ({
+    q: t(`faqs.${slug}.question`),
+    a: t(`faqs.${slug}.answer`),
+  }));
+}
 
 export default function FAQSection() {
+  const t = useTranslations("faqSection");
+  const FAQS = useFaqs();
   const [openIdx, setOpenIdx] = useState<number | null>(0);
 
   return (
@@ -51,15 +38,15 @@ export default function FAQSection() {
 
       <div className="relative">
         <SectionHeading
-          badge="Sıkça Sorulanlar"
+          badge={t("badge")}
           title={
             <>
-              Aklınızdaki
+              {t("titleLine1")}
               <br />
-              <span className="text-gradient-aurora">Tüm Sorular</span>
+              <span className="text-gradient-aurora">{t("titleAccent")}</span>
             </>
           }
-          subtitle="Tohum topundan dronlu ekime, karbon sertifikasından kurumsal entegrasyona — her şey burada."
+          subtitle={t("subtitle")}
         />
 
         <motion.div

@@ -2,31 +2,36 @@
 
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
+import { useTranslations } from "next-intl";
 import SectionWrapper from "../SectionWrapper";
 import SectionHeading from "../SectionHeading";
 
-const MILESTONES = [
-  {
-    year: "2021",
-    title: "Akdeniz Yangınları & İlk Kıvılcım",
-    description:
-      "Manavgat ve Marmaris yangınları sonrası, drone teknolojisinin yangın bölgelerinde nasıl etkili olabileceği üzerine ar-ge çalışmaları başladı.",
-  },
-  {
-    year: "2025",
-    title: "Orman Genel Müdürlüğü ile Görüşmeler",
-    description:
-      "Orman Genel Müdürlüğü ile görüşmeler başladı; ormanlaştırma sahalarında iş birliği için zemin hazırlandı.",
-  },
-  {
-    year: "2026",
-    title: "Çalışmalar ve Protokoller",
-    description:
-      "Orman Genel Müdürlüğü ile çalışmalar başlatıldı ve protokoller imzalandı. Çanakkale, İzmir ve Bursa'da demo sahalar hayata geçirildi.",
-  },
-];
+type MilestoneData = { year: string; title: string; description: string };
+
+function useMilestones(): MilestoneData[] {
+  const t = useTranslations("aboutPage.timeline");
+  return [
+    {
+      year: "2021",
+      title: t("milestones.spark.title"),
+      description: t("milestones.spark.description"),
+    },
+    {
+      year: "2025",
+      title: t("milestones.talks.title"),
+      description: t("milestones.talks.description"),
+    },
+    {
+      year: "2026",
+      title: t("milestones.protocols.title"),
+      description: t("milestones.protocols.description"),
+    },
+  ];
+}
 
 export default function Timeline() {
+  const t = useTranslations("aboutPage.timeline");
+  const milestones = useMilestones();
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -42,15 +47,15 @@ export default function Timeline() {
 
       <div className="relative">
         <SectionHeading
-          badge="Yolculuğumuz"
+          badge={t("badge")}
           title={
             <>
-              Yıllar İçinde
+              {t("titleLine1")}
               <br />
-              <span className="text-gradient-aurora">Bilim ve Teknoloji</span>
+              <span className="text-gradient-aurora">{t("titleLine2")}</span>
             </>
           }
-          subtitle="Bir yangın sonrası fikrinden bugünkü ölçeğimize — Skytech Green'in adım adım büyümesi."
+          subtitle={t("subtitle")}
         />
 
         <div ref={containerRef} className="relative max-w-4xl mx-auto pt-8 pb-12">
@@ -75,8 +80,8 @@ export default function Timeline() {
 
           {/* Milestones */}
           <ul className="relative space-y-12 lg:space-y-16">
-            {MILESTONES.map((m, idx) => (
-              <Milestone key={m.year} milestone={m} index={idx} />
+            {milestones.map((m, idx) => (
+              <Milestone key={m.year} milestone={m} index={idx} label={t("milestoneLabel")} />
             ))}
           </ul>
         </div>
@@ -88,9 +93,11 @@ export default function Timeline() {
 function Milestone({
   milestone,
   index,
+  label,
 }: {
-  milestone: (typeof MILESTONES)[number];
+  milestone: MilestoneData;
   index: number;
+  label: string;
 }) {
   const isLeft = index % 2 === 0;
 
@@ -124,7 +131,7 @@ function Milestone({
       >
         <div className="vitrin-card p-6 lg:p-8">
           <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#22894a] mb-2">
-            Milestone
+            {label}
           </p>
           <h3 className="text-2xl lg:text-3xl font-bold text-[#0e2519] mb-3 tracking-tight">
             {milestone.title}

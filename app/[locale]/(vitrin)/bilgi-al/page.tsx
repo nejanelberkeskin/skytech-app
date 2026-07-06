@@ -1,33 +1,53 @@
+import type { Metadata } from "next";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import BreadCrumb from "@/components/vitrin/BreadCrumb";
 import SectionWrapper from "@/components/vitrin/SectionWrapper";
 import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
 import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata = buildPageMetadata({
-  title: "Bilgi Al — Sorularınızı Yanıtlayalım",
-  description:
-    "Bireysel veya kurumsal Skytech Green soruları için bilgi formu — 24 saat içinde uzman ekibimizden dönüş garantisi.",
-  path: "/bilgi-al",
-});
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "infoPage" });
+  return buildPageMetadata(
+    {
+      title: t("meta.title"),
+      description: t("meta.description"),
+      path: "/bilgi-al",
+    },
+    locale
+  );
+}
 
-const SUBJECTS = [
-  "Bireysel Tohum Sipariş",
-  "Kurumsal Ormanlaştırma",
-  "ESG / Karbon Nötrleme",
-  "Drone Operasyonu",
-  "Basın / Medya",
-  "İş Birliği Önerisi",
-  "Diğer",
-];
+export default async function BilgiAlPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+  const t = await getTranslations("infoPage");
 
-export default function BilgiAlPage() {
+  const SUBJECTS = [
+    t("topics.individual"),
+    t("topics.corporate"),
+    t("topics.esg"),
+    t("topics.drone"),
+    t("topics.press"),
+    t("topics.partnership"),
+    t("topics.other"),
+  ];
+
   return (
     <>
-      <BreadcrumbSchema items={[{ name: "Bilgi Al", path: "/bilgi-al" }]} />
+      <BreadcrumbSchema items={[{ name: t("breadcrumb.label"), path: "/bilgi-al" }]} />
       <BreadCrumb
-        title="Merak Ettiğiniz Her Şeyi Sorun"
-        subtitle="Formu doldurun — 24 saat içinde uzman ekibimiz dönüş yapsın. Bireysel ya da kurumsal, fark etmez."
-        items={[{ label: "Bilgi Al" }]}
+        title={t("breadcrumb.title")}
+        subtitle={t("breadcrumb.subtitle")}
+        items={[{ label: t("breadcrumb.label") }]}
       />
 
       <SectionWrapper variant="light">
@@ -35,56 +55,56 @@ export default function BilgiAlPage() {
           {/* Form */}
           <div className="lg:col-span-2">
             <div className="vitrin-card p-7 lg:p-10">
-              <h2 className="text-2xl font-bold text-[#1a2e1a] mb-2">İletişim Formu</h2>
+              <h2 className="text-2xl font-bold text-[#1a2e1a] mb-2">{t("form.heading")}</h2>
               <p className="text-sm text-[#3d5a3d] mb-7">
-                Tüm alanları doldurun, en kısa sürede dönüş yapalım.
+                {t("form.subheading")}
               </p>
 
               <form className="space-y-5">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <Field label="Ad Soyad" required>
-                    <input type="text" name="name" required className={inputClass} placeholder="Ad Soyad" />
+                  <Field label={t("form.name.label")} required>
+                    <input type="text" name="name" required className={inputClass} placeholder={t("form.name.placeholder")} />
                   </Field>
-                  <Field label="E-posta" required>
-                    <input type="email" name="email" required className={inputClass} placeholder="ornek@sirket.com" />
+                  <Field label={t("form.email.label")} required>
+                    <input type="email" name="email" required className={inputClass} placeholder={t("form.email.placeholder")} />
                   </Field>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <Field label="Telefon">
-                    <input type="tel" name="phone" className={inputClass} placeholder="5XX XXX XX XX" />
+                  <Field label={t("form.phone.label")}>
+                    <input type="tel" name="phone" className={inputClass} placeholder={t("form.phone.placeholder")} />
                   </Field>
-                  <Field label="Şirket / Kurum">
-                    <input type="text" name="company" className={inputClass} placeholder="(opsiyonel)" />
+                  <Field label={t("form.company.label")}>
+                    <input type="text" name="company" className={inputClass} placeholder={t("form.company.placeholder")} />
                   </Field>
                 </div>
 
-                <Field label="Konu" required>
+                <Field label={t("form.subject.label")} required>
                   <select name="subject" required className={inputClass}>
-                    <option value="">Seçiniz...</option>
+                    <option value="">{t("form.subject.placeholder")}</option>
                     {SUBJECTS.map((s) => <option key={s} value={s}>{s}</option>)}
                   </select>
                 </Field>
 
-                <Field label="Mesajınız" required>
+                <Field label={t("form.message.label")} required>
                   <textarea
                     name="message"
                     required
                     rows={6}
                     className={`${inputClass} resize-none`}
-                    placeholder="Sorunuzu, ihtiyacınızı veya talebinizi detaylıca yazın..."
+                    placeholder={t("form.message.placeholder")}
                   />
                 </Field>
 
                 <div className="flex items-start gap-3 text-xs text-[#6b8f6b] pt-2">
                   <input type="checkbox" required className="mt-1 accent-[#1B6B3A]" />
                   <p>
-                    KVKK Aydınlatma Metni'ni okudum ve verilerimin işlenmesine onay veriyorum.
+                    {t("form.consent")}
                   </p>
                 </div>
 
                 <button type="submit" className="vitrin-cta-primary w-full justify-center">
-                  Mesajı Gönder
+                  {t("form.submit")}
                   <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
                     <path d="M5 12h14M13 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
@@ -97,18 +117,18 @@ export default function BilgiAlPage() {
           <div className="space-y-5">
             <InfoCard
               icon={<ClockIcon className="w-6 h-6 text-[#1B6B3A]" />}
-              title="24 Saat Yanıt"
-              desc="İş günlerinde 24 saat, hafta sonu pazartesi sabahı dönüş garantisi."
+              title={t("info.response.title")}
+              desc={t("info.response.desc")}
             />
             <InfoCard
               icon={<MailIcon className="w-6 h-6 text-[#1B6B3A]" />}
               title="info@skytechgreen.com"
-              desc="Doğrudan e-posta ile de ulaşabilirsiniz — 24 saat aktif."
+              desc={t("info.email.desc")}
             />
             <InfoCard
               icon={<PhoneIcon className="w-6 h-6 text-[#1B6B3A]" />}
               title="+90 530 127 64 35"
-              desc="Hafta içi 09:00 - 18:00 arası telefonla erişim."
+              desc={t("info.phone.desc")}
             />
           </div>
         </div>

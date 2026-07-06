@@ -9,6 +9,7 @@ import {
   type MotionValue,
 } from "framer-motion";
 import { useRef } from "react";
+import { useTranslations } from "next-intl";
 import SectionWrapper from "../SectionWrapper";
 import { TRANSACTIONS_ENABLED } from "@/lib/site-config";
 
@@ -21,54 +22,35 @@ type Package = {
   highlight: boolean;
 };
 
-const PACKAGES: Package[] = [
-  {
-    name: "Kendin Ek",
-    tag: "Bireysel",
-    description:
-      "Tohum topları adresinize teslim. Kendi bahçenize, arazinize veya seçtiğiniz alana siz ekersiniz.",
-    features: [
-      "Adresinize ücretsiz kargo (50 tohum üzeri)",
-      "Tür çeşitliliği seçimi",
-      "Dijital sertifika",
-      "Ekim rehberi (PDF)",
-      "Topluluk forumu erişimi",
-    ],
-    cta: { label: "Tohum Sipariş Et", href: "/bireysel/satin-al" },
-    highlight: false,
-  },
-  {
-    name: "Biz Ekelim",
-    tag: "Önerilen",
-    description:
-      "Profesyonel drone ekibi seçilen Skytech arazilerinde sizin adınıza ekim yapar. Yıllık izleme dahil.",
-    features: [
-      "Profesyonel drone ekimi",
-      "GPS koordinatlı ekim raporu",
-      "Yıllık drone takip raporları",
-      "Karbon nötrleme sertifikası",
-      "Hediyeleştirme + paylaşılabilir profil",
-    ],
-    cta: { label: "Profesyonel Ekim Başlat", href: "/bireysel/satin-al" },
-    highlight: true,
-  },
-  {
-    name: "Kurumsal Ormanlaştırma",
-    tag: "B2B",
-    description:
-      "Şirketinize özel kurumsal orman + çalışan sertifikaları + ESG raporlama + API entegrasyonu.",
-    features: [
-      "Şirket adına kurumsal alan",
-      "Çalışan başına bireysel sertifika",
-      "Drone uçuş kayıtları + saha videoları",
-      "ESG / GRI / CDP raporlama hazır veri",
-      "API + e-ticaret entegrasyonu",
-      "Özel hesap yöneticisi",
-    ],
-    cta: { label: "Teklif Al", href: "/kurumsal/teklif-al" },
-    highlight: false,
-  },
-];
+function usePackages(): Package[] {
+  const t = useTranslations("servicePackages.packages");
+  return [
+    {
+      name: t("diy.name"),
+      tag: t("diy.tag"),
+      description: t("diy.description"),
+      features: t.raw("diy.features") as string[],
+      cta: { label: t("diy.cta"), href: "/bireysel/satin-al" },
+      highlight: false,
+    },
+    {
+      name: t("weplant.name"),
+      tag: t("weplant.tag"),
+      description: t("weplant.description"),
+      features: t.raw("weplant.features") as string[],
+      cta: { label: t("weplant.cta"), href: "/bireysel/satin-al" },
+      highlight: true,
+    },
+    {
+      name: t("corporate.name"),
+      tag: t("corporate.tag"),
+      description: t("corporate.description"),
+      features: t.raw("corporate.features") as string[],
+      cta: { label: t("corporate.cta"), href: "/kurumsal/teklif-al" },
+      highlight: false,
+    },
+  ];
+}
 
 const containerVariants = {
   hidden: {},
@@ -96,6 +78,8 @@ const headingVariants = {
 };
 
 export default function ServicePackages() {
+  const t = useTranslations("servicePackages");
+  const PACKAGES = usePackages();
   return (
     <SectionWrapper variant="tinted" className="relative overflow-hidden !pb-32">
       {/* Aurora behind cards */}
@@ -111,7 +95,7 @@ export default function ServicePackages() {
         <motion.div variants={headingVariants}>
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#1B6B3A]/8 border border-[#1B6B3A]/15 mb-6 text-[11px] font-bold uppercase tracking-[0.18em] text-[#1B6B3A]">
             <span className="w-1.5 h-1.5 rounded-full bg-[#1B6B3A]" />
-            Hizmet Paketleri
+            {t("badge")}
           </div>
         </motion.div>
 
@@ -119,16 +103,16 @@ export default function ServicePackages() {
           variants={headingVariants}
           className="display-headline text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-[#0e2519] mb-6"
         >
-          Size Uygun
+          {t("titleLine1")}
           <br />
-          <span className="text-gradient-aurora">Çözümü Seçin</span>
+          <span className="text-gradient-aurora">{t("titleAccent")}</span>
         </motion.h2>
 
         <motion.p
           variants={headingVariants}
           className="text-base lg:text-lg text-[#3d5a3d] max-w-2xl mx-auto leading-relaxed"
         >
-          Bireysel kullanıcıdan kurumsal partnere — her ölçek için ölçülebilir etki.
+          {t("subtitle")}
         </motion.p>
       </motion.div>
 
@@ -150,6 +134,7 @@ export default function ServicePackages() {
 }
 
 function PackageCard({ pkg }: { pkg: Package }) {
+  const t = useTranslations("servicePackages");
   const ref = useRef<HTMLDivElement>(null);
 
   // Liquid hover position
@@ -178,8 +163,8 @@ function PackageCard({ pkg }: { pkg: Package }) {
   const ctaLabel = TRANSACTIONS_ENABLED
     ? pkg.cta.label
     : isCorporate
-      ? "Bilgi Al"
-      : "Yakında";
+      ? t("ctaFallback.info")
+      : t("ctaFallback.soon");
 
   return (
     <motion.div
@@ -219,7 +204,7 @@ function PackageCard({ pkg }: { pkg: Package }) {
         >
           <div className="relative inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#a3e635] text-[#0e2519] text-[11px] font-bold uppercase tracking-[0.14em] shadow-lg shadow-[#a3e635]/40">
             <StarIcon className="w-3 h-3" />
-            <span className="shimmer-text">EN POPÜLER</span>
+            <span className="shimmer-text">{t("mostPopular")}</span>
           </div>
         </motion.div>
       )}

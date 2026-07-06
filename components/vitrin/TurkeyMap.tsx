@@ -2,6 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import { TR_VIEWBOX, TURKEY_PROVINCES } from "@/lib/turkeyMapData";
 
 type ProjectStatus = "active" | "pilot" | "completed";
@@ -20,26 +21,23 @@ interface Props {
 
 const STATUS_STYLES: Record<
   ProjectStatus,
-  { fill: string; glow: string; label: string; chipBg: string; chipText: string }
+  { fill: string; glow: string; chipBg: string; chipText: string }
 > = {
   active: {
     fill: "#22894a",
     glow: "rgba(52, 211, 153, 0.55)",
-    label: "Aktif",
     chipBg: "bg-[#22894a]/15",
     chipText: "text-[#1B6B3A]",
   },
   pilot: {
     fill: "#f59e0b",
     glow: "rgba(245, 158, 11, 0.45)",
-    label: "Pilot",
     chipBg: "bg-[#f59e0b]/15",
     chipText: "text-[#b45309]",
   },
   completed: {
     fill: "#94b494",
     glow: "rgba(255, 255, 255, 0.30)",
-    label: "Tamamlandı",
     chipBg: "bg-black/8",
     chipText: "text-[#3d5a3d]",
   },
@@ -49,6 +47,7 @@ const STATUS_STYLES: Record<
 const STATUS_PRIORITY: ProjectStatus[] = ["active", "pilot", "completed"];
 
 export default function TurkeyMap({ projects }: Props) {
+  const t = useTranslations("projectsPage");
   const [hovered, setHovered] = useState<string | null>(null);
   const [tooltipPos, setTooltipPos] = useState<{ x: number; y: number } | null>(null);
 
@@ -113,7 +112,7 @@ export default function TurkeyMap({ projects }: Props) {
           className="absolute inset-0 w-full h-full"
           xmlns="http://www.w3.org/2000/svg"
           role="img"
-          aria-label="Türkiye Proje Haritası"
+          aria-label={t("map.aria")}
         >
           {/* SVG filters for glow */}
           <defs>
@@ -211,9 +210,9 @@ export default function TurkeyMap({ projects }: Props) {
 
       {/* Legend */}
       <div className="flex flex-wrap items-center justify-center gap-x-7 gap-y-2 mt-6 text-xs">
-        <LegendDot color={STATUS_STYLES.active.fill} pulse label="Aktif" />
-        <LegendDot color={STATUS_STYLES.pilot.fill} label="Pilot" />
-        <LegendDot color={STATUS_STYLES.completed.fill} label="Tamamlandı" />
+        <LegendDot color={STATUS_STYLES.active.fill} pulse label={t("status.active")} />
+        <LegendDot color={STATUS_STYLES.pilot.fill} label={t("status.pilot")} />
+        <LegendDot color={STATUS_STYLES.completed.fill} label={t("status.completed")} />
       </div>
     </div>
   );
@@ -232,6 +231,7 @@ function MapTooltip({
   x: number;
   y: number;
 }) {
+  const t = useTranslations("projectsPage");
   const totalTrees = projects.reduce((s, p) => s + p.trees, 0);
   const styles = status ? STATUS_STYLES[status] : null;
 
@@ -264,7 +264,7 @@ function MapTooltip({
                 className="w-1.5 h-1.5 rounded-full"
                 style={{ backgroundColor: styles.fill }}
               />
-              {styles.label}
+              {status && t(`status.${status}`)}
             </span>
           )}
         </div>
@@ -286,7 +286,7 @@ function MapTooltip({
             </div>
             <div className="flex items-baseline justify-between pt-2 border-t border-white/10">
               <span className="text-[10px] uppercase tracking-[0.18em] text-[#6b8f6b] font-bold">
-                Toplam Tohum
+                {t("map.totalSeeds")}
               </span>
               <span className="text-base font-bold text-[#34d399] tabular-nums">
                 {totalTrees.toLocaleString("tr-TR")}
@@ -294,7 +294,7 @@ function MapTooltip({
             </div>
           </>
         ) : (
-          <p className="text-xs text-[#6b8f6b]">Bu ilde henüz aktif projemiz yok.</p>
+          <p className="text-xs text-[#6b8f6b]">{t("map.emptyProvince")}</p>
         )}
       </div>
     </motion.div>

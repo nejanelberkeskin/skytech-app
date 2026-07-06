@@ -1,4 +1,6 @@
 import Link from "next/link";
+import type { Metadata } from "next";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import BreadCrumb from "@/components/vitrin/BreadCrumb";
 import SectionWrapper from "@/components/vitrin/SectionWrapper";
 import SectionHeading from "@/components/vitrin/SectionHeading";
@@ -8,34 +10,44 @@ import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
 import { PROJECTS } from "@/lib/projects-data";
 import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata = buildPageMetadata({
-  title: "Projeler & Harita — Sahadan Kanıt",
-  description:
-    "Çanakkale, İzmir ve Bursa'da sürdürdüğümüz pilot drone ağaçlandırma çalışmalarımız. İnteraktif Türkiye haritası ve il bazlı pilot saha detayları.",
-  path: "/projeler",
-  keywords: [
-    "ağaçlandırma projeleri Türkiye",
-    "pilot ağaçlandırma",
-    "drone ekim projeleri",
-    "Çanakkale İzmir Bursa ağaçlandırma",
-    "Orman Genel Müdürlüğü ağaçlandırma",
-  ],
-});
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "projectsPage" });
+  return buildPageMetadata(
+    {
+      title: t("meta.title"),
+      description: t("meta.description"),
+      path: "/projeler",
+      keywords: [
+        "ağaçlandırma projeleri Türkiye",
+        "pilot ağaçlandırma",
+        "drone ekim projeleri",
+        "Çanakkale İzmir Bursa ağaçlandırma",
+        "Orman Genel Müdürlüğü ağaçlandırma",
+      ],
+    },
+    locale
+  );
+}
 
-const STATS = [
-  { value: "3", label: "Pilot Bölge" },
-  { value: "3", label: "İl" },
-  { value: "%100", label: "Yasal Uyum" },
-];
+export default async function ProjelerPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+  const t = await getTranslations("projectsPage");
 
-export default function ProjelerPage() {
+  const STATS = [
+    { value: "3", label: t("stats.pilotRegions") },
+    { value: "3", label: t("stats.provinces") },
+    { value: "%100", label: t("stats.legalCompliance") },
+  ];
+
   return (
     <>
-      <BreadcrumbSchema items={[{ name: "Projeler", path: "/projeler" }]} />
+      <BreadcrumbSchema items={[{ name: t("breadcrumbSchemaName"), path: "/projeler" }]} />
       <BreadCrumb
-        title="Sahadan Kanıt"
-        subtitle="Çanakkale, İzmir ve Bursa'da pilot sahalarımızda çalışmalarımız sürüyor — gerçek dronelar, gerçek tohumlar."
-        items={[{ label: "Projeler" }]}
+        title={t("breadcrumbTitle")}
+        subtitle={t("breadcrumbSubtitle")}
+        items={[{ label: t("breadcrumbSchemaName") }]}
       />
 
       {/* Stats */}
@@ -57,20 +69,20 @@ export default function ProjelerPage() {
       {/* İnteraktif Türkiye Haritası */}
       <SectionWrapper variant="tinted">
         <SectionHeading
-          badge="İnteraktif Harita"
+          badge={t("map.badge")}
           title={
             <>
-              Türkiye{" "}
-              <span className="text-gradient-aurora">Pilot Saha Haritası</span>
+              {t("map.titleLine")}{" "}
+              <span className="text-gradient-aurora">{t("map.titleAccent")}</span>
             </>
           }
-          subtitle="Pilot sahalarımızı harita üzerinden keşfedin. İllerin üzerine gelin, detayları görün."
+          subtitle={t("map.subtitle")}
         />
         <TurkeyMap
           projects={PROJECTS.map((p) => ({
             id: p.id,
             province: p.city,
-            region: p.region,
+            region: t(`items.${p.id}.region`),
             status: p.status,
             trees: p.trees,
             year: p.year,
@@ -81,9 +93,9 @@ export default function ProjelerPage() {
       {/* Pilot saha listesi */}
       <SectionWrapper variant="light">
         <SectionHeading
-          badge="Pilot Sahalar"
-          title={<>Sahada <span className="text-gradient-aurora">Aktif Olduğumuz Bölgeler</span></>}
-          subtitle="Şu anda Çanakkale, İzmir ve Bursa'da pilot çalışmalarımız sürüyor. Alan çoğaldıkça yeni sahalar burada listelenecek."
+          badge={t("list.badge")}
+          title={<>{t("list.titleLine")} <span className="text-gradient-aurora">{t("list.titleAccent")}</span></>}
+          subtitle={t("list.subtitle")}
         />
         <ProjectsGrid />
       </SectionWrapper>
@@ -92,12 +104,12 @@ export default function ProjelerPage() {
       <SectionWrapper variant="tinted">
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="text-3xl lg:text-4xl font-bold text-[#1a2e1a] leading-tight mb-5">
-            Kendi <span className="text-gradient-forest">Projenizi</span> Başlatın
+            {t("cta.titleLine")} <span className="text-gradient-forest">{t("cta.titleAccent")}</span> {t("cta.titleTail")}
           </h2>
           <p className="text-base text-[#3d5a3d] mb-8 max-w-xl mx-auto">
-            Şirketiniz, belediyeniz veya STK'nız için özel bir proje tasarlayabiliriz.
+            {t("cta.subtitle")}
           </p>
-          <Link href="/bilgi-al" className="vitrin-cta-primary">Teklif Al</Link>
+          <Link href="/bilgi-al" className="vitrin-cta-primary">{t("cta.button")}</Link>
         </div>
       </SectionWrapper>
     </>

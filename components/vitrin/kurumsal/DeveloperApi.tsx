@@ -2,32 +2,40 @@
 
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import SectionHeading from "../SectionHeading";
 
-const SAMPLES = {
-  install: {
-    label: "Kurulum",
-    lang: "bash",
-    code: `npm install @skytechgreen/sdk`,
-  },
-  cart: {
-    label: "Sepete Tohum Ekle",
-    lang: "javascript",
-    code: `import { addSeedToCart } from "@skytechgreen/sdk";
+type SampleKey = "install" | "cart" | "certificate" | "webhook";
 
-// Müşterinin sepetine 1 tohum eklensin (1 ton CO₂ nötrleme = 200 tohum)
+export default function DeveloperApi() {
+  const t = useTranslations("corporatePage.api");
+  const [activeKey, setActiveKey] = useState<SampleKey>("cart");
+  const [copied, setCopied] = useState(false);
+
+  const SAMPLES: Record<SampleKey, { label: string; lang: string; code: string }> = {
+    install: {
+      label: t("samples.install.label"),
+      lang: "bash",
+      code: `npm install @skytechgreen/sdk`,
+    },
+    cart: {
+      label: t("samples.cart.label"),
+      lang: "javascript",
+      code: `import { addSeedToCart } from "@skytechgreen/sdk";
+
+// ${t("samples.cart.comment")}
 await addSeedToCart({
   cartId: order.id,
   quantity: 1,
-  giftMessage: "Siparişiniz için bir tohum ekildi 🌱",
+  giftMessage: "${t("samples.cart.giftMessage")}",
 });`,
-  },
-  certificate: {
-    label: "Çalışan Sertifikası",
-    lang: "javascript",
-    code: `import { issueCertificate } from "@skytechgreen/sdk";
+    },
+    certificate: {
+      label: t("samples.certificate.label"),
+      lang: "javascript",
+      code: `import { issueCertificate } from "@skytechgreen/sdk";
 
-// Şirket adına çalışana otomatik PDF sertifika
+// ${t("samples.certificate.comment")}
 const cert = await issueCertificate({
   recipientName: "Ali Yılmaz",
   trees: 50,
@@ -35,16 +43,16 @@ const cert = await issueCertificate({
   language: "tr",
 });
 
-// cert.pdfUrl → S3'te imzalı URL`,
-  },
-  webhook: {
-    label: "ESG Webhook",
-    lang: "javascript",
-    code: `// Drone uçuşu tamamlandığında webhook tetiklenir
+// ${t("samples.certificate.commentUrl")}`,
+    },
+    webhook: {
+      label: t("samples.webhook.label"),
+      lang: "javascript",
+      code: `// ${t("samples.webhook.comment")}
 app.post("/skytech/webhook", (req, res) => {
   const { event, payload } = req.body;
   if (event === "flight.completed") {
-    // ESG raporlama sisteminize işle
+    // ${t("samples.webhook.commentProcess")}
     pushToESG({
       ton: payload.co2Tonneutralized,
       gpsCoords: payload.coordinates,
@@ -53,14 +61,9 @@ app.post("/skytech/webhook", (req, res) => {
   }
   res.sendStatus(200);
 });`,
-  },
-};
+    },
+  };
 
-type SampleKey = keyof typeof SAMPLES;
-
-export default function DeveloperApi() {
-  const [activeKey, setActiveKey] = useState<SampleKey>("cart");
-  const [copied, setCopied] = useState(false);
   const sample = SAMPLES[activeKey];
 
   const handleCopy = async () => {
@@ -93,9 +96,9 @@ export default function DeveloperApi() {
               <span className="absolute inline-flex w-full h-full rounded-full bg-[#34d399] opacity-75 animate-ping" />
               <span className="relative inline-flex w-2 h-2 rounded-full bg-[#34d399]" />
             </span>
-            Geliştiriciler & API
+            {t("badge")}
             <span className="px-2 py-0.5 ml-1 rounded-full bg-[#a3e635]/20 border border-[#a3e635]/30 text-[#a3e635] text-[9px]">
-              Yakında
+              {t("comingSoon")}
             </span>
           </motion.div>
 
@@ -106,10 +109,10 @@ export default function DeveloperApi() {
             transition={{ duration: 0.9, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
             className="display-headline text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-5"
           >
-            E-ticaretinize{" "}
-            <span className="text-gradient-aurora">1 Satır</span>
+            {t("title.pre")}{" "}
+            <span className="text-gradient-aurora">{t("title.highlight")}</span>
             <br />
-            Tohum Eklentisi
+            {t("title.post")}
           </motion.h2>
 
           <motion.p
@@ -119,7 +122,7 @@ export default function DeveloperApi() {
             transition={{ duration: 0.9, delay: 0.25 }}
             className="text-base lg:text-lg text-[#a7d4a7] leading-relaxed"
           >
-            Skytech Green SDK ile her satışınıza otomatik karbon nötrleme. PDF sertifika üretimi, ESG webhook'ları ve faturalandırma tek pakette.
+            {t("intro")}
           </motion.p>
         </div>
 
@@ -171,7 +174,7 @@ export default function DeveloperApi() {
                     <svg className="w-3.5 h-3.5 text-[#34d399]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3}>
                       <polyline points="20 6 9 17 4 12" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
-                    Kopyalandı
+                    {t("copied")}
                   </>
                 ) : (
                   <>
@@ -179,7 +182,7 @@ export default function DeveloperApi() {
                       <rect x="9" y="9" width="13" height="13" rx="2" />
                       <path d="M5 15V5a2 2 0 0 1 2-2h10" />
                     </svg>
-                    Kopyala
+                    {t("copy")}
                   </>
                 )}
               </button>
@@ -201,7 +204,7 @@ export default function DeveloperApi() {
               href="/iletisim"
               className="inline-flex items-center gap-1.5 text-[#a3e635] font-bold hover:text-[#34d399]"
             >
-              Erken erişim listesine katıl
+              {t("earlyAccess")}
               <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
                 <path d="M5 12h14M13 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
               </svg>

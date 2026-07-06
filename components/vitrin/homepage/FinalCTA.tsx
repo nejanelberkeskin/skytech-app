@@ -3,9 +3,11 @@
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { useRef } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { TRANSACTIONS_ENABLED } from "@/lib/site-config";
 
 export default function FinalCTA() {
+  const t = useTranslations("finalCta");
   const ref = useRef<HTMLDivElement>(null);
 
   // Mouse-tracked aurora parallax inside the card
@@ -67,7 +69,7 @@ export default function FinalCTA() {
                 <span className="relative inline-flex w-2 h-2 rounded-full bg-[#34d399]" />
               </span>
               <span className="text-[11px] font-bold tracking-[0.2em] uppercase text-[#a7d4a7]">
-                Şimdi Başlayın
+                {t("badge")}
               </span>
             </motion.div>
 
@@ -78,9 +80,9 @@ export default function FinalCTA() {
               transition={{ duration: 0.9, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
               className="display-headline text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-white mb-6"
             >
-              Doğaya Yatırım,
+              {t("title")}
               <br />
-              <span className="text-gradient-aurora">Geleceğe Miras</span>
+              <span className="text-gradient-aurora">{t("titleAccent")}</span>
             </motion.h2>
 
             <motion.p
@@ -90,7 +92,7 @@ export default function FinalCTA() {
               transition={{ duration: 0.9, delay: 0.5 }}
               className="text-base lg:text-xl text-[#a7d4a7] max-w-xl mx-auto mb-10 leading-relaxed font-light"
             >
-              Bireysel veya kurumsal — her katkı önemli. İlk tohumunuzu bugün ekin, etkinizi anında izleyin.
+              {t("subtitle")}
             </motion.p>
 
             <motion.div
@@ -101,7 +103,7 @@ export default function FinalCTA() {
               className="flex flex-col sm:flex-row items-center justify-center gap-4"
             >
               <PrimaryCTA href={TRANSACTIONS_ENABLED ? "/bireysel/satin-al" : "/yakinda"}>
-                {TRANSACTIONS_ENABLED ? "Hemen Başla" : "Yakında"}
+                {TRANSACTIONS_ENABLED ? t("ctaPrimary") : t("ctaComingSoon")}
                 <motion.svg
                   className="w-5 h-5"
                   viewBox="0 0 24 24"
@@ -118,7 +120,7 @@ export default function FinalCTA() {
                 href="/iletisim"
                 className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl premium-glass-dark text-white font-semibold hover:border-white/30 transition-shadow"
               >
-                Bize Ulaşın
+                {t("ctaSecondary")}
               </Link>
             </motion.div>
           </div>

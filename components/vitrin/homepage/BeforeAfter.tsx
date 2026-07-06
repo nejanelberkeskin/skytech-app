@@ -3,6 +3,7 @@
 import { motion, useInView } from "framer-motion";
 import Image from "next/image";
 import { useRef } from "react";
+import { useTranslations } from "next-intl";
 import SectionHeading from "../SectionHeading";
 
 /**
@@ -14,6 +15,7 @@ import SectionHeading from "../SectionHeading";
  * scroll offset ölçümüne bağlı kalmadan her cihazda güvenilir çalışır.
  */
 export default function BeforeAfter() {
+  const t = useTranslations("beforeAfter");
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, amount: 0.35 });
 
@@ -24,12 +26,12 @@ export default function BeforeAfter() {
     <section className="relative bg-[#f8faf5] vitrin-section">
       <div className="vitrin-container">
         <SectionHeading
-          badge="Yangın Öncesi / Sonrası"
+          badge={t("badge")}
           title={
             <>
-              Aşağı Kaydırın —
+              {t("titleLine1")}
               <br />
-              <span className="text-gradient-aurora">Doğanın Geri Dönüşü</span>
+              <span className="text-gradient-aurora">{t("titleAccent")}</span>
             </>
           }
         />
@@ -77,13 +79,13 @@ export default function BeforeAfter() {
           <div className="absolute top-6 left-6 px-3 py-1.5 rounded-full bg-black/60 backdrop-blur-md text-[10px] font-bold uppercase tracking-[0.2em] text-[#fda4af] z-10">
             <span className="inline-flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-[#fda4af]" />
-              Yangın Öncesi
+              {t("labelBefore")}
             </span>
           </div>
           <div className="absolute top-6 right-6 px-3 py-1.5 rounded-full bg-black/60 backdrop-blur-md text-[10px] font-bold uppercase tracking-[0.2em] text-[#a3e635] z-10">
             <span className="inline-flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-[#a3e635] animate-pulse" />
-              Yangın Sonrası
+              {t("labelAfter")}
             </span>
           </div>
         </div>
@@ -93,11 +95,12 @@ export default function BeforeAfter() {
 }
 
 function BarrenLayer() {
+  const t = useTranslations("beforeAfter");
   return (
     <div className="absolute inset-0 overflow-hidden">
       <Image
         src="/images/before-after/manavgat-2021.webp"
-        alt="Yangın öncesi çorak arazi"
+        alt={t("altBefore")}
         fill
         sizes="(max-width: 1024px) 100vw, 80vw"
         className="object-cover"
@@ -114,11 +117,12 @@ function BarrenLayer() {
 }
 
 function ForestLayer() {
+  const t = useTranslations("beforeAfter");
   return (
     <div className="absolute inset-0 overflow-hidden">
       <Image
         src="/images/before-after/manavgat-2026.webp"
-        alt="Yangın sonrası yeşeren orman"
+        alt={t("altAfter")}
         fill
         sizes="(max-width: 1024px) 100vw, 80vw"
         className="object-cover"

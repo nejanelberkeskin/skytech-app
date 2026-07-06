@@ -1,17 +1,19 @@
 "use client";
 
-const KEYWORDS = [
-  "Ağaçlandırma",
-  "Karbon Nötr",
-  "Tohum Topu",
-  "Dron Teknolojisi",
-  "Ekolojik Etki",
-  "Sürdürülebilirlik",
-  "Şeffaf Tedarik",
-  "Yıllık İzleme",
-];
+import { useTranslations } from "next-intl";
 
 export default function MarqueeStrip() {
+  const t = useTranslations("marqueeStrip");
+  const KEYWORDS = [
+    t("keywords.reforestation"),
+    t("keywords.carbonNeutral"),
+    t("keywords.seedBall"),
+    t("keywords.droneTech"),
+    t("keywords.ecologicalImpact"),
+    t("keywords.sustainability"),
+    t("keywords.transparentSupply"),
+    t("keywords.annualMonitoring"),
+  ];
   return (
     <div
       className="relative overflow-hidden py-8 border-y border-[#1B6B3A]/20"

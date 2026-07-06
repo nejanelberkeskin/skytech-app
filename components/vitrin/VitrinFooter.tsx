@@ -1,30 +1,33 @@
 import Image from "next/image";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import LanguageSwitcher from "./LanguageSwitcher";
 import { BUILD_DATE_ISO, BUILD_DATE_TR } from "@/lib/seo";
 
-const HIZMETLER = [
-  { label: "Tohum Topu", href: "/tohum-topu" },
-  { label: "Dron Teknolojisi", href: "/dron-teknolojisi" },
-  { label: "Karbon Programı", href: "/karbon-programi" },
-  { label: "Kurumsal Çözümler", href: "/kurumsal-cozumler" },
-];
+export default async function VitrinFooter() {
+  const t = await getTranslations("footer");
 
-const HIZLI_LINKLER = [
-  { label: "Hakkımızda", href: "/hakkimizda" },
-  { label: "Projeler", href: "/projeler" },
-  { label: "Bilgi Al", href: "/bilgi-al" },
-  { label: "İletişim", href: "/iletisim" },
-];
+  const HIZMETLER = [
+    { label: t("services.seedBall"), href: "/tohum-topu" },
+    { label: t("services.droneTech"), href: "/dron-teknolojisi" },
+    { label: t("services.carbonProgram"), href: "/karbon-programi" },
+    { label: t("services.corporate"), href: "/kurumsal-cozumler" },
+  ];
 
-const YASAL = [
-  { label: "Gizlilik Politikası", href: "#" },
-  { label: "Kullanım Koşulları", href: "#" },
-  { label: "KVKK", href: "#" },
-  { label: "Çerez Politikası", href: "#" },
-];
+  const HIZLI_LINKLER = [
+    { label: t("quickLinks.about"), href: "/hakkimizda" },
+    { label: t("quickLinks.projects"), href: "/projeler" },
+    { label: t("quickLinks.info"), href: "/bilgi-al" },
+    { label: t("quickLinks.contact"), href: "/iletisim" },
+  ];
 
-export default function VitrinFooter() {
+  const YASAL = [
+    { label: t("legal.privacy"), href: "#" },
+    { label: t("legal.terms"), href: "#" },
+    { label: t("legal.kvkk"), href: "#" },
+    { label: t("legal.cookies"), href: "#" },
+  ];
+
   return (
     <footer className="relative bg-[#0a1f12] text-[#e0f0e0] mt-20 overflow-hidden">
       {/* Decorative orbs */}
@@ -35,7 +38,7 @@ export default function VitrinFooter() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8">
           {/* Brand */}
           <div className="lg:col-span-4">
-            <Link href="/" aria-label="Skytech Green ana sayfa" className="inline-flex items-center mb-5">
+            <Link href="/" aria-label="Skytech Green" className="inline-flex items-center mb-5">
               <Image
                 src="/images/brand/logo.webp"
                 alt="Skytech Green"
@@ -45,7 +48,7 @@ export default function VitrinFooter() {
               />
             </Link>
             <p className="text-sm text-[#a7d4a7] leading-relaxed mb-6 max-w-sm">
-              Tohum toplarıyla geleceği ekiyoruz. Dron teknolojisi, ormancılık bilimi ve şeffaf tedarik zinciriyle ölçülebilir ağaçlandırma.
+              {t("tagline")}
             </p>
             <div className="flex items-center gap-3">
               <SocialIcon href="#" aria="LinkedIn"><LinkedInIcon /></SocialIcon>
@@ -57,7 +60,7 @@ export default function VitrinFooter() {
 
           {/* Hizmetler */}
           <div className="lg:col-span-2">
-            <p className="text-sm font-bold text-white uppercase tracking-wider mb-4">Hizmetler</p>
+            <p className="text-sm font-bold text-white uppercase tracking-wider mb-4">{t("servicesTitle")}</p>
             <ul className="space-y-2.5">
               {HIZMETLER.map((item) => (
                 <li key={item.href}>
@@ -75,7 +78,7 @@ export default function VitrinFooter() {
 
           {/* Hızlı Linkler */}
           <div className="lg:col-span-2">
-            <p className="text-sm font-bold text-white uppercase tracking-wider mb-4">Hızlı Linkler</p>
+            <p className="text-sm font-bold text-white uppercase tracking-wider mb-4">{t("quickLinksTitle")}</p>
             <ul className="space-y-2.5">
               {HIZLI_LINKLER.map((item) => (
                 <li key={item.href}>
@@ -93,8 +96,8 @@ export default function VitrinFooter() {
 
           {/* Newsletter + İletişim */}
           <div className="lg:col-span-4">
-            <p className="text-sm font-bold text-white uppercase tracking-wider mb-4">Bültenimize Katılın</p>
-            <p className="text-sm text-[#a7d4a7] mb-4">Yeni projeler ve karbon nötrleme haberleri için.</p>
+            <p className="text-sm font-bold text-white uppercase tracking-wider mb-4">{t("newsletterTitle")}</p>
+            <p className="text-sm text-[#a7d4a7] mb-4">{t("newsletterDesc")}</p>
             <form className="flex gap-2 mb-6">
               <input
                 type="email"
@@ -105,7 +108,7 @@ export default function VitrinFooter() {
                 type="submit"
                 className="px-4 py-2.5 rounded-xl bg-gradient-to-br from-[#1B6B3A] to-[#22894a] text-white text-sm font-semibold hover:shadow-lg hover:shadow-[#1B6B3A]/30 transition-shadow"
               >
-                Abone Ol
+                {t("subscribe")}
               </button>
             </form>
 
@@ -132,11 +135,11 @@ export default function VitrinFooter() {
         <div className="vitrin-container py-5 flex flex-col lg:flex-row items-center justify-between gap-4">
           <div className="text-xs text-[#6b8f6b] flex flex-col sm:flex-row items-center gap-x-3 gap-y-1">
             <p>
-              &copy; {new Date().getFullYear()} Skytech Green Teknoloji A.Ş. Tüm hakları saklıdır.
+              &copy; {new Date().getFullYear()} Skytech Green Teknoloji A.Ş. {t("rightsReserved")}
             </p>
             <span className="hidden sm:inline text-[#3d5a3d]/60">·</span>
             <p>
-              Son güncelleme:{" "}
+              {t("lastUpdated")}{" "}
               <time dateTime={BUILD_DATE_ISO} className="text-[#a7d4a7]/80">
                 {BUILD_DATE_TR}
               </time>

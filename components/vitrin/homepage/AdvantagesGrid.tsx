@@ -2,6 +2,7 @@
 
 import { motion, type Variants, useMotionValue, useSpring } from "framer-motion";
 import { useRef } from "react";
+import { useTranslations } from "next-intl";
 import SectionWrapper from "../SectionWrapper";
 import SectionHeading from "../SectionHeading";
 
@@ -11,14 +12,17 @@ type Advantage = {
   Icon: (p: { className?: string }) => React.JSX.Element;
 };
 
-const ADVANTAGES: Advantage[] = [
-  { title: "Hızlı Ekim", description: "Bir drone uçuşunda 200+ tohum. Geleneksel yöntemlere kıyasla 10 kat hız.", Icon: BoltIcon },
-  { title: "Sıfır Saha Tahribatı", description: "Havadan ekim, ekosistemi koruyor. İnsan ayağının değmediği bölgelere bile ulaşıyor.", Icon: LeafIcon },
-  { title: "Tam Şeffaflık", description: "Her tohumun ağaçtan toplanma tarihi, orijin bilgisi ve türü blok zinciriyle doğrulanır. Tedarik zinciri uçtan uca şeffaf.", Icon: EyeIcon },
-  { title: "Yıllık İzleme", description: "Periyodik uçuş verileri, büyüme metrikleri ve karbon nötrleme sonuçlarınız kurumsal panomuzda anlık olarak güncellenir.", Icon: SatelliteIcon },
-  { title: "Kurumsal Entegrasyon", description: "API entegrasyonu ile e-ticaret sepetinden ESG raporuna kadar tam uyum.", Icon: BuildingIcon },
-  { title: "Yasal Uyumluluk", description: "Orman Bölge Müdürlükleri koordinasyonunda, %100 yasal izin ve mevzuat uyumluluğu çerçevesinde projeler.", Icon: ShieldIcon },
-];
+function useAdvantages(): Advantage[] {
+  const t = useTranslations("advantagesGrid.items");
+  return [
+    { title: t("speed.title"), description: t("speed.description"), Icon: BoltIcon },
+    { title: t("noDamage.title"), description: t("noDamage.description"), Icon: LeafIcon },
+    { title: t("transparency.title"), description: t("transparency.description"), Icon: EyeIcon },
+    { title: t("monitoring.title"), description: t("monitoring.description"), Icon: SatelliteIcon },
+    { title: t("integration.title"), description: t("integration.description"), Icon: BuildingIcon },
+    { title: t("compliance.title"), description: t("compliance.description"), Icon: ShieldIcon },
+  ];
+}
 
 const containerVariants: Variants = {
   hidden: {},
@@ -30,20 +34,22 @@ const itemVariants: Variants = {
 };
 
 export default function AdvantagesGrid() {
+  const t = useTranslations("advantagesGrid");
+  const ADVANTAGES = useAdvantages();
   return (
     <SectionWrapper variant="tinted" className="relative overflow-hidden">
       <div aria-hidden className="absolute inset-0 mesh-gradient opacity-50 pointer-events-none" />
       <div className="relative">
         <SectionHeading
-          badge="Avantajlar"
+          badge={t("badge")}
           title={
             <>
-              Skytech Green Farkı
+              {t("title")}
               <br />
-              <span className="text-gradient-aurora">Altı Temel Üstünlük</span>
+              <span className="text-gradient-aurora">{t("titleAccent")}</span>
             </>
           }
-          subtitle="Geleneksel ağaçlandırmadan dronlu ekime, her noktada ölçülebilir avantaj sağlıyoruz."
+          subtitle={t("subtitle")}
         />
 
         <motion.div

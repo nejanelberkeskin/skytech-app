@@ -1,5 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
+import type { Metadata } from "next";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import BreadCrumb from "@/components/vitrin/BreadCrumb";
 import SectionWrapper from "@/components/vitrin/SectionWrapper";
 import SectionHeading from "@/components/vitrin/SectionHeading";
@@ -10,57 +12,67 @@ import ServiceSchema from "@/components/seo/ServiceSchema";
 import { buildPageMetadata } from "@/lib/seo";
 import { TRANSACTIONS_ENABLED } from "@/lib/site-config";
 
-export const metadata = buildPageMetadata({
-  title: "Kurumsal Çözümler — ESG Ortaklığı",
-  description:
-    "Şirketinize özel kurumsal ormanlaştırma, çalışan başına otomatik PDF sertifika, GRI/CDP/SASB uyumlu ESG raporlama ve e-ticaret API entegrasyonu.",
-  path: "/kurumsal-cozumler",
-  keywords: [
-    "kurumsal ağaçlandırma",
-    "kurumsal ormanlaştırma",
-    "ESG çözümleri",
-    "çalışan karbon sertifikası",
-    "kurumsal sürdürülebilirlik partneri",
-    "B2B karbon nötrleme",
-    "API tohum entegrasyonu",
-  ],
-});
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "corporatePage" });
+  return buildPageMetadata(
+    {
+      title: t("meta.title"),
+      description: t("meta.description"),
+      path: "/kurumsal-cozumler",
+      keywords: [
+        "kurumsal ağaçlandırma",
+        "kurumsal ormanlaştırma",
+        "ESG çözümleri",
+        "çalışan karbon sertifikası",
+        "kurumsal sürdürülebilirlik partneri",
+        "B2B karbon nötrleme",
+        "API tohum entegrasyonu",
+      ],
+    },
+    locale
+  );
+}
 
-const COMPARISON = [
-  { item: "Logo Baskılı Ürün", impact: "Kısa ömürlü, çoğu çöpe gider", esg: "Yok", icon: "🎁", verdict: false, image: "/images/kurumsal/promosyon-urunu.webp" },
-  { item: "Markanıza Özel Orman", impact: "25+ yıl yaşar, ekosistem yaratır", esg: "Tam ESG entegrasyon", icon: "🌳", verdict: true, image: "/images/kurumsal/hatira-ormani.webp" },
-];
+export default async function KurumsalCozumlerPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+  const t = await getTranslations("corporatePage");
 
-const FEATURES = [
-  { title: "Çalışan Bazlı Sertifika", desc: "Her çalışana özel PDF sertifika otomatik üretilir, e-posta ile iletilir.", Icon: PeopleIcon },
-  { title: "Kurumsal Ormanlaştırma", desc: "Kuruma özel kurumsal alan, drone çekim videoları, koordinatlı haritalama.", Icon: TreesIcon },
-  { title: "ESG Yazılım API Entegrasyonu", desc: "Kurumsal panelimiz ile ESG yazılımınız arasında API entegrasyonu kurarak veri akışını otomatik hale getiriyoruz. GRI, CDP, SASB uyumlu.", Icon: ApiIcon },
-  { title: "E-ticaret Entegrasyonu", desc: "\"Sepete 1 tohum ekle\" widget'ı — müşterilerinize ekoloji deneyimi sunun.", Icon: CartIcon },
-  { title: "Karbon Ayak İzi → Markanıza Özel Orman", desc: "Sistemimiz şirketinizin karbon ayak izini hesaplar ve bu doğrultuda markanıza özel, drone teknolojisiyle desteklenen bir orman oluşturur.", Icon: CalcIcon },
-  { title: "Özel Hesap Yöneticisi", desc: "Süreç boyunca özel temas noktanız.", Icon: BadgeIcon },
-];
+  const COMPARISON = [
+    { item: t("comparison.promo.item"), impact: t("comparison.promo.impact"), esg: t("comparison.promo.esg"), icon: "🎁", verdict: false, image: "/images/kurumsal/promosyon-urunu.webp" },
+    { item: t("comparison.forest.item"), impact: t("comparison.forest.impact"), esg: t("comparison.forest.esg"), icon: "🌳", verdict: true, image: "/images/kurumsal/hatira-ormani.webp" },
+  ];
 
-export default function KurumsalCozumlerPage() {
+  const FEATURES = [
+    { title: t("features.certificate.title"), desc: t("features.certificate.desc"), Icon: PeopleIcon },
+    { title: t("features.afforestation.title"), desc: t("features.afforestation.desc"), Icon: TreesIcon },
+    { title: t("features.api.title"), desc: t("features.api.desc"), Icon: ApiIcon },
+    { title: t("features.ecommerce.title"), desc: t("features.ecommerce.desc"), Icon: CartIcon },
+    { title: t("features.footprint.title"), desc: t("features.footprint.desc"), Icon: CalcIcon },
+    { title: t("features.accountManager.title"), desc: t("features.accountManager.desc"), Icon: BadgeIcon },
+  ];
+
   return (
     <>
-      <BreadcrumbSchema items={[{ name: "Kurumsal Çözümler", path: "/kurumsal-cozumler" }]} />
+      <BreadcrumbSchema items={[{ name: t("breadcrumb.label"), path: "/kurumsal-cozumler" }]} />
       <ServiceSchema
-        name="Kurumsal Ormanlaştırma ve ESG Çözümleri"
-        description="Şirketler için kurumsal orman kurulumu, çalışan başına PDF sertifika otomasyonu, GRI/CDP uyumlu karbon raporlama, REST API + e-ticaret eklenti entegrasyonu."
+        name={t("schema.name")}
+        description={t("schema.description")}
         serviceType="Corporate ESG and reforestation partnership"
         path="/kurumsal-cozumler"
       />
       <BreadCrumb
-        title="Promosyon Ürünleri Çöpe Gider. Kurumsal Ormanınız Sonsuza Kadar Yaşar."
-        subtitle="ESG hedeflerinize ölçülebilir katkı, çalışan deneyimine somut anlam — tek bir kurumsal partner."
-        items={[{ label: "Kurumsal Çözümler" }]}
+        title={t("hero.title")}
+        subtitle={t("hero.subtitle")}
+        items={[{ label: t("breadcrumb.label") }]}
       />
 
       {/* Karşılaştırma */}
       <SectionWrapper variant="light">
         <SectionHeading
-          badge="Klasik vs. Skytech"
-          title={<>Hangisi Daha <span className="text-gradient-forest">Kalıcı Etki?</span></>}
+          badge={t("comparison.badge")}
+          title={<>{t("comparison.title.pre")} <span className="text-gradient-forest">{t("comparison.title.highlight")}</span></>}
         />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
           {COMPARISON.map((c) => (
@@ -91,10 +103,10 @@ export default function KurumsalCozumlerPage() {
               </h3>
               <ul className="space-y-3 text-sm">
                 <li className={c.verdict ? "text-white/85" : "text-[#3d5a3d]"}>
-                  <strong className={c.verdict ? "text-[#a3e635]" : "text-[#1B6B3A]"}>Etki:</strong> {c.impact}
+                  <strong className={c.verdict ? "text-[#a3e635]" : "text-[#1B6B3A]"}>{t("comparison.impactLabel")}</strong> {c.impact}
                 </li>
                 <li className={c.verdict ? "text-white/85" : "text-[#3d5a3d]"}>
-                  <strong className={c.verdict ? "text-[#a3e635]" : "text-[#1B6B3A]"}>ESG:</strong> {c.esg}
+                  <strong className={c.verdict ? "text-[#a3e635]" : "text-[#1B6B3A]"}>{t("comparison.esgLabel")}</strong> {c.esg}
                 </li>
               </ul>
               </div>
@@ -106,9 +118,9 @@ export default function KurumsalCozumlerPage() {
       {/* Özellikler */}
       <SectionWrapper variant="tinted">
         <SectionHeading
-          badge="Modüller"
-          title={<>Kurumsal Ormanlaştırma <span className="text-gradient-forest">Sistem Modülleri</span></>}
-          subtitle="Her büyüklükteki şirket için altı temel kurumsal çözüm."
+          badge={t("features.badge")}
+          title={<>{t("features.title.pre")} <span className="text-gradient-forest">{t("features.title.highlight")}</span></>}
+          subtitle={t("features.subtitle")}
         />
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 max-w-6xl mx-auto stagger-children">
           {FEATURES.map((f) => (
@@ -133,16 +145,16 @@ export default function KurumsalCozumlerPage() {
       <SectionWrapper variant="tinted">
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="text-3xl lg:text-4xl font-bold text-[#1a2e1a] leading-tight mb-5">
-            Kurumsal Projenizi <span className="text-gradient-forest">Tasarlayalım</span>
+            {t("cta.title.pre")} <span className="text-gradient-forest">{t("cta.title.highlight")}</span>
           </h2>
           <p className="text-base text-[#3d5a3d] mb-8 max-w-xl mx-auto">
-            Çalışan sayınız, karbon hedefiniz, ESG ihtiyaçlarınız — birlikte planlayalım. 24 saat içinde dönüş.
+            {t("cta.subtitle")}
           </p>
           <div className="flex flex-col sm:flex-row gap-3 items-center justify-center">
             <Link href={TRANSACTIONS_ENABLED ? "/kurumsal/teklif-al" : "/bilgi-al"} className="vitrin-cta-primary">
-              {TRANSACTIONS_ENABLED ? "Teklif Talep Et" : "Bilgi Al"}
+              {TRANSACTIONS_ENABLED ? t("cta.primaryEnabled") : t("cta.primaryDisabled")}
             </Link>
-            <Link href="/iletisim" className="vitrin-cta-secondary">Bize Ulaşın</Link>
+            <Link href="/iletisim" className="vitrin-cta-secondary">{t("cta.secondary")}</Link>
           </div>
         </div>
       </SectionWrapper>

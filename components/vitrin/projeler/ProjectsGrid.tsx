@@ -2,27 +2,26 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { PROJECTS, type ProjectStatus } from "@/lib/projects-data";
 
-const STATUS_META: Record<ProjectStatus, { label: string; color: string; dot: string }> = {
+const STATUS_META: Record<ProjectStatus, { color: string; dot: string }> = {
   active: {
-    label: "Aktif",
     color: "bg-[#22894a]/15 text-[#1B6B3A] border-[#22894a]/25",
     dot: "bg-[#22894a] animate-pulse",
   },
   pilot: {
-    label: "Pilot",
     color: "bg-[#f59e0b]/15 text-[#b45309] border-[#f59e0b]/25",
     dot: "bg-[#f59e0b]",
   },
   completed: {
-    label: "Tamamlandı",
     color: "bg-black/5 text-[#3d5a3d] border-black/10",
     dot: "bg-[#94b494]",
   },
 };
 
 export default function ProjectsGrid() {
+  const t = useTranslations("projectsPage");
   return (
     <motion.div
       layout
@@ -32,6 +31,7 @@ export default function ProjectsGrid() {
         {PROJECTS.map((project) => {
           const meta = STATUS_META[project.status];
           const hasImage = Boolean(project.image);
+          const region = t(`items.${project.id}.region`);
           return (
             <motion.article
               key={project.id}
@@ -55,7 +55,7 @@ export default function ProjectsGrid() {
                   <>
                     <Image
                       src={project.image}
-                      alt={`${project.city} ${project.region} — drone üst görünüm`}
+                      alt={`${project.city} — ${region}`}
                       fill
                       sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                       className="object-cover transition-transform duration-700 group-hover:scale-105"
@@ -72,7 +72,7 @@ export default function ProjectsGrid() {
                   className={`absolute top-3 right-3 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full backdrop-blur-md border text-[10px] font-bold uppercase tracking-[0.16em] ${meta.color}`}
                 >
                   <span className={`w-1.5 h-1.5 rounded-full ${meta.dot}`} />
-                  {meta.label}
+                  {t(`status.${project.status}`)}
                 </div>
                 <div className="absolute bottom-3 left-3">
                   <p className="text-xs text-white/70 font-medium">{project.year}</p>
@@ -81,12 +81,12 @@ export default function ProjectsGrid() {
               </div>
               <div className="p-6">
                 <p className="text-xs uppercase tracking-[0.18em] text-[#22894a] font-bold mb-1">
-                  {project.region}
+                  {region}
                 </p>
                 <h3 className="text-lg font-bold text-[#0e2519] mb-2 tracking-tight">
                   {project.city}
                 </h3>
-                <p className="text-sm text-[#3d5a3d] leading-relaxed">{project.desc}</p>
+                <p className="text-sm text-[#3d5a3d] leading-relaxed">{t(`items.${project.id}.desc`)}</p>
               </div>
             </motion.article>
           );

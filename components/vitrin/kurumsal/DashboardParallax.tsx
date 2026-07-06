@@ -2,18 +2,20 @@
 
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
-
-const PORTAL_FEATURES = [
-  "Çalışan listesi yükleme (CSV)",
-  "Otomatik sertifika üretimi",
-  "Drone uçuş kayıtları",
-  "Karbon hesaplama paneli",
-  "ESG rapor modülü",
-  "Faturalandırma & vergi",
-];
+import { useTranslations } from "next-intl";
 
 export default function DashboardParallax() {
+  const t = useTranslations("corporatePage.dashboard");
   const ref = useRef<HTMLDivElement>(null);
+
+  const PORTAL_FEATURES = [
+    t("features.upload"),
+    t("features.certificate"),
+    t("features.droneRecords"),
+    t("features.carbonPanel"),
+    t("features.esgModule"),
+    t("features.billing"),
+  ];
 
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -43,7 +45,7 @@ export default function DashboardParallax() {
               className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#1B6B3A]/8 border border-[#1B6B3A]/15 mb-5 text-[11px] font-bold uppercase tracking-[0.18em] text-[#1B6B3A]"
             >
               <span className="w-1.5 h-1.5 rounded-full bg-[#1B6B3A]" />
-              Kurumsal Portal
+              {t("badge")}
             </motion.div>
             <motion.h2
               initial={{ opacity: 0, y: 24 }}
@@ -52,9 +54,9 @@ export default function DashboardParallax() {
               transition={{ duration: 0.9, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
               className="display-headline text-3xl lg:text-5xl font-bold text-[#0e2519] mb-5"
             >
-              <span className="text-gradient-aurora">Tek Pano</span>
+              <span className="text-gradient-aurora">{t("title.highlight")}</span>
               <br />
-              Üzerinden Yönetin
+              {t("title.rest")}
             </motion.h2>
             <motion.p
               initial={{ opacity: 0, y: 16 }}
@@ -63,8 +65,7 @@ export default function DashboardParallax() {
               transition={{ duration: 0.9, delay: 0.2 }}
               className="text-base text-[#3d5a3d] leading-relaxed mb-7"
             >
-              Çalışan ekleyin, karbon ayak izinizi hesaplayın, drone uçuş kayıtlarına erişin, ESG raporu indirin —
-              hepsi kurumsal panelinizden.
+              {t("intro")}
             </motion.p>
             <motion.ul
               initial="hidden"
@@ -121,7 +122,7 @@ export default function DashboardParallax() {
                 <div className="flex items-center gap-2 mb-4">
                   <span className="w-2 h-2 rounded-full bg-[#34d399] animate-pulse" />
                   <span className="text-[10px] uppercase tracking-[0.18em] text-[#a7d4a7] font-bold">
-                    Drone — Çanakkale
+                    {t("mockup.droneLabel")}
                   </span>
                 </div>
                 <div className="flex-1 grid grid-cols-3 gap-2">
@@ -130,7 +131,7 @@ export default function DashboardParallax() {
                   ))}
                 </div>
                 <div className="mt-4 flex items-center justify-between text-[10px] text-[#a7d4a7]">
-                  <span>RTK GPS · Aktif</span>
+                  <span>{t("mockup.gpsStatus")}</span>
                   <span className="font-mono">36.78° N · 31.43° E</span>
                 </div>
               </div>
@@ -148,12 +149,12 @@ export default function DashboardParallax() {
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <p className="text-[10px] uppercase tracking-[0.18em] text-[#1B6B3A] font-bold mb-1">
-                    Karbon Nötrleme
+                    {t("mockup.carbonLabel")}
                   </p>
-                  <p className="text-2xl font-bold text-[#0e2519] tabular-nums">847 ton CO₂</p>
+                  <p className="text-2xl font-bold text-[#0e2519] tabular-nums">{t("mockup.carbonValue")}</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-[10px] text-[#22894a] font-bold">+ %23 ÇEYREK</p>
+                  <p className="text-[10px] text-[#22894a] font-bold">{t("mockup.quarterDelta")}</p>
                 </div>
               </div>
               <div className="h-2 rounded-full bg-black/5 overflow-hidden">
@@ -167,16 +168,16 @@ export default function DashboardParallax() {
               </div>
               <div className="mt-4 grid grid-cols-3 gap-2 text-xs">
                 <div>
-                  <p className="text-[#6b8f6b]">Ağaç</p>
+                  <p className="text-[#6b8f6b]">{t("mockup.treesLabel")}</p>
                   <p className="text-[#0e2519] font-bold tabular-nums">128K</p>
                 </div>
                 <div>
-                  <p className="text-[#6b8f6b]">Çalışan</p>
+                  <p className="text-[#6b8f6b]">{t("mockup.employeesLabel")}</p>
                   <p className="text-[#0e2519] font-bold tabular-nums">2.450</p>
                 </div>
                 <div>
-                  <p className="text-[#6b8f6b]">Bölge</p>
-                  <p className="text-[#0e2519] font-bold tabular-nums">6 il</p>
+                  <p className="text-[#6b8f6b]">{t("mockup.regionsLabel")}</p>
+                  <p className="text-[#0e2519] font-bold tabular-nums">{t("mockup.regionsValue")}</p>
                 </div>
               </div>
             </motion.div>
@@ -205,15 +206,15 @@ export default function DashboardParallax() {
                   </svg>
                 </div>
                 <div className="min-w-0">
-                  <p className="text-sm font-bold text-[#0e2519] truncate">Yeni Sertifika</p>
+                  <p className="text-sm font-bold text-[#0e2519] truncate">{t("mockup.certTitle")}</p>
                   <p className="text-xs text-[#3d5a3d] truncate">
-                    Örnek Kurum A.Ş. — kurumsal orman sertifikası
+                    {t("mockup.certDesc")}
                   </p>
                 </div>
               </div>
               <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.16em]">
-                <span className="text-[#22894a] font-bold">Onaylandı</span>
-                <span className="text-[#6b8f6b]">2 dakika önce</span>
+                <span className="text-[#22894a] font-bold">{t("mockup.certStatus")}</span>
+                <span className="text-[#6b8f6b]">{t("mockup.certTime")}</span>
               </div>
             </motion.div>
           </div>

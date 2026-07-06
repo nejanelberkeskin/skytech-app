@@ -9,6 +9,7 @@ import {
   type MotionValue,
 } from "framer-motion";
 import { useRef } from "react";
+import { useTranslations } from "next-intl";
 
 /**
  * SeedJourney — Tohumun yolculuğu scrollytelling.
@@ -19,6 +20,7 @@ import { useRef } from "react";
  *  3. Toprağa çarpma (scale + glow patlama)
  */
 export default function SeedJourney() {
+  const t = useTranslations("seedJourney");
   const ref = useRef<HTMLElement>(null);
 
   const { scrollYProgress } = useScroll({
@@ -66,7 +68,7 @@ export default function SeedJourney() {
       ref={ref}
       className="relative bg-white"
       style={{ height: "300vh" }}
-      aria-label="Tohumun yolculuğu"
+      aria-label={t("ariaLabel")}
     >
       {/* Sticky stage */}
       <div className="sticky top-0 h-screen overflow-hidden">
@@ -160,6 +162,7 @@ export default function SeedJourney() {
 }
 
 function LabScene() {
+  const t = useTranslations("seedJourney");
   return (
     <div className="absolute inset-0">
       {/* Lab grid + microscopes */}
@@ -182,16 +185,17 @@ function LabScene() {
       </div>
       {/* HUD elements */}
       <div className="absolute top-12 left-12 text-[10px] uppercase tracking-[0.2em] text-[#34d399]/70 font-bold">
-        ⊹ Lab Analiz · KIL/GÜBRE/TOHUM
+        {t("lab.hudTopLeft")}
       </div>
       <div className="absolute bottom-32 right-12 text-[10px] uppercase tracking-[0.2em] text-[#34d399]/70 font-bold tabular-nums text-right">
-        pH 6.8 · NPK Optimal
+        {t("lab.hudBottomRight")}
       </div>
     </div>
   );
 }
 
 function DroneScene() {
+  const t = useTranslations("seedJourney");
   return (
     <div className="absolute inset-0">
       {/* Drone silhouette top */}
@@ -232,7 +236,7 @@ function DroneScene() {
         RTK · 36.78°N · 31.43°E
       </div>
       <div className="absolute bottom-32 left-12 text-[10px] uppercase tracking-[0.2em] text-[#34d399]/70 font-bold">
-        ⊹ Hassas Hedef · 200+ tohum
+        {t("drone.hudBottomLeft")}
       </div>
     </div>
   );
@@ -245,6 +249,7 @@ function ImpactScene({
   shockwaveScale: MotionValue<number>;
   shockwaveOpacity: MotionValue<number>;
 }) {
+  const t = useTranslations("seedJourney");
   return (
     <div className="absolute inset-0">
       {/* Ground */}
@@ -284,13 +289,14 @@ function ImpactScene({
         ))}
       </svg>
       <div className="absolute bottom-44 left-12 text-[10px] uppercase tracking-[0.2em] text-[#a3e635] font-bold">
-        ⊹ Toprağa İndi · Çimlenme: %65+
+        {t("impact.hudBottomLeft")}
       </div>
     </div>
   );
 }
 
 function SceneCaption({ progress }: { progress: MotionValue<number> }) {
+  const t = useTranslations("seedJourney");
   // Use opacity transforms to switch between captions
   const opacity1 = useTransform(progress, [0, 0.25, 0.4], [1, 1, 0]);
   const opacity2 = useTransform(progress, [0.3, 0.45, 0.65, 0.75], [0, 1, 1, 0]);
@@ -301,22 +307,22 @@ function SceneCaption({ progress }: { progress: MotionValue<number> }) {
       <motion.div style={{ opacity: opacity1 }} className="absolute">
         <Caption
           step="01"
-          title="Laboratuvar"
-          desc="Orman mühendisleri kil + organik gübre + yerli tohum oranlarını analiz eder, tohum topunu formüle eder."
+          title={t("captions.lab.title")}
+          desc={t("captions.lab.desc")}
         />
       </motion.div>
       <motion.div style={{ opacity: opacity2 }} className="absolute">
         <Caption
           step="02"
-          title="Dronla Yolculuk"
-          desc="GPS hassasiyetli drone tohum topunu hedef koordinata otonom uçar — bir uçuşta 200+ tohum."
+          title={t("captions.drone.title")}
+          desc={t("captions.drone.desc")}
         />
       </motion.div>
       <motion.div style={{ opacity: opacity3 }} className="absolute">
         <Caption
           step="03"
-          title="Toprağa Buluşma"
-          desc="Yağmurla birlikte kil çözülür, tohum filizlenir. Çimlenme oranı %65+ — geleneksel yöntemin 3 katı."
+          title={t("captions.impact.title")}
+          desc={t("captions.impact.desc")}
         />
       </motion.div>
     </div>
@@ -324,10 +330,11 @@ function SceneCaption({ progress }: { progress: MotionValue<number> }) {
 }
 
 function Caption({ step, title, desc }: { step: string; title: string; desc: string }) {
+  const t = useTranslations("seedJourney");
   return (
     <div className="premium-glass-dark rounded-2xl p-6">
       <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#a3e635] mb-2">
-        Adım {step}
+        {t("stepLabel")} {step}
       </p>
       <h3 className="text-2xl lg:text-3xl font-bold text-white mb-3 tracking-tight">{title}</h3>
       <p className="text-sm text-[#a7d4a7] leading-relaxed">{desc}</p>
@@ -336,12 +343,13 @@ function Caption({ step, title, desc }: { step: string; title: string; desc: str
 }
 
 function ProgressBar({ progress }: { progress: MotionValue<number> }) {
+  const t = useTranslations("seedJourney");
   const width = useTransform(progress, (v) => `${v * 100}%`);
   return (
     <div className="absolute bottom-12 left-12 right-12 lg:left-20 lg:right-20">
       <div className="flex items-baseline justify-between mb-2 text-[10px] uppercase tracking-[0.2em] font-bold">
-        <span className="text-[#a7d4a7]">Tohumun Yolculuğu</span>
-        <span className="text-[#34d399] hidden md:block">Lab → Drone → Toprak</span>
+        <span className="text-[#a7d4a7]">{t("progress.label")}</span>
+        <span className="text-[#34d399] hidden md:block">{t("progress.steps")}</span>
       </div>
       <div className="h-px bg-white/10 rounded-full overflow-hidden">
         <motion.div

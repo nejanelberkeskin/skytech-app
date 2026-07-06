@@ -596,7 +596,7 @@
       "titleLead": "After the Wildfires,",
       "titleAccent": "A Call from Nature",
       "paragraph1": "After the 2021 Mediterranean forest fires, we saw that drones could rapidly disperse seed balls and reach areas where human footsteps struggle to arrive. We combined three things: scientific foundation + aviation technology + a transparent software infrastructure.",
-      "paragraph2": "Today <brand>Skytech Green</brand> carries out drone reforestation across six regions of Türkiye — answering the ESG goals of corporate partners and the carbon-offset aspirations of individual users.",
+      "paragraph2": "Today <brand>Skytech Green</brand> carries out drone reforestation across three regions of Türkiye — answering the ESG goals of corporate partners and the carbon-offset aspirations of individual users.",
       "imageCaption": "Our Field Team"
     },
     "timeline": {
@@ -708,8 +708,7 @@
     "map": {
       "badge": "Location",
       "title": "Visit Us",
-      "placeholderTitle": "Map Coming Soon",
-      "placeholderSubtitle": "Google Maps embed will go here"
+      "directions": "Get Directions"
     },
     "social": {
       "badge": "Social Media",
@@ -1263,7 +1262,8 @@
       "subtitle": "Explore our pilot sites on the map. Hover over the provinces to see the details.",
       "aria": "Turkey Project Map",
       "totalSeeds": "Total Seeds",
-      "emptyProvince": "No active projects in this province yet."
+      "emptyProvince": "No active projects in this province yet.",
+      "calculating": "Being calculated"
     },
     "list": {
       "badge": "Pilot Sites",

@@ -2,7 +2,6 @@
 
 import {
   motion,
-  useMotionValue,
   useScroll,
   useSpring,
   useTransform,
@@ -35,18 +34,9 @@ export default function SeedJourney() {
     mass: 0.4,
   });
 
-  // Seed scale: 0.45 (lab) → 1 (drone) → 1.6 (impact)
-  const seedScale = useTransform(progress, [0, 0.45, 0.65, 1], [0.45, 1, 1.1, 1.6]);
-  // Seed Y: top (lab) → mid (drone descend) → bottom (impact)
-  const seedY = useTransform(progress, [0, 0.4, 0.7, 1], ["-20%", "0%", "30%", "55%"]);
-  // Seed rotate
-  const seedRotate = useTransform(progress, [0, 1], [0, 360]);
-  // Seed glow intensity
-  const seedGlow = useTransform(
-    progress,
-    [0, 0.4, 0.7, 0.85, 1],
-    [0.3, 0.5, 0.7, 1, 0.4]
-  );
+  // Video paneli: scroll ile hafif derinlik (küçük scale + y kayması)
+  const videoScale = useTransform(progress, [0, 1], [0.94, 1.03]);
+  const videoY = useTransform(progress, [0, 1], ["-2%", "4%"]);
 
   // Scene visibility
   const lab = useTransform(progress, [0, 0.25, 0.4], [1, 1, 0]);
@@ -56,12 +46,6 @@ export default function SeedJourney() {
   // Impact shockwave
   const shockwaveScale = useTransform(progress, [0.7, 1], [0, 4]);
   const shockwaveOpacity = useTransform(progress, [0.7, 0.85, 1], [0, 0.7, 0]);
-
-  // Caption text — pick based on progress
-  const captionStep = useMotionValue(0);
-  progress.on("change", (v) => {
-    captionStep.set(v < 0.4 ? 0 : v < 0.7 ? 1 : 2);
-  });
 
   return (
     <section
@@ -94,60 +78,27 @@ export default function SeedJourney() {
           <ImpactScene shockwaveScale={shockwaveScale} shockwaveOpacity={shockwaveOpacity} />
         </motion.div>
 
-        {/* Centered seed ball */}
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        {/* Merkez — Higgsfield (Seedance 2.0) ile üretilen tohum yolculuğu animasyonu:
+            laboratuvar makrosu → drone haznesi → toprağa düşüş + filizlenme.
+            Autoplay/muted/loop; scroll sahne overlay'leri ve caption'lar korunur. */}
+        <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none px-6">
           <motion.div
-            style={{
-              scale: seedScale,
-              y: seedY,
-              rotate: seedRotate,
-            }}
-            className="relative"
+            style={{ scale: videoScale, y: videoY }}
+            className="relative w-[min(92vw,560px)] md:w-[min(60vw,720px)] lg:w-[min(54vw,860px)] aspect-video rounded-3xl overflow-hidden ring-1 ring-white/15 shadow-[0_0_80px_rgba(34,197,94,0.25)]"
           >
-            <motion.div
-              style={{
-                boxShadow: useTransform(
-                  seedGlow,
-                  (v) =>
-                    `0 0 ${Math.round(v * 80)}px ${Math.round(v * 30)}px rgba(34, 197, 94, ${v * 0.6})`
-                ),
-              }}
-              className="relative w-40 h-40 rounded-full"
-            >
-              {/* Seed ball — clay sphere with gradient */}
-              <div
-                className="absolute inset-0 rounded-full"
-                style={{
-                  background:
-                    "radial-gradient(circle at 30% 30%, #c2986b 0%, #8a5a30 35%, #4a2f18 80%, #2a190a 100%)",
-                  boxShadow:
-                    "inset -10px -14px 30px rgba(0,0,0,0.6), inset 8px 6px 20px rgba(255,255,255,0.18)",
-                }}
-              />
-              {/* Seed cracks */}
-              <svg viewBox="0 0 100 100" className="absolute inset-0 w-full h-full opacity-40">
-                <path
-                  d="M30 25 L45 40 M55 60 L70 75 M40 75 L25 60 M65 30 L75 45"
-                  stroke="#1a0e06"
-                  strokeWidth="1"
-                  fill="none"
-                />
-              </svg>
-              {/* Tiny green sprout peeking */}
-              <svg viewBox="0 0 100 100" className="absolute inset-0 w-full h-full">
-                <path
-                  d="M50 40 Q55 25 60 30 M50 40 Q45 25 40 30"
-                  stroke="#a3e635"
-                  strokeWidth="2.5"
-                  fill="none"
-                  strokeLinecap="round"
-                  opacity="0.85"
-                />
-                <circle cx="50" cy="40" r="2" fill="#34d399" />
-              </svg>
-            </motion.div>
-
-            {/* GORSEL: gerçek tohum topu görseli (PNG, transparan, 256x256) buraya yerleştirilebilir */}
+            <video
+              src="/videos/seed-journey.mp4"
+              poster="/videos/seed-journey-poster.webp"
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="metadata"
+              aria-hidden
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+            {/* Kenar vinyeti — video sahne arka planıyla kaynaşsın */}
+            <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_center,transparent_55%,rgba(10,31,18,0.55)_100%)]" />
           </motion.div>
         </div>
 
@@ -303,28 +254,31 @@ function SceneCaption({ progress }: { progress: MotionValue<number> }) {
   const opacity3 = useTransform(progress, [0.65, 0.8, 1], [0, 1, 1]);
 
   return (
-    <div className="absolute top-1/2 left-12 max-w-md -translate-y-1/2 lg:left-20 hidden md:block">
-      <motion.div style={{ opacity: opacity1 }} className="absolute">
-        <Caption
-          step="01"
-          title={t("captions.lab.title")}
-          desc={t("captions.lab.desc")}
-        />
-      </motion.div>
-      <motion.div style={{ opacity: opacity2 }} className="absolute">
-        <Caption
-          step="02"
-          title={t("captions.drone.title")}
-          desc={t("captions.drone.desc")}
-        />
-      </motion.div>
-      <motion.div style={{ opacity: opacity3 }} className="absolute">
-        <Caption
-          step="03"
-          title={t("captions.impact.title")}
-          desc={t("captions.impact.desc")}
-        />
-      </motion.div>
+    <div className="absolute top-1/2 left-8 lg:left-20 -translate-y-1/2 hidden md:block z-20 w-[min(40vw,26rem)]">
+      {/* Sabit yükseklikli sahne: üç caption üst üste, hepsi AYNI boyutta kutu */}
+      <div className="relative h-[240px] lg:h-[260px]">
+        <motion.div style={{ opacity: opacity1 }} className="absolute inset-0">
+          <Caption
+            step="01"
+            title={t("captions.lab.title")}
+            desc={t("captions.lab.desc")}
+          />
+        </motion.div>
+        <motion.div style={{ opacity: opacity2 }} className="absolute inset-0">
+          <Caption
+            step="02"
+            title={t("captions.drone.title")}
+            desc={t("captions.drone.desc")}
+          />
+        </motion.div>
+        <motion.div style={{ opacity: opacity3 }} className="absolute inset-0">
+          <Caption
+            step="03"
+            title={t("captions.impact.title")}
+            desc={t("captions.impact.desc")}
+          />
+        </motion.div>
+      </div>
     </div>
   );
 }
@@ -332,7 +286,7 @@ function SceneCaption({ progress }: { progress: MotionValue<number> }) {
 function Caption({ step, title, desc }: { step: string; title: string; desc: string }) {
   const t = useTranslations("seedJourney");
   return (
-    <div className="premium-glass-dark rounded-2xl p-6">
+    <div className="premium-glass-dark rounded-2xl p-6 h-full flex flex-col overflow-hidden">
       <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#a3e635] mb-2">
         {t("stepLabel")} {step}
       </p>
@@ -346,7 +300,7 @@ function ProgressBar({ progress }: { progress: MotionValue<number> }) {
   const t = useTranslations("seedJourney");
   const width = useTransform(progress, (v) => `${v * 100}%`);
   return (
-    <div className="absolute bottom-12 left-12 right-12 lg:left-20 lg:right-20">
+    <div className="absolute bottom-12 left-12 right-12 lg:left-20 lg:right-20 z-20">
       <div className="flex items-baseline justify-between mb-2 text-[10px] uppercase tracking-[0.2em] font-bold">
         <span className="text-[#a7d4a7]">{t("progress.label")}</span>
         <span className="text-[#34d399] hidden md:block">{t("progress.steps")}</span>

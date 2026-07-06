@@ -26,13 +26,6 @@ export async function generateMetadata({
         url: "/images/hakkimizda/saha.webp",
         alt: t("hero.imageAlt"),
       },
-      keywords: [
-        "Skytech Green hakkında",
-        "ekibimiz",
-        "vizyon misyon",
-        "ağaçlandırma şirketi Türkiye",
-        "Eco-Tech",
-      ],
     },
     locale
   );
@@ -162,7 +155,7 @@ export default async function HakkimizdaPage({
 
       {/* İstatistikler */}
       <SectionWrapper variant="tinted">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 max-w-3xl mx-auto">
           {STATS.map((s) => (
             <div key={s.label} className="vitrin-card p-6 lg:p-7 text-center">
               <p className="text-3xl lg:text-4xl font-bold bg-gradient-to-br from-[#1B6B3A] to-[#22894a] bg-clip-text text-transparent mb-2 tabular-nums">

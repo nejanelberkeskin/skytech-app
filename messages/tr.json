@@ -596,7 +596,7 @@
       "titleLead": "Yangın Sonrası",
       "titleAccent": "Bir Doğa Çağrısı",
       "paragraph1": "2021 Akdeniz orman yangınları sonrası, dronların hızla tohum bırakabildiğini, insan adımının zor ulaştığı bölgelere erişebildiğini gördük. Bilimsel altyapı + havacılık teknolojisi + şeffaf yazılım altyapısı — bu üçlüyü birleştirdik.",
-      "paragraph2": "Bugün <brand>Skytech Green</brand>, Türkiye genelinde altı bölgede dronlu ağaçlandırma yapıyor — kurumsal partnerlerin ESG hedeflerine, bireysel kullanıcıların karbon dengeleme isteklerine cevap veriyor.",
+      "paragraph2": "Bugün <brand>Skytech Green</brand>, Türkiye genelinde üç bölgede dronlu ağaçlandırma yapıyor — kurumsal partnerlerin ESG hedeflerine, bireysel kullanıcıların karbon dengeleme isteklerine cevap veriyor.",
       "imageCaption": "Saha Ekibimiz"
     },
     "timeline": {
@@ -708,8 +708,7 @@
     "map": {
       "badge": "Konum",
       "title": "Bizi Ziyaret Edin",
-      "placeholderTitle": "Harita Yakında",
-      "placeholderSubtitle": "Google Maps embed buraya gelecek"
+      "directions": "Yol Tarifi Al"
     },
     "social": {
       "badge": "Sosyal Medya",
@@ -1263,7 +1262,8 @@
       "subtitle": "Pilot sahalarımızı harita üzerinden keşfedin. İllerin üzerine gelin, detayları görün.",
       "aria": "Türkiye Proje Haritası",
       "totalSeeds": "Toplam Tohum",
-      "emptyProvince": "Bu ilde henüz aktif projemiz yok."
+      "emptyProvince": "Bu ilde henüz aktif projemiz yok.",
+      "calculating": "Hesaplanıyor"
     },
     "list": {
       "badge": "Pilot Sahalar",

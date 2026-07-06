@@ -20,6 +20,7 @@ import {
   SITE_TAGLINE,
   SITE_URL,
 } from "@/lib/seo";
+import { seoKeywords } from "@/lib/seo-keywords";
 import "../globals.css";
 
 const geistSans = Geist({
@@ -56,16 +57,7 @@ export async function generateMetadata({
     applicationName: SITE_NAME,
     authors: [{ name: SITE_NAME, url: SITE_URL }],
     generator: "Next.js",
-    keywords: [
-      "drone ağaçlandırma",
-      "tohum topu",
-      "karbon nötrleme",
-      "ESG",
-      "kurumsal ormanlaştırma",
-      "kurumsal sürdürülebilirlik",
-      "Türkiye ağaçlandırma",
-      "ekosistem restorasyonu",
-    ],
+    keywords: seoKeywords("/", locale),
     alternates: {
       canonical: homeUrl,
       languages: hreflangMap("/"),

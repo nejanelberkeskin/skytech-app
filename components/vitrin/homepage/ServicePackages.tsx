@@ -172,12 +172,33 @@ function PackageCard({ pkg }: { pkg: Package }) {
       onMouseMove={handleMove}
       whileHover={{ y: -6 }}
       transition={{ type: "spring", stiffness: 280, damping: 22 }}
-      className={`relative rounded-3xl overflow-hidden h-full flex flex-col p-7 lg:p-9 transition-shadow duration-500 ${
-        isHighlight
-          ? "bg-gradient-to-br from-[#1B6B3A] via-[#22894a] to-[#1B6B3A] text-white breathe-popular lg:-translate-y-3"
-          : "premium-glass"
-      }`}
+      className={`relative h-full ${isHighlight ? "lg:-translate-y-3" : ""}`}
     >
+      {/* Most popular badge — kartın DIŞINDA konumlanır; kart overflow-hidden
+          olduğu için içeride kırpılıyordu. Konum sınıfları düz div'de, entrance
+          animasyonu iç motion.div'de: framer'ın transform'u -translate-x-1/2'yi
+          ezmesin diye ayrıldı. */}
+      {isHighlight && (
+        <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-20">
+          <motion.div
+            initial={{ opacity: 0, y: -10, scale: 0.8 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ delay: 0.6, type: "spring", stiffness: 200 }}
+            className="relative inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#a3e635] text-[#0e2519] text-[11px] font-bold uppercase tracking-[0.14em] shadow-lg shadow-[#a3e635]/40 whitespace-nowrap"
+          >
+            <StarIcon className="w-3 h-3" />
+            <span className="shimmer-text">{t("mostPopular")}</span>
+          </motion.div>
+        </div>
+      )}
+
+      <div
+        className={`relative rounded-3xl overflow-hidden h-full flex flex-col p-7 lg:p-9 transition-shadow duration-500 ${
+          isHighlight
+            ? "bg-gradient-to-br from-[#1B6B3A] via-[#22894a] to-[#1B6B3A] text-white breathe-popular"
+            : "premium-glass"
+        }`}
+      >
       <LiquidGlow x={sx} y={sy} highlight={isHighlight} />
 
       {/* Highlight: shimmer band */}
@@ -192,21 +213,6 @@ function PackageCard({ pkg }: { pkg: Package }) {
             backgroundSize: "200% 100%",
           }}
         />
-      )}
-
-      {/* Most popular badge */}
-      {isHighlight && (
-        <motion.div
-          initial={{ opacity: 0, y: -10, scale: 0.8 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ delay: 0.6, type: "spring", stiffness: 200 }}
-          className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-10"
-        >
-          <div className="relative inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#a3e635] text-[#0e2519] text-[11px] font-bold uppercase tracking-[0.14em] shadow-lg shadow-[#a3e635]/40">
-            <StarIcon className="w-3 h-3" />
-            <span className="shimmer-text">{t("mostPopular")}</span>
-          </div>
-        </motion.div>
       )}
 
       <div className="relative flex flex-col flex-1">
@@ -300,6 +306,7 @@ function PackageCard({ pkg }: { pkg: Package }) {
             />
           </motion.div>
         </Link>
+      </div>
       </div>
     </motion.div>
   );

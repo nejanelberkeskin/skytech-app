@@ -279,7 +279,7 @@ function MapTooltip({
                 >
                   <span className="truncate">{p.region}</span>
                   <span className="font-bold text-white tabular-nums shrink-0 ml-3">
-                    {p.trees.toLocaleString("tr-TR")}
+                    {p.trees > 0 ? p.trees.toLocaleString("tr-TR") : t("map.calculating")}
                   </span>
                 </div>
               ))}
@@ -289,7 +289,7 @@ function MapTooltip({
                 {t("map.totalSeeds")}
               </span>
               <span className="text-base font-bold text-[#34d399] tabular-nums">
-                {totalTrees.toLocaleString("tr-TR")}
+                {totalTrees > 0 ? totalTrees.toLocaleString("tr-TR") : t("map.calculating")}
               </span>
             </div>
           </>

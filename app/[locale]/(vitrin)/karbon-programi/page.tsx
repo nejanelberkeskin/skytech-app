@@ -18,15 +18,6 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       title: t("meta.title"),
       description: t("meta.description"),
       path: "/karbon-programi",
-      keywords: [
-        "karbon nötrleme",
-        "karbon ayak izi",
-        "ESG raporlama",
-        "karbon sertifikası",
-        "GRI CDP karbon",
-        "kurumsal sürdürülebilirlik",
-        "carbon offset Türkiye",
-      ],
     },
     locale
   );

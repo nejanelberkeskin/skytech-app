@@ -216,30 +216,103 @@
   },
   "footer": {
     "tagline": "Tohum toplarıyla geleceği ekiyoruz. Dron teknolojisi, ormancılık bilimi ve şeffaf tedarik zinciriyle ölçülebilir ağaçlandırma.",
-    "links": {
-      "sections": "Bölümler",
-      "company": "Şirket",
-      "support": "Destek",
-      "legal": "Yasal"
+    "servicesTitle": "Hizmetler",
+    "quickLinksTitle": "Hızlı Linkler",
+    "newsletterTitle": "Bültenimize Katılın",
+    "newsletterDesc": "Yeni projeler ve karbon nötrleme haberleri için.",
+    "subscribe": "Abone Ol",
+    "lastUpdated": "Son güncelleme:",
+    "rightsReserved": "Tüm hakları saklıdır.",
+    "services": {
+      "seedBall": "Tohum Topu",
+      "droneTech": "Dron Teknolojisi",
+      "carbonProgram": "Karbon Programı",
+      "corporate": "Kurumsal Çözümler"
     },
-    "copyright": "© {year} Skytech Green. Tüm hakları saklıdır."
+    "quickLinks": {
+      "about": "Hakkımızda",
+      "projects": "Projeler",
+      "info": "Bilgi Al",
+      "contact": "İletişim"
+    },
+    "legal": {
+      "privacy": "Gizlilik Politikası",
+      "terms": "Kullanım Koşulları",
+      "kvkk": "KVKK",
+      "cookies": "Çerez Politikası"
+    }
   },
   "ourSeeds": {
+    "meta": {
+      "title": "Tohumlarımız — Yerli Türler ve Özellikleri",
+      "description": "Skytech Green tohum topu projelerinde kullandığımız yerli türler: Kızılçam, Karaçam, Sedir, Ardıç. Her türün iklim adaptasyonu, kök yapısı, çimlenme süresi ve ekolojik rolü."
+    },
     "breadcrumbTitle": "Yerli Tohumlarımız",
     "breadcrumbSubtitle": "Her tohum, bölgenin iklimine ve ekosistemine uygun olarak seçilir. Skytech Green tohum topu projelerinde kullanılan dört yerli türün özellikleri.",
+    "breadcrumbSchemaName": "Tohumlarımız",
     "sectionBadge": "Türler",
     "sectionTitleLine": "Dört Yerli",
     "sectionTitleAccent": "Türümüz",
     "sectionSubtitle": "Her tür, ekildiği bölgenin iklim ve toprak yapısına göre seçilir. Tohumlarımız Orman Bölge Müdürlükleri tedariklidir.",
     "footnote": "Yöreye uygun tohumlarımız ilgili Orman Bölge Müdürlüklerinden tedarik edilmekte; tohumların tür bilgisi, ağaçlardan toplanma tarihleri ve orijin bilgileri blok zinciri teknolojisiyle güvenle doğrulanmaktadır.",
+    "typeLabel": "Tür {number}",
     "labels": {
-      "type": "Tür",
       "region": "Bölge",
       "climate": "İklim",
       "rootDepth": "Kök Yapısı",
       "germination": "Çimlenme",
       "lifespan": "Ortalama Ömrü",
       "ecologicalRole": "Ekolojik Rolü"
+    },
+    "seeds": {
+      "kizilcam": {
+        "name": "Kızılçam",
+        "latin": "Pinus brutia",
+        "family": "Pinaceae (Çamgiller)",
+        "region": "Akdeniz, Ege, Marmara",
+        "climate": "Akdeniz iklimi, sıcak-kurak yazlara dayanıklı",
+        "rootDepth": "Derin ve geniş yayılan",
+        "germination": "20–30 gün",
+        "lifespan": "150–200 yıl",
+        "ecologicalRole": "Yangın sonrası ilk kolonileyici tür. Toprağı stabilize eder, kuşlar ve böcekler için habitat sağlar.",
+        "description": "Türkiye orman alanının yaklaşık %25'ini kaplayan en yaygın iğne yapraklı türümüz. Akdeniz iklimine mükemmel uyum sağlar, hızlı büyür ve yangından sonra otomatik rejenerasyon kabiliyetiyle bilinir."
+      },
+      "karacam": {
+        "name": "Karaçam",
+        "latin": "Pinus nigra",
+        "family": "Pinaceae (Çamgiller)",
+        "region": "İç Anadolu, Batı Karadeniz, Toroslar",
+        "climate": "Karasal iklim; kuraklığa ve soğuğa toleranslı",
+        "rootDepth": "Derin kazık kök sistemi",
+        "germination": "20–40 gün",
+        "lifespan": "300–500 yıl",
+        "ecologicalRole": "Yüksek rakım ormanlaştırmasının öncü türü. Erozyon kontrolünde ve bozkır-orman geçiş kuşağında kritik rol oynar.",
+        "description": "Anadolu'nun yüksek kesimlerine dayanıklı yerli çam türü. Kuraklığa ve dona toleransı sayesinde zorlu iklimlerde güvenle kullanılır; uzun ömürlü ve dayanıklı odunuyla bilinir."
+      },
+      "sedir": {
+        "name": "Sedir (Toros Sediri)",
+        "latin": "Cedrus libani",
+        "family": "Pinaceae (Çamgiller)",
+        "region": "Toroslar, Antalya, Konya",
+        "climate": "Dağ iklimi, 1.000–2.000 m yükseltiler",
+        "rootDepth": "Derin ve dayanıklı",
+        "germination": "25–40 gün",
+        "lifespan": "1.000+ yıl",
+        "ecologicalRole": "Yüksek rakım ekosistemlerinin yapı taşı. Kuş ve memeli türler için habitat sağlar.",
+        "description": "Anadolu'nun simgesi, asırlık ömrüyle bir miras türü. Yüksek dağlarda saf orman oluşturur; reçinesi ve özel kokusuyla kuraklığa yüksek dayanım sağlar."
+      },
+      "ardic": {
+        "name": "Ardıç",
+        "latin": "Juniperus",
+        "family": "Cupressaceae (Servigiller)",
+        "region": "Anadolu geneli, özellikle iç bölgeler",
+        "climate": "Kurak ve yarı-kurak iklim, taşlı topraklar",
+        "rootDepth": "Derin, kayalık zeminlere uyumlu",
+        "germination": "60–120 gün (kalın kabuk)",
+        "lifespan": "300–600 yıl",
+        "ecologicalRole": "Sarp ve kurak yamaçlarda öncü tür. Meyveleri kuş ve yaban hayatına besin sağlar; erozyon kontrolünde kritik.",
+        "description": "Anadolu'nun sarp yamaçlarına uyum sağlayan dayanıklı yerli tür. Eteklerden zirvelere kadar yaşar; meyveleri ekosistem için besin değeri taşır, erozyon ve çölleşmeyle mücadelede vazgeçilmezdir."
+      }
     }
   },
   "languageSwitcher": {
@@ -247,5 +320,979 @@
     "tr": "Türkçe",
     "en": "English",
     "ru": "Русский"
+  },
+  "advantagesGrid": {
+    "badge": "Avantajlar",
+    "title": "Skytech Green Farkı",
+    "titleAccent": "Altı Temel Üstünlük",
+    "subtitle": "Geleneksel ağaçlandırmadan dronlu ekime, her noktada ölçülebilir avantaj sağlıyoruz.",
+    "items": {
+      "speed": {
+        "title": "Hızlı Ekim",
+        "description": "Bir drone uçuşunda 200+ tohum. Geleneksel yöntemlere kıyasla 10 kat hız."
+      },
+      "noDamage": {
+        "title": "Sıfır Saha Tahribatı",
+        "description": "Havadan ekim, ekosistemi koruyor. İnsan ayağının değmediği bölgelere bile ulaşıyor."
+      },
+      "transparency": {
+        "title": "Tam Şeffaflık",
+        "description": "Her tohumun ağaçtan toplanma tarihi, orijin bilgisi ve türü blok zinciriyle doğrulanır. Tedarik zinciri uçtan uca şeffaf."
+      },
+      "monitoring": {
+        "title": "Yıllık İzleme",
+        "description": "Periyodik uçuş verileri, büyüme metrikleri ve karbon nötrleme sonuçlarınız kurumsal panomuzda anlık olarak güncellenir."
+      },
+      "integration": {
+        "title": "Kurumsal Entegrasyon",
+        "description": "API entegrasyonu ile e-ticaret sepetinden ESG raporuna kadar tam uyum."
+      },
+      "compliance": {
+        "title": "Yasal Uyumluluk",
+        "description": "Orman Bölge Müdürlükleri koordinasyonunda, %100 yasal izin ve mevzuat uyumluluğu çerçevesinde projeler."
+      }
+    }
+  },
+  "comparisonTable": {
+    "badge": "Karşılaştırma",
+    "title": "Geleneksel Yöntem vs.",
+    "titleAccent": "Skytech Green",
+    "subtitle": "Ölçülebilir farkları yan yana koyduk. Karar sizin.",
+    "traditional": {
+      "heading": "Geleneksel Ağaçlandırma",
+      "imageAlt": "Geleneksel ağaçlandırma — elle ekim",
+      "items": {
+        "manual": "İnsan gücüyle, zorlu coğrafyalarda yetersiz",
+        "damage": "Saha tahribatı kaçınılmaz",
+        "untraceable": "Tedarik zinciri belgesiz, izlenemez",
+        "reporting": "Manuel raporlama, denetim zayıf",
+        "speed": "Dakika başına 2-3 fidan dikim hızı"
+      }
+    },
+    "skytech": {
+      "imageAlt": "Skytech Green drone ekim",
+      "items": {
+        "access": "Drone teknolojisiyle her bölgeye erişim",
+        "noTrace": "Sıfır saha izi, ekosistem korunur",
+        "verified": "Ağaçtan toplanma tarihi + orijin blok zinciri ile doğrulanır",
+        "reporting": "Yıllık drone raporlama, ESG entegre",
+        "distribution": "Bir uçuşta 200+ tohum dağıtımı"
+      }
+    }
+  },
+  "magicLens": {
+    "badge": "Sihirli Lens",
+    "title": "Çorak Bir Arazi.",
+    "titleAccent": "Yeşil Bir Gelecek.",
+    "subtitle": "Fareyi gezdirin — yanmış toprağın altında nasıl bir orman büyüdüğünü kendi gözlerinizle görün.",
+    "hint": "Fareyi gezdirin",
+    "labelBefore": "Önce — Yangın Sonrası",
+    "labelAfter": "Sonra — Skytech Green",
+    "barrenAlt": "Yangın sonrası çorak arazi",
+    "forestAlt": "Yenilenmiş yeşil orman"
+  },
+  "marqueeStrip": {
+    "keywords": {
+      "reforestation": "Ağaçlandırma",
+      "carbonNeutral": "Karbon Nötr",
+      "seedBall": "Tohum Topu",
+      "droneTech": "Dron Teknolojisi",
+      "ecologicalImpact": "Ekolojik Etki",
+      "sustainability": "Sürdürülebilirlik",
+      "transparentSupply": "Şeffaf Tedarik",
+      "annualMonitoring": "Yıllık İzleme"
+    }
+  },
+  "finalCta": {
+    "badge": "Şimdi Başlayın",
+    "title": "Doğaya Yatırım,",
+    "titleAccent": "Geleceğe Miras",
+    "subtitle": "Bireysel veya kurumsal — her katkı önemli. İlk tohumunuzu bugün ekin, etkinizi anında izleyin.",
+    "ctaPrimary": "Hemen Başla",
+    "ctaComingSoon": "Yakında",
+    "ctaSecondary": "Bize Ulaşın"
+  },
+  "carbonCalculator": {
+    "badge": "Karbon Hesaplayıcı",
+    "titleLine1": "Etkinizi",
+    "titleAccent": "Anında Görün",
+    "subtitle": "Tohum sayısını, yılı ve çimlenme oranını ayarlayın — kaç ağaç yetişeceğini, kaç ton karbonun nötrleneceğini canlı izleyin.",
+    "sliders": {
+      "seeds": "Tohum Sayısı",
+      "years": "İzleme Süresi",
+      "germRate": "Çimlenme Oranı"
+    },
+    "units": {
+      "year": "yıl"
+    },
+    "formula": {
+      "label": "Formül:",
+      "text": "Tohum × çimlenme = ağaç · Ağaç × 5kg CO₂ × yıl = toplam karbon"
+    },
+    "results": {
+      "trees": "Yetişecek Ağaç",
+      "carbon": "Nötrlenecek Karbon",
+      "carbonSuffix": "ton CO₂",
+      "people": "Kişi Karbon Ayak İzi Nötrlenir",
+      "peopleSuffix": "kişi"
+    },
+    "cta": {
+      "start": "Bu Etkiyi Başlat — Tohum Sipariş Et",
+      "soon": "Yakında"
+    }
+  },
+  "faqSection": {
+    "badge": "Sıkça Sorulanlar",
+    "titleLine1": "Aklınızdaki",
+    "titleAccent": "Tüm Sorular",
+    "subtitle": "Tohum topundan dronlu ekime, karbon sertifikasından kurumsal entegrasyona — her şey burada.",
+    "faqs": {
+      "seedBall": {
+        "question": "Tohum topu nedir, nasıl çalışır?",
+        "answer": "Tohum topu; bitki tohumlarının kil ve organik besin maddeleriyle kaplanarak dış etkenlerden korunduğu, çimlenme başarısını %65+ üzerine çıkaran yenilikçi bir yapay kapsülleme yöntemidir. Doğa dostu bu biyoteknolojik yaklaşım, tohumları kuraklık ve canlı tüketimi gibi risklerden koruyarak toprağa güvenle tutunmalarını sağlar; yağmurla birlikte filizlenerek doğanın yenilenme hızını artırır."
+      },
+      "sourcing": {
+        "question": "Tohumlar nereden tedarik ediliyor?",
+        "answer": "Tüm tohumlar Orman Bölge Müdürlükleri iş birliğiyle tedarik edilir. Biyolojik çeşitliliğin korunması ve sürdürülebilirlik ilkeleri doğrultusunda; her tohum lotunun ağaçtan toplanma tarihi, genetik orijini ve taksonomik (tür) bilgisi blok zinciri teknolojisiyle kayıt altına alınır. Uçtan uca şeffaf yapılandırılan tedarik zincirimiz sayesinde müşterilerimiz tohum kimlik kartlarına ve sertifikasyon verilerine diledikleri an erişebilir."
+      },
+      "droneEfficiency": {
+        "question": "Drone ile ekim ne kadar verimli?",
+        "answer": "Tek bir uçuşta 200'den fazla tohum dağıtarak geleneksel yöntemlere kıyasla 10 kat hız ve yüksek maliyet etkinliği sunar. GPS hassasiyetli koordinatlar sayesinde insan ayağının ulaşamadığı eğimli ve yangın sonrası tahribat görmüş alanlara yüksek erişilebilirlik sağlar; santimetrik hassasiyetle kaynak verimliliğini maksimuma çıkarırken minimum karbon ayak iziyle sürdürülebilir bir çevresel etki yaratır."
+      },
+      "tracking": {
+        "question": "Ekilen tohumların büyümesini nasıl takip edebilirim?",
+        "answer": "Yıllık periyodik drone uçuşlarıyla bölge yeniden taranır, büyüme verisi kurumsal panonuza işlenir. Bireysel kullanıcılar dijital sertifikalarındaki QR kodla bölge görsellerine erişebilir. Kurumsal partnerler API ile gerçek zamanlı veriye ulaşır."
+      },
+      "certificate": {
+        "question": "Karbon sertifikası ne için geçerli?",
+        "answer": "Sertifikalar; ESG raporlarında, GRI ve CDP gönderimlerinde, kurumsal sürdürülebilirlik beyanlarında kullanılabilir. Tüm ormanlaştırma ve karbon yutak alanı projeleri Orman Genel Müdürlüğü (OGM) Bölge Müdürlükleri koordinasyonunda, yasal ve bilimsel altyapıya uygun olarak yürütülür; %100 doğrulanabilir bir izleme zinciri sunarız."
+      },
+      "minOrder": {
+        "question": "Minimum sipariş miktarı var mı?",
+        "answer": "Bireysel kullanıcılar için minimum 10 tohum, kurumsal partnerler için minimum 1.000 tohum başlangıç limiti vardır. 50 tohum ve üzeri bireysel siparişlerde kargo ücretsizdir. Kurumsal projelerde teklif fiyatlandırması yapılır."
+      },
+      "b2bIntegration": {
+        "question": "B2B kurumsal entegrasyon nasıl çalışır?",
+        "answer": "Kurumsal panelimiz; çalışan listesi yükleme, otomatik PDF sertifika üretimi, e-ticaret \"sepete tohum ekle\" entegrasyonu, ESG raporlama API'si gibi modüller içerir. Özel hesap yöneticisi atanır ve kurum ihtiyaçlarına göre özelleştirme yapılır."
+      },
+      "gift": {
+        "question": "Hediye olarak gönderebilir miyim?",
+        "answer": "Evet — bireysel sipariş akışında \"hediye et\" seçeneği vardır. Alıcı, dijital sertifikayı e-posta ile alır. Üyelik kazandığında, gönderici otomatik tohum bonusu kazanır (viral büyüme programımız)."
+      }
+    }
+  },
+  "seedJourney": {
+    "ariaLabel": "Tohumun yolculuğu",
+    "stepLabel": "Adım",
+    "lab": {
+      "hudTopLeft": "⊹ Lab Analiz · KIL/GÜBRE/TOHUM",
+      "hudBottomRight": "pH 6.8 · NPK Optimal"
+    },
+    "drone": {
+      "hudBottomLeft": "⊹ Hassas Hedef · 200+ tohum"
+    },
+    "impact": {
+      "hudBottomLeft": "⊹ Toprağa İndi · Çimlenme: %65+"
+    },
+    "captions": {
+      "lab": {
+        "title": "Laboratuvar",
+        "desc": "Orman mühendisleri kil + organik gübre + yerli tohum oranlarını analiz eder, tohum topunu formüle eder."
+      },
+      "drone": {
+        "title": "Dronla Yolculuk",
+        "desc": "GPS hassasiyetli drone tohum topunu hedef koordinata otonom uçar — bir uçuşta 200+ tohum."
+      },
+      "impact": {
+        "title": "Toprağa Buluşma",
+        "desc": "Yağmurla birlikte kil çözülür, tohum filizlenir. Çimlenme oranı %65+ — geleneksel yöntemin 3 katı."
+      }
+    },
+    "progress": {
+      "label": "Tohumun Yolculuğu",
+      "steps": "Lab → Drone → Toprak"
+    }
+  },
+  "servicePackages": {
+    "badge": "Hizmet Paketleri",
+    "titleLine1": "Size Uygun",
+    "titleAccent": "Çözümü Seçin",
+    "subtitle": "Bireysel kullanıcıdan kurumsal partnere — her ölçek için ölçülebilir etki.",
+    "mostPopular": "EN POPÜLER",
+    "ctaFallback": {
+      "info": "Bilgi Al",
+      "soon": "Yakında"
+    },
+    "packages": {
+      "diy": {
+        "name": "Kendin Ek",
+        "tag": "Bireysel",
+        "description": "Tohum topları adresinize teslim. Kendi bahçenize, arazinize veya seçtiğiniz alana siz ekersiniz.",
+        "features": [
+          "Adresinize ücretsiz kargo (50 tohum üzeri)",
+          "Tür çeşitliliği seçimi",
+          "Dijital sertifika",
+          "Ekim rehberi (PDF)",
+          "Topluluk forumu erişimi"
+        ],
+        "cta": "Tohum Sipariş Et"
+      },
+      "weplant": {
+        "name": "Biz Ekelim",
+        "tag": "Önerilen",
+        "description": "Profesyonel drone ekibi seçilen Skytech arazilerinde sizin adınıza ekim yapar. Yıllık izleme dahil.",
+        "features": [
+          "Profesyonel drone ekimi",
+          "GPS koordinatlı ekim raporu",
+          "Yıllık drone takip raporları",
+          "Karbon nötrleme sertifikası",
+          "Hediyeleştirme + paylaşılabilir profil"
+        ],
+        "cta": "Profesyonel Ekim Başlat"
+      },
+      "corporate": {
+        "name": "Kurumsal Ormanlaştırma",
+        "tag": "B2B",
+        "description": "Şirketinize özel kurumsal orman + çalışan sertifikaları + ESG raporlama + API entegrasyonu.",
+        "features": [
+          "Şirket adına kurumsal alan",
+          "Çalışan başına bireysel sertifika",
+          "Drone uçuş kayıtları + saha videoları",
+          "ESG / GRI / CDP raporlama hazır veri",
+          "API + e-ticaret entegrasyonu",
+          "Özel hesap yöneticisi"
+        ],
+        "cta": "Teklif Al"
+      }
+    }
+  },
+  "beforeAfter": {
+    "badge": "Yangın Öncesi / Sonrası",
+    "titleLine1": "Aşağı Kaydırın —",
+    "titleAccent": "Doğanın Geri Dönüşü",
+    "labelBefore": "Yangın Öncesi",
+    "labelAfter": "Yangın Sonrası",
+    "altBefore": "Yangın öncesi çorak arazi",
+    "altAfter": "Yangın sonrası yeşeren orman"
+  },
+  "aboutPage": {
+    "meta": {
+      "title": "Hakkımızda — Bilim, Teknoloji ve Doğa",
+      "description": "2021 Akdeniz yangınlarından doğan vizyon, orman mühendisleri + drone pilotları + yazılım ekibinden oluşan 36+ kişilik aile. Skytech Green'in kuruluş hikayesi ve değerleri."
+    },
+    "breadcrumb": {
+      "label": "Hakkımızda"
+    },
+    "hero": {
+      "title": "Bilim, Teknoloji ve Doğa. Üçünü Birleştiriyoruz.",
+      "subtitle": "Skytech Green; iklim kriziyle mücadeleyi havacılık, ormancılık ve modern yazılımla birleştiren yeni nesil bir Eco-Tech platformudur.",
+      "imageAlt": "Skytech Green saha ekibi — drone operasyon"
+    },
+    "story": {
+      "badge": "Hikayemiz",
+      "titleLead": "Yangın Sonrası",
+      "titleAccent": "Bir Doğa Çağrısı",
+      "paragraph1": "2021 Akdeniz orman yangınları sonrası, dronların hızla tohum bırakabildiğini, insan adımının zor ulaştığı bölgelere erişebildiğini gördük. Bilimsel altyapı + havacılık teknolojisi + şeffaf yazılım altyapısı — bu üçlüyü birleştirdik.",
+      "paragraph2": "Bugün <brand>Skytech Green</brand>, Türkiye genelinde altı bölgede dronlu ağaçlandırma yapıyor — kurumsal partnerlerin ESG hedeflerine, bireysel kullanıcıların karbon dengeleme isteklerine cevap veriyor.",
+      "imageCaption": "Saha Ekibimiz"
+    },
+    "timeline": {
+      "badge": "Yolculuğumuz",
+      "titleLine1": "Yıllar İçinde",
+      "titleLine2": "Bilim ve Teknoloji",
+      "subtitle": "Bir yangın sonrası fikrinden bugünkü ölçeğimize — Skytech Green'in adım adım büyümesi.",
+      "milestoneLabel": "Kilometre Taşı",
+      "milestones": {
+        "spark": {
+          "title": "Akdeniz Yangınları & İlk Kıvılcım",
+          "description": "Manavgat ve Marmaris yangınları sonrası, drone teknolojisinin yangın bölgelerinde nasıl etkili olabileceği üzerine ar-ge çalışmaları başladı."
+        },
+        "talks": {
+          "title": "Orman Genel Müdürlüğü ile Görüşmeler",
+          "description": "Orman Genel Müdürlüğü ile görüşmeler başladı; ormanlaştırma sahalarında iş birliği için zemin hazırlandı."
+        },
+        "protocols": {
+          "title": "Çalışmalar ve Protokoller",
+          "description": "Orman Genel Müdürlüğü ile çalışmalar başlatıldı ve protokoller imzalandı. Çanakkale, İzmir ve Bursa'da demo sahalar hayata geçirildi."
+        }
+      }
+    },
+    "values": {
+      "badge": "Değerlerimiz",
+      "title": "Bizi <accent>Biz Yapan</accent>",
+      "science": {
+        "title": "Bilim",
+        "desc": "Her kararımızın arkasında ormancılık ve ekoloji bilimi vardır."
+      },
+      "technology": {
+        "title": "Teknoloji",
+        "desc": "Drone, GPS, uydu — en ileri araçları en iyi şekilde kullanırız."
+      },
+      "transparency": {
+        "title": "Şeffaflık",
+        "desc": "Her tohum, her uçuş, her sertifika izlenebilir kayıt altında."
+      },
+      "sustainability": {
+        "title": "Sürdürülebilirlik",
+        "desc": "Kısa vadeli kazanç değil, uzun vadeli ekosistem yaratıyoruz."
+      }
+    },
+    "team": {
+      "badge": "Ekip",
+      "title": "Disiplinler Arası <accent>Bir Aile</accent>",
+      "subtitle": "Orman mühendislerinden drone pilotlarına, yazılımcılardan proje koordinatörlerine — 36+ kişilik bir aile.",
+      "foresters": {
+        "name": "Orman Mühendisleri",
+        "desc": "Tohum türü seçimi, formülasyon ve toprak analizi"
+      },
+      "pilots": {
+        "name": "Drone Pilotları & Operatörler",
+        "desc": "Sertifikalı pilotlar, GPS hassasiyetli operasyon"
+      },
+      "coordinators": {
+        "name": "Proje Koordinatörleri",
+        "desc": "Orman Genel Müdürlüğü, Karadeniz Teknik Üniversitesi ve Artvin Çoruh Üniversitesi koordinasyonu"
+      },
+      "software": {
+        "name": "Yazılım & Veri Ekibi",
+        "desc": "Platform, ESG raporlama, izleme yazılımı"
+      }
+    },
+    "stats": {
+      "regions": {
+        "label": "Aktif Bölge"
+      },
+      "members": {
+        "label": "Ekip Üyesi"
+      },
+      "compliance": {
+        "label": "Yasal Uyum"
+      }
+    },
+    "cta": {
+      "title": "Bu Yolculukta <accent>Bize Katılın</accent>",
+      "subtitle": "İlk tohumunuzu bugün ekin, etkinizi hemen izleyin. Birlikte daha yeşil bir gelecek mümkün.",
+      "primaryEnabled": "Tohum Sipariş Et",
+      "primaryDisabled": "Yakında",
+      "secondary": "Bize Ulaşın"
+    }
+  },
+  "contactPage": {
+    "meta": {
+      "title": "İletişim — Bize Ulaşın",
+      "description": "Skytech Green Ankara ofisi, telefon, e-posta ve sosyal medya iletişim bilgileri. Çalışma saatleri 09:00-18:00, hafta içi."
+    },
+    "breadcrumb": {
+      "label": "İletişim"
+    },
+    "hero": {
+      "title": "Bize Ulaşın",
+      "subtitle": "Bireysel sorularınız için bilgi formumuza, kurumsal projeler için teklif sayfamıza yönelin. Sosyal medyadan da bağlantı kurabilirsiniz."
+    },
+    "contacts": {
+      "address": {
+        "title": "Adres",
+        "secondary": "Kahramankazan / Ankara, Türkiye\nSkytech Green Teknoloji A.Ş."
+      },
+      "phone": {
+        "title": "Telefon",
+        "secondary": "Hafta içi 09:00 - 18:00\nWhatsApp Business üzerinden de erişilebilir."
+      },
+      "email": {
+        "title": "E-posta"
+      }
+    },
+    "map": {
+      "badge": "Konum",
+      "title": "Bizi Ziyaret Edin",
+      "placeholderTitle": "Harita Yakında",
+      "placeholderSubtitle": "Google Maps embed buraya gelecek"
+    },
+    "social": {
+      "badge": "Sosyal Medya",
+      "title": "Hikayemizi Takip Edin",
+      "subtitle": "Drone uçuşları, saha videoları, ekip hikayeleri ve teknolojik atılımlar — sosyal medyada."
+    },
+    "cta": {
+      "title": "Hangi Yoldan <accent>İlerleyelim?</accent>",
+      "subtitle": "İhtiyacınıza en uygun temas noktası için aşağıdan seçin.",
+      "primary": "Bilgi Almak İstiyorum",
+      "secondary": "Kurumsal Teklif"
+    }
+  },
+  "seedBallPage": {
+    "meta": {
+      "title": "Tohum Topu — Bir Kürede Koca Bir Orman",
+      "description": "Kil, organik gübre ve seçilmiş tohumlardan üretilen tohum topu nedir, nasıl yapılır? %65+ çimlenme oranı, üretim süreci ve bilimsel formülasyon.",
+      "imageAlt": "Tohum topu yakın çekim — kil küre, çatlak ve filiz"
+    },
+    "breadcrumb": {
+      "label": "Tohum Topu"
+    },
+    "schema": {
+      "name": "Tohum Topu Üretimi ve Tedariki",
+      "description": "Orman Bölge Müdürlükleri koordineli yerli tohumlardan, kil ve organik gübreyle formüle edilmiş, %65+ çimlenme oranına sahip tohum topu üretimi."
+    },
+    "hero": {
+      "title": "Bir Kürede Koca Bir Orman",
+      "subtitle": "Tohum topu — kil, organik gübre ve seçilmiş tohumların ormancılık bilimiyle birleştiği küçük bir mucize."
+    },
+    "what": {
+      "badge": "Tohum Topu Nedir?",
+      "heading": "Doğanın <grad>Akıllı Kapsülü</grad>",
+      "p1": "Tohum topu; bitki tohumlarının kil ve organik besin maddeleriyle kaplanarak dış etkenlerden korunduğu, çimlenme başarısını<strong>%65+</strong>seviyesine çıkaran yenilikçi bir yapay kapsülleme yöntemidir.",
+      "p2": "Doğa dostu bir biyoteknolojik yaklaşım olan tohum topu; tohumları kuraklık ve canlı tüketimi gibi risklerden koruyarak toprağa güvenle tutunmalarını sağlar. Yağmurla birlikte filizlenerek doğanın yenilenme hızını artırır.",
+      "imageAlt": "Tohum topu yakın çekim — kil küre, çatlak ve filiz",
+      "caption": {
+        "eyebrow": "Yakın Çekim",
+        "text": "Kil + Gübre + Yerli Tohum"
+      }
+    },
+    "science": {
+      "badge": "Bilimsel Tasarım",
+      "heading": "<grad>Akademik Literatür + Laboratuvar</grad> Analizleri",
+      "body": "Akademik literatür ve laboratuvar analizleriyle optimize edilen tohum topu teknolojimiz; uzman ekibimizin araştırmaları sonucunda, doğadaki en zorlu koşullarda bile maksimum çimlenme ve kök gelişimi başarısı sunmak üzere bilimsel olarak tasarlanmıştır."
+    },
+    "formulation": {
+      "badge": "Formülasyon",
+      "title": "Üç Bileşen, <grad>Mükemmel Denge</grad>",
+      "subtitle": "Her tohum topu, ormancılık bilimi prensiplerinde formüle edilir."
+    },
+    "components": {
+      "native": {
+        "label": "Yerli Tohum",
+        "desc": "Orman Bölge Müdürlükleri tedarikli; tür ve orijin bilgisi kayıt altında."
+      },
+      "clay": {
+        "label": "Killi Toprak",
+        "desc": "Tohumu biyotik ve abiyotik zararlardan korur."
+      },
+      "fertilizer": {
+        "label": "Organik Gübre",
+        "desc": "Çimlenme için besin desteği."
+      }
+    },
+    "production": {
+      "badge": "Üretim Süreci",
+      "title": "Üç Adımda <grad>Tohum Topu</grad>"
+    },
+    "steps": {
+      "selection": {
+        "title": "Tohum Seçimi",
+        "desc": "Hedef bölgenin iklim ve toprağına uygun yerli tür belirlenir."
+      },
+      "mixing": {
+        "title": "Karışım & Şekillendirme",
+        "desc": "Kil, gübre, tohum oranlanır; küre haline getirilir."
+      },
+      "drying": {
+        "title": "Kurutma & Paketleme",
+        "desc": "48 saat doğal kurutma; nemden korunmuş paketlenir."
+      }
+    },
+    "stats": {
+      "germination": {
+        "label": "Çimlenme Oranı"
+      },
+      "perFlight": {
+        "label": "Tohum / Drone Uçuşu"
+      },
+      "co2": {
+        "label": "CO₂ / Ağaç / Yıl"
+      },
+      "lifespan": {
+        "value": "25 yıl",
+        "label": "Ortalama Yaşam"
+      }
+    },
+    "cta": {
+      "title": "Kendi <grad>Tohum Topunuzu</grad> Sipariş Edin",
+      "subtitle": "Adresinize teslim, kendi bahçenizde veya seçilen Skytech alanlarında profesyonel ekim ile.",
+      "buttonOrder": "Sipariş Ver",
+      "buttonSoon": "Yakında"
+    }
+  },
+  "droneTechPage": {
+    "meta": {
+      "title": "Dron Teknolojisi — Hassas Ekim, Sıfır Ayak İzi",
+      "description": "GPS hassasiyetli drone filomuz, ulaşılması zor bölgelerde insan ayağının değmediği alanlara tohum topu ekiyor. RTK GPS, LiDAR, otonom uçuş, 200+ tohum/uçuş.",
+      "imageAlt": "Skytech Green tarımsal ekim drone — hero shot"
+    },
+    "breadcrumb": {
+      "label": "Dron Teknolojisi"
+    },
+    "schema": {
+      "name": "Dron ile Ağaçlandırma Hizmeti",
+      "description": "GPS hassasiyetli, otonom uçuşlu profesyonel drone filomuzla bir uçuşta 200+ tohum atışı. Sıfır saha tahribatı, ulaşılması zor bölgelere erişim, tam izlenebilirlik."
+    },
+    "hero": {
+      "title": "Hassas Ekim, Sıfır Ayak İzi",
+      "subtitle": "GPS hassasiyetli dronlarla, insan adımının ulaşamadığı bölgelere tohum topu ekiyoruz."
+    },
+    "system": {
+      "badge": "Drone Sistemi",
+      "heading": "<grad>Otonom Drone Filomuz</grad> Sahada",
+      "p1": "Otonom uçuş kabiliyetine sahip insansız hava araçları (İHA), önceden tanımlanmış hedef koordinatlara yüksek hassasiyetle ulaşır ve tek operasyonda 200+ tohum topunu başarıyla yerleştirir.",
+      "p2": "Yüksek hassasiyetli GPS verileriyle yönlendirilen İHA filomuz, <strong>sıfır ekolojik tahribat</strong> prensibiyle çalışır. Tüm uçuş kayıtları gerçek zamanlı olarak kurumsal panonuza işlenir — şeffaflık ve doğrulanabilirlik için.",
+      "imageAlt": "Skytech Green tarımsal ekim drone — premium ürün görseli",
+      "thermalCamera": "Termal Kamera"
+    },
+    "featuresSection": {
+      "badge": "Teknik Özellikler",
+      "title": "Endüstri Lideri <grad>Drone Donanımı</grad>"
+    },
+    "features": {
+      "gps": {
+        "title": "GPS Hassasiyeti",
+        "desc": "Santimetre seviyesinde RTK GPS — her tohumun düştüğü nokta kayıtlı."
+      },
+      "capacity": {
+        "title": "200+ Tohum / Uçuş",
+        "desc": "Gelişmiş kapasite ile büyük alanları tek seferde tarayabiliyoruz."
+      },
+      "speed": {
+        "title": "10x Hız",
+        "desc": "Geleneksel ekime göre on kat daha hızlı, ekim süresini günlerden saatlere indiriyor."
+      },
+      "autonomous": {
+        "title": "Otonom Görev",
+        "desc": "Önceden planlanan rota; drone otonom uçar, görevi tamamlar, baz istasyonuna döner."
+      },
+      "access": {
+        "title": "Ulaşılması Zor Bölgelere Erişim",
+        "desc": "Fiziki olarak ulaşılması zor olan yangın bölgesi ve erozyon alanlarına erişim."
+      },
+      "tracking": {
+        "title": "Yıllık Takip",
+        "desc": "Periyodik uçuş verileri, büyüme metrikleri ve karbon nötrleme sonuçlarınız kurumsal panomuzda anlık olarak güncellenir; doğrudan ESG raporlarınıza aktarılabilir."
+      }
+    },
+    "processSection": {
+      "badge": "Operasyon",
+      "title": "Dört Aşamada <grad>Drone Ekimi</grad>"
+    },
+    "process": {
+      "survey": {
+        "title": "Bölge Taraması",
+        "desc": "Drone uydu ve LiDAR ile alan haritalanır, eğim ve toprak nem analizi yapılır."
+      },
+      "plan": {
+        "title": "Ekim Planı",
+        "desc": "GPS koordinatlı ekim haritası oluşturulur. Yasal izinler Orman Bölge Müdürlüğü ile koordine edilir."
+      },
+      "seeding": {
+        "title": "Otonom Ekim",
+        "desc": "Drone planlanmış rotada otonom uçar, hesaplanmış noktalara tohum topu bırakır."
+      },
+      "reporting": {
+        "title": "Raporlama",
+        "desc": "Uçuş kaydı, fotoğraflar ve GPS verileri kurumsal panonuza yansır."
+      }
+    },
+    "cta": {
+      "title": "Projeniz İçin <grad>Drone Ekimi</grad> Planlayalım",
+      "subtitle": "Bölge analizi, yasal izin koordinasyonu ve operasyon planlaması — tek noktadan.",
+      "buttonPrimary": "Teklif Al",
+      "buttonSecondary": "Aktif Projeler"
+    }
+  },
+  "carbonProgramPage": {
+    "meta": {
+      "title": "Karbon Programı — Ölçülebilir, Şeffaf, Sertifikalı",
+      "description": "Karbon nötrleme programımız: dron ekimleriyle dengelenen CO₂, şeffaf metrikler, GRI/CDP uyumlu ESG raporlama. Kurumsal karbon sertifikası."
+    },
+    "breadcrumb": {
+      "label": "Karbon Programı"
+    },
+    "schema": {
+      "name": "Karbon Nötrleme Programı",
+      "description": "GRI/CDP/SASB uyumlu, IPCC standartlarında karbon ayak izi hesaplama ve dron ağaçlandırmayla nötrleme. Kurumsal ESG raporlarına entegre."
+    },
+    "hero": {
+      "title": "Holding ve Şirketler için Uçtan Uca Karbon Nötrleme",
+      "subtitle": "Yıllık sera gazı emisyonlarınızı uluslararası standartlarda hesaplıyor, drone teknolojisiyle yüksek karbon yutak alanları (biyo-karbon ekosistemleri) inşa ediyor ve tüm süreci şeffaf biçimde ESG raporlarınıza entegre ediyoruz."
+    },
+    "metrics": {
+      "badge": "Metrikler",
+      "title": {
+        "pre": "Ölçülebilir",
+        "highlight": "Karbon Etkisi"
+      },
+      "subtitle": "Her sayı IPCC standartlarına dayanır. Şeffaf, doğrulanabilir, denetlenebilir.",
+      "perTree": {
+        "label": "CO₂ / Ağaç / Yıl",
+        "desc": "Bir ağacın ortalama yıllık karbondioksit emilimi; tür, yaş ve iklime göre değişir."
+      },
+      "perHectare": {
+        "label": "CO₂ / ha / Yıl",
+        "desc": "Genç ağaçlandırma alanlarının ilk 20 yıldaki hektar başına karbon giderim aralığı."
+      },
+      "perSquareMeter": {
+        "label": "CO₂ / m² / Yıl",
+        "desc": "Akdeniz çam ormanlarında ölçülen organik karbon tutum hızı (2/3 toprak, 1/3 biyokütle)."
+      },
+      "compliant": {
+        "label": "Uyumlu",
+        "desc": "Veri formatlarımız uluslararası raporlama standartlarına uygundur."
+      }
+    },
+    "comparison": {
+      "badge": "Karbon Kredisi vs. Gerçek Ağaçlandırma",
+      "title": {
+        "pre": "Hangisi",
+        "highlight": "Gerçekten Etkili?"
+      },
+      "prosLabel": "Artılar:",
+      "consLabel": "Eksiler:",
+      "credit": {
+        "method": "Karbon Kredisi Satın Alma",
+        "pros": "Hızlı, kolay",
+        "cons": "Soyut, ölçülemez, çoğu zaman çift sayım"
+      },
+      "forest": {
+        "method": "Skytech Drone Ağaçlandırma",
+        "pros": "Fiziksel ağaç + GPS koordinatlı kayıt"
+      }
+    },
+    "faq": {
+      "badge": "SSS",
+      "title": {
+        "pre": "Karbon Programı",
+        "highlight": "Hakkında"
+      },
+      "validity": {
+        "question": "Karbon sertifikalarınız ne için geçerli?",
+        "answer": "Sertifikalarımız ESG raporlarında, GRI ve CDP gönderimlerinde, kurumsal sürdürülebilirlik beyanlarında kullanılabilir. Kurumumuz bünyesinde gerçekleştirilen tüm ormanlaştırma ve karbon yutak alanı projeleri Orman Genel Müdürlüğü (OGM) Bölge Müdürlükleri koordinasyonunda, yasal ve bilimsel altyapıya uygun olarak yürütülmektedir."
+      },
+      "calculation": {
+        "question": "Karbon hesaplaması nasıl yapılıyor?",
+        "answer": "Tohum sayısı × çimlenme oranı = ağaç sayısı; ağaç sayısı × ağaç başına yıllık CO₂ emilimi × izleme süresi = toplam karbon dengelemesi. Ağaç başına emilim aralığı (10–25 kg/yıl) ve hektar bazlı giderim hızları (4,5–40,7 t CO₂/ha/yıl) sayfanın altında listelenen akademik kaynaklara dayanır; tür, yaş ve iklime göre saha bazında güncellenir."
+      },
+      "individual": {
+        "question": "Bireysel olarak da katılabilir miyim?",
+        "answer": "Evet — tohum sipariş eden her kullanıcı, kendi karbon ayak izini dengelemiş olur. Dijital sertifikanızda kaç kg CO₂ dengelediğiniz net olarak gösterilir."
+      },
+      "esg": {
+        "question": "ESG entegrasyonu nasıl çalışıyor?",
+        "answer": "Kurumsal panelinizde ESG yazılımınız arasında API entegrasyonu sağlayarak veri akışını otomatik hale getiriyoruz. Sistemimiz şirketinizin karbon ayak izini hesaplar ve bu doğrultuda markanıza özel, drone teknolojisiyle desteklenen bir orman oluşturur."
+      }
+    },
+    "references": {
+      "badge": "Bilimsel Kaynaklar",
+      "title": {
+        "pre": "Verilerimizin",
+        "highlight": "Dayanakları"
+      },
+      "subtitle": "Karbon hesaplama parametrelerimiz, hakemli akademik yayınlara ve bağımsız kurum kaynaklarına dayanır.",
+      "ref1": {
+        "text": "Ortalama ağaç başına yıllık CO₂ emilim aralığı — bağımsız karbon hesaplama derlemeleri ve orman yönetimi karbon muhasebesi kaynakları."
+      },
+      "ref2": {
+        "text": "Ağaçlandırma ve fidanlıkların ilk 20 yıldaki hektar başına karbon giderim hızı (4,5–40,7 t CO₂ ha⁻¹ yıl⁻¹)."
+      },
+      "ref3": {
+        "text": "Akdeniz çam ormanında organik karbon tutum hızı (~550 g CO₂ m⁻² yıl⁻¹)."
+      },
+      "ref4": {
+        "text": "Tohum topu kompozisyonu, atış yüksekliği ve çimlenme başarısı üzerine İHA tabanlı hassas ekim araştırması."
+      },
+      "note": "Not: Karbon giderim değerleri tür, yaş, iklim ve saha koşullarına göre değişir. Sunulan aralıklar bilimsel literatürdeki ortalamalardır; kurumsal projelerde saha bazlı ölçümlerle güncellenir."
+    },
+    "cta": {
+      "title": {
+        "pre": "Karbon Nötrleme",
+        "highlight": "Programına Katılın"
+      },
+      "subtitle": "Bireysel ya da kurumsal — ölçülebilir karbon dengeleme yolculuğu burada başlıyor.",
+      "primaryEnabled": "Kurumsal Teklif Al",
+      "primaryDisabled": "Bilgi Al",
+      "secondaryEnabled": "Bireysel Tohum Sipariş Et",
+      "secondaryDisabled": "Yakında"
+    }
+  },
+  "corporatePage": {
+    "meta": {
+      "title": "Kurumsal Çözümler — ESG Ortaklığı",
+      "description": "Şirketinize özel kurumsal ormanlaştırma, çalışan başına otomatik PDF sertifika, GRI/CDP/SASB uyumlu ESG raporlama ve e-ticaret API entegrasyonu."
+    },
+    "breadcrumb": {
+      "label": "Kurumsal Çözümler"
+    },
+    "schema": {
+      "name": "Kurumsal Ormanlaştırma ve ESG Çözümleri",
+      "description": "Şirketler için kurumsal orman kurulumu, çalışan başına PDF sertifika otomasyonu, GRI/CDP uyumlu karbon raporlama, REST API + e-ticaret eklenti entegrasyonu."
+    },
+    "hero": {
+      "title": "Promosyon Ürünleri Çöpe Gider. Kurumsal Ormanınız Sonsuza Kadar Yaşar.",
+      "subtitle": "ESG hedeflerinize ölçülebilir katkı, çalışan deneyimine somut anlam — tek bir kurumsal partner."
+    },
+    "comparison": {
+      "badge": "Klasik vs. Skytech",
+      "title": {
+        "pre": "Hangisi Daha",
+        "highlight": "Kalıcı Etki?"
+      },
+      "impactLabel": "Etki:",
+      "esgLabel": "ESG:",
+      "promo": {
+        "item": "Logo Baskılı Ürün",
+        "impact": "Kısa ömürlü, çoğu çöpe gider",
+        "esg": "Yok"
+      },
+      "forest": {
+        "item": "Markanıza Özel Orman",
+        "impact": "25+ yıl yaşar, ekosistem yaratır",
+        "esg": "Tam ESG entegrasyon"
+      }
+    },
+    "features": {
+      "badge": "Modüller",
+      "title": {
+        "pre": "Kurumsal Ormanlaştırma",
+        "highlight": "Sistem Modülleri"
+      },
+      "subtitle": "Her büyüklükteki şirket için altı temel kurumsal çözüm.",
+      "certificate": {
+        "title": "Çalışan Bazlı Sertifika",
+        "desc": "Her çalışana özel PDF sertifika otomatik üretilir, e-posta ile iletilir."
+      },
+      "afforestation": {
+        "title": "Kurumsal Ormanlaştırma",
+        "desc": "Kuruma özel kurumsal alan, drone çekim videoları, koordinatlı haritalama."
+      },
+      "api": {
+        "title": "ESG Yazılım API Entegrasyonu",
+        "desc": "Kurumsal panelimiz ile ESG yazılımınız arasında API entegrasyonu kurarak veri akışını otomatik hale getiriyoruz. GRI, CDP, SASB uyumlu."
+      },
+      "ecommerce": {
+        "title": "E-ticaret Entegrasyonu",
+        "desc": "\"Sepete 1 tohum ekle\" widget'ı — müşterilerinize ekoloji deneyimi sunun."
+      },
+      "footprint": {
+        "title": "Karbon Ayak İzi → Markanıza Özel Orman",
+        "desc": "Sistemimiz şirketinizin karbon ayak izini hesaplar ve bu doğrultuda markanıza özel, drone teknolojisiyle desteklenen bir orman oluşturur."
+      },
+      "accountManager": {
+        "title": "Özel Hesap Yöneticisi",
+        "desc": "Süreç boyunca özel temas noktanız."
+      }
+    },
+    "cta": {
+      "title": {
+        "pre": "Kurumsal Projenizi",
+        "highlight": "Tasarlayalım"
+      },
+      "subtitle": "Çalışan sayınız, karbon hedefiniz, ESG ihtiyaçlarınız — birlikte planlayalım. 24 saat içinde dönüş.",
+      "primaryEnabled": "Teklif Talep Et",
+      "primaryDisabled": "Bilgi Al",
+      "secondary": "Bize Ulaşın"
+    },
+    "dashboard": {
+      "badge": "Kurumsal Portal",
+      "title": {
+        "highlight": "Tek Pano",
+        "rest": "Üzerinden Yönetin"
+      },
+      "intro": "Çalışan ekleyin, karbon ayak izinizi hesaplayın, drone uçuş kayıtlarına erişin, ESG raporu indirin — hepsi kurumsal panelinizden.",
+      "features": {
+        "upload": "Çalışan listesi yükleme (CSV)",
+        "certificate": "Otomatik sertifika üretimi",
+        "droneRecords": "Drone uçuş kayıtları",
+        "carbonPanel": "Karbon hesaplama paneli",
+        "esgModule": "ESG rapor modülü",
+        "billing": "Faturalandırma & vergi"
+      },
+      "mockup": {
+        "droneLabel": "Drone — Çanakkale",
+        "gpsStatus": "RTK GPS · Aktif",
+        "carbonLabel": "Karbon Nötrleme",
+        "carbonValue": "847 ton CO₂",
+        "quarterDelta": "+ %23 ÇEYREK",
+        "treesLabel": "Ağaç",
+        "employeesLabel": "Çalışan",
+        "regionsLabel": "Bölge",
+        "regionsValue": "6 il",
+        "certTitle": "Yeni Sertifika",
+        "certDesc": "Örnek Kurum A.Ş. — kurumsal orman sertifikası",
+        "certStatus": "Onaylandı",
+        "certTime": "2 dakika önce"
+      }
+    },
+    "api": {
+      "badge": "Geliştiriciler & API",
+      "comingSoon": "Yakında",
+      "title": {
+        "pre": "E-ticaretinize",
+        "highlight": "1 Satır",
+        "post": "Tohum Eklentisi"
+      },
+      "intro": "Skytech Green SDK ile her satışınıza otomatik karbon nötrleme. PDF sertifika üretimi, ESG webhook'ları ve faturalandırma tek pakette.",
+      "copy": "Kopyala",
+      "copied": "Kopyalandı",
+      "earlyAccess": "Erken erişim listesine katıl",
+      "samples": {
+        "install": {
+          "label": "Kurulum"
+        },
+        "cart": {
+          "label": "Sepete Tohum Ekle",
+          "comment": "Müşterinin sepetine 1 tohum eklensin (1 ton CO₂ nötrleme = 200 tohum)",
+          "giftMessage": "Siparişiniz için bir tohum ekildi 🌱"
+        },
+        "certificate": {
+          "label": "Çalışan Sertifikası",
+          "comment": "Şirket adına çalışana otomatik PDF sertifika",
+          "commentUrl": "cert.pdfUrl → S3'te imzalı URL"
+        },
+        "webhook": {
+          "label": "ESG Webhook",
+          "comment": "Drone uçuşu tamamlandığında webhook tetiklenir",
+          "commentProcess": "ESG raporlama sisteminize işle"
+        }
+      }
+    }
+  },
+  "infoPage": {
+    "meta": {
+      "title": "Bilgi Al — Sorularınızı Yanıtlayalım",
+      "description": "Bireysel veya kurumsal Skytech Green soruları için bilgi formu — 24 saat içinde uzman ekibimizden dönüş garantisi."
+    },
+    "breadcrumb": {
+      "label": "Bilgi Al",
+      "title": "Merak Ettiğiniz Her Şeyi Sorun",
+      "subtitle": "Formu doldurun — 24 saat içinde uzman ekibimiz dönüş yapsın. Bireysel ya da kurumsal, fark etmez."
+    },
+    "form": {
+      "heading": "İletişim Formu",
+      "subheading": "Tüm alanları doldurun, en kısa sürede dönüş yapalım.",
+      "name": {
+        "label": "Ad Soyad",
+        "placeholder": "Ad Soyad"
+      },
+      "email": {
+        "label": "E-posta",
+        "placeholder": "ornek@sirket.com"
+      },
+      "phone": {
+        "label": "Telefon",
+        "placeholder": "5XX XXX XX XX"
+      },
+      "company": {
+        "label": "Şirket / Kurum",
+        "placeholder": "(opsiyonel)"
+      },
+      "subject": {
+        "label": "Konu",
+        "placeholder": "Seçiniz..."
+      },
+      "message": {
+        "label": "Mesajınız",
+        "placeholder": "Sorunuzu, ihtiyacınızı veya talebinizi detaylıca yazın..."
+      },
+      "consent": "KVKK Aydınlatma Metni'ni okudum ve verilerimin işlenmesine onay veriyorum.",
+      "submit": "Mesajı Gönder"
+    },
+    "topics": {
+      "individual": "Bireysel Tohum Sipariş",
+      "corporate": "Kurumsal Ormanlaştırma",
+      "esg": "ESG / Karbon Nötrleme",
+      "drone": "Drone Operasyonu",
+      "press": "Basın / Medya",
+      "partnership": "İş Birliği Önerisi",
+      "other": "Diğer"
+    },
+    "info": {
+      "response": {
+        "title": "24 Saat Yanıt",
+        "desc": "İş günlerinde 24 saat, hafta sonu pazartesi sabahı dönüş garantisi."
+      },
+      "email": {
+        "desc": "Doğrudan e-posta ile de ulaşabilirsiniz — 24 saat aktif."
+      },
+      "phone": {
+        "desc": "Hafta içi 09:00 - 18:00 arası telefonla erişim."
+      }
+    }
+  },
+  "comingSoonPage": {
+    "meta": {
+      "title": "Yakında — Sipariş ve Üyelik Çok Yakında",
+      "description": "Tohum siparişi, üyelik ve kurumsal panel çok yakında açılıyor. Şimdilik bilgi almak veya kurumsal iletişim için formumuzu kullanabilirsiniz."
+    },
+    "badge": "Çok Yakında",
+    "title": {
+      "lead": "Sipariş & Üyelik",
+      "highlight": "Çok Yakında"
+    },
+    "body": {
+      "primary": "Tohum siparişi, dijital sertifika ve üyelik sistemimiz üzerinde son hazırlıkları yapıyoruz. Çok yakında buradan tohum toplarınızı sipariş edebilecek ve etkinizi takip edebileceksiniz.",
+      "secondary": "O zamana kadar projelerimizi inceleyebilir, bilgi alabilir veya kurumsal iş birlikleri için bizimle iletişime geçebilirsiniz."
+    },
+    "cta": {
+      "home": "Ana Sayfaya Dön",
+      "info": "Bilgi Al"
+    },
+    "discover": {
+      "heading": "Bu Arada Keşfedin",
+      "seedBall": "Tohum Topu",
+      "drone": "Dron Teknolojisi",
+      "projects": "Projeler",
+      "corporate": "Kurumsal"
+    }
+  },
+  "projectsPage": {
+    "meta": {
+      "title": "Projeler & Harita — Sahadan Kanıt",
+      "description": "Çanakkale, İzmir ve Bursa'da sürdürdüğümüz pilot drone ağaçlandırma çalışmalarımız. İnteraktif Türkiye haritası ve il bazlı pilot saha detayları."
+    },
+    "breadcrumbTitle": "Sahadan Kanıt",
+    "breadcrumbSubtitle": "Çanakkale, İzmir ve Bursa'da pilot sahalarımızda çalışmalarımız sürüyor — gerçek dronelar, gerçek tohumlar.",
+    "breadcrumbSchemaName": "Projeler",
+    "stats": {
+      "pilotRegions": "Pilot Bölge",
+      "provinces": "İl",
+      "legalCompliance": "Yasal Uyum"
+    },
+    "map": {
+      "badge": "İnteraktif Harita",
+      "titleLine": "Türkiye",
+      "titleAccent": "Pilot Saha Haritası",
+      "subtitle": "Pilot sahalarımızı harita üzerinden keşfedin. İllerin üzerine gelin, detayları görün.",
+      "aria": "Türkiye Proje Haritası",
+      "totalSeeds": "Toplam Tohum",
+      "emptyProvince": "Bu ilde henüz aktif projemiz yok."
+    },
+    "list": {
+      "badge": "Pilot Sahalar",
+      "titleLine": "Sahada",
+      "titleAccent": "Aktif Olduğumuz Bölgeler",
+      "subtitle": "Şu anda Çanakkale, İzmir ve Bursa'da pilot çalışmalarımız sürüyor. Alan çoğaldıkça yeni sahalar burada listelenecek."
+    },
+    "cta": {
+      "titleLine": "Kendi",
+      "titleAccent": "Projenizi",
+      "titleTail": "Başlatın",
+      "subtitle": "Şirketiniz, belediyeniz veya STK'nız için özel bir proje tasarlayabiliriz.",
+      "button": "Teklif Al"
+    },
+    "status": {
+      "active": "Aktif",
+      "pilot": "Pilot",
+      "completed": "Tamamlandı"
+    },
+    "items": {
+      "canakkale": {
+        "region": "Pilot Saha",
+        "desc": "Orman Genel Müdürlüğü koordinasyonunda pilot ağaçlandırma çalışması."
+      },
+      "izmir": {
+        "region": "Pilot Saha",
+        "desc": "Drone destekli pilot ekim ve saha analizi çalışmaları."
+      },
+      "bursa": {
+        "region": "Pilot Saha",
+        "desc": "Ekosistem restorasyonu odaklı pilot saha hazırlıkları."
+      }
+    }
   }
 }

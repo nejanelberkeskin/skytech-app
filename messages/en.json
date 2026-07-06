@@ -215,31 +215,104 @@
     }
   },
   "footer": {
-    "tagline": "We plant the future with seed balls. Measurable reforestation through drone technology, forestry science, and a transparent supply chain.",
-    "links": {
-      "sections": "Sections",
-      "company": "Company",
-      "support": "Support",
-      "legal": "Legal"
+    "tagline": "We plant the future with seed balls. Measurable reforestation powered by drone technology, forestry science and a transparent supply chain.",
+    "servicesTitle": "Services",
+    "quickLinksTitle": "Quick Links",
+    "newsletterTitle": "Join Our Newsletter",
+    "newsletterDesc": "For news about new projects and carbon neutralization.",
+    "subscribe": "Subscribe",
+    "lastUpdated": "Last updated:",
+    "rightsReserved": "All rights reserved.",
+    "services": {
+      "seedBall": "Seed Ball",
+      "droneTech": "Drone Technology",
+      "carbonProgram": "Carbon Program",
+      "corporate": "Corporate Solutions"
     },
-    "copyright": "© {year} Skytech Green. All rights reserved."
+    "quickLinks": {
+      "about": "About Us",
+      "projects": "Projects",
+      "info": "Get Info",
+      "contact": "Contact"
+    },
+    "legal": {
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Use",
+      "kvkk": "KVKK",
+      "cookies": "Cookie Policy"
+    }
   },
   "ourSeeds": {
+    "meta": {
+      "title": "Our Seeds — Native Species and Their Characteristics",
+      "description": "The native species we use in Skytech Green seed ball projects: Turkish Red Pine, Black Pine, Cedar and Juniper. Each species' climate adaptation, root system, germination time and ecological role."
+    },
     "breadcrumbTitle": "Our Native Seeds",
-    "breadcrumbSubtitle": "Each seed is chosen for the climate and ecosystem of its region. The properties of the four native species used in Skytech Green seed ball projects.",
+    "breadcrumbSubtitle": "Every seed is selected to suit the region's climate and ecosystem. The characteristics of the four native species used in Skytech Green seed ball projects.",
+    "breadcrumbSchemaName": "Our Seeds",
     "sectionBadge": "Species",
     "sectionTitleLine": "Four Native",
     "sectionTitleAccent": "Species",
-    "sectionSubtitle": "Each species is matched to the climate and soil of its planting region. Our seeds are sourced from Republic of Türkiye Regional Forestry Directorates.",
-    "footnote": "Our regionally-suited seeds are sourced from the relevant Regional Forestry Directorates; species, collection dates, and origin of every seed are securely verified by blockchain technology.",
+    "sectionSubtitle": "Each species is chosen according to the climate and soil structure of the region where it is planted. Our seeds are supplied by the Regional Forestry Directorates.",
+    "footnote": "Our region-appropriate seeds are sourced from the relevant Regional Forestry Directorates; the species information, the dates the seeds were collected from the trees and their origin details are securely verified with blockchain technology.",
+    "typeLabel": "Species {number}",
     "labels": {
-      "type": "Species",
       "region": "Region",
       "climate": "Climate",
       "rootDepth": "Root System",
       "germination": "Germination",
       "lifespan": "Average Lifespan",
       "ecologicalRole": "Ecological Role"
+    },
+    "seeds": {
+      "kizilcam": {
+        "name": "Turkish Red Pine",
+        "latin": "Pinus brutia",
+        "family": "Pinaceae (pines)",
+        "region": "Mediterranean, Aegean, Marmara",
+        "climate": "Mediterranean climate, resistant to hot, dry summers",
+        "rootDepth": "Deep and widely spreading",
+        "germination": "20–30 days",
+        "lifespan": "150–200 years",
+        "ecologicalRole": "The first colonizing species after fire. It stabilizes the soil and provides habitat for birds and insects.",
+        "description": "Our most widespread conifer, covering roughly 25% of Türkiye's forest area. It adapts perfectly to the Mediterranean climate, grows quickly and is known for its ability to regenerate automatically after fire."
+      },
+      "karacam": {
+        "name": "Black Pine",
+        "latin": "Pinus nigra",
+        "family": "Pinaceae (pines)",
+        "region": "Central Anatolia, Western Black Sea, Taurus Mountains",
+        "climate": "Continental climate; tolerant of drought and cold",
+        "rootDepth": "Deep taproot system",
+        "germination": "20–40 days",
+        "lifespan": "300–500 years",
+        "ecologicalRole": "The pioneer species of high-altitude reforestation. It plays a critical role in erosion control and in the steppe–forest transition zone.",
+        "description": "A native pine species resilient to the high elevations of Anatolia. Thanks to its tolerance of drought and frost it is used safely in harsh climates; it is known for its long-lived and durable wood."
+      },
+      "sedir": {
+        "name": "Cedar (Cedar of Lebanon)",
+        "latin": "Cedrus libani",
+        "family": "Pinaceae (pines)",
+        "region": "Taurus Mountains, Antalya, Konya",
+        "climate": "Mountain climate, elevations of 1,000–2,000 m",
+        "rootDepth": "Deep and durable",
+        "germination": "25–40 days",
+        "lifespan": "1,000+ years",
+        "ecologicalRole": "A cornerstone of high-altitude ecosystems. It provides habitat for bird and mammal species.",
+        "description": "A symbol of Anatolia and a heritage species with a life span of centuries. It forms pure forests on high mountains; with its resin and distinctive scent it offers high resistance to drought."
+      },
+      "ardic": {
+        "name": "Juniper",
+        "latin": "Juniperus",
+        "family": "Cupressaceae (cypresses)",
+        "region": "Across Anatolia, especially the interior regions",
+        "climate": "Arid and semi-arid climate, stony soils",
+        "rootDepth": "Deep, adapted to rocky ground",
+        "germination": "60–120 days (thick seed coat)",
+        "lifespan": "300–600 years",
+        "ecologicalRole": "A pioneer species on steep, arid slopes. Its berries provide food for birds and wildlife; critical for erosion control.",
+        "description": "A resilient native species that adapts to the steep slopes of Anatolia. It grows from the foothills up to the summits; its berries hold nutritional value for the ecosystem, and it is indispensable in the fight against erosion and desertification."
+      }
     }
   },
   "languageSwitcher": {
@@ -247,5 +320,979 @@
     "tr": "Türkçe",
     "en": "English",
     "ru": "Русский"
+  },
+  "advantagesGrid": {
+    "badge": "Advantages",
+    "title": "The Skytech Green Difference",
+    "titleAccent": "Six Core Strengths",
+    "subtitle": "From traditional reforestation to drone seeding, we deliver measurable advantages at every step.",
+    "items": {
+      "speed": {
+        "title": "Fast Seeding",
+        "description": "200+ seeds in a single drone flight. Ten times faster than traditional methods."
+      },
+      "noDamage": {
+        "title": "Zero Site Damage",
+        "description": "Aerial seeding protects the ecosystem, reaching even areas no human foot has touched."
+      },
+      "transparency": {
+        "title": "Full Transparency",
+        "description": "Each seed's harvest date, origin and species are verified on the blockchain. An end-to-end transparent supply chain."
+      },
+      "monitoring": {
+        "title": "Annual Monitoring",
+        "description": "Periodic flight data, growth metrics and your carbon neutralization results update in real time on our corporate dashboard."
+      },
+      "integration": {
+        "title": "Corporate Integration",
+        "description": "Full alignment via API integration, from the e-commerce cart to your ESG report."
+      },
+      "compliance": {
+        "title": "Legal Compliance",
+        "description": "Projects run in coordination with the Regional Forestry Directorates, with 100% legal permits and full regulatory compliance."
+      }
+    }
+  },
+  "comparisonTable": {
+    "badge": "Comparison",
+    "title": "Traditional Method vs.",
+    "titleAccent": "Skytech Green",
+    "subtitle": "We placed the measurable differences side by side. The choice is yours.",
+    "traditional": {
+      "heading": "Traditional Reforestation",
+      "imageAlt": "Traditional reforestation — manual seeding",
+      "items": {
+        "manual": "Reliant on manual labor, inadequate in rugged terrain",
+        "damage": "Site damage is unavoidable",
+        "untraceable": "Undocumented, untraceable supply chain",
+        "reporting": "Manual reporting, weak oversight",
+        "speed": "Planting rate of 2-3 saplings per minute"
+      }
+    },
+    "skytech": {
+      "imageAlt": "Skytech Green drone seeding",
+      "items": {
+        "access": "Access to every region with drone technology",
+        "noTrace": "Zero site footprint, the ecosystem is protected",
+        "verified": "Harvest date + origin verified on the blockchain",
+        "reporting": "Annual drone reporting, ESG integrated",
+        "distribution": "200+ seeds distributed in a single flight"
+      }
+    }
+  },
+  "magicLens": {
+    "badge": "Magic Lens",
+    "title": "A Barren Land.",
+    "titleAccent": "A Green Future.",
+    "subtitle": "Move your cursor — see with your own eyes the forest growing beneath the scorched soil.",
+    "hint": "Move your cursor",
+    "labelBefore": "Before — After the Fire",
+    "labelAfter": "After — Skytech Green",
+    "barrenAlt": "Barren land after a fire",
+    "forestAlt": "Renewed green forest"
+  },
+  "marqueeStrip": {
+    "keywords": {
+      "reforestation": "Reforestation",
+      "carbonNeutral": "Carbon Neutral",
+      "seedBall": "Seed Ball",
+      "droneTech": "Drone Technology",
+      "ecologicalImpact": "Ecological Impact",
+      "sustainability": "Sustainability",
+      "transparentSupply": "Transparent Supply",
+      "annualMonitoring": "Annual Monitoring"
+    }
+  },
+  "finalCta": {
+    "badge": "Start Now",
+    "title": "An Investment in Nature,",
+    "titleAccent": "A Legacy for the Future",
+    "subtitle": "Individual or corporate — every contribution matters. Plant your first seed today and track your impact instantly.",
+    "ctaPrimary": "Get Started",
+    "ctaComingSoon": "Coming Soon",
+    "ctaSecondary": "Contact Us"
+  },
+  "carbonCalculator": {
+    "badge": "Carbon Calculator",
+    "titleLine1": "See Your Impact",
+    "titleAccent": "Instantly",
+    "subtitle": "Adjust the number of seeds, the years, and the germination rate — watch live how many trees will grow and how many tons of carbon will be neutralized.",
+    "sliders": {
+      "seeds": "Number of Seeds",
+      "years": "Monitoring Period",
+      "germRate": "Germination Rate"
+    },
+    "units": {
+      "year": "yr"
+    },
+    "formula": {
+      "label": "Formula:",
+      "text": "Seeds × germination = trees · Trees × 5kg CO₂ × years = total carbon"
+    },
+    "results": {
+      "trees": "Trees Grown",
+      "carbon": "Carbon Neutralized",
+      "carbonSuffix": "tons CO₂",
+      "people": "People's Carbon Footprint Offset",
+      "peopleSuffix": "people"
+    },
+    "cta": {
+      "start": "Start This Impact — Order Seeds",
+      "soon": "Coming Soon"
+    }
+  },
+  "faqSection": {
+    "badge": "Frequently Asked",
+    "titleLine1": "All the Questions",
+    "titleAccent": "On Your Mind",
+    "subtitle": "From seed balls to drone planting, from carbon certificates to corporate integration — everything is here.",
+    "faqs": {
+      "seedBall": {
+        "question": "What is a seed ball and how does it work?",
+        "answer": "A seed ball is an innovative artificial encapsulation method in which plant seeds are coated with clay and organic nutrients to protect them from external factors, raising germination success above 65%. This nature-friendly biotechnological approach protects seeds from risks such as drought and consumption by wildlife, helping them take hold in the soil safely; sprouting with the rain, it accelerates nature's rate of renewal."
+      },
+      "sourcing": {
+        "question": "Where are the seeds sourced from?",
+        "answer": "All seeds are sourced in cooperation with the Regional Forestry Directorates. In line with the principles of preserving biodiversity and sustainability, the collection date, genetic origin, and taxonomic (species) information of every seed lot is recorded using blockchain technology. Thanks to our end-to-end transparent supply chain, our customers can access seed ID cards and certification data at any time."
+      },
+      "droneEfficiency": {
+        "question": "How efficient is drone planting?",
+        "answer": "By distributing more than 200 seeds in a single flight, it offers 10 times the speed and high cost-efficiency compared to traditional methods. Thanks to GPS-precise coordinates, it provides high accessibility to steep and post-fire damaged areas that human feet cannot reach; with centimetric precision it maximizes resource efficiency while creating a sustainable environmental impact with a minimal carbon footprint."
+      },
+      "tracking": {
+        "question": "How can I track the growth of the planted seeds?",
+        "answer": "With annual periodic drone flights, the area is rescanned and growth data is processed into your corporate dashboard. Individual users can access area imagery via the QR code on their digital certificate. Corporate partners access real-time data through the API."
+      },
+      "certificate": {
+        "question": "What is the carbon certificate valid for?",
+        "answer": "The certificates can be used in ESG reports, GRI and CDP submissions, and corporate sustainability statements. All reforestation and carbon sink projects are carried out in coordination with the Regional Directorates of the General Directorate of Forestry (OGM), in accordance with legal and scientific infrastructure; we provide a 100% verifiable monitoring chain."
+      },
+      "minOrder": {
+        "question": "Is there a minimum order quantity?",
+        "answer": "There is a starting limit of a minimum of 10 seeds for individual users and a minimum of 1,000 seeds for corporate partners. Shipping is free on individual orders of 50 seeds and above. Quote-based pricing is applied for corporate projects."
+      },
+      "b2bIntegration": {
+        "question": "How does B2B corporate integration work?",
+        "answer": "Our corporate panel includes modules such as employee list upload, automatic PDF certificate generation, an e-commerce \"add seeds to cart\" integration, and an ESG reporting API. A dedicated account manager is assigned and customization is carried out according to the organization's needs."
+      },
+      "gift": {
+        "question": "Can I send it as a gift?",
+        "answer": "Yes — there is a \"gift it\" option in the individual order flow. The recipient receives the digital certificate by email. When they sign up, the sender automatically earns a seed bonus (our viral growth program)."
+      }
+    }
+  },
+  "seedJourney": {
+    "ariaLabel": "The seed's journey",
+    "stepLabel": "Step",
+    "lab": {
+      "hudTopLeft": "⊹ Lab Analysis · CLAY/FERTILIZER/SEED",
+      "hudBottomRight": "pH 6.8 · NPK Optimal"
+    },
+    "drone": {
+      "hudBottomLeft": "⊹ Precise Target · 200+ seeds"
+    },
+    "impact": {
+      "hudBottomLeft": "⊹ Landed on Soil · Germination: 65%+"
+    },
+    "captions": {
+      "lab": {
+        "title": "Laboratory",
+        "desc": "Forestry engineers analyze the ratios of clay + organic fertilizer + native seeds and formulate the seed ball."
+      },
+      "drone": {
+        "title": "Journey by Drone",
+        "desc": "A GPS-precise drone flies the seed ball autonomously to the target coordinate — 200+ seeds in a single flight."
+      },
+      "impact": {
+        "title": "Meeting the Soil",
+        "desc": "With the rain, the clay dissolves and the seed sprouts. Germination rate is 65%+ — three times that of the traditional method."
+      }
+    },
+    "progress": {
+      "label": "The Seed's Journey",
+      "steps": "Lab → Drone → Soil"
+    }
+  },
+  "servicePackages": {
+    "badge": "Service Packages",
+    "titleLine1": "Choose the Solution",
+    "titleAccent": "That Fits You",
+    "subtitle": "From individual users to corporate partners — measurable impact for every scale.",
+    "mostPopular": "MOST POPULAR",
+    "ctaFallback": {
+      "info": "Get Info",
+      "soon": "Coming Soon"
+    },
+    "packages": {
+      "diy": {
+        "name": "Plant It Yourself",
+        "tag": "Individual",
+        "description": "Seed balls delivered to your address. You plant them in your own garden, land, or any area you choose.",
+        "features": [
+          "Free shipping to your address (over 50 seeds)",
+          "Species variety selection",
+          "Digital certificate",
+          "Planting guide (PDF)",
+          "Community forum access"
+        ],
+        "cta": "Order Seeds"
+      },
+      "weplant": {
+        "name": "We'll Plant It",
+        "tag": "Recommended",
+        "description": "A professional drone team plants on your behalf on selected Skytech lands. Annual monitoring included.",
+        "features": [
+          "Professional drone planting",
+          "GPS-coordinated planting report",
+          "Annual drone tracking reports",
+          "Carbon neutralization certificate",
+          "Gifting + shareable profile"
+        ],
+        "cta": "Start Professional Planting"
+      },
+      "corporate": {
+        "name": "Corporate Reforestation",
+        "tag": "B2B",
+        "description": "A corporate forest tailored to your company + employee certificates + ESG reporting + API integration.",
+        "features": [
+          "Corporate area in your company's name",
+          "Individual certificate per employee",
+          "Drone flight records + field videos",
+          "Ready-to-use data for ESG / GRI / CDP reporting",
+          "API + e-commerce integration",
+          "Dedicated account manager"
+        ],
+        "cta": "Get a Quote"
+      }
+    }
+  },
+  "beforeAfter": {
+    "badge": "Before / After the Fire",
+    "titleLine1": "Scroll Down —",
+    "titleAccent": "Nature's Return",
+    "labelBefore": "Before the Fire",
+    "labelAfter": "After the Fire",
+    "altBefore": "Barren land before the fire",
+    "altAfter": "Forest greening after the fire"
+  },
+  "aboutPage": {
+    "meta": {
+      "title": "About Us — Science, Technology and Nature",
+      "description": "A vision born from the 2021 Mediterranean wildfires — a 36+ person family of forest engineers, drone pilots and a software team. The founding story and values of Skytech Green."
+    },
+    "breadcrumb": {
+      "label": "About Us"
+    },
+    "hero": {
+      "title": "Science, Technology and Nature. We Bring the Three Together.",
+      "subtitle": "Skytech Green is a new-generation Eco-Tech platform that combines the fight against the climate crisis with aviation, forestry and modern software.",
+      "imageAlt": "Skytech Green field team — drone operation"
+    },
+    "story": {
+      "badge": "Our Story",
+      "titleLead": "After the Wildfires,",
+      "titleAccent": "A Call from Nature",
+      "paragraph1": "After the 2021 Mediterranean forest fires, we saw that drones could rapidly disperse seed balls and reach areas where human footsteps struggle to arrive. We combined three things: scientific foundation + aviation technology + a transparent software infrastructure.",
+      "paragraph2": "Today <brand>Skytech Green</brand> carries out drone reforestation across six regions of Türkiye — answering the ESG goals of corporate partners and the carbon-offset aspirations of individual users.",
+      "imageCaption": "Our Field Team"
+    },
+    "timeline": {
+      "badge": "Our Journey",
+      "titleLine1": "Over the Years",
+      "titleLine2": "Science and Technology",
+      "subtitle": "From an idea after a wildfire to our scale today — the step-by-step growth of Skytech Green.",
+      "milestoneLabel": "Milestone",
+      "milestones": {
+        "spark": {
+          "title": "Mediterranean Wildfires & The First Spark",
+          "description": "After the Manavgat and Marmaris wildfires, R&D began on how drone technology could be effective in fire-stricken areas."
+        },
+        "talks": {
+          "title": "Talks with the General Directorate of Forestry",
+          "description": "Talks began with the General Directorate of Forestry, laying the groundwork for cooperation on reforestation sites."
+        },
+        "protocols": {
+          "title": "Operations and Protocols",
+          "description": "Work with the General Directorate of Forestry began and protocols were signed. Demo sites were launched in Çanakkale, İzmir and Bursa."
+        }
+      }
+    },
+    "values": {
+      "badge": "Our Values",
+      "title": "What <accent>Makes Us Us</accent>",
+      "science": {
+        "title": "Science",
+        "desc": "Behind every decision we make stands the science of forestry and ecology."
+      },
+      "technology": {
+        "title": "Technology",
+        "desc": "Drones, GPS, satellites — we use the most advanced tools in the best possible way."
+      },
+      "transparency": {
+        "title": "Transparency",
+        "desc": "Every seed, every flight, every certificate is under traceable record."
+      },
+      "sustainability": {
+        "title": "Sustainability",
+        "desc": "We create long-term ecosystems, not short-term gains."
+      }
+    },
+    "team": {
+      "badge": "Team",
+      "title": "An <accent>Interdisciplinary Family</accent>",
+      "subtitle": "From forest engineers to drone pilots, from software developers to project coordinators — a family of 36+ people.",
+      "foresters": {
+        "name": "Forest Engineers",
+        "desc": "Seed species selection, formulation and soil analysis"
+      },
+      "pilots": {
+        "name": "Drone Pilots & Operators",
+        "desc": "Certified pilots, GPS-precision operations"
+      },
+      "coordinators": {
+        "name": "Project Coordinators",
+        "desc": "Coordination with the General Directorate of Forestry, Karadeniz Teknik Üniversitesi and Artvin Çoruh Üniversitesi"
+      },
+      "software": {
+        "name": "Software & Data Team",
+        "desc": "Platform, ESG reporting, monitoring software"
+      }
+    },
+    "stats": {
+      "regions": {
+        "label": "Active Regions"
+      },
+      "members": {
+        "label": "Team Members"
+      },
+      "compliance": {
+        "label": "Legal Compliance"
+      }
+    },
+    "cta": {
+      "title": "Join <accent>Us on This Journey</accent>",
+      "subtitle": "Plant your first seed today and track your impact right away. Together, a greener future is possible.",
+      "primaryEnabled": "Order Seeds",
+      "primaryDisabled": "Coming Soon",
+      "secondary": "Contact Us"
+    }
+  },
+  "contactPage": {
+    "meta": {
+      "title": "Contact — Reach Us",
+      "description": "Skytech Green Ankara office, phone, email and social media contact details. Working hours 09:00-18:00, weekdays."
+    },
+    "breadcrumb": {
+      "label": "Contact"
+    },
+    "hero": {
+      "title": "Reach Us",
+      "subtitle": "For individual questions, head to our information form; for corporate projects, to our quote page. You can also connect with us on social media."
+    },
+    "contacts": {
+      "address": {
+        "title": "Address",
+        "secondary": "Kahramankazan / Ankara, Türkiye\nSkytech Green Teknoloji A.Ş."
+      },
+      "phone": {
+        "title": "Phone",
+        "secondary": "Weekdays 09:00 - 18:00\nAlso reachable via WhatsApp Business."
+      },
+      "email": {
+        "title": "Email"
+      }
+    },
+    "map": {
+      "badge": "Location",
+      "title": "Visit Us",
+      "placeholderTitle": "Map Coming Soon",
+      "placeholderSubtitle": "Google Maps embed will go here"
+    },
+    "social": {
+      "badge": "Social Media",
+      "title": "Follow Our Story",
+      "subtitle": "Drone flights, field videos, team stories and technological breakthroughs — on social media."
+    },
+    "cta": {
+      "title": "Which <accent>Path Shall We Take?</accent>",
+      "subtitle": "Choose the contact point that best fits your needs below.",
+      "primary": "I Want Information",
+      "secondary": "Corporate Quote"
+    }
+  },
+  "seedBallPage": {
+    "meta": {
+      "title": "Seed Ball — A Whole Forest in a Sphere",
+      "description": "What is a seed ball made of clay, organic fertilizer and selected seeds, and how is it made? 65%+ germination rate, production process and scientific formulation.",
+      "imageAlt": "Seed ball close-up — clay sphere, cracks and sprout"
+    },
+    "breadcrumb": {
+      "label": "Seed Ball"
+    },
+    "schema": {
+      "name": "Seed Ball Production and Supply",
+      "description": "Seed ball production with a 65%+ germination rate, formulated from native seeds coordinated with the Regional Forestry Directorates, clay and organic fertilizer."
+    },
+    "hero": {
+      "title": "A Whole Forest in a Sphere",
+      "subtitle": "The seed ball — a small miracle where clay, organic fertilizer and selected seeds meet the science of forestry."
+    },
+    "what": {
+      "badge": "What Is a Seed Ball?",
+      "heading": "Nature's <grad>Smart Capsule</grad>",
+      "p1": "A seed ball is an innovative artificial encapsulation method in which plant seeds are coated with clay and organic nutrients to protect them from external factors, raising germination success to<strong>65%+</strong>.",
+      "p2": "As an eco-friendly biotechnological approach, the seed ball protects seeds from risks such as drought and consumption by wildlife, helping them take hold in the soil safely. Sprouting with the rain, it accelerates nature's rate of renewal.",
+      "imageAlt": "Seed ball close-up — clay sphere, cracks and sprout",
+      "caption": {
+        "eyebrow": "Close-up",
+        "text": "Clay + Fertilizer + Native Seed"
+      }
+    },
+    "science": {
+      "badge": "Scientific Design",
+      "heading": "<grad>Academic Literature + Lab</grad> Analyses",
+      "body": "Optimized through academic literature and laboratory analyses, our seed ball technology has been scientifically designed — as a result of our expert team's research — to deliver maximum germination and root development success even in nature's harshest conditions."
+    },
+    "formulation": {
+      "badge": "Formulation",
+      "title": "Three Components, <grad>Perfect Balance</grad>",
+      "subtitle": "Every seed ball is formulated on the principles of forestry science."
+    },
+    "components": {
+      "native": {
+        "label": "Native Seed",
+        "desc": "Supplied by the Regional Forestry Directorates; species and origin data on record."
+      },
+      "clay": {
+        "label": "Clay Soil",
+        "desc": "Protects the seed from biotic and abiotic harm."
+      },
+      "fertilizer": {
+        "label": "Organic Fertilizer",
+        "desc": "Nutrient support for germination."
+      }
+    },
+    "production": {
+      "badge": "Production Process",
+      "title": "The Seed Ball in <grad>Three Steps</grad>"
+    },
+    "steps": {
+      "selection": {
+        "title": "Seed Selection",
+        "desc": "A native species suited to the target region's climate and soil is determined."
+      },
+      "mixing": {
+        "title": "Mixing & Shaping",
+        "desc": "Clay, fertilizer and seed are proportioned and shaped into a sphere."
+      },
+      "drying": {
+        "title": "Drying & Packaging",
+        "desc": "48 hours of natural drying; packaged with protection from moisture."
+      }
+    },
+    "stats": {
+      "germination": {
+        "label": "Germination Rate"
+      },
+      "perFlight": {
+        "label": "Seeds / Drone Flight"
+      },
+      "co2": {
+        "label": "CO₂ / Tree / Year"
+      },
+      "lifespan": {
+        "value": "25 yrs",
+        "label": "Average Lifespan"
+      }
+    },
+    "cta": {
+      "title": "Order Your Own <grad>Seed Ball</grad>",
+      "subtitle": "Delivered to your address, with professional planting in your own garden or in selected Skytech areas.",
+      "buttonOrder": "Place Order",
+      "buttonSoon": "Coming Soon"
+    }
+  },
+  "droneTechPage": {
+    "meta": {
+      "title": "Drone Technology — Precision Seeding, Zero Footprint",
+      "description": "Our GPS-precision drone fleet sows seed balls in hard-to-reach areas untouched by human feet. RTK GPS, LiDAR, autonomous flight, 200+ seeds/flight.",
+      "imageAlt": "Skytech Green agricultural seeding drone — hero shot"
+    },
+    "breadcrumb": {
+      "label": "Drone Technology"
+    },
+    "schema": {
+      "name": "Drone Reforestation Service",
+      "description": "200+ seeds dropped per flight with our GPS-precision, autonomous-flight professional drone fleet. Zero site disturbance, access to hard-to-reach areas, full traceability."
+    },
+    "hero": {
+      "title": "Precision Seeding, Zero Footprint",
+      "subtitle": "With GPS-precision drones, we sow seed balls in areas no human step can reach."
+    },
+    "system": {
+      "badge": "Drone System",
+      "heading": "<grad>Our Autonomous Drone Fleet</grad> in the Field",
+      "p1": "Unmanned aerial vehicles (UAVs) with autonomous flight capability reach predefined target coordinates with high precision and successfully place 200+ seed balls in a single operation.",
+      "p2": "Guided by high-precision GPS data, our UAV fleet operates on the principle of <strong>zero ecological disturbance</strong>. All flight records are logged to your corporate dashboard in real time — for transparency and verifiability.",
+      "imageAlt": "Skytech Green agricultural seeding drone — premium product visual",
+      "thermalCamera": "Thermal Camera"
+    },
+    "featuresSection": {
+      "badge": "Technical Specifications",
+      "title": "Industry-Leading <grad>Drone Hardware</grad>"
+    },
+    "features": {
+      "gps": {
+        "title": "GPS Precision",
+        "desc": "Centimeter-level RTK GPS — the drop point of every seed is recorded."
+      },
+      "capacity": {
+        "title": "200+ Seeds / Flight",
+        "desc": "With advanced capacity we can cover large areas in a single pass."
+      },
+      "speed": {
+        "title": "10x Speed",
+        "desc": "Ten times faster than traditional seeding, cutting sowing time from days to hours."
+      },
+      "autonomous": {
+        "title": "Autonomous Mission",
+        "desc": "A pre-planned route; the drone flies autonomously, completes the mission, and returns to base station."
+      },
+      "access": {
+        "title": "Access to Hard-to-Reach Areas",
+        "desc": "Access to physically hard-to-reach fire zones and erosion areas."
+      },
+      "tracking": {
+        "title": "Annual Tracking",
+        "desc": "Periodic flight data, growth metrics and your carbon-offset results are updated live on our corporate dashboard; they can be exported directly into your ESG reports."
+      }
+    },
+    "processSection": {
+      "badge": "Operation",
+      "title": "Drone Seeding in <grad>Four Stages</grad>"
+    },
+    "process": {
+      "survey": {
+        "title": "Area Survey",
+        "desc": "The area is mapped by drone with satellite and LiDAR; slope and soil moisture are analyzed."
+      },
+      "plan": {
+        "title": "Seeding Plan",
+        "desc": "A GPS-coordinated seeding map is created. Legal permits are coordinated with the Regional Forestry Directorate."
+      },
+      "seeding": {
+        "title": "Autonomous Seeding",
+        "desc": "The drone flies autonomously along the planned route, dropping seed balls at calculated points."
+      },
+      "reporting": {
+        "title": "Reporting",
+        "desc": "Flight logs, photos and GPS data are reflected on your corporate dashboard."
+      }
+    },
+    "cta": {
+      "title": "Let's Plan <grad>Drone Seeding</grad> for Your Project",
+      "subtitle": "Area analysis, legal permit coordination and operation planning — from a single point.",
+      "buttonPrimary": "Get a Quote",
+      "buttonSecondary": "Active Projects"
+    }
+  },
+  "carbonProgramPage": {
+    "meta": {
+      "title": "Carbon Program — Measurable, Transparent, Certified",
+      "description": "Our carbon neutralization program: CO₂ offset through drone planting, transparent metrics, GRI/CDP-compliant ESG reporting. Corporate carbon certificate."
+    },
+    "breadcrumb": {
+      "label": "Carbon Program"
+    },
+    "schema": {
+      "name": "Carbon Neutralization Program",
+      "description": "GRI/CDP/SASB-compliant carbon footprint calculation to IPCC standards, neutralized through drone reforestation. Integrated into corporate ESG reports."
+    },
+    "hero": {
+      "title": "End-to-End Carbon Neutralization for Holdings and Companies",
+      "subtitle": "We calculate your annual greenhouse gas emissions to international standards, build high-capacity carbon sink areas (bio-carbon ecosystems) with drone technology, and transparently integrate the entire process into your ESG reports."
+    },
+    "metrics": {
+      "badge": "Metrics",
+      "title": {
+        "pre": "Measurable",
+        "highlight": "Carbon Impact"
+      },
+      "subtitle": "Every figure is grounded in IPCC standards. Transparent, verifiable, auditable.",
+      "perTree": {
+        "label": "CO₂ / Tree / Year",
+        "desc": "Average annual carbon dioxide absorption of a tree; varies by species, age and climate."
+      },
+      "perHectare": {
+        "label": "CO₂ / ha / Year",
+        "desc": "Per-hectare carbon removal range of young reforestation areas over the first 20 years."
+      },
+      "perSquareMeter": {
+        "label": "CO₂ / m² / Year",
+        "desc": "Organic carbon sequestration rate measured in Mediterranean pine forests (2/3 soil, 1/3 biomass)."
+      },
+      "compliant": {
+        "label": "Compliant",
+        "desc": "Our data formats conform to international reporting standards."
+      }
+    },
+    "comparison": {
+      "badge": "Carbon Credit vs. Real Reforestation",
+      "title": {
+        "pre": "Which Is",
+        "highlight": "Truly Effective?"
+      },
+      "prosLabel": "Pros:",
+      "consLabel": "Cons:",
+      "credit": {
+        "method": "Buying Carbon Credits",
+        "pros": "Fast, easy",
+        "cons": "Abstract, unmeasurable, often double-counted"
+      },
+      "forest": {
+        "method": "Skytech Drone Reforestation",
+        "pros": "Physical trees + GPS-coordinated records"
+      }
+    },
+    "faq": {
+      "badge": "FAQ",
+      "title": {
+        "pre": "About the",
+        "highlight": "Carbon Program"
+      },
+      "validity": {
+        "question": "What are your carbon certificates valid for?",
+        "answer": "Our certificates can be used in ESG reports, GRI and CDP submissions, and corporate sustainability statements. All reforestation and carbon sink projects carried out by our company are conducted in coordination with the Regional Directorates of the General Directorate of Forestry (OGM), in line with a sound legal and scientific framework."
+      },
+      "calculation": {
+        "question": "How is the carbon calculation performed?",
+        "answer": "Number of seeds × germination rate = number of trees; number of trees × annual CO₂ absorption per tree × monitoring period = total carbon offset. The per-tree absorption range (10–25 kg/year) and per-hectare removal rates (4.5–40.7 t CO₂/ha/year) are based on the academic sources listed at the bottom of the page; they are updated on a site basis according to species, age and climate."
+      },
+      "individual": {
+        "question": "Can I participate as an individual too?",
+        "answer": "Yes — every user who orders seeds offsets their own carbon footprint. Your digital certificate clearly shows how many kg of CO₂ you have offset."
+      },
+      "esg": {
+        "question": "How does ESG integration work?",
+        "answer": "We automate the data flow by providing API integration between your ESG software and your corporate dashboard. Our system calculates your company's carbon footprint and, accordingly, creates a forest unique to your brand, supported by drone technology."
+      }
+    },
+    "references": {
+      "badge": "Scientific Sources",
+      "title": {
+        "pre": "The Basis for",
+        "highlight": "Our Data"
+      },
+      "subtitle": "Our carbon calculation parameters are based on peer-reviewed academic publications and independent institutional sources.",
+      "ref1": {
+        "text": "Average annual CO₂ absorption range per tree — independent carbon accounting compilations and forest management carbon accounting sources."
+      },
+      "ref2": {
+        "text": "Per-hectare carbon removal rate of reforestation and nurseries over the first 20 years (4.5–40.7 t CO₂ ha⁻¹ yr⁻¹)."
+      },
+      "ref3": {
+        "text": "Organic carbon sequestration rate in a Mediterranean pine forest (~550 g CO₂ m⁻² yr⁻¹)."
+      },
+      "ref4": {
+        "text": "UAV-based precision seeding research on seed ball composition, drop height and germination success."
+      },
+      "note": "Note: Carbon removal values vary by species, age, climate and site conditions. The ranges presented are averages from the scientific literature; in corporate projects they are updated with site-based measurements."
+    },
+    "cta": {
+      "title": {
+        "pre": "Join the",
+        "highlight": "Carbon Neutralization Program"
+      },
+      "subtitle": "Individual or corporate — your measurable carbon offset journey starts here.",
+      "primaryEnabled": "Get a Corporate Quote",
+      "primaryDisabled": "Get Information",
+      "secondaryEnabled": "Order Seeds as an Individual",
+      "secondaryDisabled": "Coming Soon"
+    }
+  },
+  "corporatePage": {
+    "meta": {
+      "title": "Corporate Solutions — ESG Partnership",
+      "description": "Custom corporate afforestation for your company, automatic PDF certificate per employee, GRI/CDP/SASB-compliant ESG reporting and e-commerce API integration."
+    },
+    "breadcrumb": {
+      "label": "Corporate Solutions"
+    },
+    "schema": {
+      "name": "Corporate Afforestation and ESG Solutions",
+      "description": "Corporate forest setup for companies, per-employee PDF certificate automation, GRI/CDP-compliant carbon reporting, REST API + e-commerce plugin integration."
+    },
+    "hero": {
+      "title": "Promotional Products End Up in the Trash. Your Corporate Forest Lives Forever.",
+      "subtitle": "Measurable contribution to your ESG goals, tangible meaning for the employee experience — from a single corporate partner."
+    },
+    "comparison": {
+      "badge": "Classic vs. Skytech",
+      "title": {
+        "pre": "Which Has More",
+        "highlight": "Lasting Impact?"
+      },
+      "impactLabel": "Impact:",
+      "esgLabel": "ESG:",
+      "promo": {
+        "item": "Logo-Printed Product",
+        "impact": "Short-lived, mostly ends up as waste",
+        "esg": "None"
+      },
+      "forest": {
+        "item": "A Forest Unique to Your Brand",
+        "impact": "Lives 25+ years, creates an ecosystem",
+        "esg": "Full ESG integration"
+      }
+    },
+    "features": {
+      "badge": "Modules",
+      "title": {
+        "pre": "Corporate Afforestation",
+        "highlight": "System Modules"
+      },
+      "subtitle": "Six core corporate solutions for companies of every size.",
+      "certificate": {
+        "title": "Employee-Based Certificate",
+        "desc": "A personalized PDF certificate is generated automatically for each employee and delivered by email."
+      },
+      "afforestation": {
+        "title": "Corporate Afforestation",
+        "desc": "A dedicated corporate area, drone footage videos, coordinate-based mapping."
+      },
+      "api": {
+        "title": "ESG Software API Integration",
+        "desc": "We automate the data flow by setting up API integration between our corporate dashboard and your ESG software. GRI, CDP and SASB compliant."
+      },
+      "ecommerce": {
+        "title": "E-commerce Integration",
+        "desc": "An \"Add 1 seed to cart\" widget — offer your customers an ecological experience."
+      },
+      "footprint": {
+        "title": "Carbon Footprint → A Forest Unique to Your Brand",
+        "desc": "Our system calculates your company's carbon footprint and, accordingly, creates a forest unique to your brand, supported by drone technology."
+      },
+      "accountManager": {
+        "title": "Dedicated Account Manager",
+        "desc": "Your dedicated point of contact throughout the process."
+      }
+    },
+    "cta": {
+      "title": {
+        "pre": "Let's Design Your",
+        "highlight": "Corporate Project"
+      },
+      "subtitle": "Your headcount, your carbon target, your ESG needs — let's plan them together. Response within 24 hours.",
+      "primaryEnabled": "Request a Quote",
+      "primaryDisabled": "Get Information",
+      "secondary": "Contact Us"
+    },
+    "dashboard": {
+      "badge": "Corporate Portal",
+      "title": {
+        "highlight": "Manage Everything",
+        "rest": "From a Single Dashboard"
+      },
+      "intro": "Add employees, calculate your carbon footprint, access drone flight records, download your ESG report — all from your corporate dashboard.",
+      "features": {
+        "upload": "Employee list upload (CSV)",
+        "certificate": "Automatic certificate generation",
+        "droneRecords": "Drone flight records",
+        "carbonPanel": "Carbon calculation panel",
+        "esgModule": "ESG report module",
+        "billing": "Billing & tax"
+      },
+      "mockup": {
+        "droneLabel": "Drone — Çanakkale",
+        "gpsStatus": "RTK GPS · Active",
+        "carbonLabel": "Carbon Neutralization",
+        "carbonValue": "847 t CO₂",
+        "quarterDelta": "+ 23% QUARTER",
+        "treesLabel": "Trees",
+        "employeesLabel": "Employees",
+        "regionsLabel": "Region",
+        "regionsValue": "6 provinces",
+        "certTitle": "New Certificate",
+        "certDesc": "Sample Corp Inc. — corporate forest certificate",
+        "certStatus": "Approved",
+        "certTime": "2 minutes ago"
+      }
+    },
+    "api": {
+      "badge": "Developers & API",
+      "comingSoon": "Coming Soon",
+      "title": {
+        "pre": "A",
+        "highlight": "1-Line",
+        "post": "Seed Plugin for Your Store"
+      },
+      "intro": "Automatic carbon neutralization on every sale with the Skytech Green SDK. PDF certificate generation, ESG webhooks and billing in a single package.",
+      "copy": "Copy",
+      "copied": "Copied",
+      "earlyAccess": "Join the early access list",
+      "samples": {
+        "install": {
+          "label": "Installation"
+        },
+        "cart": {
+          "label": "Add Seed to Cart",
+          "comment": "Add 1 seed to the customer's cart (1 t CO₂ neutralization = 200 seeds)",
+          "giftMessage": "A seed was planted for your order 🌱"
+        },
+        "certificate": {
+          "label": "Employee Certificate",
+          "comment": "Automatic PDF certificate for an employee on behalf of the company",
+          "commentUrl": "cert.pdfUrl → signed URL on S3"
+        },
+        "webhook": {
+          "label": "ESG Webhook",
+          "comment": "The webhook is triggered when a drone flight is completed",
+          "commentProcess": "Process into your ESG reporting system"
+        }
+      }
+    }
+  },
+  "infoPage": {
+    "meta": {
+      "title": "Get Information — Let Us Answer Your Questions",
+      "description": "Information form for individual or corporate Skytech Green questions — guaranteed response from our expert team within 24 hours."
+    },
+    "breadcrumb": {
+      "label": "Get Information",
+      "title": "Ask Us Anything You're Curious About",
+      "subtitle": "Fill in the form — our expert team will get back to you within 24 hours. Individual or corporate, it makes no difference."
+    },
+    "form": {
+      "heading": "Contact Form",
+      "subheading": "Fill in all the fields and we'll get back to you as soon as possible.",
+      "name": {
+        "label": "Full Name",
+        "placeholder": "Full Name"
+      },
+      "email": {
+        "label": "Email",
+        "placeholder": "example@company.com"
+      },
+      "phone": {
+        "label": "Phone",
+        "placeholder": "5XX XXX XX XX"
+      },
+      "company": {
+        "label": "Company / Organization",
+        "placeholder": "(optional)"
+      },
+      "subject": {
+        "label": "Subject",
+        "placeholder": "Select..."
+      },
+      "message": {
+        "label": "Your Message",
+        "placeholder": "Describe your question, need or request in detail..."
+      },
+      "consent": "I have read the KVKK (Personal Data Protection) Disclosure Statement and consent to the processing of my data.",
+      "submit": "Send Message"
+    },
+    "topics": {
+      "individual": "Individual Seed Order",
+      "corporate": "Corporate Reforestation",
+      "esg": "ESG / Carbon Neutralization",
+      "drone": "Drone Operation",
+      "press": "Press / Media",
+      "partnership": "Partnership Proposal",
+      "other": "Other"
+    },
+    "info": {
+      "response": {
+        "title": "24-Hour Response",
+        "desc": "24-hour response on business days; a Monday-morning reply guaranteed for weekends."
+      },
+      "email": {
+        "desc": "You can also reach us directly by email — active 24 hours."
+      },
+      "phone": {
+        "desc": "Reachable by phone on weekdays between 09:00 and 18:00."
+      }
+    }
+  },
+  "comingSoonPage": {
+    "meta": {
+      "title": "Coming Soon — Ordering and Membership Coming Very Soon",
+      "description": "Seed ordering, membership and the corporate panel are opening very soon. For now, you can use our form to get information or reach us for corporate inquiries."
+    },
+    "badge": "Coming Soon",
+    "title": {
+      "lead": "Ordering & Membership",
+      "highlight": "Coming Soon"
+    },
+    "body": {
+      "primary": "We are putting the finishing touches on our seed ordering, digital certificate and membership system. Very soon you'll be able to order your seed balls right here and track your impact.",
+      "secondary": "Until then, you can explore our projects, get information, or contact us about corporate partnerships."
+    },
+    "cta": {
+      "home": "Back to Home",
+      "info": "Get Information"
+    },
+    "discover": {
+      "heading": "Explore in the Meantime",
+      "seedBall": "Seed Ball",
+      "drone": "Drone Technology",
+      "projects": "Projects",
+      "corporate": "Corporate"
+    }
+  },
+  "projectsPage": {
+    "meta": {
+      "title": "Projects & Map — Proof from the Field",
+      "description": "Our pilot drone reforestation work underway in Çanakkale, İzmir and Bursa. Interactive map of Türkiye and pilot site details by province."
+    },
+    "breadcrumbTitle": "Proof from the Field",
+    "breadcrumbSubtitle": "Our work continues at our pilot sites in Çanakkale, İzmir and Bursa — real drones, real seeds.",
+    "breadcrumbSchemaName": "Projects",
+    "stats": {
+      "pilotRegions": "Pilot Sites",
+      "provinces": "Provinces",
+      "legalCompliance": "Legal Compliance"
+    },
+    "map": {
+      "badge": "Interactive Map",
+      "titleLine": "Türkiye",
+      "titleAccent": "Pilot Site Map",
+      "subtitle": "Explore our pilot sites on the map. Hover over the provinces to see the details.",
+      "aria": "Turkey Project Map",
+      "totalSeeds": "Total Seeds",
+      "emptyProvince": "No active projects in this province yet."
+    },
+    "list": {
+      "badge": "Pilot Sites",
+      "titleLine": "Regions Where We Are",
+      "titleAccent": "Active in the Field",
+      "subtitle": "Our pilot work is currently underway in Çanakkale, İzmir and Bursa. As our area grows, new sites will be listed here."
+    },
+    "cta": {
+      "titleLine": "Start Your Own",
+      "titleAccent": "Project",
+      "titleTail": "",
+      "subtitle": "We can design a custom project for your company, your municipality or your NGO.",
+      "button": "Get a Quote"
+    },
+    "status": {
+      "active": "Active",
+      "pilot": "Pilot",
+      "completed": "Completed"
+    },
+    "items": {
+      "canakkale": {
+        "region": "Pilot Site",
+        "desc": "Pilot reforestation work coordinated by the General Directorate of Forestry."
+      },
+      "izmir": {
+        "region": "Pilot Site",
+        "desc": "Drone-assisted pilot seeding and field analysis work."
+      },
+      "bursa": {
+        "region": "Pilot Site",
+        "desc": "Pilot site preparations focused on ecosystem restoration."
+      }
+    }
   }
 }

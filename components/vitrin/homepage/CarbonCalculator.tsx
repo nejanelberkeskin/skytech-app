@@ -3,9 +3,11 @@
 import Link from "next/link";
 import { motion, type Variants } from "framer-motion";
 import { useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import { TRANSACTIONS_ENABLED } from "@/lib/site-config";
 
 export default function CarbonCalculator() {
+  const t = useTranslations("carbonCalculator");
   const [seeds, setSeeds] = useState(5000);
   const [years, setYears] = useState(10);
   const [germRate, setGermRate] = useState(65);
@@ -40,22 +42,22 @@ export default function CarbonCalculator() {
           <motion.div variants={itemVariants}>
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full premium-glass-dark mb-6 text-[11px] font-bold uppercase tracking-[0.18em] text-[#a7d4a7]">
               <span className="w-1.5 h-1.5 rounded-full bg-[#34d399] animate-pulse" />
-              Karbon Hesaplayıcı
+              {t("badge")}
             </div>
           </motion.div>
           <motion.h2
             variants={itemVariants}
             className="display-headline text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-white mb-6"
           >
-            Etkinizi
+            {t("titleLine1")}
             <br />
-            <span className="text-gradient-aurora">Anında Görün</span>
+            <span className="text-gradient-aurora">{t("titleAccent")}</span>
           </motion.h2>
           <motion.p
             variants={itemVariants}
             className="text-base lg:text-lg text-[#a7d4a7] leading-relaxed max-w-xl mx-auto"
           >
-            Tohum sayısını, yılı ve çimlenme oranını ayarlayın — kaç ağaç yetişeceğini, kaç ton karbonun nötrleneceğini canlı izleyin.
+            {t("subtitle")}
           </motion.p>
         </motion.div>
 
@@ -69,7 +71,7 @@ export default function CarbonCalculator() {
           {/* Sliders */}
           <motion.div variants={itemVariants} className="liquid-glass-dark rounded-3xl p-7 lg:p-9 space-y-7">
             <Slider
-              label="Tohum Sayısı"
+              label={t("sliders.seeds")}
               value={seeds}
               min={500}
               max={100000}
@@ -78,16 +80,16 @@ export default function CarbonCalculator() {
               onChange={setSeeds}
             />
             <Slider
-              label="İzleme Süresi"
+              label={t("sliders.years")}
               value={years}
               min={1}
               max={25}
               step={1}
-              displayValue={`${years} yıl`}
+              displayValue={`${years} ${t("units.year")}`}
               onChange={setYears}
             />
             <Slider
-              label="Çimlenme Oranı"
+              label={t("sliders.germRate")}
               value={germRate}
               min={40}
               max={85}
@@ -97,7 +99,7 @@ export default function CarbonCalculator() {
             />
 
             <p className="text-xs text-[#6b8f6b] leading-relaxed pt-3 border-t border-white/8">
-              <span className="font-bold text-[#a7d4a7]">Formül:</span> Tohum × çimlenme = ağaç · Ağaç × 5kg CO₂ × yıl = toplam karbon
+              <span className="font-bold text-[#a7d4a7]">{t("formula.label")}</span> {t("formula.text")}
             </p>
           </motion.div>
 
@@ -106,7 +108,7 @@ export default function CarbonCalculator() {
             <motion.div variants={itemVariants}>
               <ResultCard
                 icon={<TreeIcon />}
-                label="Yetişecek Ağaç"
+                label={t("results.trees")}
                 value={trees.toLocaleString("tr-TR")}
                 suffix=""
                 gradient="from-[#22894a] to-[#34d399]"
@@ -115,18 +117,18 @@ export default function CarbonCalculator() {
             <motion.div variants={itemVariants}>
               <ResultCard
                 icon={<CloudIcon />}
-                label="Nötrlenecek Karbon"
+                label={t("results.carbon")}
                 value={co2Total.toLocaleString("tr-TR")}
-                suffix="ton CO₂"
+                suffix={t("results.carbonSuffix")}
                 gradient="from-[#1B6B3A] to-[#22894a]"
               />
             </motion.div>
             <motion.div variants={itemVariants}>
               <ResultCard
                 icon={<UserIcon />}
-                label="Kişi Karbon Ayak İzi Nötrlenir"
+                label={t("results.people")}
                 value={peopleOffset.toString().replace(".", ",")}
-                suffix="kişi"
+                suffix={t("results.peopleSuffix")}
                 gradient="from-[#34d399] to-[#a3e635]"
               />
             </motion.div>
@@ -149,7 +151,7 @@ export default function CarbonCalculator() {
                     }}
                   />
                   <span className="relative inline-flex items-center gap-3">
-                    {TRANSACTIONS_ENABLED ? "Bu Etkiyi Başlat — Tohum Sipariş Et" : "Yakında"}
+                    {TRANSACTIONS_ENABLED ? t("cta.start") : t("cta.soon")}
                     <motion.svg
                       className="w-5 h-5"
                       viewBox="0 0 24 24"

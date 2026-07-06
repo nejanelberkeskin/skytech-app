@@ -2,41 +2,41 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import SectionWrapper from "../SectionWrapper";
 import SectionHeading from "../SectionHeading";
 
-const TRADITIONAL = [
-  "İnsan gücüyle, zorlu coğrafyalarda yetersiz",
-  "Saha tahribatı kaçınılmaz",
-  "Tedarik zinciri belgesiz, izlenemez",
-  "Manuel raporlama, denetim zayıf",
-  "Dakika başına 2-3 fidan dikim hızı",
-];
-
-const SKYTECH = [
-  "Drone teknolojisiyle her bölgeye erişim",
-  "Sıfır saha izi, ekosistem korunur",
-  "Ağaçtan toplanma tarihi + orijin blok zinciri ile doğrulanır",
-  "Yıllık drone raporlama, ESG entegre",
-  "Bir uçuşta 200+ tohum dağıtımı",
-];
-
 export default function ComparisonTable() {
+  const t = useTranslations("comparisonTable");
+  const TRADITIONAL = [
+    t("traditional.items.manual"),
+    t("traditional.items.damage"),
+    t("traditional.items.untraceable"),
+    t("traditional.items.reporting"),
+    t("traditional.items.speed"),
+  ];
+  const SKYTECH = [
+    t("skytech.items.access"),
+    t("skytech.items.noTrace"),
+    t("skytech.items.verified"),
+    t("skytech.items.reporting"),
+    t("skytech.items.distribution"),
+  ];
   return (
     <SectionWrapper variant="light" className="relative overflow-hidden">
       <div aria-hidden className="absolute inset-0 mesh-gradient opacity-40 pointer-events-none" />
 
       <div className="relative">
         <SectionHeading
-          badge="Karşılaştırma"
+          badge={t("badge")}
           title={
             <>
-              Geleneksel Yöntem vs.
+              {t("title")}
               <br />
-              <span className="text-gradient-aurora">Skytech Green</span>
+              <span className="text-gradient-aurora">{t("titleAccent")}</span>
             </>
           }
-          subtitle="Ölçülebilir farkları yan yana koyduk. Karar sizin."
+          subtitle={t("subtitle")}
         />
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 lg:gap-7 max-w-5xl mx-auto">
@@ -51,7 +51,7 @@ export default function ComparisonTable() {
             <div className="relative aspect-[16/10] overflow-hidden">
               <Image
                 src="/images/comparison/geleneksel-agaclandirma.webp"
-                alt="Geleneksel ağaçlandırma — elle ekim"
+                alt={t("traditional.imageAlt")}
                 fill
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 className="object-cover"
@@ -67,7 +67,7 @@ export default function ComparisonTable() {
                   <line x1="8" y1="12" x2="16" y2="12" strokeLinecap="round" />
                 </svg>
               </div>
-              <h3 className="text-xl font-bold text-[#0e2519] tracking-tight">Geleneksel Ağaçlandırma</h3>
+              <h3 className="text-xl font-bold text-[#0e2519] tracking-tight">{t("traditional.heading")}</h3>
             </div>
             <ul className="space-y-4">
               {TRADITIONAL.map((item, i) => (
@@ -98,7 +98,7 @@ export default function ComparisonTable() {
             <div className="relative aspect-[16/10] overflow-hidden">
               <Image
                 src="/images/comparison/skytech-drone-ekim.webp"
-                alt="Skytech Green drone ekim"
+                alt={t("skytech.imageAlt")}
                 fill
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 className="object-cover"

@@ -1,15 +1,35 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import SectionWrapper from "@/components/vitrin/SectionWrapper";
 import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata = buildPageMetadata({
-  title: "Yakında — Sipariş ve Üyelik Çok Yakında",
-  description:
-    "Tohum siparişi, üyelik ve kurumsal panel çok yakında açılıyor. Şimdilik bilgi almak veya kurumsal iletişim için formumuzu kullanabilirsiniz.",
-  path: "/yakinda",
-});
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "comingSoonPage" });
+  return buildPageMetadata(
+    {
+      title: t("meta.title"),
+      description: t("meta.description"),
+      path: "/yakinda",
+    },
+    locale
+  );
+}
 
-export default function YakindaPage() {
+export default async function YakindaPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+  const t = await getTranslations("comingSoonPage");
+
   return (
     <SectionWrapper variant="light" className="!py-24 lg:!py-32">
       <div className="max-w-2xl mx-auto text-center">
@@ -19,7 +39,7 @@ export default function YakindaPage() {
             <span className="absolute inline-flex h-full w-full rounded-full bg-[#22894a] opacity-60 animate-ping" />
             <span className="relative inline-flex rounded-full h-2 w-2 bg-[#1B6B3A]" />
           </span>
-          Çok Yakında
+          {t("badge")}
         </div>
 
         {/* Görsel ikon */}
@@ -28,39 +48,36 @@ export default function YakindaPage() {
         </div>
 
         <h1 className="text-4xl lg:text-5xl font-bold text-[#0e2519] leading-tight mb-5 tracking-tight">
-          Sipariş & Üyelik <span className="text-gradient-forest">Çok Yakında</span>
+          {t("title.lead")} <span className="text-gradient-forest">{t("title.highlight")}</span>
         </h1>
 
         <p className="text-lg text-[#3d5a3d] leading-relaxed mb-4">
-          Tohum siparişi, dijital sertifika ve üyelik sistemimiz üzerinde son
-          hazırlıkları yapıyoruz. Çok yakında buradan tohum toplarınızı sipariş
-          edebilecek ve etkinizi takip edebileceksiniz.
+          {t("body.primary")}
         </p>
         <p className="text-base text-[#6b8f6b] leading-relaxed mb-10">
-          O zamana kadar projelerimizi inceleyebilir, bilgi alabilir veya
-          kurumsal iş birlikleri için bizimle iletişime geçebilirsiniz.
+          {t("body.secondary")}
         </p>
 
         {/* CTA'lar */}
         <div className="flex flex-col sm:flex-row gap-3 items-center justify-center">
           <Link href="/" className="vitrin-cta-secondary">
-            Ana Sayfaya Dön
+            {t("cta.home")}
           </Link>
           <Link href="/bilgi-al" className="vitrin-cta-primary">
-            Bilgi Al
+            {t("cta.info")}
           </Link>
         </div>
 
         {/* Hızlı linkler */}
         <div className="mt-14 pt-10 border-t border-black/5">
           <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#6b8f6b] mb-5">
-            Bu Arada Keşfedin
+            {t("discover.heading")}
           </p>
           <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm">
-            <Link href="/tohum-topu" className="text-[#1B6B3A] hover:text-[#22894a] font-semibold transition-colors">Tohum Topu</Link>
-            <Link href="/dron-teknolojisi" className="text-[#1B6B3A] hover:text-[#22894a] font-semibold transition-colors">Dron Teknolojisi</Link>
-            <Link href="/projeler" className="text-[#1B6B3A] hover:text-[#22894a] font-semibold transition-colors">Projeler</Link>
-            <Link href="/kurumsal-cozumler" className="text-[#1B6B3A] hover:text-[#22894a] font-semibold transition-colors">Kurumsal</Link>
+            <Link href="/tohum-topu" className="text-[#1B6B3A] hover:text-[#22894a] font-semibold transition-colors">{t("discover.seedBall")}</Link>
+            <Link href="/dron-teknolojisi" className="text-[#1B6B3A] hover:text-[#22894a] font-semibold transition-colors">{t("discover.drone")}</Link>
+            <Link href="/projeler" className="text-[#1B6B3A] hover:text-[#22894a] font-semibold transition-colors">{t("discover.projects")}</Link>
+            <Link href="/kurumsal-cozumler" className="text-[#1B6B3A] hover:text-[#22894a] font-semibold transition-colors">{t("discover.corporate")}</Link>
           </div>
         </div>
       </div>

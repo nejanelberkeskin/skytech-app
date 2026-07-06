@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { SITE_URL } from "@/lib/seo";
+import { TRANSACTIONS_ENABLED, isSuspendedRoute } from "@/lib/site-config";
 
 /**
  * sitemap.xml — Next.js otomatik /sitemap.xml'i bu fonksiyondan üretir.
@@ -51,7 +52,11 @@ function localizedUrl(path: string, locale: string): string {
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const lastModified = new Date();
-  const all: SitemapEntry[] = [...VITRIN_PAGES, ...APP_ENTRY_PAGES];
+  // Transaction'lar askıdayken 307 ile /yakinda'ya yönlenen sayfaları
+  // sitemap'e koymayoruz — yönlendirilen URL'ler arama motorlarına verilmemeli.
+  const all: SitemapEntry[] = [...VITRIN_PAGES, ...APP_ENTRY_PAGES].filter(
+    (entry) => TRANSACTIONS_ENABLED || !isSuspendedRoute(entry.path)
+  );
 
   // Her sayfa için 3 dilde URL üret + alternates ile hreflang sinyali ver
   return all.flatMap((entry) =>

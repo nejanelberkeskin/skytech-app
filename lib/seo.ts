@@ -23,6 +23,23 @@ export const SITE_DESCRIPTION =
 export const SITE_LOCALE = "tr_TR";
 export const SITE_LANGUAGE = "tr";
 
+/** Desteklenen diller ve varsayılan (prefix'siz) dil. */
+export const LOCALES = ["tr", "en", "ru"] as const;
+export type Locale = (typeof LOCALES)[number];
+export const DEFAULT_LOCALE: Locale = "tr";
+
+/** OpenGraph `og:locale` değerleri. */
+export const LOCALE_TO_OG_LOCALE: Record<string, string> = {
+  tr: "tr_TR",
+  en: "en_US",
+  ru: "ru_RU",
+};
+
+/** Diğer dillerin `og:locale:alternate` listesi (verilen aktif dil hariç). */
+export function ogLocaleAlternates(active: string): string[] {
+  return LOCALES.filter((l) => l !== active).map((l) => LOCALE_TO_OG_LOCALE[l]);
+}
+
 export const ORG_LEGAL_NAME = "Skytech Green Teknoloji A.Ş.";
 export const ORG_FOUNDED = "2021";
 export const ORG_AREA_SERVED = "Türkiye";
@@ -72,6 +89,28 @@ export function absoluteUrl(path: string): string {
   return `${SITE_URL}${clean}`;
 }
 
+/**
+ * Locale-prefix'li absolute URL. Varsayılan dil (tr) prefix almaz.
+ *   localeUrl("/tohum-topu", "tr") → https://.../tohum-topu
+ *   localeUrl("/tohum-topu", "en") → https://.../en/tohum-topu
+ *   localeUrl("/", "ru")           → https://.../ru
+ */
+export function localeUrl(path: string, locale: string): string {
+  const clean = path === "/" ? "" : path.startsWith("/") ? path : `/${path}`;
+  if (locale === DEFAULT_LOCALE) return `${SITE_URL}${clean || "/"}`;
+  return `${SITE_URL}/${locale}${clean}`;
+}
+
+/** hreflang alternates haritası — tr/en/ru + x-default (tr). */
+export function hreflangMap(path: string): Record<string, string> {
+  return {
+    tr: localeUrl(path, "tr"),
+    en: localeUrl(path, "en"),
+    ru: localeUrl(path, "ru"),
+    "x-default": localeUrl(path, "tr"),
+  };
+}
+
 interface PageMetaInput {
   /** Sayfanın <title> içeriği — site adı otomatik eklenir. */
   title: string;
@@ -102,8 +141,11 @@ interface PageMetaInput {
  *     path: "/tohum-topu",
  *   });
  */
-export function buildPageMetadata(input: PageMetaInput): Metadata {
-  const url = absoluteUrl(input.path);
+export function buildPageMetadata(
+  input: PageMetaInput,
+  locale: string = DEFAULT_LOCALE
+): Metadata {
+  const url = localeUrl(input.path, locale);
   const titleFull =
     input.path === "/" ? `${SITE_NAME} — ${SITE_TAGLINE}` : `${input.title} | ${SITE_NAME}`;
 
@@ -127,11 +169,7 @@ export function buildPageMetadata(input: PageMetaInput): Metadata {
     keywords: input.keywords,
     alternates: {
       canonical: url,
-      languages: {
-        "tr-TR": url,
-        // EN sürümü yayına alınınca buraya `${url}?lang=en` veya prefix path eklenecek
-        "x-default": url,
-      },
+      languages: hreflangMap(input.path),
     },
     robots: input.noindex
       ? { index: false, follow: false }
@@ -142,7 +180,8 @@ export function buildPageMetadata(input: PageMetaInput): Metadata {
       siteName: SITE_NAME,
       title: titleFull,
       description: input.description,
-      locale: SITE_LOCALE,
+      locale: LOCALE_TO_OG_LOCALE[locale] ?? SITE_LOCALE,
+      alternateLocale: ogLocaleAlternates(locale),
       images: [image],
       ...(input.publishedTime && { publishedTime: input.publishedTime }),
       ...(input.modifiedTime && { modifiedTime: input.modifiedTime }),

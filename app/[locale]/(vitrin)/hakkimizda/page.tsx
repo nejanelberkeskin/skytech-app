@@ -1,5 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
+import type { Metadata } from "next";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import BreadCrumb from "@/components/vitrin/BreadCrumb";
 import SectionWrapper from "@/components/vitrin/SectionWrapper";
 import SectionHeading from "@/components/vitrin/SectionHeading";
@@ -8,52 +10,70 @@ import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
 import { buildPageMetadata } from "@/lib/seo";
 import { TRANSACTIONS_ENABLED } from "@/lib/site-config";
 
-export const metadata = buildPageMetadata({
-  title: "Hakkımızda — Bilim, Teknoloji ve Doğa",
-  description:
-    "2021 Akdeniz yangınlarından doğan vizyon, orman mühendisleri + drone pilotları + yazılım ekibinden oluşan 36+ kişilik aile. Skytech Green'in kuruluş hikayesi ve değerleri.",
-  path: "/hakkimizda",
-  image: {
-    url: "/images/hakkimizda/saha.webp",
-    alt: "Skytech Green saha ekibi — drone operasyon",
-  },
-  keywords: [
-    "Skytech Green hakkında",
-    "ekibimiz",
-    "vizyon misyon",
-    "ağaçlandırma şirketi Türkiye",
-    "Eco-Tech",
-  ],
-});
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "aboutPage" });
+  return buildPageMetadata(
+    {
+      title: t("meta.title"),
+      description: t("meta.description"),
+      path: "/hakkimizda",
+      image: {
+        url: "/images/hakkimizda/saha.webp",
+        alt: t("hero.imageAlt"),
+      },
+      keywords: [
+        "Skytech Green hakkında",
+        "ekibimiz",
+        "vizyon misyon",
+        "ağaçlandırma şirketi Türkiye",
+        "Eco-Tech",
+      ],
+    },
+    locale
+  );
+}
 
-const VALUES = [
-  { title: "Bilim", desc: "Her kararımızın arkasında ormancılık ve ekoloji bilimi vardır.", Icon: ScienceIcon },
-  { title: "Teknoloji", desc: "Drone, GPS, uydu — en ileri araçları en iyi şekilde kullanırız.", Icon: TechIcon },
-  { title: "Şeffaflık", desc: "Her tohum, her uçuş, her sertifika izlenebilir kayıt altında.", Icon: EyeIcon },
-  { title: "Sürdürülebilirlik", desc: "Kısa vadeli kazanç değil, uzun vadeli ekosistem yaratıyoruz.", Icon: LeafIcon },
-];
+export default async function HakkimizdaPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+  const t = await getTranslations("aboutPage");
 
-const TEAM = [
-  { name: "Orman Mühendisleri", desc: "Tohum türü seçimi, formülasyon ve toprak analizi", count: 8 },
-  { name: "Drone Pilotları & Operatörler", desc: "Sertifikalı pilotlar, GPS hassasiyetli operasyon", count: 12 },
-  { name: "Proje Koordinatörleri", desc: "Orman Genel Müdürlüğü, Karadeniz Teknik Üniversitesi ve Artvin Çoruh Üniversitesi koordinasyonu", count: 6 },
-  { name: "Yazılım & Veri Ekibi", desc: "Platform, ESG raporlama, izleme yazılımı", count: 10 },
-];
+  const VALUES = [
+    { title: t("values.science.title"), desc: t("values.science.desc"), Icon: ScienceIcon },
+    { title: t("values.technology.title"), desc: t("values.technology.desc"), Icon: TechIcon },
+    { title: t("values.transparency.title"), desc: t("values.transparency.desc"), Icon: EyeIcon },
+    { title: t("values.sustainability.title"), desc: t("values.sustainability.desc"), Icon: LeafIcon },
+  ];
 
-const STATS = [
-  { value: "3", label: "Aktif Bölge" },
-  { value: "36+", label: "Ekip Üyesi" },
-  { value: "%100", label: "Yasal Uyum" },
-];
+  const TEAM = [
+    { name: t("team.foresters.name"), desc: t("team.foresters.desc"), count: 8 },
+    { name: t("team.pilots.name"), desc: t("team.pilots.desc"), count: 12 },
+    { name: t("team.coordinators.name"), desc: t("team.coordinators.desc"), count: 6 },
+    { name: t("team.software.name"), desc: t("team.software.desc"), count: 10 },
+  ];
 
-export default function HakkimizdaPage() {
+  const STATS = [
+    { value: "3", label: t("stats.regions.label") },
+    { value: "36+", label: t("stats.members.label") },
+    { value: "%100", label: t("stats.compliance.label") },
+  ];
+
   return (
     <>
-      <BreadcrumbSchema items={[{ name: "Hakkımızda", path: "/hakkimizda" }]} />
+      <BreadcrumbSchema items={[{ name: t("breadcrumb.label"), path: "/hakkimizda" }]} />
       <BreadCrumb
-        title="Bilim, Teknoloji ve Doğa. Üçünü Birleştiriyoruz."
-        subtitle="Skytech Green; iklim kriziyle mücadeleyi havacılık, ormancılık ve modern yazılımla birleştiren yeni nesil bir Eco-Tech platformudur."
-        items={[{ label: "Hakkımızda" }]}
+        title={t("hero.title")}
+        subtitle={t("hero.subtitle")}
+        items={[{ label: t("breadcrumb.label") }]}
       />
 
       {/* Hikaye */}
@@ -61,32 +81,32 @@ export default function HakkimizdaPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center max-w-6xl mx-auto">
           <div>
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#1B6B3A]/8 text-[#1B6B3A] mb-5 text-xs font-semibold uppercase tracking-wider">
-              Hikayemiz
+              {t("story.badge")}
             </div>
             <h2 className="text-3xl lg:text-4xl font-bold text-[#1a2e1a] leading-tight mb-5">
-              Yangın Sonrası <span className="text-gradient-forest">Bir Doğa Çağrısı</span>
+              {t("story.titleLead")} <span className="text-gradient-forest">{t("story.titleAccent")}</span>
             </h2>
             <p className="text-base text-[#3d5a3d] leading-relaxed mb-5">
-              2021 Akdeniz orman yangınları sonrası, dronların hızla tohum bırakabildiğini, insan adımının zor ulaştığı bölgelere erişebildiğini gördük.
-              Bilimsel altyapı + havacılık teknolojisi + şeffaf yazılım altyapısı — bu üçlüyü birleştirdik.
+              {t("story.paragraph1")}
             </p>
             <p className="text-base text-[#3d5a3d] leading-relaxed">
-              Bugün <strong className="text-[#1B6B3A]">Skytech Green</strong>, Türkiye genelinde altı bölgede dronlu ağaçlandırma yapıyor —
-              kurumsal partnerlerin ESG hedeflerine, bireysel kullanıcıların karbon dengeleme isteklerine cevap veriyor.
+              {t.rich("story.paragraph2", {
+                brand: (chunks) => <strong className="text-[#1B6B3A]">{chunks}</strong>,
+              })}
             </p>
           </div>
 
           <div className="relative aspect-square rounded-3xl overflow-hidden bg-[#0a1f12]">
             <Image
               src="/images/hakkimizda/saha.webp"
-              alt="Skytech Green saha ekibi — drone operasyon"
+              alt={t("hero.imageAlt")}
               fill
               priority
               sizes="(max-width: 1024px) 100vw, 50vw"
               className="object-cover"
             />
             <div className="absolute bottom-6 left-6 right-6 liquid-glass-dark rounded-2xl p-4 text-center">
-              <p className="text-xs text-[#a7d4a7] uppercase tracking-wider font-semibold">Saha Ekibimiz</p>
+              <p className="text-xs text-[#a7d4a7] uppercase tracking-wider font-semibold">{t("story.imageCaption")}</p>
             </div>
           </div>
         </div>
@@ -98,8 +118,10 @@ export default function HakkimizdaPage() {
       {/* Değerler */}
       <SectionWrapper variant="tinted">
         <SectionHeading
-          badge="Değerlerimiz"
-          title={<>Bizi <span className="text-gradient-forest">Biz Yapan</span></>}
+          badge={t("values.badge")}
+          title={t.rich("values.title", {
+            accent: (chunks) => <span className="text-gradient-forest">{chunks}</span>,
+          })}
         />
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 max-w-6xl mx-auto stagger-children">
           {VALUES.map((v) => (
@@ -117,9 +139,11 @@ export default function HakkimizdaPage() {
       {/* Ekip */}
       <SectionWrapper variant="light">
         <SectionHeading
-          badge="Ekip"
-          title={<>Disiplinler Arası <span className="text-gradient-forest">Bir Aile</span></>}
-          subtitle="Orman mühendislerinden drone pilotlarına, yazılımcılardan proje koordinatörlerine — 36+ kişilik bir aile."
+          badge={t("team.badge")}
+          title={t.rich("team.title", {
+            accent: (chunks) => <span className="text-gradient-forest">{chunks}</span>,
+          })}
+          subtitle={t("team.subtitle")}
         />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 max-w-4xl mx-auto stagger-children">
           {TEAM.map((t) => (
@@ -156,16 +180,18 @@ export default function HakkimizdaPage() {
       <SectionWrapper variant="light">
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="text-3xl lg:text-4xl font-bold text-[#1a2e1a] leading-tight mb-5">
-            Bu Yolculukta <span className="text-gradient-forest">Bize Katılın</span>
+            {t.rich("cta.title", {
+              accent: (chunks) => <span className="text-gradient-forest">{chunks}</span>,
+            })}
           </h2>
           <p className="text-base text-[#3d5a3d] mb-8 max-w-xl mx-auto">
-            İlk tohumunuzu bugün ekin, etkinizi hemen izleyin. Birlikte daha yeşil bir gelecek mümkün.
+            {t("cta.subtitle")}
           </p>
           <div className="flex flex-col sm:flex-row gap-3 items-center justify-center">
             <Link href={TRANSACTIONS_ENABLED ? "/bireysel/satin-al" : "/yakinda"} className="vitrin-cta-primary">
-              {TRANSACTIONS_ENABLED ? "Tohum Sipariş Et" : "Yakında"}
+              {TRANSACTIONS_ENABLED ? t("cta.primaryEnabled") : t("cta.primaryDisabled")}
             </Link>
-            <Link href="/iletisim" className="vitrin-cta-secondary">Bize Ulaşın</Link>
+            <Link href="/iletisim" className="vitrin-cta-secondary">{t("cta.secondary")}</Link>
           </div>
         </div>
       </SectionWrapper>

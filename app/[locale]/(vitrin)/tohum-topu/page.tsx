@@ -1,5 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
+import type { Metadata } from "next";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import BreadCrumb from "@/components/vitrin/BreadCrumb";
 import SectionWrapper from "@/components/vitrin/SectionWrapper";
 import SectionHeading from "@/components/vitrin/SectionHeading";
@@ -8,59 +10,69 @@ import ServiceSchema from "@/components/seo/ServiceSchema";
 import { buildPageMetadata } from "@/lib/seo";
 import { TRANSACTIONS_ENABLED } from "@/lib/site-config";
 
-export const metadata = buildPageMetadata({
-  title: "Tohum Topu — Bir Kürede Koca Bir Orman",
-  description:
-    "Kil, organik gübre ve seçilmiş tohumlardan üretilen tohum topu nedir, nasıl yapılır? %65+ çimlenme oranı, üretim süreci ve bilimsel formülasyon.",
-  path: "/tohum-topu",
-  image: {
-    url: "/images/tohum-topu/hero.webp",
-    alt: "Tohum topu yakın çekim — kil küre, çatlak ve filiz",
-  },
-  keywords: [
-    "tohum topu",
-    "tohum topu nedir",
-    "kil tohum topu",
-    "ağaçlandırma tohum topu",
-    "tohum topu üretimi",
-    "yerli tohum",
-  ],
-});
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "seedBallPage" });
+  return buildPageMetadata(
+    {
+      title: t("meta.title"),
+      description: t("meta.description"),
+      path: "/tohum-topu",
+      image: {
+        url: "/images/tohum-topu/hero.webp",
+        alt: t("meta.imageAlt"),
+      },
+      keywords: [
+        "tohum topu",
+        "tohum topu nedir",
+        "kil tohum topu",
+        "ağaçlandırma tohum topu",
+        "tohum topu üretimi",
+        "yerli tohum",
+      ],
+    },
+    locale
+  );
+}
 
-const COMPONENTS = [
-  { label: "Yerli Tohum", desc: "Orman Bölge Müdürlükleri tedarikli; tür ve orijin bilgisi kayıt altında.", pct: "30%" },
-  { label: "Killi Toprak", desc: "Tohumu biyotik ve abiyotik zararlardan korur.", pct: "50%" },
-  { label: "Organik Gübre", desc: "Çimlenme için besin desteği.", pct: "20%" },
-];
+export default async function TohumTopuPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+  const t = await getTranslations("seedBallPage");
 
-const STEPS = [
-  { num: "01", title: "Tohum Seçimi", desc: "Hedef bölgenin iklim ve toprağına uygun yerli tür belirlenir." },
-  { num: "02", title: "Karışım & Şekillendirme", desc: "Kil, gübre, tohum oranlanır; küre haline getirilir." },
-  { num: "03", title: "Kurutma & Paketleme", desc: "48 saat doğal kurutma; nemden korunmuş paketlenir." },
-];
+  const COMPONENTS = [
+    { label: t("components.native.label"), desc: t("components.native.desc"), pct: "30%" },
+    { label: t("components.clay.label"), desc: t("components.clay.desc"), pct: "50%" },
+    { label: t("components.fertilizer.label"), desc: t("components.fertilizer.desc"), pct: "20%" },
+  ];
 
-const STATS = [
-  { value: "%65+", label: "Çimlenme Oranı" },
-  { value: "200+", label: "Tohum / Drone Uçuşu" },
-  { value: "5kg", label: "CO₂ / Ağaç / Yıl" },
-  { value: "25 yıl", label: "Ortalama Yaşam" },
-];
+  const STEPS = [
+    { num: "01", title: t("steps.selection.title"), desc: t("steps.selection.desc") },
+    { num: "02", title: t("steps.mixing.title"), desc: t("steps.mixing.desc") },
+    { num: "03", title: t("steps.drying.title"), desc: t("steps.drying.desc") },
+  ];
 
-export default function TohumTopuPage() {
+  const STATS = [
+    { value: "%65+", label: t("stats.germination.label") },
+    { value: "200+", label: t("stats.perFlight.label") },
+    { value: "5kg", label: t("stats.co2.label") },
+    { value: t("stats.lifespan.value"), label: t("stats.lifespan.label") },
+  ];
+
   return (
     <>
-      <BreadcrumbSchema items={[{ name: "Tohum Topu", path: "/tohum-topu" }]} />
+      <BreadcrumbSchema items={[{ name: t("breadcrumb.label"), path: "/tohum-topu" }]} />
       <ServiceSchema
-        name="Tohum Topu Üretimi ve Tedariki"
-        description="Orman Bölge Müdürlükleri koordineli yerli tohumlardan, kil ve organik gübreyle formüle edilmiş, %65+ çimlenme oranına sahip tohum topu üretimi."
+        name={t("schema.name")}
+        description={t("schema.description")}
         serviceType="Seed ball production for reforestation"
         path="/tohum-topu"
         image="/images/tohum-topu/hero.webp"
       />
       <BreadCrumb
-        title="Bir Kürede Koca Bir Orman"
-        subtitle="Tohum topu — kil, organik gübre ve seçilmiş tohumların ormancılık bilimiyle birleştiği küçük bir mucize."
-        items={[{ label: "Tohum Topu" }]}
+        title={t("hero.title")}
+        subtitle={t("hero.subtitle")}
+        items={[{ label: t("breadcrumb.label") }]}
       />
 
       {/* Bilim — Ne ve Neden */}
@@ -69,32 +81,35 @@ export default function TohumTopuPage() {
           <div>
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#1B6B3A]/8 text-[#1B6B3A] mb-5 text-xs font-semibold uppercase tracking-wider">
               <span className="w-1.5 h-1.5 rounded-full bg-[#1B6B3A]" />
-              Tohum Topu Nedir?
+              {t("what.badge")}
             </div>
             <h2 className="text-3xl lg:text-4xl font-bold text-[#1a2e1a] leading-tight mb-5">
-              Doğanın <span className="text-gradient-forest">Akıllı Kapsülü</span>
+              {t.rich("what.heading", {
+                grad: (chunks) => <span className="text-gradient-forest">{chunks}</span>,
+              })}
             </h2>
             <p className="text-base text-[#3d5a3d] leading-relaxed mb-5">
-              Tohum topu; bitki tohumlarının kil ve organik besin maddeleriyle kaplanarak dış etkenlerden korunduğu, çimlenme başarısını
-              <strong className="text-[#1B6B3A]"> %65+ </strong>seviyesine çıkaran yenilikçi bir yapay kapsülleme yöntemidir.
+              {t.rich("what.p1", {
+                strong: (chunks) => <strong className="text-[#1B6B3A]"> {chunks} </strong>,
+              })}
             </p>
             <p className="text-base text-[#3d5a3d] leading-relaxed">
-              Doğa dostu bir biyoteknolojik yaklaşım olan tohum topu; tohumları kuraklık ve canlı tüketimi gibi risklerden koruyarak toprağa güvenle tutunmalarını sağlar. Yağmurla birlikte filizlenerek doğanın yenilenme hızını artırır.
+              {t("what.p2")}
             </p>
           </div>
 
           <div className="relative aspect-square rounded-3xl overflow-hidden bg-[#0a1f12]">
             <Image
               src="/images/tohum-topu/hero.webp"
-              alt="Tohum topu yakın çekim — kil küre, çatlak ve filiz"
+              alt={t("what.imageAlt")}
               fill
               priority
               sizes="(max-width: 1024px) 100vw, 50vw"
               className="object-cover"
             />
             <div className="absolute bottom-6 left-6 right-6 liquid-glass-dark rounded-2xl p-5 text-center">
-              <p className="text-xs text-[#a7d4a7] uppercase tracking-wider font-semibold mb-1">Yakın Çekim</p>
-              <p className="text-sm text-white">Kil + Gübre + Yerli Tohum</p>
+              <p className="text-xs text-[#a7d4a7] uppercase tracking-wider font-semibold mb-1">{t("what.caption.eyebrow")}</p>
+              <p className="text-sm text-white">{t("what.caption.text")}</p>
             </div>
           </div>
         </div>
@@ -105,15 +120,15 @@ export default function TohumTopuPage() {
         <div className="max-w-3xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#1B6B3A]/8 text-[#1B6B3A] mb-5 text-xs font-semibold uppercase tracking-wider">
             <span className="w-1.5 h-1.5 rounded-full bg-[#1B6B3A]" />
-            Bilimsel Tasarım
+            {t("science.badge")}
           </div>
           <h2 className="text-3xl lg:text-4xl font-bold text-[#1a2e1a] leading-tight mb-5">
-            <span className="text-gradient-forest">Akademik Literatür + Laboratuvar</span> Analizleri
+            {t.rich("science.heading", {
+              grad: (chunks) => <span className="text-gradient-forest">{chunks}</span>,
+            })}
           </h2>
           <p className="text-base text-[#3d5a3d] leading-relaxed">
-            Akademik literatür ve laboratuvar analizleriyle optimize edilen tohum topu teknolojimiz;
-            uzman ekibimizin araştırmaları sonucunda, doğadaki en zorlu koşullarda bile maksimum
-            çimlenme ve kök gelişimi başarısı sunmak üzere bilimsel olarak tasarlanmıştır.
+            {t("science.body")}
           </p>
         </div>
       </SectionWrapper>
@@ -121,9 +136,11 @@ export default function TohumTopuPage() {
       {/* Bileşenler */}
       <SectionWrapper variant="light">
         <SectionHeading
-          badge="Formülasyon"
-          title={<>Üç Bileşen, <span className="text-gradient-forest">Mükemmel Denge</span></>}
-          subtitle="Her tohum topu, ormancılık bilimi prensiplerinde formüle edilir."
+          badge={t("formulation.badge")}
+          title={t.rich("formulation.title", {
+            grad: (chunks) => <span className="text-gradient-forest">{chunks}</span>,
+          })}
+          subtitle={t("formulation.subtitle")}
         />
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 lg:gap-6 max-w-5xl mx-auto stagger-children">
           {COMPONENTS.map((c) => (
@@ -141,8 +158,10 @@ export default function TohumTopuPage() {
       {/* Üretim Süreci */}
       <SectionWrapper variant="light">
         <SectionHeading
-          badge="Üretim Süreci"
-          title={<>Üç Adımda <span className="text-gradient-forest">Tohum Topu</span></>}
+          badge={t("production.badge")}
+          title={t.rich("production.title", {
+            grad: (chunks) => <span className="text-gradient-forest">{chunks}</span>,
+          })}
         />
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto stagger-children">
           {STEPS.map((s) => (
@@ -175,13 +194,15 @@ export default function TohumTopuPage() {
       <SectionWrapper variant="light">
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="text-3xl lg:text-4xl font-bold text-[#1a2e1a] leading-tight mb-5">
-            Kendi <span className="text-gradient-forest">Tohum Topunuzu</span> Sipariş Edin
+            {t.rich("cta.title", {
+              grad: (chunks) => <span className="text-gradient-forest">{chunks}</span>,
+            })}
           </h2>
           <p className="text-base text-[#3d5a3d] mb-8 max-w-xl mx-auto">
-            Adresinize teslim, kendi bahçenizde veya seçilen Skytech alanlarında profesyonel ekim ile.
+            {t("cta.subtitle")}
           </p>
           <Link href={TRANSACTIONS_ENABLED ? "/bireysel/satin-al" : "/yakinda"} className="vitrin-cta-primary">
-            {TRANSACTIONS_ENABLED ? "Sipariş Ver" : "Yakında"}
+            {TRANSACTIONS_ENABLED ? t("cta.buttonOrder") : t("cta.buttonSoon")}
             <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
               <path d="M5 12h14M13 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
             </svg>

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 
 interface BreadCrumbItem {
   label: string;
@@ -17,6 +18,7 @@ interface BreadCrumbProps {
 }
 
 export default function BreadCrumb({ title, subtitle, items = [], backgroundImage }: BreadCrumbProps) {
+  const t = useTranslations("nav");
   return (
     <div className="relative overflow-hidden mesh-dark grain-overlay">
       {/* Aurora */}
@@ -59,7 +61,7 @@ export default function BreadCrumb({ title, subtitle, items = [], backgroundImag
           className="flex items-center gap-2 text-xs font-medium text-[#a7d4a7] mb-6"
         >
           <Link href="/" className="hover:text-white transition-colors">
-            Ana Sayfa
+            {t("home")}
           </Link>
           {items.map((item, idx) => (
             <span key={idx} className="flex items-center gap-2">

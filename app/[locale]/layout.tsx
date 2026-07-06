@@ -11,6 +11,10 @@ import WebVitalsReporter from "@/components/seo/WebVitalsReporter";
 import { routing } from "@/i18n/routing";
 import {
   DEFAULT_OG_IMAGE,
+  hreflangMap,
+  LOCALE_TO_OG_LOCALE,
+  localeUrl,
+  ogLocaleAlternates,
   SITE_DESCRIPTION,
   SITE_NAME,
   SITE_TAGLINE,
@@ -30,78 +34,78 @@ const geistMono = Geist_Mono({
   display: "swap",
 });
 
-const LOCALE_TO_OG_LOCALE: Record<string, string> = {
-  tr: "tr_TR",
-  en: "en_US",
-  ru: "ru_RU",
-};
-
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }
 
-export const metadata: Metadata = {
-  metadataBase: new URL(SITE_URL),
-  title: {
-    default: `${SITE_NAME} — ${SITE_TAGLINE}`,
-    template: `%s | ${SITE_NAME}`,
-  },
-  description: SITE_DESCRIPTION,
-  applicationName: SITE_NAME,
-  authors: [{ name: SITE_NAME, url: SITE_URL }],
-  generator: "Next.js",
-  keywords: [
-    "drone ağaçlandırma",
-    "tohum topu",
-    "karbon nötrleme",
-    "ESG",
-    "kurumsal ormanlaştırma",
-    "kurumsal sürdürülebilirlik",
-    "Türkiye ağaçlandırma",
-    "ekosistem restorasyonu",
-  ],
-  alternates: {
-    canonical: "/",
-    languages: {
-      tr: "/",
-      en: "/en",
-      ru: "/ru",
-      "x-default": "/",
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const homeUrl = localeUrl("/", locale);
+
+  return {
+    metadataBase: new URL(SITE_URL),
+    title: {
+      default: `${SITE_NAME} — ${SITE_TAGLINE}`,
+      template: `%s | ${SITE_NAME}`,
     },
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
+    description: SITE_DESCRIPTION,
+    applicationName: SITE_NAME,
+    authors: [{ name: SITE_NAME, url: SITE_URL }],
+    generator: "Next.js",
+    keywords: [
+      "drone ağaçlandırma",
+      "tohum topu",
+      "karbon nötrleme",
+      "ESG",
+      "kurumsal ormanlaştırma",
+      "kurumsal sürdürülebilirlik",
+      "Türkiye ağaçlandırma",
+      "ekosistem restorasyonu",
+    ],
+    alternates: {
+      canonical: homeUrl,
+      languages: hreflangMap("/"),
+    },
+    robots: {
       index: true,
       follow: true,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-      "max-video-preview": -1,
-    },
-  },
-  openGraph: {
-    type: "website",
-    url: SITE_URL,
-    siteName: SITE_NAME,
-    title: `${SITE_NAME} — ${SITE_TAGLINE}`,
-    description: SITE_DESCRIPTION,
-    images: [
-      {
-        url: DEFAULT_OG_IMAGE.url,
-        width: DEFAULT_OG_IMAGE.width,
-        height: DEFAULT_OG_IMAGE.height,
-        alt: DEFAULT_OG_IMAGE.alt,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+        "max-video-preview": -1,
       },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: `${SITE_NAME} — ${SITE_TAGLINE}`,
-    description: SITE_DESCRIPTION,
-    images: [DEFAULT_OG_IMAGE.url],
-  },
-};
+    },
+    openGraph: {
+      type: "website",
+      url: homeUrl,
+      siteName: SITE_NAME,
+      title: `${SITE_NAME} — ${SITE_TAGLINE}`,
+      description: SITE_DESCRIPTION,
+      locale: LOCALE_TO_OG_LOCALE[locale] ?? "tr_TR",
+      alternateLocale: ogLocaleAlternates(locale),
+      images: [
+        {
+          url: DEFAULT_OG_IMAGE.url,
+          width: DEFAULT_OG_IMAGE.width,
+          height: DEFAULT_OG_IMAGE.height,
+          alt: DEFAULT_OG_IMAGE.alt,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${SITE_NAME} — ${SITE_TAGLINE}`,
+      description: SITE_DESCRIPTION,
+      images: [DEFAULT_OG_IMAGE.url],
+    },
+  };
+}
 
 export const viewport: Viewport = {
   themeColor: "#1B6B3A",

@@ -3,6 +3,7 @@
 import { motion, useMotionTemplate, useMotionValue, useSpring } from "framer-motion";
 import Image from "next/image";
 import { useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 import SectionHeading from "../SectionHeading";
 
 /**
@@ -13,6 +14,7 @@ import SectionHeading from "../SectionHeading";
  * CSS mask-image: radial-gradient + Framer Motion useMotionTemplate
  */
 export default function MagicLens() {
+  const t = useTranslations("magicLens");
   const containerRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(false);
 
@@ -36,15 +38,15 @@ export default function MagicLens() {
     <section className="relative overflow-hidden vitrin-section bg-white">
       <div className="vitrin-container">
         <SectionHeading
-          badge="Sihirli Lens"
+          badge={t("badge")}
           title={
             <>
-              Çorak Bir Arazi.
+              {t("title")}
               <br />
-              <span className="text-gradient-aurora">Yeşil Bir Gelecek.</span>
+              <span className="text-gradient-aurora">{t("titleAccent")}</span>
             </>
           }
-          subtitle="Fareyi gezdirin — yanmış toprağın altında nasıl bir orman büyüdüğünü kendi gözlerinizle görün."
+          subtitle={t("subtitle")}
         />
 
         <div
@@ -96,17 +98,17 @@ export default function MagicLens() {
           >
             <span className="inline-flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-[#34d399] animate-pulse" />
-              Fareyi gezdirin
+              {t("hint")}
             </span>
           </motion.div>
 
           {/* Labels */}
           <div className="absolute bottom-6 left-6 right-6 flex items-center justify-between text-xs font-bold uppercase tracking-[0.2em] pointer-events-none">
             <span className="px-3 py-1.5 rounded-full premium-glass-dark text-[#fda4af]">
-              Önce — Yangın Sonrası
+              {t("labelBefore")}
             </span>
             <span className="px-3 py-1.5 rounded-full premium-glass-dark text-[#a3e635]">
-              Sonra — Skytech Green
+              {t("labelAfter")}
             </span>
           </div>
         </div>
@@ -116,11 +118,12 @@ export default function MagicLens() {
 }
 
 function BarrenScene() {
+  const t = useTranslations("magicLens");
   return (
     <div className="absolute inset-0 overflow-hidden">
       <Image
         src="/images/lens/lens-burnt.webp"
-        alt="Yangın sonrası çorak arazi"
+        alt={t("barrenAlt")}
         fill
         sizes="(max-width: 1024px) 100vw, 80vw"
         className="object-cover"
@@ -137,11 +140,12 @@ function BarrenScene() {
 }
 
 function ForestScene() {
+  const t = useTranslations("magicLens");
   return (
     <div className="absolute inset-0 overflow-hidden">
       <Image
         src="/images/lens/lens-forest.webp"
-        alt="Yenilenmiş yeşil orman"
+        alt={t("forestAlt")}
         fill
         sizes="(max-width: 1024px) 100vw, 80vw"
         className="object-cover"

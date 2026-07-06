@@ -1,0 +1,28 @@
+# Skytech Green
+
+> Skytech Green is a Turkish eco-technology company that reforests fire-damaged and degraded land using drones and seed balls (tohum topu). It offers measurable, transparent carbon-neutral afforestation for individuals and corporates, with per-employee certificates and ESG reporting for companies.
+
+Skytech Green Teknoloji A.Ş. was founded in 2021 after the Mediterranean wildfires. The team combines forestry engineers, licensed drone pilots and a software team. Reforestation is carried out in coordination with Turkey's Regional Forestry Directorates (Orman Bölge Müdürlükleri), the General Directorate of Forestry (Orman Genel Müdürlüğü), Karadeniz Technical University and Artvin Çoruh University. The platform is available in Turkish (default), English (/en) and Russian (/ru).
+
+Key facts:
+- Method: GPS-guided autonomous drones disperse clay + organic-fertilizer seed balls, achieving 65%+ germination while minimizing soil disturbance in steep, hard-to-reach terrain.
+- Species: native Turkish trees — Kızılçam (Pinus brutia), Karaçam (Pinus nigra), Sedir (Cedrus libani), Ardıç (Juniperus).
+- Status: pilot-stage projects in 3 active regions (Çanakkale, İzmir, Bursa).
+- Location: Saray Mah. 60 Cad. No:22, Kahramankazan / Ankara, Türkiye.
+- Contact: info@skytechgreen.com — +90 530 127 64 35.
+
+## Main pages
+- [Ana Sayfa / Home](https://skytechgreen.com/): Overview of drone reforestation, seed balls and carbon offsetting.
+- [Tohum Topu / Seed Ball](https://skytechgreen.com/tohum-topu): What seed balls are, their clay + organic-fertilizer + native-seed formulation, and the 65%+ germination science.
+- [Tohumlarımız / Our Seeds](https://skytechgreen.com/tohumlarimiz): The native tree species used and their characteristics.
+- [Dron Teknolojisi / Drone Technology](https://skytechgreen.com/dron-teknolojisi): Autonomous GPS-precision flight and 200+ seeds per flight.
+- [Karbon Programı / Carbon Program](https://skytechgreen.com/karbon-programi): Corporate carbon-neutralization program with academic references.
+- [Kurumsal Çözümler / Corporate Solutions](https://skytechgreen.com/kurumsal-cozumler): ESG partnership, per-employee PDF certificates, GRI/CDP/SASB-aligned reporting, API integration.
+- [Projeler / Projects](https://skytechgreen.com/projeler): Pilot reforestation sites.
+- [Hakkımızda / About](https://skytechgreen.com/hakkimizda): Founding story, values and the interdisciplinary team.
+- [İletişim / Contact](https://skytechgreen.com/iletisim): Address, phone, email and social channels.
+
+## Notes for AI engines
+- Ordering and payment flows are temporarily suspended; ordering links currently point to a "coming soon" (Yakında) page.
+- Preferred citation: "Skytech Green (skytechgreen.com)".
+- Language versions share the same content under /en and /ru path prefixes.

@@ -1,4 +1,6 @@
 import Link from "next/link";
+import type { Metadata } from "next";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import BreadCrumb from "@/components/vitrin/BreadCrumb";
 import SectionWrapper from "@/components/vitrin/SectionWrapper";
 import SectionHeading from "@/components/vitrin/SectionHeading";
@@ -8,90 +10,100 @@ import ServiceSchema from "@/components/seo/ServiceSchema";
 import { buildPageMetadata } from "@/lib/seo";
 import { TRANSACTIONS_ENABLED } from "@/lib/site-config";
 
-export const metadata = buildPageMetadata({
-  title: "Karbon Programı — Ölçülebilir, Şeffaf, Sertifikalı",
-  description:
-    "Karbon nötrleme programımız: dron ekimleriyle dengelenen CO₂, şeffaf metrikler, GRI/CDP uyumlu ESG raporlama. Kurumsal karbon sertifikası.",
-  path: "/karbon-programi",
-  keywords: [
-    "karbon nötrleme",
-    "karbon ayak izi",
-    "ESG raporlama",
-    "karbon sertifikası",
-    "GRI CDP karbon",
-    "kurumsal sürdürülebilirlik",
-    "carbon offset Türkiye",
-  ],
-});
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "carbonProgramPage" });
+  return buildPageMetadata(
+    {
+      title: t("meta.title"),
+      description: t("meta.description"),
+      path: "/karbon-programi",
+      keywords: [
+        "karbon nötrleme",
+        "karbon ayak izi",
+        "ESG raporlama",
+        "karbon sertifikası",
+        "GRI CDP karbon",
+        "kurumsal sürdürülebilirlik",
+        "carbon offset Türkiye",
+      ],
+    },
+    locale
+  );
+}
 
-const METRICS = [
-  { value: "10–25 kg", label: "CO₂ / Ağaç / Yıl", desc: "Bir ağacın ortalama yıllık karbondioksit emilimi; tür, yaş ve iklime göre değişir.", ref: 1 },
-  { value: "4,5–40,7 t", label: "CO₂ / ha / Yıl", desc: "Genç ağaçlandırma alanlarının ilk 20 yıldaki hektar başına karbon giderim aralığı.", ref: 2 },
-  { value: "~550 g", label: "CO₂ / m² / Yıl", desc: "Akdeniz çam ormanlarında ölçülen organik karbon tutum hızı (2/3 toprak, 1/3 biyokütle).", ref: 3 },
-  { value: "GRI/CDP", label: "Uyumlu", desc: "Veri formatlarımız uluslararası raporlama standartlarına uygundur." },
-];
+export default async function KarbonProgramiPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+  const t = await getTranslations("carbonProgramPage");
 
-const REFERENCES = [
-  {
-    id: 1,
-    text: "Ortalama ağaç başına yıllık CO₂ emilim aralığı — bağımsız karbon hesaplama derlemeleri ve orman yönetimi karbon muhasebesi kaynakları.",
-    source: "Penn State Extension — Carbon Accounting in Forest Management",
-    url: "https://extension.psu.edu/carbon-accounting-in-forest-management",
-  },
-  {
-    id: 2,
-    text: "Ağaçlandırma ve fidanlıkların ilk 20 yıldaki hektar başına karbon giderim hızı (4,5–40,7 t CO₂ ha⁻¹ yıl⁻¹).",
-    source: "Bernal et al., Carbon Balance and Management (2018) — Global carbon dioxide removal rates from forest landscape restoration",
-    url: "https://cbmjournal.biomedcentral.com/articles/10.1186/s13021-018-0110-8",
-  },
-  {
-    id: 3,
-    text: "Akdeniz çam ormanında organik karbon tutum hızı (~550 g CO₂ m⁻² yıl⁻¹).",
-    source: "Disentangling the soil and atmospheric stress on carbon sequestration in a Mediterranean pine forest, arXiv (2025)",
-    url: "https://arxiv.org/pdf/2511.22720",
-  },
-  {
-    id: 4,
-    text: "Tohum topu kompozisyonu, atış yüksekliği ve çimlenme başarısı üzerine İHA tabanlı hassas ekim araştırması.",
-    source: "UAV-Based Precision Seed Dropping for Automated Reforestation, Authorea (2025)",
-    url: "https://www.authorea.com/doi/full/10.22541/au.175622436.63027828/v1",
-  },
-];
+  const METRICS = [
+    { value: "10–25 kg", label: t("metrics.perTree.label"), desc: t("metrics.perTree.desc"), ref: 1 },
+    { value: "4,5–40,7 t", label: t("metrics.perHectare.label"), desc: t("metrics.perHectare.desc"), ref: 2 },
+    { value: "~550 g", label: t("metrics.perSquareMeter.label"), desc: t("metrics.perSquareMeter.desc"), ref: 3 },
+    { value: "GRI/CDP", label: t("metrics.compliant.label"), desc: t("metrics.compliant.desc") },
+  ];
 
-const COMPARISON = [
-  { method: "Karbon Kredisi Satın Alma", icon: "📄", pros: "Hızlı, kolay", cons: "Soyut, ölçülemez, çoğu zaman çift sayım", verdict: false },
-  { method: "Skytech Drone Ağaçlandırma", icon: "🌱", pros: "Fiziksel ağaç + GPS koordinatlı kayıt", cons: "—", verdict: true },
-];
+  const REFERENCES = [
+    {
+      id: 1,
+      text: t("references.ref1.text"),
+      source: "Penn State Extension — Carbon Accounting in Forest Management",
+      url: "https://extension.psu.edu/carbon-accounting-in-forest-management",
+    },
+    {
+      id: 2,
+      text: t("references.ref2.text"),
+      source: "Bernal et al., Carbon Balance and Management (2018) — Global carbon dioxide removal rates from forest landscape restoration",
+      url: "https://cbmjournal.biomedcentral.com/articles/10.1186/s13021-018-0110-8",
+    },
+    {
+      id: 3,
+      text: t("references.ref3.text"),
+      source: "Disentangling the soil and atmospheric stress on carbon sequestration in a Mediterranean pine forest, arXiv (2025)",
+      url: "https://arxiv.org/pdf/2511.22720",
+    },
+    {
+      id: 4,
+      text: t("references.ref4.text"),
+      source: "UAV-Based Precision Seed Dropping for Automated Reforestation, Authorea (2025)",
+      url: "https://www.authorea.com/doi/full/10.22541/au.175622436.63027828/v1",
+    },
+  ];
 
-const FAQ = [
-  { q: "Karbon sertifikalarınız ne için geçerli?", a: "Sertifikalarımız ESG raporlarında, GRI ve CDP gönderimlerinde, kurumsal sürdürülebilirlik beyanlarında kullanılabilir. Kurumumuz bünyesinde gerçekleştirilen tüm ormanlaştırma ve karbon yutak alanı projeleri Orman Genel Müdürlüğü (OGM) Bölge Müdürlükleri koordinasyonunda, yasal ve bilimsel altyapıya uygun olarak yürütülmektedir." },
-  { q: "Karbon hesaplaması nasıl yapılıyor?", a: "Tohum sayısı × çimlenme oranı = ağaç sayısı; ağaç sayısı × ağaç başına yıllık CO₂ emilimi × izleme süresi = toplam karbon dengelemesi. Ağaç başına emilim aralığı (10–25 kg/yıl) ve hektar bazlı giderim hızları (4,5–40,7 t CO₂/ha/yıl) sayfanın altında listelenen akademik kaynaklara dayanır; tür, yaş ve iklime göre saha bazında güncellenir." },
-  { q: "Bireysel olarak da katılabilir miyim?", a: "Evet — tohum sipariş eden her kullanıcı, kendi karbon ayak izini dengelemiş olur. Dijital sertifikanızda kaç kg CO₂ dengelediğiniz net olarak gösterilir." },
-  { q: "ESG entegrasyonu nasıl çalışıyor?", a: "Kurumsal panelinizde ESG yazılımınız arasında API entegrasyonu sağlayarak veri akışını otomatik hale getiriyoruz. Sistemimiz şirketinizin karbon ayak izini hesaplar ve bu doğrultuda markanıza özel, drone teknolojisiyle desteklenen bir orman oluşturur." },
-];
+  const COMPARISON = [
+    { method: t("comparison.credit.method"), icon: "📄", pros: t("comparison.credit.pros"), cons: t("comparison.credit.cons"), verdict: false },
+    { method: t("comparison.forest.method"), icon: "🌱", pros: t("comparison.forest.pros"), cons: "—", verdict: true },
+  ];
 
-export default function KarbonProgramiPage() {
+  const FAQ = [
+    { q: t("faq.validity.question"), a: t("faq.validity.answer") },
+    { q: t("faq.calculation.question"), a: t("faq.calculation.answer") },
+    { q: t("faq.individual.question"), a: t("faq.individual.answer") },
+    { q: t("faq.esg.question"), a: t("faq.esg.answer") },
+  ];
+
   return (
     <>
-      <BreadcrumbSchema items={[{ name: "Karbon Programı", path: "/karbon-programi" }]} />
+      <BreadcrumbSchema items={[{ name: t("breadcrumb.label"), path: "/karbon-programi" }]} />
       <ServiceSchema
-        name="Karbon Nötrleme Programı"
-        description="GRI/CDP/SASB uyumlu, IPCC standartlarında karbon ayak izi hesaplama ve dron ağaçlandırmayla nötrleme. Kurumsal ESG raporlarına entegre."
+        name={t("schema.name")}
+        description={t("schema.description")}
         serviceType="Carbon offset and ESG reporting"
         path="/karbon-programi"
       />
       <BreadCrumb
-        title="Holding ve Şirketler için Uçtan Uca Karbon Nötrleme"
-        subtitle="Yıllık sera gazı emisyonlarınızı uluslararası standartlarda hesaplıyor, drone teknolojisiyle yüksek karbon yutak alanları (biyo-karbon ekosistemleri) inşa ediyor ve tüm süreci şeffaf biçimde ESG raporlarınıza entegre ediyoruz."
-        items={[{ label: "Karbon Programı" }]}
+        title={t("hero.title")}
+        subtitle={t("hero.subtitle")}
+        items={[{ label: t("breadcrumb.label") }]}
       />
 
       {/* Metrikler */}
       <SectionWrapper variant="light">
         <SectionHeading
-          badge="Metrikler"
-          title={<>Ölçülebilir <span className="text-gradient-forest">Karbon Etkisi</span></>}
-          subtitle="Her sayı IPCC standartlarına dayanır. Şeffaf, doğrulanabilir, denetlenebilir."
+          badge={t("metrics.badge")}
+          title={<>{t("metrics.title.pre")} <span className="text-gradient-forest">{t("metrics.title.highlight")}</span></>}
+          subtitle={t("metrics.subtitle")}
         />
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 max-w-6xl mx-auto stagger-children">
           {METRICS.map((m) => (
@@ -114,8 +126,8 @@ export default function KarbonProgramiPage() {
       {/* Karşılaştırma */}
       <SectionWrapper variant="light">
         <SectionHeading
-          badge="Karbon Kredisi vs. Gerçek Ağaçlandırma"
-          title={<>Hangisi <span className="text-gradient-forest">Gerçekten Etkili?</span></>}
+          badge={t("comparison.badge")}
+          title={<>{t("comparison.title.pre")} <span className="text-gradient-forest">{t("comparison.title.highlight")}</span></>}
         />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
           {COMPARISON.map((c) => (
@@ -133,11 +145,11 @@ export default function KarbonProgramiPage() {
               </h3>
               <div className="space-y-3 text-sm">
                 <p className={c.verdict ? "text-white/85" : "text-[#3d5a3d]"}>
-                  <strong className={c.verdict ? "text-[#a3e635]" : "text-[#1B6B3A]"}>Artılar:</strong> {c.pros}
+                  <strong className={c.verdict ? "text-[#a3e635]" : "text-[#1B6B3A]"}>{t("comparison.prosLabel")}</strong> {c.pros}
                 </p>
                 {c.cons !== "—" && (
                   <p className={c.verdict ? "text-white/85" : "text-[#3d5a3d]"}>
-                    <strong className="text-[#dc2626]">Eksiler:</strong> {c.cons}
+                    <strong className="text-[#dc2626]">{t("comparison.consLabel")}</strong> {c.cons}
                   </p>
                 )}
               </div>
@@ -149,8 +161,8 @@ export default function KarbonProgramiPage() {
       {/* FAQ */}
       <SectionWrapper variant="tinted">
         <SectionHeading
-          badge="SSS"
-          title={<>Karbon Programı <span className="text-gradient-forest">Hakkında</span></>}
+          badge={t("faq.badge")}
+          title={<>{t("faq.title.pre")} <span className="text-gradient-forest">{t("faq.title.highlight")}</span></>}
         />
         <div className="max-w-3xl mx-auto space-y-3">
           {FAQ.map((item, i) => (
@@ -173,9 +185,9 @@ export default function KarbonProgramiPage() {
       {/* Akademik Kaynaklar */}
       <SectionWrapper variant="light">
         <SectionHeading
-          badge="Bilimsel Kaynaklar"
-          title={<>Verilerimizin <span className="text-gradient-forest">Dayanakları</span></>}
-          subtitle="Karbon hesaplama parametrelerimiz, hakemli akademik yayınlara ve bağımsız kurum kaynaklarına dayanır."
+          badge={t("references.badge")}
+          title={<>{t("references.title.pre")} <span className="text-gradient-forest">{t("references.title.highlight")}</span></>}
+          subtitle={t("references.subtitle")}
         />
         <ol className="max-w-3xl mx-auto space-y-4">
           {REFERENCES.map((ref) => (
@@ -203,8 +215,7 @@ export default function KarbonProgramiPage() {
           ))}
         </ol>
         <p className="max-w-3xl mx-auto text-xs text-[#6b8f6b] mt-6 text-center leading-relaxed">
-          Not: Karbon giderim değerleri tür, yaş, iklim ve saha koşullarına göre değişir. Sunulan aralıklar
-          bilimsel literatürdeki ortalamalardır; kurumsal projelerde saha bazlı ölçümlerle güncellenir.
+          {t("references.note")}
         </p>
       </SectionWrapper>
 
@@ -212,17 +223,17 @@ export default function KarbonProgramiPage() {
       <SectionWrapper variant="tinted">
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="text-3xl lg:text-4xl font-bold text-[#1a2e1a] leading-tight mb-5">
-            Karbon Nötrleme <span className="text-gradient-forest">Programına Katılın</span>
+            {t("cta.title.pre")} <span className="text-gradient-forest">{t("cta.title.highlight")}</span>
           </h2>
           <p className="text-base text-[#3d5a3d] mb-8 max-w-xl mx-auto">
-            Bireysel ya da kurumsal — ölçülebilir karbon dengeleme yolculuğu burada başlıyor.
+            {t("cta.subtitle")}
           </p>
           <div className="flex flex-col sm:flex-row gap-3 items-center justify-center">
             <Link href={TRANSACTIONS_ENABLED ? "/kurumsal/teklif-al" : "/bilgi-al"} className="vitrin-cta-primary">
-              {TRANSACTIONS_ENABLED ? "Kurumsal Teklif Al" : "Bilgi Al"}
+              {TRANSACTIONS_ENABLED ? t("cta.primaryEnabled") : t("cta.primaryDisabled")}
             </Link>
             <Link href={TRANSACTIONS_ENABLED ? "/bireysel/satin-al" : "/yakinda"} className="vitrin-cta-secondary">
-              {TRANSACTIONS_ENABLED ? "Bireysel Tohum Sipariş Et" : "Yakında"}
+              {TRANSACTIONS_ENABLED ? t("cta.secondaryEnabled") : t("cta.secondaryDisabled")}
             </Link>
           </div>
         </div>

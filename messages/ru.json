@@ -224,7 +224,6 @@
     "newsletterTitle": "Подпишитесь на рассылку",
     "newsletterDesc": "Новости о новых проектах и углеродной нейтрализации.",
     "subscribe": "Подписаться",
-    "lastUpdated": "Последнее обновление:",
     "rightsReserved": "Все права защищены.",
     "services": {
       "seedBall": "Семенной шар",
@@ -695,7 +694,7 @@
     "contacts": {
       "address": {
         "title": "Адрес",
-        "secondary": "Kahramankazan / Ankara, Türkiye\nSkytech Green Teknoloji A.Ş."
+        "secondary": "Kahramankazan / Ankara, Türkiye\nSkytech Havacılık A.Ş."
       },
       "phone": {
         "title": "Телефон",

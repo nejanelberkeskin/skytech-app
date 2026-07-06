@@ -224,7 +224,6 @@
     "newsletterTitle": "Bültenimize Katılın",
     "newsletterDesc": "Yeni projeler ve karbon nötrleme haberleri için.",
     "subscribe": "Abone Ol",
-    "lastUpdated": "Son güncelleme:",
     "rightsReserved": "Tüm hakları saklıdır.",
     "services": {
       "seedBall": "Tohum Topu",
@@ -695,7 +694,7 @@
     "contacts": {
       "address": {
         "title": "Adres",
-        "secondary": "Kahramankazan / Ankara, Türkiye\nSkytech Green Teknoloji A.Ş."
+        "secondary": "Kahramankazan / Ankara, Türkiye\nSkytech Havacılık A.Ş."
       },
       "phone": {
         "title": "Telefon",

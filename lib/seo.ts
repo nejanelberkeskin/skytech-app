@@ -41,7 +41,7 @@ export function ogLocaleAlternates(active: string): string[] {
   return LOCALES.filter((l) => l !== active).map((l) => LOCALE_TO_OG_LOCALE[l]);
 }
 
-export const ORG_LEGAL_NAME = "Skytech Green Teknoloji A.Ş.";
+export const ORG_LEGAL_NAME = "Skytech Havacılık A.Ş.";
 export const ORG_FOUNDED = "2021";
 export const ORG_AREA_SERVED = "Türkiye";
 export const ORG_ADDRESS = {

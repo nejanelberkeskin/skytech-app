@@ -3,6 +3,7 @@
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { useRef } from "react";
 import Link from "next/link";
+import { TRANSACTIONS_ENABLED } from "@/lib/site-config";
 
 export default function FinalCTA() {
   const ref = useRef<HTMLDivElement>(null);
@@ -99,8 +100,8 @@ export default function FinalCTA() {
               transition={{ duration: 0.9, delay: 0.7 }}
               className="flex flex-col sm:flex-row items-center justify-center gap-4"
             >
-              <PrimaryCTA href="/bireysel/satin-al">
-                Hemen Başla
+              <PrimaryCTA href={TRANSACTIONS_ENABLED ? "/bireysel/satin-al" : "/yakinda"}>
+                {TRANSACTIONS_ENABLED ? "Hemen Başla" : "Yakında"}
                 <motion.svg
                   className="w-5 h-5"
                   viewBox="0 0 24 24"

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { motion, type Variants } from "framer-motion";
 import { useMemo, useState } from "react";
+import { TRANSACTIONS_ENABLED } from "@/lib/site-config";
 
 export default function CarbonCalculator() {
   const [seeds, setSeeds] = useState(5000);
@@ -131,7 +132,7 @@ export default function CarbonCalculator() {
             </motion.div>
 
             <motion.div variants={itemVariants}>
-              <Link href="/bireysel/satin-al" className="block group">
+              <Link href={TRANSACTIONS_ENABLED ? "/bireysel/satin-al" : "/yakinda"} className="block group">
                 <motion.div
                   whileHover={{ y: -2 }}
                   whileTap={{ scale: 0.98 }}
@@ -148,7 +149,7 @@ export default function CarbonCalculator() {
                     }}
                   />
                   <span className="relative inline-flex items-center gap-3">
-                    Bu Etkiyi Başlat — Tohum Sipariş Et
+                    {TRANSACTIONS_ENABLED ? "Bu Etkiyi Başlat — Tohum Sipariş Et" : "Yakında"}
                     <motion.svg
                       className="w-5 h-5"
                       viewBox="0 0 24 24"

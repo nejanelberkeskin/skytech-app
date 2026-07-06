@@ -8,6 +8,7 @@ import DeveloperApi from "@/components/vitrin/kurumsal/DeveloperApi";
 import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
 import ServiceSchema from "@/components/seo/ServiceSchema";
 import { buildPageMetadata } from "@/lib/seo";
+import { TRANSACTIONS_ENABLED } from "@/lib/site-config";
 
 export const metadata = buildPageMetadata({
   title: "Kurumsal Çözümler — ESG Ortaklığı",
@@ -138,7 +139,9 @@ export default function KurumsalCozumlerPage() {
             Çalışan sayınız, karbon hedefiniz, ESG ihtiyaçlarınız — birlikte planlayalım. 24 saat içinde dönüş.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 items-center justify-center">
-            <Link href="/kurumsal/teklif-al" className="vitrin-cta-primary">Teklif Talep Et</Link>
+            <Link href={TRANSACTIONS_ENABLED ? "/kurumsal/teklif-al" : "/bilgi-al"} className="vitrin-cta-primary">
+              {TRANSACTIONS_ENABLED ? "Teklif Talep Et" : "Bilgi Al"}
+            </Link>
             <Link href="/iletisim" className="vitrin-cta-secondary">Bize Ulaşın</Link>
           </div>
         </div>

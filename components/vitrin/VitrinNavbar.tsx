@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 import LanguageSwitcher from "./LanguageSwitcher";
+import { TRANSACTIONS_ENABLED } from "@/lib/site-config";
 
 function useNavItems() {
   const t = useTranslations("nav");
@@ -149,14 +150,19 @@ export default function VitrinNavbar() {
           {/* CTAs */}
           <div className="hidden lg:flex items-center gap-3">
             <LanguageSwitcher />
+            {TRANSACTIONS_ENABLED && (
+              <Link
+                href="/auth/login"
+                className="px-4 py-2 text-sm font-semibold text-[#1a2e1a] hover:text-[#1B6B3A] transition-colors"
+              >
+                {tNav("login")}
+              </Link>
+            )}
             <Link
-              href="/auth/login"
-              className="px-4 py-2 text-sm font-semibold text-[#1a2e1a] hover:text-[#1B6B3A] transition-colors"
+              href={TRANSACTIONS_ENABLED ? "/bireysel/satin-al" : "/yakinda"}
+              className="vitrin-cta-primary !py-2.5 !px-5 !text-sm"
             >
-              {tNav("login")}
-            </Link>
-            <Link href="/bireysel/satin-al" className="vitrin-cta-primary !py-2.5 !px-5 !text-sm">
-              {tNav("orderSeeds")}
+              {TRANSACTIONS_ENABLED ? tNav("orderSeeds") : tNav("comingSoon")}
             </Link>
           </div>
 
@@ -284,17 +290,19 @@ export default function VitrinNavbar() {
                 <div className="flex justify-center pb-1">
                   <LanguageSwitcher dark />
                 </div>
+                {TRANSACTIONS_ENABLED && (
+                  <Link
+                    href="/auth/login"
+                    className="block w-full text-center py-3 rounded-xl premium-glass-dark text-sm font-bold text-white"
+                  >
+                    {tNav("login")}
+                  </Link>
+                )}
                 <Link
-                  href="/auth/login"
-                  className="block w-full text-center py-3 rounded-xl premium-glass-dark text-sm font-bold text-white"
-                >
-                  {tNav("login")}
-                </Link>
-                <Link
-                  href="/bireysel/satin-al"
+                  href={TRANSACTIONS_ENABLED ? "/bireysel/satin-al" : "/yakinda"}
                   className="block w-full text-center py-3 rounded-xl bg-gradient-to-br from-[#1B6B3A] via-[#22894a] to-[#1B6B3A] text-white text-sm font-bold shadow-lg shadow-[#1B6B3A]/30"
                 >
-                  {tNav("orderSeeds")} →
+                  {TRANSACTIONS_ENABLED ? `${tNav("orderSeeds")} →` : tNav("comingSoon")}
                 </Link>
               </motion.div>
             </motion.div>

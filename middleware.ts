@@ -3,6 +3,7 @@ import type { NextRequest } from "next/server";
 import createIntlMiddleware from "next-intl/middleware";
 import { routing } from "@/i18n/routing";
 import { updateSession } from "@/lib/supabase/middleware";
+import { TRANSACTIONS_ENABLED, isSuspendedRoute } from "@/lib/site-config";
 
 /**
  * ════════════════════════════════════════════════════════════════════════
@@ -56,6 +57,7 @@ const PUBLIC_PAGE_PATTERNS: RegExp[] = [
   /^\/hakkimizda(\/.*)?$/,
   /^\/iletisim(\/.*)?$/,
   /^\/bilgi-al(\/.*)?$/,
+  /^\/yakinda(\/.*)?$/,
 ];
 
 const PUBLIC_API_PREFIXES: string[] = [
@@ -112,17 +114,32 @@ export async function middleware(request: NextRequest) {
   const cleanPath = stripLocale(pathname);
   const locale = getLocaleFromPath(pathname);
 
-  /* ── 3. Public sayfa rotaları: auth redirect yok ────────────────────── */
-  if (isPublicPage(cleanPath)) {
-    // Supabase session refresh yine yapılır (cookie rotation için)
-    const { response } = await updateSession(request);
-    // intl response cookie'lerini koru
+  // next-intl'in internal rewrite header'ı (ör. /admin/giris → /tr/admin/giris)
+  // updateSession'ın döndürdüğü response'a taşınmalı; yoksa default-locale
+  // (prefix'siz) rotalar 404 verir. Korumalı sayfalar dahil her yerde kullan.
+  const withIntl = (response: NextResponse): NextResponse => {
     intlResponse.headers.forEach((value, key) => {
-      if (key === "x-middleware-rewrite" || key === "location" || key.startsWith("x-")) {
+      if (key === "x-middleware-rewrite" || key === "x-middleware-override-headers" || key.startsWith("x-middleware-request")) {
         response.headers.set(key, value);
       }
     });
     return response;
+  };
+
+  /* ── 2b. Askıya alınmış akışlar: sipariş / ödeme / hesap → /yakinda ────
+     TRANSACTIONS_ENABLED kapalıyken tüm transactional rotalar (bireysel,
+     checkout, hesabim, auth, kurumsal giriş/panel/teklif) /yakinda'ya
+     yönlendirilir. Admin paneli bilinçli olarak kapsam DIŞINDA.
+     ────────────────────────────────────────────────────────────────────── */
+  if (!TRANSACTIONS_ENABLED && isSuspendedRoute(cleanPath)) {
+    return NextResponse.redirect(new URL(localePath("/yakinda", locale), request.url));
+  }
+
+  /* ── 3. Public sayfa rotaları: auth redirect yok ────────────────────── */
+  if (isPublicPage(cleanPath)) {
+    // Supabase session refresh yine yapılır (cookie rotation için)
+    const { response } = await updateSession(request);
+    return withIntl(response);
   }
 
   /* ── 4. Bakım Modu: /bireysel/* ─────────────────────────────────────── */
@@ -152,21 +169,21 @@ export async function middleware(request: NextRequest) {
       loginUrl.searchParams.set("redirect", pathname);
       return NextResponse.redirect(loginUrl);
     }
-    return response;
+    return withIntl(response);
   }
 
   if (cleanPath.startsWith("/admin") && !cleanPath.startsWith("/admin/giris")) {
     if (!user) {
       return NextResponse.redirect(new URL(localePath("/admin/giris", locale), request.url));
     }
-    return response;
+    return withIntl(response);
   }
 
   if (cleanPath.startsWith("/kurumsal/panel")) {
     if (!user) {
       return NextResponse.redirect(new URL(localePath("/kurumsal/giris", locale), request.url));
     }
-    return response;
+    return withIntl(response);
   }
 
   /* ── 6. Auth yönlendirme sayfaları ──────────────────────────────────── */
@@ -174,19 +191,19 @@ export async function middleware(request: NextRequest) {
     if (user) {
       return NextResponse.redirect(new URL(localePath("/hesabim", locale), request.url));
     }
-    return response;
+    return withIntl(response);
   }
   if (cleanPath === "/admin/giris") {
     if (user) {
       return NextResponse.redirect(new URL(localePath("/admin", locale), request.url));
     }
-    return response;
+    return withIntl(response);
   }
   if (cleanPath === "/kurumsal/giris") {
     if (user) {
       return NextResponse.redirect(new URL(localePath("/kurumsal/panel", locale), request.url));
     }
-    return response;
+    return withIntl(response);
   }
 
   return intlResponse;

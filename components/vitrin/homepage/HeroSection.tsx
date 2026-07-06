@@ -4,9 +4,11 @@ import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import Image from "next/image";
 import { useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
+import { TRANSACTIONS_ENABLED } from "@/lib/site-config";
 
 export default function HeroSection() {
   const t = useTranslations("hero");
+  const tNav = useTranslations("nav");
   const HEADLINE_LINE_1 = t("headlineLine1");
   const HEADLINE_LINE_2 = t("headlineLine2");
   const SUBTEXT = t("subtitle");
@@ -137,8 +139,8 @@ export default function HeroSection() {
             transition={{ duration: 0.9, delay: 1.15, ease: [0.16, 1, 0.3, 1] }}
             className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16"
           >
-            <MagneticCTA href="/bireysel/satin-al" variant="primary">
-              <span>{t("ctaPrimary")}</span>
+            <MagneticCTA href={TRANSACTIONS_ENABLED ? "/bireysel/satin-al" : "/yakinda"} variant="primary">
+              <span>{TRANSACTIONS_ENABLED ? t("ctaPrimary") : tNav("comingSoon")}</span>
               <motion.svg
                 className="w-5 h-5"
                 viewBox="0 0 24 24"

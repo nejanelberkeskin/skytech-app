@@ -4,6 +4,7 @@ import SectionWrapper from "@/components/vitrin/SectionWrapper";
 import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
 import LocalBusinessSchema from "@/components/seo/LocalBusinessSchema";
 import { buildPageMetadata } from "@/lib/seo";
+import { TRANSACTIONS_ENABLED } from "@/lib/site-config";
 
 export const metadata = buildPageMetadata({
   title: "İletişim — Bize Ulaşın",
@@ -131,7 +132,9 @@ export default function IletisimPage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-3 items-center justify-center">
             <Link href="/bilgi-al" className="vitrin-cta-primary">Bilgi Almak İstiyorum</Link>
-            <Link href="/kurumsal/teklif-al" className="vitrin-cta-secondary">Kurumsal Teklif</Link>
+            {TRANSACTIONS_ENABLED && (
+              <Link href="/kurumsal/teklif-al" className="vitrin-cta-secondary">Kurumsal Teklif</Link>
+            )}
           </div>
         </div>
       </SectionWrapper>

@@ -6,6 +6,7 @@ import SectionHeading from "@/components/vitrin/SectionHeading";
 import Timeline from "@/components/vitrin/hakkimizda/Timeline";
 import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
 import { buildPageMetadata } from "@/lib/seo";
+import { TRANSACTIONS_ENABLED } from "@/lib/site-config";
 
 export const metadata = buildPageMetadata({
   title: "Hakkımızda — Bilim, Teknoloji ve Doğa",
@@ -161,7 +162,9 @@ export default function HakkimizdaPage() {
             İlk tohumunuzu bugün ekin, etkinizi hemen izleyin. Birlikte daha yeşil bir gelecek mümkün.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 items-center justify-center">
-            <Link href="/bireysel/satin-al" className="vitrin-cta-primary">Tohum Sipariş Et</Link>
+            <Link href={TRANSACTIONS_ENABLED ? "/bireysel/satin-al" : "/yakinda"} className="vitrin-cta-primary">
+              {TRANSACTIONS_ENABLED ? "Tohum Sipariş Et" : "Yakında"}
+            </Link>
             <Link href="/iletisim" className="vitrin-cta-secondary">Bize Ulaşın</Link>
           </div>
         </div>

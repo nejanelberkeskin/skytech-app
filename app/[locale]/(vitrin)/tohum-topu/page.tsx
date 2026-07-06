@@ -6,6 +6,7 @@ import SectionHeading from "@/components/vitrin/SectionHeading";
 import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
 import ServiceSchema from "@/components/seo/ServiceSchema";
 import { buildPageMetadata } from "@/lib/seo";
+import { TRANSACTIONS_ENABLED } from "@/lib/site-config";
 
 export const metadata = buildPageMetadata({
   title: "Tohum Topu — Bir Kürede Koca Bir Orman",
@@ -179,8 +180,8 @@ export default function TohumTopuPage() {
           <p className="text-base text-[#3d5a3d] mb-8 max-w-xl mx-auto">
             Adresinize teslim, kendi bahçenizde veya seçilen Skytech alanlarında profesyonel ekim ile.
           </p>
-          <Link href="/bireysel/satin-al" className="vitrin-cta-primary">
-            Sipariş Ver
+          <Link href={TRANSACTIONS_ENABLED ? "/bireysel/satin-al" : "/yakinda"} className="vitrin-cta-primary">
+            {TRANSACTIONS_ENABLED ? "Sipariş Ver" : "Yakında"}
             <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
               <path d="M5 12h14M13 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
             </svg>

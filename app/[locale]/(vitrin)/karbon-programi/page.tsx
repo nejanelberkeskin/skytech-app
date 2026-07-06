@@ -6,6 +6,7 @@ import CarbonCalculator from "@/components/vitrin/homepage/CarbonCalculator";
 import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
 import ServiceSchema from "@/components/seo/ServiceSchema";
 import { buildPageMetadata } from "@/lib/seo";
+import { TRANSACTIONS_ENABLED } from "@/lib/site-config";
 
 export const metadata = buildPageMetadata({
   title: "Karbon Programı — Ölçülebilir, Şeffaf, Sertifikalı",
@@ -217,8 +218,12 @@ export default function KarbonProgramiPage() {
             Bireysel ya da kurumsal — ölçülebilir karbon dengeleme yolculuğu burada başlıyor.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 items-center justify-center">
-            <Link href="/kurumsal/teklif-al" className="vitrin-cta-primary">Kurumsal Teklif Al</Link>
-            <Link href="/bireysel/satin-al" className="vitrin-cta-secondary">Bireysel Tohum Sipariş Et</Link>
+            <Link href={TRANSACTIONS_ENABLED ? "/kurumsal/teklif-al" : "/bilgi-al"} className="vitrin-cta-primary">
+              {TRANSACTIONS_ENABLED ? "Kurumsal Teklif Al" : "Bilgi Al"}
+            </Link>
+            <Link href={TRANSACTIONS_ENABLED ? "/bireysel/satin-al" : "/yakinda"} className="vitrin-cta-secondary">
+              {TRANSACTIONS_ENABLED ? "Bireysel Tohum Sipariş Et" : "Yakında"}
+            </Link>
           </div>
         </div>
       </SectionWrapper>

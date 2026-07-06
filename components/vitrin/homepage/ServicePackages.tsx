@@ -10,6 +10,7 @@ import {
 } from "framer-motion";
 import { useRef } from "react";
 import SectionWrapper from "../SectionWrapper";
+import { TRANSACTIONS_ENABLED } from "@/lib/site-config";
 
 type Package = {
   name: string;
@@ -167,6 +168,19 @@ function PackageCard({ pkg }: { pkg: Package }) {
 
   const isHighlight = pkg.highlight;
 
+  // Transactions kapalıyken: sipariş CTA'ları → /yakinda, kurumsal teklif → /bilgi-al
+  const isCorporate = pkg.cta.href.startsWith("/kurumsal");
+  const ctaHref = TRANSACTIONS_ENABLED
+    ? pkg.cta.href
+    : isCorporate
+      ? "/bilgi-al"
+      : "/yakinda";
+  const ctaLabel = TRANSACTIONS_ENABLED
+    ? pkg.cta.label
+    : isCorporate
+      ? "Bilgi Al"
+      : "Yakında";
+
   return (
     <motion.div
       ref={ref}
@@ -262,7 +276,7 @@ function PackageCard({ pkg }: { pkg: Package }) {
         </ul>
 
         {/* CTA */}
-        <Link href={pkg.cta.href} className="block">
+        <Link href={ctaHref} className="block">
           <motion.div
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
@@ -273,7 +287,7 @@ function PackageCard({ pkg }: { pkg: Package }) {
             }`}
           >
             <span className="relative z-10 inline-flex items-center gap-2">
-              {pkg.cta.label}
+              {ctaLabel}
               <motion.svg
                 className="w-4 h-4"
                 viewBox="0 0 24 24"

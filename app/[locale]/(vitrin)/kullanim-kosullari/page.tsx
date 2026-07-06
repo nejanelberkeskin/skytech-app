@@ -96,7 +96,7 @@ export default async function KullanimKosullariPage({
           Mahkemeleri ve İcra Daireleri yetkilidir.
         </LegalP>
         <LegalP>
-          İletişim: Skytech Havacılık A.Ş. — Saray Mah. 60 Cad. No:22, Kahramankazan /
+          İletişim: Skytech Havacılık A.Ş. — Saray Mah. 60 Cad. No:32, Kahramankazan /
           Ankara · info@skytechgreen.com
         </LegalP>
       </LegalSection>

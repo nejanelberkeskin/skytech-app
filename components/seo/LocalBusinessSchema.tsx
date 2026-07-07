@@ -37,11 +37,11 @@ export default async function LocalBusinessSchema() {
           addressRegion: ORG_ADDRESS.district,
           addressCountry: ORG_ADDRESS.countryCode,
         },
-        // OSM'deki gerçek "60. Cadde" (Saray Mah., Kahramankazan) — Overpass ile doğrulandı
+        // Google Business kaydı "Skytech Havacılık" (maps.app.goo.gl/Tg3N3MsfhmvEmeMz9)
         geo: {
           "@type": "GeoCoordinates",
-          latitude: 40.0465,
-          longitude: 32.5962,
+          latitude: 40.0491034,
+          longitude: 32.5976506,
         },
         telephone: ORG_CONTACT.phone,
         email: ORG_CONTACT.email,

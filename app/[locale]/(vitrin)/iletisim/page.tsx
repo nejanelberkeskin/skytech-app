@@ -38,20 +38,20 @@ export default async function IletisimPage({
     {
       Icon: PinIcon,
       title: t("contacts.address.title"),
-      primary: "Saray Mah. 60 Cad. No:32",
+      primary: "Saray Mah. 60 Cad. No:22",
       secondary: t("contacts.address.secondary"),
     },
     {
       Icon: PhoneIcon,
       title: t("contacts.phone.title"),
-      primary: "+90 530 127 64 35",
-      secondary: t("contacts.phone.secondary"),
+      primary: "0850 308 2600",
+      secondary: `+90 530 127 64 35\n${t("contacts.phone.secondary")}`,
     },
     {
       Icon: MailIcon,
       title: t("contacts.email.title"),
       primary: "info@skytechgreen.com",
-      secondary: "kurumsal@skytechgreen.com\npress@skytechgreen.com",
+      secondary: "",
     },
   ];
 
@@ -106,10 +106,10 @@ export default async function IletisimPage({
           <div className="relative aspect-[16/9] rounded-3xl overflow-hidden border border-black/5 shadow-xl bg-[#0a1f12]">
             {/* OpenStreetMap embed — keyless + her yerde frameable
                 (Google'ın keyless ?output=embed formatı kaldırıldı: 404 + SAMEORIGIN).
-                Koordinat: OSM'deki gerçek "60. Cadde", Saray Mah. / Kahramankazan
-                (Overpass ile doğrulandı). Yol tarifi linki yine Google Maps'e gider. */}
+                Koordinat: Google Business kaydı "Skytech Havacılık"
+                (maps.app.goo.gl/Tg3N3MsfhmvEmeMz9 → 40.0491034, 32.5976506). */}
             <iframe
-              src="https://www.openstreetmap.org/export/embed.html?bbox=32.5762%2C40.0335%2C32.6162%2C40.0595&layer=mapnik&marker=40.0465%2C32.5962"
+              src="https://www.openstreetmap.org/export/embed.html?bbox=32.5877%2C40.0426%2C32.6077%2C40.0556&layer=mapnik&marker=40.04910%2C32.59765"
               title={t("map.title")}
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
@@ -119,12 +119,10 @@ export default async function IletisimPage({
             <div className="absolute bottom-4 left-4 right-4 sm:right-auto sm:max-w-sm rounded-2xl px-5 py-4 flex items-start gap-3 pointer-events-none bg-[#0a1f12]/92 backdrop-blur-md border border-white/10 shadow-xl">
               <PinIcon className="w-5 h-5 text-[#34d399] shrink-0 mt-0.5" />
               <div>
-                <p className="text-sm font-bold text-white leading-snug">Saray Mah. 60 Cad. No:32</p>
+                <p className="text-sm font-bold text-white leading-snug">Saray Mah. 60 Cad. No:22</p>
                 <p className="text-xs text-[#a7d4a7]">Kahramankazan / Ankara, Türkiye</p>
                 <a
-                  href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
-                    "Saray Mah. 60. Cadde No:32, Kahramankazan, Ankara"
-                  )}`}
+                  href="https://www.google.com/maps/dir/?api=1&destination=40.0491034,32.5976506"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1 mt-2 text-xs font-semibold text-[#a3e635] hover:text-white transition-colors pointer-events-auto"

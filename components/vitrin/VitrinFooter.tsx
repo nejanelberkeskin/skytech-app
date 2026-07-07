@@ -119,11 +119,11 @@ export default async function VitrinFooter() {
               </p>
               <p className="flex items-start gap-2">
                 <PhoneIcon className="w-4 h-4 text-[#22894a] mt-0.5 shrink-0" />
-                <span>+90 530 127 64 35</span>
+                <span>0850 308 2600<br />+90 530 127 64 35</span>
               </p>
               <p className="flex items-start gap-2">
                 <PinIcon className="w-4 h-4 text-[#22894a] mt-0.5 shrink-0" />
-                <span>Saray Mah. 60 Cad. No:32<br />Kahramankazan / Ankara, Türkiye</span>
+                <span>Saray Mah. 60 Cad. No:22<br />Kahramankazan / Ankara, Türkiye</span>
               </p>
             </div>
           </div>

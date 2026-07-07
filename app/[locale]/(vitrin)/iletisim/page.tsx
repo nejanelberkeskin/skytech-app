@@ -106,9 +106,10 @@ export default async function IletisimPage({
           <div className="relative aspect-[16/9] rounded-3xl overflow-hidden border border-black/5 shadow-xl bg-[#0a1f12]">
             {/* OpenStreetMap embed — keyless + her yerde frameable
                 (Google'ın keyless ?output=embed formatı kaldırıldı: 404 + SAMEORIGIN).
-                Yol tarifi linki yine Google Maps'e gider. */}
+                Koordinat: OSM'deki gerçek "60. Cadde", Saray Mah. / Kahramankazan
+                (Overpass ile doğrulandı). Yol tarifi linki yine Google Maps'e gider. */}
             <iframe
-              src="https://www.openstreetmap.org/export/embed.html?bbox=32.6558%2C40.1911%2C32.7158%2C40.2511&layer=mapnik&marker=40.2211%2C32.6858"
+              src="https://www.openstreetmap.org/export/embed.html?bbox=32.5762%2C40.0335%2C32.6162%2C40.0595&layer=mapnik&marker=40.0465%2C32.5962"
               title={t("map.title")}
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"

@@ -91,7 +91,7 @@ export default async function CerezPolitikasiPage({
 
       <LegalSection no="5" title="İletişim">
         <LegalP>
-          Sorularınız için: Skytech Havacılık A.Ş. — Saray Mah. 60 Cad. No:32,
+          Sorularınız için: Skytech Havacılık A.Ş. — Saray Mah. 60 Cad. No:22,
           Kahramankazan / Ankara · info@skytechgreen.com
         </LegalP>
       </LegalSection>

@@ -173,8 +173,8 @@ export default function CorporateLogin() {
 
           <p className="text-center text-xs text-emerald-200/20">
             Hesabınızda sorun mu var?{" "}
-            <a href="mailto:kurumsal@skytechgreen.com" className="text-emerald-400 hover:underline">
-              kurumsal@skytechgreen.com
+            <a href="mailto:info@skytechgreen.com" className="text-emerald-400 hover:underline">
+              info@skytechgreen.com
             </a>
           </p>
         </div>

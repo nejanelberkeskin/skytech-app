@@ -37,11 +37,11 @@ export default async function LocalBusinessSchema() {
           addressRegion: ORG_ADDRESS.district,
           addressCountry: ORG_ADDRESS.countryCode,
         },
-        // Kahramankazan ilçe merkezi yaklaşık koordinatı (Saray Mah. çevresi)
+        // Google Business kaydı "Skytech Havacılık" (maps.app.goo.gl/Tg3N3MsfhmvEmeMz9)
         geo: {
           "@type": "GeoCoordinates",
-          latitude: 40.2211,
-          longitude: 32.6858,
+          latitude: 40.0491034,
+          longitude: 32.5976506,
         },
         telephone: ORG_CONTACT.phone,
         email: ORG_CONTACT.email,

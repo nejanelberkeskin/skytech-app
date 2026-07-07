@@ -114,7 +114,7 @@ export default async function GizlilikPolitikasiPage({
 
       <LegalSection no="7" title="İletişim">
         <LegalP>
-          Skytech Havacılık A.Ş. — Saray Mah. 60 Cad. No:32, Kahramankazan / Ankara,
+          Skytech Havacılık A.Ş. — Saray Mah. 60 Cad. No:22, Kahramankazan / Ankara,
           Türkiye · info@skytechgreen.com
         </LegalP>
         <LegalP>

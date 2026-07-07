@@ -45,7 +45,7 @@ export const ORG_LEGAL_NAME = "Skytech Havacılık A.Ş.";
 export const ORG_FOUNDED = "2021";
 export const ORG_AREA_SERVED = "Türkiye";
 export const ORG_ADDRESS = {
-  street: "Saray Mah. 60 Cad. No:32",
+  street: "Saray Mah. 60 Cad. No:22",
   district: "Kahramankazan",
   city: "Ankara",
   country: "Türkiye",
@@ -53,7 +53,9 @@ export const ORG_ADDRESS = {
 };
 export const ORG_CONTACT = {
   email: "info@skytechgreen.com",
-  phone: "+90 530 127 64 35",
+  // Birincil hat (sabit) — şemalarda bu kullanılır; ikincil mobil hat sayfalarda listelenir.
+  phone: "+90 850 308 26 00",
+  phoneSecondary: "+90 530 127 64 35",
 };
 export const ORG_SAMEAS = [
   // İleride sosyal medya hesapları eklenince burayı doldurabiliriz

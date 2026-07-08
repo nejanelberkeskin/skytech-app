@@ -21,9 +21,12 @@ export const SUSPENDED_ROUTE_PATTERNS: RegExp[] = [
   /^\/checkout(\/.*)?$/,          // ödeme sonuç ekranları
   /^\/hesabim(\/.*)?$/,           // üye paneli
   /^\/auth(\/.*)?$/,              // giriş / kayıt
+  /^\/kurumsal$/,                 // kurumsal app girişi (login/teklif CTA'ları suspended)
   /^\/kurumsal\/giris(\/.*)?$/,   // kurumsal giriş
   /^\/kurumsal\/panel(\/.*)?$/,   // kurumsal panel
   /^\/kurumsal\/teklif-al(\/.*)?$/, // hesap yaratan B2B teklif formu
+  /^\/lands(\/.*)?$/,             // arazi rezervasyonu — satın alma akışının parçası
+  /^\/kargo-takip(\/.*)?$/,       // sipariş yoksa takip edilecek kargo da yok
 ];
 
 export function isSuspendedRoute(pathname: string): boolean {

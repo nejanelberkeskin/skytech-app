@@ -54,7 +54,7 @@ export default function HeroSection() {
       <div className="absolute inset-0 pointer-events-none">
         <Image
           src="/images/anasayfa/hero-bg.webp"
-          alt=""
+          alt={t("backgroundAlt")}
           fill
           priority
           sizes="100vw"

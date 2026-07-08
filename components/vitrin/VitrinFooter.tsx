@@ -52,10 +52,10 @@ export default async function VitrinFooter() {
               {t("tagline")}
             </p>
             <div className="flex items-center gap-3">
-              <SocialIcon href="#" aria="LinkedIn"><LinkedInIcon /></SocialIcon>
-              <SocialIcon href="#" aria="Instagram"><InstagramIcon /></SocialIcon>
-              <SocialIcon href="#" aria="X"><XIcon /></SocialIcon>
-              <SocialIcon href="#" aria="YouTube"><YouTubeIcon /></SocialIcon>
+              <SocialIcon aria="LinkedIn"><LinkedInIcon /></SocialIcon>
+              <SocialIcon href="https://www.instagram.com/skytechgreen/" aria="Instagram"><InstagramIcon /></SocialIcon>
+              <SocialIcon aria="X"><XIcon /></SocialIcon>
+              <SocialIcon aria="YouTube"><YouTubeIcon /></SocialIcon>
             </div>
           </div>
 
@@ -160,15 +160,29 @@ export default async function VitrinFooter() {
   );
 }
 
-function SocialIcon({ href, aria, children }: { href: string; aria: string; children: React.ReactNode }) {
+/** href verilmezse hesap henüz açılmamış demektir — tıklanamaz, sessizce durur. */
+function SocialIcon({ href, aria, children }: { href?: string; aria: string; children: React.ReactNode }) {
+  if (!href) {
+    return (
+      <span
+        aria-label={aria}
+        aria-disabled="true"
+        className="w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-[#a7d4a7]/40 cursor-default"
+      >
+        {children}
+      </span>
+    );
+  }
   return (
-    <Link
+    <a
       href={href}
       aria-label={aria}
+      target="_blank"
+      rel="noopener noreferrer"
       className="w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-[#a7d4a7] hover:bg-[#1B6B3A] hover:text-white hover:border-[#22894a] transition-all"
     >
       {children}
-    </Link>
+    </a>
   );
 }
 

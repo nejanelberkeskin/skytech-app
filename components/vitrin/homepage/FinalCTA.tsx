@@ -2,9 +2,11 @@
 
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { useRef } from "react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { TRANSACTIONS_ENABLED } from "@/lib/site-config";
+
+const MotionLink = motion.create(Link);
 
 export default function FinalCTA() {
   const t = useTranslations("finalCta");
@@ -151,7 +153,7 @@ function PrimaryCTA({ href, children }: { href: string; children: React.ReactNod
   };
 
   return (
-    <motion.a
+    <MotionLink
       ref={ref}
       href={href}
       onMouseMove={handleMove}
@@ -170,6 +172,6 @@ function PrimaryCTA({ href, children }: { href: string; children: React.ReactNod
         }}
       />
       <span className="relative inline-flex items-center gap-3">{children}</span>
-    </motion.a>
+    </MotionLink>
   );
 }

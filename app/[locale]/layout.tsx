@@ -9,6 +9,7 @@ import OrganizationSchema from "@/components/seo/OrganizationSchema";
 import WebSiteSchema from "@/components/seo/WebSiteSchema";
 import WebVitalsReporter from "@/components/seo/WebVitalsReporter";
 import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
+import CookieConsentBanner from "@/components/analytics/CookieConsentBanner";
 import { routing } from "@/i18n/routing";
 import {
   DEFAULT_OG_IMAGE,
@@ -132,6 +133,7 @@ export default async function LocaleLayout({
           <WebVitalsReporter />
           {children}
           <GoogleAnalytics />
+          <CookieConsentBanner />
           <Analytics />
           <SpeedInsights />
         </NextIntlClientProvider>

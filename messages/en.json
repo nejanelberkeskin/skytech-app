@@ -241,7 +241,8 @@
       "privacy": "Privacy Policy",
       "terms": "Terms of Use",
       "kvkk": "KVKK",
-      "cookies": "Cookie Policy"
+      "cookies": "Cookie Policy",
+      "cookiePreferences": "Cookie Preferences"
     }
   },
   "ourSeeds": {
@@ -1306,5 +1307,11 @@
   "homeMeta": {
     "title": "Plant the Future with Seed Balls",
     "description": "Carbon-neutral reforestation with drone technology and seed balls. Individual and corporate solutions, measurable impact, transparent supply chain."
+  },
+  "cookieConsent": {
+    "message": "We use cookies to improve your experience and anonymously analyze site traffic.",
+    "policyLink": "Cookie Policy",
+    "rejectAll": "Essential Only",
+    "acceptAll": "Accept All"
   }
 }

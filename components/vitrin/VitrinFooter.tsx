@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import LanguageSwitcher from "./LanguageSwitcher";
+import CookiePreferencesLink from "./CookiePreferencesLink";
 import { ORG_LEGAL_NAME } from "@/lib/seo";
 
 export default async function VitrinFooter() {
@@ -147,6 +148,9 @@ export default async function VitrinFooter() {
                   </Link>
                 </li>
               ))}
+              <li>
+                <CookiePreferencesLink label={t("legal.cookiePreferences")} />
+              </li>
             </ul>
             <LanguageSwitcher dark />
           </div>

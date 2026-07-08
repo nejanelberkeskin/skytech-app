@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import SectionWrapper from "@/components/vitrin/SectionWrapper";
 import { buildPageMetadata } from "@/lib/seo";

@@ -4,7 +4,10 @@ import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import Image from "next/image";
 import { useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { TRANSACTIONS_ENABLED } from "@/lib/site-config";
+
+const MotionLink = motion.create(Link);
 
 export default function HeroSection() {
   const t = useTranslations("hero");
@@ -282,7 +285,7 @@ function MagneticCTA({
       : "premium-glass-dark text-white hover:border-white/30";
 
   return (
-    <motion.a
+    <MotionLink
       ref={ref}
       href={href}
       onMouseMove={handleMove}
@@ -309,7 +312,7 @@ function MagneticCTA({
         </span>
       )}
       <span className="relative inline-flex items-center gap-3">{children}</span>
-    </motion.a>
+    </MotionLink>
   );
 }
 

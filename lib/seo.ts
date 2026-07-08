@@ -58,10 +58,11 @@ export const ORG_CONTACT = {
   phoneSecondary: "+90 530 127 64 35",
 };
 export const ORG_SAMEAS = [
-  // İleride sosyal medya hesapları eklenince burayı doldurabiliriz
+  "https://www.instagram.com/skytechgreen/",
+  // Diğer platformlar hesap açılınca eklenecek:
   // "https://www.linkedin.com/company/skytechgreen",
   // "https://twitter.com/skytechgreen",
-  // "https://www.instagram.com/skytechgreen",
+  // "https://www.youtube.com/@skytechgreen",
 ];
 
 export const DEFAULT_OG_IMAGE = {

@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { SITE_URL } from "@/lib/seo";
+import { localeUrl } from "@/lib/seo";
 import { TRANSACTIONS_ENABLED, isSuspendedRoute } from "@/lib/site-config";
 
 /**
@@ -47,12 +47,6 @@ const APP_ENTRY_PAGES: SitemapEntry[] = [
 ];
 
 const LOCALES = ["tr", "en", "ru"] as const;
-const DEFAULT_LOCALE = "tr";
-
-function localizedUrl(path: string, locale: string): string {
-  if (locale === DEFAULT_LOCALE) return `${SITE_URL}${path}`;
-  return `${SITE_URL}/${locale}${path}`;
-}
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const lastModified = new Date();
@@ -65,13 +59,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
   // Her sayfa için 3 dilde URL üret + alternates ile hreflang sinyali ver
   return all.flatMap((entry) =>
     LOCALES.map((locale) => ({
-      url: localizedUrl(entry.path, locale),
+      url: localeUrl(entry.path, locale),
       lastModified,
       changeFrequency: entry.changeFrequency,
       priority: entry.priority,
       alternates: {
         languages: Object.fromEntries(
-          LOCALES.map((l) => [l, localizedUrl(entry.path, l)])
+          LOCALES.map((l) => [l, localeUrl(entry.path, l)])
         ),
       },
     }))

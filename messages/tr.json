@@ -34,7 +34,8 @@
     "trustForestRegions": "Orman Bölge Müdürlükleri ile koordineli",
     "trustAnnualReport": "Yıllık drone raporlama",
     "trustCertificate": "Karbon sertifikası",
-    "discover": "Keşfet"
+    "discover": "Keşfet",
+    "backgroundAlt": "Dron ile tohum topu ekimi yapılan orman arazisi"
   },
   "valueCards": {
     "badge": "Neden Skytech Green?",

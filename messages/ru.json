@@ -34,7 +34,8 @@
     "trustForestRegions": "В координации с региональными управлениями лесного хозяйства",
     "trustAnnualReport": "Ежегодные отчёты с дронов",
     "trustCertificate": "Углеродный сертификат",
-    "discover": "Смотреть"
+    "discover": "Смотреть",
+    "backgroundAlt": "Лесной участок, засеваемый семенными шариками с помощью дрона"
   },
   "valueCards": {
     "badge": "Почему Skytech Green?",

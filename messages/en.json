@@ -34,7 +34,8 @@
     "trustForestRegions": "Coordinated with Regional Forestry Directorates",
     "trustAnnualReport": "Annual drone reporting",
     "trustCertificate": "Carbon certificate",
-    "discover": "Explore"
+    "discover": "Explore",
+    "backgroundAlt": "Forest land being seeded with seed balls by drone"
   },
   "valueCards": {
     "badge": "Why Skytech Green?",

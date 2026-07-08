@@ -179,7 +179,9 @@ export function buildPageMetadata(
       };
 
   return {
-    title: titleFull,
+    // `absolute` root layout'un title.template'inin bir daha üzerine binmesini
+    // (çift "| Skytech Green" — Bing bunu "title too long" diye işaretledi) engeller.
+    title: { absolute: titleFull },
     description: input.description,
     // Sayfa açıkça keyword vermezse locale'e göre merkezi kümeden doldur
     // (Yandex + GEO crawler'ları için üç dilde ayrı listeler).

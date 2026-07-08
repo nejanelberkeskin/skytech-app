@@ -1191,7 +1191,13 @@
         "placeholder": "Sorunuzu, ihtiyacınızı veya talebinizi detaylıca yazın..."
       },
       "consent": "KVKK Aydınlatma Metni'ni okudum ve verilerimin işlenmesine onay veriyorum.",
-      "submit": "Mesajı Gönder"
+      "submit": "Mesajı Gönder",
+      "submitting": "Gönderiliyor...",
+      "success": {
+        "title": "Mesajınız Alındı!",
+        "desc": "En kısa sürede size dönüş yapacağız. Teşekkür ederiz."
+      },
+      "error": "Bir şeyler ters gitti. Lütfen tekrar deneyin veya doğrudan info@skytechgreen.com adresinden bize ulaşın."
     },
     "topics": {
       "individual": "Bireysel Tohum Sipariş",

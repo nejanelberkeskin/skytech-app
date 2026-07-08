@@ -1191,7 +1191,13 @@
         "placeholder": "Describe your question, need or request in detail..."
       },
       "consent": "I have read the KVKK (Personal Data Protection) Disclosure Statement and consent to the processing of my data.",
-      "submit": "Send Message"
+      "submit": "Send Message",
+      "submitting": "Sending...",
+      "success": {
+        "title": "Message Received!",
+        "desc": "We will get back to you as soon as possible. Thank you."
+      },
+      "error": "Something went wrong. Please try again or reach us directly at info@skytechgreen.com."
     },
     "topics": {
       "individual": "Individual Seed Order",

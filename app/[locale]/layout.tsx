@@ -8,6 +8,7 @@ import { notFound } from "next/navigation";
 import OrganizationSchema from "@/components/seo/OrganizationSchema";
 import WebSiteSchema from "@/components/seo/WebSiteSchema";
 import WebVitalsReporter from "@/components/seo/WebVitalsReporter";
+import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
 import { routing } from "@/i18n/routing";
 import {
   DEFAULT_OG_IMAGE,
@@ -130,6 +131,7 @@ export default async function LocaleLayout({
           <WebSiteSchema />
           <WebVitalsReporter />
           {children}
+          <GoogleAnalytics />
           <Analytics />
           <SpeedInsights />
         </NextIntlClientProvider>

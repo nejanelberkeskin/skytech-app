@@ -241,7 +241,8 @@
       "privacy": "Gizlilik Politikası",
       "terms": "Kullanım Koşulları",
       "kvkk": "KVKK",
-      "cookies": "Çerez Politikası"
+      "cookies": "Çerez Politikası",
+      "cookiePreferences": "Çerez Tercihleri"
     }
   },
   "ourSeeds": {
@@ -1306,5 +1307,11 @@
   "homeMeta": {
     "title": "Tohum Toplarıyla Geleceği Ekin",
     "description": "Dron teknolojisi ve tohum topu ile karbon nötr ağaçlandırma. Bireysel ve kurumsal çözümler, ölçülebilir etki, şeffaf tedarik zinciri."
+  },
+  "cookieConsent": {
+    "message": "Deneyiminizi iyileştirmek ve site trafiğini anonim olarak analiz etmek için çerezler kullanıyoruz.",
+    "policyLink": "Çerez Politikası",
+    "rejectAll": "Sadece Zorunlu",
+    "acceptAll": "Tümünü Kabul Et"
   }
 }

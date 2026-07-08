@@ -6,12 +6,13 @@ import { GA_MEASUREMENT_ID } from "@/lib/analytics";
 /**
  * GA4 yükleyici — Consent Mode v2 varsayılanlarıyla.
  *
- * Henüz çerez onay banner'ı yok; bu yüzden analytics_storage ve tüm ad_*
- * sinyalleri varsayılan olarak "denied" ayarlanır. Google, denied durumunda
- * bile cookieless/modeled ping'lerle GA4'e temel (anonim, toplu) trafik
- * verisi ulaştırır — ama kişi bazlı çerez atmaz. Banner eklenince, kullanıcı
- * onay verdiğinde `gtag('consent', 'update', { analytics_storage: 'granted' })`
- * çağrısıyla tam izlemeye geçilecek.
+ * Her sayfa yüklemesinde analytics_storage ve tüm ad_* sinyalleri önce
+ * varsayılan olarak "denied" ayarlanır (Google'ın önerdiği gizlilik-öncelikli
+ * varsayılan). Google, denied durumunda bile cookieless/modeled ping'lerle
+ * GA4'e temel (anonim, toplu) trafik verisi ulaştırır — ama kişi bazlı çerez
+ * atmaz. components/analytics/CookieConsentBanner.tsx, kullanıcının daha
+ * önce verdiği tercihi (varsa) localStorage'dan okuyup updateConsent() ile
+ * gerçek duruma çeker; yoksa banner'ı gösterip tercihi ilk kez alır.
  */
 export default function GoogleAnalytics() {
   return (

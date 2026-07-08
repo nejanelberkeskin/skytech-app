@@ -3,6 +3,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import BreadCrumb from "@/components/vitrin/BreadCrumb";
 import SectionWrapper from "@/components/vitrin/SectionWrapper";
 import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
+import InfoForm from "@/components/vitrin/bilgi-al/InfoForm";
 import { buildPageMetadata } from "@/lib/seo";
 
 export async function generateMetadata({
@@ -31,16 +32,6 @@ export default async function BilgiAlPage({
   setRequestLocale(locale);
   const t = await getTranslations("infoPage");
 
-  const SUBJECTS = [
-    t("topics.individual"),
-    t("topics.corporate"),
-    t("topics.esg"),
-    t("topics.drone"),
-    t("topics.press"),
-    t("topics.partnership"),
-    t("topics.other"),
-  ];
-
   return (
     <>
       <BreadcrumbSchema items={[{ name: t("breadcrumb.label"), path: "/bilgi-al" }]} />
@@ -54,63 +45,7 @@ export default async function BilgiAlPage({
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12 max-w-6xl mx-auto">
           {/* Form */}
           <div className="lg:col-span-2">
-            <div className="vitrin-card p-7 lg:p-10">
-              <h2 className="text-2xl font-bold text-[#1a2e1a] mb-2">{t("form.heading")}</h2>
-              <p className="text-sm text-[#3d5a3d] mb-7">
-                {t("form.subheading")}
-              </p>
-
-              <form className="space-y-5">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <Field label={t("form.name.label")} required>
-                    <input type="text" name="name" required className={inputClass} placeholder={t("form.name.placeholder")} />
-                  </Field>
-                  <Field label={t("form.email.label")} required>
-                    <input type="email" name="email" required className={inputClass} placeholder={t("form.email.placeholder")} />
-                  </Field>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <Field label={t("form.phone.label")}>
-                    <input type="tel" name="phone" className={inputClass} placeholder={t("form.phone.placeholder")} />
-                  </Field>
-                  <Field label={t("form.company.label")}>
-                    <input type="text" name="company" className={inputClass} placeholder={t("form.company.placeholder")} />
-                  </Field>
-                </div>
-
-                <Field label={t("form.subject.label")} required>
-                  <select name="subject" required className={inputClass}>
-                    <option value="">{t("form.subject.placeholder")}</option>
-                    {SUBJECTS.map((s) => <option key={s} value={s}>{s}</option>)}
-                  </select>
-                </Field>
-
-                <Field label={t("form.message.label")} required>
-                  <textarea
-                    name="message"
-                    required
-                    rows={6}
-                    className={`${inputClass} resize-none`}
-                    placeholder={t("form.message.placeholder")}
-                  />
-                </Field>
-
-                <div className="flex items-start gap-3 text-xs text-[#6b8f6b] pt-2">
-                  <input type="checkbox" required className="mt-1 accent-[#1B6B3A]" />
-                  <p>
-                    {t("form.consent")}
-                  </p>
-                </div>
-
-                <button type="submit" className="vitrin-cta-primary w-full justify-center">
-                  {t("form.submit")}
-                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
-                    <path d="M5 12h14M13 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </button>
-              </form>
-            </div>
+            <InfoForm />
           </div>
 
           {/* Yan info */}
@@ -134,20 +69,6 @@ export default async function BilgiAlPage({
         </div>
       </SectionWrapper>
     </>
-  );
-}
-
-const inputClass =
-  "w-full px-4 py-3 rounded-xl bg-white border border-black/10 text-sm text-[#1a2e1a] placeholder:text-[#94b494] focus:outline-none focus:border-[#1B6B3A]/40 focus:ring-2 focus:ring-[#1B6B3A]/15 transition-all";
-
-function Field({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode }) {
-  return (
-    <label className="block">
-      <span className="block text-xs font-semibold text-[#1a2e1a] mb-1.5 uppercase tracking-wider">
-        {label}{required && <span className="text-[#dc2626] ml-0.5">*</span>}
-      </span>
-      {children}
-    </label>
   );
 }
 

@@ -658,3 +658,47 @@ export async function sendEmployeeCertificateEmail(data: EmployeeCertificateData
     throw e;
   }
 }
+
+// ── Bilgi-al formu bildirimi ──────────────────────────────────────────
+
+interface ContactFormData {
+  name: string;
+  email: string;
+  phone?: string;
+  company?: string;
+  subject: string;
+  message: string;
+}
+
+/**
+ * /bilgi-al formu gönderiminde info@'ya bildirim gönderir.
+ * replyTo submitter'ın kendi e-postası — doğrudan "Yanıtla" ile cevap gider.
+ */
+export async function sendContactFormNotification(data: ContactFormData) {
+  const notifyTo = process.env.CONTACT_NOTIFY_EMAIL || "info@skytechgreen.com";
+  const subject = `[Bilgi Al] ${esc(data.subject)} — ${esc(data.name)}`;
+
+  const html = emailLayout(
+    "Yeni Bilgi Talebi",
+    `
+      <table style="width:100%;border-collapse:collapse;font-size:14px;">
+        <tr><td style="padding:6px 0;color:#6b8f6b;width:120px;">Ad Soyad</td><td style="padding:6px 0;font-weight:600;">${esc(data.name)}</td></tr>
+        <tr><td style="padding:6px 0;color:#6b8f6b;">E-posta</td><td style="padding:6px 0;font-weight:600;">${esc(data.email)}</td></tr>
+        ${data.phone ? `<tr><td style="padding:6px 0;color:#6b8f6b;">Telefon</td><td style="padding:6px 0;">${esc(data.phone)}</td></tr>` : ""}
+        ${data.company ? `<tr><td style="padding:6px 0;color:#6b8f6b;">Şirket</td><td style="padding:6px 0;">${esc(data.company)}</td></tr>` : ""}
+        <tr><td style="padding:6px 0;color:#6b8f6b;">Konu</td><td style="padding:6px 0;font-weight:600;">${esc(data.subject)}</td></tr>
+      </table>
+      <p style="margin:16px 0 4px;color:#6b8f6b;font-size:13px;">Mesaj</p>
+      <p style="white-space:pre-wrap;background:#f8faf5;border-radius:8px;padding:14px;font-size:14px;">${esc(data.message)}</p>
+    `
+  );
+
+  try {
+    const result = await sendEmail({ to: notifyTo, subject, html, replyTo: data.email });
+    await logEmail("contact_form", notifyTo, subject, null, result.id || null);
+    return result;
+  } catch (e: any) {
+    await logEmail("contact_form", notifyTo, subject, null, null, e.message);
+    throw e;
+  }
+}

@@ -21,14 +21,17 @@ export default function manifest(): MetadataRoute.Manifest {
     lang: "tr-TR",
     categories: ["business", "productivity", "sustainability"],
     icons: [
+      // Tarayıcı sekmesi / Google arama sonucu. 192 = 48'in katı (Google şartı).
       {
         src: "/icon.png",
-        sizes: "any",
+        sizes: "192x192",
         type: "image/png",
         purpose: "any",
       },
+      // Android maskable: içerik merkez %80 güvenli bölgede, kenarlarda boşluk yok.
+      // Ayrı dosya olmalı — "any" ikonu maskelenirse kenarları kırpılır.
       {
-        src: "/icon.png",
+        src: "/icon-maskable.png",
         sizes: "512x512",
         type: "image/png",
         purpose: "maskable",

@@ -226,7 +226,7 @@
     "newsletterDesc": "Yeni projeler ve karbon nötrleme haberleri için.",
     "subscribe": "Abone Ol",
     "rightsReserved": "Tüm hakları saklıdır.",
-    "brandOf": "Skytech Green, {company} markasıdır.",
+    "brandOf": "Skytech Green, <link>{company}</link> markasıdır.",
     "services": {
       "seedBall": "Tohum Topu",
       "droneTech": "Dron Teknolojisi",

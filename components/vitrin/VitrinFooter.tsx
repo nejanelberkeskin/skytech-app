@@ -4,7 +4,7 @@ import { getTranslations } from "next-intl/server";
 import LanguageSwitcher from "./LanguageSwitcher";
 import CookiePreferencesLink from "./CookiePreferencesLink";
 import KenxBadge from "./KenxBadge";
-import { ORG_LEGAL_NAME, ORG_SOCIAL } from "@/lib/seo";
+import { ORG_LEGAL_NAME, ORG_PARENT_URL, ORG_SOCIAL } from "@/lib/seo";
 
 export default async function VitrinFooter() {
   const t = await getTranslations("footer");
@@ -172,7 +172,19 @@ export default async function VitrinFooter() {
             Skytech Green bir marka, tuzel kisilik Skytech Havacilik A.S. */}
         <div className="vitrin-container pb-6 -mt-1">
           <p className="text-[11px] text-[#4f6b4f] text-center lg:text-left">
-            {t("brandOf", { company: ORG_LEGAL_NAME })}
+            {t.rich("brandOf", {
+              company: ORG_LEGAL_NAME,
+              link: (chunks) => (
+                <a
+                  href={ORG_PARENT_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline underline-offset-2 decoration-[#4f6b4f]/40 hover:text-[#a7d4a7] hover:decoration-[#a7d4a7] transition-colors"
+                >
+                  {chunks}
+                </a>
+              ),
+            })}
           </p>
         </div>
       </div>

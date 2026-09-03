@@ -42,6 +42,8 @@ export function ogLocaleAlternates(active: string): string[] {
 }
 
 export const ORG_LEGAL_NAME = "Skytech Havacılık A.Ş.";
+/** Bagli oldugumuz ana sirket. Footer'daki marka beyani buraya baglaniyor. */
+export const ORG_PARENT_URL = "https://skytechhavacilik.com";
 export const ORG_FOUNDED = "2021";
 export const ORG_AREA_SERVED = "Türkiye";
 export const ORG_ADDRESS = {

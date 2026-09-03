@@ -76,13 +76,12 @@ export default function CorporatePanelLayout({ children }: { children: React.Rea
         <div className="px-6 py-5" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
           <Link href="/kurumsal" className="flex items-center gap-2.5" onClick={() => setSidebarOpen(false)} aria-label="Skytech Green Kurumsal">
             <Image
-              src="/images/brand/logo.webp"
+              src="/images/brand/logo-light.webp"
               alt="Skytech Green"
-              width={130}
-              height={34}
+              width={256}
+              height={32}
               priority
               className="h-8 w-auto"
-              style={{ filter: "brightness(0) invert(1)" }}
             />
           </Link>
           <p className="text-xs text-emerald-200/25 mt-1.5">Kurumsal Panel</p>

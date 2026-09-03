@@ -109,13 +109,12 @@ export default function HesabimLayout({ children }: { children: React.ReactNode 
         <div className="px-6 py-5" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
           <Link href="/" className="flex items-center gap-2.5" onClick={() => setSidebarOpen(false)} aria-label="Skytech Green ana sayfa">
             <Image
-              src="/images/brand/logo.webp"
+              src="/images/brand/logo-light.webp"
               alt="Skytech Green"
-              width={140}
+              width={288}
               height={36}
               priority
               className="h-9 w-auto"
-              style={{ filter: "brightness(0) invert(1)" }}
             />
           </Link>
         </div>
@@ -196,12 +195,11 @@ export default function HesabimLayout({ children }: { children: React.ReactNode 
             </svg>
           </button>
           <Image
-            src="/images/brand/logo.webp"
+            src="/images/brand/logo-light.webp"
             alt="Skytech Green"
-            width={120}
-            height={30}
+            width={224}
+            height={28}
             className="h-7 w-auto"
-            style={{ filter: "brightness(0) invert(1)" }}
           />
           <div className="w-10" /> {/* Spacer for centering */}
         </div>

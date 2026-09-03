@@ -5,7 +5,7 @@ import BreadCrumb from "@/components/vitrin/BreadCrumb";
 import SectionWrapper from "@/components/vitrin/SectionWrapper";
 import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
 import LocalBusinessSchema from "@/components/seo/LocalBusinessSchema";
-import { buildPageMetadata } from "@/lib/seo";
+import { buildPageMetadata, ORG_SOCIAL } from "@/lib/seo";
 import { TRANSACTIONS_ENABLED } from "@/lib/site-config";
 
 export async function generateMetadata({
@@ -55,11 +55,14 @@ export default async function IletisimPage({
     },
   ];
 
-  const SOCIAL = [
-    { name: "LinkedIn", href: "#", Icon: LinkedInIcon },
-    { name: "Instagram", href: "#", Icon: InstagramIcon },
-    { name: "X (Twitter)", href: "#", Icon: XIcon },
-    { name: "YouTube", href: "#", Icon: YouTubeIcon },
+  // href yoksa hesap henuz acilmamis demektir; tiklanamaz durur.
+  // Onceki halinde dordune de href="#" verilmisti — tiklaninca hicbir sey
+  // olmayan olu linklerdi.
+  const SOCIAL: { name: string; href?: string; Icon: (p: { className?: string }) => React.ReactElement }[] = [
+    { name: "LinkedIn", href: ORG_SOCIAL.linkedin, Icon: LinkedInIcon },
+    { name: "Instagram", href: ORG_SOCIAL.instagram, Icon: InstagramIcon },
+    { name: "X (Twitter)", Icon: XIcon },
+    { name: "YouTube", Icon: YouTubeIcon },
   ];
 
   return (
@@ -147,16 +150,29 @@ export default async function IletisimPage({
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-3">
-            {SOCIAL.map((s) => (
-              <Link
-                key={s.name}
-                href={s.href}
-                className="group inline-flex items-center gap-2.5 px-5 py-3 rounded-2xl bg-white border border-black/8 text-[#1a2e1a] hover:bg-[#1B6B3A] hover:text-white hover:border-[#1B6B3A] transition-all"
-              >
-                <s.Icon className="w-4 h-4" />
-                <span className="text-sm font-semibold">{s.name}</span>
-              </Link>
-            ))}
+            {SOCIAL.map((s) =>
+              s.href ? (
+                <a
+                  key={s.name}
+                  href={s.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group inline-flex items-center gap-2.5 px-5 py-3 rounded-2xl bg-white border border-black/8 text-[#1a2e1a] hover:bg-[#1B6B3A] hover:text-white hover:border-[#1B6B3A] transition-all"
+                >
+                  <s.Icon className="w-4 h-4" />
+                  <span className="text-sm font-semibold">{s.name}</span>
+                </a>
+              ) : (
+                <span
+                  key={s.name}
+                  aria-disabled="true"
+                  className="inline-flex items-center gap-2.5 px-5 py-3 rounded-2xl bg-white/60 border border-black/5 text-[#1a2e1a]/35 cursor-default"
+                >
+                  <s.Icon className="w-4 h-4" />
+                  <span className="text-sm font-semibold">{s.name}</span>
+                </span>
+              )
+            )}
           </div>
         </div>
       </SectionWrapper>

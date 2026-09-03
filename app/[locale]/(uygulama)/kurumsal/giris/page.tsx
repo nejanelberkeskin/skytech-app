@@ -67,8 +67,8 @@ export default function CorporateLogin() {
             <Image
               src="/images/brand/logo.webp"
               alt="Skytech Green"
-              width={130}
-              height={34}
+              width={256}
+              height={32}
               priority
               className="h-8 w-auto"
             />

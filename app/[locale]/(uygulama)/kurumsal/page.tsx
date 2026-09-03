@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase/browser";
 import Navbar from "@/components/Navbar";
+import KenxBadge from "@/components/vitrin/KenxBadge";
 
 interface LiveStats {
   totalSeeds: number;
@@ -239,7 +240,10 @@ export default function CorporateLanding() {
             <span>🌱</span>
             <span className="text-sm font-semibold text-emerald-200/40">SkytechGreen</span>
           </div>
-          <p className="text-xs text-emerald-200/20">© 2026 SkytechGreen. Tüm hakları saklıdır.</p>
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-5">
+            <p className="text-xs text-emerald-200/20">© 2026 SkytechGreen. Tüm hakları saklıdır.</p>
+            <KenxBadge tone="light" className="text-emerald-200/30" />
+          </div>
           <div className="flex gap-6 text-sm text-emerald-200/30">
             <Link href="/bireysel/satin-al" className="hover:text-white transition-colors">Bireysel</Link>
             <Link href="/kurumsal/teklif-al" className="hover:text-white transition-colors">Teklif Al</Link>

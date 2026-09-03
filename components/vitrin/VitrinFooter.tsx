@@ -3,7 +3,8 @@ import { Link } from "@/i18n/navigation";
 import { getTranslations } from "next-intl/server";
 import LanguageSwitcher from "./LanguageSwitcher";
 import CookiePreferencesLink from "./CookiePreferencesLink";
-import { ORG_LEGAL_NAME } from "@/lib/seo";
+import KenxBadge from "./KenxBadge";
+import { ORG_LEGAL_NAME, ORG_SOCIAL } from "@/lib/seo";
 
 export default async function VitrinFooter() {
   const t = await getTranslations("footer");
@@ -41,19 +42,19 @@ export default async function VitrinFooter() {
           <div className="lg:col-span-4">
             <Link href="/" aria-label="Skytech Green" className="inline-flex items-center mb-5">
               <Image
-                src="/images/brand/logo.webp"
+                src="/images/brand/logo-light.webp"
                 alt="Skytech Green"
-                width={200}
-                height={62}
-                className="h-12 w-auto brightness-0 invert"
+                width={384}
+                height={48}
+                className="h-12 w-auto"
               />
             </Link>
             <p className="text-sm text-[#a7d4a7] leading-relaxed mb-6 max-w-sm">
               {t("tagline")}
             </p>
             <div className="flex items-center gap-3">
-              <SocialIcon aria="LinkedIn"><LinkedInIcon /></SocialIcon>
-              <SocialIcon href="https://www.instagram.com/skytechgreen/" aria="Instagram"><InstagramIcon /></SocialIcon>
+              <SocialIcon href={ORG_SOCIAL.linkedin} aria="LinkedIn"><LinkedInIcon /></SocialIcon>
+              <SocialIcon href={ORG_SOCIAL.instagram} aria="Instagram"><InstagramIcon /></SocialIcon>
               <SocialIcon aria="X"><XIcon /></SocialIcon>
               <SocialIcon aria="YouTube"><YouTubeIcon /></SocialIcon>
             </div>
@@ -134,10 +135,21 @@ export default async function VitrinFooter() {
       {/* Bottom bar */}
       <div className="relative border-t border-white/5">
         <div className="vitrin-container py-5 flex flex-col lg:flex-row items-center justify-between gap-4">
-          <div className="text-xs text-[#6b8f6b]">
-            <p>
-              &copy; {new Date().getFullYear()} {ORG_LEGAL_NAME} {t("rightsReserved")}
-            </p>
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2.5 sm:gap-5 text-xs text-[#6b8f6b]">
+            <div className="flex items-center gap-2.5">
+              <Image
+                src="/images/brand/logo-mark-light.webp"
+                alt=""
+                aria-hidden="true"
+                width={26}
+                height={26}
+                className="w-6 h-6 shrink-0 opacity-80"
+              />
+              <p>
+                &copy; {new Date().getFullYear()} {ORG_LEGAL_NAME} {t("rightsReserved")}
+              </p>
+            </div>
+            <KenxBadge tone="light" />
           </div>
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs">
             <ul className="flex flex-wrap items-center gap-x-5 gap-y-2">
@@ -154,6 +166,14 @@ export default async function VitrinFooter() {
             </ul>
             <LanguageSwitcher dark />
           </div>
+        </div>
+
+        {/* Marka beyani — en alt satir. Telif satirindan ayri bir bilgi:
+            Skytech Green bir marka, tuzel kisilik Skytech Havacilik A.S. */}
+        <div className="vitrin-container pb-6 -mt-1">
+          <p className="text-[11px] text-[#4f6b4f] text-center lg:text-left">
+            {t("brandOf", { company: ORG_LEGAL_NAME })}
+          </p>
         </div>
       </div>
     </footer>

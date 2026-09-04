@@ -29,8 +29,8 @@ export default function Navbar() {
           <Image
             src="/images/brand/logo.webp"
             alt="Skytech Green"
-            width={180}
-            height={56}
+            width={320}
+            height={40}
             priority
             className="h-10 lg:h-11 w-auto transition-transform group-hover:scale-[1.03]"
           />

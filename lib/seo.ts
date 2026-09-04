@@ -42,6 +42,8 @@ export function ogLocaleAlternates(active: string): string[] {
 }
 
 export const ORG_LEGAL_NAME = "Skytech Havacılık A.Ş.";
+/** Bagli oldugumuz ana sirket. Footer'daki marka beyani buraya baglaniyor. */
+export const ORG_PARENT_URL = "https://skytechhavacilik.com";
 export const ORG_FOUNDED = "2021";
 export const ORG_AREA_SERVED = "Türkiye";
 export const ORG_ADDRESS = {
@@ -57,10 +59,20 @@ export const ORG_CONTACT = {
   phone: "+90 850 308 26 00",
   phoneSecondary: "+90 530 127 64 35",
 };
+/**
+ * Sosyal hesaplar tek kaynaktan. Footer ikonları da, schema.org sameAs da
+ * buradan okur — adresin iki yerde ayrı yazılması hâlinde biri güncellenmeden
+ * kalıyordu.
+ */
+export const ORG_SOCIAL = {
+  instagram: "https://www.instagram.com/skytechgreen/",
+  linkedin: "https://www.linkedin.com/company/skytechgreen",
+} as const;
+
 export const ORG_SAMEAS = [
-  "https://www.instagram.com/skytechgreen/",
+  ORG_SOCIAL.instagram,
+  ORG_SOCIAL.linkedin,
   // Diğer platformlar hesap açılınca eklenecek:
-  // "https://www.linkedin.com/company/skytechgreen",
   // "https://twitter.com/skytechgreen",
   // "https://www.youtube.com/@skytechgreen",
 ];

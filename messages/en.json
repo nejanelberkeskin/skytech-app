@@ -226,6 +226,7 @@
     "newsletterDesc": "For news about new projects and carbon neutralization.",
     "subscribe": "Subscribe",
     "rightsReserved": "All rights reserved.",
+    "brandOf": "Skytech Green is a brand of <link>{company}</link>",
     "services": {
       "seedBall": "Seed Ball",
       "droneTech": "Drone Technology",

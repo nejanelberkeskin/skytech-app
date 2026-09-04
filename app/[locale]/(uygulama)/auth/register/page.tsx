@@ -78,7 +78,7 @@ export default function RegisterPage() {
           <Image
             src="/images/brand/logo.webp"
             alt="Skytech Green"
-            width={140}
+            width={288}
             height={36}
             priority
             className="h-9 w-auto transition-transform duration-300 group-hover:scale-105"

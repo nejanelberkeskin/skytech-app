@@ -225,11 +225,18 @@ function WordReveal({
 }) {
   const words = text.split(" ");
   return (
-    <span className={`${gradient ? "text-gradient-aurora" : ""} ${className}`}>
+    <span className={className}>
       {words.map((word, i) => (
         <span key={i} className="inline-block overflow-hidden align-bottom py-[0.1em]">
           <motion.span
-            className="inline-block"
+            /* Gradyan, harfleri TASIYAN elemanin uzerinde durmali.
+               Disdaki span'de dururken background-clip:text, arada transform'lu
+               ve overflow:hidden'li bir katman oldugu icin ilk boyamada
+               calismiyordu: giris animasyonu bitince tarayici kirpilmis arka
+               plani yeniden boyamiyor ve yazi gorunmez kaliyordu (mobilde ilk
+               acilista). Scroll gibi bir repaint tetikleyicisi gelince
+               duzeliyordu — bu yuzden aralikli bir hata gibi gorunuyordu. */
+            className={`inline-block ${gradient ? "text-gradient-aurora" : ""}`}
             initial={{ y: "110%", opacity: 0 }}
             animate={{ y: "0%", opacity: 1 }}
             transition={{

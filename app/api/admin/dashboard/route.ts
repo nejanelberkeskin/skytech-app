@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
   const supabase = createServiceRoleClient();
 
   // ── Paralel sorgular ─────────────────────────────────────────────────────
-  const [ordersRes, landsRes, b2bRes, monthlyRes] = await Promise.all([
+  const [ordersRes, landsRes, b2bRes, monthlyRes, newRequestsRes, contactedRequestsRes] = await Promise.all([
     // Tüm ödenmiş siparişler (ciro + tohum toplamı)
     supabase
       .from("orders")
@@ -33,6 +33,10 @@ export async function GET(request: NextRequest) {
       .select("total_price, total_seeds, created_at")
       .in("status", ["confirmed", "delivered", "shipped", "preparing"])
       .gte("created_at", new Date(Date.now() - 180 * 24 * 60 * 60 * 1000).toISOString()),
+
+    // Talepler: yeni (dönüş bekleyen) ve iletişime geçilmiş
+    supabase.from("service_requests").select("id", { count: "exact", head: true }).eq("status", "new"),
+    supabase.from("service_requests").select("id", { count: "exact", head: true }).eq("status", "contacted"),
   ]);
 
   const orders = ordersRes.data ?? [];
@@ -112,6 +116,8 @@ export async function GET(request: NextRequest) {
       pendingB2b,
       quotedB2b,
       totalLands: lands.length,
+      newRequests: newRequestsRes.count ?? 0,
+      contactedRequests: contactedRequestsRes.count ?? 0,
     },
     monthlyGrowth,
     capacityAlerts,

@@ -9,7 +9,8 @@
     "lint": "eslint",
     "analyze": "ANALYZE=true next build",
     "typecheck": "tsc --noEmit",
-    "lint:check": "eslint"
+    "lint:check": "eslint",
+    "i18n:check": "node scripts/i18n-parity.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.9.0",
@@ -25,7 +26,8 @@
     "next-intl": "^4.13.0",
     "postcss": "^8.5.8",
     "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react-dom": "19.2.3",
+    "zod": "^4.6.5"
   },
   "devDependencies": {
     "@next/bundle-analyzer": "^16.2.9",

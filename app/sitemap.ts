@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 import { localeUrl } from "@/lib/seo";
-import { TRANSACTIONS_ENABLED, isSuspendedRoute } from "@/lib/site-config";
+import { isSuspendedRoute } from "@/lib/site-config";
 
 /**
  * sitemap.xml — Next.js otomatik /sitemap.xml'i bu fonksiyondan üretir.
@@ -28,6 +28,11 @@ const VITRIN_PAGES: SitemapEntry[] = [
   { path: "/hakkimizda", changeFrequency: "monthly", priority: 0.7 },
   { path: "/iletisim", changeFrequency: "yearly", priority: 0.6 },
   { path: "/bilgi-al", changeFrequency: "yearly", priority: 0.6 },
+  // Talep toplama akışı (ödeme öncesi dönem)
+  { path: "/talep", changeFrequency: "weekly", priority: 0.9 },
+  { path: "/talep/tohum", changeFrequency: "weekly", priority: 0.85 },
+  { path: "/talep/arazime-ekim", changeFrequency: "monthly", priority: 0.8 },
+  { path: "/talep/acik-arazi", changeFrequency: "weekly", priority: 0.8 },
   { path: "/gizlilik-politikasi", changeFrequency: "yearly", priority: 0.3 },
   { path: "/kullanim-kosullari", changeFrequency: "yearly", priority: 0.3 },
   { path: "/kvkk", changeFrequency: "yearly", priority: 0.3 },
@@ -50,10 +55,10 @@ const LOCALES = ["tr", "en", "ru"] as const;
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const lastModified = new Date();
-  // Transaction'lar askıdayken 307 ile /yakinda'ya yönlenen sayfaları
-  // sitemap'e koymayoruz — yönlendirilen URL'ler arama motorlarına verilmemeli.
+  // Bayraklarla /yakinda'ya yönlenen sayfaları sitemap'e koymayoruz —
+  // yönlendirilen URL'ler arama motorlarına verilmemeli.
   const all: SitemapEntry[] = [...VITRIN_PAGES, ...APP_ENTRY_PAGES].filter(
-    (entry) => TRANSACTIONS_ENABLED || !isSuspendedRoute(entry.path)
+    (entry) => !isSuspendedRoute(entry.path)
   );
 
   // Her sayfa için 3 dilde URL üret + alternates ile hreflang sinyali ver

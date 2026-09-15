@@ -10,6 +10,13 @@
  */
 
 import { createServiceRoleClient } from "@/lib/supabase/server";
+import type { ServiceRequest } from "@/lib/types";
+import {
+  REQUEST_TYPE_LABELS,
+  requestSummaryRows,
+  type LabelLocale,
+  type SummaryRow,
+} from "@/lib/requests/labels";
 
 // ── Resend REST wrapper ──────────────────────────────────────────────
 
@@ -84,6 +91,12 @@ async function logEmail(
   } catch (e) {
     console.error("[mail] Failed to log email:", e);
   }
+}
+
+// ── Hata mesajı (unknown → string) ───────────────────────────────────
+
+function errorMessage(e: unknown): string {
+  return e instanceof Error ? errorMessage(e) : String(e);
 }
 
 // ── HTML escape helper (XSS koruması) ────────────────────────────────
@@ -198,8 +211,8 @@ export async function sendOrderConfirmationEmail(data: OrderConfirmationData) {
     const result = await sendEmail({ to: data.email, subject, html });
     await logEmail("order_confirmation", data.email, subject, data.orderId, result.id || null);
     return result;
-  } catch (e: any) {
-    await logEmail("order_confirmation", data.email, subject, data.orderId, null, e.message);
+  } catch (e: unknown) {
+    await logEmail("order_confirmation", data.email, subject, data.orderId, null, errorMessage(e));
     throw e;
   }
 }
@@ -274,8 +287,8 @@ export async function sendB2BQuoteReadyEmail(data: B2BQuoteReadyData) {
     const result = await sendEmail({ to: data.email, subject, html });
     await logEmail("b2b_quote_ready", data.email, subject, data.quoteId, result.id || null);
     return result;
-  } catch (e: any) {
-    await logEmail("b2b_quote_ready", data.email, subject, data.quoteId, null, e.message);
+  } catch (e: unknown) {
+    await logEmail("b2b_quote_ready", data.email, subject, data.quoteId, null, errorMessage(e));
     throw e;
   }
 }
@@ -348,8 +361,8 @@ export async function sendSeedPlantedEmail(data: SeedPlantedData) {
     const result = await sendEmail({ to: data.email, subject, html });
     await logEmail("seed_planted", data.email, subject, data.orderId, result.id || null);
     return result;
-  } catch (e: any) {
-    await logEmail("seed_planted", data.email, subject, data.orderId, null, e.message);
+  } catch (e: unknown) {
+    await logEmail("seed_planted", data.email, subject, data.orderId, null, errorMessage(e));
     throw e;
   }
 }
@@ -406,8 +419,8 @@ export async function sendOrderPreparingEmail(
     const result = await sendEmail({ to: email, subject, html });
     await logEmail("order_preparing", email, subject, orderId, result.id || null);
     return result;
-  } catch (e: any) {
-    await logEmail("order_preparing", email, subject, orderId, null, e.message);
+  } catch (e: unknown) {
+    await logEmail("order_preparing", email, subject, orderId, null, errorMessage(e));
     throw e;
   }
 }
@@ -490,8 +503,8 @@ export async function sendOrderShippedEmail(
     const result = await sendEmail({ to: email, subject, html });
     await logEmail("order_shipped", email, subject, orderId, result.id || null);
     return result;
-  } catch (e: any) {
-    await logEmail("order_shipped", email, subject, orderId, null, e.message);
+  } catch (e: unknown) {
+    await logEmail("order_shipped", email, subject, orderId, null, errorMessage(e));
     throw e;
   }
 }
@@ -558,8 +571,8 @@ export async function sendOrderDeliveredEmail(
     const result = await sendEmail({ to: email, subject, html });
     await logEmail("order_delivered", email, subject, orderId, result.id || null);
     return result;
-  } catch (e: any) {
-    await logEmail("order_delivered", email, subject, orderId, null, e.message);
+  } catch (e: unknown) {
+    await logEmail("order_delivered", email, subject, orderId, null, errorMessage(e));
     throw e;
   }
 }
@@ -646,14 +659,14 @@ export async function sendEmployeeCertificateEmail(data: EmployeeCertificateData
       result.id || null
     );
     return result;
-  } catch (e: any) {
+  } catch (e: unknown) {
     await logEmail(
       "employee_certificate",
       data.recipientEmail,
       subject,
       data.allocationId,
       null,
-      e.message
+      errorMessage(e)
     );
     throw e;
   }
@@ -697,8 +710,168 @@ export async function sendContactFormNotification(data: ContactFormData) {
     const result = await sendEmail({ to: notifyTo, subject, html, replyTo: data.email });
     await logEmail("contact_form", notifyTo, subject, null, result.id || null);
     return result;
-  } catch (e: any) {
-    await logEmail("contact_form", notifyTo, subject, null, null, e.message);
+  } catch (e: unknown) {
+    await logEmail("contact_form", notifyTo, subject, null, null, errorMessage(e));
+    throw e;
+  }
+}
+
+// ═════════════════════════════════════════════════════════════════════
+// 8. SERVICE REQUEST — talep bildirimi (şirkete) + alındı onayı (talep sahibine)
+// ═════════════════════════════════════════════════════════════════════
+
+/** Talep e-postalarının hedef adresi — bilgi-al formuyla aynı kutu. */
+export function requestNotifyEmail(): string {
+  return process.env.REQUEST_NOTIFY_EMAIL || process.env.CONTACT_NOTIFY_EMAIL || "info@skytechgreen.com";
+}
+
+function appUrl(): string {
+  return process.env.NEXT_PUBLIC_APP_URL || "https://skytechgreen.com";
+}
+
+function summaryTable(rows: SummaryRow[]): string {
+  if (rows.length === 0) return "";
+  return `
+      <table style="width:100%;border-collapse:collapse;font-size:14px;margin:12px 0;">
+        ${rows
+          .map((r) => {
+            const value = r.href
+              ? `<a href="${esc(r.href)}" style="color:#059669;word-break:break-all;">${esc(r.value)}</a>`
+              : r.multiline
+                ? `<span style="white-space:pre-wrap;">${esc(r.value)}</span>`
+                : esc(r.value);
+            return `<tr>
+              <td style="padding:7px 12px 7px 0;color:#6b8f6b;vertical-align:top;width:150px;">${esc(r.label)}</td>
+              <td style="padding:7px 0;font-weight:600;color:#1e293b;vertical-align:top;">${value}</td>
+            </tr>`;
+          })
+          .join("")}
+      </table>`;
+}
+
+/** Talep sahibinin dilinde (ru → en) sabit metinler. */
+const CONFIRM_TEXT = {
+  tr: {
+    subject: (no: string) => `Talebiniz alındı — ${no}`,
+    title: "Talebiniz Alındı",
+    sub: "Skytech Green ekibi en kısa sürede sizinle iletişime geçecek",
+    hello: (name: string) => `Merhaba <strong>${name}</strong>,`,
+    intro: (type: string, no: string) =>
+      `<strong>${type}</strong> talebiniz bize ulaştı. Talep numaranız: <strong style="font-family:monospace;font-size:16px;color:#059669;">${no}</strong>. Yazışmalarınızda bu numarayı belirtmeniz süreci hızlandırır.`,
+    summaryTitle: "Talep özeti",
+    next: "Ekibimiz talebinizi inceleyip bir iş günü içinde bıraktığınız iletişim bilgisi üzerinden size dönüş yapacak. Fiyatlandırma ve teslimat ayrıntıları bu görüşmede netleştirilir; şu an sizden herhangi bir ödeme istenmemektedir.",
+    account: (url: string) =>
+      `Talebinizin durumunu takip etmek için <a href="${url}" class="btn">ücretsiz hesap oluşturabilirsiniz</a>.`,
+    contact: "Sorularınız için bu e-postayı yanıtlayabilir veya info@skytechgreen.com adresine yazabilirsiniz.",
+  },
+  en: {
+    subject: (no: string) => `We received your request — ${no}`,
+    title: "Request Received",
+    sub: "The Skytech Green team will get back to you shortly",
+    hello: (name: string) => `Hello <strong>${name}</strong>,`,
+    intro: (type: string, no: string) =>
+      `Your <strong>${type}</strong> has reached us. Your request number is <strong style="font-family:monospace;font-size:16px;color:#059669;">${no}</strong>. Quoting it in your correspondence speeds things up.`,
+    summaryTitle: "Request summary",
+    next: "Our team will review your request and contact you within one business day using the details you provided. Pricing and delivery details are clarified in that conversation; no payment is requested at this stage.",
+    account: (url: string) =>
+      `To track the status of your request you can <a href="${url}" class="btn">create a free account</a>.`,
+    contact: "For questions, reply to this e-mail or write to info@skytechgreen.com.",
+  },
+} as const;
+
+type MailLocale = keyof typeof CONFIRM_TEXT;
+const mailLocale = (l: LabelLocale): MailLocale => (l === "tr" ? "tr" : "en");
+
+interface RequestMailInput {
+  request: ServiceRequest;
+  landName?: string | null;
+  /** Hesap oluşturma bağlantısı gösterilsin mi (ACCOUNTS_ENABLED) */
+  accountLink?: boolean;
+}
+
+/**
+ * Şirkete yeni talep bildirimi. replyTo talep sahibinin e-postası (varsa) —
+ * "Yanıtla" doğrudan ona gider. Konu satırı talep numarası ile başlar;
+ * posta kutusunda arama/filtreleme kolaylaşır.
+ */
+export async function sendServiceRequestNotification({ request, landName }: RequestMailInput) {
+  const notifyTo = requestNotifyEmail();
+  const typeLabel = REQUEST_TYPE_LABELS.tr[request.type];
+  const subject = `[Talep] ${request.request_no} · ${typeLabel} — ${request.contact_name}`;
+  const rows = requestSummaryRows(request, "tr", landName);
+  const adminUrl = `${appUrl()}/admin/talepler?no=${encodeURIComponent(request.request_no)}`;
+  const createdAt = new Date(request.created_at).toLocaleString("tr-TR", { dateStyle: "long", timeStyle: "short" });
+
+  const html = emailLayout(subject, `
+    <div class="header">
+      <h1>Yeni Talep: ${esc(typeLabel)}</h1>
+      <p>${esc(request.request_no)} · ${esc(createdAt)}</p>
+    </div>
+    <div class="body">
+      <table style="width:100%;border-collapse:collapse;font-size:14px;">
+        <tr><td style="padding:6px 0;color:#6b8f6b;width:150px;">Ad Soyad</td><td style="padding:6px 0;font-weight:600;">${esc(request.contact_name)}</td></tr>
+        ${request.company ? `<tr><td style="padding:6px 0;color:#6b8f6b;">Şirket / Kurum</td><td style="padding:6px 0;">${esc(request.company)}</td></tr>` : ""}
+        ${request.email ? `<tr><td style="padding:6px 0;color:#6b8f6b;">E-posta</td><td style="padding:6px 0;"><a href="mailto:${esc(request.email)}" style="color:#059669;">${esc(request.email)}</a></td></tr>` : ""}
+        ${request.phone ? `<tr><td style="padding:6px 0;color:#6b8f6b;">Telefon</td><td style="padding:6px 0;"><a href="tel:${esc(request.phone)}" style="color:#059669;">${esc(request.phone)}</a></td></tr>` : ""}
+        <tr><td style="padding:6px 0;color:#6b8f6b;">Dil</td><td style="padding:6px 0;">${esc(request.locale.toUpperCase())}${request.user_id ? " · üye hesabıyla" : " · misafir"}</td></tr>
+      </table>
+      <p style="margin:18px 0 4px;color:#6b8f6b;font-size:13px;font-weight:600;">TALEP DETAYI</p>
+      ${summaryTable(rows)}
+      ${request.message ? `
+      <p style="margin:16px 0 4px;color:#6b8f6b;font-size:13px;">Mesaj</p>
+      <p style="white-space:pre-wrap;background:#f8faf5;border-radius:8px;padding:14px;font-size:14px;">${esc(request.message)}</p>` : ""}
+      <p style="text-align:center;margin-top:24px;">
+        <a href="${adminUrl}" class="btn">Yönetim panelinde aç</a>
+      </p>
+      <p style="color:#94a3b8;font-size:12px;margin-top:16px;">Kayıt kimliği: ${esc(request.id)} · KVKK onayı: ${esc(request.consent_version)}</p>
+    </div>
+  `);
+
+  try {
+    const result = await sendEmail({ to: notifyTo, subject, html, replyTo: request.email ?? undefined });
+    await logEmail("service_request_notify", notifyTo, subject, request.id, result.id || null);
+    return result;
+  } catch (e: unknown) {
+    await logEmail("service_request_notify", notifyTo, subject, request.id, null, errorMessage(e));
+    throw e;
+  }
+}
+
+/** Talep sahibine alındı onayı — e-posta bırakmışsa. Fiyat içermez. */
+export async function sendServiceRequestConfirmation({ request, landName, accountLink }: RequestMailInput) {
+  if (!request.email) return { id: "skipped-no-email" } as ResendResponse;
+
+  const loc = mailLocale(request.locale);
+  const t = CONFIRM_TEXT[loc];
+  const typeLabel = REQUEST_TYPE_LABELS[loc][request.type];
+  const subject = t.subject(request.request_no);
+  const rows = requestSummaryRows(request, loc, landName);
+  const registerUrl = `${appUrl()}/auth/register?talep=${encodeURIComponent(request.id)}`;
+
+  const html = emailLayout(subject, `
+    <div class="header">
+      <h1>${esc(t.title)}</h1>
+      <p>${esc(t.sub)}</p>
+    </div>
+    <div class="body">
+      <p>${t.hello(esc(request.contact_name))}</p>
+      <p>${t.intro(esc(typeLabel), esc(request.request_no))}</p>
+      <div class="info-box">
+        <p style="margin:0 0 6px;color:#166534;font-size:13px;font-weight:700;">${esc(t.summaryTitle)}</p>
+        ${summaryTable(rows)}
+      </div>
+      <p>${esc(t.next)}</p>
+      ${accountLink ? `<p style="text-align:center;margin-top:20px;">${t.account(registerUrl)}</p>` : ""}
+      <p style="color:#64748b;font-size:13px;margin-top:20px;">${esc(t.contact)}</p>
+    </div>
+  `);
+
+  try {
+    const result = await sendEmail({ to: request.email, subject, html });
+    await logEmail("service_request_confirm", request.email, subject, request.id, result.id || null);
+    return result;
+  } catch (e: unknown) {
+    await logEmail("service_request_confirm", request.email, subject, request.id, null, errorMessage(e));
     throw e;
   }
 }

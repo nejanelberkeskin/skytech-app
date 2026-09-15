@@ -3,6 +3,17 @@
 import { useEffect, useState, useRef } from "react";
 import { supabase } from "@/lib/supabase/browser";
 import Link from "next/link";
+import { TRANSACTIONS_ENABLED } from "@/lib/site-config";
+import RequestsOverview from "@/components/hesabim/RequestsOverview";
+
+/**
+ * Hesabım — genel bakış. Ödeme kapalıyken (talep toplama dönemi) sipariş /
+ * sertifika sayaçları yerine talep özeti gösterilir.
+ */
+export default function HesabimOverview() {
+  if (!TRANSACTIONS_ENABLED) return <RequestsOverview />;
+  return <OrdersOverview />;
+}
 
 /* ── CountUp Hook ──────────────────────────────────────────── */
 function useCountUp(target: number, duration = 1200) {
@@ -33,7 +44,7 @@ interface DashboardData {
   certificates: number;
 }
 
-export default function HesabimOverview() {
+function OrdersOverview() {
   const [data, setData] = useState<DashboardData>({ totalSeeds: 0, estimatedCarbon: 0, activeReservations: 0, certificates: 0 });
   const [recentOrders, setRecentOrders] = useState<{ id: string; created_at: string; total_seeds: number; status: string; order_type: string }[]>([]);
   const [loading, setLoading] = useState(true);

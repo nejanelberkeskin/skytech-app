@@ -4,7 +4,7 @@ import { Link } from "@/i18n/navigation";
 import { motion, type Variants } from "framer-motion";
 import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
-import { TRANSACTIONS_ENABLED } from "@/lib/site-config";
+import { CTA_MODE, orderCtaHref } from "@/lib/site-config";
 
 export default function CarbonCalculator() {
   const t = useTranslations("carbonCalculator");
@@ -134,7 +134,7 @@ export default function CarbonCalculator() {
             </motion.div>
 
             <motion.div variants={itemVariants}>
-              <Link href={TRANSACTIONS_ENABLED ? "/bireysel/satin-al" : "/yakinda"} className="block group">
+              <Link href={orderCtaHref("openLand")} className="block group">
                 <motion.div
                   whileHover={{ y: -2 }}
                   whileTap={{ scale: 0.98 }}
@@ -151,7 +151,7 @@ export default function CarbonCalculator() {
                     }}
                   />
                   <span className="relative inline-flex items-center gap-3">
-                    {TRANSACTIONS_ENABLED ? t("cta.start") : t("cta.soon")}
+                    {CTA_MODE === "order" ? t("cta.start") : CTA_MODE === "request" ? t("cta.request") : t("cta.soon")}
                     <motion.svg
                       className="w-5 h-5"
                       viewBox="0 0 24 24"

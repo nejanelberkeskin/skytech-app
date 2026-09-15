@@ -22,7 +22,10 @@
     "signUp": "Get Started",
     "orderSeeds": "Order Seeds",
     "menu": "Menu",
-    "comingSoon": "Coming Soon"
+    "comingSoon": "Coming Soon",
+    "requests": "Submit a Request",
+    "account": "My Account",
+    "register": "Sign Up"
   },
   "hero": {
     "badge": "Carbon Neutral · Transparent · Measurable",
@@ -35,7 +38,8 @@
     "trustAnnualReport": "Annual drone reporting",
     "trustCertificate": "Carbon certificate",
     "discover": "Explore",
-    "backgroundAlt": "Forest land being seeded with seed balls by drone"
+    "backgroundAlt": "Forest land being seeded with seed balls by drone",
+    "ctaRequest": "Submit a Request"
   },
   "valueCards": {
     "badge": "Why Skytech Green?",
@@ -237,7 +241,8 @@
       "about": "About Us",
       "projects": "Projects",
       "info": "Get Info",
-      "contact": "Contact"
+      "contact": "Contact",
+      "requests": "Submit a Request"
     },
     "legal": {
       "privacy": "Privacy Policy",
@@ -415,7 +420,8 @@
     "subtitle": "Individual or corporate — every contribution matters. Plant your first seed today and track your impact instantly.",
     "ctaPrimary": "Get Started",
     "ctaComingSoon": "Coming Soon",
-    "ctaSecondary": "Contact Us"
+    "ctaSecondary": "Contact Us",
+    "ctaRequest": "Submit a Request"
   },
   "carbonCalculator": {
     "badge": "Carbon Calculator",
@@ -443,7 +449,8 @@
     },
     "cta": {
       "start": "Start This Impact — Order Seeds",
-      "soon": "Coming Soon"
+      "soon": "Coming Soon",
+      "request": "Start This Impact — Submit a Request"
     }
   },
   "faqSection": {
@@ -540,7 +547,8 @@
           "Planting guide (PDF)",
           "Community forum access"
         ],
-        "cta": "Order Seeds"
+        "cta": "Order Seeds",
+        "ctaRequest": "Request Seeds"
       },
       "weplant": {
         "name": "We'll Plant It",
@@ -553,7 +561,8 @@
           "Carbon neutralization certificate",
           "Gifting + shareable profile"
         ],
-        "cta": "Start Professional Planting"
+        "cta": "Start Professional Planting",
+        "ctaRequest": "Request Planting"
       },
       "corporate": {
         "name": "Corporate Reforestation",
@@ -679,7 +688,8 @@
       "subtitle": "Plant your first seed today and track your impact right away. Together, a greener future is possible.",
       "primaryEnabled": "Order Seeds",
       "primaryDisabled": "Coming Soon",
-      "secondary": "Contact Us"
+      "secondary": "Contact Us",
+      "primaryRequest": "Submit a Request"
     }
   },
   "contactPage": {
@@ -813,7 +823,8 @@
       "title": "Order Your Own <grad>Seed Ball</grad>",
       "subtitle": "Delivered to your address, with professional planting in your own garden or in selected Skytech areas.",
       "buttonOrder": "Place Order",
-      "buttonSoon": "Coming Soon"
+      "buttonSoon": "Coming Soon",
+      "buttonRequest": "Submit a Request"
     }
   },
   "droneTechPage": {
@@ -1011,7 +1022,8 @@
       "primaryEnabled": "Get a Corporate Quote",
       "primaryDisabled": "Get Information",
       "secondaryEnabled": "Order Seeds as an Individual",
-      "secondaryDisabled": "Coming Soon"
+      "secondaryDisabled": "Coming Soon",
+      "secondaryRequest": "Individual Request"
     }
   },
   "corporatePage": {
@@ -1226,21 +1238,22 @@
   },
   "comingSoonPage": {
     "meta": {
-      "title": "Coming Soon — Ordering and Membership Coming Very Soon",
-      "description": "Seed ordering, membership and the corporate panel are opening very soon. For now, you can use our form to get information or reach us for corporate inquiries."
+      "title": "Coming Soon — Pricing and Online Payment",
+      "description": "Pricing and online payment are launching soon. You can already submit a seed, planting or land request and create an account."
     },
     "badge": "Coming Soon",
     "title": {
-      "lead": "Ordering & Membership",
+      "lead": "Online Payment",
       "highlight": "Coming Soon"
     },
     "body": {
-      "primary": "We are putting the finishing touches on our seed ordering, digital certificate and membership system. Very soon you'll be able to order your seed balls right here and track your impact.",
-      "secondary": "Until then, you can explore our projects, get information, or contact us about corporate partnerships."
+      "primary": "We are finalising our pricing and online payment infrastructure. In the meantime we collect your request and settle pricing and planning together with you.",
+      "secondary": "For a seed request, a planting application for your land or seeding on our open sites, just fill in the form; our team gets back to you within one business day."
     },
     "cta": {
       "home": "Back to Home",
-      "info": "Get Information"
+      "info": "Get Information",
+      "request": "Submit a Request"
     },
     "discover": {
       "heading": "Explore in the Meantime",
@@ -1315,5 +1328,258 @@
     "policyLink": "Cookie Policy",
     "rejectAll": "Essential Only",
     "acceptAll": "Accept All"
+  },
+  "requestsHub": {
+    "meta": {
+      "title": "Submit a Request — Seeds, Planting and Land Applications",
+      "description": "Leave a request without paying: seed balls delivered to you, drone planting on your land, or seeding on our open sites. Our team gets back to you within one business day."
+    },
+    "breadcrumb": {
+      "label": "Submit a Request",
+      "title": "Leave Your Request, We Will Call You",
+      "subtitle": "Pricing and online payment are coming soon. For now we collect your request and settle species, quantity and schedule together with you."
+    },
+    "badge": "No payment · No commitment",
+    "cards": {
+      "seed": {
+        "tag": "Individual",
+        "title": "Seed Request",
+        "desc": "Seed balls delivered to your address. Pick the species and quantity; we plan the rest together.",
+        "cta": "Request seeds"
+      },
+      "land": {
+        "tag": "Landowner",
+        "title": "Plant on My Land",
+        "desc": "Drone planting application for your burnt, degraded or idle land. Survey and planning are on us.",
+        "cta": "Apply"
+      },
+      "openLand": {
+        "tag": "We plant",
+        "title": "Seeds on Open Land",
+        "desc": "We plant on Skytech sites in your name. Choose the site and the number of seeds.",
+        "cta": "Submit a request"
+      }
+    },
+    "how": {
+      "title": "How it works",
+      "steps": [
+        {
+          "title": "Leave your request",
+          "desc": "Fill in the form in two minutes; no account needed."
+        },
+        {
+          "title": "We call you",
+          "desc": "Our team gets back to you by phone or e-mail within one business day."
+        },
+        {
+          "title": "We plan together",
+          "desc": "Species, quantity, pricing and schedule are settled in that conversation."
+        }
+      ]
+    },
+    "note": {
+      "title": "Pricing and payment",
+      "desc": "Pricing and online payment are launching soon. No payment is requested at this stage; your request does not commit you to anything."
+    },
+    "account": {
+      "title": "Track your request",
+      "desc": "Create a free account to follow the status of all your requests in one place.",
+      "cta": "Create account",
+      "login": "Sign in"
+    }
+  },
+  "requestForms": {
+    "common": {
+      "backToHub": "All request types",
+      "required": "required",
+      "optional": "optional",
+      "contact": {
+        "heading": "How can we reach you?",
+        "sub": "Leave at least one of phone or e-mail.",
+        "name": "Full name",
+        "namePlaceholder": "Your full name",
+        "email": "E-mail",
+        "emailPlaceholder": "you@example.com",
+        "phone": "Phone",
+        "phonePlaceholder": "+90 5XX XXX XX XX",
+        "company": "Company / Institution",
+        "companyPlaceholder": "Optional",
+        "message": "Your note",
+        "messagePlaceholder": "Anything you would like to add?"
+      },
+      "prefilled": "Your contact details were filled from your account; you can change them.",
+      "consent": "I have read the <kvkk>Privacy Notice (KVKK)</kvkk> and consent to my data being processed to respond to this request.",
+      "noPayment": "No payment is taken with this form. Pricing and planning are settled when our team gets back to you.",
+      "submit": "Send Request",
+      "submitting": "Sending…",
+      "summary": {
+        "title": "Request summary",
+        "empty": "Your summary appears here as you make your choices."
+      },
+      "success": {
+        "title": "Request received",
+        "desc": "Our team will contact you within one business day.",
+        "numberLabel": "Your request number",
+        "copy": "Copy",
+        "copied": "Copied",
+        "emailNote": "A confirmation e-mail was sent to {email}.",
+        "nextTitle": "What happens next?",
+        "next": [
+          "We review your request.",
+          "We get back to you by phone or e-mail.",
+          "We settle species, quantity, pricing and schedule together."
+        ],
+        "accountTitle": "Track your request from your account",
+        "accountDesc": "Create a free account and this request is linked to it automatically.",
+        "accountCta": "Create account",
+        "trackCta": "Go to my requests",
+        "home": "Back to home",
+        "another": "Submit another request"
+      },
+      "errors": {
+        "generic": "Something went wrong. Please try again or write to info@skytechgreen.com.",
+        "rateLimited": "Too many requests in a short time. Please try again a little later.",
+        "closed": "Requests are currently closed.",
+        "fixFields": "Please check the highlighted fields.",
+        "nameRequired": "Full name is required.",
+        "nameShort": "Full name must be at least 2 characters.",
+        "tooLong": "Text is too long.",
+        "emailInvalid": "Enter a valid e-mail address.",
+        "phoneInvalid": "Enter a valid phone number (e.g. +90 5XX XXX XX XX).",
+        "contactRequired": "Enter at least one of phone or e-mail.",
+        "consentRequired": "Tick the consent box to continue.",
+        "seedRequired": "Select at least one seed species.",
+        "seedTooMany": "You can select at most {max} species.",
+        "seedDuplicate": "The same species was added more than once.",
+        "seedInvalid": "The selected species is no longer available; refresh the page.",
+        "quantityInvalid": "Quantity must be a whole number.",
+        "quantityMin": "Quantity must be at least {min}.",
+        "quantityMax": "Quantity can be at most {max}.",
+        "provinceRequired": "Select a province.",
+        "provinceInvalid": "Invalid province.",
+        "areaRequired": "Enter the area size.",
+        "areaMin": "Area size is too small.",
+        "areaMax": "Area size is too large.",
+        "areaUnitInvalid": "Select a unit.",
+        "conditionRequired": "Select at least one land condition.",
+        "ownershipRequired": "Select the ownership type.",
+        "timingRequired": "Select a timing.",
+        "urlInvalid": "The link must start with http(s)://.",
+        "landInvalid": "The selected site is currently closed to requests; choose another site."
+      }
+    },
+    "seed": {
+      "meta": {
+        "title": "Seed Request — Seed Balls Delivered to You",
+        "description": "Request Turkish red pine, black pine, cedar and juniper seed balls. Pick species and quantity; our team settles pricing and delivery with you. No payment."
+      },
+      "breadcrumb": {
+        "label": "Seed Request",
+        "title": "Seed Request",
+        "subtitle": "Pick the species and quantity and leave your contact details. We settle pricing and delivery with you within one business day."
+      },
+      "species": {
+        "heading": "Which species would you like?",
+        "sub": "Select one or more species and set the quantity. Quantity means number of seed balls.",
+        "quantity": "Quantity",
+        "selected": "Selected",
+        "select": "Select"
+      },
+      "delivery": {
+        "heading": "Delivery",
+        "sub": "Shipping details are settled later; the province is enough for now.",
+        "province": "Province",
+        "provincePlaceholder": "Select a province",
+        "district": "District",
+        "districtPlaceholder": "Optional"
+      },
+      "purpose": {
+        "heading": "Purpose",
+        "sub": "Optional — helps us recommend the right species."
+      },
+      "summary": {
+        "species": "Species",
+        "total": "Total seeds",
+        "province": "Province"
+      }
+    },
+    "land": {
+      "meta": {
+        "title": "Plant on My Land — Drone Planting Application",
+        "description": "Apply for drone seed-ball planting on your burnt, degraded or idle land. Share the location, area and land condition; survey and planning are on us."
+      },
+      "breadcrumb": {
+        "label": "Plant on My Land",
+        "title": "Plant on My Land",
+        "subtitle": "Describe your land briefly. Our team assesses suitability and contacts you for a survey and planning."
+      },
+      "location": {
+        "heading": "Where is the land?",
+        "province": "Province",
+        "provincePlaceholder": "Select a province",
+        "district": "District",
+        "districtPlaceholder": "Optional",
+        "mapLink": "Map link",
+        "mapLinkPlaceholder": "https://maps.app.goo.gl/… (optional)"
+      },
+      "area": {
+        "heading": "Area size",
+        "value": "Size",
+        "unit": "Unit",
+        "hint": "An approximate value is enough."
+      },
+      "condition": {
+        "heading": "Condition of the land",
+        "sub": "You can select more than one."
+      },
+      "ownership": {
+        "heading": "Ownership"
+      },
+      "timing": {
+        "heading": "When would you like planting?"
+      },
+      "notes": {
+        "heading": "Access and terrain notes",
+        "placeholder": "Road access, slope, water source, previous plantings… (optional)"
+      },
+      "summary": {
+        "location": "Location",
+        "area": "Area",
+        "condition": "Condition",
+        "timing": "Timing"
+      }
+    },
+    "openLand": {
+      "meta": {
+        "title": "Seeds on Open Land — We Plant in Your Name",
+        "description": "Drone seed-ball planting on Skytech's open sites in your name. Choose the site and quantity, optionally dedicate it to someone; our team settles pricing with you."
+      },
+      "breadcrumb": {
+        "label": "Seeds on Open Land",
+        "title": "Seeds on Open Land",
+        "subtitle": "Choose the site and the number of seeds. Our team selects the species for the region's climate; pricing is settled when we get back to you."
+      },
+      "land": {
+        "heading": "Which site should we plant?",
+        "sub": "Choose one of our sites open to requests.",
+        "empty": "No site is open to requests right now. You can write your preferred region in your note.",
+        "region": "Region",
+        "open": "Open to requests"
+      },
+      "quantity": {
+        "heading": "How many seeds?",
+        "sub": "Quantity means number of seed balls."
+      },
+      "dedication": {
+        "heading": "In whose name?",
+        "sub": "Optional — the recipient's name if this is a gift.",
+        "placeholder": "Full name"
+      },
+      "summary": {
+        "land": "Site",
+        "quantity": "Seed quantity",
+        "dedication": "In the name of"
+      }
+    }
   }
 }

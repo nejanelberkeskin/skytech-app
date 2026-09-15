@@ -3,6 +3,7 @@ import { Link } from "@/i18n/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import SectionWrapper from "@/components/vitrin/SectionWrapper";
 import { buildPageMetadata } from "@/lib/seo";
+import { REQUESTS_ENABLED, REQUEST_ROUTES } from "@/lib/site-config";
 
 export async function generateMetadata({
   params,
@@ -60,12 +61,25 @@ export default async function YakindaPage({
 
         {/* CTA'lar */}
         <div className="flex flex-col sm:flex-row gap-3 items-center justify-center">
-          <Link href="/" className="vitrin-cta-secondary">
-            {t("cta.home")}
-          </Link>
-          <Link href="/bilgi-al" className="vitrin-cta-primary">
-            {t("cta.info")}
-          </Link>
+          {REQUESTS_ENABLED ? (
+            <>
+              <Link href={REQUEST_ROUTES.hub} className="vitrin-cta-primary">
+                {t("cta.request")}
+              </Link>
+              <Link href="/bilgi-al" className="vitrin-cta-secondary">
+                {t("cta.info")}
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link href="/" className="vitrin-cta-secondary">
+                {t("cta.home")}
+              </Link>
+              <Link href="/bilgi-al" className="vitrin-cta-primary">
+                {t("cta.info")}
+              </Link>
+            </>
+          )}
         </div>
 
         {/* Hızlı linkler */}

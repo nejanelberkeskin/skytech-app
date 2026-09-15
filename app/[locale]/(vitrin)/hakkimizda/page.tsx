@@ -8,7 +8,7 @@ import SectionHeading from "@/components/vitrin/SectionHeading";
 import Timeline from "@/components/vitrin/hakkimizda/Timeline";
 import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
 import { buildPageMetadata } from "@/lib/seo";
-import { TRANSACTIONS_ENABLED } from "@/lib/site-config";
+import { CTA_MODE, orderCtaHref } from "@/lib/site-config";
 
 export async function generateMetadata({
   params,
@@ -181,8 +181,8 @@ export default async function HakkimizdaPage({
             {t("cta.subtitle")}
           </p>
           <div className="flex flex-col sm:flex-row gap-3 items-center justify-center">
-            <Link href={TRANSACTIONS_ENABLED ? "/bireysel/satin-al" : "/yakinda"} className="vitrin-cta-primary">
-              {TRANSACTIONS_ENABLED ? t("cta.primaryEnabled") : t("cta.primaryDisabled")}
+            <Link href={orderCtaHref("hub")} className="vitrin-cta-primary">
+              {CTA_MODE === "order" ? t("cta.primaryEnabled") : CTA_MODE === "request" ? t("cta.primaryRequest") : t("cta.primaryDisabled")}
             </Link>
             <Link href="/iletisim" className="vitrin-cta-secondary">{t("cta.secondary")}</Link>
           </div>

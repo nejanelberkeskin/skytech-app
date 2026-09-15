@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { TRANSACTIONS_ENABLED } from "@/lib/site-config";
+import { CTA_MODE, orderCtaHref } from "@/lib/site-config";
 
 const MotionLink = motion.create(Link);
 
@@ -142,8 +142,8 @@ export default function HeroSection() {
             transition={{ duration: 0.9, delay: 1.15, ease: [0.16, 1, 0.3, 1] }}
             className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16"
           >
-            <MagneticCTA href={TRANSACTIONS_ENABLED ? "/bireysel/satin-al" : "/yakinda"} variant="primary">
-              <span>{TRANSACTIONS_ENABLED ? t("ctaPrimary") : tNav("comingSoon")}</span>
+            <MagneticCTA href={orderCtaHref("hub")} variant="primary">
+              <span>{CTA_MODE === "order" ? t("ctaPrimary") : CTA_MODE === "request" ? t("ctaRequest") : tNav("comingSoon")}</span>
               <motion.svg
                 className="w-5 h-5"
                 viewBox="0 0 24 24"

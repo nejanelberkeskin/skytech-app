@@ -22,7 +22,10 @@
     "signUp": "Hemen Başla",
     "orderSeeds": "Tohum Sipariş Et",
     "menu": "Menü",
-    "comingSoon": "Yakında"
+    "comingSoon": "Yakında",
+    "requests": "Talep Oluştur",
+    "account": "Hesabım",
+    "register": "Üye Ol"
   },
   "hero": {
     "badge": "Karbon Nötrleme · Şeffaf · Ölçülebilir",
@@ -35,7 +38,8 @@
     "trustAnnualReport": "Yıllık drone raporlama",
     "trustCertificate": "Karbon sertifikası",
     "discover": "Keşfet",
-    "backgroundAlt": "Dron ile tohum topu ekimi yapılan orman arazisi"
+    "backgroundAlt": "Dron ile tohum topu ekimi yapılan orman arazisi",
+    "ctaRequest": "Talep Oluştur"
   },
   "valueCards": {
     "badge": "Neden Skytech Green?",
@@ -237,7 +241,8 @@
       "about": "Hakkımızda",
       "projects": "Projeler",
       "info": "Bilgi Al",
-      "contact": "İletişim"
+      "contact": "İletişim",
+      "requests": "Talep Oluştur"
     },
     "legal": {
       "privacy": "Gizlilik Politikası",
@@ -415,7 +420,8 @@
     "subtitle": "Bireysel veya kurumsal — her katkı önemli. İlk tohumunuzu bugün ekin, etkinizi anında izleyin.",
     "ctaPrimary": "Hemen Başla",
     "ctaComingSoon": "Yakında",
-    "ctaSecondary": "Bize Ulaşın"
+    "ctaSecondary": "Bize Ulaşın",
+    "ctaRequest": "Talep Oluştur"
   },
   "carbonCalculator": {
     "badge": "Karbon Hesaplayıcı",
@@ -443,7 +449,8 @@
     },
     "cta": {
       "start": "Bu Etkiyi Başlat — Tohum Sipariş Et",
-      "soon": "Yakında"
+      "soon": "Yakında",
+      "request": "Bu Etkiyi Başlat — Talep Oluştur"
     }
   },
   "faqSection": {
@@ -540,7 +547,8 @@
           "Ekim rehberi (PDF)",
           "Topluluk forumu erişimi"
         ],
-        "cta": "Tohum Sipariş Et"
+        "cta": "Tohum Sipariş Et",
+        "ctaRequest": "Tohum Talebi Oluştur"
       },
       "weplant": {
         "name": "Biz Ekelim",
@@ -553,7 +561,8 @@
           "Karbon nötrleme sertifikası",
           "Hediyeleştirme + paylaşılabilir profil"
         ],
-        "cta": "Profesyonel Ekim Başlat"
+        "cta": "Profesyonel Ekim Başlat",
+        "ctaRequest": "Ekim Talebi Oluştur"
       },
       "corporate": {
         "name": "Kurumsal Ormanlaştırma",
@@ -679,7 +688,8 @@
       "subtitle": "İlk tohumunuzu bugün ekin, etkinizi hemen izleyin. Birlikte daha yeşil bir gelecek mümkün.",
       "primaryEnabled": "Tohum Sipariş Et",
       "primaryDisabled": "Yakında",
-      "secondary": "Bize Ulaşın"
+      "secondary": "Bize Ulaşın",
+      "primaryRequest": "Talep Oluştur"
     }
   },
   "contactPage": {
@@ -813,7 +823,8 @@
       "title": "Kendi <grad>Tohum Topunuzu</grad> Sipariş Edin",
       "subtitle": "Adresinize teslim, kendi bahçenizde veya seçilen Skytech alanlarında profesyonel ekim ile.",
       "buttonOrder": "Sipariş Ver",
-      "buttonSoon": "Yakında"
+      "buttonSoon": "Yakında",
+      "buttonRequest": "Talep Oluştur"
     }
   },
   "droneTechPage": {
@@ -1011,7 +1022,8 @@
       "primaryEnabled": "Kurumsal Teklif Al",
       "primaryDisabled": "Bilgi Al",
       "secondaryEnabled": "Bireysel Tohum Sipariş Et",
-      "secondaryDisabled": "Yakında"
+      "secondaryDisabled": "Yakında",
+      "secondaryRequest": "Bireysel Talep Oluştur"
     }
   },
   "corporatePage": {
@@ -1226,21 +1238,22 @@
   },
   "comingSoonPage": {
     "meta": {
-      "title": "Yakında — Sipariş ve Üyelik Çok Yakında",
-      "description": "Tohum siparişi, üyelik ve kurumsal panel çok yakında açılıyor. Şimdilik bilgi almak veya kurumsal iletişim için formumuzu kullanabilirsiniz."
+      "title": "Yakında — Fiyatlandırma ve Online Ödeme",
+      "description": "Fiyatlandırma ve online ödeme çok yakında açılıyor. Şimdiden tohum, ekim ve arazi başvurusu talebi bırakabilir, hesap oluşturabilirsiniz."
     },
     "badge": "Çok Yakında",
     "title": {
-      "lead": "Sipariş & Üyelik",
+      "lead": "Online Ödeme",
       "highlight": "Çok Yakında"
     },
     "body": {
-      "primary": "Tohum siparişi, dijital sertifika ve üyelik sistemimiz üzerinde son hazırlıkları yapıyoruz. Çok yakında buradan tohum toplarınızı sipariş edebilecek ve etkinizi takip edebileceksiniz.",
-      "secondary": "O zamana kadar projelerimizi inceleyebilir, bilgi alabilir veya kurumsal iş birlikleri için bizimle iletişime geçebilirsiniz."
+      "primary": "Fiyatlandırma ve online ödeme altyapımızda son hazırlıkları yapıyoruz. Bu aşamada talebinizi alıyor, fiyat ve planlamayı sizinle birlikte netleştiriyoruz.",
+      "secondary": "Tohum talebi, arazinize ekim başvurusu ya da açık sahalarımıza tohum talebi için formu doldurmanız yeterli; ekibimiz bir iş günü içinde dönüş yapar."
     },
     "cta": {
       "home": "Ana Sayfaya Dön",
-      "info": "Bilgi Al"
+      "info": "Bilgi Al",
+      "request": "Talep Oluştur"
     },
     "discover": {
       "heading": "Bu Arada Keşfedin",
@@ -1315,5 +1328,258 @@
     "policyLink": "Çerez Politikası",
     "rejectAll": "Sadece Zorunlu",
     "acceptAll": "Tümünü Kabul Et"
+  },
+  "requestsHub": {
+    "meta": {
+      "title": "Talep Oluştur — Tohum, Ekim ve Arazi Başvurusu",
+      "description": "Ödeme yapmadan talep bırakın: tohum topu talebi, arazinize drone ile ekim başvurusu ya da açık sahalarımıza tohum talebi. Ekibimiz bir iş günü içinde size dönsün."
+    },
+    "breadcrumb": {
+      "label": "Talep Oluştur",
+      "title": "Talebinizi Bırakın, Sizi Arayalım",
+      "subtitle": "Fiyatlandırma ve online ödeme çok yakında. Bu aşamada talebinizi alıyor, tür, adet ve takvimi sizinle birlikte netleştiriyoruz."
+    },
+    "badge": "Ödeme yok · Taahhüt yok",
+    "cards": {
+      "seed": {
+        "tag": "Bireysel",
+        "title": "Tohum Talebi",
+        "desc": "Tohum toplarını adresinize gönderelim. Türü ve adedi seçin, gerisini birlikte planlayalım.",
+        "cta": "Tohum talebi oluştur"
+      },
+      "land": {
+        "tag": "Arazi sahibi",
+        "title": "Arazime Ekim Yapın",
+        "desc": "Yanmış, bozulmuş ya da atıl araziniz için drone ile ekim başvurusu. Keşif ve planlama bizden.",
+        "cta": "Başvuru yap"
+      },
+      "openLand": {
+        "tag": "Biz ekelim",
+        "title": "Açık Araziye Tohum",
+        "desc": "Skytech sahalarına sizin adınıza ekim yapalım. Sahayı ve tohum adedini seçin.",
+        "cta": "Talep oluştur"
+      }
+    },
+    "how": {
+      "title": "Nasıl işler?",
+      "steps": [
+        {
+          "title": "Talebinizi bırakın",
+          "desc": "Formu iki dakikada doldurun; hesap açmanız gerekmez."
+        },
+        {
+          "title": "Sizi arayalım",
+          "desc": "Ekibimiz bir iş günü içinde telefon ya da e-posta ile dönüş yapar."
+        },
+        {
+          "title": "Birlikte planlayalım",
+          "desc": "Tür, adet, fiyat ve takvimi görüşmede netleştiririz."
+        }
+      ]
+    },
+    "note": {
+      "title": "Fiyat ve ödeme",
+      "desc": "Fiyatlandırma ve online ödeme çok yakında açılıyor. Bu aşamada sizden ödeme istenmez; talebiniz sizi hiçbir şeye bağlamaz."
+    },
+    "account": {
+      "title": "Talebinizi takip edin",
+      "desc": "Ücretsiz hesap açarak taleplerinizin durumunu tek yerden izleyebilirsiniz.",
+      "cta": "Hesap oluştur",
+      "login": "Giriş yap"
+    }
+  },
+  "requestForms": {
+    "common": {
+      "backToHub": "Tüm talep türleri",
+      "required": "zorunlu",
+      "optional": "isteğe bağlı",
+      "contact": {
+        "heading": "Size nasıl ulaşalım?",
+        "sub": "Telefon veya e-postadan en az birini bırakın.",
+        "name": "Ad Soyad",
+        "namePlaceholder": "Adınız Soyadınız",
+        "email": "E-posta",
+        "emailPlaceholder": "ornek@mail.com",
+        "phone": "Telefon",
+        "phonePlaceholder": "5XX XXX XX XX",
+        "company": "Şirket / Kurum",
+        "companyPlaceholder": "İsteğe bağlı",
+        "message": "Notunuz",
+        "messagePlaceholder": "Eklemek istediğiniz bir şey var mı?"
+      },
+      "prefilled": "İletişim bilgileriniz hesabınızdan dolduruldu; dilerseniz değiştirebilirsiniz.",
+      "consent": "<kvkk>KVKK Aydınlatma Metni</kvkk>'ni okudum; verilerimin talebimle ilgili iletişim için işlenmesine onay veriyorum.",
+      "noPayment": "Bu formla ödeme alınmaz. Fiyat ve planlama, ekibimizin dönüşünde netleşir.",
+      "submit": "Talebi Gönder",
+      "submitting": "Gönderiliyor…",
+      "summary": {
+        "title": "Talep özeti",
+        "empty": "Seçimlerinizi yaptıkça özet burada görünür."
+      },
+      "success": {
+        "title": "Talebiniz alındı",
+        "desc": "Ekibimiz bir iş günü içinde sizinle iletişime geçecek.",
+        "numberLabel": "Talep numaranız",
+        "copy": "Kopyala",
+        "copied": "Kopyalandı",
+        "emailNote": "Onay e-postası {email} adresine gönderildi.",
+        "nextTitle": "Sırada ne var?",
+        "next": [
+          "Talebinizi inceliyoruz.",
+          "Telefon ya da e-posta ile size dönüyoruz.",
+          "Tür, adet, fiyat ve takvimi birlikte netleştiriyoruz."
+        ],
+        "accountTitle": "Talebinizi hesabınızdan takip edin",
+        "accountDesc": "Ücretsiz hesap açın; talebiniz otomatik olarak hesabınıza bağlansın.",
+        "accountCta": "Hesap oluştur",
+        "trackCta": "Taleplerime git",
+        "home": "Ana sayfaya dön",
+        "another": "Yeni talep oluştur"
+      },
+      "errors": {
+        "generic": "Bir şeyler ters gitti. Lütfen tekrar deneyin ya da info@skytechgreen.com adresine yazın.",
+        "rateLimited": "Kısa sürede çok fazla talep gönderildi. Lütfen biraz sonra tekrar deneyin.",
+        "closed": "Talep alımı şu anda kapalı.",
+        "fixFields": "Lütfen işaretli alanları kontrol edin.",
+        "nameRequired": "Ad Soyad zorunludur.",
+        "nameShort": "Ad Soyad en az 2 karakter olmalı.",
+        "tooLong": "Metin çok uzun.",
+        "emailInvalid": "Geçerli bir e-posta adresi girin.",
+        "phoneInvalid": "Geçerli bir telefon numarası girin (örn. 5XX XXX XX XX).",
+        "contactRequired": "Telefon veya e-postadan en az birini girin.",
+        "consentRequired": "Devam etmek için onay kutusunu işaretleyin.",
+        "seedRequired": "En az bir tohum türü seçin.",
+        "seedTooMany": "En fazla {max} tür seçebilirsiniz.",
+        "seedDuplicate": "Aynı tür birden fazla eklenmiş.",
+        "seedInvalid": "Seçilen tür artık mevcut değil; sayfayı yenileyin.",
+        "quantityInvalid": "Adet tam sayı olmalı.",
+        "quantityMin": "Adet en az {min} olmalı.",
+        "quantityMax": "Adet en fazla {max} olabilir.",
+        "provinceRequired": "İl seçin.",
+        "provinceInvalid": "Geçersiz il.",
+        "areaRequired": "Alan büyüklüğünü girin.",
+        "areaMin": "Alan büyüklüğü çok küçük.",
+        "areaMax": "Alan büyüklüğü çok büyük.",
+        "areaUnitInvalid": "Birim seçin.",
+        "conditionRequired": "Arazi durumundan en az birini seçin.",
+        "ownershipRequired": "Mülkiyet türünü seçin.",
+        "timingRequired": "Zamanlama seçin.",
+        "urlInvalid": "Bağlantı http(s):// ile başlamalı.",
+        "landInvalid": "Seçilen saha şu anda talebe kapalı; başka bir saha seçin."
+      }
+    },
+    "seed": {
+      "meta": {
+        "title": "Tohum Talebi — Tohum Toplarını Adresinize Gönderelim",
+        "description": "Kızılçam, karaçam, sedir ve ardıç tohum topları için talep bırakın. Tür ve adedi seçin; fiyat ve teslimatı ekibimiz sizinle netleştirsin. Ödeme yok."
+      },
+      "breadcrumb": {
+        "label": "Tohum Talebi",
+        "title": "Tohum Talebi",
+        "subtitle": "Türü ve adedi seçin, iletişim bilginizi bırakın. Fiyat ve teslimatı bir iş günü içinde sizinle netleştirelim."
+      },
+      "species": {
+        "heading": "Hangi türleri istiyorsunuz?",
+        "sub": "Bir ya da birden fazla tür seçin, adedini belirleyin. Adet, tohum topu sayısıdır.",
+        "quantity": "Adet",
+        "selected": "Seçildi",
+        "select": "Seç"
+      },
+      "delivery": {
+        "heading": "Teslimat",
+        "sub": "Kargo bilgileri dönüşte netleşir; şimdilik il yeterli.",
+        "province": "İl",
+        "provincePlaceholder": "İl seçin",
+        "district": "İlçe",
+        "districtPlaceholder": "İsteğe bağlı"
+      },
+      "purpose": {
+        "heading": "Kullanım amacı",
+        "sub": "İsteğe bağlı — doğru öneri için yardımcı olur."
+      },
+      "summary": {
+        "species": "Türler",
+        "total": "Toplam tohum",
+        "province": "İl"
+      }
+    },
+    "land": {
+      "meta": {
+        "title": "Arazime Ekim Yapın — Drone ile Ekim Başvurusu",
+        "description": "Yanmış, bozulmuş ya da atıl araziniz için drone ile tohum topu ekimi başvurusu. Konum, alan ve arazi durumunu paylaşın; keşif ve planlama bizden."
+      },
+      "breadcrumb": {
+        "label": "Arazime Ekim Yapın",
+        "title": "Arazime Ekim Yapın",
+        "subtitle": "Arazinizi kısaca tanımlayın. Ekibimiz uygunluğu değerlendirip keşif ve planlama için sizinle iletişime geçsin."
+      },
+      "location": {
+        "heading": "Arazi nerede?",
+        "province": "İl",
+        "provincePlaceholder": "İl seçin",
+        "district": "İlçe",
+        "districtPlaceholder": "İsteğe bağlı",
+        "mapLink": "Konum bağlantısı",
+        "mapLinkPlaceholder": "https://maps.app.goo.gl/… (isteğe bağlı)"
+      },
+      "area": {
+        "heading": "Alan büyüklüğü",
+        "value": "Büyüklük",
+        "unit": "Birim",
+        "hint": "Yaklaşık değer yeterli."
+      },
+      "condition": {
+        "heading": "Arazinin durumu",
+        "sub": "Birden fazla seçebilirsiniz."
+      },
+      "ownership": {
+        "heading": "Mülkiyet"
+      },
+      "timing": {
+        "heading": "Ne zaman ekim istiyorsunuz?"
+      },
+      "notes": {
+        "heading": "Erişim ve arazi notu",
+        "placeholder": "Yol durumu, eğim, su kaynağı, önceki ekimler… (isteğe bağlı)"
+      },
+      "summary": {
+        "location": "Konum",
+        "area": "Alan",
+        "condition": "Durum",
+        "timing": "Zamanlama"
+      }
+    },
+    "openLand": {
+      "meta": {
+        "title": "Açık Araziye Tohum — Sizin Adınıza Ekelim",
+        "description": "Skytech'in açık sahalarına sizin adınıza drone ile tohum topu ekimi. Sahayı ve adedi seçin, isterseniz bir kişiye adayın; fiyatı ekibimiz sizinle netleştirsin."
+      },
+      "breadcrumb": {
+        "label": "Açık Araziye Tohum",
+        "title": "Açık Araziye Tohum",
+        "subtitle": "Sahayı ve tohum adedini seçin. Tür seçimini bölgenin iklimine göre ekibimiz yapar; fiyatı dönüşte netleştiririz."
+      },
+      "land": {
+        "heading": "Hangi sahaya ekelim?",
+        "sub": "Talebe açık sahalarımızdan birini seçin.",
+        "empty": "Şu anda talebe açık saha bulunmuyor. Bölge tercihinizi notunuza yazabilirsiniz.",
+        "region": "Bölge",
+        "open": "Talebe açık"
+      },
+      "quantity": {
+        "heading": "Kaç tohum?",
+        "sub": "Adet, tohum topu sayısıdır."
+      },
+      "dedication": {
+        "heading": "Kimin adına ekilsin?",
+        "sub": "İsteğe bağlı — hediye ediyorsanız alıcının adı.",
+        "placeholder": "Ad Soyad"
+      },
+      "summary": {
+        "land": "Saha",
+        "quantity": "Tohum adedi",
+        "dedication": "Adına"
+      }
+    }
   }
 }

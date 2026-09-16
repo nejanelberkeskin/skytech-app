@@ -231,3 +231,46 @@ export interface ReserveResponse {
     seeds: number;
   }[];
 }
+
+// ── Service Requests (ödeme almadan toplanan talepler) ───────────────────────
+/**
+ * /talep/* formlarından gelen kayıtlar. Yazma yalnız service_role (API route);
+ * giriş yapmış kullanıcı kendi (user_id bağlı) taleplerini RLS ile okur.
+ * Şema: supabase/migrations/014_service_requests.sql
+ */
+export type ServiceRequestType = "seed_purchase" | "land_application" | "open_land_seeding";
+export type ServiceRequestStatus = "new" | "contacted" | "quoted" | "converted" | "closed" | "spam";
+
+export interface ServiceRequestSeedItem {
+  slug: string;      // seed_catalog.slug
+  name: string;      // kayıt anındaki katalog adı (katalog değişse de talep okunur kalsın)
+  quantity: number;
+}
+
+export interface ServiceRequest {
+  id: string;
+  request_no: string;                  // "TLP-A3K9PX"
+  type: ServiceRequestType;
+  status: ServiceRequestStatus;
+  user_id: string | null;
+  contact_name: string;
+  email: string | null;
+  phone: string | null;
+  company: string | null;
+  locale: "tr" | "en" | "ru";
+  land_id: string | null;
+  total_seeds: number | null;
+  seed_items: ServiceRequestSeedItem[];
+  details: Record<string, unknown>;    // türe özel alanlar — lib/requests/schema.ts
+  message: string | null;
+  consent_at: string;
+  consent_version: string;
+  ip_hash: string | null;
+  user_agent: string | null;
+  source_path: string | null;
+  admin_note: string | null;
+  handled_by: string | null;
+  handled_at: string | null;
+  created_at: string;
+  updated_at: string;
+}

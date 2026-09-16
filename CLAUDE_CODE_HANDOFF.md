@@ -448,3 +448,44 @@ app/
 │   └── siparislerim/page.tsx          ← açık tema + siparis_no
 └── middleware.ts                       ← /api/auth/ public prefix
 ```
+
+---
+
+## 11. Talep Toplama + Üyelik Açılışı (15 Eylül 2026)
+
+Ödeme ve fiyatlandırma "çok yakında" kalırken üç talep akışı ve üyelik açıldı.
+Ayrıntılı tasarım notları kod içi yorumlarda; burada haritası.
+
+### Bayraklar — `lib/site-config.ts`
+| Bayrak | Env | Varsayılan | Ne yapar |
+|---|---|---|---|
+| `TRANSACTIONS_ENABLED` | `NEXT_PUBLIC_TRANSACTIONS_ENABLED=true` | kapalı | Sipariş/ödeme/kurumsal panel rotalarını açar |
+| `REQUESTS_ENABLED` | `NEXT_PUBLIC_REQUESTS_ENABLED=false` | açık | `/talep/*` talep toplama |
+| `ACCOUNTS_ENABLED` | `NEXT_PUBLIC_ACCOUNTS_ENABLED=false` | açık | `/auth/*`, `/hesabim` |
+| `GOOGLE_AUTH_ENABLED` | `NEXT_PUBLIC_AUTH_GOOGLE_ENABLED=true` | kapalı | Google ile giriş butonları (Supabase'de sağlayıcı kurulmadan açma) |
+
+CTA hedefleri `orderCtaHref(kind)`, etiket seçimi `CTA_MODE` ("order" | "request" | "soon").
+Üyelik açık, ödeme kapalıyken `/hesabim/(siparislerim|rezervasyonlar|sertifikalar|davet-et|davet-et-kazan|telemetri)` → `/hesabim`.
+
+### Veritabanı — `supabase/migrations/014_service_requests.sql` (canlıda uygulandı)
+- `service_requests`: talepler. Yazma yalnız service_role (API). Üye kendi satırını okur (RLS + sütun bazlı GRANT; `ip_hash`, `admin_note`, `client_token` sütun yetkisi dışında).
+- `email_logs`: mail kayıtları (repoda vardı, canlıda yoktu).
+- `handle_new_user()` + `on_auth_user_created`: auth.users INSERT → profiles satırı. Not: Supabase, public'teki yeni tablolara anon/authenticated'a varsayılan olarak TÜM yetkileri verir; her yeni tabloda açıkça `REVOKE` yapılmalı.
+
+### Akış
+1. `/talep` (merkez) → `/talep/tohum` · `/talep/arazime-ekim` · `/talep/acik-arazi` (vitrin, tr/en/ru, `components/vitrin/talep/*`).
+2. `POST /api/public/talep` — zod şeması (`lib/requests/schema.ts`, istemciyle ortak), honeypot, doldurma süresi (<3 sn → `status='spam'`, mail yok), bellek içi + DB (ip_hash, 10/saat) rate limit, katalog/saha canlı doğrulama, `clientToken` idempotency, 20 KB gövde sınırı, `user_id` yalnız oturumdan. Yanıt yalnız `{ requestNo, requestId }`.
+3. E-postalar `after()` ile yanıt sonrası: şirkete bildirim (`REQUEST_NOTIFY_EMAIL` → `CONTACT_NOTIFY_EMAIL` → info@skytechgreen.com, reply-to talep sahibi) + talep sahibine tr/en onay.
+4. Admin: `/admin/talepler` (SUPER_ADMIN, FINANCE, OPERATIONS) — filtre/arama, detay, durum + not (`PATCH /api/admin/requests`, audit log). Pano: "Bekleyen Talep".
+5. Hesap: `/hesabim` talep özeti, `/hesabim/taleplerim`. Misafir talebi → `?talep=<uuid>` ile kayıt/giriş → `POST /api/auth/claim-request` (e-posta eşleşmesi şart).
+6. Auth: `/auth/sifremi-unuttum`, `/auth/sifre-yenile`; `GET /api/auth/confirm` (token_hash, cihazdan bağımsız), `GET /api/auth/callback` (PKCE / OAuth).
+
+### Supabase panelinde yapılması gerekenler (kod dışı)
+- Authentication → URL Configuration: Site URL `https://skytechgreen.com`, Redirect URLs `https://skytechgreen.com/**`, `https://*.vercel.app/**`, `http://localhost:3000/**`.
+- E-posta doğrulama canlıda AÇIK (bu belgenin 7.5 maddesi eskimiş). Yerleşik SMTP saatte birkaç mail ile sınırlı → Resend SMTP tanımlanmalı (`smtp.resend.com`, kullanıcı `resend`, şifre = API anahtarı, gönderen `noreply@skytechgreen.com`).
+- E-posta şablonlarını cihazdan bağımsız çalışması için `{{ .SiteURL }}/api/auth/confirm?token_hash={{ .TokenHash }}&type=recovery&next=/auth/sifre-yenile` (Reset Password) ve `…&type=signup&next=/hesabim` (Confirm signup) biçimine çevirin.
+- Security: "Leaked password protection" açın (advisor uyarısı).
+
+### Test
+- Mail göndermeden test: `.env.development.local` içine `RESEND_API_KEY=` (boş) koyup dev sunucuyu çalıştırın; `[mail] RESEND_API_KEY not set — skipping` loglanır. Test kayıtları `contact_name LIKE 'TEST%'` ile silinir.
+- `npm run i18n:check` — tr/en/ru anahtar eşitliği.

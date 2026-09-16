@@ -11,7 +11,7 @@ import {
 import { useRef } from "react";
 import { useTranslations } from "next-intl";
 import SectionWrapper from "../SectionWrapper";
-import { TRANSACTIONS_ENABLED } from "@/lib/site-config";
+import { REQUESTS_ENABLED, REQUEST_ROUTES, TRANSACTIONS_ENABLED } from "@/lib/site-config";
 
 type Package = {
   name: string;
@@ -19,6 +19,8 @@ type Package = {
   description: string;
   features: string[];
   cta: { label: string; href: string };
+  /** Ödeme kapalı, talep toplama açıkken kullanılacak CTA (kurumsalda yok) */
+  requestCta?: { label: string; href: string };
   highlight: boolean;
 };
 
@@ -31,6 +33,7 @@ function usePackages(): Package[] {
       description: t("diy.description"),
       features: t.raw("diy.features") as string[],
       cta: { label: t("diy.cta"), href: "/bireysel/satin-al" },
+      requestCta: { label: t("diy.ctaRequest"), href: REQUEST_ROUTES.seed },
       highlight: false,
     },
     {
@@ -39,6 +42,7 @@ function usePackages(): Package[] {
       description: t("weplant.description"),
       features: t.raw("weplant.features") as string[],
       cta: { label: t("weplant.cta"), href: "/bireysel/satin-al" },
+      requestCta: { label: t("weplant.ctaRequest"), href: REQUEST_ROUTES.openLand },
       highlight: true,
     },
     {
@@ -153,18 +157,20 @@ function PackageCard({ pkg }: { pkg: Package }) {
 
   const isHighlight = pkg.highlight;
 
-  // Transactions kapalıyken: sipariş CTA'ları → /yakinda, kurumsal teklif → /bilgi-al
+  // Ödeme kapalıyken: kurumsal teklif → /bilgi-al; bireysel paketler talep
+  // toplama açıksa ilgili /talep/* sayfasına, değilse /yakinda'ya gider.
   const isCorporate = pkg.cta.href.startsWith("/kurumsal");
+  const requestCta = REQUESTS_ENABLED ? pkg.requestCta : undefined;
   const ctaHref = TRANSACTIONS_ENABLED
     ? pkg.cta.href
     : isCorporate
       ? "/bilgi-al"
-      : "/yakinda";
+      : requestCta?.href ?? "/yakinda";
   const ctaLabel = TRANSACTIONS_ENABLED
     ? pkg.cta.label
     : isCorporate
       ? t("ctaFallback.info")
-      : t("ctaFallback.soon");
+      : requestCta?.label ?? t("ctaFallback.soon");
 
   return (
     <motion.div

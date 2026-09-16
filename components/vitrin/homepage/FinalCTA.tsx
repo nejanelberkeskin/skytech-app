@@ -4,7 +4,7 @@ import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { useRef } from "react";
 import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
-import { TRANSACTIONS_ENABLED } from "@/lib/site-config";
+import { CTA_MODE, orderCtaHref } from "@/lib/site-config";
 
 const MotionLink = motion.create(Link);
 
@@ -104,8 +104,8 @@ export default function FinalCTA() {
               transition={{ duration: 0.9, delay: 0.7 }}
               className="flex flex-col sm:flex-row items-center justify-center gap-4"
             >
-              <PrimaryCTA href={TRANSACTIONS_ENABLED ? "/bireysel/satin-al" : "/yakinda"}>
-                {TRANSACTIONS_ENABLED ? t("ctaPrimary") : t("ctaComingSoon")}
+              <PrimaryCTA href={orderCtaHref("hub")}>
+                {CTA_MODE === "order" ? t("ctaPrimary") : CTA_MODE === "request" ? t("ctaRequest") : t("ctaComingSoon")}
                 <motion.svg
                   className="w-5 h-5"
                   viewBox="0 0 24 24"

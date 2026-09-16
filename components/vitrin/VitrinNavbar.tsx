@@ -2,11 +2,38 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 import LanguageSwitcher from "./LanguageSwitcher";
-import { TRANSACTIONS_ENABLED } from "@/lib/site-config";
+import { ACCOUNTS_ENABLED, CTA_MODE, orderCtaHref } from "@/lib/site-config";
+
+/**
+ * Oturum var mı? Supabase'in auth çerezi ("sb-<ref>-auth-token[.N]")
+ * tarayıcıda okunabilir; supabase-js'i vitrin paketine eklemeden yalnız
+ * "Giriş Yap" / "Hesabım" etiketini seçmek için yeterli. Yetki kararı
+ * middleware'de verilir, bu yalnız görsel ipucu.
+ */
+const SESSION_COOKIE_RE = /^sb-[a-z0-9]+-auth-token(\.\d+)?=/;
+
+function readSessionCookie(): boolean {
+  if (!ACCOUNTS_ENABLED || typeof document === "undefined") return false;
+  return document.cookie.split("; ").some((c) => SESSION_COOKIE_RE.test(c));
+}
+
+function subscribeSessionCookie(onChange: () => void): () => void {
+  window.addEventListener("focus", onChange);
+  window.addEventListener("pageshow", onChange);
+  return () => {
+    window.removeEventListener("focus", onChange);
+    window.removeEventListener("pageshow", onChange);
+  };
+}
+
+function useHasSessionCookie(): boolean {
+  // Sunucu ve ilk hidrasyonda false; istemcide çerez okunur, odak değişince yenilenir.
+  return useSyncExternalStore(subscribeSessionCookie, readSessionCookie, () => false);
+}
 
 function useNavItems() {
   const t = useTranslations("nav");
@@ -37,6 +64,13 @@ export default function VitrinNavbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const pathname = usePathname();
+  const signedIn = useHasSessionCookie();
+
+  const ctaHref = orderCtaHref("hub");
+  const ctaLabel =
+    CTA_MODE === "order" ? tNav("orderSeeds") : CTA_MODE === "request" ? tNav("requests") : tNav("comingSoon");
+  const accountHref = signedIn ? "/hesabim" : "/auth/login";
+  const accountLabel = signedIn ? tNav("account") : tNav("login");
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -150,19 +184,16 @@ export default function VitrinNavbar() {
           {/* CTAs */}
           <div className="hidden lg:flex items-center gap-3">
             <LanguageSwitcher />
-            {TRANSACTIONS_ENABLED && (
+            {ACCOUNTS_ENABLED && (
               <Link
-                href="/auth/login"
+                href={accountHref}
                 className="px-4 py-2 text-sm font-semibold text-[#1a2e1a] hover:text-[#1B6B3A] transition-colors"
               >
-                {tNav("login")}
+                {accountLabel}
               </Link>
             )}
-            <Link
-              href={TRANSACTIONS_ENABLED ? "/bireysel/satin-al" : "/yakinda"}
-              className="vitrin-cta-primary !py-2.5 !px-5 !text-sm"
-            >
-              {TRANSACTIONS_ENABLED ? tNav("orderSeeds") : tNav("comingSoon")}
+            <Link href={ctaHref} className="vitrin-cta-primary !py-2.5 !px-5 !text-sm">
+              {ctaLabel}
             </Link>
           </div>
 
@@ -290,19 +321,19 @@ export default function VitrinNavbar() {
                 <div className="flex justify-center pb-1">
                   <LanguageSwitcher dark />
                 </div>
-                {TRANSACTIONS_ENABLED && (
+                {ACCOUNTS_ENABLED && (
                   <Link
-                    href="/auth/login"
+                    href={accountHref}
                     className="block w-full text-center py-3 rounded-xl premium-glass-dark text-sm font-bold text-white"
                   >
-                    {tNav("login")}
+                    {accountLabel}
                   </Link>
                 )}
                 <Link
-                  href={TRANSACTIONS_ENABLED ? "/bireysel/satin-al" : "/yakinda"}
+                  href={ctaHref}
                   className="block w-full text-center py-3 rounded-xl bg-gradient-to-br from-[#1B6B3A] via-[#22894a] to-[#1B6B3A] text-white text-sm font-bold shadow-lg shadow-[#1B6B3A]/30"
                 >
-                  {TRANSACTIONS_ENABLED ? `${tNav("orderSeeds")} →` : tNav("comingSoon")}
+                  {CTA_MODE === "soon" ? ctaLabel : `${ctaLabel} →`}
                 </Link>
               </motion.div>
             </motion.div>

@@ -31,6 +31,8 @@ interface DashboardData {
     pendingB2b: number;
     quotedB2b: number;
     totalLands: number;
+    newRequests: number;
+    contactedRequests: number;
   };
   monthlyGrowth: MonthlyPoint[];
   capacityAlerts: CapacityAlert[];
@@ -301,6 +303,14 @@ function DashboardContent() {
                   : "—"
               }
               sub="tüm zamanlar"
+            />
+          )}
+          {(admin.role === "SUPER_ADMIN" || admin.role === "FINANCE" || admin.role === "OPERATIONS") && (
+            <CardStat
+              icon="📥"
+              label="Bekleyen Talep"
+              value={kpis ? `${kpis.newRequests ?? 0}` : "—"}
+              sub={kpis ? `${kpis.contactedRequests ?? 0} iletişimde` : ""}
             />
           )}
           <CardStat

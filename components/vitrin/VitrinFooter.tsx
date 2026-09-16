@@ -5,6 +5,7 @@ import LanguageSwitcher from "./LanguageSwitcher";
 import CookiePreferencesLink from "./CookiePreferencesLink";
 import KenxBadge from "./KenxBadge";
 import { ORG_LEGAL_NAME, ORG_PARENT_URL, ORG_SOCIAL } from "@/lib/seo";
+import { REQUESTS_ENABLED, REQUEST_ROUTES } from "@/lib/site-config";
 
 export default async function VitrinFooter() {
   const t = await getTranslations("footer");
@@ -17,6 +18,7 @@ export default async function VitrinFooter() {
   ];
 
   const HIZLI_LINKLER = [
+    ...(REQUESTS_ENABLED ? [{ label: t("quickLinks.requests"), href: REQUEST_ROUTES.hub }] : []),
     { label: t("quickLinks.about"), href: "/hakkimizda" },
     { label: t("quickLinks.projects"), href: "/projeler" },
     { label: t("quickLinks.info"), href: "/bilgi-al" },

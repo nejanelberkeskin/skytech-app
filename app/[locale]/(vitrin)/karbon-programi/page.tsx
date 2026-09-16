@@ -8,7 +8,7 @@ import CarbonCalculator from "@/components/vitrin/homepage/CarbonCalculator";
 import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
 import ServiceSchema from "@/components/seo/ServiceSchema";
 import { buildPageMetadata } from "@/lib/seo";
-import { TRANSACTIONS_ENABLED } from "@/lib/site-config";
+import { CTA_MODE, TRANSACTIONS_ENABLED, orderCtaHref } from "@/lib/site-config";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
@@ -223,8 +223,8 @@ export default async function KarbonProgramiPage({ params }: { params: Promise<{
             <Link href={TRANSACTIONS_ENABLED ? "/kurumsal/teklif-al" : "/bilgi-al"} className="vitrin-cta-primary">
               {TRANSACTIONS_ENABLED ? t("cta.primaryEnabled") : t("cta.primaryDisabled")}
             </Link>
-            <Link href={TRANSACTIONS_ENABLED ? "/bireysel/satin-al" : "/yakinda"} className="vitrin-cta-secondary">
-              {TRANSACTIONS_ENABLED ? t("cta.secondaryEnabled") : t("cta.secondaryDisabled")}
+            <Link href={orderCtaHref("hub")} className="vitrin-cta-secondary">
+              {CTA_MODE === "order" ? t("cta.secondaryEnabled") : CTA_MODE === "request" ? t("cta.secondaryRequest") : t("cta.secondaryDisabled")}
             </Link>
           </div>
         </div>

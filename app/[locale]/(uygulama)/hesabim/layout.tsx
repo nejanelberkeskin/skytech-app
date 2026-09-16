@@ -7,18 +7,22 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase/browser";
 import {
   BarChartIcon, PackageIcon, SproutIcon, CertificateIcon,
-  GiftIcon, TrophyIcon, SettingsIcon, AlertTriangleIcon,
+  GiftIcon, TrophyIcon, SettingsIcon, AlertTriangleIcon, MailIcon,
 } from "@/components/ui/Icons";
+import { CTA_MODE, TRANSACTIONS_ENABLED, orderCtaHref } from "@/lib/site-config";
 
+// `transactional: true` olanlar yalnız ödeme açıkken listelenir (middleware
+// de bu rotaları /hesabim'a katlar) — boş sipariş/sertifika ekranı gösterilmez.
 const NAV_ITEMS = [
   { href: "/hesabim", label: "Genel Bakış", Icon: BarChartIcon, exact: true },
-  { href: "/hesabim/siparislerim", label: "Fiziksel Siparişlerim", Icon: PackageIcon },
-  { href: "/hesabim/rezervasyonlar", label: "Arazi Ekimlerim", Icon: SproutIcon },
-  { href: "/hesabim/sertifikalar", label: "Sertifikalarım", Icon: CertificateIcon },
-  { href: "/hesabim/davet-et", label: "Davet Et & Kazan", Icon: GiftIcon },
-  { href: "/hesabim/davet-et-kazan", label: "Ödüllerim", Icon: TrophyIcon },
+  { href: "/hesabim/taleplerim", label: "Taleplerim", Icon: MailIcon },
+  { href: "/hesabim/siparislerim", label: "Fiziksel Siparişlerim", Icon: PackageIcon, transactional: true },
+  { href: "/hesabim/rezervasyonlar", label: "Arazi Ekimlerim", Icon: SproutIcon, transactional: true },
+  { href: "/hesabim/sertifikalar", label: "Sertifikalarım", Icon: CertificateIcon, transactional: true },
+  { href: "/hesabim/davet-et", label: "Davet Et & Kazan", Icon: GiftIcon, transactional: true },
+  { href: "/hesabim/davet-et-kazan", label: "Ödüllerim", Icon: TrophyIcon, transactional: true },
   { href: "/hesabim/profil", label: "Profil & Ayarlar", Icon: SettingsIcon },
-];
+].filter((item) => TRANSACTIONS_ENABLED || !item.transactional);
 
 export default function HesabimLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -160,12 +164,12 @@ export default function HesabimLayout({ children }: { children: React.ReactNode 
         {/* Bottom actions */}
         <div className="px-5 py-4 space-y-3" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
           <Link
-            href="/bireysel/satin-al"
+            href={orderCtaHref("hub")}
             onClick={() => setSidebarOpen(false)}
             className="flex items-center justify-center gap-2 w-full py-3 rounded-2xl glass-btn text-sm font-medium text-white transition-all"
           >
             <SproutIcon className="w-4 h-4" />
-            Tohum Satın Al
+            {CTA_MODE === "order" ? "Tohum Satın Al" : "Talep Oluştur"}
           </Link>
           <button
             onClick={handleLogout}

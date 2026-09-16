@@ -8,7 +8,7 @@ import SectionHeading from "@/components/vitrin/SectionHeading";
 import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
 import ServiceSchema from "@/components/seo/ServiceSchema";
 import { buildPageMetadata } from "@/lib/seo";
-import { TRANSACTIONS_ENABLED } from "@/lib/site-config";
+import { CTA_MODE, orderCtaHref } from "@/lib/site-config";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
@@ -193,8 +193,8 @@ export default async function TohumTopuPage({ params }: { params: Promise<{ loca
           <p className="text-base text-[#3d5a3d] mb-8 max-w-xl mx-auto">
             {t("cta.subtitle")}
           </p>
-          <Link href={TRANSACTIONS_ENABLED ? "/bireysel/satin-al" : "/yakinda"} className="vitrin-cta-primary">
-            {TRANSACTIONS_ENABLED ? t("cta.buttonOrder") : t("cta.buttonSoon")}
+          <Link href={orderCtaHref("seed")} className="vitrin-cta-primary">
+            {CTA_MODE === "order" ? t("cta.buttonOrder") : CTA_MODE === "request" ? t("cta.buttonRequest") : t("cta.buttonSoon")}
             <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
               <path d="M5 12h14M13 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
             </svg>

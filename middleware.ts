@@ -3,7 +3,7 @@ import type { NextRequest } from "next/server";
 import createIntlMiddleware from "next-intl/middleware";
 import { routing } from "@/i18n/routing";
 import { updateSession } from "@/lib/supabase/middleware";
-import { TRANSACTIONS_ENABLED, isSuspendedRoute } from "@/lib/site-config";
+import { isSuspendedRoute, isTransactionOnlyAccountRoute } from "@/lib/site-config";
 
 /**
  * ════════════════════════════════════════════════════════════════════════
@@ -57,6 +57,7 @@ const PUBLIC_PAGE_PATTERNS: RegExp[] = [
   /^\/hakkimizda(\/.*)?$/,
   /^\/iletisim(\/.*)?$/,
   /^\/bilgi-al(\/.*)?$/,
+  /^\/talep(\/.*)?$/,
   /^\/yakinda(\/.*)?$/,
   /^\/gizlilik-politikasi$/,
   /^\/kullanim-kosullari$/,
@@ -130,13 +131,20 @@ export async function middleware(request: NextRequest) {
     return response;
   };
 
-  /* ── 2b. Askıya alınmış akışlar: sipariş / ödeme / hesap → /yakinda ────
-     TRANSACTIONS_ENABLED kapalıyken tüm transactional rotalar (bireysel,
-     checkout, hesabim, auth, kurumsal giriş/panel/teklif) /yakinda'ya
-     yönlendirilir. Admin paneli bilinçli olarak kapsam DIŞINDA.
+  /* ── 2b. Askıya alınmış akışlar → /yakinda ─────────────────────────────
+     Bayraklar lib/site-config.ts'te: ödeme rotaları (bireysel, checkout,
+     kurumsal giriş/panel/teklif, lands, kargo-takip) TRANSACTIONS_ENABLED;
+     üyelik (auth, hesabim) ACCOUNTS_ENABLED; talep (/talep) REQUESTS_ENABLED.
+     Admin paneli bilinçli olarak kapsam DIŞINDA.
      ────────────────────────────────────────────────────────────────────── */
-  if (!TRANSACTIONS_ENABLED && isSuspendedRoute(cleanPath)) {
+  if (isSuspendedRoute(cleanPath)) {
     return NextResponse.redirect(new URL(localePath("/yakinda", locale), request.url));
+  }
+
+  /* ── 2c. Üyelik açık, ödeme kapalı: sipariş/sertifika/davet sayfaları
+     anlamsız → /hesabim (boş ekran yerine talep özeti). ─────────────── */
+  if (isTransactionOnlyAccountRoute(cleanPath)) {
+    return NextResponse.redirect(new URL(localePath("/hesabim", locale), request.url));
   }
 
   /* ── 3. Public sayfa rotaları: auth redirect yok ────────────────────── */
@@ -193,7 +201,11 @@ export async function middleware(request: NextRequest) {
   /* ── 6. Auth yönlendirme sayfaları ──────────────────────────────────── */
   if (cleanPath.startsWith("/auth/login") || cleanPath.startsWith("/auth/register")) {
     if (user) {
-      return NextResponse.redirect(new URL(localePath("/hesabim", locale), request.url));
+      // ?talep=<uuid> (misafir talebini hesaba bağlama) hesabım sayfasına taşınır
+      const target = new URL(localePath("/hesabim", locale), request.url);
+      const talep = request.nextUrl.searchParams.get("talep");
+      if (talep && /^[0-9a-f-]{36}$/i.test(talep)) target.searchParams.set("talep", talep);
+      return NextResponse.redirect(target);
     }
     return withIntl(response);
   }

@@ -522,7 +522,6 @@
       "route": "Planlı rota"
     },
     "progress": {
-      "label": "Tohumun Yolculuğu",
       "steps": "Hazırlık → Uçuş → Toprak → Filiz"
     }
   },

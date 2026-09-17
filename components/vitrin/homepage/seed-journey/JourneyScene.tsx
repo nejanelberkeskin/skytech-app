@@ -183,8 +183,10 @@ function Sprout({ progress }: { progress: MotionValue<number> }) {
   const stem = useTransform(progress, [0.28, 0.64], [0, 1]);
   const needles = useTransform(progress, [0.57, 0.82], [0, 1]);
   const landscape = useTransform(progress, [0.74, 0.94], [0, 1]);
+  // Kadraj genişlemesi: fide, tohumun toprağa değdiği nokta (320, 315) etrafında küçülür.
+  // framer-motion SVG dönüşümlerini CSS transform olarak uygular; merkez viewBox
+  // birimleriyle verilmezse varsayılan "fill-box / 50% 50%" fideyi zeminden koparır.
   const scale = useTransform(progress, [0.73, 0.98], [1, 0.85]);
-  const camera = useTransform(scale, value => `translate(${320 * (1 - value)} ${315 * (1 - value)}) scale(${value})`);
   return (
     <>
       <motion.g style={{ opacity: landscape }}>
@@ -197,7 +199,7 @@ function Sprout({ progress }: { progress: MotionValue<number> }) {
         ))}
       </motion.g>
       <Ground />
-      <motion.g transform={camera}>
+      <motion.g style={{ scale, originX: "320px", originY: "315px", transformBox: "view-box" }}>
         <g transform="translate(320 315)">
           <Seed />
           <g stroke="#c9a06f" strokeWidth="1.5">

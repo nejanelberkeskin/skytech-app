@@ -16,15 +16,20 @@ const getMotionPreference = () => window.matchMedia(REDUCED_MOTION).matches;
 const getServerPreference = () => false;
 
 export default function SeedJourney() {
-  const t = useTranslations("seedJourney");
   const id = `sj-${useId()}`;
   const ref = useRef<HTMLElement>(null);
   const reduced = useSyncExternalStore(subscribeMotion, getMotionPreference, getServerPreference);
 
   return (
-    <section ref={ref} className={`sj-journey${reduced ? " sj-static" : ""}`} aria-labelledby={`${id}-heading`}>
+    // data-immersive: sahne ekranı kapladığı sürece ScrollToTop düğmesi gizlenir
+    // (mobilde altyazı kartının köşesine biniyordu). Durağan sürümde gerek yok.
+    <section
+      ref={ref}
+      className={`sj-journey${reduced ? " sj-static" : ""}`}
+      aria-labelledby={`${id}-heading`}
+      data-immersive={reduced ? undefined : ""}
+    >
       {reduced ? <StaticJourney headingId={`${id}-heading`} /> : <ScrollJourney target={ref} headingId={`${id}-heading`} />}
-      <span className="sr-only">{t("progress.steps")}</span>
     </section>
   );
 }
@@ -62,9 +67,10 @@ function ScrollJourney({ target, headingId }: { target: RefObject<HTMLElement | 
         <ol className="sj-acts">
           {ACTS.map((act, index) => <ScrollAct key={act} act={act} index={index} progress={scrollYProgress} />)}
         </ol>
-        <div className="sj-progress" aria-label={t("progress.label")}>
+        {/* Yalnız görsel gösterge: adım sırasını ekran okuyucuya <ol> zaten veriyor. */}
+        <div className="sj-progress" aria-hidden="true">
           <p>{t("progress.steps")}</p>
-          <div className="sj-track" aria-hidden="true"><motion.div style={{ scaleX: scrollYProgress }} /></div>
+          <div className="sj-track"><motion.div style={{ scaleX: scrollYProgress }} /></div>
         </div>
       </div>
     </div>

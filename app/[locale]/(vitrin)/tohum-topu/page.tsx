@@ -186,7 +186,7 @@ export default async function TohumTopuPage({ params }: { params: Promise<{ loca
       <SectionWrapper variant="light">
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="text-3xl lg:text-4xl font-bold text-[#1a2e1a] leading-tight mb-5">
-            {t.rich("cta.title", {
+            {t.rich(CTA_MODE === "request" ? "cta.titleRequest" : "cta.title", {
               grad: (chunks) => <span className="text-gradient-forest">{chunks}</span>,
             })}
           </h2>

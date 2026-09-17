@@ -480,8 +480,8 @@
         "answer": "The certificates can be used in ESG reports, GRI and CDP submissions, and corporate sustainability statements. All reforestation and carbon sink projects are carried out in coordination with the Regional Directorates of the General Directorate of Forestry (OGM), in accordance with legal and scientific infrastructure; we provide a 100% verifiable monitoring chain."
       },
       "minOrder": {
-        "question": "Is there a minimum order quantity?",
-        "answer": "There is a starting limit of a minimum of 10 seeds for individual users and a minimum of 1,000 seeds for corporate partners. Shipping is free on individual orders of 50 seeds and above. Quote-based pricing is applied for corporate projects."
+        "question": "Is there a minimum request quantity?",
+        "answer": "There is no lower limit for submitting a request; you choose the species and the quantity. Pricing, delivery and the scale of corporate projects are clarified together with you when our team gets back to you."
       },
       "b2bIntegration": {
         "question": "How does B2B corporate integration work?",
@@ -489,7 +489,7 @@
       },
       "gift": {
         "question": "Can I send it as a gift?",
-        "answer": "Yes — there is a \"gift it\" option in the individual order flow. The recipient receives the digital certificate by email. When they sign up, the sender automatically earns a seed bonus (our viral growth program)."
+        "answer": "Yes. In a seed request you can select \"Gift\" as the purpose, and in an open-land planting request you can state in whose name the seeds should be planted. We clarify the details together when we get back to you."
       }
     }
   },
@@ -542,7 +542,7 @@
         "tag": "Individual",
         "description": "Seed balls delivered to your address. You plant them in your own garden, land, or any area you choose.",
         "features": [
-          "Free shipping to your address (over 50 seeds)",
+          "Shipped to your address",
           "Species variety selection",
           "Digital certificate",
           "Planting guide (PDF)",
@@ -822,6 +822,7 @@
     },
     "cta": {
       "title": "Order Your Own <grad>Seed Ball</grad>",
+      "titleRequest": "Request Your Own <grad>Seed Ball</grad>",
       "subtitle": "Delivered to your address, with professional planting in your own garden or in selected Skytech areas.",
       "buttonOrder": "Place Order",
       "buttonSoon": "Coming Soon",
@@ -986,7 +987,7 @@
       },
       "individual": {
         "question": "Can I participate as an individual too?",
-        "answer": "Yes — every user who orders seeds offsets their own carbon footprint. Your digital certificate clearly shows how many kg of CO₂ you have offset."
+        "answer": "Yes. As an individual you can submit a seed request or ask us to plant on our open sites in your name. The development of the planted sites is monitored regularly."
       },
       "esg": {
         "question": "How does ESG integration work?",
@@ -1216,7 +1217,7 @@
       "error": "Something went wrong. Please try again or reach us directly at info@skytechgreen.com."
     },
     "topics": {
-      "individual": "Individual Seed Order",
+      "individual": "Individual Seed Request",
       "corporate": "Corporate Reforestation",
       "esg": "ESG / Carbon Neutralization",
       "drone": "Drone Operation",

@@ -480,8 +480,8 @@
         "answer": "Sertifikalar; ESG raporlarında, GRI ve CDP gönderimlerinde, kurumsal sürdürülebilirlik beyanlarında kullanılabilir. Tüm ormanlaştırma ve karbon yutak alanı projeleri Orman Genel Müdürlüğü (OGM) Bölge Müdürlükleri koordinasyonunda, yasal ve bilimsel altyapıya uygun olarak yürütülür; %100 doğrulanabilir bir izleme zinciri sunarız."
       },
       "minOrder": {
-        "question": "Minimum sipariş miktarı var mı?",
-        "answer": "Bireysel kullanıcılar için minimum 10 tohum, kurumsal partnerler için minimum 1.000 tohum başlangıç limiti vardır. 50 tohum ve üzeri bireysel siparişlerde kargo ücretsizdir. Kurumsal projelerde teklif fiyatlandırması yapılır."
+        "question": "Minimum talep miktarı var mı?",
+        "answer": "Talep bırakmak için alt sınır yoktur; tür ve adedi siz belirlersiniz. Fiyat, teslimat ve kurumsal projelerde ölçek, ekibimizin dönüşünde sizinle birlikte netleşir."
       },
       "b2bIntegration": {
         "question": "B2B kurumsal entegrasyon nasıl çalışır?",
@@ -489,7 +489,7 @@
       },
       "gift": {
         "question": "Hediye olarak gönderebilir miyim?",
-        "answer": "Evet — bireysel sipariş akışında \"hediye et\" seçeneği vardır. Alıcı, dijital sertifikayı e-posta ile alır. Üyelik kazandığında, gönderici otomatik tohum bonusu kazanır (viral büyüme programımız)."
+        "answer": "Evet. Tohum talebinde kullanım amacını \"Hediye\" olarak seçebilir, açık araziye ekim talebinde tohumların kimin adına ekileceğini belirtebilirsiniz. Ayrıntıları dönüşte birlikte netleştiririz."
       }
     }
   },
@@ -542,7 +542,7 @@
         "tag": "Bireysel",
         "description": "Tohum topları adresinize teslim. Kendi bahçenize, arazinize veya seçtiğiniz alana siz ekersiniz.",
         "features": [
-          "Adresinize ücretsiz kargo (50 tohum üzeri)",
+          "Adresinize kargo ile teslim",
           "Tür çeşitliliği seçimi",
           "Dijital sertifika",
           "Ekim rehberi (PDF)",
@@ -822,6 +822,7 @@
     },
     "cta": {
       "title": "Kendi <grad>Tohum Topunuzu</grad> Sipariş Edin",
+      "titleRequest": "Kendi <grad>Tohum Topunuzu</grad> Talep Edin",
       "subtitle": "Adresinize teslim, kendi bahçenizde veya seçilen Skytech alanlarında profesyonel ekim ile.",
       "buttonOrder": "Sipariş Ver",
       "buttonSoon": "Yakında",
@@ -986,7 +987,7 @@
       },
       "individual": {
         "question": "Bireysel olarak da katılabilir miyim?",
-        "answer": "Evet — tohum sipariş eden her kullanıcı, kendi karbon ayak izini dengelemiş olur. Dijital sertifikanızda kaç kg CO₂ dengelediğiniz net olarak gösterilir."
+        "answer": "Evet. Bireysel olarak da tohum talebi bırakabilir ya da açık sahalarımıza sizin adınıza ekim talep edebilirsiniz. Ekim yapılan sahaların gelişimi düzenli olarak izlenir."
       },
       "esg": {
         "question": "ESG entegrasyonu nasıl çalışıyor?",
@@ -1216,7 +1217,7 @@
       "error": "Bir şeyler ters gitti. Lütfen tekrar deneyin veya doğrudan info@skytechgreen.com adresinden bize ulaşın."
     },
     "topics": {
-      "individual": "Bireysel Tohum Sipariş",
+      "individual": "Bireysel Tohum Talebi",
       "corporate": "Kurumsal Ormanlaştırma",
       "esg": "ESG / Karbon Nötrleme",
       "drone": "Drone Operasyonu",

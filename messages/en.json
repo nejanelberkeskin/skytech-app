@@ -494,35 +494,36 @@
     }
   },
   "seedJourney": {
-    "ariaLabel": "The seed's journey",
+    "heading": "The Journey of a Seed",
+    "intro": "Our seed balls are prepared in the lab, delivered to the field by drone and blend into the soil with rainfall.",
     "stepLabel": "Step",
-    "lab": {
-      "hudTopLeft": "⊹ Lab Analysis · CLAY/FERTILIZER/SEED",
-      "hudBottomRight": "pH 6.8 · NPK Optimal"
-    },
-    "drone": {
-      "hudBottomLeft": "⊹ Precise Target · 200+ seeds"
-    },
-    "impact": {
-      "hudBottomLeft": "⊹ Landed on Soil · Germination: 65%+"
-    },
-    "captions": {
-      "lab": {
-        "title": "Laboratory",
-        "desc": "Forestry engineers analyze the ratios of clay + organic fertilizer + native seeds and formulate the seed ball."
+    "acts": {
+      "prepare": {
+        "title": "The Seed Ball Is Prepared",
+        "desc": "Native seed is coated with clay and organic matter. The shell helps protect it from birds, rodents and drying out."
       },
-      "drone": {
-        "title": "Journey by Drone",
-        "desc": "A GPS-precise drone flies the seed ball autonomously to the target coordinate — 200+ seeds in a single flight."
+      "flight": {
+        "title": "To the Field by Drone",
+        "desc": "The drone flies a planned route and releases seed balls at the designated points, including slopes that are hard to reach on foot."
       },
-      "impact": {
+      "soil": {
         "title": "Meeting the Soil",
-        "desc": "With the rain, the clay dissolves and the seed sprouts. Germination rate is 65%+ — three times that of the traditional method."
+        "desc": "The seed ball settles on the ground and waits for rain. With rainfall the clay dissolves and the seed blends into the soil."
+      },
+      "sprout": {
+        "title": "Germination and Monitoring",
+        "desc": "When conditions are right the seed germinates and the seedling takes root. The site is monitored regularly in the following seasons."
       }
     },
+    "labels": {
+      "clay": "Clay",
+      "organic": "Organic matter",
+      "seed": "Native seed",
+      "route": "Planned route"
+    },
     "progress": {
-      "label": "The Seed's Journey",
-      "steps": "Lab → Drone → Soil"
+      "label": "The Journey of a Seed",
+      "steps": "Preparation → Flight → Soil → Sprout"
     }
   },
   "servicePackages": {

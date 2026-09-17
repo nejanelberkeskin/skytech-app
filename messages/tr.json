@@ -494,35 +494,36 @@
     }
   },
   "seedJourney": {
-    "ariaLabel": "Tohumun yolculuğu",
+    "heading": "Tohumun Yolculuğu",
+    "intro": "Tohum toplarımız laboratuvarda hazırlanır, dronla sahaya ulaşır ve yağışla birlikte toprağa karışır.",
     "stepLabel": "Adım",
-    "lab": {
-      "hudTopLeft": "⊹ Lab Analiz · KIL/GÜBRE/TOHUM",
-      "hudBottomRight": "pH 6.8 · NPK Optimal"
-    },
-    "drone": {
-      "hudBottomLeft": "⊹ Hassas Hedef · 200+ tohum"
-    },
-    "impact": {
-      "hudBottomLeft": "⊹ Toprağa İndi · Çimlenme: %65+"
-    },
-    "captions": {
-      "lab": {
-        "title": "Laboratuvar",
-        "desc": "Orman mühendisleri kil + organik gübre + yerli tohum oranlarını analiz eder, tohum topunu formüle eder."
+    "acts": {
+      "prepare": {
+        "title": "Tohum Topu Hazırlanır",
+        "desc": "Yerli tohum, kil ve organik maddeyle kaplanır. Bu kabuk tohumun kuşlardan, kemirgenlerden ve kuruluktan korunmasına yardımcı olur."
       },
-      "drone": {
-        "title": "Dronla Yolculuk",
-        "desc": "GPS hassasiyetli drone tohum topunu hedef koordinata otonom uçar — bir uçuşta 200+ tohum."
+      "flight": {
+        "title": "Dronla Sahaya",
+        "desc": "Dron, planlanan rota üzerinde uçar ve tohum toplarını belirlenen noktalara bırakır. Yaya ulaşılması zor yamaçlara da erişir."
       },
-      "impact": {
-        "title": "Toprağa Buluşma",
-        "desc": "Yağmurla birlikte kil çözülür, tohum filizlenir. Çimlenme oranı %65+ — geleneksel yöntemin 3 katı."
+      "soil": {
+        "title": "Toprakla Buluşma",
+        "desc": "Tohum topu toprağa yerleşir ve yağışı bekler. Yağışla birlikte kil çözülür, tohum toprağa karışır."
+      },
+      "sprout": {
+        "title": "Çimlenme ve İzleme",
+        "desc": "Koşullar oluştuğunda tohum çimlenir, fide kök salar. Saha, sonraki dönemlerde düzenli olarak izlenir."
       }
+    },
+    "labels": {
+      "clay": "Kil",
+      "organic": "Organik madde",
+      "seed": "Yerli tohum",
+      "route": "Planlı rota"
     },
     "progress": {
       "label": "Tohumun Yolculuğu",
-      "steps": "Lab → Drone → Toprak"
+      "steps": "Hazırlık → Uçuş → Toprak → Filiz"
     }
   },
   "servicePackages": {

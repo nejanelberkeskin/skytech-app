@@ -1004,8 +1004,23 @@ body {
 .display-headline {
   font-feature-settings: "ss01" on, "ss02" on, "cv11" on;
   letter-spacing: -0.04em;
-  line-height: 0.92;
+  /* 0.92 iki satırlı başlıklarda satırları birbirine sokuyordu: üst satırın
+     alt uzantıları (g, y, ç, ş, ğ) alt satırın üst işaretleriyle (İ, Ü, Ö, Ş, Ğ)
+     çakışıyordu. Türkçe/Kiril için güvenli alt sınır ~1.08. */
+  line-height: 1.08;
   text-wrap: balance;
+}
+
+/* Gradyan metin: background-clip:text yalnız öğenin kendi kutusunu boyar; kutudan
+   taşan harf uzantıları (İ'nin noktası, ğ/y/ç kuyruğu) boyanmadan kalıp "kesik"
+   görünüyordu. Satır içi öğede dikey padding satır yüksekliğini değiştirmez ama
+   boyama alanını büyütür; inline-block kullanımlarında yerleşimi bozmasın diye
+   aynı miktarda negatif margin ile dengelenir. */
+[class*="text-gradient-"] {
+  padding-block: 0.14em;
+  margin-block: -0.14em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
 }
 
 /* Deep gradient — premium, soft */

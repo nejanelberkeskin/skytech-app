@@ -103,7 +103,9 @@ function WordReveal({ text, className = "" }: { text: string; className?: string
     <span className={className}>
       {words.map((word, i) => (
         <span key={i}>
-          <span className="inline-block overflow-hidden align-bottom">
+          {/* Kırpma kutusu satır kutusundan uzun olmalı; yoksa harflerin üst/alt
+              uzantıları kesilir. Padding kutuyu büyütür, negatif margin yerleşimi korur. */}
+          <span className="inline-block overflow-hidden align-bottom py-[0.16em] -my-[0.16em]">
             <motion.span
               className="inline-block"
               initial={{ y: "110%", opacity: 0 }}

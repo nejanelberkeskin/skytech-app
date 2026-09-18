@@ -423,36 +423,6 @@
     "ctaSecondary": "Bize Ulaşın",
     "ctaRequest": "Talep Oluştur"
   },
-  "carbonCalculator": {
-    "badge": "Karbon Hesaplayıcı",
-    "titleLine1": "Etkinizi",
-    "titleAccent": "Anında Görün",
-    "subtitle": "Tohum sayısını, yılı ve çimlenme oranını ayarlayın — kaç ağaç yetişeceğini, kaç ton karbonun nötrleneceğini canlı izleyin.",
-    "sliders": {
-      "seeds": "Tohum Sayısı",
-      "years": "İzleme Süresi",
-      "germRate": "Çimlenme Oranı"
-    },
-    "units": {
-      "year": "yıl"
-    },
-    "formula": {
-      "label": "Formül:",
-      "text": "Tohum × çimlenme = ağaç · Ağaç × 5kg CO₂ × yıl = toplam karbon"
-    },
-    "results": {
-      "trees": "Yetişecek Ağaç",
-      "carbon": "Nötrlenecek Karbon",
-      "carbonSuffix": "ton CO₂",
-      "people": "Kişi Karbon Ayak İzi Nötrlenir",
-      "peopleSuffix": "kişi"
-    },
-    "cta": {
-      "start": "Bu Etkiyi Başlat — Tohum Sipariş Et",
-      "soon": "Yakında",
-      "request": "Bu Etkiyi Başlat — Talep Oluştur"
-    }
-  },
   "faqSection": {
     "badge": "Sıkça Sorulanlar",
     "titleLine1": "Aklınızdaki",
@@ -930,121 +900,6 @@
       "subtitle": "Bölge analizi, yasal izin koordinasyonu ve operasyon planlaması — tek noktadan.",
       "buttonPrimary": "Teklif Al",
       "buttonSecondary": "Aktif Projeler"
-    }
-  },
-  "carbonProgramPage": {
-    "meta": {
-      "title": "Karbon Programı — Ölçülebilir, Şeffaf, Sertifikalı",
-      "description": "Karbon nötrleme programımız: dron ekimleriyle dengelenen CO₂, şeffaf metrikler, GRI/CDP uyumlu ESG raporlama. Kurumsal karbon sertifikası."
-    },
-    "breadcrumb": {
-      "label": "Karbon Programı"
-    },
-    "schema": {
-      "name": "Karbon Nötrleme Programı",
-      "description": "GRI/CDP/SASB uyumlu, IPCC standartlarında karbon ayak izi hesaplama ve dron ağaçlandırmayla nötrleme. Kurumsal ESG raporlarına entegre."
-    },
-    "hero": {
-      "title": "Holding ve Şirketler için Uçtan Uca Karbon Nötrleme",
-      "subtitle": "Yıllık sera gazı emisyonlarınızı uluslararası standartlarda hesaplıyor, dron teknolojisiyle yüksek karbon yutak alanları (biyo-karbon ekosistemleri) inşa ediyor ve tüm süreci şeffaf biçimde ESG raporlarınıza entegre ediyoruz."
-    },
-    "metrics": {
-      "badge": "Metrikler",
-      "title": {
-        "pre": "Ölçülebilir",
-        "highlight": "Karbon Etkisi"
-      },
-      "subtitle": "Her sayı IPCC standartlarına dayanır. Şeffaf, doğrulanabilir, denetlenebilir.",
-      "perTree": {
-        "label": "CO₂ / Ağaç / Yıl",
-        "desc": "Bir ağacın ortalama yıllık karbondioksit emilimi; tür, yaş ve iklime göre değişir."
-      },
-      "perHectare": {
-        "label": "CO₂ / ha / Yıl",
-        "desc": "Genç ağaçlandırma alanlarının ilk 20 yıldaki hektar başına karbon giderim aralığı."
-      },
-      "perSquareMeter": {
-        "label": "CO₂ / m² / Yıl",
-        "desc": "Akdeniz çam ormanlarında ölçülen organik karbon tutum hızı (2/3 toprak, 1/3 biyokütle)."
-      },
-      "compliant": {
-        "label": "Uyumlu",
-        "desc": "Veri formatlarımız uluslararası raporlama standartlarına uygundur."
-      }
-    },
-    "comparison": {
-      "badge": "Karbon Kredisi vs. Gerçek Ağaçlandırma",
-      "title": {
-        "pre": "Hangisi",
-        "highlight": "Gerçekten Etkili?"
-      },
-      "prosLabel": "Artılar:",
-      "consLabel": "Eksiler:",
-      "credit": {
-        "method": "Karbon Kredisi Satın Alma",
-        "pros": "Hızlı, kolay",
-        "cons": "Soyut, ölçülemez, çoğu zaman çift sayım"
-      },
-      "forest": {
-        "method": "Skytech Dron Ağaçlandırma",
-        "pros": "Fiziksel ağaç + GPS koordinatlı kayıt"
-      }
-    },
-    "faq": {
-      "badge": "SSS",
-      "title": {
-        "pre": "Karbon Programı",
-        "highlight": "Hakkında"
-      },
-      "validity": {
-        "question": "Karbon sertifikalarınız ne için geçerli?",
-        "answer": "Sertifikalarımız ESG raporlarında, GRI ve CDP gönderimlerinde, kurumsal sürdürülebilirlik beyanlarında kullanılabilir. Kurumumuz bünyesinde gerçekleştirilen tüm ormanlaştırma ve karbon yutak alanı projeleri Orman Genel Müdürlüğü (OGM) Bölge Müdürlükleri koordinasyonunda, yasal ve bilimsel altyapıya uygun olarak yürütülmektedir."
-      },
-      "calculation": {
-        "question": "Karbon hesaplaması nasıl yapılıyor?",
-        "answer": "Tohum sayısı × çimlenme oranı = ağaç sayısı; ağaç sayısı × ağaç başına yıllık CO₂ emilimi × izleme süresi = toplam karbon dengelemesi. Ağaç başına emilim aralığı (10–25 kg/yıl) ve hektar bazlı giderim hızları (4,5–40,7 t CO₂/ha/yıl) sayfanın altında listelenen akademik kaynaklara dayanır; tür, yaş ve iklime göre saha bazında güncellenir."
-      },
-      "individual": {
-        "question": "Bireysel olarak da katılabilir miyim?",
-        "answer": "Evet. Bireysel olarak da tohum talebi bırakabilir ya da açık sahalarımıza sizin adınıza ekim talep edebilirsiniz. Ekim yapılan sahaların gelişimi düzenli olarak izlenir."
-      },
-      "esg": {
-        "question": "ESG entegrasyonu nasıl çalışıyor?",
-        "answer": "Kurumsal panelinizde ESG yazılımınız arasında API entegrasyonu sağlayarak veri akışını otomatik hale getiriyoruz. Sistemimiz şirketinizin karbon ayak izini hesaplar ve bu doğrultuda markanıza özel, dron teknolojisiyle desteklenen bir orman oluşturur."
-      }
-    },
-    "references": {
-      "badge": "Bilimsel Kaynaklar",
-      "title": {
-        "pre": "Verilerimizin",
-        "highlight": "Dayanakları"
-      },
-      "subtitle": "Karbon hesaplama parametrelerimiz, hakemli akademik yayınlara ve bağımsız kurum kaynaklarına dayanır.",
-      "ref1": {
-        "text": "Ortalama ağaç başına yıllık CO₂ emilim aralığı — bağımsız karbon hesaplama derlemeleri ve orman yönetimi karbon muhasebesi kaynakları."
-      },
-      "ref2": {
-        "text": "Ağaçlandırma ve fidanlıkların ilk 20 yıldaki hektar başına karbon giderim hızı (4,5–40,7 t CO₂ ha⁻¹ yıl⁻¹)."
-      },
-      "ref3": {
-        "text": "Akdeniz çam ormanında organik karbon tutum hızı (~550 g CO₂ m⁻² yıl⁻¹)."
-      },
-      "ref4": {
-        "text": "Tohum topu kompozisyonu, atış yüksekliği ve çimlenme başarısı üzerine İHA tabanlı hassas ekim araştırması."
-      },
-      "note": "Not: Karbon giderim değerleri tür, yaş, iklim ve saha koşullarına göre değişir. Sunulan aralıklar bilimsel literatürdeki ortalamalardır; kurumsal projelerde saha bazlı ölçümlerle güncellenir."
-    },
-    "cta": {
-      "title": {
-        "pre": "Karbon Nötrleme",
-        "highlight": "Programına Katılın"
-      },
-      "subtitle": "Bireysel ya da kurumsal — ölçülebilir karbon dengeleme yolculuğu burada başlıyor.",
-      "primaryEnabled": "Kurumsal Teklif Al",
-      "primaryDisabled": "Bilgi Al",
-      "secondaryEnabled": "Bireysel Tohum Sipariş Et",
-      "secondaryDisabled": "Yakında",
-      "secondaryRequest": "Bireysel Talep Oluştur"
     }
   },
   "corporatePage": {
@@ -1601,6 +1456,131 @@
         "quantity": "Tohum adedi",
         "dedication": "Adına"
       }
+    }
+  },
+  "carbonProgramPage": {
+    "meta": {
+      "title": "Karbon ve Raporlama — Faaliyet Raporu",
+      "description": "Her çalışma için saha, alan, tür, tarih, koordinat ve görüntü içeren Faaliyet Raporu düzenliyoruz. Raporun ne işe yaradığını ve ne olmadığını açıkça anlatıyoruz."
+    },
+    "breadcrumb": {
+      "label": "Karbon ve Raporlama"
+    },
+    "schema": {
+      "name": "Faaliyet Raporu ve İzleme",
+      "description": "Dronla tohum topu bırakma çalışmaları için saha, alan, tür, tarih, koordinat ve görüntü içeren Faaliyet Raporu ile yıllık izleme."
+    },
+    "hero": {
+      "title": "Karbon ve Raporlama",
+      "subtitle": "Yaptığımız işi belgeliyoruz; belgeleyemediğimiz bir şeyi vaat etmiyoruz. Faaliyet Raporu'nun ne olduğunu ve ne olmadığını burada bulabilirsiniz."
+    },
+    "report": {
+      "badge": "Faaliyet Raporu",
+      "title": {
+        "pre": "Her Çalışma",
+        "highlight": "Kayıt Altında"
+      },
+      "subtitle": "Tohum topu bırakılan her saha için bir Faaliyet Raporu düzenliyoruz. Raporda şunlar yer alır:",
+      "items": {
+        "site": {
+          "title": "Saha ve konum",
+          "desc": "Çalışmanın yapıldığı Proje Uygulama Sahası, ili ve ilçesi."
+        },
+        "area": {
+          "title": "Alan",
+          "desc": "Çalışılan alanın hektar cinsinden büyüklüğü."
+        },
+        "species": {
+          "title": "Tür ve tohum kaynağı",
+          "desc": "Sahaya bırakılan tür ya da türler ve tohumun tedarik edildiği kaynak."
+        },
+        "date": {
+          "title": "Tarih ve uçuş kaydı",
+          "desc": "Bırakmanın yapıldığı tarih ve dron uçuşlarına ait kayıtlar."
+        },
+        "coordinates": {
+          "title": "Koordinatlar",
+          "desc": "Tohum toplarının bırakıldığı alanın koordinatları."
+        },
+        "footage": {
+          "title": "Görüntüler ve izleme",
+          "desc": "Çalışma sırasında ve izleme döneminde dronla alınan görüntüler; yıllık izleme sonuçları."
+        }
+      }
+    },
+    "usage": {
+      "badge": "Kullanım",
+      "title": {
+        "pre": "Rapor Ne İşe Yarar,",
+        "highlight": "Ne Değildir?"
+      },
+      "can": {
+        "heading": "Nasıl kullanabilirsiniz",
+        "items": [
+          "Sürdürülebilirlik raporunuzun doğa, biyoçeşitlilik ve toplumsal katkı bölümlerinde destekleyici belge olarak",
+          "Kurum içi ve kurum dışı iletişimde, yapılan çalışmanın somut kaydı olarak",
+          "Çalışanlarınız ve paydaşlarınızla paylaşacağınız Katılım Sertifikaları'nın dayanağı olarak",
+          "Sahanın yıllar içindeki gelişimini izlemek için"
+        ]
+      },
+      "cannot": {
+        "heading": "Ne değildir",
+        "items": [
+          "Karbon kredisi ya da karbon nötr belgesi değildir",
+          "Sera gazı envanterinizden düşülemez; denkleştirme amacıyla kullanılamaz",
+          "Bağış makbuzu değildir; vergi indirimi sağlamaz",
+          "Çimlenme ya da ağaç sayısı garantisi vermez; tohumdan ağaca giden süreç yıllar alır ve doğal koşullara bağlıdır"
+        ]
+      }
+    },
+    "why": {
+      "badge": "Yaklaşımımız",
+      "title": {
+        "pre": "Karbon Konusunda",
+        "highlight": "Neden Temkinliyiz?"
+      },
+      "body": "Ormanlar karbon tutar; ancak bir çalışmanın ne kadar karbon tuttuğunu söyleyebilmek için yıllara yayılan ölçüm ve bağımsız doğrulama gerekir. Sahalarımızdaki karbon tutumu bugün bağımsız bir kuruluşça hesaplanıp doğrulanmış değildir. Bu nedenle rakam vermiyor, karbon nötrlüğü gibi iddialarda bulunmuyoruz.",
+      "points": [
+        "Kurumsal sera gazı envanterleri kurumun kendi faaliyet sınırını kapsar; üçüncü tarafın yürüttüğü bir orman çalışması bu envanterden düşülemez.",
+        "Karbon kredisi; tescilli bir proje, bağımsız geçerli kılma ve dönemsel ölçüm sonucunda, proje düzeyinde üretilir. Tek bir siparişle kredi elde edilmez.",
+        "Bağımsız bir doğrulama yapılırsa kapsamını, yöntemini ve sonuçlarını bu sayfada yayımlarız."
+      ]
+    },
+    "faq": {
+      "badge": "Sık Sorulanlar",
+      "title": {
+        "pre": "Karbon ve Rapor",
+        "highlight": "Soruları"
+      },
+      "items": {
+        "credit": {
+          "question": "Bu çalışmayla karbon raporu ya da karbon kredisi alabilir miyim?",
+          "answer": "Hayır. Verdiğimiz belge bir Faaliyet Raporu'dur: çalışmanın sahasını, alanını, türlerini, tarihini, koordinatlarını ve görüntülerini kayıt altına alır. Karbon kredisi ya da karbon nötr belgesi değildir; sera gazı envanterinizden düşülemez, denkleştirme amacıyla kullanılamaz."
+        },
+        "sustainability": {
+          "question": "Faaliyet Raporu'nu sürdürülebilirlik raporumda nasıl kullanırım?",
+          "answer": "Raporu; doğa, biyoçeşitlilik ve toplumsal katkı başlıklarında yaptığınız çalışmanın kanıtı olarak ekleyebilirsiniz. Emisyon azaltımı ya da giderimi olarak raporlamayın; bu tür beyanlar doğrulanmış karbon kredisi gerektirir."
+        },
+        "individual": {
+          "question": "Bireysel olarak da katılabilir miyim?",
+          "answer": "Evet. Bir Proje Uygulama Sahası seçip o sahaya tohum topu bıraktırabilirsiniz. Bırakma yapıldıktan sonra Katılım Sertifikanız, yaklaşık altı ay sonra da çalışmanın görüntüleri e-postayla iletilir."
+        },
+        "future": {
+          "question": "İleride karbon doğrulaması yapılacak mı?",
+          "answer": "Bu, proje düzeyinde tescil ve uzun süreli ölçüm gerektiren bir süreçtir. Böyle bir adım atıldığında kapsamını, yöntemini ve sonuçlarını burada açıkça paylaşırız; o güne kadar karbon miktarına ilişkin bir beyanda bulunmuyoruz."
+        }
+      }
+    },
+    "cta": {
+      "title": {
+        "pre": "Çalışmaya",
+        "highlight": "Katılın"
+      },
+      "subtitle": "Bireysel ya da kurumsal — bir saha seçin ya da kurumunuz için bilgi alın.",
+      "order": "Satın Al",
+      "request": "Talep Oluştur",
+      "soon": "Yakında",
+      "corporate": "Kurumsal Bilgi Al"
     }
   }
 }

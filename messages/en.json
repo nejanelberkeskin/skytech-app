@@ -423,36 +423,6 @@
     "ctaSecondary": "Contact Us",
     "ctaRequest": "Submit a Request"
   },
-  "carbonCalculator": {
-    "badge": "Carbon Calculator",
-    "titleLine1": "See Your Impact",
-    "titleAccent": "Instantly",
-    "subtitle": "Adjust the number of seeds, the years, and the germination rate — watch live how many trees will grow and how many tons of carbon will be neutralized.",
-    "sliders": {
-      "seeds": "Number of Seeds",
-      "years": "Monitoring Period",
-      "germRate": "Germination Rate"
-    },
-    "units": {
-      "year": "yr"
-    },
-    "formula": {
-      "label": "Formula:",
-      "text": "Seeds × germination = trees · Trees × 5kg CO₂ × years = total carbon"
-    },
-    "results": {
-      "trees": "Trees Grown",
-      "carbon": "Carbon Neutralized",
-      "carbonSuffix": "tons CO₂",
-      "people": "People's Carbon Footprint Offset",
-      "peopleSuffix": "people"
-    },
-    "cta": {
-      "start": "Start This Impact — Order Seeds",
-      "soon": "Coming Soon",
-      "request": "Start This Impact — Submit a Request"
-    }
-  },
   "faqSection": {
     "badge": "Frequently Asked",
     "titleLine1": "All the Questions",
@@ -930,121 +900,6 @@
       "subtitle": "Area analysis, legal permit coordination and operation planning — from a single point.",
       "buttonPrimary": "Get a Quote",
       "buttonSecondary": "Active Projects"
-    }
-  },
-  "carbonProgramPage": {
-    "meta": {
-      "title": "Carbon Program — Measurable, Transparent, Certified",
-      "description": "Our carbon neutralization program: CO₂ offset through drone planting, transparent metrics, GRI/CDP-compliant ESG reporting. Corporate carbon certificate."
-    },
-    "breadcrumb": {
-      "label": "Carbon Program"
-    },
-    "schema": {
-      "name": "Carbon Neutralization Program",
-      "description": "GRI/CDP/SASB-compliant carbon footprint calculation to IPCC standards, neutralized through drone reforestation. Integrated into corporate ESG reports."
-    },
-    "hero": {
-      "title": "End-to-End Carbon Neutralization for Holdings and Companies",
-      "subtitle": "We calculate your annual greenhouse gas emissions to international standards, build high-capacity carbon sink areas (bio-carbon ecosystems) with drone technology, and transparently integrate the entire process into your ESG reports."
-    },
-    "metrics": {
-      "badge": "Metrics",
-      "title": {
-        "pre": "Measurable",
-        "highlight": "Carbon Impact"
-      },
-      "subtitle": "Every figure is grounded in IPCC standards. Transparent, verifiable, auditable.",
-      "perTree": {
-        "label": "CO₂ / Tree / Year",
-        "desc": "Average annual carbon dioxide absorption of a tree; varies by species, age and climate."
-      },
-      "perHectare": {
-        "label": "CO₂ / ha / Year",
-        "desc": "Per-hectare carbon removal range of young reforestation areas over the first 20 years."
-      },
-      "perSquareMeter": {
-        "label": "CO₂ / m² / Year",
-        "desc": "Organic carbon sequestration rate measured in Mediterranean pine forests (2/3 soil, 1/3 biomass)."
-      },
-      "compliant": {
-        "label": "Compliant",
-        "desc": "Our data formats conform to international reporting standards."
-      }
-    },
-    "comparison": {
-      "badge": "Carbon Credit vs. Real Reforestation",
-      "title": {
-        "pre": "Which Is",
-        "highlight": "Truly Effective?"
-      },
-      "prosLabel": "Pros:",
-      "consLabel": "Cons:",
-      "credit": {
-        "method": "Buying Carbon Credits",
-        "pros": "Fast, easy",
-        "cons": "Abstract, unmeasurable, often double-counted"
-      },
-      "forest": {
-        "method": "Skytech Drone Reforestation",
-        "pros": "Physical trees + GPS-coordinated records"
-      }
-    },
-    "faq": {
-      "badge": "FAQ",
-      "title": {
-        "pre": "About the",
-        "highlight": "Carbon Program"
-      },
-      "validity": {
-        "question": "What are your carbon certificates valid for?",
-        "answer": "Our certificates can be used in ESG reports, GRI and CDP submissions, and corporate sustainability statements. All reforestation and carbon sink projects carried out by our company are conducted in coordination with the Regional Directorates of the General Directorate of Forestry (OGM), in line with a sound legal and scientific framework."
-      },
-      "calculation": {
-        "question": "How is the carbon calculation performed?",
-        "answer": "Number of seeds × germination rate = number of trees; number of trees × annual CO₂ absorption per tree × monitoring period = total carbon offset. The per-tree absorption range (10–25 kg/year) and per-hectare removal rates (4.5–40.7 t CO₂/ha/year) are based on the academic sources listed at the bottom of the page; they are updated on a site basis according to species, age and climate."
-      },
-      "individual": {
-        "question": "Can I participate as an individual too?",
-        "answer": "Yes. As an individual you can submit a seed request or ask us to plant on our open sites in your name. The development of the planted sites is monitored regularly."
-      },
-      "esg": {
-        "question": "How does ESG integration work?",
-        "answer": "We automate the data flow by providing API integration between your ESG software and your corporate dashboard. Our system calculates your company's carbon footprint and, accordingly, creates a forest unique to your brand, supported by drone technology."
-      }
-    },
-    "references": {
-      "badge": "Scientific Sources",
-      "title": {
-        "pre": "The Basis for",
-        "highlight": "Our Data"
-      },
-      "subtitle": "Our carbon calculation parameters are based on peer-reviewed academic publications and independent institutional sources.",
-      "ref1": {
-        "text": "Average annual CO₂ absorption range per tree — independent carbon accounting compilations and forest management carbon accounting sources."
-      },
-      "ref2": {
-        "text": "Per-hectare carbon removal rate of reforestation and nurseries over the first 20 years (4.5–40.7 t CO₂ ha⁻¹ yr⁻¹)."
-      },
-      "ref3": {
-        "text": "Organic carbon sequestration rate in a Mediterranean pine forest (~550 g CO₂ m⁻² yr⁻¹)."
-      },
-      "ref4": {
-        "text": "UAV-based precision seeding research on seed ball composition, drop height and germination success."
-      },
-      "note": "Note: Carbon removal values vary by species, age, climate and site conditions. The ranges presented are averages from the scientific literature; in corporate projects they are updated with site-based measurements."
-    },
-    "cta": {
-      "title": {
-        "pre": "Join the",
-        "highlight": "Carbon Neutralization Program"
-      },
-      "subtitle": "Individual or corporate — your measurable carbon offset journey starts here.",
-      "primaryEnabled": "Get a Corporate Quote",
-      "primaryDisabled": "Get Information",
-      "secondaryEnabled": "Order Seeds as an Individual",
-      "secondaryDisabled": "Coming Soon",
-      "secondaryRequest": "Individual Request"
     }
   },
   "corporatePage": {
@@ -1601,6 +1456,131 @@
         "quantity": "Seed quantity",
         "dedication": "In the name of"
       }
+    }
+  },
+  "carbonProgramPage": {
+    "meta": {
+      "title": "Carbon & Reporting — The Activity Report",
+      "description": "For every job we issue an Activity Report covering site, area, species, date, coordinates and footage — and we say plainly what the report is for and what it is not."
+    },
+    "breadcrumb": {
+      "label": "Carbon & Reporting"
+    },
+    "schema": {
+      "name": "Activity Report and Monitoring",
+      "description": "An Activity Report covering site, area, species, date, coordinates and footage for seed ball release by drone, together with annual monitoring."
+    },
+    "hero": {
+      "title": "Carbon & Reporting",
+      "subtitle": "We document the work we do, and we do not promise what we cannot document. Here is what the Activity Report is — and what it is not."
+    },
+    "report": {
+      "badge": "Activity Report",
+      "title": {
+        "pre": "Every Job",
+        "highlight": "On Record"
+      },
+      "subtitle": "We issue an Activity Report for every site where seed balls are released. It contains:",
+      "items": {
+        "site": {
+          "title": "Site and location",
+          "desc": "The Project Site where the work took place, with its province and district."
+        },
+        "area": {
+          "title": "Area",
+          "desc": "The size of the area worked on, in hectares."
+        },
+        "species": {
+          "title": "Species and seed source",
+          "desc": "The species released on the site and where the seed was sourced."
+        },
+        "date": {
+          "title": "Date and flight log",
+          "desc": "The date of the release and the records of the drone flights."
+        },
+        "coordinates": {
+          "title": "Coordinates",
+          "desc": "The coordinates of the area where the seed balls were released."
+        },
+        "footage": {
+          "title": "Footage and monitoring",
+          "desc": "Drone footage taken during the work and in the monitoring period, plus the annual monitoring results."
+        }
+      }
+    },
+    "usage": {
+      "badge": "Use",
+      "title": {
+        "pre": "What the Report Is For —",
+        "highlight": "and What It Is Not"
+      },
+      "can": {
+        "heading": "How you can use it",
+        "items": [
+          "As supporting evidence in the nature, biodiversity and social-contribution sections of your sustainability report",
+          "As a concrete record of the work in your internal and external communications",
+          "As the basis for the Certificates of Participation you share with employees and stakeholders",
+          "To follow how the site develops over the years"
+        ]
+      },
+      "cannot": {
+        "heading": "What it is not",
+        "items": [
+          "It is not a carbon credit or a carbon-neutral certificate",
+          "It cannot be deducted from your greenhouse gas inventory or used for offsetting",
+          "It is not a donation receipt and provides no tax deduction",
+          "It does not guarantee germination or a number of trees; the path from seed to tree takes years and depends on natural conditions"
+        ]
+      }
+    },
+    "why": {
+      "badge": "Our approach",
+      "title": {
+        "pre": "Why We Are Careful",
+        "highlight": "About Carbon"
+      },
+      "body": "Forests store carbon — but stating how much carbon a given piece of work has stored requires years of measurement and independent verification. Carbon uptake on our sites has not been calculated and verified by an independent body to date. That is why we give no figures and make no claims such as carbon neutrality.",
+      "points": [
+        "A corporate greenhouse gas inventory covers the organisation's own operational boundary; forest work carried out by a third party cannot be deducted from it.",
+        "Carbon credits are generated at project level, through a registered project, independent validation and periodic measurement. A single order does not produce credits.",
+        "If an independent verification is carried out, we will publish its scope, method and results on this page."
+      ]
+    },
+    "faq": {
+      "badge": "FAQ",
+      "title": {
+        "pre": "Carbon and Report",
+        "highlight": "Questions"
+      },
+      "items": {
+        "credit": {
+          "question": "Can I obtain a carbon report or carbon credits through this work?",
+          "answer": "No. The document we provide is an Activity Report: it records the site, area, species, date, coordinates and footage of the work. It is not a carbon credit or a carbon-neutral certificate; it cannot be deducted from your greenhouse gas inventory or used for offsetting."
+        },
+        "sustainability": {
+          "question": "How do I use the Activity Report in my sustainability report?",
+          "answer": "You can include it as evidence of the work you supported under nature, biodiversity and social contribution. Do not report it as an emission reduction or removal; such statements require verified carbon credits."
+        },
+        "individual": {
+          "question": "Can I take part as an individual?",
+          "answer": "Yes. You can choose a Project Site and have seed balls released there. After the release you receive your Certificate of Participation by email, and about six months later the footage of the work."
+        },
+        "future": {
+          "question": "Will there be a carbon verification in the future?",
+          "answer": "That is a process requiring project-level registration and long-term measurement. If such a step is taken we will share its scope, method and results here openly; until then we make no statement about carbon quantities."
+        }
+      }
+    },
+    "cta": {
+      "title": {
+        "pre": "Take Part",
+        "highlight": "in the Work"
+      },
+      "subtitle": "Individual or corporate — choose a site, or get information for your organisation.",
+      "order": "Buy Now",
+      "request": "Submit a Request",
+      "soon": "Coming Soon",
+      "corporate": "Corporate Enquiry"
     }
   }
 }

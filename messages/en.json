@@ -10,17 +10,17 @@
   "nav": {
     "home": "Home",
     "services": "Services",
-    "seedBall": "Seed Ball",
+    "seedBall": "Seed Ball Technology",
     "ourSeeds": "Our Seeds",
     "droneTech": "Drone Technology",
-    "carbonProgram": "Carbon Program",
+    "carbonProgram": "Carbon & Reporting",
     "projects": "Projects",
     "corporate": "Corporate",
     "about": "About",
     "contact": "Contact",
     "login": "Sign In",
     "signUp": "Get Started",
-    "orderSeeds": "Order Seeds",
+    "orderSeeds": "Buy Now",
     "menu": "Menu",
     "comingSoon": "Coming Soon",
     "requests": "Submit a Request",
@@ -83,7 +83,7 @@
       },
       "distribution": {
         "title": "Release by Drone",
-        "description": "Guided by high-precision GPS data, our drone fleet releases seed balls at pre-determined target points. Because no one enters the land, soil and vegetation are left undamaged."
+        "description": "Guided by high-precision GPS data, our drone fleet releases 200+ seed balls in a single flight at pre-determined target points. Because no one enters the land, soil and vegetation are left undamaged."
       },
       "monitoring": {
         "title": "Annual Monitoring & Reporting",
@@ -104,7 +104,7 @@
         "bullets": [
           "Worker safety: Avoids risking lives on loose, landslide-prone terrain after fires",
           "Golden time window: Rapid intervention before topsoil loses nutrients or erosion begins",
-          "GIS-driven homogeneous distribution: Seed density per m² is finely tuned",
+          "Even distribution with GIS: the number of seed balls per m² is precisely tuned",
           "Digital traceability: Every coordinate is logged, germination is monitored from satellites"
         ],
         "stat": "65%+",
@@ -118,11 +118,11 @@
             "items": [
               {
                 "title": "Labor Savings",
-                "description": "Work that would take hundreds of laborers weeks of manual planting is completed by autonomous drone fleets in a fraction of the time."
+                "description": "Work that takes hundreds of labourers weeks with traditional hand planting is completed by autonomous drone fleets in a very short time."
               },
               {
                 "title": "Worker Safety",
-                "description": "Planting is carried out on loose post-fire soil, fallen trees and landslide-prone terrain without putting human lives at risk."
+                "description": "Seed balls are released without risking human life on dangerous terrain with loosened soil, fallen trees and landslide risk after a fire."
               }
             ]
           },
@@ -152,7 +152,7 @@
               },
               {
                 "title": "Lower Cost",
-                "description": "Optimizes reforestation budgets by removing seedling growing, transport, hole digging and planting labor costs."
+                "description": "It optimises the reforestation budget by removing the costs of raising saplings, transport, digging and planting labour."
               },
               {
                 "title": "Critical Time Management",
@@ -165,15 +165,15 @@
             "items": [
               {
                 "title": "GIS and Mapping Integration",
-                "description": "Thanks to 3D maps prepared in advance, seeds are not dropped randomly but placed precisely on micro-basins and moist points where germination probability is highest."
+                "description": "Thanks to 3D maps of the area prepared in advance, seed balls are not scattered at random but released at micro-basins and moist spots where germination is most likely."
               },
               {
                 "title": "Homogeneous Distribution",
-                "description": "Sensors and autonomous algorithms finely tune the seed count per m²; over-density or gaps are prevented."
+                "description": "Sensors and autonomous algorithms precisely tune the number of seed balls per m², preventing overcrowding or gaps."
               },
               {
                 "title": "Digital Traceability",
-                "description": "Since drop coordinates are logged in the system, germination success and vegetation development are easily tracked by satellites or drones in the following months."
+                "description": "Because the coordinates where seed balls are released are recorded, germination success and vegetation development can easily be tracked by satellite or drone."
               }
             ]
           },
@@ -197,44 +197,44 @@
         "title": "Ecological Restoration of Mining Sites",
         "description": "We accelerate the restoration of sites whose natural structure, vegetation and soil quality have been disturbed by mining. Using remote sensing and AI, we boost vegetation success in degraded topographies, building a gradual and sustainable forest ecosystem.",
         "bullets": [
-          "200+ seeds per drone flight — 10× faster than traditional methods",
+          "200+ seed balls in a single drone flight — 10 times faster than traditional methods",
           "Zero ground footprint: maximum restoration with the smallest environmental footprint",
           "Full transparency: seed species, origin and germination rates logged end-to-end",
           "Annual monitoring: high-resolution digital data via periodic drone flights",
-          "Corporate integration: every sale on your e-commerce site flows straight into your ESG reports via API",
+          "Corporate reporting: an Activity Report for every job, covering site, area, species and footage",
           "Legal compliance: 100% compliant, coordinated with Regional Forestry Directorates"
         ],
         "stat": "10×",
         "statLabel": "Speed vs. traditional"
       },
       "carbon": {
-        "label": "Carbon Neutral",
-        "title": "End-to-End Carbon Neutrality for Holdings and Companies",
-        "description": "We calculate your annual greenhouse gas emissions to international standards, build high-carbon-sink areas (bio-carbon ecosystems) with drone technology, and integrate the entire process transparently into your ESG reports. By providing API integration between our corporate dashboard and your ESG software, we automate the data flow.",
+        "label": "Corporate Participation",
+        "title": "Group Participation and Reporting for Organisations",
+        "description": "Have seed balls released on Project Sites on behalf of your company. Use the Activity Report — covering the site, area, species, date and footage of the work — as supporting evidence in the nature and social-contribution sections of your sustainability reports.",
         "bullets": [
-          "Corporate carbon footprint assessment — to international standards",
-          "Brand-dedicated forest, supported by drone technology",
-          "Employee certificate — individual carbon attribution",
-          "Data ready for ESG, GRI, CDP reports — automatic flow via API"
+          "A Certificate of Participation issued in your company's name",
+          "An Activity Report with site, hectares, species, date and footage",
+          "Shareable certificates for your employees and stakeholders",
+          "Corporate invoicing and an order-specific contract"
         ],
-        "stat": "ESG",
-        "statLabel": "Full compliance"
+        "stat": "Report",
+        "statLabel": "For every job"
       }
     }
   },
   "footer": {
-    "tagline": "We plant the future with seed balls. Measurable reforestation powered by drone technology, forestry science and a transparent supply chain.",
+    "tagline": "With Seed Ball Technology, drones and forestry science, we work to bring forest back to fire-affected sites.",
     "servicesTitle": "Services",
     "quickLinksTitle": "Quick Links",
     "newsletterTitle": "Join Our Newsletter",
-    "newsletterDesc": "For news about new projects and carbon neutralization.",
+    "newsletterDesc": "For new sites and news from the field.",
     "subscribe": "Subscribe",
     "rightsReserved": "All rights reserved.",
     "brandOf": "Skytech Green is a brand of <link>{company}</link>",
     "services": {
-      "seedBall": "Seed Ball",
+      "seedBall": "Seed Ball Technology",
       "droneTech": "Drone Technology",
-      "carbonProgram": "Carbon Program",
+      "carbonProgram": "Carbon & Reporting",
       "corporate": "Corporate Solutions"
     },
     "quickLinks": {
@@ -263,7 +263,7 @@
     "sectionBadge": "Species",
     "sectionTitleLine": "Four Native",
     "sectionTitleAccent": "Species",
-    "sectionSubtitle": "Each species is chosen according to the climate and soil structure of the region where it is planted. Our seeds are supplied by the Regional Forestry Directorates.",
+    "sectionSubtitle": "Each species is selected for the climate and soil of the region where it is released. Our seeds are sourced through the Regional Forestry Directorates.",
     "footnote": "Our region-appropriate seeds are sourced from the relevant Regional Forestry Directorates; the species information, the dates the seeds were collected from the trees and their origin details are securely verified with blockchain technology.",
     "typeLabel": "Species {number}",
     "labels": {
@@ -335,15 +335,15 @@
     "badge": "Advantages",
     "title": "The Skytech Green Difference",
     "titleAccent": "Six Core Strengths",
-    "subtitle": "From traditional reforestation to drone seeding, we deliver measurable advantages at every step.",
+    "subtitle": "From traditional tree planting to seed ball release by drone, we deliver a measurable advantage at every point.",
     "items": {
       "speed": {
-        "title": "Fast Seeding",
-        "description": "200+ seeds in a single drone flight. Ten times faster than traditional methods."
+        "title": "Fast Operation",
+        "description": "200+ seed balls in a single drone flight. 10 times faster than traditional methods."
       },
       "noDamage": {
         "title": "Zero Site Damage",
-        "description": "Aerial seeding protects the ecosystem, reaching even areas no human foot has touched."
+        "description": "Seed balls are released from the air, so the ecosystem is protected — even areas untouched by human feet can be reached."
       },
       "transparency": {
         "title": "Full Transparency",
@@ -351,7 +351,7 @@
       },
       "monitoring": {
         "title": "Annual Monitoring",
-        "description": "Periodic flight data, growth metrics and your carbon neutralization results update in real time on our corporate dashboard."
+        "description": "Sites are re-surveyed by drone every year; flight data and growth footage are compiled in an Activity Report."
       },
       "integration": {
         "title": "Corporate Integration",
@@ -370,7 +370,7 @@
     "subtitle": "We placed the measurable differences side by side. The choice is yours.",
     "traditional": {
       "heading": "Traditional Reforestation",
-      "imageAlt": "Traditional reforestation — manual seeding",
+      "imageAlt": "Traditional tree planting — saplings planted by hand",
       "items": {
         "manual": "Reliant on manual labor, inadequate in rugged terrain",
         "damage": "Site damage is unavoidable",
@@ -380,13 +380,13 @@
       }
     },
     "skytech": {
-      "imageAlt": "Skytech Green drone seeding",
+      "imageAlt": "Skytech Green — seed ball release by drone",
       "items": {
         "access": "Access to every region with drone technology",
         "noTrace": "Zero site footprint, the ecosystem is protected",
         "verified": "Harvest date + origin verified on the blockchain",
-        "reporting": "Annual drone reporting, ESG integrated",
-        "distribution": "200+ seeds distributed in a single flight"
+        "reporting": "Annual drone monitoring and an Activity Report",
+        "distribution": "200+ seed balls per flight"
       }
     }
   },
@@ -417,7 +417,7 @@
     "badge": "Start Now",
     "title": "An Investment in Nature,",
     "titleAccent": "A Legacy for the Future",
-    "subtitle": "Individual or corporate — every contribution matters. Plant your first seed today and track your impact instantly.",
+    "subtitle": "Individual or corporate — take part in bringing forest back to fire-affected sites. Choose a site and follow the work through reports and footage.",
     "ctaPrimary": "Get Started",
     "ctaComingSoon": "Coming Soon",
     "ctaSecondary": "Contact Us",
@@ -457,31 +457,31 @@
     "badge": "Frequently Asked",
     "titleLine1": "All the Questions",
     "titleAccent": "On Your Mind",
-    "subtitle": "From seed balls to drone planting, from carbon certificates to corporate integration — everything is here.",
+    "subtitle": "From Seed Ball Technology to release by drone, from the certificate to reporting — the questions people ask.",
     "faqs": {
       "seedBall": {
-        "question": "What is a seed ball and how does it work?",
-        "answer": "A seed ball is an innovative artificial encapsulation method in which plant seeds are coated with clay and organic nutrients to protect them from external factors, raising germination success above 65%. This nature-friendly biotechnological approach protects seeds from risks such as drought and consumption by wildlife, helping them take hold in the soil safely; sprouting with the rain, it accelerates nature's rate of renewal."
+        "question": "What is Seed Ball Technology and how does it work?",
+        "answer": "Seed Ball Technology is a method in which native seeds are encapsulated in clay and organic nutrients, protecting them from external factors and raising germination success above 65%+. The capsule shields the seed from drought and from being eaten; it dissolves with rainfall and the seed germinates in its natural cycle."
       },
       "sourcing": {
         "question": "Where are the seeds sourced from?",
         "answer": "All seeds are sourced in cooperation with the Regional Forestry Directorates. In line with the principles of preserving biodiversity and sustainability, the collection date, genetic origin, and taxonomic (species) information of every seed lot is recorded using blockchain technology. Thanks to our end-to-end transparent supply chain, our customers can access seed ID cards and certification data at any time."
       },
       "droneEfficiency": {
-        "question": "How efficient is drone planting?",
-        "answer": "By distributing more than 200 seeds in a single flight, it offers 10 times the speed and high cost-efficiency compared to traditional methods. Thanks to GPS-precise coordinates, it provides high accessibility to steep and post-fire damaged areas that human feet cannot reach; with centimetric precision it maximizes resource efficiency while creating a sustainable environmental impact with a minimal carbon footprint."
+        "question": "How efficient is seed ball release by drone?",
+        "answer": "By releasing more than 200 seed balls in a single flight, it is 10 times faster than traditional methods and highly cost-effective. GPS-precise coordinates make it possible to reach steep and fire-affected areas that people cannot access, and because no one enters the land, soil and vegetation are protected."
       },
       "tracking": {
-        "question": "How can I track the growth of the planted seeds?",
-        "answer": "With annual periodic drone flights, the area is rescanned and growth data is processed into your corporate dashboard. Individual users can access area imagery via the QR code on their digital certificate. Corporate partners access real-time data through the API."
+        "question": "How can I follow the development of the released seed balls?",
+        "answer": "Sites are re-surveyed by drone every year. About six months after the release we publish footage of the work as a public video and send you the link by email. For organisations, the results are also compiled in the Activity Report."
       },
       "certificate": {
-        "question": "What is the carbon certificate valid for?",
-        "answer": "The certificates can be used in ESG reports, GRI and CDP submissions, and corporate sustainability statements. All reforestation and carbon sink projects are carried out in coordination with the Regional Directorates of the General Directorate of Forestry (OGM), in accordance with legal and scientific infrastructure; we provide a 100% verifiable monitoring chain."
+        "question": "What is the Certificate of Participation?",
+        "answer": "After the seed balls have been released on the site, we email you a Certificate of Participation. It shows the name you chose, the site, the date and the number of seed balls, and you can share it on social media. The certificate is not a donation receipt and does not provide any tax deduction."
       },
       "minOrder": {
-        "question": "Is there a minimum request quantity?",
-        "answer": "There is no lower limit for submitting a request; you choose the species and the quantity. Pricing, delivery and the scale of corporate projects are clarified together with you when our team gets back to you."
+        "question": "What is the minimum number of seed balls?",
+        "answer": "You can take part with a minimum of 20 seed balls. You can use one of the preset options or set the quantity yourself; the current fee is shown on the site page and at the order step."
       },
       "b2bIntegration": {
         "question": "How does B2B corporate integration work?",
@@ -489,7 +489,27 @@
       },
       "gift": {
         "question": "Can I send it as a gift?",
-        "answer": "Yes. In a seed request you can select \"Gift\" as the purpose, and in an open-land planting request you can state in whose name the seeds should be planted. We clarify the details together when we get back to you."
+        "answer": "Yes. You decide which name appears on the certificate, so you can enter the name of someone you care about and give them the Certificate of Participation as a gift."
+      },
+      "species": {
+        "question": "Do I choose which species is released?",
+        "answer": "No. The species is determined by our specialists according to the site's climate, soil and natural vegetation. On each site's page you can see which species is released and why."
+      },
+      "calendar": {
+        "question": "When are the seed balls released?",
+        "answer": "Release work takes place between October and March — the best period for the seed to meet rainfall. From April to September the sites are inspected, monitored and reported on. About six months after the release we share footage of the work."
+      },
+      "hectare": {
+        "question": "What is a hectare?",
+        "answer": "A hectare is a unit of area: 1 hectare is 10,000 square metres (about 2.47 acres) — roughly one and a half football pitches. We state the size of our sites in hectares."
+      },
+      "carbonReport": {
+        "question": "Can I obtain a carbon report or carbon credits through this work?",
+        "answer": "No. The document we provide is an Activity Report: it records the site, area, species, date, coordinates and footage of the work. It is not a carbon credit or a carbon-neutral certificate; it cannot be deducted from your greenhouse gas inventory or used for offsetting. Carbon uptake on the sites has not been calculated and verified by an independent body to date. If such a verification is carried out, we will publish it here together with its method and results."
+      },
+      "notDonation": {
+        "question": "Is this a donation?",
+        "answer": "No. What you buy from Skytech Green is a service: the release by drone of the number of seed balls you choose on the site you select. An invoice is issued for the service fee; your payment is not a donation and does not provide any tax deduction."
       }
     }
   },

@@ -10,17 +10,17 @@
   "nav": {
     "home": "Ana Sayfa",
     "services": "Hizmetler",
-    "seedBall": "Tohum Topu",
+    "seedBall": "Tohum Topu Teknolojisi",
     "ourSeeds": "Tohumlarımız",
     "droneTech": "Dron Teknolojisi",
-    "carbonProgram": "Karbon Programı",
+    "carbonProgram": "Karbon ve Raporlama",
     "projects": "Projeler",
     "corporate": "Kurumsal",
     "about": "Hakkımızda",
     "contact": "İletişim",
     "login": "Giriş Yap",
     "signUp": "Hemen Başla",
-    "orderSeeds": "Tohum Sipariş Et",
+    "orderSeeds": "Satın Al",
     "menu": "Menü",
     "comingSoon": "Yakında",
     "requests": "Talep Oluştur",
@@ -83,7 +83,7 @@
       },
       "distribution": {
         "title": "Dronla Bırakma",
-        "description": "Yüksek hassasiyetli GPS verileriyle yönlendirilen dron filomuz, tohum toplarını önceden belirlenmiş hedef noktalara bırakır. Araziye girilmediği için toprak ve bitki örtüsü zarar görmez."
+        "description": "Yüksek hassasiyetli GPS verileriyle yönlendirilen dron filomuz, tek bir uçuşta 200+ tohum topunu önceden belirlenmiş hedef noktalara bırakır. Araziye girilmediği için toprak ve bitki örtüsü zarar görmez."
       },
       "monitoring": {
         "title": "Yıllık İzleme ve Raporlama",
@@ -104,7 +104,7 @@
         "bullets": [
           "İş güvenliği: Yangın sonrası gevşeyen toprak ve heyelan riskinde insan hayatını riske atmaz",
           "Altın zaman dilimi: Toprak besin değerini kaybetmeden, erozyon başlamadan hızla müdahale",
-          "GIS ile homojen dağılım: m² başına düşen tohum miktarı hassas ayarlanır",
+          "GIS ile homojen dağılım: m² başına düşen tohum topu miktarı hassas ayarlanır",
           "Dijital izlenebilirlik: Her koordinat kayıt altında, çimlenme uydudan takip edilir"
         ],
         "stat": "%65+",
@@ -118,11 +118,11 @@
             "items": [
               {
                 "title": "İş Gücü Tasarrufu",
-                "description": "İnsan gücüyle yapılacak ekim yöntemiyle yüzlerce işçinin haftalarca süren çalışmasını, otonom dron filoları çok kısa sürede tamamlar."
+                "description": "Geleneksel dikim yönteminde yüzlerce işçinin haftalarca süren çalışmasını, otonom dron filoları çok kısa sürede tamamlar."
               },
               {
                 "title": "İş Güvenliği",
-                "description": "Yangın sonrası gevşeyen toprak, devrilen ağaçlar ve heyelan riski barındıran tehlikeli arazilerde insan hayatını riske atmadan ekim yapar."
+                "description": "Yangın sonrası gevşeyen toprak, devrilen ağaçlar ve heyelan riski barındıran tehlikeli arazilerde insan hayatını riske atmadan tohum topu bırakır."
               }
             ]
           },
@@ -152,7 +152,7 @@
               },
               {
                 "title": "Düşük Maliyet",
-                "description": "Fidan yetiştirme, nakliye, çukur kazma ve dikim işçiliği maliyetlerini ortadan kaldırarak ağaçlandırma bütçesini optimize eder."
+                "description": "Fidan yetiştirme, nakliye, çukur kazma ve dikim işçiliği maliyetlerini ortadan kaldırarak ormanlaştırma bütçesini optimize eder."
               },
               {
                 "title": "Kritik Zaman Yönetimi",
@@ -165,15 +165,15 @@
             "items": [
               {
                 "title": "GIS ve Haritalama Entegrasyonu",
-                "description": "Alanın önceden çıkarılan 3 boyutlu haritaları sayesinde tohumlar rastgele değil, çimlenme olasılığı en yüksek mikro havzalara ve nemli noktalara nokta atışı bırakılır."
+                "description": "Alanın önceden çıkarılan 3 boyutlu haritaları sayesinde tohum topları rastgele değil, çimlenme olasılığı en yüksek mikro havzalara ve nemli noktalara hedefli olarak bırakılır."
               },
               {
                 "title": "Homojen Dağılım",
-                "description": "Sensörler ve otonom algoritmalarla m² başına düşecek tohum miktarı hassas ayarlanır; aşırı sıkışıklık veya boşluklar önlenir."
+                "description": "Sensörler ve otonom algoritmalarla m² başına düşecek tohum topu miktarı hassas ayarlanır; aşırı sıkışıklık veya boşluklar önlenir."
               },
               {
                 "title": "Dijital İzlenebilirlik",
-                "description": "Tohumların atıldığı koordinatlar sisteme kaydedildiği için, çimlenme başarısı ve bitki örtüsü gelişimi uydular veya dronlarla kolayca takip edilir."
+                "description": "Tohum toplarının bırakıldığı koordinatlar sisteme kaydedildiği için, çimlenme başarısı ve bitki örtüsü gelişimi uydular veya dronlarla kolayca takip edilir."
               }
             ]
           },
@@ -197,44 +197,44 @@
         "title": "Maden Sahalarının Ekolojik Restorasyonu",
         "description": "Madencilik sonucu doğal yapısı, bitki örtüsü ve toprak kalitesi bozulmuş sahaların restorasyonunu İHA ve optimize edilmiş tohum topu metodolojileriyle hızlandırıyoruz. Uzaktan algılama ve yapay zekâ ile topoğrafyası bozulmuş arazilerde vejetasyon başarısını artırıyor; kademeli ve sürdürülebilir bir orman ekosistemi kuruyoruz.",
         "bullets": [
-          "Bir dron uçuşunda 200+ tohum — geleneksel yöntemlere göre 10 kat daha hızlı",
+          "Bir dron uçuşunda 200+ tohum topu — geleneksel yöntemlere göre 10 kat daha hızlı",
           "Sıfır saha tahribatı: minimum çevresel ayak iziyle maksimum restorasyon etkisi",
           "Tam şeffaflık: tohumun türü, orijini, çimlenme oranı uçtan uca kayıt altında",
           "Yıllık izleme: periyodik dron uçuşlarıyla yüksek çözünürlüklü dijital veri",
-          "Kurumsal entegrasyon: API ile e-ticaret sitenizdeki her satış doğrudan ESG raporlarınıza aktarılır",
+          "Kurumsal raporlama: her çalışma için saha, alan, tür ve görüntü içeren Faaliyet Raporu",
           "Yasal uyumluluk: Orman Bölge Müdürlükleri koordinasyonunda %100 yasal"
         ],
         "stat": "10×",
         "statLabel": "Geleneksele göre hız"
       },
       "carbon": {
-        "label": "Karbon Nötrleme",
-        "title": "Holding ve Şirketler İçin Uçtan Uca Karbon Nötrleme",
-        "description": "Yıllık sera gazı emisyonlarınızı uluslararası standartlarda hesaplıyor, dron teknolojisiyle yüksek karbon yutak alanları (biyo-karbon ekosistemleri) inşa ediyor ve tüm süreci şeffaf biçimde ESG raporlarınıza entegre ediyoruz. Kurumsal panelimiz ile ESG yazılımınız arasında API entegrasyonu sağlayarak veri akışını otomatik hale getiriyoruz.",
+        "label": "Kurumsal Katılım",
+        "title": "Kurumlar İçin Toplu Katılım ve Raporlama",
+        "description": "Şirketiniz adına Proje Uygulama Sahalarına tohum topu bıraktırın. Çalışmanın sahasını, alanını, türünü, tarihini ve görüntülerini içeren Faaliyet Raporu'nu sürdürülebilirlik raporlarınızın doğa ve toplumsal katkı bölümlerinde destekleyici belge olarak kullanın.",
         "bullets": [
-          "Şirket karbon ayak izi hesaplaması — uluslararası standartlarda",
-          "Markanıza özel, dron teknolojisiyle desteklenen orman",
-          "Çalışan sertifikası — bireysel karbon atıfı",
-          "ESG, GRI, CDP raporlarına hazır veri — API ile otomatik akış"
+          "Şirket adına düzenlenen Katılım Sertifikası",
+          "Saha, hektar, tür, tarih ve görüntü içeren Faaliyet Raporu",
+          "Çalışanlarınız ve paydaşlarınız için paylaşılabilir sertifikalar",
+          "Kurumsal fatura ve siparişe özel sözleşme"
         ],
-        "stat": "ESG",
-        "statLabel": "Tam uyum"
+        "stat": "Rapor",
+        "statLabel": "Her çalışma için"
       }
     }
   },
   "footer": {
-    "tagline": "Tohum toplarıyla geleceği ekiyoruz. Dron teknolojisi, ormancılık bilimi ve şeffaf tedarik zinciriyle ölçülebilir ağaçlandırma.",
+    "tagline": "Tohum Topu Teknolojisi, dron ve ormancılık bilimiyle yangından etkilenmiş sahaların yeniden ormanlaşmasına çalışıyoruz.",
     "servicesTitle": "Hizmetler",
     "quickLinksTitle": "Hızlı Linkler",
     "newsletterTitle": "Bültenimize Katılın",
-    "newsletterDesc": "Yeni projeler ve karbon nötrleme haberleri için.",
+    "newsletterDesc": "Yeni sahalar ve çalışma haberleri için.",
     "subscribe": "Abone Ol",
     "rightsReserved": "Tüm hakları saklıdır.",
     "brandOf": "Skytech Green, <link>{company}</link> markasıdır.",
     "services": {
-      "seedBall": "Tohum Topu",
+      "seedBall": "Tohum Topu Teknolojisi",
       "droneTech": "Dron Teknolojisi",
-      "carbonProgram": "Karbon Programı",
+      "carbonProgram": "Karbon ve Raporlama",
       "corporate": "Kurumsal Çözümler"
     },
     "quickLinks": {
@@ -263,7 +263,7 @@
     "sectionBadge": "Türler",
     "sectionTitleLine": "Dört Yerli",
     "sectionTitleAccent": "Türümüz",
-    "sectionSubtitle": "Her tür, ekildiği bölgenin iklim ve toprak yapısına göre seçilir. Tohumlarımız Orman Bölge Müdürlükleri tedariklidir.",
+    "sectionSubtitle": "Her tür, bırakıldığı bölgenin iklim ve toprak yapısına göre seçilir. Tohumlarımız Orman Bölge Müdürlükleri tedariklidir.",
     "footnote": "Yöreye uygun tohumlarımız ilgili Orman Bölge Müdürlüklerinden tedarik edilmekte; tohumların tür bilgisi, ağaçlardan toplanma tarihleri ve orijin bilgileri blok zinciri teknolojisiyle güvenle doğrulanmaktadır.",
     "typeLabel": "Tür {number}",
     "labels": {
@@ -335,15 +335,15 @@
     "badge": "Avantajlar",
     "title": "Skytech Green Farkı",
     "titleAccent": "Altı Temel Üstünlük",
-    "subtitle": "Geleneksel ağaçlandırmadan dronlu ekime, her noktada ölçülebilir avantaj sağlıyoruz.",
+    "subtitle": "Geleneksel ağaçlandırmadan dronla tohum topu bırakmaya, her noktada ölçülebilir avantaj sağlıyoruz.",
     "items": {
       "speed": {
-        "title": "Hızlı Ekim",
-        "description": "Bir dron uçuşunda 200+ tohum. Geleneksel yöntemlere kıyasla 10 kat hız."
+        "title": "Hızlı Uygulama",
+        "description": "Bir dron uçuşunda 200+ tohum topu. Geleneksel yöntemlere kıyasla 10 kat hız."
       },
       "noDamage": {
         "title": "Sıfır Saha Tahribatı",
-        "description": "Havadan ekim, ekosistemi koruyor. İnsan ayağının değmediği bölgelere bile ulaşıyor."
+        "description": "Tohum topları havadan bırakılır; ekosistem korunur. İnsan ayağının değmediği bölgelere bile ulaşılır."
       },
       "transparency": {
         "title": "Tam Şeffaflık",
@@ -351,7 +351,7 @@
       },
       "monitoring": {
         "title": "Yıllık İzleme",
-        "description": "Periyodik uçuş verileri, büyüme metrikleri ve karbon nötrleme sonuçlarınız kurumsal panomuzda anlık olarak güncellenir."
+        "description": "Sahalar her yıl dronla yeniden görüntülenir; uçuş verileri ve gelişim görüntüleri Faaliyet Raporu'nda toplanır."
       },
       "integration": {
         "title": "Kurumsal Entegrasyon",
@@ -370,7 +370,7 @@
     "subtitle": "Ölçülebilir farkları yan yana koyduk. Karar sizin.",
     "traditional": {
       "heading": "Geleneksel Ağaçlandırma",
-      "imageAlt": "Geleneksel ağaçlandırma — elle ekim",
+      "imageAlt": "Geleneksel ağaçlandırma — elle fidan dikimi",
       "items": {
         "manual": "İnsan gücüyle, zorlu coğrafyalarda yetersiz",
         "damage": "Saha tahribatı kaçınılmaz",
@@ -380,13 +380,13 @@
       }
     },
     "skytech": {
-      "imageAlt": "Skytech Green dron ekim",
+      "imageAlt": "Skytech Green — dronla tohum topu bırakma",
       "items": {
         "access": "Dron teknolojisiyle her bölgeye erişim",
         "noTrace": "Sıfır saha izi, ekosistem korunur",
         "verified": "Ağaçtan toplanma tarihi + orijin blok zinciri ile doğrulanır",
-        "reporting": "Yıllık dron raporlama, ESG entegre",
-        "distribution": "Bir uçuşta 200+ tohum dağıtımı"
+        "reporting": "Dronla yıllık izleme ve Faaliyet Raporu",
+        "distribution": "Bir uçuşta 200+ tohum topu"
       }
     }
   },
@@ -417,7 +417,7 @@
     "badge": "Şimdi Başlayın",
     "title": "Doğaya Yatırım,",
     "titleAccent": "Geleceğe Miras",
-    "subtitle": "Bireysel veya kurumsal — her katkı önemli. İlk tohumunuzu bugün ekin, etkinizi anında izleyin.",
+    "subtitle": "Bireysel ya da kurumsal — yangından etkilenmiş sahaların yeniden ormanlaşmasına katılın. Bir saha seçin; çalışmayı raporlarla ve görüntülerle izleyin.",
     "ctaPrimary": "Hemen Başla",
     "ctaComingSoon": "Yakında",
     "ctaSecondary": "Bize Ulaşın",
@@ -457,31 +457,31 @@
     "badge": "Sıkça Sorulanlar",
     "titleLine1": "Aklınızdaki",
     "titleAccent": "Tüm Sorular",
-    "subtitle": "Tohum topundan dronlu ekime, karbon sertifikasından kurumsal entegrasyona — her şey burada.",
+    "subtitle": "Tohum Topu Teknolojisi'nden dronla bırakmaya, sertifikadan raporlamaya — merak edilenler burada.",
     "faqs": {
       "seedBall": {
-        "question": "Tohum topu nedir, nasıl çalışır?",
-        "answer": "Tohum topu; bitki tohumlarının kil ve organik besin maddeleriyle kaplanarak dış etkenlerden korunduğu, çimlenme başarısını %65+ üzerine çıkaran yenilikçi bir yapay kapsülleme yöntemidir. Doğa dostu bu biyoteknolojik yaklaşım, tohumları kuraklık ve canlı tüketimi gibi risklerden koruyarak toprağa güvenle tutunmalarını sağlar; yağmurla birlikte filizlenerek doğanın yenilenme hızını artırır."
+        "question": "Tohum Topu Teknolojisi nedir, nasıl çalışır?",
+        "answer": "Tohum Topu Teknolojisi; yerli tohumların kil ve organik besin maddeleriyle kapsüllenerek dış etkenlerden korunduğu, çimlenme başarısını %65+ üzerine çıkaran bir yöntemdir. Kapsül, tohumu kuraklık ve canlı tüketimi gibi risklerden korur; yağışla birlikte çözülür ve tohum doğal döngüsünde çimlenir."
       },
       "sourcing": {
         "question": "Tohumlar nereden tedarik ediliyor?",
         "answer": "Tüm tohumlar Orman Bölge Müdürlükleri iş birliğiyle tedarik edilir. Biyolojik çeşitliliğin korunması ve sürdürülebilirlik ilkeleri doğrultusunda; her tohum lotunun ağaçtan toplanma tarihi, genetik orijini ve taksonomik (tür) bilgisi blok zinciri teknolojisiyle kayıt altına alınır. Uçtan uca şeffaf yapılandırılan tedarik zincirimiz sayesinde müşterilerimiz tohum kimlik kartlarına ve sertifikasyon verilerine diledikleri an erişebilir."
       },
       "droneEfficiency": {
-        "question": "Dron ile ekim ne kadar verimli?",
-        "answer": "Tek bir uçuşta 200'den fazla tohum dağıtarak geleneksel yöntemlere kıyasla 10 kat hız ve yüksek maliyet etkinliği sunar. GPS hassasiyetli koordinatlar sayesinde insan ayağının ulaşamadığı eğimli ve yangın sonrası tahribat görmüş alanlara yüksek erişilebilirlik sağlar; santimetrik hassasiyetle kaynak verimliliğini maksimuma çıkarırken minimum karbon ayak iziyle sürdürülebilir bir çevresel etki yaratır."
+        "question": "Dronla tohum topu bırakma ne kadar verimli?",
+        "answer": "Tek bir uçuşta 200'den fazla tohum topu bırakarak geleneksel yöntemlere kıyasla 10 kat hız ve yüksek maliyet etkinliği sunar. GPS hassasiyetli koordinatlar sayesinde insan ayağının ulaşamadığı eğimli ve yangından etkilenmiş alanlara erişir; araziye girilmediği için toprak ve bitki örtüsü korunur."
       },
       "tracking": {
-        "question": "Ekilen tohumların büyümesini nasıl takip edebilirim?",
-        "answer": "Yıllık periyodik dron uçuşlarıyla bölge yeniden taranır, büyüme verisi kurumsal panonuza işlenir. Bireysel kullanıcılar dijital sertifikalarındaki QR kodla bölge görsellerine erişebilir. Kurumsal partnerler API ile gerçek zamanlı veriye ulaşır."
+        "question": "Bırakılan tohum toplarının gelişimini nasıl takip edebilirim?",
+        "answer": "Sahalar her yıl dronla yeniden görüntülenir. Bırakmadan yaklaşık altı ay sonra çalışmanın görüntülerini herkese açık bir video olarak yayımlar, bağlantısını e-postayla göndeririz. Kurumlar için sonuçlar ayrıca Faaliyet Raporu'nda toplanır."
       },
       "certificate": {
-        "question": "Karbon sertifikası ne için geçerli?",
-        "answer": "Sertifikalar; ESG raporlarında, GRI ve CDP gönderimlerinde, kurumsal sürdürülebilirlik beyanlarında kullanılabilir. Tüm ormanlaştırma ve karbon yutak alanı projeleri Orman Genel Müdürlüğü (OGM) Bölge Müdürlükleri koordinasyonunda, yasal ve bilimsel altyapıya uygun olarak yürütülür; %100 doğrulanabilir bir izleme zinciri sunarız."
+        "question": "Katılım Sertifikası nedir?",
+        "answer": "Tohum topları sahaya bırakıldıktan sonra e-postayla bir Katılım Sertifikası göndeririz. Sertifikada seçtiğiniz ad, saha, tarih ve tohum topu adedi yer alır; sosyal medyada paylaşabilirsiniz. Sertifika bir bağış makbuzu değildir ve vergi indirimi sağlamaz."
       },
       "minOrder": {
-        "question": "Minimum talep miktarı var mı?",
-        "answer": "Talep bırakmak için alt sınır yoktur; tür ve adedi siz belirlersiniz. Fiyat, teslimat ve kurumsal projelerde ölçek, ekibimizin dönüşünde sizinle birlikte netleşir."
+        "question": "En az kaç tohum topu bıraktırabilirim?",
+        "answer": "En az 20 tohum topu ile katılabilirsiniz. Hazır seçeneklerden birini kullanabilir ya da adedi kendiniz belirleyebilirsiniz; güncel bedel saha sayfasında ve sipariş adımında gösterilir."
       },
       "b2bIntegration": {
         "question": "B2B kurumsal entegrasyon nasıl çalışır?",
@@ -489,7 +489,27 @@
       },
       "gift": {
         "question": "Hediye olarak gönderebilir miyim?",
-        "answer": "Evet. Tohum talebinde kullanım amacını \"Hediye\" olarak seçebilir, açık araziye ekim talebinde tohumların kimin adına ekileceğini belirtebilirsiniz. Ayrıntıları dönüşte birlikte netleştiririz."
+        "answer": "Evet. Sertifikada görünecek adı siz belirlersiniz; sevdiğiniz birinin adını yazarak Katılım Sertifikası'nı ona armağan edebilirsiniz."
+      },
+      "species": {
+        "question": "Hangi türün tohum topu bırakılacağını ben mi seçiyorum?",
+        "answer": "Hayır. Tür; sahanın iklimine, toprağına ve doğal bitki örtüsüne göre uzman ekibimizce belirlenir. Her sahanın sayfasında hangi türün bırakıldığını ve nedenini görebilirsiniz."
+      },
+      "calendar": {
+        "question": "Tohum topları ne zaman bırakılıyor?",
+        "answer": "Bırakma çalışmaları Ekim–Mart arasında yapılır; tohumun yağışla buluşması için en uygun dönem budur. Nisan–Eylül arasında sahalar incelenir, izlenir ve raporlanır. Bırakmadan yaklaşık altı ay sonra çalışmanın görüntülerini paylaşırız."
+      },
+      "hectare": {
+        "question": "Hektar ne demek?",
+        "answer": "Hektar bir alan ölçü birimidir: 1 hektar 10.000 metrekaredir, yani 10 dekara (dönüme) eşittir. Kabaca bir buçuk futbol sahası büyüklüğünde bir alan düşünebilirsiniz. Sahalarımızın büyüklüğünü hektar olarak belirtiyoruz."
+      },
+      "carbonReport": {
+        "question": "Bu çalışmayla karbon raporu ya da karbon kredisi alabilir miyim?",
+        "answer": "Hayır. Verdiğimiz belge bir Faaliyet Raporu'dur: çalışmanın sahasını, alanını, türlerini, tarihini, koordinatlarını ve görüntülerini kayıt altına alır. Karbon kredisi ya da karbon nötr belgesi değildir; sera gazı envanterinizden düşülemez, denkleştirme amacıyla kullanılamaz. Sahalardaki karbon tutumu bugün bağımsız bir kuruluşça hesaplanıp doğrulanmış değildir. Böyle bir doğrulama yapılırsa yöntemi ve sonuçlarıyla birlikte burada yayımlarız."
+      },
+      "notDonation": {
+        "question": "Bu bir bağış mı?",
+        "answer": "Hayır. Skytech Green'de satın aldığınız şey bir hizmettir: seçtiğiniz sahaya, belirlediğiniz adette tohum topunun dronla bırakılması. Hizmet bedeli karşılığında fatura düzenlenir; ödemeniz bağış sayılmaz ve vergi indirimi sağlamaz."
       }
     }
   },

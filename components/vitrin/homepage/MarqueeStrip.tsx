@@ -6,7 +6,7 @@ export default function MarqueeStrip() {
   const t = useTranslations("marqueeStrip");
   const KEYWORDS = [
     t("keywords.reforestation"),
-    t("keywords.carbonNeutral"),
+    t("keywords.regeneration"),
     t("keywords.seedBall"),
     t("keywords.droneTech"),
     t("keywords.ecologicalImpact"),

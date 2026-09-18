@@ -12,7 +12,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: `${SITE_NAME} — Tohum Toplarıyla Geleceği Ekin`,
     short_name: SITE_NAME,
     description:
-      "Dron teknolojisi ve tohum topu ile karbon nötr ağaçlandırma platformu.",
+      "Yangından etkilenmiş sahalara dronla tohum topu bırakma: ormanlaştırma, gençleştirme ve izleme.",
     start_url: "/",
     display: "standalone",
     background_color: "#0a1f12",

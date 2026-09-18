@@ -11,11 +11,16 @@ const FAQ_SLUGS = [
   "seedBall",
   "sourcing",
   "droneEfficiency",
+  "species",
+  "calendar",
+  "hectare",
+  "minOrder",
   "tracking",
   "certificate",
-  "minOrder",
-  "b2bIntegration",
   "gift",
+  "notDonation",
+  "carbonReport",
+  "b2bIntegration",
 ] as const;
 
 function useFaqs() {

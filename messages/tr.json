@@ -28,26 +28,26 @@
     "register": "Üye Ol"
   },
   "hero": {
-    "badge": "Karbon Nötrleme · Şeffaf · Ölçülebilir",
+    "badge": "Ormanlaştırma · Gençleştirme · İzleme",
     "headlineLine1": "Doğayı Teknolojiyle",
     "headlineLine2": "Yeşertiyoruz",
-    "subtitle": "Drone teknolojisiyle tohum topu ekim faaliyetleri yapıyoruz. İnsansız hava araçları sayesinde arazi tahribatını sıfıra indiriyor, sarp bölgelerde doğal yaşamı aynen koruyoruz.",
-    "ctaPrimary": "Tohum Sipariş Et",
+    "subtitle": "Yangından etkilenmiş ve ulaşılması zor sahalara dronla tohum topu bırakıyoruz. Araziye girmeden çalıştığımız için toprağı ve doğal yaşamı örselemiyoruz.",
+    "ctaPrimary": "Satın Al",
     "ctaSecondary": "Kurumsal Çözümler",
     "trustForestRegions": "Orman Bölge Müdürlükleri ile koordineli",
-    "trustAnnualReport": "Yıllık drone raporlama",
-    "trustCertificate": "Karbon sertifikası",
+    "trustAnnualReport": "Dronla yıllık izleme",
+    "trustCertificate": "Katılım Sertifikası",
     "discover": "Keşfet",
-    "backgroundAlt": "Dron ile tohum topu ekimi yapılan orman arazisi",
+    "backgroundAlt": "Dronla tohum topu bırakılan orman sahası",
     "ctaRequest": "Talep Oluştur"
   },
   "valueCards": {
     "badge": "Neden Skytech Green?",
-    "subtitle": "Üç temel prensip üzerine inşa edilmiş, ölçülebilir ve sürdürülebilir bir ağaçlandırma sistemi.",
+    "subtitle": "Üç temel ilke üzerine kurulu, her adımı izlenebilir bir ormanlaştırma ve gençleştirme çalışması.",
     "items": {
       "zeroFootprint": {
         "title": "Sıfır Saha İzi",
-        "description": "Doğayı teknolojiyle yeşertiyoruz. Drone teknolojisi kullanarak tohum topu ekim faaliyetleri yapıyoruz. İnsansız hava araçları teknolojisi ile hem arazi tahribatını sıfıra indiriyoruz hem de sarp bölgelerde doğal yaşamı aynen koruyoruz.",
+        "description": "Tohum toplarını sahaya dronla bırakıyoruz. Araziye iş makinesi ve ekip girmediği için toprak yapısı bozulmuyor; sarp ve yangından etkilenmiş bölgelerde doğal yaşam korunuyor.",
         "stat": "%100",
         "statLabel": "Doğa Korumalı"
       },
@@ -58,8 +58,8 @@
         "statLabel": "İzlenebilirlik"
       },
       "annualReport": {
-        "title": "Yıllık Drone Raporlama",
-        "description": "Periyodik uçuş verileri, büyüme metrikleri ve karbon nötrleme sonuçlarınız kurumsal panomuzda anlık olarak güncellenir; doğrudan ESG raporlarınıza aktarılabilir.",
+        "title": "Dronla Yıllık İzleme",
+        "description": "Sahalar her yıl dronla yeniden görüntülenir. Gelişim verileri ve görüntüler Faaliyet Raporu'nda toplanır; kurumlar bu raporu sürdürülebilirlik raporlarında destekleyici belge olarak kullanabilir.",
         "stat": "12 ay",
         "statLabel": "İzleme"
       }
@@ -71,7 +71,7 @@
     "badge": "Süreç",
     "title": "Dört Adımda",
     "titleAccent": "Tam Otomasyon",
-    "subtitle": "Tohum seçiminden ESG raporlamasına kadar uçtan uca bilim ve teknoloji.",
+    "subtitle": "Tohum seçiminden izleme raporuna kadar her adımda bilim ve teknoloji.",
     "steps": {
       "research": {
         "title": "Tohum Topu Ar-Ge",
@@ -79,15 +79,15 @@
       },
       "analysis": {
         "title": "Hedef Alan Analizi",
-        "description": "Uygulamamız; uydu ve drone (İHA) görüntülerini analiz ederek sahanın topografik yapısını, toprağın nem içeriği ve ekosistemin yapısını inceler. Tohum topu atışı için en doğru hedef alanları yapay zekâ ile belirler. Orman Bölge Müdürlüğü koordinasyonuyla yasal izinleri alarak ormanlaştırma süreçlerini tamamen bilimsel ve güvenli hale getirir."
+        "description": "Uygulamamız; uydu ve dron görüntülerini analiz ederek sahanın topografik yapısını, toprağın nem içeriğini ve ekosistemin yapısını inceler. Tohum topu bırakmak için en uygun hedef alanları yapay zekâ ile belirler. Orman Bölge Müdürlüğü koordinasyonuyla yasal izinler alınır; süreç bilimsel ve güvenli biçimde yürütülür."
       },
       "distribution": {
-        "title": "Dronla Dağıtım",
-        "description": "Yüksek hassasiyetli GPS verileriyle yönlendirilen İHA filomuz, sıfır ekolojik tahribat prensibiyle tek bir uçuşta 200+ tohum topunu önceden optimize edilmiş hedef noktalara hatasız şekilde ulaştırıyoruz."
+        "title": "Dronla Bırakma",
+        "description": "Yüksek hassasiyetli GPS verileriyle yönlendirilen dron filomuz, tohum toplarını önceden belirlenmiş hedef noktalara bırakır. Araziye girilmediği için toprak ve bitki örtüsü zarar görmez."
       },
       "monitoring": {
-        "title": "Yıllık İzleme & ESG",
-        "description": "Yıllık İHA fotogrametrisi ile izlenen vejetasyon büyüme verileri ve kurumsal gösterge panelinde gerçek zamanlı sunulan karbon denkleştirme metrikleri anlık olarak görülür. ESG raporlama süreçlerine entegre edilebilir."
+        "title": "Yıllık İzleme ve Raporlama",
+        "description": "Sahalar her yıl dron fotogrametrisiyle yeniden görüntülenir; bitki örtüsünün gelişimi kayıt altına alınır. Sonuçlar Faaliyet Raporu olarak paylaşılır; bırakmadan yaklaşık altı ay sonra çalışmanın görüntüleri yayımlanır."
       }
     }
   },
@@ -403,14 +403,14 @@
   },
   "marqueeStrip": {
     "keywords": {
-      "reforestation": "Ağaçlandırma",
-      "carbonNeutral": "Karbon Nötr",
-      "seedBall": "Tohum Topu",
+      "reforestation": "Ormanlaştırma",
+      "seedBall": "Tohum Topu Teknolojisi",
       "droneTech": "Dron Teknolojisi",
       "ecologicalImpact": "Ekolojik Etki",
       "sustainability": "Sürdürülebilirlik",
       "transparentSupply": "Şeffaf Tedarik",
-      "annualMonitoring": "Yıllık İzleme"
+      "annualMonitoring": "Yıllık İzleme",
+      "regeneration": "Gençleştirme"
     }
   },
   "finalCta": {
@@ -1321,8 +1321,8 @@
     }
   },
   "homeMeta": {
-    "title": "Tohum Toplarıyla Geleceği Ekin",
-    "description": "Dron teknolojisi ve tohum topu ile karbon nötr ağaçlandırma. Bireysel ve kurumsal çözümler, ölçülebilir etki, şeffaf tedarik zinciri."
+    "title": "Tohum Topu Teknolojisiyle Ormanlaştırma",
+    "description": "Yangından etkilenmiş sahalara dronla tohum topu bırakıyoruz. Bir Proje Uygulama Sahasına katılın ya da kendi araziniz için başvurun; çalışmayı raporlarla ve görüntülerle izleyin."
   },
   "cookieConsent": {
     "message": "Deneyiminizi iyileştirmek ve site trafiğini anonim olarak analiz etmek için çerezler kullanıyoruz.",

@@ -28,26 +28,26 @@
     "register": "Sign Up"
   },
   "hero": {
-    "badge": "Carbon Neutral · Transparent · Measurable",
+    "badge": "Reforestation · Regeneration · Monitoring",
     "headlineLine1": "We Are Greening Nature",
     "headlineLine2": "with Technology",
-    "subtitle": "We carry out seed ball planting with drone technology. Thanks to unmanned aerial vehicles, we reduce land disturbance to zero and preserve wildlife on steep terrain.",
-    "ctaPrimary": "Order Seeds",
+    "subtitle": "We release seed balls by drone over fire-affected and hard-to-reach sites. Because we work without entering the land, the soil and wildlife are left undisturbed.",
+    "ctaPrimary": "Buy Now",
     "ctaSecondary": "Corporate Solutions",
     "trustForestRegions": "Coordinated with Regional Forestry Directorates",
-    "trustAnnualReport": "Annual drone reporting",
-    "trustCertificate": "Carbon certificate",
+    "trustAnnualReport": "Annual drone monitoring",
+    "trustCertificate": "Certificate of Participation",
     "discover": "Explore",
-    "backgroundAlt": "Forest land being seeded with seed balls by drone",
+    "backgroundAlt": "Forest site where seed balls are released by drone",
     "ctaRequest": "Submit a Request"
   },
   "valueCards": {
     "badge": "Why Skytech Green?",
-    "subtitle": "A measurable and sustainable reforestation system built on three core principles.",
+    "subtitle": "Reforestation and regeneration work built on three core principles — traceable at every step.",
     "items": {
       "zeroFootprint": {
         "title": "Zero Ground Footprint",
-        "description": "We green nature with technology. Using drone technology, we carry out seed ball planting operations. With unmanned aerial vehicles, we reduce land disturbance to zero and preserve wildlife in steep terrain.",
+        "description": "We release seed balls over the site by drone. With no machinery or crews entering the land, the soil structure stays intact and wildlife is protected on steep and fire-affected terrain.",
         "stat": "100%",
         "statLabel": "Nature-Safe"
       },
@@ -58,8 +58,8 @@
         "statLabel": "Traceability"
       },
       "annualReport": {
-        "title": "Annual Drone Reporting",
-        "description": "Periodic flight data, growth metrics and your carbon neutralization results are updated live on our corporate dashboard and can be exported directly to your ESG reports.",
+        "title": "Annual Drone Monitoring",
+        "description": "Sites are re-surveyed by drone every year. Growth data and footage are compiled in an Activity Report, which organisations can use as supporting evidence in their sustainability reporting.",
         "stat": "12 mo",
         "statLabel": "Monitoring"
       }
@@ -71,7 +71,7 @@
     "badge": "Process",
     "title": "Four Steps to",
     "titleAccent": "Full Automation",
-    "subtitle": "End-to-end science and technology, from seed selection to ESG reporting.",
+    "subtitle": "Science and technology at every step, from seed selection to the monitoring report.",
     "steps": {
       "research": {
         "title": "Seed Ball R&D",
@@ -79,15 +79,15 @@
       },
       "analysis": {
         "title": "Target Site Analysis",
-        "description": "Our application analyses satellite and drone (UAV) imagery to study the site's topography, soil moisture and ecosystem structure. It uses artificial intelligence to determine the most suitable target points for seed ball drops. Coordinated with the Regional Forestry Directorate, all legal permits are obtained to make the afforestation process fully scientific and safe."
+        "description": "Our application analyses satellite and drone imagery to study the site's topography, soil moisture and ecosystem structure. It uses artificial intelligence to determine the most suitable target points for releasing seed balls. Legal permits are obtained in coordination with the Regional Forestry Directorate, and the process is run scientifically and safely."
       },
       "distribution": {
-        "title": "Drone Distribution",
-        "description": "Guided by high-precision GPS data, our UAV fleet delivers 200+ seed balls in a single flight to pre-optimized target points — flawlessly and with zero ecological impact."
+        "title": "Release by Drone",
+        "description": "Guided by high-precision GPS data, our drone fleet releases seed balls at pre-determined target points. Because no one enters the land, soil and vegetation are left undamaged."
       },
       "monitoring": {
-        "title": "Annual Monitoring & ESG",
-        "description": "Vegetation growth data tracked through annual UAV photogrammetry and real-time carbon offset metrics on the corporate dashboard are available instantly. Ready to be integrated into ESG reporting workflows."
+        "title": "Annual Monitoring & Reporting",
+        "description": "Sites are re-surveyed every year with drone photogrammetry and vegetation development is recorded. Results are shared as an Activity Report, and footage of the work is published about six months after the release."
       }
     }
   },
@@ -404,13 +404,13 @@
   "marqueeStrip": {
     "keywords": {
       "reforestation": "Reforestation",
-      "carbonNeutral": "Carbon Neutral",
-      "seedBall": "Seed Ball",
+      "seedBall": "Seed Ball Technology",
       "droneTech": "Drone Technology",
       "ecologicalImpact": "Ecological Impact",
       "sustainability": "Sustainability",
       "transparentSupply": "Transparent Supply",
-      "annualMonitoring": "Annual Monitoring"
+      "annualMonitoring": "Annual Monitoring",
+      "regeneration": "Regeneration"
     }
   },
   "finalCta": {
@@ -1321,8 +1321,8 @@
     }
   },
   "homeMeta": {
-    "title": "Plant the Future with Seed Balls",
-    "description": "Carbon-neutral reforestation with drone technology and seed balls. Individual and corporate solutions, measurable impact, transparent supply chain."
+    "title": "Reforestation with Seed Ball Technology",
+    "description": "We release seed balls by drone over fire-affected sites. Join a Project Site or apply for your own land, and follow the work through reports and footage."
   },
   "cookieConsent": {
     "message": "We use cookies to improve your experience and anonymously analyze site traffic.",

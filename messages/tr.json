@@ -548,7 +548,7 @@
           "Profesyonel dron ekimi",
           "GPS koordinatlı ekim raporu",
           "Yıllık dron takip raporları",
-          "Karbon nötrleme sertifikası",
+          "Katılım Sertifikası",
           "Hediyeleştirme + paylaşılabilir profil"
         ],
         "cta": "Profesyonel Ekim Başlat",
@@ -597,7 +597,7 @@
       "titleLead": "Yangın Sonrası",
       "titleAccent": "Bir Doğa Çağrısı",
       "paragraph1": "2021 Akdeniz orman yangınları sonrası, dronların hızla tohum bırakabildiğini, insan adımının zor ulaştığı bölgelere erişebildiğini gördük. Bilimsel altyapı + havacılık teknolojisi + şeffaf yazılım altyapısı — bu üçlüyü birleştirdik.",
-      "paragraph2": "Bugün <brand>Skytech Green</brand>, Türkiye genelinde üç bölgede dronlu ağaçlandırma yapıyor — kurumsal partnerlerin ESG hedeflerine, bireysel kullanıcıların karbon dengeleme isteklerine cevap veriyor.",
+      "paragraph2": "Bugün <brand>Skytech Green</brand>, Türkiye'de üç bölgedeki Proje Uygulama Sahalarında dronla tohum topu bırakıyor; kurumların ve bireylerin, yangından etkilenmiş sahaların yeniden ormanlaşmasına katılmasını sağlıyor.",
       "imageCaption": "Saha Ekibimiz"
     },
     "timeline": {
@@ -617,7 +617,7 @@
         },
         "protocols": {
           "title": "Çalışmalar ve Protokoller",
-          "description": "Orman Genel Müdürlüğü ile çalışmalar başlatıldı ve protokoller imzalandı. Çanakkale, İzmir ve Bursa'da demo sahalar hayata geçirildi."
+          "description": "Orman Genel Müdürlüğü ile çalışmalar başlatıldı ve protokoller imzalandı. Çanakkale, İzmir ve Bursa'da ilk Proje Uygulama Sahaları hayata geçirildi."
         }
       }
     },
@@ -675,8 +675,8 @@
     },
     "cta": {
       "title": "Bu Yolculukta <accent>Bize Katılın</accent>",
-      "subtitle": "İlk tohumunuzu bugün ekin, etkinizi hemen izleyin. Birlikte daha yeşil bir gelecek mümkün.",
-      "primaryEnabled": "Tohum Sipariş Et",
+      "subtitle": "Bir saha seçin, tohum topu bıraktırın; çalışmayı raporlarla ve görüntülerle izleyin.",
+      "primaryEnabled": "Satın Al",
       "primaryDisabled": "Yakında",
       "secondary": "Bize Ulaşın",
       "primaryRequest": "Talep Oluştur"
@@ -739,7 +739,7 @@
     },
     "hero": {
       "title": "Bir Kürede Koca Bir Orman",
-      "subtitle": "Tohum topu — kil, organik gübre ve seçilmiş tohumların ormancılık bilimiyle birleştiği küçük bir mucize."
+      "subtitle": "Tohum Topu Teknolojisi — kil, organik madde ve seçilmiş yerli tohumların ormancılık bilimiyle kapsüllendiği yöntem."
     },
     "what": {
       "badge": "Tohum Topu Nedir?",
@@ -799,48 +799,49 @@
         "label": "Çimlenme Oranı"
       },
       "perFlight": {
-        "label": "Tohum / Dron Uçuşu"
-      },
-      "co2": {
-        "label": "CO₂ / Ağaç / Yıl"
+        "label": "Tohum Topu / Dron Uçuşu"
       },
       "lifespan": {
         "value": "25 yıl",
         "label": "Ortalama Yaşam"
+      },
+      "season": {
+        "label": "Bırakma Sezonu",
+        "value": "Ekim–Mart"
       }
     },
     "cta": {
-      "title": "Kendi <grad>Tohum Topunuzu</grad> Sipariş Edin",
-      "titleRequest": "Kendi <grad>Tohum Topunuzu</grad> Talep Edin",
-      "subtitle": "Adresinize teslim, kendi bahçenizde veya seçilen Skytech alanlarında profesyonel ekim ile.",
-      "buttonOrder": "Sipariş Ver",
+      "title": "Bir Sahaya <grad>Tohum Topu</grad> Bıraktırın",
+      "titleRequest": "Bir Sahaya <grad>Tohum Topu</grad> Bıraktırın",
+      "subtitle": "Bir Proje Uygulama Sahası seçin ya da kendi araziniz için başvurun; tohum toplarını dronla biz bırakalım.",
+      "buttonOrder": "Satın Al",
       "buttonSoon": "Yakında",
       "buttonRequest": "Talep Oluştur"
     }
   },
   "droneTechPage": {
     "meta": {
-      "title": "Dron Teknolojisi — Hassas Ekim, Sıfır Ayak İzi",
-      "description": "GPS hassasiyetli dron filomuz, ulaşılması zor bölgelerde insan ayağının değmediği alanlara tohum topu ekiyor. RTK GPS, LiDAR, otonom uçuş, 200+ tohum/uçuş.",
-      "imageAlt": "Skytech Green tarımsal ekim dron — hero shot"
+      "title": "Dron Teknolojisi — Hassas Bırakma, Sıfır Ayak İzi",
+      "description": "GPS hassasiyetli dron filomuz, ulaşılması zor bölgelerde insan ayağının değmediği alanlara tohum topu bırakıyor. RTK GPS, LiDAR, otonom uçuş, 200+ tohum topu/uçuş.",
+      "imageAlt": "Skytech Green tohum topu bırakma dronu"
     },
     "breadcrumb": {
       "label": "Dron Teknolojisi"
     },
     "schema": {
       "name": "Dron ile Ağaçlandırma Hizmeti",
-      "description": "GPS hassasiyetli, otonom uçuşlu profesyonel dron filomuzla bir uçuşta 200+ tohum atışı. Sıfır saha tahribatı, ulaşılması zor bölgelere erişim, tam izlenebilirlik."
+      "description": "GPS hassasiyetli, otonom uçuşlu profesyonel dron filomuzla bir uçuşta 200+ tohum topu bırakma. Sıfır saha tahribatı, ulaşılması zor bölgelere erişim, tam izlenebilirlik."
     },
     "hero": {
-      "title": "Hassas Ekim, Sıfır Ayak İzi",
-      "subtitle": "GPS hassasiyetli dronlarla, insan adımının ulaşamadığı bölgelere tohum topu ekiyoruz."
+      "title": "Hassas Bırakma, Sıfır Ayak İzi",
+      "subtitle": "GPS hassasiyetli dronlarla, insan adımının ulaşamadığı bölgelere tohum topu bırakıyoruz."
     },
     "system": {
       "badge": "Dron Sistemi",
       "heading": "<grad>Otonom Dron Filomuz</grad> Sahada",
       "p1": "Otonom uçuş kabiliyetine sahip insansız hava araçları (İHA), önceden tanımlanmış hedef koordinatlara yüksek hassasiyetle ulaşır ve tek operasyonda 200+ tohum topunu başarıyla yerleştirir.",
       "p2": "Yüksek hassasiyetli GPS verileriyle yönlendirilen İHA filomuz, <strong>sıfır ekolojik tahribat</strong> prensibiyle çalışır. Tüm uçuş kayıtları gerçek zamanlı olarak kurumsal panonuza işlenir — şeffaflık ve doğrulanabilirlik için.",
-      "imageAlt": "Skytech Green tarımsal ekim dron — premium ürün görseli",
+      "imageAlt": "Skytech Green dronu — tohum topu haznesiyle",
       "thermalCamera": "Termal Kamera"
     },
     "featuresSection": {
@@ -858,7 +859,7 @@
       },
       "speed": {
         "title": "10x Hız",
-        "desc": "Geleneksel ekime göre on kat daha hızlı, ekim süresini günlerden saatlere indiriyor."
+        "desc": "Geleneksel dikime göre on kat daha hızlı; uygulama süresini günlerden saatlere indirir."
       },
       "autonomous": {
         "title": "Otonom Görev",
@@ -870,12 +871,12 @@
       },
       "tracking": {
         "title": "Yıllık Takip",
-        "desc": "Periyodik uçuş verileri, büyüme metrikleri ve karbon nötrleme sonuçlarınız kurumsal panomuzda anlık olarak güncellenir; doğrudan ESG raporlarınıza aktarılabilir."
+        "desc": "Sahalar her yıl dronla yeniden görüntülenir; uçuş verileri ve gelişim görüntüleri Faaliyet Raporu'nda toplanır."
       }
     },
     "processSection": {
       "badge": "Operasyon",
-      "title": "Dört Aşamada <grad>Dron Ekimi</grad>"
+      "title": "Dört Aşamada <grad>Dronla Bırakma</grad>"
     },
     "process": {
       "survey": {
@@ -883,11 +884,11 @@
         "desc": "Dron uydu ve LiDAR ile alan haritalanır, eğim ve toprak nem analizi yapılır."
       },
       "plan": {
-        "title": "Ekim Planı",
-        "desc": "GPS koordinatlı ekim haritası oluşturulur. Yasal izinler Orman Bölge Müdürlüğü ile koordine edilir."
+        "title": "Bırakma Planı",
+        "desc": "GPS koordinatlı bırakma haritası oluşturulur. Yasal izinler Orman Bölge Müdürlüğü ile koordine edilir."
       },
       "seeding": {
-        "title": "Otonom Ekim",
+        "title": "Otonom Bırakma",
         "desc": "Dron planlanmış rotada otonom uçar, hesaplanmış noktalara tohum topu bırakır."
       },
       "reporting": {
@@ -896,7 +897,7 @@
       }
     },
     "cta": {
-      "title": "Projeniz İçin <grad>Dron Ekimi</grad> Planlayalım",
+      "title": "Araziniz İçin <grad>Çalışma</grad> Planlayalım",
       "subtitle": "Bölge analizi, yasal izin koordinasyonu ve operasyon planlaması — tek noktadan.",
       "buttonPrimary": "Teklif Al",
       "buttonSecondary": "Aktif Projeler"
@@ -912,7 +913,7 @@
     },
     "schema": {
       "name": "Kurumsal Ormanlaştırma ve ESG Çözümleri",
-      "description": "Şirketler için kurumsal orman kurulumu, çalışan başına PDF sertifika otomasyonu, GRI/CDP uyumlu karbon raporlama, REST API + e-ticaret eklenti entegrasyonu."
+      "description": "Şirketler için toplu katılım, çalışan başına Katılım Sertifikası, Faaliyet Raporu ve kurumsal faturalama."
     },
     "hero": {
       "title": "Promosyon Ürünleri Çöpe Gider. Kurumsal Ormanınız Sonsuza Kadar Yaşar.",
@@ -961,8 +962,8 @@
         "desc": "\"Sepete 1 tohum ekle\" widget'ı — müşterilerinize ekoloji deneyimi sunun."
       },
       "footprint": {
-        "title": "Karbon Ayak İzi → Markanıza Özel Orman",
-        "desc": "Sistemimiz şirketinizin karbon ayak izini hesaplar ve bu doğrultuda markanıza özel, dron teknolojisiyle desteklenen bir orman oluşturur."
+        "title": "Faaliyet Raporu",
+        "desc": "Her çalışma için saha, alan, tür, tarih, koordinat ve görüntü içeren Faaliyet Raporu; sürdürülebilirlik raporlarınızda destekleyici belge olarak kullanılabilir."
       },
       "accountManager": {
         "title": "Özel Hesap Yöneticisi",
@@ -974,7 +975,7 @@
         "pre": "Kurumsal Projenizi",
         "highlight": "Tasarlayalım"
       },
-      "subtitle": "Çalışan sayınız, karbon hedefiniz, ESG ihtiyaçlarınız — birlikte planlayalım. 24 saat içinde dönüş.",
+      "subtitle": "Çalışan sayınız, katılmak istediğiniz sahalar, raporlama ihtiyaçlarınız — birlikte planlayalım. Bir iş günü içinde dönüş.",
       "primaryEnabled": "Teklif Talep Et",
       "primaryDisabled": "Bilgi Al",
       "secondary": "Bize Ulaşın"
@@ -985,20 +986,20 @@
         "highlight": "Tek Pano",
         "rest": "Üzerinden Yönetin"
       },
-      "intro": "Çalışan ekleyin, karbon ayak izinizi hesaplayın, dron uçuş kayıtlarına erişin, ESG raporu indirin — hepsi kurumsal panelinizden.",
+      "intro": "Çalışan ekleyin, sertifikaları dağıtın, dron uçuş kayıtlarına ve Faaliyet Raporu'na erişin — hepsi kurumsal panelinizden.",
       "features": {
         "upload": "Çalışan listesi yükleme (CSV)",
         "certificate": "Otomatik sertifika üretimi",
         "droneRecords": "Dron uçuş kayıtları",
-        "carbonPanel": "Karbon hesaplama paneli",
+        "carbonPanel": "Faaliyet Raporu arşivi",
         "esgModule": "ESG rapor modülü",
         "billing": "Faturalandırma & vergi"
       },
       "mockup": {
         "droneLabel": "Dron — Çanakkale",
         "gpsStatus": "RTK GPS · Aktif",
-        "carbonLabel": "Karbon Nötrleme",
-        "carbonValue": "847 ton CO₂",
+        "carbonLabel": "Faaliyet Raporu",
+        "carbonValue": "3 saha",
         "quarterDelta": "+ %23 ÇEYREK",
         "treesLabel": "Ağaç",
         "employeesLabel": "Çalışan",
@@ -1018,7 +1019,7 @@
         "highlight": "1 Satır",
         "post": "Tohum Eklentisi"
       },
-      "intro": "Skytech Green SDK ile her satışınıza otomatik karbon nötrleme. PDF sertifika üretimi, ESG webhook'ları ve faturalandırma tek pakette.",
+      "intro": "Skytech Green API ile satışlarınızı tohum topu bırakma çalışmalarına bağlayın. Katılım Sertifikası üretimi, webhook'lar ve faturalandırma tek pakette.",
       "copy": "Kopyala",
       "copied": "Kopyalandı",
       "earlyAccess": "Erken erişim listesine katıl",
@@ -1028,8 +1029,8 @@
         },
         "cart": {
           "label": "Sepete Tohum Ekle",
-          "comment": "Müşterinin sepetine 1 tohum eklensin (1 ton CO₂ nötrleme = 200 tohum)",
-          "giftMessage": "Siparişiniz için bir tohum ekildi 🌱"
+          "comment": "Müşterinin sepetine 1 tohum topu eklensin",
+          "giftMessage": "Siparişiniz için bir tohum topu bırakılacak"
         },
         "certificate": {
           "label": "Çalışan Sertifikası",
@@ -1093,7 +1094,7 @@
     "topics": {
       "individual": "Bireysel Tohum Talebi",
       "corporate": "Kurumsal Ormanlaştırma",
-      "esg": "ESG / Karbon Nötrleme",
+      "esg": "ESG / Raporlama",
       "drone": "Dron Operasyonu",
       "press": "Basın / Medya",
       "partnership": "İş Birliği Önerisi",
@@ -1142,31 +1143,29 @@
   "projectsPage": {
     "meta": {
       "title": "Projeler & Harita — Sahadan Kanıt",
-      "description": "Çanakkale, İzmir ve Bursa'da sürdürdüğümüz pilot dron ağaçlandırma çalışmalarımız. İnteraktif Türkiye haritası ve il bazlı pilot saha detayları."
+      "description": "Çanakkale, İzmir ve Bursa'daki Proje Uygulama Sahalarımız. Etkileşimli Türkiye haritası ve il bazında saha bilgileri."
     },
     "breadcrumbTitle": "Sahadan Kanıt",
-    "breadcrumbSubtitle": "Çanakkale, İzmir ve Bursa'da pilot sahalarımızda çalışmalarımız sürüyor — gerçek dronlar, gerçek tohumlar.",
+    "breadcrumbSubtitle": "Çanakkale, İzmir ve Bursa'daki Proje Uygulama Sahalarımızda çalışmalarımız sürüyor.",
     "breadcrumbSchemaName": "Projeler",
     "stats": {
-      "pilotRegions": "Pilot Bölge",
+      "pilotRegions": "Proje Sahası",
       "provinces": "İl",
       "legalCompliance": "Yasal Uyum"
     },
     "map": {
       "badge": "İnteraktif Harita",
       "titleLine": "Türkiye",
-      "titleAccent": "Pilot Saha Haritası",
-      "subtitle": "Pilot sahalarımızı harita üzerinden keşfedin. İllerin üzerine gelin, detayları görün.",
+      "titleAccent": "Saha Haritası",
+      "subtitle": "Proje Uygulama Sahalarımızı harita üzerinden keşfedin. İllerin üzerine gelin, detayları görün.",
       "aria": "Türkiye Proje Haritası",
-      "totalSeeds": "Toplam Tohum",
-      "emptyProvince": "Bu ilde henüz aktif projemiz yok.",
-      "calculating": "Hesaplanıyor"
+      "emptyProvince": "Bu ilde henüz aktif projemiz yok."
     },
     "list": {
-      "badge": "Pilot Sahalar",
+      "badge": "Proje Uygulama Sahaları",
       "titleLine": "Sahada",
       "titleAccent": "Aktif Olduğumuz Bölgeler",
-      "subtitle": "Şu anda Çanakkale, İzmir ve Bursa'da pilot çalışmalarımız sürüyor. Alan çoğaldıkça yeni sahalar burada listelenecek."
+      "subtitle": "Şu anda Çanakkale, İzmir ve Bursa'da çalışmalarımız sürüyor. Yeni sahalar eklendikçe burada listelenecek."
     },
     "cta": {
       "titleLine": "Kendi",
@@ -1177,21 +1176,21 @@
     },
     "status": {
       "active": "Aktif",
-      "pilot": "Pilot",
+      "pilot": "Çalışma sürüyor",
       "completed": "Tamamlandı"
     },
     "items": {
       "canakkale": {
-        "region": "Pilot Saha",
-        "desc": "Orman Genel Müdürlüğü koordinasyonunda pilot ağaçlandırma çalışması."
+        "region": "Proje Uygulama Sahası",
+        "desc": "Orman Genel Müdürlüğü koordinasyonunda yürütülen ormanlaştırma ve gençleştirme çalışması."
       },
       "izmir": {
-        "region": "Pilot Saha",
-        "desc": "Dron destekli pilot ekim ve saha analizi çalışmaları."
+        "region": "Proje Uygulama Sahası",
+        "desc": "Dronla tohum topu bırakma ve saha analizi çalışmaları."
       },
       "bursa": {
-        "region": "Pilot Saha",
-        "desc": "Ekosistem restorasyonu odaklı pilot saha hazırlıkları."
+        "region": "Proje Uygulama Sahası",
+        "desc": "Ekosistem restorasyonu odaklı saha hazırlıkları."
       }
     }
   },

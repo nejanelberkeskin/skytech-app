@@ -47,7 +47,7 @@ export default async function TohumTopuPage({ params }: { params: Promise<{ loca
   const STATS = [
     { value: "%65+", label: t("stats.germination.label") },
     { value: "200+", label: t("stats.perFlight.label") },
-    { value: "5kg", label: t("stats.co2.label") },
+    { value: t("stats.season.value"), label: t("stats.season.label") },
     { value: t("stats.lifespan.value"), label: t("stats.lifespan.label") },
   ];
 

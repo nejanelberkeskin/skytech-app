@@ -548,7 +548,7 @@
           "Professional drone planting",
           "GPS-coordinated planting report",
           "Annual drone tracking reports",
-          "Carbon neutralization certificate",
+          "Certificate of Participation",
           "Gifting + shareable profile"
         ],
         "cta": "Start Professional Planting",
@@ -597,7 +597,7 @@
       "titleLead": "After the Wildfires,",
       "titleAccent": "A Call from Nature",
       "paragraph1": "After the 2021 Mediterranean forest fires, we saw that drones could rapidly disperse seed balls and reach areas where human footsteps struggle to arrive. We combined three things: scientific foundation + aviation technology + a transparent software infrastructure.",
-      "paragraph2": "Today <brand>Skytech Green</brand> carries out drone reforestation across three regions of Türkiye — answering the ESG goals of corporate partners and the carbon-offset aspirations of individual users.",
+      "paragraph2": "Today <brand>Skytech Green</brand> releases seed balls by drone on Project Sites in three regions of Türkiye, enabling organisations and individuals to take part in bringing forest back to fire-affected sites.",
       "imageCaption": "Our Field Team"
     },
     "timeline": {
@@ -617,7 +617,7 @@
         },
         "protocols": {
           "title": "Operations and Protocols",
-          "description": "Work with the General Directorate of Forestry began and protocols were signed. Demo sites were launched in Çanakkale, İzmir and Bursa."
+          "description": "Work began with the General Directorate of Forestry and protocols were signed. The first Project Sites were established in Çanakkale, İzmir and Bursa."
         }
       }
     },
@@ -675,8 +675,8 @@
     },
     "cta": {
       "title": "Join <accent>Us on This Journey</accent>",
-      "subtitle": "Plant your first seed today and track your impact right away. Together, a greener future is possible.",
-      "primaryEnabled": "Order Seeds",
+      "subtitle": "Choose a site, have seed balls released there, and follow the work through reports and footage.",
+      "primaryEnabled": "Buy Now",
       "primaryDisabled": "Coming Soon",
       "secondary": "Contact Us",
       "primaryRequest": "Submit a Request"
@@ -739,7 +739,7 @@
     },
     "hero": {
       "title": "A Whole Forest in a Sphere",
-      "subtitle": "The seed ball — a small miracle where clay, organic fertilizer and selected seeds meet the science of forestry."
+      "subtitle": "Seed Ball Technology — a method in which clay, organic matter and selected native seeds are encapsulated with forestry science."
     },
     "what": {
       "badge": "What Is a Seed Ball?",
@@ -799,48 +799,49 @@
         "label": "Germination Rate"
       },
       "perFlight": {
-        "label": "Seeds / Drone Flight"
-      },
-      "co2": {
-        "label": "CO₂ / Tree / Year"
+        "label": "Seed Balls / Drone Flight"
       },
       "lifespan": {
         "value": "25 yrs",
         "label": "Average Lifespan"
+      },
+      "season": {
+        "label": "Release Season",
+        "value": "Oct–Mar"
       }
     },
     "cta": {
-      "title": "Order Your Own <grad>Seed Ball</grad>",
-      "titleRequest": "Request Your Own <grad>Seed Ball</grad>",
-      "subtitle": "Delivered to your address, with professional planting in your own garden or in selected Skytech areas.",
-      "buttonOrder": "Place Order",
+      "title": "Have <grad>Seed Balls</grad> Released on a Site",
+      "titleRequest": "Have <grad>Seed Balls</grad> Released on a Site",
+      "subtitle": "Choose a Project Site or apply for your own land — we release the seed balls by drone.",
+      "buttonOrder": "Buy Now",
       "buttonSoon": "Coming Soon",
       "buttonRequest": "Submit a Request"
     }
   },
   "droneTechPage": {
     "meta": {
-      "title": "Drone Technology — Precision Seeding, Zero Footprint",
-      "description": "Our GPS-precision drone fleet sows seed balls in hard-to-reach areas untouched by human feet. RTK GPS, LiDAR, autonomous flight, 200+ seeds/flight.",
-      "imageAlt": "Skytech Green agricultural seeding drone — hero shot"
+      "title": "Drone Technology — Precision Release, Zero Footprint",
+      "description": "Our GPS-precise drone fleet releases seed balls over hard-to-reach areas untouched by human feet. RTK GPS, LiDAR, autonomous flight, 200+ seed balls per flight.",
+      "imageAlt": "Skytech Green seed ball release drone"
     },
     "breadcrumb": {
       "label": "Drone Technology"
     },
     "schema": {
       "name": "Drone Reforestation Service",
-      "description": "200+ seeds dropped per flight with our GPS-precision, autonomous-flight professional drone fleet. Zero site disturbance, access to hard-to-reach areas, full traceability."
+      "description": "Releasing 200+ seed balls per flight with our GPS-precise, autonomous professional drone fleet. Zero site disturbance, access to hard-to-reach areas, full traceability."
     },
     "hero": {
-      "title": "Precision Seeding, Zero Footprint",
-      "subtitle": "With GPS-precision drones, we sow seed balls in areas no human step can reach."
+      "title": "Precision Release, Zero Footprint",
+      "subtitle": "With GPS-precise drones, we release seed balls over areas no human step can reach."
     },
     "system": {
       "badge": "Drone System",
       "heading": "<grad>Our Autonomous Drone Fleet</grad> in the Field",
       "p1": "Unmanned aerial vehicles (UAVs) with autonomous flight capability reach predefined target coordinates with high precision and successfully place 200+ seed balls in a single operation.",
       "p2": "Guided by high-precision GPS data, our UAV fleet operates on the principle of <strong>zero ecological disturbance</strong>. All flight records are logged to your corporate dashboard in real time — for transparency and verifiability.",
-      "imageAlt": "Skytech Green agricultural seeding drone — premium product visual",
+      "imageAlt": "Skytech Green drone with its seed ball hopper",
       "thermalCamera": "Thermal Camera"
     },
     "featuresSection": {
@@ -858,7 +859,7 @@
       },
       "speed": {
         "title": "10x Speed",
-        "desc": "Ten times faster than traditional seeding, cutting sowing time from days to hours."
+        "desc": "Ten times faster than traditional hand planting, cutting operation time from days to hours."
       },
       "autonomous": {
         "title": "Autonomous Mission",
@@ -870,12 +871,12 @@
       },
       "tracking": {
         "title": "Annual Tracking",
-        "desc": "Periodic flight data, growth metrics and your carbon-offset results are updated live on our corporate dashboard; they can be exported directly into your ESG reports."
+        "desc": "Sites are re-surveyed by drone every year; flight data and growth footage are compiled in an Activity Report."
       }
     },
     "processSection": {
       "badge": "Operation",
-      "title": "Drone Seeding in <grad>Four Stages</grad>"
+      "title": "<grad>Release by Drone</grad> in Four Stages"
     },
     "process": {
       "survey": {
@@ -883,11 +884,11 @@
         "desc": "The area is mapped by drone with satellite and LiDAR; slope and soil moisture are analyzed."
       },
       "plan": {
-        "title": "Seeding Plan",
-        "desc": "A GPS-coordinated seeding map is created. Legal permits are coordinated with the Regional Forestry Directorate."
+        "title": "Release Plan",
+        "desc": "A GPS-coordinated release map is created. Legal permits are coordinated with the Regional Forestry Directorate."
       },
       "seeding": {
-        "title": "Autonomous Seeding",
+        "title": "Autonomous Release",
         "desc": "The drone flies autonomously along the planned route, dropping seed balls at calculated points."
       },
       "reporting": {
@@ -896,7 +897,7 @@
       }
     },
     "cta": {
-      "title": "Let's Plan <grad>Drone Seeding</grad> for Your Project",
+      "title": "Let's Plan the <grad>Work</grad> for Your Land",
       "subtitle": "Area analysis, legal permit coordination and operation planning — from a single point.",
       "buttonPrimary": "Get a Quote",
       "buttonSecondary": "Active Projects"
@@ -912,7 +913,7 @@
     },
     "schema": {
       "name": "Corporate Afforestation and ESG Solutions",
-      "description": "Corporate forest setup for companies, per-employee PDF certificate automation, GRI/CDP-compliant carbon reporting, REST API + e-commerce plugin integration."
+      "description": "Group participation for companies, a Certificate of Participation per employee, an Activity Report and corporate invoicing."
     },
     "hero": {
       "title": "Promotional Products End Up in the Trash. Your Corporate Forest Lives Forever.",
@@ -961,8 +962,8 @@
         "desc": "An \"Add 1 seed to cart\" widget — offer your customers an ecological experience."
       },
       "footprint": {
-        "title": "Carbon Footprint → A Forest Unique to Your Brand",
-        "desc": "Our system calculates your company's carbon footprint and, accordingly, creates a forest unique to your brand, supported by drone technology."
+        "title": "Activity Report",
+        "desc": "An Activity Report for every job, covering site, area, species, date, coordinates and footage — usable as supporting evidence in your sustainability reports."
       },
       "accountManager": {
         "title": "Dedicated Account Manager",
@@ -974,7 +975,7 @@
         "pre": "Let's Design Your",
         "highlight": "Corporate Project"
       },
-      "subtitle": "Your headcount, your carbon target, your ESG needs — let's plan them together. Response within 24 hours.",
+      "subtitle": "Your headcount, the sites you want to join, your reporting needs — let's plan together. Reply within one business day.",
       "primaryEnabled": "Request a Quote",
       "primaryDisabled": "Get Information",
       "secondary": "Contact Us"
@@ -985,20 +986,20 @@
         "highlight": "Manage Everything",
         "rest": "From a Single Dashboard"
       },
-      "intro": "Add employees, calculate your carbon footprint, access drone flight records, download your ESG report — all from your corporate dashboard.",
+      "intro": "Add employees, distribute certificates, access drone flight records and the Activity Report — all from your corporate panel.",
       "features": {
         "upload": "Employee list upload (CSV)",
         "certificate": "Automatic certificate generation",
         "droneRecords": "Drone flight records",
-        "carbonPanel": "Carbon calculation panel",
+        "carbonPanel": "Activity Report archive",
         "esgModule": "ESG report module",
         "billing": "Billing & tax"
       },
       "mockup": {
         "droneLabel": "Drone — Çanakkale",
         "gpsStatus": "RTK GPS · Active",
-        "carbonLabel": "Carbon Neutralization",
-        "carbonValue": "847 t CO₂",
+        "carbonLabel": "Activity Report",
+        "carbonValue": "3 sites",
         "quarterDelta": "+ 23% QUARTER",
         "treesLabel": "Trees",
         "employeesLabel": "Employees",
@@ -1018,7 +1019,7 @@
         "highlight": "1-Line",
         "post": "Seed Plugin for Your Store"
       },
-      "intro": "Automatic carbon neutralization on every sale with the Skytech Green SDK. PDF certificate generation, ESG webhooks and billing in a single package.",
+      "intro": "Connect your sales to seed ball release work with the Skytech Green API. Certificate of Participation generation, webhooks and invoicing in one package.",
       "copy": "Copy",
       "copied": "Copied",
       "earlyAccess": "Join the early access list",
@@ -1028,8 +1029,8 @@
         },
         "cart": {
           "label": "Add Seed to Cart",
-          "comment": "Add 1 seed to the customer's cart (1 t CO₂ neutralization = 200 seeds)",
-          "giftMessage": "A seed was planted for your order 🌱"
+          "comment": "Add 1 seed ball to the customer's cart",
+          "giftMessage": "A seed ball will be released for your order"
         },
         "certificate": {
           "label": "Employee Certificate",
@@ -1093,7 +1094,7 @@
     "topics": {
       "individual": "Individual Seed Request",
       "corporate": "Corporate Reforestation",
-      "esg": "ESG / Carbon Neutralization",
+      "esg": "ESG / Reporting",
       "drone": "Drone Operation",
       "press": "Press / Media",
       "partnership": "Partnership Proposal",
@@ -1142,31 +1143,29 @@
   "projectsPage": {
     "meta": {
       "title": "Projects & Map — Proof from the Field",
-      "description": "Our pilot drone reforestation work underway in Çanakkale, İzmir and Bursa. Interactive map of Türkiye and pilot site details by province."
+      "description": "Our Project Sites in Çanakkale, İzmir and Bursa. An interactive map of Türkiye with site information by province."
     },
     "breadcrumbTitle": "Proof from the Field",
-    "breadcrumbSubtitle": "Our work continues at our pilot sites in Çanakkale, İzmir and Bursa — real drones, real seeds.",
+    "breadcrumbSubtitle": "Work is under way on our Project Sites in Çanakkale, İzmir and Bursa.",
     "breadcrumbSchemaName": "Projects",
     "stats": {
-      "pilotRegions": "Pilot Sites",
+      "pilotRegions": "Project Sites",
       "provinces": "Provinces",
       "legalCompliance": "Legal Compliance"
     },
     "map": {
       "badge": "Interactive Map",
       "titleLine": "Türkiye",
-      "titleAccent": "Pilot Site Map",
-      "subtitle": "Explore our pilot sites on the map. Hover over the provinces to see the details.",
+      "titleAccent": "Site Map",
+      "subtitle": "Explore our Project Sites on the map. Hover over a province to see the details.",
       "aria": "Turkey Project Map",
-      "totalSeeds": "Total Seeds",
-      "emptyProvince": "No active projects in this province yet.",
-      "calculating": "Being calculated"
+      "emptyProvince": "No active projects in this province yet."
     },
     "list": {
-      "badge": "Pilot Sites",
+      "badge": "Project Sites",
       "titleLine": "Regions Where We Are",
       "titleAccent": "Active in the Field",
-      "subtitle": "Our pilot work is currently underway in Çanakkale, İzmir and Bursa. As our area grows, new sites will be listed here."
+      "subtitle": "Work is currently under way in Çanakkale, İzmir and Bursa. New sites will be listed here as they are added."
     },
     "cta": {
       "titleLine": "Start Your Own",
@@ -1177,21 +1176,21 @@
     },
     "status": {
       "active": "Active",
-      "pilot": "Pilot",
+      "pilot": "Work in progress",
       "completed": "Completed"
     },
     "items": {
       "canakkale": {
-        "region": "Pilot Site",
-        "desc": "Pilot reforestation work coordinated by the General Directorate of Forestry."
+        "region": "Project Site",
+        "desc": "Reforestation and regeneration work carried out in coordination with the General Directorate of Forestry."
       },
       "izmir": {
-        "region": "Pilot Site",
-        "desc": "Drone-assisted pilot seeding and field analysis work."
+        "region": "Project Site",
+        "desc": "Seed ball release by drone and site analysis work."
       },
       "bursa": {
-        "region": "Pilot Site",
-        "desc": "Pilot site preparations focused on ecosystem restoration."
+        "region": "Project Site",
+        "desc": "Site preparation focused on ecosystem restoration."
       }
     }
   },

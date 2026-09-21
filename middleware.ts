@@ -85,6 +85,8 @@ const PUBLIC_API_PREFIXES: string[] = [
   "/api/payment/status",
   "/api/public/",
   "/api/auth/",
+  // Zamanlanmış işler: oturumla değil CRON_SECRET başlığıyla korunur (uç kendi denetler)
+  "/api/cron/",
 ];
 
 function isPublicPage(pathname: string): boolean {

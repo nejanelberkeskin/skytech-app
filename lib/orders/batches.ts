@@ -6,9 +6,11 @@
  * içindeki siparişler `released` olur, sahada ayrılan kapasite kalıcıya (`filled_seeds`) geçer ve
  * fatura zamanı "bırakmada" ise siparişler fatura kuyruğuna girer. Bu adım GERİ ALINAMAZ.
  *
- * Katılım Sertifikası ve müşteri bildirimi Faz 6'da bu adımın üstüne eklenecek.
+ * Aynı adımda her siparişe Katılım Sertifikası kodu verilir; müşteri bildirimi çağıran uçtan
+ * (`sendPendingCertificateEmails`) ve zamanlanmış işten gider.
  */
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { issueCertificate } from "./certificates";
 import { trToday } from "./schedule";
 import { getSalesSettings } from "./settings";
 import { addOrderEvent, db, transitionOrder } from "./store";
@@ -46,6 +48,7 @@ export interface BatchRow {
   released_on: string | null;
   video_url: string | null;
   video_published_at: string | null;
+  monitoring_report_url: string | null;
   notes: string | null;
   created_at: string;
 }
@@ -72,7 +75,7 @@ export async function createBatch(input: BatchInput, adminUserId: string, supaba
 
 export async function updateBatch(
   id: string,
-  patch: { title?: string | null; plannedOn?: string | null; notes?: string | null },
+  patch: { title?: string | null; plannedOn?: string | null; notes?: string | null; monitoringReportUrl?: string | null },
   supabase: SupabaseClient = db()
 ): Promise<BatchResult<{ batch: BatchRow }>> {
   const batch = await getBatch(supabase, id);
@@ -84,6 +87,12 @@ export async function updateBatch(
   if (patch.title !== undefined) update.title = patch.title;
   if (patch.plannedOn !== undefined) update.planned_on = patch.plannedOn;
   if (patch.notes !== undefined) update.notes = patch.notes;
+  if (patch.monitoringReportUrl !== undefined) {
+    // İzleme raporu yalnız bırakılmış çalışmaya eklenir (saha sayfasında herkese açık görünür).
+    if (patch.monitoringReportUrl && !batch.released_on) return { ok: false, error: "invalid_state" };
+    update.monitoring_report_url = patch.monitoringReportUrl;
+  }
+  if (Object.keys(update).length === 0) return { ok: true, batch };
   const { data, error } = await supabase.from("release_batches").update(update).eq("id", id).select("*").single();
   if (error || !data) return { ok: false, error: "unavailable" };
   return { ok: true, batch: data as BatchRow };
@@ -175,6 +184,7 @@ export async function completeRelease(batchId: string, releasedOn: string, admin
     }
     await supabase.rpc("commit_reserved_capacity", { p_land_id: moved.land_id, p_quantity: moved.quantity });
     await addOrderEvent(supabase, moved.id, "release_completed", actorOf(adminUserId), { batchId, releasedOn });
+    await issueCertificate(supabase, moved);
     if (settings.invoiceTiming === "on_performance") {
       const open = await supabase.from("order_invoices").select("id").eq("order_id", moved.id).eq("kind", "sale").in("status", ["pending", "issued"]).limit(1);
       if (!open.data?.length) await supabase.from("order_invoices").insert({ order_id: moved.id, kind: "sale", provider: "manual", status: "pending", created_by: "system" });

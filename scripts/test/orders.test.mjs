@@ -34,6 +34,12 @@ assert.ok(!St.canTransition("expired", "confirmed"));
 assert.throws(() => St.assertTransition("refunded", "paid"), St.InvalidTransitionError);
 St.assertTransition("paid", "confirmed");
 
+// sezon sonu (izleme dönemine geçişin ölçütü)
+assert.equal(Sc.seasonEndOf("2026-2027"), "2027-03-31");
+assert.equal(Sc.seasonEndOf(Sc.seasonFor(new Date("2026-11-15T10:00:00Z")).label), "2027-03-31");
+assert.equal(Sc.seasonEndOf("2026-2028"), null, "ardışık olmayan yıllar sezon değildir");
+assert.equal(Sc.seasonEndOf("2026"), null);
+
 // cayma hakkı
 const dl = "2026-11-04T20:59:59.999Z";
 assert.ok(St.canWithdraw("paid", dl, new Date("2026-11-04T20:59:59.000Z")));

@@ -52,7 +52,7 @@ interface OrderRow {
 }
 
 interface DetailResponse {
-  batch: Batch & { video_url: string | null };
+  batch: Batch & { video_url: string | null; video_published_at: string | null; monitoring_report_url: string | null };
   land: { name: string; capacity_seeds: number; filled_seeds: number; reserved_seeds: number } | null;
   orders: OrderRow[];
   candidates: OrderRow[];
@@ -66,6 +66,7 @@ const ERRORS: Record<string, string> = {
   invalid_date: "Tarih geçersiz: bırakma tarihi bugünden ileri olamaz ve cayma süresi dolmuş olmalıdır.",
   empty: "Partide bırakılacak sipariş yok.",
   invalid_body: "Eksik ya da hatalı bilgi.",
+  invalid_url: "Bağlantı tanınmadı: herkese açık bir YouTube video bağlantısı olmalı (https://youtu.be/… ya da https://www.youtube.com/watch?v=…).",
   unavailable: "Şu anda işlenemiyor; yeniden deneyin.",
 };
 
@@ -234,7 +235,9 @@ function BatchDetail({ id, canManage, onClose, onChanged, notify }: { id: string
   const [busy, setBusy] = useState(false);
   const [releasedOn, setReleasedOn] = useState(todayTr);
   const [confirmRelease, setConfirmRelease] = useState(false);
-  const [edit, setEdit] = useState({ title: "", plannedOn: "", notes: "" });
+  const [edit, setEdit] = useState({ title: "", plannedOn: "", notes: "", reportUrl: "" });
+  const [videoUrl, setVideoUrl] = useState("");
+  const [confirmVideo, setConfirmVideo] = useState(false);
 
   const load = useCallback(async () => {
     try {
@@ -242,7 +245,9 @@ function BatchDetail({ id, canManage, onClose, onChanged, notify }: { id: string
       if (!res.ok) throw new Error(String(res.status));
       const json = (await res.json()) as DetailResponse;
       setDetail(json);
-      setEdit({ title: json.batch.title ?? "", plannedOn: json.batch.planned_on ?? "", notes: json.batch.notes ?? "" });
+      setEdit({ title: json.batch.title ?? "", plannedOn: json.batch.planned_on ?? "", notes: json.batch.notes ?? "", reportUrl: json.batch.monitoring_report_url ?? "" });
+      setVideoUrl(json.batch.video_url ?? "");
+      setConfirmVideo(false);
       setPicked(new Set());
     } catch {
       notify(false, "Parti yüklenemedi.");
@@ -277,7 +282,13 @@ function BatchDetail({ id, canManage, onClose, onChanged, notify }: { id: string
   const totals = useMemo(() => ({ orders: detail?.orders.length ?? 0, quantity: detail?.orders.reduce((s, o) => s + o.quantity, 0) ?? 0 }), [detail]);
   const selectable = detail?.candidates.filter((c) => c.capacity_held) ?? [];
   const released = Boolean(detail?.batch.released_on);
-  const dirty = detail ? edit.title !== (detail.batch.title ?? "") || edit.plannedOn !== (detail.batch.planned_on ?? "") || edit.notes !== (detail.batch.notes ?? "") : false;
+  const dirty = detail
+    ? edit.title !== (detail.batch.title ?? "") ||
+      edit.plannedOn !== (detail.batch.planned_on ?? "") ||
+      edit.notes !== (detail.batch.notes ?? "") ||
+      edit.reportUrl !== (detail.batch.monitoring_report_url ?? "")
+    : false;
+  const videoPublished = Boolean(detail?.batch.video_published_at);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm" onClick={onClose}>
@@ -311,7 +322,31 @@ function BatchDetail({ id, canManage, onClose, onChanged, notify }: { id: string
                     <Input label="Planlanan tarih" type="date" value={edit.plannedOn} disabled={released} onChange={(e) => setEdit({ ...edit, plannedOn: e.target.value })} />
                   </div>
                   <Textarea label="Not" value={edit.notes} onChange={(e) => setEdit({ ...edit, notes: e.target.value })} rows={2} maxLength={2000} />
-                  <Button variant="secondary" size="sm" loading={busy} disabled={!dirty} onClick={() => send("PATCH", { title: edit.title.trim() || null, plannedOn: edit.plannedOn || null, notes: edit.notes.trim() || null }, "Parti güncellendi.")}>Kaydet</Button>
+                  {released && (
+                    <Input
+                      label="İzleme raporu bağlantısı (https, PDF) — saha sayfasında herkese açık görünür"
+                      type="url"
+                      value={edit.reportUrl}
+                      onChange={(e) => setEdit({ ...edit, reportUrl: e.target.value })}
+                      maxLength={500}
+                      placeholder="https://…"
+                    />
+                  )}
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    loading={busy}
+                    disabled={!dirty}
+                    onClick={() =>
+                      send(
+                        "PATCH",
+                        { title: edit.title.trim() || null, plannedOn: edit.plannedOn || null, notes: edit.notes.trim() || null, ...(released ? { monitoringReportUrl: edit.reportUrl.trim() || null } : {}) },
+                        "Parti güncellendi."
+                      )
+                    }
+                  >
+                    Kaydet
+                  </Button>
                 </section>
               )}
 
@@ -395,6 +430,31 @@ function BatchDetail({ id, canManage, onClose, onChanged, notify }: { id: string
                     </div>
                   ) : (
                     <Button variant="secondary" size="sm" disabled={totals.orders === 0 || !releasedOn} onClick={() => setConfirmRelease(true)}>Bırakmayı işaretle…</Button>
+                  )}
+                </section>
+              )}
+
+              {canManage && released && (
+                <section className="bg-[var(--bg-surface)] border border-white/[0.06] rounded-2xl p-5 space-y-3">
+                  <h3 className="font-semibold text-white text-sm">Çalışma videosu</h3>
+                  <p className="text-xs text-slate-500">
+                    Çalışmanın görüntüleri YouTube&apos;a <strong className="text-slate-300">herkese açık</strong> yüklendikten sonra bağlantıyı buraya girin. İlk yayımda partideki tüm müşterilere e-posta gider,
+                    siparişleri &quot;Tamamlandı&quot; olur ve video saha sayfasında görünür. Sonradan yalnız bağlantı düzeltilebilir; yeniden e-posta gitmez.
+                  </p>
+                  <Input label="YouTube bağlantısı" type="url" value={videoUrl} onChange={(e) => { setVideoUrl(e.target.value); setConfirmVideo(false); }} maxLength={300} placeholder="https://youtu.be/…" />
+                  {videoPublished ? (
+                    <Button variant="secondary" size="sm" loading={busy} disabled={!videoUrl.trim() || videoUrl.trim() === (detail.batch.video_url ?? "")} onClick={() => send("POST", { action: "publish_video", videoUrl: videoUrl.trim() }, "Video bağlantısı güncellendi.")}>
+                      Bağlantıyı güncelle
+                    </Button>
+                  ) : confirmVideo ? (
+                    <div className="flex gap-3 flex-wrap">
+                      <Button variant="primary" loading={busy} onClick={() => send("POST", { action: "publish_video", videoUrl: videoUrl.trim() }, "Video yayımlandı; müşterilere bildirim gönderiliyor.")}>
+                        Evet: yayımla ve {totals.orders} müşteriye bildir
+                      </Button>
+                      <Button variant="secondary" disabled={busy} onClick={() => setConfirmVideo(false)}>Vazgeç</Button>
+                    </div>
+                  ) : (
+                    <Button variant="secondary" size="sm" disabled={!videoUrl.trim()} onClick={() => setConfirmVideo(true)}>Videoyu yayımla…</Button>
                   )}
                 </section>
               )}

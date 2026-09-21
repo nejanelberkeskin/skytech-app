@@ -1,11 +1,14 @@
 /**
  * Katılım Sertifikası — SUNUCU tarafı okuma.
  *
- * Yeni sipariş tabloları (migration 016) gelene kadar gerçek kaynak yoktur:
- * geliştirmede iki ÖRNEK sertifika döner, canlıda hiçbir kod bulunmaz (→ 404).
- * Sipariş çekirdeği yayına girince yalnız bu dosyanın içi değişir; sözleşme
- * (`PublicCertificate`) ve çağıranlar aynı kalır.
+ * Kaynak: `release_orders` (sertifika kodu bırakma tamamlanınca verilir — lib/orders/certificates.ts).
+ * Herkese açık sayfaya yalnız alıcının seçtiği görünen ad, saha ve bırakma bilgisi çıkar; e-posta,
+ * telefon, fatura ve sipariş numarası ASLA çıkmaz. İade edilmiş siparişin sertifikası "iptal" görünür.
+ * Canlı sitede deneme siparişlerinin sertifikaları gösterilmez. Geliştirmede iki ÖRNEK kod da çalışır.
  */
+import { createServiceRoleClient } from "@/lib/supabase/server";
+import { trToday } from "@/lib/orders/schedule";
+import type { SiteSnapshot } from "@/lib/orders/types";
 import { CERTIFICATE_CODE_RE, type PublicCertificate } from "./types";
 
 const FIXTURES: PublicCertificate[] = [
@@ -51,8 +54,48 @@ export async function getPublicCertificate(rawCode: string): Promise<PublicCerti
   const code = normalizeCertificateCode(rawCode);
   if (!code) return null;
   if (process.env.NODE_ENV !== "production") {
-    return FIXTURES.find((c) => c.code === code) ?? null;
+    const sample = FIXTURES.find((c) => c.code === code);
+    if (sample) return sample;
   }
-  // Canlı kaynak migration 016 ile bağlanacak.
-  return null;
+
+  try {
+    const supabase = createServiceRoleClient();
+    let query = supabase
+      .from("release_orders")
+      .select("certificate_code, certificate_name, certificate_issued_at, certificate_cancelled_at, quantity, site_snapshot, land_id, batch_id, released_at, is_test")
+      .eq("certificate_code", code);
+    if (process.env.VERCEL_ENV === "production") query = query.eq("is_test", false);
+    const { data: order, error } = await query.maybeSingle();
+    if (error || !order || !order.certificate_issued_at) return null;
+
+    const [batch, land] = await Promise.all([
+      order.batch_id
+        ? supabase.from("release_batches").select("released_on, video_url, video_published_at").eq("id", order.batch_id).maybeSingle()
+        : Promise.resolve({ data: null }),
+      supabase.from("lands").select("slug, is_public").eq("id", order.land_id).maybeSingle(),
+    ]);
+    const site = order.site_snapshot as SiteSnapshot;
+    const batchRow = batch.data as { released_on: string | null; video_url: string | null; video_published_at: string | null } | null;
+    const landRow = land.data as { slug: string | null; is_public: boolean | null } | null;
+    const releasedOn = batchRow?.released_on ?? (order.released_at ? trToday(new Date(order.released_at as string)) : null);
+    if (!releasedOn) return null;
+
+    return {
+      code,
+      status: order.certificate_cancelled_at ? "cancelled" : "valid",
+      displayName: order.certificate_name as string,
+      quantity: order.quantity as number,
+      siteName: site.name,
+      siteSlug: landRow?.is_public && landRow.slug ? landRow.slug : null,
+      province: site.province,
+      workType: site.workType,
+      species: site.species.map((sp) => ({ slug: sp.slug, name: sp.name, latinName: sp.latinName })),
+      releasedOn,
+      issuedOn: trToday(new Date(order.certificate_issued_at as string)),
+      videoUrl: batchRow?.video_published_at && batchRow.video_url ? batchRow.video_url : null,
+    };
+  } catch (e) {
+    console.error("[sertifika] okunamadı:", e instanceof Error ? e.message : e);
+    return null;
+  }
 }

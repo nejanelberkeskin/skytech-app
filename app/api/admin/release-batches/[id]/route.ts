@@ -1,19 +1,24 @@
-import { NextRequest, NextResponse } from "next/server";
+import { after, NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { createServiceRoleClient } from "@/lib/supabase/server";
 import { requireAdmin, getClientIP } from "@/lib/admin-auth";
 import { auditLog } from "@/lib/admin/audit";
+import { publicOrigin } from "@/lib/mail";
 import { assignOrders, completeRelease, deleteBatch, unassignOrder, updateBatch, type BatchError } from "@/lib/orders/batches";
+import { sendPendingCertificateEmails } from "@/lib/orders/certificates";
+import { publishBatchVideo, sendPendingVideoEmails } from "@/lib/orders/jobs";
 
 /**
  * Admin — Bırakma partisi (ayrıntı + işlemler)
  *
  * GET    → { batch, orders, candidates }   candidates: aynı saha + sezon, kesinleşmiş, partisiz
- * PATCH  { title?, plannedOn?, notes? }
+ * PATCH  { title?, plannedOn?, notes?, monitoringReportUrl? }
  * POST   { action:"assign", orderIds[] } | { action:"unassign", orderId } | { action:"release", releasedOn }
+ *        | { action:"publish_video", videoUrl }   — yalnız bırakılmış parti; ilk yayımda müşterilere bildirim gider
  * DELETE → yalnız boş ve bırakılmamış parti
  *
- * "release" GERİ ALINAMAZ: siparişler `released` olur, kapasite kalıcıya geçer, fatura kuyruğu dolar.
+ * "release" GERİ ALINAMAZ: siparişler `released` olur, kapasite kalıcıya geçer, fatura kuyruğu dolar,
+ * Katılım Sertifikaları düzenlenir ve müşterilere bildirilir (yanıtı bekletmeden; kalanı zamanlanmış iş tamamlar).
  */
 const VIEW_ROLES = ["SUPER_ADMIN", "OPERATIONS", "FINANCE"] as const;
 const MANAGE_ROLES = ["SUPER_ADMIN", "OPERATIONS"] as const;
@@ -53,6 +58,7 @@ const patchSchema = z.object({
   title: z.string().trim().max(120).nullable().optional(),
   plannedOn: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().optional(),
   notes: z.string().trim().max(2000).nullable().optional(),
+  monitoringReportUrl: z.string().trim().max(500).regex(/^https:\/\/\S+$/).nullable().optional(),
 });
 
 export async function PATCH(request: NextRequest, { params }: Ctx) {
@@ -64,7 +70,11 @@ export async function PATCH(request: NextRequest, { params }: Ctx) {
   if (!parsed.success) return NextResponse.json({ error: "invalid_body" }, { status: 400 });
 
   const supabase = createServiceRoleClient();
-  const result = await updateBatch(id, { title: parsed.data.title, plannedOn: parsed.data.plannedOn, notes: parsed.data.notes }, supabase);
+  const result = await updateBatch(
+    id,
+    { title: parsed.data.title, plannedOn: parsed.data.plannedOn, notes: parsed.data.notes, monitoringReportUrl: parsed.data.monitoringReportUrl },
+    supabase
+  );
   if (!result.ok) return NextResponse.json({ error: result.error }, { status: STATUS_FOR[result.error] });
   await auditLog(supabase, { admin, action: "UPDATE", entity: "release_batch", entityId: id, details: parsed.data, ip: getClientIP(request) });
   return NextResponse.json({ ok: true, batch: result.batch });
@@ -74,6 +84,7 @@ const actionSchema = z.discriminatedUnion("action", [
   z.object({ action: z.literal("assign"), orderIds: z.array(z.uuid()).min(1).max(500) }),
   z.object({ action: z.literal("unassign"), orderId: z.uuid() }),
   z.object({ action: z.literal("release"), releasedOn: z.string().regex(/^\d{4}-\d{2}-\d{2}$/) }),
+  z.object({ action: z.literal("publish_video"), videoUrl: z.string().trim().min(10).max(300) }),
 ]);
 
 export async function POST(request: NextRequest, { params }: Ctx) {
@@ -86,12 +97,27 @@ export async function POST(request: NextRequest, { params }: Ctx) {
   const input = parsed.data;
 
   const supabase = createServiceRoleClient();
+  const origin = publicOrigin(request.nextUrl.origin);
+
+  if (input.action === "publish_video") {
+    const published = await publishBatchVideo(id, input.videoUrl, supabase);
+    await auditLog(supabase, { admin, action: "UPDATE", entity: "release_batch", entityId: id, details: { action: "publish_video", ...published }, ip: getClientIP(request) });
+    if (!published.ok) {
+      const status = published.error === "not_found" ? 404 : published.error === "unavailable" ? 503 : published.error === "invalid_url" ? 400 : 409;
+      return NextResponse.json({ error: published.error }, { status });
+    }
+    // İlk yayımda müşterilere bildirim gider (kalanını zamanlanmış iş tamamlar).
+    if (published.firstPublication) after(() => sendPendingVideoEmails(origin));
+    return NextResponse.json(published);
+  }
+
   const result =
     input.action === "assign"
       ? await assignOrders(id, input.orderIds, admin.user_id, supabase)
       : input.action === "unassign"
         ? await unassignOrder(input.orderId, admin.user_id, supabase)
         : await completeRelease(id, input.releasedOn, admin.user_id, supabase);
+  if (input.action === "release" && result.ok) after(() => sendPendingCertificateEmails(origin));
 
   await auditLog(supabase, {
     admin,

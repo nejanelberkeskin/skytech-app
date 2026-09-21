@@ -689,6 +689,30 @@ Bu bölüm 11. bölümdeki akış tarifinin yerine geçer.
   eşzamanlı iki bırakma isteğinden yalnız biri → `released` + fatura kuyruğu + kapasite `reserved→filled`). Sayfa tarayıcıda
   DENENMEDİ (oturum gerekiyor).
 
+### Sertifika, bildirimler ve zamanlanmış işler (Faz 6)
+- **Katılım Sertifikası** bırakma tamamlanınca düzenlenir: `completeRelease` her siparişe benzersiz kod verir
+  (`lib/orders/certificates.ts → issueCertificate`, yinelenebilir). Herkese açık sayfa (`/sertifika/[kod]`, Astra #27) artık
+  gerçek kayıttan okur (`lib/certificates/data.ts`): yalnız seçilen ad, saha, adet, tarihler, video — e-posta/telefon/fatura/
+  sipariş no ÇIKMAZ; iade edilmiş siparişte "iptal"; canlıda deneme siparişlerinin sertifikası gösterilmez.
+- **Bildirim kuyrukları** (e-posta büyük partilerde isteği kilitlemesin diye): `sendPendingCertificateEmails` (gönderildi
+  bilgisi olay izinden: `email_sent` + `release_certificate`; son 14 günde düzenlenenler taranır) ve
+  `sendPendingVideoEmails` (`video_notified_at` boş olanlar). İkisi de işlemin ardından `after()` ile VE zamanlanmış işten
+  çağrılır; gönderilmişi yeniden göndermez. Müşteri e-postalarındaki bağlantı kökü canlıda hep asıl alan adı (`publicOrigin`).
+- **Çalışma videosu:** yönetim → parti ayrıntısı → "Çalışma videosu" (yalnız bırakılmış parti; yalnız YouTube bağlantısı —
+  `youtubeIdFrom`). İlk yayımda `video_published_at` yazılır, müşterilere e-posta gider, sipariş `completed` olur
+  (gerekirse `released → monitoring → completed` ardışık). Sonradan yalnız bağlantı düzeltilir; yeniden e-posta gitmez.
+  İzleme raporu bağlantısı da aynı ekrandan (saha sayfasında herkese açık görünür).
+- **Durum geçişleri:** `released → monitoring` bırakma sezonu bitince (1 Nisan; `startMonitoringDue`, ölçüt `seasonEndOf`).
+- **Zamanlanmış iş:** `GET /api/cron/siparis-isleri` (günde bir, `vercel.json` → 03:00 UTC): süre dolumu · kesinleşme ·
+  izleme dönemine geçiş · gitmemiş sertifika ve video bildirimleri. Yetki `Authorization: Bearer <CRON_SECRET>`;
+  **`CRON_SECRET` Vercel'de tanımlı değilse uç kapalıdır (503)** — canlıya çıkmadan tanımlanmalı. İşler yinelenebilir.
+- **Saha çalışma günlüğü sözleşmesi** (`lib/sites/releases*.ts`): tamamlanan bırakmalar — tarih, başlık, video, rapor; ADET YOK.
+  Arayüzü Astra yapıyor (brif 09, taban `faz6a-saha-calismalari-sozlesmesi`).
+- Sınama: betikle, taze deneme siparişinde uçtan uca (gerçek e-posta gönderilmeden; "başarılı gönderim" yolu sahte
+  göndericiyle): sertifika kodu + yinelenebilirlik · herkese açık sertifikada kişisel veri yok · bildirim bir kez ·
+  1 Nisan geçişi · geçersiz/erken video reddi · video düzeltmesinde yeniden bildirim yok · bildirim gitmeden `completed`
+  olmuyor · çalışma günlüğü ve sipariş görünümü doluyor. Zamanlanmış iş ucu: kimliksiz/yanlış anahtar 401, doğru anahtar 200.
+
 ### Sıradaki (plan §Fazlar)
-Faz 5c satış ayarları ekranı (fiyat/KDV/süreler + "sipariş alımı durduruldu"; sihirbaz fiyatı sunucudan almalı) → Faz 6 sertifika + zamanlanmış işler (süre dolumu, cayma süresi sonu → `confirmed`, video
+Faz 7 Hesabım → Siparişlerim (üyenin kendi siparişleri; RLS ile) → Faz 5c satış ayarları ekranı (fiyat/KDV/süreler + "sipariş alımı durduruldu"; sihirbaz fiyatı sunucudan almalı) → Faz 6 sertifika + zamanlanmış işler (süre dolumu, cayma süresi sonu → `confirmed`, video
 bildirimi).

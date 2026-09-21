@@ -1256,3 +1256,183 @@ export const sendSellerCancellationNotice = (input: OrderNoticeInput) => sendOrd
 
 /** İade sağlayıcıdan yapıldığında müşteriye bildirim. */
 export const sendRefundCompleted = (input: OrderNoticeInput) => sendOrderNotice("refunded", "release_refund_done", input);
+
+// ═════════════════════════════════════════════════════════════════════
+// BIRAKMA TAMAMLANDI (Katılım Sertifikası) ve ÇALIŞMA VİDEOSU — müşteri bildirimleri
+// ═════════════════════════════════════════════════════════════════════
+// Sonuç vaadi içermez: yapılan iş bildirilir (tohum topları bırakıldı / görüntüler yayımlandı).
+
+export interface ReleaseCertificateInput {
+  orderId: string;
+  orderNo: string;
+  locale: "tr" | "en" | "ru";
+  email: string;
+  firstName: string;
+  certificateName: string;
+  siteName: string;
+  /** Biçimlendirilmiş adet ("1.000") */
+  quantityText: string;
+  /** "12 Kasım 2026" biçiminde, hazır metin */
+  releasedOnText: string;
+  certificateUrl: string;
+  orderUrl: string;
+  isTest: boolean;
+}
+
+const RELEASE_TEXT = {
+  tr: {
+    subject: (no: string) => `Tohum toplarınız bırakıldı — Katılım Sertifikanız hazır (${no})`,
+    title: "Tohum Toplarınız Bırakıldı",
+    sub: "Katılım Sertifikanız düzenlendi",
+    hello: (n: string) => `Merhaba <strong>${n}</strong>,`,
+    intro: (no: string) => `<strong style="font-family:monospace;">${no}</strong> numaralı siparişinize konu tohum topları, seçtiğiniz Proje Uygulama Sahasına dronla bırakılmıştır.`,
+    rows: { site: "Proje Uygulama Sahası", quantity: "Bırakılan tohum topu", date: "Bırakma tarihi", name: "Sertifikadaki ad" },
+    certificate: "Katılım Sertifikanız çevrim içi olarak düzenlendi. Bağlantıyı dilediğiniz kişilerle paylaşabilirsiniz; sertifikada yalnız seçtiğiniz ad görünür.",
+    cta: "Sertifikamı görüntüle",
+    next: "Faturanız ayrıca e-postayla gönderilir. Saha, izleme döneminde incelenir; çalışmanın görüntüleri yayımlandığında size haber veririz.",
+    order: "Sipariş ayrıntıları",
+    contact: "Sorularınız için bu e-postayı yanıtlayabilir veya info@skytechgreen.com adresine yazabilirsiniz.",
+    test: "DENEME SİPARİŞİ — gerçek bir bırakma yapılmamıştır.",
+  },
+  en: {
+    subject: (no: string) => `Your seed balls have been released — your certificate is ready (${no})`,
+    title: "Your Seed Balls Have Been Released",
+    sub: "Your Certificate of Participation has been issued",
+    hello: (n: string) => `Hello <strong>${n}</strong>,`,
+    intro: (no: string) => `The seed balls under order <strong style="font-family:monospace;">${no}</strong> have been released by drone at the Project Site you chose.`,
+    rows: { site: "Project Site", quantity: "Seed balls released", date: "Release date", name: "Name on certificate" },
+    certificate: "Your Certificate of Participation has been issued online. You can share the link with anyone you wish; only the name you chose appears on the certificate.",
+    cta: "View my certificate",
+    next: "Your invoice is sent separately by e-mail. The site is inspected during the monitoring period; we will let you know when footage of the work is published.",
+    order: "Order details",
+    contact: "For questions, reply to this e-mail or write to info@skytechgreen.com.",
+    test: "TEST ORDER — no actual release has taken place.",
+  },
+} as const;
+
+export async function sendReleaseCertificate(input: ReleaseCertificateInput) {
+  const t = RELEASE_TEXT[input.locale === "tr" ? "tr" : "en"];
+  const subject = (input.isTest ? "[DENEME] " : "") + t.subject(input.orderNo);
+  const rows: [string, string][] = [
+    [t.rows.site, input.siteName],
+    [t.rows.quantity, input.quantityText],
+    [t.rows.date, input.releasedOnText],
+    [t.rows.name, input.certificateName],
+  ];
+  const html = emailLayout(subject, `
+    <div class="header">
+      <h1>${esc(t.title)}</h1>
+      <p>${esc(t.sub)}</p>
+    </div>
+    <div class="body">
+      ${input.isTest ? `<p style="background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;padding:10px 14px;border-radius:8px;font-weight:600;">${esc(t.test)}</p>` : ""}
+      <p>${t.hello(esc(input.firstName))}</p>
+      <p>${t.intro(esc(input.orderNo))}</p>
+      <div class="info-box">
+        <table style="width:100%;border-collapse:collapse;font-size:14px;">
+          ${rows
+            .map(
+              ([k, v]) => `<tr>
+            <td style="padding:7px 12px 7px 0;color:#6b8f6b;vertical-align:top;width:190px;">${esc(k)}</td>
+            <td style="padding:7px 0;font-weight:600;color:#1e293b;vertical-align:top;">${esc(v)}</td>
+          </tr>`
+            )
+            .join("")}
+        </table>
+      </div>
+      <p>${esc(t.certificate)}</p>
+      <p style="text-align:center;margin:24px 0;"><a href="${esc(input.certificateUrl)}" class="btn">${esc(t.cta)}</a></p>
+      <p>${esc(t.next)}</p>
+      <p style="font-size:13px;"><a href="${esc(input.orderUrl)}" style="color:#059669;">${esc(t.order)}</a></p>
+      <p style="color:#64748b;font-size:13px;margin-top:20px;">${esc(t.contact)}</p>
+    </div>
+  `);
+  try {
+    const result = await sendEmail({ to: input.email, subject, html });
+    await logEmail("release_certificate", input.email, subject, input.orderId, result.id || null);
+    return result;
+  } catch (e: unknown) {
+    await logEmail("release_certificate", input.email, subject, input.orderId, null, errorMessage(e));
+    throw e;
+  }
+}
+
+export interface VideoPublishedInput {
+  orderId: string;
+  orderNo: string;
+  locale: "tr" | "en" | "ru";
+  email: string;
+  firstName: string;
+  siteName: string;
+  releasedOnText: string;
+  videoUrl: string;
+  /** Saha sayfası (yayındaysa); yoksa null */
+  siteUrl: string | null;
+  orderUrl: string;
+  isTest: boolean;
+}
+
+const VIDEO_TEXT = {
+  tr: {
+    subject: (site: string) => `Çalışmanın görüntüleri yayımlandı — ${site}`,
+    title: "Çalışmanın Görüntüleri Yayımlandı",
+    sub: "Katıldığınız bırakma çalışmasının videosu",
+    hello: (n: string) => `Merhaba <strong>${n}</strong>,`,
+    intro: (site: string, d: string) => `<strong>${site}</strong> sahasında <strong>${d}</strong> tarihinde yapılan ve sizin de katıldığınız tohum topu bırakma çalışmasının görüntüleri yayımlandı.`,
+    cta: "Videoyu izle",
+    note: "Video YouTube'da herkese açık yayımlanmıştır; bağlantıyı dilediğiniz kişilerle paylaşabilirsiniz.",
+    site: "Saha sayfası",
+    order: "Sipariş ayrıntıları",
+    contact: "Sorularınız için bu e-postayı yanıtlayabilir veya info@skytechgreen.com adresine yazabilirsiniz.",
+    test: "DENEME SİPARİŞİ.",
+  },
+  en: {
+    subject: (site: string) => `Footage of the work has been published — ${site}`,
+    title: "Footage of the Work Has Been Published",
+    sub: "Video of the release operation you took part in",
+    hello: (n: string) => `Hello <strong>${n}</strong>,`,
+    intro: (site: string, d: string) => `Footage of the seed ball release carried out at <strong>${site}</strong> on <strong>${d}</strong>, in which you took part, has been published.`,
+    cta: "Watch the video",
+    note: "The video is published publicly on YouTube; you can share the link with anyone you wish.",
+    site: "Site page",
+    order: "Order details",
+    contact: "For questions, reply to this e-mail or write to info@skytechgreen.com.",
+    test: "TEST ORDER.",
+  },
+} as const;
+
+export async function sendVideoPublished(input: VideoPublishedInput) {
+  const t = VIDEO_TEXT[input.locale === "tr" ? "tr" : "en"];
+  const subject = (input.isTest ? "[DENEME] " : "") + t.subject(input.siteName);
+  const html = emailLayout(subject, `
+    <div class="header">
+      <h1>${esc(t.title)}</h1>
+      <p>${esc(t.sub)}</p>
+    </div>
+    <div class="body">
+      ${input.isTest ? `<p style="background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;padding:10px 14px;border-radius:8px;font-weight:600;">${esc(t.test)}</p>` : ""}
+      <p>${t.hello(esc(input.firstName))}</p>
+      <p>${t.intro(esc(input.siteName), esc(input.releasedOnText))}</p>
+      <p style="text-align:center;margin:24px 0;"><a href="${esc(input.videoUrl)}" class="btn">${esc(t.cta)}</a></p>
+      <p>${esc(t.note)}</p>
+      <p style="font-size:13px;">
+        ${input.siteUrl ? `<a href="${esc(input.siteUrl)}" style="color:#059669;">${esc(t.site)}</a> · ` : ""}<a href="${esc(input.orderUrl)}" style="color:#059669;">${esc(t.order)}</a>
+      </p>
+      <p style="color:#64748b;font-size:13px;margin-top:20px;">${esc(t.contact)}</p>
+    </div>
+  `);
+  try {
+    const result = await sendEmail({ to: input.email, subject, html });
+    await logEmail("release_video", input.email, subject, input.orderId, result.id || null);
+    return result;
+  } catch (e: unknown) {
+    await logEmail("release_video", input.email, subject, input.orderId, null, errorMessage(e));
+    throw e;
+  }
+}
+
+/** Müşteriye giden e-postalardaki bağlantıların kökü: canlıda her zaman asıl alan adı. */
+export function publicOrigin(requestOrigin?: string | null): string {
+  if (process.env.VERCEL_ENV === "production" || !requestOrigin) return appUrl();
+  return requestOrigin;
+}

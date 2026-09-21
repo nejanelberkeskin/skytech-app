@@ -75,6 +75,12 @@ export function seasonFor(at: Date = new Date()): ReleaseSeason {
   return seasonStartingIn(m >= 10 ? y : m <= 3 ? y - 1 : y);
 }
 
+/** "2026-2027" → sezonun son günü "2027-03-31"; biçim bozuksa null. */
+export function seasonEndOf(label: string): string | null {
+  const m = /^(\d{4})-(\d{4})$/.exec(label);
+  return m && Number(m[2]) === Number(m[1]) + 1 ? iso(Number(m[2]), 3, 31) : null;
+}
+
 export function nextSeason(season: ReleaseSeason): ReleaseSeason {
   return seasonStartingIn(Number(season.label.slice(0, 4)) + 1);
 }

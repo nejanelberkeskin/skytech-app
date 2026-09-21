@@ -134,38 +134,49 @@ export const consentsSchema = z.object({
 
 /* ── Sipariş gövdesi ──────────────────────────────────────────────────────── */
 
-export const orderPayloadSchema = z
-  .object({
-    /** Saha kimliği — sunucu yayında ve katılıma açık olduğunu ayrıca doğrular. */
-    landId: z.uuid("landInvalid"),
-    quantity: z
-      .number("quantityInvalid")
-      .int("quantityInvalid")
-      .min(RELEASE_QTY.min, "quantityMin")
-      .max(RELEASE_QTY.max, "quantityMax"),
-    /** Boşsa sertifikaya alıcının adı soyadı yazılır (sunucuda doldurulur). */
-    certificateName: certificateNameSchema,
-    buyer: buyerSchema,
-    invoice: invoiceSchema,
-    consents: consentsSchema,
-    locale: z.enum(LOCALES).default("tr"),
-    /** Müşteriye gösterilen hukuki metinlerin şablon sürümü; sunucu güncel sürümle karşılaştırır. */
-    documentsVersion: z.string().min(1, "documentsStale").max(40, "documentsStale"),
-    /** Idempotency: sihirbaz açılışında üretilir; ağ tekrarı tek sipariş oluşturur. */
-    clientToken: z.uuid("generic"),
-    /** Honeypot ve doldurma süresi — talep formlarıyla aynı bot sinyalleri. */
-    website: z.string().max(200).optional(),
-    elapsedMs: z.number().int().nonnegative().max(86_400_000).optional(),
-    sourcePath: z.string().max(300).optional(),
-  })
-  .superRefine((v, ctx) => {
-    if (v.invoice.type === "corporate" && !v.consents.corporateAuthority) {
-      ctx.addIssue({ code: "custom", path: ["consents", "corporateAuthority"], message: "corporateAuthorityRequired" });
-    }
-  });
+const orderFields = z.object({
+  /** Saha kimliği — sunucu yayında ve katılıma açık olduğunu ayrıca doğrular. */
+  landId: z.uuid("landInvalid"),
+  quantity: z
+    .number("quantityInvalid")
+    .int("quantityInvalid")
+    .min(RELEASE_QTY.min, "quantityMin")
+    .max(RELEASE_QTY.max, "quantityMax"),
+  /** Boşsa sertifikaya alıcının adı soyadı yazılır (sunucuda doldurulur). */
+  certificateName: certificateNameSchema,
+  buyer: buyerSchema,
+  invoice: invoiceSchema,
+  consents: consentsSchema,
+  locale: z.enum(LOCALES).default("tr"),
+  /** Müşteriye gösterilen hukuki metinlerin şablon sürümü; sunucu güncel sürümle karşılaştırır. */
+  documentsVersion: z.string().min(1, "documentsStale").max(40, "documentsStale"),
+  /** Idempotency: sihirbaz açılışında üretilir; ağ tekrarı tek sipariş oluşturur. */
+  clientToken: z.uuid("generic"),
+  /** Honeypot ve doldurma süresi — talep formlarıyla aynı bot sinyalleri. */
+  website: z.string().max(200).optional(),
+  elapsedMs: z.number().int().nonnegative().max(86_400_000).optional(),
+  sourcePath: z.string().max(300).optional(),
+});
+
+export const orderPayloadSchema = orderFields.superRefine((v, ctx) => {
+  if (v.invoice.type === "corporate" && !v.consents.corporateAuthority) {
+    ctx.addIssue({ code: "custom", path: ["consents", "corporateAuthority"], message: "corporateAuthorityRequired" });
+  }
+});
+
+/** 4. adımın önizlemesi: onay kutuları ve idempotency alanları henüz yoktur. */
+export const orderPreviewSchema = orderFields.pick({
+  landId: true,
+  quantity: true,
+  certificateName: true,
+  buyer: true,
+  invoice: true,
+  locale: true,
+});
 
 export type OrderPayloadInput = z.input<typeof orderPayloadSchema>;
 export type OrderPayload = z.output<typeof orderPayloadSchema>;
+export type OrderPreviewPayload = z.output<typeof orderPreviewSchema>;
 
 /**
  * Sertifikada görünecek ad: verilen ad ya da alıcının adı soyadı. Yedek ad da

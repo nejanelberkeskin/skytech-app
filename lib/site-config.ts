@@ -1,7 +1,7 @@
 /**
  * Site genel yapılandırması — özellik bayrakları ve rota yardımcıları.
  *
- * Üç bağımsız aşama var:
+ * Bağımsız aşamalar:
  *
  *  TRANSACTIONS_ENABLED  Sipariş / ödeme / kurumsal panel. Şu an KAPALI —
  *                        fiyat ve ödeme "çok yakında". Vercel'de
@@ -13,6 +13,13 @@
  *                        NEXT_PUBLIC_REQUESTS_ENABLED=false ile kapatılır.
  *                        (Doğrudan tohum satışı/talebi 2026-09 itibarıyla yok.)
  *
+ *  SALES_ENABLED         Yeni satış modeli: sahaya tohum topu bıraktırma siparişi,
+ *                        çevrim içi ödeme, sözleşme ve fatura. Şu an KAPALI; sanal
+ *                        POS ve e-fatura hazır olunca NEXT_PUBLIC_SALES_ENABLED=true
+ *                        ile açılır. Kapalıyken sipariş sihirbazı aynı arayüzle
+ *                        ödeme almadan TALEP toplar (REQUESTS_ENABLED).
+ *                        (TRANSACTIONS_ENABLED eski akışa aittir; o akış emekli olacak.)
+ *
  *  ACCOUNTS_ENABLED      Üyelik (kayıt / giriş / hesabım). Varsayılan AÇIK;
  *                        NEXT_PUBLIC_ACCOUNTS_ENABLED=false ile kapatılır.
  *                        Ödemeye bağlı hesap sayfaları (siparişler, sertifikalar,
@@ -23,6 +30,8 @@ export const TRANSACTIONS_ENABLED =
 
 export const REQUESTS_ENABLED =
   process.env.NEXT_PUBLIC_REQUESTS_ENABLED !== "false";
+
+export const SALES_ENABLED = process.env.NEXT_PUBLIC_SALES_ENABLED === "true";
 
 export const ACCOUNTS_ENABLED =
   process.env.NEXT_PUBLIC_ACCOUNTS_ENABLED !== "false";

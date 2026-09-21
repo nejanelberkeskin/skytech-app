@@ -1389,6 +1389,19 @@
       }
     }
   },
+  "siteReleases": {
+    "title": "Bu sahadaki çalışmalar",
+    "intro": "Bu sahada tamamlanan tohum topu bırakma çalışmaları. Çalışmanın görüntüleri, bırakmayı izleyen izleme döneminde yayımlanır.",
+    "season": "{season} sezonu",
+    "play": "Videoyu oynat",
+    "playNamed": "{date} çalışmasının videosunu oynat",
+    "videoTitle": "{date} çalışma videosu",
+    "consentNote": "Oynattığınızda video YouTube'dan yüklenir.",
+    "publishedOn": "Yayımlanma: {date}",
+    "openOnYouTube": "YouTube'da aç",
+    "videoPending": "Bu çalışmanın görüntüleri izleme döneminde yayımlanacak.",
+    "report": "İzleme raporu (PDF)"
+  },
   "orderStatusPage": {
     "title": "Siparişiniz",
     "description": "Siparişinizin durumunu, bırakma takvimini, belgelerini ve iade bilgilerini görüntüleyin.",

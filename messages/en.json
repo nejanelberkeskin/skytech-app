@@ -1389,6 +1389,19 @@
       }
     }
   },
+  "siteReleases": {
+    "title": "Work at this site",
+    "intro": "Completed seed ball releases at this site. Footage is published during the monitoring period following each release.",
+    "season": "{season} season",
+    "play": "Play video",
+    "playNamed": "Play the video of the release on {date}",
+    "videoTitle": "Release video — {date}",
+    "consentNote": "When you press play, the video loads from YouTube.",
+    "publishedOn": "Published: {date}",
+    "openOnYouTube": "Open on YouTube",
+    "videoPending": "Footage of this release will be published during the monitoring period.",
+    "report": "Monitoring report (PDF)"
+  },
   "orderStatusPage": {
     "title": "Your order",
     "description": "View your order status, seed ball release schedule, documents and refund information.",

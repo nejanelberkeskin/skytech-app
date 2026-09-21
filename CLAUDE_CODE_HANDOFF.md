@@ -542,6 +542,17 @@ Bu bölüm 11. bölümdeki akış tarifinin yerine geçer.
 - "Yayından al / Yayına al" yalnız `is_public`'i değiştirir; evreye dokunmaz (`full` artık vitrinde "Kontenjan doldu").
 - Eski "Tahmini Karbon" kartı kaldırıldı (doğrulanmamış katsayı). Kapasite sayıları yalnız bu ekranda görünür.
 
+### Sipariş çekirdeği — temel (Faz 3a; arayüz yok, hiçbir yerden çağrılmıyor)
+- `supabase/migrations/016_release_orders.sql` — **TASLAK, canlıya uygulanmadı.** `sales_settings`, `release_batches`,
+  `release_orders`, `order_documents` (değişmez), `order_events` (değişmez), `order_refunds`, `order_invoices`;
+  kapasite işlevleri (satır kilidi), RLS + sütun bazlı yetki. Eski `orders/payments/certificates` tablolarına dokunmaz.
+- `lib/orders/types.ts` durumlar ve alan sözlüğü · `state.ts` durum makinesi (`assertTransition`, `canWithdraw`) ·
+  `schedule.ts` takvim (sezon 1 Eki–31 Mar, cayma 14 gün, hazırlık payı 21 gün, yetişmeyen sipariş sonraki sezona;
+  İstanbul saatiyle) · `identifiers.ts` sipariş no `SG-YYYY-XXXXXX` ve sertifika kodu (yalnız sunucu) ·
+  `tax-ids.ts` TCKN/VKN sağlaması · `schema.ts` sihirbazın ortak zod şeması (alıcı, Bireysel/Kurumsal fatura,
+  ayrı onay kutuları; **tutar alanı yok** — sunucu hesaplar).
+- [MM] bekleyen varsayımlar migration'da işaretli: KDV %20, fatura zamanı `on_performance`.
+
 ### Sıradaki (plan §Fazlar)
 Faz 3 sipariş çekirdeği (`release_orders`, sözleşmeler,
 cayma) → Faz 4 ödeme sağlayıcı katmanı. Sihirbaz yayına girince yalnız `lib/site-config.ts`

@@ -8,6 +8,7 @@
  *   refundDuplicate()  aynı siparişe gelen İKİNCİ tahsilatı iade eder
  *   queueInvoice()     "şimdi fatura kes" — fatura kuyruğuna alır
  *   markInvoiceIssued() kesilen faturanın numarasını işler
+ *   reserveCapacityNow() geç ödemede ayrılamamış kapasiteyi sonradan ayırır
  *   confirmDueOrders() cayma süresi dolan `paid` siparişleri `confirmed` yapar
  */
 import type { SupabaseClient } from "@supabase/supabase-js";
@@ -267,6 +268,28 @@ export async function markInvoiceIssued(orderId: string, input: InvoiceIssueInpu
   if (!data) return { ok: false, error: "invalid_state" };
   await addOrderEvent(supabase, order.id, "invoice_issued", actorOf(adminUserId), { invoiceNo: input.invoiceNo, ettn: input.ettn, issuedOn: input.issuedOn });
   return { ok: true, order };
+}
+
+/* ── Geç ödemede ayrılamamış kapasite ─────────────────────────────────────── */
+
+/**
+ * `payment_meta.capacityHeld=false` siparişte kapasiteyi şimdi ayırmayı dener (yönetici sahanın
+ * kapasitesini artırdıktan sonra). Başarılıysa işaret kalkar; sipariş partiye alınabilir hâle gelir.
+ */
+export async function reserveCapacityNow(orderId: string, adminUserId: string, supabase: SupabaseClient = db()): Promise<AdminActionResult> {
+  const order = await getOrder(supabase, orderId);
+  if (!order) return { ok: false, error: "not_found" };
+  if (order.payment_meta?.capacityHeld !== false) return { ok: false, error: "already_done" };
+  if (!["paid", "confirmed"].includes(order.status)) return { ok: false, error: "invalid_state" };
+  const reserved = await supabase.rpc("reserve_release_capacity", { p_land_id: order.land_id, p_quantity: order.quantity });
+  if (reserved.error) return { ok: false, error: "unavailable" };
+  if (reserved.data !== true) return { ok: false, error: "invalid_state", detail: "sahada yeterli boş kapasite yok ya da saha katılıma kapalı" };
+  const meta = { ...(order.payment_meta ?? {}) };
+  delete meta.capacityHeld;
+  const { data, error } = await supabase.from("release_orders").update({ payment_meta: meta }).eq("id", order.id).select("*").maybeSingle();
+  if (error || !data) return { ok: false, error: "unavailable" };
+  await addOrderEvent(supabase, order.id, "status_changed", actorOf(adminUserId), { note: "capacity_reserved_late" });
+  return { ok: true, order: data as ReleaseOrderRow };
 }
 
 /* ── Cayma süresi dolan siparişler ────────────────────────────────────────── */

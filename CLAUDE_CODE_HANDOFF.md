@@ -671,7 +671,24 @@ Bu bölüm 11. bölümdeki akış tarifinin yerine geçer.
   çift tahsilat, fatura). Panel oturum gerektirdiği için sayfanın kendisi tarayıcıda DENENMEDİ (ayrıntı bileşeni geçici bir
   önizlemeyle görüldü) — kullanıcı deneyecek.
 
+### Yönetim — bırakma partileri (Faz 5b)
+- Modül `partiler` → `/admin/birakma-partileri`. Yönetim SUPER_ADMIN + OPERATIONS; FINANCE yalnız görüntüler.
+- `lib/orders/batches.ts`: `createBatch` · `updateBatch` · `deleteBatch` (yalnız hiçbir siparişin bağlı olmadığı parti) ·
+  `assignOrders` (yalnız `confirmed`, aynı saha + sezon, kapasitesi ayrılmış; biri uygunsuzsa hiçbiri alınmaz → `scheduled`) ·
+  `unassignOrder` (→ `confirmed`) · `completeRelease` (**geri alınamaz**: parti `released_on` yalnız NULL iken yazılarak
+  sahiplenilir → eşzamanlı ikinci istek işleyemez; siparişler `released`, `commit_reserved_capacity` ile kapasite kalıcıya
+  geçer, fatura zamanı "bırakmada" ise fatura kuyruğu dolar). Bırakma tarihi ileri olamaz ve her siparişin cayma süresi
+  o tarihten ÖNCE dolmuş olmalıdır.
+- API: `GET|POST /api/admin/release-batches`, `GET|PATCH|POST|DELETE /api/admin/release-batches/[id]`.
+  Liste ayrıca "partiye alınmayı bekleyen" siparişleri saha × sezon olarak verir.
+- Sipariş ayrıntısına `reserve_capacity` işlemi eklendi: geç ödemede kapasitesi ayrılamamış sipariş (saha kapasitesi
+  artırıldıktan sonra) buradan ayrılır; ayrılmadan partiye alınamaz.
+- **Faz 6'ya devreden:** bırakmada Katılım Sertifikası üretimi + müşteriye bildirim, `released → monitoring → completed`
+  geçişleri, video bağlantısı ve bildirimi, zamanlanmış işler.
+- Sınama: betikle, taze bir deneme siparişi üzerinde uçtan uca (kesinleşme → parti → atama/çıkarma → tarih denetimleri →
+  eşzamanlı iki bırakma isteğinden yalnız biri → `released` + fatura kuyruğu + kapasite `reserved→filled`). Sayfa tarayıcıda
+  DENENMEDİ (oturum gerekiyor).
+
 ### Sıradaki (plan §Fazlar)
-Faz 5b bırakma partileri (parti oluştur, kesinleşmiş siparişleri ata, bırakıldı işaretle → kapasite `filled`, fatura kuyruğu) → Faz 5 yönetim (siparişler, cayma/iade, fatura
-kuyruğu, partiler, ayarlar) → Faz 6 sertifika + zamanlanmış işler (süre dolumu, cayma süresi sonu → `confirmed`, video
+Faz 5c satış ayarları ekranı (fiyat/KDV/süreler + "sipariş alımı durduruldu"; sihirbaz fiyatı sunucudan almalı) → Faz 6 sertifika + zamanlanmış işler (süre dolumu, cayma süresi sonu → `confirmed`, video
 bildirimi).

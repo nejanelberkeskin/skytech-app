@@ -119,7 +119,10 @@ export default function ReleaseOrderDetail({ detail, act, onClose }: { detail: D
             {capacityNotHeld && (
               <p className="text-sm text-amber-100/90">
                 Bu sipariş ödeme süresi dolduktan SONRA ödendi ve o sırada sahada yer kalmamıştı: sipariş için kapasite ayrılamadı. Sahanın kapasitesini artırın ya da
-                siparişi satıcı kaynaklı iptal edip bedelini iade edin.
+                siparişi satıcı kaynaklı iptal edip bedelini iade edin.{" "}
+                <button type="button" disabled={busy} onClick={() => run({ action: "reserve_capacity" }, "Kapasite ayrıldı.")} className="underline font-semibold text-amber-200 hover:text-white disabled:opacity-60">
+                  Kapasiteyi şimdi ayırmayı dene
+                </button>
               </p>
             )}
             {openDuplicates.map((d) => (

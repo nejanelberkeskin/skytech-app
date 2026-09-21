@@ -81,6 +81,14 @@ export const ADMIN_MODULES: AdminModule[] = [
     allowedRoles: ["SUPER_ADMIN", "FINANCE", "OPERATIONS"],
   },
   {
+    // Bırakma partileri: kesinleşmiş siparişler partiye alınır, bırakma tamamlanınca işaretlenir
+    id: "partiler",
+    href: "/admin/birakma-partileri",
+    label: "Bırakma Partileri",
+    icon: "🚁",
+    allowedRoles: ["SUPER_ADMIN", "OPERATIONS", "FINANCE"],
+  },
+  {
     // Eski tohum satışı akışı (kapalı); Faz 8 temizliğinde kalkacak
     id: "siparisler",
     href: "/admin/siparisler",

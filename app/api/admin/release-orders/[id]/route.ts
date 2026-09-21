@@ -9,6 +9,7 @@ import {
   markInvoiceIssued,
   queueInvoice,
   refundDuplicate,
+  reserveCapacityNow,
   type AdminActionResult,
 } from "@/lib/orders/admin-actions";
 import { loadOrderDetail } from "@/lib/orders/admin-detail";
@@ -27,6 +28,7 @@ import type { ReleaseOrderRow } from "@/lib/orders/types";
  *      refund            {}                            — bekleyen iadeyi sağlayıcıdan yap
  *      refund_duplicate  { paymentId }                 — çift tahsilatı iade et
  *      invoice_now       {}                            — fatura kuyruğuna al
+ *      reserve_capacity  {}                            — geç ödemede ayrılamamış kapasiteyi şimdi ayır
  *      invoice_issued    { invoiceId, invoiceNo, ettn?, issuedOn }
  *
  * Görüntüleme: SUPER_ADMIN, FINANCE, OPERATIONS. Para ve fatura işlemleri: SUPER_ADMIN, FINANCE.
@@ -53,6 +55,7 @@ const actionSchema = z.discriminatedUnion("action", [
   z.object({ action: z.literal("refund") }),
   z.object({ action: z.literal("refund_duplicate"), paymentId: z.string().trim().min(1).max(100) }),
   z.object({ action: z.literal("invoice_now") }),
+  z.object({ action: z.literal("reserve_capacity") }),
   z.object({
     action: z.literal("invoice_issued"),
     invoiceId: z.uuid(),
@@ -82,7 +85,8 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
   if (!parsed.success) return NextResponse.json({ error: "invalid_body" }, { status: 400 });
   const input = parsed.data;
 
-  if (input.action !== "note" && !(MONEY_ROLES as readonly string[]).includes(admin.role)) {
+  // Not ve kapasite ayırma para hareketi değildir; görüntüleyebilen her rol yapabilir.
+  if (input.action !== "note" && input.action !== "reserve_capacity" && !(MONEY_ROLES as readonly string[]).includes(admin.role)) {
     return NextResponse.json({ error: "forbidden" }, { status: 403 });
   }
 
@@ -118,6 +122,8 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     details = { paymentId: input.paymentId };
   } else if (input.action === "invoice_now") {
     result = await queueInvoice(id, admin.user_id, supabase);
+  } else if (input.action === "reserve_capacity") {
+    result = await reserveCapacityNow(id, admin.user_id, supabase);
   } else {
     result = await markInvoiceIssued(id, { invoiceId: input.invoiceId, invoiceNo: input.invoiceNo, ettn: input.ettn ?? null, issuedOn: input.issuedOn }, admin.user_id, supabase);
     details = { invoiceNo: input.invoiceNo };

@@ -83,9 +83,9 @@ export function trackEvent(name: string, params?: GtagEventParams): void {
 }
 
 /**
- * Lead dönüşüm event'i — bilgi-al formu başarıyla gönderildiğinde tetiklenir.
- * GA4'te "Anahtar olay" (key event) olarak işaretlenip Google Ads'e
- * dönüşüm olarak aktarılacak (reklam fazı).
+ * Lead dönüşüm event'i — bilgi-al formu başarıyla gönderildiğinde tetiklenir (yalnız analitiğe
+ * izin vermiş ziyaretçilerde). GA4'te "Anahtar olay" olarak işaretlenir. Google Ads'e dönüşüm
+ * aktarımı reklam döneminde, ayrı bir pazarlama izniyle birlikte ele alınacak.
  */
 export function trackLead(params?: { subject?: string }): void {
   trackEvent("generate_lead", params);
@@ -97,11 +97,11 @@ export function trackLead(params?: { subject?: string }): void {
  */
 export function updateConsent(granted: boolean): void {
   if (typeof window === "undefined" || typeof window.gtag !== "function") return;
-  const state = granted ? "granted" : "denied";
+  // İzin yalnız analitiği kapsar; reklam sinyalleri her durumda kapalıdır (bkz. GoogleAnalytics.tsx).
   window.gtag("consent", "update", {
-    analytics_storage: state,
-    ad_storage: state,
-    ad_user_data: state,
-    ad_personalization: state,
+    analytics_storage: granted ? "granted" : "denied",
+    ad_storage: "denied",
+    ad_user_data: "denied",
+    ad_personalization: "denied",
   });
 }

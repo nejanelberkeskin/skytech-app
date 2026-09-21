@@ -7,6 +7,9 @@ import { readConsent, subscribeConsent, writeConsent, type CookieConsent as Cons
 
 const REOPEN_EVENT = "open-cookie-preferences";
 
+const CHOICE_BUTTON =
+  "flex-1 min-h-11 px-4 py-2.5 rounded-xl text-sm font-semibold text-[#0e2519] bg-white border border-[#1B6B3A]/40 hover:bg-[#edf4e9] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1B6B3A] transition-colors";
+
 /** Footer'daki "Çerez Tercihleri" linkinden banner'ı yeniden açmak için. */
 export function reopenCookiePreferences(): void {
   window.dispatchEvent(new Event(REOPEN_EVENT));
@@ -47,18 +50,11 @@ export default function CookieConsentBanner() {
           </Link>
         </p>
         <div className="flex items-center gap-2.5">
-          <button
-            type="button"
-            onClick={() => choose("denied")}
-            className="flex-1 px-4 py-2.5 rounded-xl text-sm font-semibold text-[#1a2e1a] bg-black/5 hover:bg-black/10 transition-colors"
-          >
+          {/* İki seçenek AYNI görünürlüktedir (renk, boyut, punto): ret düğmesi geri plana itilmez. */}
+          <button type="button" onClick={() => choose("denied")} className={CHOICE_BUTTON}>
             {t("rejectAll")}
           </button>
-          <button
-            type="button"
-            onClick={() => choose("granted")}
-            className="flex-1 vitrin-cta-primary !py-2.5 !px-4 justify-center"
-          >
+          <button type="button" onClick={() => choose("granted")} className={CHOICE_BUTTON}>
             {t("acceptAll")}
           </button>
         </div>

@@ -15,6 +15,11 @@ import { GA_MEASUREMENT_ID, readConsent, subscribeConsent } from "@/lib/analytic
  *
  * Bedeli: izin vermeyen ziyaretçiler GA'da görünmez. Çerezsiz toplu trafik için Vercel Analytics
  * (aynı alan adından, çerezsiz) yüklenmeye devam eder.
+ *
+ * İzin YALNIZ ANALİTİK içindir: reklam sinyalleri (ad_storage, ad_user_data, ad_personalization,
+ * Google signals) her durumda kapalıdır — bugün reklam ölçümü yapılmıyor, Çerez Politikası da
+ * "reklam/pazarlama çerezi yok" diyor. Reklam dönemi başlarsa bantta AYRI bir "pazarlama"
+ * tercihi açılmalı ve politika güncellenmelidir; bu ayar sessizce "granted" yapılmaz.
  */
 export default function GoogleAnalytics() {
   // Sunucuda ve ilk boyamada "izin yok" sayılır → hydration uyuşmazlığı olmaz, varsayılan kapalıdır.
@@ -35,14 +40,17 @@ export default function GoogleAnalytics() {
           window.gtag = gtag;
 
           gtag('consent', 'default', {
-            'ad_storage': 'granted',
-            'ad_user_data': 'granted',
-            'ad_personalization': 'granted',
+            'ad_storage': 'denied',
+            'ad_user_data': 'denied',
+            'ad_personalization': 'denied',
             'analytics_storage': 'granted'
           });
 
           gtag('js', new Date());
-          gtag('config', '${GA_MEASUREMENT_ID}');
+          gtag('config', '${GA_MEASUREMENT_ID}', {
+            'allow_google_signals': false,
+            'allow_ad_personalization_signals': false
+          });
         `}
       </Script>
     </>

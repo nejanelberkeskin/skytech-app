@@ -15,7 +15,7 @@ export const SITES_HREF = "/sahalar";
  * ile o sahayı seçili açar. Sihirbaz gelince: `/sahalar/${site.slug}/katil`.
  */
 export function siteOrderHref(site: Pick<ProjectSite, "slug">): string {
-  return `/talep/acik-arazi?saha=${encodeURIComponent(site.slug)}`;
+  return `/sahalar/${site.slug}/katil`;
 }
 
 /** "Kendi arazim için işlem yaptırmak istiyorum" bağlantısı. */

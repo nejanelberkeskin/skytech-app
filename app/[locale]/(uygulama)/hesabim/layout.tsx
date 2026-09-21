@@ -9,20 +9,22 @@ import {
   BarChartIcon, PackageIcon, SproutIcon, CertificateIcon,
   GiftIcon, TrophyIcon, SettingsIcon, AlertTriangleIcon, MailIcon,
 } from "@/components/ui/Icons";
-import { CTA_MODE, TRANSACTIONS_ENABLED, orderCtaHref } from "@/lib/site-config";
+import { CTA_MODE, SALES_ENABLED, TRANSACTIONS_ENABLED, orderCtaHref } from "@/lib/site-config";
 
 // `transactional: true` olanlar yalnız ödeme açıkken listelenir (middleware
 // de bu rotaları /hesabim'a katlar) — boş sipariş/sertifika ekranı gösterilmez.
 const NAV_ITEMS = [
   { href: "/hesabim", label: "Genel Bakış", Icon: BarChartIcon, exact: true },
   { href: "/hesabim/taleplerim", label: "Taleplerim", Icon: MailIcon },
+  // Satış modeli v2: sahaya tohum topu bıraktırma siparişleri (yalnız satış açıkken listelenir)
+  { href: "/hesabim/siparisler", label: "Siparişlerim", Icon: PackageIcon, sales: true },
   { href: "/hesabim/siparislerim", label: "Fiziksel Siparişlerim", Icon: PackageIcon, transactional: true },
   { href: "/hesabim/rezervasyonlar", label: "Arazi Ekimlerim", Icon: SproutIcon, transactional: true },
   { href: "/hesabim/sertifikalar", label: "Sertifikalarım", Icon: CertificateIcon, transactional: true },
   { href: "/hesabim/davet-et", label: "Davet Et & Kazan", Icon: GiftIcon, transactional: true },
   { href: "/hesabim/davet-et-kazan", label: "Ödüllerim", Icon: TrophyIcon, transactional: true },
   { href: "/hesabim/profil", label: "Profil & Ayarlar", Icon: SettingsIcon },
-].filter((item) => TRANSACTIONS_ENABLED || !item.transactional);
+].filter((item: { transactional?: boolean; sales?: boolean }) => (TRANSACTIONS_ENABLED || !item.transactional) && (SALES_ENABLED || !item.sales));
 
 export default function HesabimLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();

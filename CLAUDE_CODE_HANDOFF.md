@@ -713,6 +713,16 @@ Bu bölüm 11. bölümdeki akış tarifinin yerine geçer.
   1 Nisan geçişi · geçersiz/erken video reddi · video düzeltmesinde yeniden bildirim yok · bildirim gitmeden `completed`
   olmuyor · çalışma günlüğü ve sipariş görünümü doluyor. Zamanlanmış iş ucu: kimliksiz/yanlış anahtar 401, doğru anahtar 200.
 
+### Hesabım — Siparişlerim (Faz 7)
+- `/hesabim/siparisler` (kenar menüde "Siparişlerim"; yalnız `SALES_ENABLED` iken listelenir). Üyenin siparişleri tarayıcıdan
+  **RLS ile** okunur (`release_orders_select_own` + sütun yetkisi: fatura/onay/ödeme ayrıntısı dışarıda). Yalnız ödenmiş
+  siparişler; kartta durum, saha, adet, tutar, son tarih / bırakma tarihi, sertifika, video, cayma bağlantısı (süre içindeyse).
+  Ayrıntı ve belgeler `/siparis/<no>` sayfasında (üye oturumuyla; belirteç gerekmez).
+- `POST /api/auth/claim-orders`: aynı e-postayla MİSAFİR olarak verilmiş siparişleri hesaba bağlar — yalnız hesabın e-postası
+  doğrulanmışsa, yalnız sahipsiz siparişler, yinelenebilir. Sayfa açılırken çağrılır.
+- Eski `/hesabim/siparislerim` (tohum satışı) sayfasına dokunulmadı; Faz 8 temizliğinde kalkacak.
+- Sınama: sorgu biçimi canlı şemaya karşı doğrulandı; sayfa üye oturumu gerektirdiği için tarayıcıda DENENMEDİ.
+
 ### Sıradaki (plan §Fazlar)
-Faz 7 Hesabım → Siparişlerim (üyenin kendi siparişleri; RLS ile) → Faz 5c satış ayarları ekranı (fiyat/KDV/süreler + "sipariş alımı durduruldu"; sihirbaz fiyatı sunucudan almalı) → Faz 6 sertifika + zamanlanmış işler (süre dolumu, cayma süresi sonu → `confirmed`, video
+Faz 5c satış ayarları ekranı (fiyat/KDV/süreler + "sipariş alımı durduruldu"; sihirbaz fiyatı sunucudan almalı) → Faz 6 sertifika + zamanlanmış işler (süre dolumu, cayma süresi sonu → `confirmed`, video
 bildirimi).

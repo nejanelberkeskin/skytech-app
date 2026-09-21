@@ -66,3 +66,28 @@ export const DOCUMENT_LABELS: Record<string, string> = {
   withdrawal_form: "Cayma Formu",
   kvkk_notice: "KVKK Aydınlatma Metni",
 };
+
+/** Müşteriye gösterilen durum adları (Hesabım). Sipariş sayfasındaki çevirilerle aynı sözcükler. */
+export const CUSTOMER_STATUS_LABELS: Partial<Record<OrderStatus, string>> = {
+  paid: "Ödendi",
+  confirmed: "Kesinleşti",
+  scheduled: "Planlandı",
+  released: "Bırakıldı",
+  monitoring: "İzlemede",
+  completed: "Tamamlandı",
+  withdrawal_requested: "Cayma bildirildi",
+  cancelled_by_seller: "İptal edildi",
+  refunded: "İade edildi",
+};
+
+export const CUSTOMER_STATUS_HINTS: Partial<Record<OrderStatus, string>> = {
+  paid: "Siparişiniz kesinleşti; 14 günlük cayma süresi işliyor.",
+  confirmed: "Cayma süresi tamamlandı; siparişiniz bırakma planına alınabilir.",
+  scheduled: "Siparişiniz bir bırakma çalışmasına atandı.",
+  released: "Tohum toplarınız sahaya bırakıldı; Katılım Sertifikanız düzenlendi.",
+  monitoring: "Saha inceleniyor, izleniyor ve raporlanıyor.",
+  completed: "Çalışmanın görüntüleri paylaşıldı.",
+  withdrawal_requested: "Cayma bildiriminiz alındı; bedelin tamamı 14 gün içinde iade edilir.",
+  cancelled_by_seller: "Sipariş tarafımızca iptal edildi; bedelin tamamı iade edilir.",
+  refunded: "Bedelin tamamı iade edildi.",
+};

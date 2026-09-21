@@ -242,7 +242,6 @@
       "projects": "Projects",
       "info": "Get Info",
       "contact": "Contact",
-      "requests": "Submit a Request",
       "sites": "Project Sites"
     },
     "legal": {
@@ -1974,7 +1973,8 @@
       "download": "Download",
       "close": "Close",
       "readNamed": "Read {title}",
-      "downloadNamed": "Download {title}"
+      "downloadNamed": "Download {title}",
+      "languageNote": "The documents are issued in Turkish."
     },
     "request": {
       "submit": "Send Request",

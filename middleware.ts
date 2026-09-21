@@ -155,12 +155,14 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL(localePath("/yakinda", locale), request.url));
   }
 
-  /* ── 2b-ii. Kaldırılan talep adresleri (eski seçim sayfası, tohum talebi).
-     Geçici (307): sipariş sihirbazı gelince hedefler /sahalar altına taşınacak;
-     kalıcı yönlendirme tarayıcıda önbelleğe yapışmasın. ─────────────────── */
+  /* ── 2b-ii. Kaldırılan talep adresleri (eski seçim sayfası, tohum talebi, açık arazi
+     talep formu) → Proje Uygulama Sahaları. Eski `?saha=<slug>` bağlantıları doğrudan o
+     sahanın sihirbazına gider. Geçici (307): tarayıcı önbelleğine yapışmasın. ────────── */
   const retiredTarget = RETIRED_REQUEST_REDIRECTS[cleanPath.replace(/\/+$/, "")];
   if (retiredTarget) {
-    return NextResponse.redirect(new URL(localePath(retiredTarget, locale), request.url), 307);
+    const saha = request.nextUrl.searchParams.get("saha");
+    const target = saha && /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(saha) && saha.length <= 80 ? `/sahalar/${saha}/katil` : retiredTarget;
+    return NextResponse.redirect(new URL(localePath(target, locale), request.url), 307);
   }
 
   /* ── 2c. Üyelik açık, ödeme kapalı: sipariş/sertifika/davet sayfaları

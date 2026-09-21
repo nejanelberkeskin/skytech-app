@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { redirect } from "@/i18n/navigation";
-import { SALES_ENABLED, REQUESTS_ENABLED } from "@/lib/site-config";
+import { REQUESTS_ENABLED } from "@/lib/site-config";
+import { ordersClosed } from "@/lib/orders/gate";
+import { getPaymentProvider } from "@/lib/payments";
 import { getProjectSiteBySlug } from "@/lib/sites/data";
 import { siteDetailHref, siteOrderHref } from "@/lib/sites/links";
 import { formatHectares, formatSiteLocation } from "@/lib/sites/format";
@@ -32,8 +34,10 @@ export default async function ParticipatePage({ params }: Props) {
   const site = await getProjectSiteBySlug(slug, locale);
   if (!site) notFound();
   if (!site.acceptsOrders) redirect({ href: siteDetailHref(site), locale });
-  if (!SALES_ENABLED && !REQUESTS_ENABLED)
-    redirect({ href: "/yakinda", locale });
+  // Kip, sipariş uçlarının kullandığı AYNI kapıdan okunur (bayrak + ödeme sağlayıcısı + hukuki
+  // metin sürümü): sipariş alınamıyorsa sihirbaz çıkmaz sokağa girmez, talep kipinde açılır.
+  const canOrder = !ordersClosed(getPaymentProvider());
+  if (!canOrder && !REQUESTS_ENABLED) redirect({ href: "/yakinda", locale });
   const [t, sites, seeds] = await Promise.all([
     getTranslations({ locale, namespace: "orderWizard" }),
     getTranslations({ locale, namespace: "sitesPage" }),
@@ -56,7 +60,7 @@ export default async function ParticipatePage({ params }: Props) {
     <div className="vitrin-container pb-12 pt-32 sm:pt-40">
       <header className="mb-8 max-w-3xl">
         <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-[#1B6B3A]">
-          {t(SALES_ENABLED ? "orderMode" : "requestMode")}
+          {t(canOrder ? "orderMode" : "requestMode")}
         </p>
         <h1 className="display-headline text-3xl font-semibold text-[#0e2519] sm:text-5xl">
           {t("title")}
@@ -67,7 +71,7 @@ export default async function ParticipatePage({ params }: Props) {
       </header>
       <OrderWizard
         locale={locale}
-        mode={SALES_ENABLED ? "order" : "request"}
+        mode={canOrder ? "order" : "request"}
         site={{
           id: site.id,
           slug: site.slug,

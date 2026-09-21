@@ -33,9 +33,8 @@ const VITRIN_PAGES: SitemapEntry[] = [
   { path: "/hakkimizda", changeFrequency: "monthly", priority: 0.7 },
   { path: "/iletisim", changeFrequency: "yearly", priority: 0.6 },
   { path: "/bilgi-al", changeFrequency: "yearly", priority: 0.6 },
-  // Talep toplama akışı (ödeme öncesi dönem). /talep ve /talep/tohum kaldırıldı
+  // Talep toplama akışı. /talep, /talep/tohum ve /talep/acik-arazi kaldırıldı
   // (sahalara yönleniyor) — yönlendirilen adres sitemap'e konmaz.
-  { path: "/talep/acik-arazi", changeFrequency: "weekly", priority: 0.9 },
   { path: "/talep/arazime-ekim", changeFrequency: "monthly", priority: 0.8 },
   { path: "/gizlilik-politikasi", changeFrequency: "yearly", priority: 0.3 },
   { path: "/kullanim-kosullari", changeFrequency: "yearly", priority: 0.3 },

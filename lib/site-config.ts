@@ -54,27 +54,30 @@ export const GOOGLE_AUTH_ENABLED =
  * sahalara yönlenir.
  */
 export const REQUEST_ROUTES = {
-  hub: "/talep/acik-arazi",
+  hub: "/sahalar",
   land: "/talep/arazime-ekim",
-  openLand: "/talep/acik-arazi",
+  openLand: "/sahalar",
 } as const;
 
-/** Kaldırılan talep adresleri → yeni hedef (middleware uygular, dil öneki korunur). */
+/**
+ * Kaldırılan talep adresleri → yeni hedef (middleware uygular, dil öneki korunur).
+ * `/talep/acik-arazi?saha=<slug>` doğrudan o sahanın sihirbazına gider (middleware).
+ */
 export const RETIRED_REQUEST_REDIRECTS: Record<string, string> = {
   "/talep": REQUEST_ROUTES.openLand,
   "/talep/tohum": REQUEST_ROUTES.openLand,
+  "/talep/acik-arazi": REQUEST_ROUTES.openLand,
 };
 
 export type RequestRouteKey = keyof typeof REQUEST_ROUTES;
 
 /**
- * Sipariş niyetli CTA'lar için hedef: talep toplama açıksa /talep/*, kapalıysa
- * /yakinda. Eski satın alma akışına (/bireysel/*) artık HİÇBİR çağrı gitmez —
- * o akış doğrudan tohum satıyordu; yeni sipariş sihirbazı yayına girdiğinde
- * hedef burada tek yerden değişir.
+ * Sipariş niyetli CTA'lar için hedef: Proje Uygulama Sahaları (oradan sahanın sihirbazı
+ * `/sahalar/<slug>/katil` açılır — satış açıksa sipariş, değilse talep kipinde). Talep de
+ * satış da kapalıysa /yakinda. Eski satın alma akışına (/bireysel/*) HİÇBİR çağrı gitmez.
  */
 export function orderCtaHref(kind: RequestRouteKey = "hub"): string {
-  if (REQUESTS_ENABLED) return REQUEST_ROUTES[kind];
+  if (REQUESTS_ENABLED || SALES_ENABLED) return REQUEST_ROUTES[kind];
   return "/yakinda";
 }
 

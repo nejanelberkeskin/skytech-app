@@ -627,15 +627,14 @@ export default function OrderWizard({
             </Link>
           )}
           {failure === "closed" && (
-            <Link
-              href={{
-                pathname: "/talep/acik-arazi",
-                query: { saha: site.slug },
-              }}
+            // Tam sayfa yenileme: sunucu kipi yeniden belirler; sipariş kapalıysa sihirbaz talep kipinde açılır.
+            <button
+              type="button"
+              onClick={() => window.location.reload()}
               className="inline-block min-h-11 py-3 text-sm font-semibold text-[#1B6B3A] underline"
             >
               {t("request.leaveRequest")}
-            </Link>
+            </button>
           )}
           {step === 1 && (
             <SectionCard

@@ -67,7 +67,7 @@ export default function OrderReview({
     invoice.type === "corporate" ? mask(invoice.taxId) : mask(invoice.tckn);
   const rows = [
     { label: t("review.site"), value: site.name },
-    { label: t("review.species"), value: site.species.join(" · ") },
+    ...(site.species.length ? [{ label: t("review.species"), value: site.species.join(" · ") }] : []),
     { label: t("quantity.label"), value: formatCount(totals.quantity, locale) },
     {
       label: t("quantity.unit"),
@@ -220,6 +220,9 @@ export default function OrderReview({
       </section>
       <section className="vitrin-card p-6 lg:p-8">
         <h3 className="mb-5 text-lg font-bold">{t("documents.title")}</h3>
+        {locale !== "tr" && (
+          <p className="-mt-2 mb-4 text-sm text-[#526352]">{t("documents.languageNote")}</p>
+        )}
         <ul className="divide-y divide-[#1B6B3A]/10">
           {preview.documents.map((doc) => (
             <li

@@ -5,7 +5,6 @@ import LanguageSwitcher from "./LanguageSwitcher";
 import CookiePreferencesLink from "./CookiePreferencesLink";
 import KenxBadge from "./KenxBadge";
 import { ORG_LEGAL_NAME, ORG_PARENT_URL, ORG_SOCIAL } from "@/lib/seo";
-import { REQUESTS_ENABLED, REQUEST_ROUTES } from "@/lib/site-config";
 import { SITES_HREF } from "@/lib/sites/links";
 import { LEGAL_PAGES_ENABLED, SALES_LEGAL_PAGES } from "@/lib/legal/visibility";
 
@@ -20,7 +19,6 @@ export default async function VitrinFooter() {
   ];
 
   const HIZLI_LINKLER = [
-    ...(REQUESTS_ENABLED ? [{ label: t("quickLinks.requests"), href: REQUEST_ROUTES.hub }] : []),
     { label: t("quickLinks.sites"), href: SITES_HREF },
     { label: t("quickLinks.about"), href: "/hakkimizda" },
     { label: t("quickLinks.projects"), href: "/projeler" },

@@ -636,7 +636,19 @@ Bu bölüm 11. bölümdeki akış tarifinin yerine geçer.
 - Canlıya geçişte: canlı anahtarlar + `IYZICO_BASE_URL=https://api.iyzipay.com`, iyzico panelinde dönüş alan adı,
   `ORDER_LINK_SECRET`, hukuki sürümden "-taslak" ekinin kalkması, `NEXT_PUBLIC_SALES_ENABLED=true`.
 
+### Sihirbazın akışa bağlanması (Faz 4b; Astra'nın #31'i bu dalda birleşik)
+- "Satın Al / Talep Oluştur" çağrıları artık **`/sahalar`**'a gider (`REQUEST_ROUTES.hub = openLand = "/sahalar"`); oradan
+  sahanın sihirbazı `/sahalar/<slug>/katil` açılır. Eski `/talep/acik-arazi` (ve `/talep`, `/talep/tohum`) 307 ile
+  `/sahalar`'a; eski `?saha=<slug>` bağlantıları doğrudan o sahanın sihirbazına yönlenir (middleware; slug biçimi doğrulanır).
+  Eski açık arazi formu sayfası ve `OpenLandRequestForm` artık ULAŞILMAZ — Faz 8 temizliğinde silinecek.
+- Sihirbazın kipi (sipariş / talep) bayraktan değil **sipariş kapısından** okunur (`lib/orders/gate.ts`): bayrak açık ama
+  sağlayıcı yok ya da metinler taslak + canlı site ise sihirbaz çıkmaz sokağa girmez, talep kipinde açılır.
+- Özet adımında tür girilmemiş sahada boş satır gösterilmez; TR dışı dillerde "belgeler Türkçe düzenlenir" notu.
+- Alt bilgideki "Talep" hızlı bağlantısı kalktı (hedefi "Proje Uygulama Sahaları" ile aynı adresti).
+- **Faz 9 notu:** `CTA_MODE` hâlâ eski bayrağa bakıyor; satış açıldığında çağrı metinleri ("Talep Oluştur" → katılım dili)
+  gözden geçirilmeli.
+
 ### Sıradaki (plan §Fazlar)
 Faz 5 yönetim (siparişler, cayma/iade, fatura
 kuyruğu, partiler, ayarlar) → Faz 6 sertifika + zamanlanmış işler (süre dolumu, cayma süresi sonu → `confirmed`, video
-bildirimi). Sihirbaz (#31) birleşince `lib/site-config.ts` (`REQUEST_ROUTES`) → `/sahalar`, `/talep/acik-arazi` yönlendirmesi.
+bildirimi).

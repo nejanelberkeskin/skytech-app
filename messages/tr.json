@@ -242,7 +242,6 @@
       "projects": "Projeler",
       "info": "Bilgi Al",
       "contact": "İletişim",
-      "requests": "Talep Oluştur",
       "sites": "Proje Uygulama Sahaları"
     },
     "legal": {
@@ -1974,7 +1973,8 @@
       "download": "İndir",
       "close": "Kapat",
       "readNamed": "{title} belgesini oku",
-      "downloadNamed": "{title} belgesini indir"
+      "downloadNamed": "{title} belgesini indir",
+      "languageNote": "Belgeler Türkçe düzenlenir."
     },
     "request": {
       "submit": "Talebi Gönder",

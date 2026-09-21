@@ -242,7 +242,6 @@
       "projects": "Проекты",
       "info": "Получить информацию",
       "contact": "Контакты",
-      "requests": "Оставить заявку",
       "sites": "Проектные участки"
     },
     "legal": {
@@ -1974,7 +1973,8 @@
       "download": "Скачать",
       "close": "Закрыть",
       "readNamed": "Прочитать: {title}",
-      "downloadNamed": "Скачать: {title}"
+      "downloadNamed": "Скачать: {title}",
+      "languageNote": "Документы составляются на турецком языке."
     },
     "request": {
       "submit": "Отправить заявку",

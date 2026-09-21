@@ -242,7 +242,8 @@
       "projects": "Projects",
       "info": "Get Info",
       "contact": "Contact",
-      "requests": "Submit a Request"
+      "requests": "Submit a Request",
+      "sites": "Project Sites"
     },
     "legal": {
       "privacy": "Privacy Policy",
@@ -1160,7 +1161,8 @@
       "badge": "Project Sites",
       "titleLine": "Regions Where We Are",
       "titleAccent": "Active in the Field",
-      "subtitle": "Work is currently under way in Çanakkale, İzmir and Bursa. New sites will be listed here as they are added."
+      "subtitle": "Work is currently under way in Çanakkale, İzmir and Bursa. New sites will be listed here as they are added.",
+      "sitesCta": "View the Project Sites"
     },
     "cta": {
       "titleLine": "Start Your Own",
@@ -1357,7 +1359,8 @@
           "genclestirme": "Regeneration",
           "ormanlastirma_genclestirme": "Reforestation – Regeneration"
         },
-        "speciesNote": "The species is chosen by our specialists for the site's climate and soil; you do not need to choose."
+        "speciesNote": "The species is chosen by our specialists for the site's climate and soil; you do not need to choose.",
+        "details": "View site details"
       },
       "quantity": {
         "heading": "How many seed balls?",

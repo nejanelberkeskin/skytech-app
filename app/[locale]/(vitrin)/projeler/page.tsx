@@ -9,6 +9,7 @@ import TurkeyMap from "@/components/vitrin/TurkeyMap";
 import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
 import { PROJECTS } from "@/lib/projects-data";
 import { buildPageMetadata } from "@/lib/seo";
+import { SITES_HREF } from "@/lib/sites/links";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
@@ -91,6 +92,11 @@ export default async function ProjelerPage({ params }: { params: Promise<{ local
           subtitle={t("list.subtitle")}
         />
         <ProjectsGrid />
+        <div className="mt-10 text-center">
+          <Link href={SITES_HREF} className="vitrin-cta-primary">
+            {t("list.sitesCta")}
+          </Link>
+        </div>
       </SectionWrapper>
 
       {/* CTA */}

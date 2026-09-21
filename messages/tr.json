@@ -242,7 +242,8 @@
       "projects": "Projeler",
       "info": "Bilgi Al",
       "contact": "İletişim",
-      "requests": "Talep Oluştur"
+      "requests": "Talep Oluştur",
+      "sites": "Proje Uygulama Sahaları"
     },
     "legal": {
       "privacy": "Gizlilik Politikası",
@@ -1160,7 +1161,8 @@
       "badge": "Proje Uygulama Sahaları",
       "titleLine": "Sahada",
       "titleAccent": "Aktif Olduğumuz Bölgeler",
-      "subtitle": "Şu anda Çanakkale, İzmir ve Bursa'da çalışmalarımız sürüyor. Yeni sahalar eklendikçe burada listelenecek."
+      "subtitle": "Şu anda Çanakkale, İzmir ve Bursa'da çalışmalarımız sürüyor. Yeni sahalar eklendikçe burada listelenecek.",
+      "sitesCta": "Sahaları İnceleyin"
     },
     "cta": {
       "titleLine": "Kendi",
@@ -1357,7 +1359,8 @@
           "genclestirme": "Gençleştirme",
           "ormanlastirma_genclestirme": "Ormanlaştırma – Gençleştirme"
         },
-        "speciesNote": "Tür, sahanın iklim ve toprak koşullarına göre uzman ekibimizce belirlenir; seçim yapmanız gerekmez."
+        "speciesNote": "Tür, sahanın iklim ve toprak koşullarına göre uzman ekibimizce belirlenir; seçim yapmanız gerekmez.",
+        "details": "Sahayı incele"
       },
       "quantity": {
         "heading": "Kaç tohum topu bırakılsın?",

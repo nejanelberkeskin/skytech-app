@@ -8,6 +8,7 @@ import { buildPageMetadata } from "@/lib/seo";
 import { REQUEST_ROUTES } from "@/lib/site-config";
 import { getProjectSites } from "@/lib/sites/data";
 import { formatHectares, formatSiteLocation } from "@/lib/sites/format";
+import { siteDetailHref } from "@/lib/sites/links";
 import type { SiteLocale } from "@/lib/sites/types";
 
 /* ═══════════════════════════════════════════════════════════════════════
@@ -72,6 +73,7 @@ export default async function SahayaTohumTopuPage({
         return tSeeds.has(key) ? tSeeds(key) : sp.name;
       }),
       coverImage: s.coverImage,
+      detailHref: siteDetailHref(s),
     }));
 
   return (

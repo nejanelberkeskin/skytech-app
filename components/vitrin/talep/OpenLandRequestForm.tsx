@@ -47,6 +47,8 @@ export interface SiteOption {
   /** Sahaya bırakılan tür adları (istenen dilde) */
   species: string[];
   coverImage: string | null;
+  /** Saha ayrıntı sayfası (/sahalar/<slug>) */
+  detailHref: string;
 }
 
 /** Saha sayfasından gelindiyse (?saha=slug) o saha seçili açılır — hydration'a zarar vermeden. */
@@ -212,6 +214,16 @@ export default function OpenLandRequestForm({ sites }: { sites: SiteOption[] }) 
                     <Fact label={t("site.workType")} value={s.workType} />
                     {s.species.length > 0 && <Fact label={t("site.species")} value={s.species.join(", ")} />}
                   </span>
+                  {/* Yeni sekmede açılır: form doldurulurken girilenler kaybolmasın. */}
+                  <Link
+                    href={s.detailHref}
+                    target="_blank"
+                    rel="noopener"
+                    className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-[#1B6B3A] underline decoration-[#1B6B3A]/30 underline-offset-4 hover:decoration-[#1B6B3A]"
+                  >
+                    {t("site.details")}
+                    <span aria-hidden="true">↗</span>
+                  </Link>
                 </span>
                 <span
                   className={`shrink-0 mt-0.5 w-5 h-5 rounded-full border-2 flex items-center justify-center ${

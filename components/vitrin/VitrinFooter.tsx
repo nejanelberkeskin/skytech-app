@@ -6,6 +6,7 @@ import CookiePreferencesLink from "./CookiePreferencesLink";
 import KenxBadge from "./KenxBadge";
 import { ORG_LEGAL_NAME, ORG_PARENT_URL, ORG_SOCIAL } from "@/lib/seo";
 import { REQUESTS_ENABLED, REQUEST_ROUTES } from "@/lib/site-config";
+import { SITES_HREF } from "@/lib/sites/links";
 
 export default async function VitrinFooter() {
   const t = await getTranslations("footer");
@@ -19,6 +20,7 @@ export default async function VitrinFooter() {
 
   const HIZLI_LINKLER = [
     ...(REQUESTS_ENABLED ? [{ label: t("quickLinks.requests"), href: REQUEST_ROUTES.hub }] : []),
+    { label: t("quickLinks.sites"), href: SITES_HREF },
     { label: t("quickLinks.about"), href: "/hakkimizda" },
     { label: t("quickLinks.projects"), href: "/projeler" },
     { label: t("quickLinks.info"), href: "/bilgi-al" },
@@ -220,14 +222,6 @@ function SocialIcon({ href, aria, children }: { href?: string; aria: string; chi
   );
 }
 
-function LeafIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 32 32" fill="none">
-      <path d="M27 5C27 5 22 4 16 6C10 8 6 13 6 19C6 22 8 25 11 26C8 24 7 21 7 19C7 14 11 9 17 8C12 11 9 16 9 20C9 24 11 27 14 27C20 27 26 22 27 5Z" fill="currentColor" />
-      <path d="M11 26C9 25 7 22 7 19C7 22 8 25 11 26Z" fill="currentColor" opacity="0.6" />
-    </svg>
-  );
-}
 function ArrowRightIcon({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>

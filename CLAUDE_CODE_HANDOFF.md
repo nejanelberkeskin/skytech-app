@@ -508,6 +508,16 @@ Bu bölüm 11. bölümdeki akış tarifinin yerine geçer.
 - `orderCtaHref()` artık eski `/bireysel/*` akışına hiçbir koşulda gitmez.
 - `?saha=<slug>` ile gelen ziyaretçide o saha seçili açılır (`lib/sites/links.ts → siteOrderHref`).
 
+### Saha ve sertifika sayfaları (GPT-6 Astra, PR #26 · #27)
+- `/sahalar` liste, `/sahalar/[slug]` ayrıntı (`components/vitrin/sahalar/*`), `SeasonTimeline`
+  (`components/vitrin/shared/`, `full` | `compact`). Veri: `lib/sites/data.ts`; bağlantılar yalnız `lib/sites/links.ts`.
+- `/sertifika/[kod]` doğrulama sayfası (noindex) + `GET /api/public/katilim-sertifikasi/[kod]/gorsel?b=dikey|yatay&dil=tr|en|ru`
+  (`next/og`, 1080×1350 ve 1200×630). Yerleşim ve arka plan: `lib/certificates/layout.ts` — müşterinin sertifika görseli
+  gelince `public/images/sertifika/` altına konur, `CERT_BACKGROUND` ve koordinatlar güncellenir. Fontlar `assets/fonts/`
+  (Noto Sans, OFL); dosya izine girdiği build çıktısında doğrulandı. Canlıda veri kaynağı henüz `null` döner (Faz 7).
+- Çapraz bağlantılar: talep formundaki saha kartı → saha sayfası (yeni sekme), `/projeler` → `/sahalar`, alt bilgi → `/sahalar`.
+  Eski `(uygulama)/sertifika/[id]` sayfası kaldırıldı.
+
 ### Kurallar — tek kaynak
 | Ne | Nerede |
 |---|---|

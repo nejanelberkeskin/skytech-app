@@ -138,7 +138,12 @@ const base = {
   clientToken: "6c1f0e0a-2b3c-4d5e-8f90-a1b2c3d4e5f6",
 };
 const parse = (patch = {}) => S.orderPayloadSchema.safeParse({ ...base, ...patch });
-const errs = (r) => (r.success ? {} : Object.fromEntries(r.error.issues.map((i) => [i.path.join("."), i.message])));
+// Uygulamadaki kuralla aynı: bir alan için İLK hata geçerlidir (issuesToFieldErrors).
+const errs = (r) => {
+  const out = {};
+  if (!r.success) for (const i of r.error.issues) out[i.path.join(".")] ??= i.message;
+  return out;
+};
 
 let r = parse();
 assert.ok(r.success, JSON.stringify(errs(r)));
@@ -159,7 +164,10 @@ assert.deepEqual(errs(parse({ quantity: 19 })), { quantity: "quantityMin" });
 assert.deepEqual(errs(parse({ consents: { preInfo: true, contract: false, kvkkRead: true } })), { "consents.contract": "contractRequired" });
 assert.deepEqual(errs(parse({ consents: { preInfo: false, contract: true, kvkkRead: true } })), { "consents.preInfo": "preInfoRequired" });
 assert.deepEqual(errs(parse({ consents: { preInfo: true, contract: true } })), { "consents.kvkkRead": "kvkkRequired" });
-assert.deepEqual(errs(parse({ buyer: { ...base.buyer, email: "" } })), { "buyer.email": "emailInvalid" });
+assert.deepEqual(errs(parse({ buyer: { ...base.buyer, email: "" } })), { "buyer.email": "emailRequired" });
+assert.deepEqual(errs(parse({ buyer: { ...base.buyer, email: "gecersiz" } })), { "buyer.email": "emailInvalid" });
+assert.deepEqual(errs(parse({ buyer: { ...base.buyer, firstName: " " } }))["buyer.firstName"], "firstNameRequired");
+assert.equal(errs(parse({ invoice: { type: "individual", address: { ...address, line: "" } } }))["invoice.address.line"], "addressRequired");
 assert.deepEqual(errs(parse({ buyer: { ...base.buyer, phone: "" } })), { "buyer.phone": "phoneRequired" });
 assert.deepEqual(errs(parse({ buyer: { ...base.buyer, phone: "12345" } })), { "buyer.phone": "phoneInvalid" });
 assert.deepEqual(errs(parse({ invoice: { type: "individual", address, tckn: "10000000147" } })), { "invoice.tckn": "tcknInvalid" });

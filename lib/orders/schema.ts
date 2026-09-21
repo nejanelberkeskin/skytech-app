@@ -16,7 +16,8 @@ const requiredText = (min: number, max: number, keys: { required: string; short:
     .string(keys.required)
     .max(max * 2, "tooLong")
     .transform((v) => cleanText(v))
-    .pipe(z.string().min(min, keys.short).max(max, "tooLong"));
+    // Boş bırakılan alan "zorunlu", kısa kalan alan "kısa" iletisini alır (ilk hata gösterilir).
+    .pipe(z.string().min(1, keys.required).min(min, keys.short).max(max, "tooLong"));
 
 const optionalText = (max: number) =>
   z
@@ -40,7 +41,7 @@ export const buyerSchema = z.object({
     .string("emailRequired")
     .max(200, "tooLong")
     .transform((v) => v.trim().toLowerCase())
-    .pipe(z.email("emailInvalid")),
+    .pipe(z.string().min(1, "emailRequired").pipe(z.email("emailInvalid"))),
   phone: z
     .string("phoneRequired")
     .max(40, "tooLong")

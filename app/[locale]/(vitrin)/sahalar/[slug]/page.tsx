@@ -8,13 +8,19 @@ import SectionHeading from "@/components/vitrin/SectionHeading";
 import SectionWrapper from "@/components/vitrin/SectionWrapper";
 import { SiteBadges } from "@/components/vitrin/sahalar/SiteCard";
 import SeasonTimeline from "@/components/vitrin/shared/SeasonTimeline";
+import SiteReleases from "@/components/vitrin/sahalar/SiteReleases";
 import { getProjectSiteBySlug } from "@/lib/sites/data";
+import { getSiteReleases } from "@/lib/sites/releases-data";
+import { formatLongDay } from "@/lib/orders/dates";
 import { SITES_HREF, siteDetailHref, siteOrderHref } from "@/lib/sites/links";
 import type { SiteLocale } from "@/lib/sites/types";
 import { buildPageMetadata } from "@/lib/seo";
 
 export const revalidate = 300;
-type Props = { params: Promise<{ locale: SiteLocale; slug: string }> };
+type Props = {
+  params: Promise<{ locale: SiteLocale; slug: string }>;
+  searchParams: Promise<{ ornek?: string | string[] }>;
+};
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale, slug } = await params;
   const site = await getProjectSiteBySlug(slug, locale);
@@ -29,11 +35,25 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     locale,
   );
 }
-export default async function SiteDetailPage({ params }: Props) {
+export default async function SiteDetailPage({ params, searchParams }: Props) {
   const { locale, slug } = await params;
   setRequestLocale(locale);
   const site = await getProjectSiteBySlug(slug, locale);
   if (!site) notFound();
+  const { ornek } = await searchParams;
+  const releases = await getSiteReleases(site.id, {
+    sample: typeof ornek === "string" ? ornek : null,
+  });
+  const releaseDates: Record<string, string> = {};
+  for (const release of releases) {
+    releaseDates[release.releasedOn] = formatLongDay(release.releasedOn, locale);
+    if (release.video) {
+      releaseDates[release.video.publishedOn] = formatLongDay(
+        release.video.publishedOn,
+        locale,
+      );
+    }
+  }
   const [t, shared, seeds] = await Promise.all([
     getTranslations({ locale, namespace: "siteDetail" }),
     getTranslations({ locale, namespace: "sitesPage" }),
@@ -201,16 +221,19 @@ export default async function SiteDetailPage({ params }: Props) {
           locale={locale}
           currentMonth={new Date().getUTCMonth()}
         />
-        {site.videoUrl && /^https:\/\//i.test(site.videoUrl) && (
-          <a
-            href={site.videoUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-8 inline-flex text-[#1B6B3A] underline underline-offset-4"
-          >
-            {t("video")} ↗
-          </a>
-        )}
+        <SiteReleases releases={releases} dates={releaseDates} locale={locale} />
+        {!releases.some((release) => release.video) &&
+          site.videoUrl &&
+          /^https:\/\//i.test(site.videoUrl) && (
+            <a
+              href={site.videoUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-8 inline-flex text-[#1B6B3A] underline underline-offset-4"
+            >
+              {t("video")} ↗
+            </a>
+          )}
         <section className="mt-12 flex flex-col items-start justify-between gap-6 rounded-3xl bg-[#edf4e9] p-6 sm:p-8 lg:flex-row lg:items-center">
           {site.acceptsOrders ? (
             <Link

@@ -1,7 +1,7 @@
 /**
  * Sipariş sihirbazı — istemci ve sunucunun ORTAK doğrulama şeması.
  *
- * Hata iletileri i18n anahtarıdır ("orderForm.errors.<anahtar>"); kalıp talep
+ * Hata iletileri i18n anahtarıdır ("orderWizard.errors.<anahtar>"); kalıp talep
  * formlarıyla aynıdır (lib/requests/schema.ts). TUTAR bu şemada YOKTUR: istemci
  * tutar göndermez, gönderse de okunmaz — sunucu lib/pricing.ts ile hesaplar.
  */

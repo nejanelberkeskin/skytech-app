@@ -476,13 +476,23 @@ export default function OrderWizard({
     </div>
   );
 
+  const focusSuccess = useCallback((node: HTMLDivElement | null) => {
+    if (!node) return;
+    node.focus({ preventScroll: true });
+    // Reach the shared SuccessCard's scroll target before its passive effect.
+    // Its smooth scroll then has no distance to animate for reduced-motion users.
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      window.scrollTo({ top: 0, behavior: "instant" });
+    }
+  }, []);
+
   if (request.success)
     return (
       <div
         data-immersive
-        className="min-h-[70svh]"
+        className="min-h-[70svh] motion-reduce:[&_*]:!transition-none motion-reduce:[&_*]:!animate-none"
         tabIndex={-1}
-        ref={(node) => node?.focus()}
+        ref={focusSuccess}
       >
         <SuccessCard
           result={request.success}

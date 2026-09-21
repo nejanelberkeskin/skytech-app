@@ -489,3 +489,42 @@ CTA hedefleri `orderCtaHref(kind)`, etiket seçimi `CTA_MODE` ("order" | "reques
 ### Test
 - Mail göndermeden test: `.env.development.local` içine `RESEND_API_KEY=` (boş) koyup dev sunucuyu çalıştırın; `[mail] RESEND_API_KEY not set — skipping` loglanır. Test kayıtları `contact_name LIKE 'TEST%'` ile silinir.
 - `npm run i18n:check` — tr/en/ru anahtar eşitliği.
+
+---
+
+## 12. Satış Modeli v2 — Talep Akışının Yeniden Kurulması (21 Eylül 2026)
+
+Müşteri revizyonu (18 Eylül 2026): **doğrudan tohum satışı yok.** İki yol kaldı:
+(1) Proje Uygulama Sahasına tohum topu bıraktırma, (2) kendi arazim için başvuru.
+Bağlayıcı sözlük ve ana plan depo dışında: `web-brifler/03-…ANA-PLAN.md`, `04-…SOZLUGU.md`.
+Bu bölüm 11. bölümdeki akış tarifinin yerine geçer.
+
+### Akış
+- Sitedeki bütün "Talep Oluştur / Satın Al" çağrıları → `/talep/acik-arazi` (saha listesi + form).
+  Üstte küçük bağlantı: "Kendi arazim için işlem yaptırmak istiyorum" → `/talep/arazime-ekim`.
+- `/talep` (seçim sayfası) ve `/talep/tohum` (tohum talebi) **kaldırıldı**; middleware 307 ile
+  sahalara yönlendirir (`RETIRED_REQUEST_REDIRECTS`, dil öneki korunur). `seed_purchase` türü
+  API'de artık reddedilir; DB kısıtında eski kayıtlar için durur (`ACTIVE_REQUEST_TYPES` yeni türler).
+- `orderCtaHref()` artık eski `/bireysel/*` akışına hiçbir koşulda gitmez.
+- `?saha=<slug>` ile gelen ziyaretçide o saha seçili açılır (`lib/sites/links.ts → siteOrderHref`).
+
+### Kurallar — tek kaynak
+| Ne | Nerede |
+|---|---|
+| Birim bedel (10 TL, KDV dâhil, kuruş tam sayı), en az 20 / en çok 100.000, hazır adetler 50·100·200·500·5000 | `lib/pricing.ts` |
+| Fiyatı formda gizleme | `NEXT_PUBLIC_PRICING_VISIBLE=false` (varsayılan: görünür) |
+| Sertifikadaki ad: 2–60 karakter, harf/rakam/temel noktalama | `lib/requests/schema.ts → certificateNameSchema` |
+| Saha verisi (hektar var, adet/kapasite YOK), tür müşteri tarafından seçilmez | `lib/sites/*` (migration 015) |
+| E-posta / hesabım / admin etiketleri | `lib/requests/labels.ts` |
+
+- Tahmini tutar istemciden alınmaz; API `details.unitPriceKurus` ve `estimatedTotalKurus` alanlarını
+  kendi hesaplayıp talebe yazar (müşterinin gördüğü fiyatın anlık kopyası; bağlayıcı değil).
+- Onay kutusu "açık rıza" dilinden çıkarıldı (`CONSENT_VERSION = "2026-09-21"`): talebe dönüş için
+  veri işleme rızaya dayanmaz; ticari ileti izni sipariş akışında ayrı ve isteğe bağlı alınacak.
+- Sayı/para biçimleri bilinçli olarak `Intl` kullanmaz (`formatCount`, `formatTry`, `formatHectares`):
+  Node ile tarayıcı ICU'su ayrışınca hydration uyuşmazlığı çıkıyordu.
+
+### Sıradaki (plan §Fazlar)
+Faz 2b yönetim panelinde saha alanları → Faz 3 sipariş çekirdeği (`release_orders`, sözleşmeler,
+cayma) → Faz 4 ödeme sağlayıcı katmanı. Sihirbaz yayına girince yalnız `lib/site-config.ts`
+(`REQUEST_ROUTES`) ve `lib/sites/links.ts` değişir; çağrılara dokunulmaz.

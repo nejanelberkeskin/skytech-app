@@ -154,7 +154,7 @@ function RequestsOverviewContent() {
                 <div className="flex-1 min-w-0">
                   <p className="text-sm text-white">
                     <span className="font-mono text-emerald-300">{r.request_no}</span> — {REQUEST_TYPE_LABELS.tr[r.type]}
-                    {r.total_seeds ? ` · ${r.total_seeds.toLocaleString("tr-TR")} tohum` : ""}
+                    {r.total_seeds ? ` · ${r.total_seeds.toLocaleString("tr-TR")} tohum topu` : ""}
                     {r.land?.name ? ` · ${r.land.name}` : ""}
                   </p>
                   <p className="text-xs text-emerald-200/25 mt-0.5">{new Date(r.created_at).toLocaleDateString("tr-TR")}</p>
@@ -168,11 +168,10 @@ function RequestsOverviewContent() {
         )}
       </div>
 
-      <div className="grid md:grid-cols-3 gap-4">
+      <div className="grid md:grid-cols-2 gap-4">
         {[
-          { href: REQUEST_ROUTES.seed, icon: "🌱", title: "Tohum Talebi", desc: "Tohum topları adresinize gelsin" },
-          { href: REQUEST_ROUTES.openLand, icon: "🚁", title: "Açık Araziye Tohum", desc: "Sahalarımıza sizin adınıza ekelim" },
-          { href: REQUEST_ROUTES.land, icon: "🗺️", title: "Arazime Ekim Yapın", desc: "Araziniz için drone ile ekim başvurusu" },
+          { href: REQUEST_ROUTES.openLand, icon: "🚁", title: "Sahaya Tohum Topu Bıraktırın", desc: "Bir Proje Uygulama Sahası seçin, adedi belirleyin" },
+          { href: REQUEST_ROUTES.land, icon: "🗺️", title: "Kendi Arazim İçin", desc: "Araziniz için dronla tohum topu bırakma başvurusu" },
         ].map((a) => (
           <Link key={a.href} href={a.href} className="liquid-glass liquid-glass-hover relative rounded-3xl p-5 flex items-center gap-4 group overflow-hidden">
             <div className="w-12 h-12 rounded-2xl flex items-center justify-center glass-subtle group-hover:scale-110 transition-transform duration-300">

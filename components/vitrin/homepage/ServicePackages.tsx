@@ -11,46 +11,61 @@ import {
 import { useRef } from "react";
 import { useTranslations } from "next-intl";
 import SectionWrapper from "../SectionWrapper";
-import { REQUESTS_ENABLED, REQUEST_ROUTES, TRANSACTIONS_ENABLED } from "@/lib/site-config";
+import { REQUESTS_ENABLED, orderCtaHref } from "@/lib/site-config";
+import { RELEASE_QTY } from "@/lib/pricing";
 
+/*
+ * İki yol + kurumsal:
+ *   1. Proje Uygulama Sahasına tohum topu bıraktırma (önerilen) → saha seçimi
+ *   2. Kendi arazim için işlem yaptırmak istiyorum → başvuru formu
+ *   3. Kurumsal katılım → bilgi al
+ * Doğrudan tohum satışı yoktur; eski "Kendin Ek" kartı bu yüzden kaldırıldı.
+ */
 type Package = {
+  key: "ownLand" | "site" | "corporate";
   name: string;
   tag: string;
   description: string;
   features: string[];
   cta: { label: string; href: string };
-  /** Ödeme kapalı, talep toplama açıkken kullanılacak CTA (kurumsalda yok) */
-  requestCta?: { label: string; href: string };
   highlight: boolean;
 };
 
 function usePackages(): Package[] {
-  const t = useTranslations("servicePackages.packages");
+  const t = useTranslations("servicePackages");
+  const features = (key: Package["key"]) =>
+    (t.raw(`packages.${key}.features`) as string[]).map((f) => f.replace("{min}", String(RELEASE_QTY.min)));
+  // Talep toplama kapalıysa çağrılar /yakinda'ya gider; etiket de ona göre değişir.
+  const requestCta = (key: "ownLand" | "site", kind: "land" | "openLand") => ({
+    label: REQUESTS_ENABLED ? t(`packages.${key}.cta`) : t("ctaFallback.soon"),
+    href: orderCtaHref(kind),
+  });
   return [
     {
-      name: t("diy.name"),
-      tag: t("diy.tag"),
-      description: t("diy.description"),
-      features: t.raw("diy.features") as string[],
-      cta: { label: t("diy.cta"), href: "/bireysel/satin-al" },
-      requestCta: { label: t("diy.ctaRequest"), href: REQUEST_ROUTES.seed },
+      key: "ownLand",
+      name: t("packages.ownLand.name"),
+      tag: t("packages.ownLand.tag"),
+      description: t("packages.ownLand.description"),
+      features: features("ownLand"),
+      cta: requestCta("ownLand", "land"),
       highlight: false,
     },
     {
-      name: t("weplant.name"),
-      tag: t("weplant.tag"),
-      description: t("weplant.description"),
-      features: t.raw("weplant.features") as string[],
-      cta: { label: t("weplant.cta"), href: "/bireysel/satin-al" },
-      requestCta: { label: t("weplant.ctaRequest"), href: REQUEST_ROUTES.openLand },
+      key: "site",
+      name: t("packages.site.name"),
+      tag: t("packages.site.tag"),
+      description: t("packages.site.description"),
+      features: features("site"),
+      cta: requestCta("site", "openLand"),
       highlight: true,
     },
     {
-      name: t("corporate.name"),
-      tag: t("corporate.tag"),
-      description: t("corporate.description"),
-      features: t.raw("corporate.features") as string[],
-      cta: { label: t("corporate.cta"), href: "/kurumsal/teklif-al" },
+      key: "corporate",
+      name: t("packages.corporate.name"),
+      tag: t("packages.corporate.tag"),
+      description: t("packages.corporate.description"),
+      features: features("corporate"),
+      cta: { label: t("packages.corporate.cta"), href: "/bilgi-al" },
       highlight: false,
     },
   ];
@@ -128,7 +143,8 @@ export default function ServicePackages() {
         className="relative grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-7 max-w-6xl mx-auto"
       >
         {PACKAGES.map((pkg) => (
-          <motion.div key={pkg.name} variants={cardVariants}>
+          // Önerilen kart masaüstünde ortada, tek sütunda (mobil) en üstte durur.
+          <motion.div key={pkg.key} variants={cardVariants} className={pkg.highlight ? "order-first lg:order-none" : undefined}>
             <PackageCard pkg={pkg} />
           </motion.div>
         ))}
@@ -156,21 +172,8 @@ function PackageCard({ pkg }: { pkg: Package }) {
   };
 
   const isHighlight = pkg.highlight;
-
-  // Ödeme kapalıyken: kurumsal teklif → /bilgi-al; bireysel paketler talep
-  // toplama açıksa ilgili /talep/* sayfasına, değilse /yakinda'ya gider.
-  const isCorporate = pkg.cta.href.startsWith("/kurumsal");
-  const requestCta = REQUESTS_ENABLED ? pkg.requestCta : undefined;
-  const ctaHref = TRANSACTIONS_ENABLED
-    ? pkg.cta.href
-    : isCorporate
-      ? "/bilgi-al"
-      : requestCta?.href ?? "/yakinda";
-  const ctaLabel = TRANSACTIONS_ENABLED
-    ? pkg.cta.label
-    : isCorporate
-      ? t("ctaFallback.info")
-      : requestCta?.label ?? t("ctaFallback.soon");
+  const ctaHref = pkg.cta.href;
+  const ctaLabel = pkg.cta.label;
 
   return (
     <motion.div

@@ -516,57 +516,52 @@
     }
   },
   "servicePackages": {
-    "badge": "Service Packages",
-    "titleLine1": "Choose the Solution",
+    "badge": "Services",
+    "titleLine1": "Choose the Path",
     "titleAccent": "That Fits You",
-    "subtitle": "From individual users to corporate partners — measurable impact for every scale.",
-    "mostPopular": "MOST POPULAR",
+    "subtitle": "Join a Project Site, apply for your own land, or plan a group participation on behalf of your organisation.",
+    "mostPopular": "RECOMMENDED",
     "ctaFallback": {
-      "info": "Get Info",
       "soon": "Coming Soon"
     },
     "packages": {
-      "diy": {
-        "name": "Plant It Yourself",
-        "tag": "Individual",
-        "description": "Seed balls delivered to your address. You plant them in your own garden, land, or any area you choose.",
-        "features": [
-          "Shipped to your address",
-          "Species variety selection",
-          "Digital certificate",
-          "Planting guide (PDF)",
-          "Community forum access"
-        ],
-        "cta": "Order Seeds",
-        "ctaRequest": "Request Seeds"
-      },
-      "weplant": {
-        "name": "We'll Plant It",
-        "tag": "Recommended",
-        "description": "A professional drone team plants on your behalf on selected Skytech lands. Annual monitoring included.",
-        "features": [
-          "Professional drone planting",
-          "GPS-coordinated planting report",
-          "Annual drone tracking reports",
-          "Certificate of Participation",
-          "Gifting + shareable profile"
-        ],
-        "cta": "Start Professional Planting",
-        "ctaRequest": "Request Planting"
-      },
       "corporate": {
-        "name": "Corporate Reforestation",
-        "tag": "B2B",
-        "description": "A corporate forest tailored to your company + employee certificates + ESG reporting + API integration.",
+        "name": "Corporate Participation",
+        "tag": "Organisations",
+        "description": "Group participation on behalf of your organisation: Certificates of Participation for employees and partners, an Activity Report for the organisation.",
         "features": [
-          "Corporate area in your company's name",
-          "Individual certificate per employee",
-          "Drone flight records + field videos",
-          "Ready-to-use data for ESG / GRI / CDP reporting",
-          "API + e-commerce integration",
-          "Dedicated account manager"
+          "Seed ball release in bulk quantities",
+          "Separate Certificates of Participation for employees and partners",
+          "An Activity Report with site, area, species and date",
+          "Footage of the work and a site video",
+          "Invoice issued to your organisation"
         ],
-        "cta": "Get a Quote"
+        "cta": "Get Info"
+      },
+      "site": {
+        "name": "Have Seed Balls Released on a Site",
+        "tag": "Individuals and organisations",
+        "description": "Choose a fire-affected Project Site and our drone team releases seed balls there on your behalf.",
+        "features": [
+          "You choose the site; the species is set by the site",
+          "From {min} seed balls, any quantity you like",
+          "A Certificate of Participation in your name",
+          "Release October–March, monitoring April–September",
+          "Footage of the work about six months after release"
+        ],
+        "cta": "Choose a Site"
+      },
+      "ownLand": {
+        "name": "For My Own Land",
+        "tag": "Landowners",
+        "description": "Apply for your burnt, degraded or idle land; our team plans the survey, the species selection and the drone seed ball release.",
+        "features": [
+          "Survey and planning for your land",
+          "Native species matched to climate and soil",
+          "Drone seed ball release",
+          "A quote prepared for your land"
+        ],
+        "cta": "Apply"
       }
     }
   },
@@ -1092,7 +1087,7 @@
       "error": "Something went wrong. Please try again or reach us directly at info@skytechgreen.com."
     },
     "topics": {
-      "individual": "Individual Seed Request",
+      "individual": "Seed Ball Release on a Project Site",
       "corporate": "Corporate Reforestation",
       "esg": "ESG / Reporting",
       "drone": "Drone Operation",
@@ -1115,8 +1110,8 @@
   },
   "comingSoonPage": {
     "meta": {
-      "title": "Coming Soon — Pricing and Online Payment",
-      "description": "Pricing and online payment are launching soon. You can already submit a seed, planting or land request and create an account."
+      "title": "Coming Soon — Online Payment",
+      "description": "Online payment is launching soon. You can already request a seed ball release on a Project Site, apply for your own land and create an account."
     },
     "badge": "Coming Soon",
     "title": {
@@ -1124,8 +1119,8 @@
       "highlight": "Coming Soon"
     },
     "body": {
-      "primary": "We are finalising our pricing and online payment infrastructure. In the meantime we collect your request and settle pricing and planning together with you.",
-      "secondary": "For a seed request, a planting application for your land or seeding on our open sites, just fill in the form; our team gets back to you within one business day."
+      "primary": "We are finalising our online payment infrastructure. In the meantime we collect your request and settle the details and schedule together with you.",
+      "secondary": "To have seed balls released on a Project Site or to apply for your own land, just fill in the form; our team gets back to you within one business day."
     },
     "cta": {
       "home": "Back to Home",
@@ -1204,68 +1199,8 @@
     "rejectAll": "Essential Only",
     "acceptAll": "Accept All"
   },
-  "requestsHub": {
-    "meta": {
-      "title": "Submit a Request — Seeds, Planting and Land Applications",
-      "description": "Leave a request without paying: seed balls delivered to you, drone planting on your land, or seeding on our open sites. Our team gets back to you within one business day."
-    },
-    "breadcrumb": {
-      "label": "Submit a Request",
-      "title": "Leave Your Request, We Will Call You",
-      "subtitle": "Pricing and online payment are coming soon. For now we collect your request and settle species, quantity and schedule together with you."
-    },
-    "badge": "No payment · No commitment",
-    "cards": {
-      "seed": {
-        "tag": "Individual",
-        "title": "Seed Request",
-        "desc": "Seed balls delivered to your address. Pick the species and quantity; we plan the rest together.",
-        "cta": "Request seeds"
-      },
-      "land": {
-        "tag": "Landowner",
-        "title": "Plant on My Land",
-        "desc": "Drone planting application for your burnt, degraded or idle land. Survey and planning are on us.",
-        "cta": "Apply"
-      },
-      "openLand": {
-        "tag": "We plant",
-        "title": "Seeds on Open Land",
-        "desc": "We plant on Skytech sites in your name. Choose the site and the number of seeds.",
-        "cta": "Submit a request"
-      }
-    },
-    "how": {
-      "title": "How it works",
-      "steps": [
-        {
-          "title": "Leave your request",
-          "desc": "Fill in the form in two minutes; no account needed."
-        },
-        {
-          "title": "We call you",
-          "desc": "Our team gets back to you by phone or e-mail within one business day."
-        },
-        {
-          "title": "We plan together",
-          "desc": "Species, quantity, pricing and schedule are settled in that conversation."
-        }
-      ]
-    },
-    "note": {
-      "title": "Pricing and payment",
-      "desc": "Pricing and online payment are launching soon. No payment is requested at this stage; your request does not commit you to anything."
-    },
-    "account": {
-      "title": "Track your request",
-      "desc": "Create a free account to follow the status of all your requests in one place.",
-      "cta": "Create account",
-      "login": "Sign in"
-    }
-  },
   "requestForms": {
     "common": {
-      "backToHub": "All request types",
       "required": "required",
       "optional": "optional",
       "contact": {
@@ -1283,8 +1218,8 @@
         "messagePlaceholder": "Anything you would like to add?"
       },
       "prefilled": "Your contact details were filled from your account; you can change them.",
-      "consent": "I have read the <kvkk>Privacy Notice (KVKK)</kvkk> and consent to my data being processed to respond to this request.",
-      "noPayment": "No payment is taken with this form. Pricing and planning are settled when our team gets back to you.",
+      "consent": "I have read the <kvkk>Privacy Notice (KVKK)</kvkk> and would like to be contacted about my request.",
+      "noPayment": "No payment is taken with this form. Details and scheduling are settled when our team gets back to you.",
       "submit": "Send Request",
       "submitting": "Sending…",
       "summary": {
@@ -1302,7 +1237,7 @@
         "next": [
           "We review your request.",
           "We get back to you by phone or e-mail.",
-          "We settle species, quantity, pricing and schedule together."
+          "We settle the details and schedule together."
         ],
         "accountTitle": "Track your request from your account",
         "accountDesc": "Create a free account and this request is linked to it automatically.",
@@ -1323,13 +1258,9 @@
         "phoneInvalid": "Enter a valid phone number (e.g. +90 5XX XXX XX XX).",
         "contactRequired": "Enter at least one of phone or e-mail.",
         "consentRequired": "Tick the consent box to continue.",
-        "seedRequired": "Select at least one seed species.",
-        "seedTooMany": "You can select at most {max} species.",
-        "seedDuplicate": "The same species was added more than once.",
-        "seedInvalid": "The selected species is no longer available; refresh the page.",
         "quantityInvalid": "Quantity must be a whole number.",
-        "quantityMin": "Quantity must be at least {min}.",
-        "quantityMax": "Quantity can be at most {max}.",
+        "quantityMin": "The minimum is {min} seed balls.",
+        "quantityMax": "A single request can include up to {max} seed balls; write to us for more.",
         "provinceRequired": "Select a province.",
         "provinceInvalid": "Invalid province.",
         "areaRequired": "Enter the area size.",
@@ -1340,52 +1271,20 @@
         "ownershipRequired": "Select the ownership type.",
         "timingRequired": "Select a timing.",
         "urlInvalid": "The link must start with http(s)://.",
-        "landInvalid": "The selected site is currently closed to requests; choose another site."
-      }
-    },
-    "seed": {
-      "meta": {
-        "title": "Seed Request — Seed Balls Delivered to You",
-        "description": "Request Turkish red pine, black pine, cedar and juniper seed balls. Pick species and quantity; our team settles pricing and delivery with you. No payment."
-      },
-      "breadcrumb": {
-        "label": "Seed Request",
-        "title": "Seed Request",
-        "subtitle": "Pick the species and quantity and leave your contact details. We settle pricing and delivery with you within one business day."
-      },
-      "species": {
-        "heading": "Which species would you like?",
-        "sub": "Select one or more species and set the quantity. Quantity means number of seed balls.",
-        "quantity": "Quantity",
-        "selected": "Selected",
-        "select": "Select"
-      },
-      "delivery": {
-        "heading": "Delivery",
-        "sub": "Shipping details are settled later; the province is enough for now.",
-        "province": "Province",
-        "provincePlaceholder": "Select a province",
-        "district": "District",
-        "districtPlaceholder": "Optional"
-      },
-      "purpose": {
-        "heading": "Purpose",
-        "sub": "Optional — helps us recommend the right species."
-      },
-      "summary": {
-        "species": "Species",
-        "total": "Total seeds",
-        "province": "Province"
+        "landInvalid": "The selected site is currently closed for participation; choose another site.",
+        "certificateNameShort": "The name on the certificate must be at least {min} characters.",
+        "certificateNameLong": "The name on the certificate can be at most {max} characters.",
+        "certificateNameInvalid": "The name on the certificate may contain only letters, digits and basic punctuation."
       }
     },
     "land": {
       "meta": {
-        "title": "Plant on My Land — Drone Planting Application",
-        "description": "Apply for drone seed-ball planting on your burnt, degraded or idle land. Share the location, area and land condition; survey and planning are on us."
+        "title": "For My Own Land — Drone Seed Ball Release Application",
+        "description": "Apply for a drone seed ball release on your burnt, degraded or idle land. Share the location, area and land condition; survey and planning are on us."
       },
       "breadcrumb": {
-        "label": "Plant on My Land",
-        "title": "Plant on My Land",
+        "label": "For My Own Land",
+        "title": "Application for My Own Land",
         "subtitle": "Describe your land briefly. Our team assesses suitability and contacts you for a survey and planning."
       },
       "location": {
@@ -1411,49 +1310,80 @@
         "heading": "Ownership"
       },
       "timing": {
-        "heading": "When would you like planting?"
+        "heading": "When would you like the work done?"
       },
       "notes": {
         "heading": "Access and terrain notes",
-        "placeholder": "Road access, slope, water source, previous plantings… (optional)"
+        "placeholder": "Road access, slope, water source, previous work… (optional)"
       },
       "summary": {
         "location": "Location",
         "area": "Area",
         "condition": "Condition",
         "timing": "Timing"
-      }
+      },
+      "backToSites": "Back to Project Sites"
     },
     "openLand": {
       "meta": {
-        "title": "Seeds on Open Land — We Plant in Your Name",
-        "description": "Drone seed-ball planting on Skytech's open sites in your name. Choose the site and quantity, optionally dedicate it to someone; our team settles pricing with you."
+        "title": "Project Sites — Have Seed Balls Released on a Site",
+        "description": "Choose one of our fire-affected Project Sites and our drone team releases seed balls there on your behalf. A Certificate of Participation is issued in your name."
       },
       "breadcrumb": {
-        "label": "Seeds on Open Land",
-        "title": "Seeds on Open Land",
-        "subtitle": "Choose the site and the number of seeds. Our team selects the species for the region's climate; pricing is settled when we get back to you."
+        "label": "Project Sites",
+        "title": "Project Sites",
+        "subtitle": "Take part in bringing fire-affected sites back to forest. Choose a site and we release seed balls there on your behalf."
       },
-      "land": {
-        "heading": "Which site should we plant?",
-        "sub": "Choose one of our sites open to requests.",
-        "empty": "No site is open to requests right now. You can write your preferred region in your note.",
-        "region": "Region",
-        "open": "Open to requests"
+      "top": {
+        "text": "Each site's area, type of work and released species are shown below.",
+        "ownLand": "I want this work done on my own land"
+      },
+      "empty": {
+        "title": "No site is open for participation right now",
+        "desc": "New Project Sites appear here as they open. You can apply for your own land or write to us for information.",
+        "contact": "Get info"
+      },
+      "site": {
+        "heading": "Which site?",
+        "sub": "Choose one of the Project Sites open for participation.",
+        "area": "Area",
+        "workType": "Work",
+        "species": "Species released",
+        "hectares": "{count, plural, one {{value} hectare} other {{value} hectares}}",
+        "fire": "Fire-affected site",
+        "fireWithYear": "Fire-affected site · {year}",
+        "workTypes": {
+          "ormanlastirma": "Reforestation",
+          "genclestirme": "Regeneration",
+          "ormanlastirma_genclestirme": "Reforestation – Regeneration"
+        },
+        "speciesNote": "The species is chosen by our specialists for the site's climate and soil; you do not need to choose."
       },
       "quantity": {
-        "heading": "How many seeds?",
-        "sub": "Quantity means number of seed balls."
+        "heading": "How many seed balls?",
+        "sub": "Minimum {min}. Pick a preset or type any quantity you like.",
+        "label": "Number of seed balls"
       },
-      "dedication": {
-        "heading": "In whose name?",
-        "sub": "Optional — the recipient's name if this is a gift.",
-        "placeholder": "Full name"
+      "price": {
+        "unit": "Unit price",
+        "vat": "VAT included",
+        "total": "Estimated total",
+        "note": "No payment is taken at this stage; the total is for information only. Our team will get back to you about your request."
+      },
+      "certificate": {
+        "heading": "Which name should appear on the certificate?",
+        "sub": "Once the seed ball release is completed, a Certificate of Participation is issued in your name and sent by e-mail. You can enter your own name, someone else's or your organisation's.",
+        "label": "Name on certificate",
+        "placeholder": "Full name or organisation",
+        "hint": "Up to {max} characters. If left blank, your full name is used."
       },
       "summary": {
-        "land": "Site",
-        "quantity": "Seed quantity",
-        "dedication": "In the name of"
+        "site": "Site",
+        "species": "Species released",
+        "quantity": "Seed balls",
+        "unitPrice": "Unit price",
+        "total": "Estimated total",
+        "certificateName": "Name on certificate"
       }
     }
   },

@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import RoleGuard from "@/components/RoleGuard";
 import { Button, Select, Textarea } from "@/components/ui";
 import type { ServiceRequest, ServiceRequestStatus, ServiceRequestType } from "@/lib/types";
-import { REQUEST_STATUSES, REQUEST_TYPES } from "@/lib/requests/schema";
+import { ACTIVE_REQUEST_TYPES, REQUEST_STATUSES } from "@/lib/requests/schema";
 import { REQUEST_STATUS_LABELS, REQUEST_TYPE_LABELS, requestSummaryRows } from "@/lib/requests/labels";
 
 /* ═══════════════════════════════════════════════════════════════════════
@@ -208,7 +208,7 @@ function TaleplerContent() {
           </div>
           <Select value={type} onChange={(e) => changeType(e.target.value as ServiceRequestType | "")}>
             <option value="">Tüm türler</option>
-            {REQUEST_TYPES.map((t) => (
+            {ACTIVE_REQUEST_TYPES.map((t) => (
               <option key={t} value={t}>{REQUEST_TYPE_LABELS.tr[t]}</option>
             ))}
           </Select>

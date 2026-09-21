@@ -1,7 +1,8 @@
 "use client";
 
 import { useId, type ReactNode } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
+import { formatCount, type PriceLocale } from "@/lib/pricing";
 
 /* ═══════════════════════════════════════════════════════════════════════
    Talep formları — ortak yapı taşları (vitrin açık tema)
@@ -188,6 +189,7 @@ export function QuantityInput({
   disabled?: boolean;
   ariaLabel: string;
 }) {
+  const locale = useLocale() as PriceLocale;
   const clamp = (n: number) => Math.min(max, Math.max(min, Math.round(n)));
   const step = (dir: -1 | 1) => {
     const base = value ?? min;
@@ -240,7 +242,7 @@ export function QuantityInput({
                   : "bg-white border-black/10 text-[#3d5a3d] hover:border-[#1B6B3A]/40"
               }`}
             >
-              {q.toLocaleString("tr-TR")}
+              {formatCount(q, locale)}
             </button>
           ))}
         </div>

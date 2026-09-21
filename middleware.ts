@@ -3,7 +3,7 @@ import type { NextRequest } from "next/server";
 import createIntlMiddleware from "next-intl/middleware";
 import { routing } from "@/i18n/routing";
 import { updateSession } from "@/lib/supabase/middleware";
-import { isSuspendedRoute, isTransactionOnlyAccountRoute } from "@/lib/site-config";
+import { RETIRED_REQUEST_REDIRECTS, isSuspendedRoute, isTransactionOnlyAccountRoute } from "@/lib/site-config";
 
 /**
  * ════════════════════════════════════════════════════════════════════════
@@ -139,6 +139,14 @@ export async function middleware(request: NextRequest) {
      ────────────────────────────────────────────────────────────────────── */
   if (isSuspendedRoute(cleanPath)) {
     return NextResponse.redirect(new URL(localePath("/yakinda", locale), request.url));
+  }
+
+  /* ── 2b-ii. Kaldırılan talep adresleri (eski seçim sayfası, tohum talebi).
+     Geçici (307): sipariş sihirbazı gelince hedefler /sahalar altına taşınacak;
+     kalıcı yönlendirme tarayıcıda önbelleğe yapışmasın. ─────────────────── */
+  const retiredTarget = RETIRED_REQUEST_REDIRECTS[cleanPath.replace(/\/+$/, "")];
+  if (retiredTarget) {
+    return NextResponse.redirect(new URL(localePath(retiredTarget, locale), request.url), 307);
   }
 
   /* ── 2c. Üyelik açık, ödeme kapalı: sipariş/sertifika/davet sayfaları

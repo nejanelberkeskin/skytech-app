@@ -5,15 +5,17 @@
  */
 import type { ServiceRequest, ServiceRequestStatus, ServiceRequestType } from "@/lib/types";
 import { ilAdi } from "@/lib/tr-iller";
+import { formatCount, formatTry } from "@/lib/pricing";
 
 export type LabelLocale = "tr" | "en" | "ru";
 
 type Dict<K extends string> = Record<LabelLocale, Record<K, string>>;
 
 export const REQUEST_TYPE_LABELS: Dict<ServiceRequestType> = {
-  tr: { seed_purchase: "Tohum talebi", land_application: "Arazime ekim başvurusu", open_land_seeding: "Açık araziye tohum talebi" },
-  en: { seed_purchase: "Seed request", land_application: "Plant-on-my-land application", open_land_seeding: "Open-land seeding request" },
-  ru: { seed_purchase: "Заявка на семена", land_application: "Заявка на посев на моём участке", open_land_seeding: "Заявка на посев на открытом участке" },
+  // seed_purchase: 2026-09'da kaldırılan tür — yalnız eski kayıtlar için.
+  tr: { seed_purchase: "Tohum talebi (eski)", land_application: "Kendi arazim için başvuru", open_land_seeding: "Sahaya tohum topu bıraktırma talebi" },
+  en: { seed_purchase: "Seed request (legacy)", land_application: "Own-land application", open_land_seeding: "Seed ball release request" },
+  ru: { seed_purchase: "Заявка на семена (архив)", land_application: "Заявка для собственного участка", open_land_seeding: "Заявка на сброс семенных шаров" },
 };
 
 export const REQUEST_STATUS_LABELS: Dict<ServiceRequestStatus> = {
@@ -35,9 +37,9 @@ export const OWNERSHIP_LABELS: Dict<"own" | "institution" | "cooperative" | "oth
 };
 
 export const TIMING_LABELS: Dict<"this_season" | "six_months" | "flexible"> = {
-  tr: { this_season: "Bu ekim sezonu", six_months: "6 ay içinde", flexible: "Esnek" },
-  en: { this_season: "This planting season", six_months: "Within 6 months", flexible: "Flexible" },
-  ru: { this_season: "В этот посевной сезон", six_months: "В течение 6 месяцев", flexible: "Гибко" },
+  tr: { this_season: "Bu bırakma sezonu (Ekim–Mart)", six_months: "6 ay içinde", flexible: "Esnek" },
+  en: { this_season: "This release season (Oct–Mar)", six_months: "Within 6 months", flexible: "Flexible" },
+  ru: { this_season: "В этот сезон сброса (октябрь–март)", six_months: "В течение 6 месяцев", flexible: "Гибко" },
 };
 
 export const AREA_UNIT_LABELS: Dict<"dekar" | "hektar"> = {
@@ -46,19 +48,21 @@ export const AREA_UNIT_LABELS: Dict<"dekar" | "hektar"> = {
   ru: { dekar: "декар", hektar: "га" },
 };
 
-export const PURPOSE_LABELS: Dict<"garden" | "land" | "gift" | "corporate" | "other"> = {
-  tr: { garden: "Bahçe / hobi", land: "Kendi arazime ekim", gift: "Hediye", corporate: "Kurumsal etkinlik", other: "Diğer" },
-  en: { garden: "Garden / hobby", land: "Planting on my land", gift: "Gift", corporate: "Corporate event", other: "Other" },
-  ru: { garden: "Сад / хобби", land: "Посев на моём участке", gift: "Подарок", corporate: "Корпоративное мероприятие", other: "Другое" },
+/** Sahalara bırakılan türler — ad sözlüğü `messages/*.json → ourSeeds.seeds` ile aynı tutulur. */
+export const SPECIES_LABELS: Record<LabelLocale, Record<string, string>> = {
+  tr: { kizilcam: "Kızılçam", karacam: "Karaçam", sedir: "Sedir (Toros Sediri)", ardic: "Ardıç" },
+  en: { kizilcam: "Turkish Red Pine", karacam: "Black Pine", sedir: "Cedar (Cedar of Lebanon)", ardic: "Juniper" },
+  ru: { kizilcam: "Сосна калабрийская", karacam: "Сосна чёрная", sedir: "Кедр (ливанский кедр)", ardic: "Можжевельник" },
 };
 
 const FIELD: Dict<
-  | "seeds" | "totalSeeds" | "province" | "district" | "purpose" | "area" | "conditions"
-  | "ownership" | "timing" | "mapLink" | "accessNotes" | "land" | "quantity" | "dedication"
+  | "seeds" | "totalSeeds" | "province" | "district" | "area" | "conditions"
+  | "ownership" | "timing" | "mapLink" | "accessNotes" | "land" | "species" | "quantity"
+  | "certificateName" | "unitPrice" | "estimatedTotal"
 > = {
-  tr: { seeds: "Tohum türleri", totalSeeds: "Toplam tohum", province: "İl", district: "İlçe", purpose: "Kullanım amacı", area: "Alan", conditions: "Arazi durumu", ownership: "Mülkiyet", timing: "Zamanlama", mapLink: "Konum bağlantısı", accessNotes: "Erişim / arazi notu", land: "Saha", quantity: "Tohum adedi", dedication: "Adına ekilecek kişi" },
-  en: { seeds: "Seed species", totalSeeds: "Total seeds", province: "Province", district: "District", purpose: "Purpose", area: "Area", conditions: "Land condition", ownership: "Ownership", timing: "Timing", mapLink: "Map link", accessNotes: "Access / terrain notes", land: "Site", quantity: "Seed quantity", dedication: "Dedicated to" },
-  ru: { seeds: "Виды семян", totalSeeds: "Всего семян", province: "Провинция", district: "Район", purpose: "Цель", area: "Площадь", conditions: "Состояние участка", ownership: "Собственность", timing: "Сроки", mapLink: "Ссылка на карту", accessNotes: "Доступ / рельеф", land: "Участок", quantity: "Количество семян", dedication: "Посвящается" },
+  tr: { seeds: "Tohum türleri", totalSeeds: "Toplam tohum", province: "İl", district: "İlçe", area: "Alan", conditions: "Arazi durumu", ownership: "Mülkiyet", timing: "Zamanlama", mapLink: "Konum bağlantısı", accessNotes: "Erişim / arazi notu", land: "Proje Uygulama Sahası", species: "Bırakılacak tür", quantity: "Tohum topu adedi", certificateName: "Sertifikadaki ad", unitPrice: "Birim bedel (KDV dâhil)", estimatedTotal: "Tahmini tutar (KDV dâhil)" },
+  en: { seeds: "Seed species", totalSeeds: "Total seeds", province: "Province", district: "District", area: "Area", conditions: "Land condition", ownership: "Ownership", timing: "Timing", mapLink: "Map link", accessNotes: "Access / terrain notes", land: "Project Site", species: "Species released", quantity: "Seed balls", certificateName: "Name on certificate", unitPrice: "Unit price (VAT incl.)", estimatedTotal: "Estimated total (VAT incl.)" },
+  ru: { seeds: "Виды семян", totalSeeds: "Всего семян", province: "Провинция", district: "Район", area: "Площадь", conditions: "Состояние участка", ownership: "Собственность", timing: "Сроки", mapLink: "Ссылка на карту", accessNotes: "Доступ / рельеф", land: "Проектный участок", species: "Древесная порода", quantity: "Семенные шары", certificateName: "Имя в сертификате", unitPrice: "Цена за шар (с НДС)", estimatedTotal: "Ориентировочная сумма (с НДС)" },
 };
 
 export interface SummaryRow {
@@ -70,13 +74,12 @@ export interface SummaryRow {
   href?: string;
 }
 
-const fmtInt = (n: number, locale: LabelLocale) =>
-  n.toLocaleString(locale === "tr" ? "tr-TR" : locale === "ru" ? "ru-RU" : "en-GB");
+const fmtInt = (n: number, locale: LabelLocale) => formatCount(n, locale);
 
 /**
  * Talep detaylarını okunur satırlara çevirir. `details` DB'de doğrulanmış
  * JSON'dır ama yine de savunmacı okunur (eksik/bozuk alan → satır atlanır).
- * `landName` açık arazi taleplerinde lands tablosundan gelir.
+ * `landName` saha taleplerinde lands tablosundan gelir.
  */
 export function requestSummaryRows(
   req: Pick<ServiceRequest, "type" | "details" | "seed_items" | "total_seeds">,
@@ -102,8 +105,6 @@ export function requestSummaryRows(
     if (il) rows.push({ label: f.province, value: il });
     const ilce = str("deliveryDistrict");
     if (ilce) rows.push({ label: f.district, value: ilce });
-    const p = str("purpose") as keyof typeof PURPOSE_LABELS.tr | null;
-    if (p && PURPOSE_LABELS[locale][p]) rows.push({ label: f.purpose, value: PURPOSE_LABELS[locale][p] });
   }
 
   if (req.type === "land_application") {
@@ -132,11 +133,21 @@ export function requestSummaryRows(
   }
 
   if (req.type === "open_land_seeding") {
-    if (landName) rows.push({ label: f.land, value: landName });
+    const site = landName ?? str("landName");
+    if (site) rows.push({ label: f.land, value: site });
+    const species = (Array.isArray(d.speciesSlugs) ? (d.speciesSlugs as unknown[]) : [])
+      .map((s) => (typeof s === "string" ? SPECIES_LABELS[locale][s] : undefined))
+      .filter((s): s is string => Boolean(s));
+    if (species.length) rows.push({ label: f.species, value: species.join(", ") });
     const q = num("quantity") ?? req.total_seeds;
     if (q) rows.push({ label: f.quantity, value: fmtInt(q, locale) });
-    const ded = str("dedication");
-    if (ded) rows.push({ label: f.dedication, value: ded });
+    const unit = num("unitPriceKurus");
+    if (unit) rows.push({ label: f.unitPrice, value: formatTry(unit, locale) });
+    const total = num("estimatedTotalKurus");
+    if (total) rows.push({ label: f.estimatedTotal, value: formatTry(total, locale) });
+    // "dedication": 2026-09 öncesi kayıtlardaki eski alan adı.
+    const cert = str("certificateName") ?? str("dedication");
+    if (cert) rows.push({ label: f.certificateName, value: cert });
   }
 
   return rows;

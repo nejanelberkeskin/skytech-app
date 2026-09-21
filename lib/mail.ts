@@ -757,9 +757,9 @@ const CONFIRM_TEXT = {
     sub: "Skytech Green ekibi en kısa sürede sizinle iletişime geçecek",
     hello: (name: string) => `Merhaba <strong>${name}</strong>,`,
     intro: (type: string, no: string) =>
-      `<strong>${type}</strong> talebiniz bize ulaştı. Talep numaranız: <strong style="font-family:monospace;font-size:16px;color:#059669;">${no}</strong>. Yazışmalarınızda bu numarayı belirtmeniz süreci hızlandırır.`,
+      `Talebiniz bize ulaştı: <strong>${type}</strong>. Talep numaranız: <strong style="font-family:monospace;font-size:16px;color:#059669;">${no}</strong>. Yazışmalarınızda bu numarayı belirtmeniz süreci hızlandırır.`,
     summaryTitle: "Talep özeti",
-    next: "Ekibimiz talebinizi inceleyip bir iş günü içinde bıraktığınız iletişim bilgisi üzerinden size dönüş yapacak. Fiyatlandırma ve teslimat ayrıntıları bu görüşmede netleştirilir; şu an sizden herhangi bir ödeme istenmemektedir.",
+    next: "Ekibimiz talebinizi inceleyip bir iş günü içinde bıraktığınız iletişim bilgisi üzerinden size dönüş yapacak. Ayrıntılar ve takvim bu görüşmede netleştirilir; şu an sizden herhangi bir ödeme istenmemektedir.",
     account: (url: string) =>
       `Talebinizin durumunu takip etmek için <a href="${url}" class="btn">ücretsiz hesap oluşturabilirsiniz</a>.`,
     contact: "Sorularınız için bu e-postayı yanıtlayabilir veya info@skytechgreen.com adresine yazabilirsiniz.",
@@ -772,7 +772,7 @@ const CONFIRM_TEXT = {
     intro: (type: string, no: string) =>
       `Your <strong>${type}</strong> has reached us. Your request number is <strong style="font-family:monospace;font-size:16px;color:#059669;">${no}</strong>. Quoting it in your correspondence speeds things up.`,
     summaryTitle: "Request summary",
-    next: "Our team will review your request and contact you within one business day using the details you provided. Pricing and delivery details are clarified in that conversation; no payment is requested at this stage.",
+    next: "Our team will review your request and contact you within one business day using the details you provided. Details and scheduling are clarified in that conversation; no payment is requested at this stage.",
     account: (url: string) =>
       `To track the status of your request you can <a href="${url}" class="btn">create a free account</a>.`,
     contact: "For questions, reply to this e-mail or write to info@skytechgreen.com.",

@@ -7,10 +7,11 @@
  *                        fiyat ve ödeme "çok yakında". Vercel'de
  *                        NEXT_PUBLIC_TRANSACTIONS_ENABLED=true ile açılır.
  *
- *  REQUESTS_ENABLED      Ödeme almadan talep toplama (/talep/*): tohum talebi,
- *                        arazime ekim başvurusu, açık araziye tohum talebi.
- *                        Varsayılan AÇIK; NEXT_PUBLIC_REQUESTS_ENABLED=false
- *                        ile kapatılır.
+ *  REQUESTS_ENABLED      Ödeme almadan talep toplama (/talep/*): Proje Uygulama
+ *                        Sahasına tohum topu bıraktırma talebi ve kendi arazi
+ *                        başvurusu. Varsayılan AÇIK;
+ *                        NEXT_PUBLIC_REQUESTS_ENABLED=false ile kapatılır.
+ *                        (Doğrudan tohum satışı/talebi 2026-09 itibarıyla yok.)
  *
  *  ACCOUNTS_ENABLED      Üyelik (kayıt / giriş / hesabım). Varsayılan AÇIK;
  *                        NEXT_PUBLIC_ACCOUNTS_ENABLED=false ile kapatılır.
@@ -34,26 +35,36 @@ export const ACCOUNTS_ENABLED =
 export const GOOGLE_AUTH_ENABLED =
   process.env.NEXT_PUBLIC_AUTH_GOOGLE_ENABLED === "true";
 
-/** Talep akışı rotaları — tek yerden yönetilir. */
+/**
+ * Talep akışı rotaları — tek yerden yönetilir.
+ *
+ * "Satın Al / Talep Oluştur" çağrıları doğrudan Proje Uygulama Sahalarına gider
+ * (`hub` = `openLand`); kendi arazi başvurusu o sayfanın üstündeki küçük
+ * bağlantıdan açılır. Ayrı bir seçim sayfası (eski /talep) ve tohum talebi
+ * (eski /talep/tohum) kaldırıldı; ikisi de `RETIRED_REQUEST_REDIRECTS` ile
+ * sahalara yönlenir.
+ */
 export const REQUEST_ROUTES = {
-  hub: "/talep",
-  seed: "/talep/tohum",
+  hub: "/talep/acik-arazi",
   land: "/talep/arazime-ekim",
   openLand: "/talep/acik-arazi",
 } as const;
 
+/** Kaldırılan talep adresleri → yeni hedef (middleware uygular, dil öneki korunur). */
+export const RETIRED_REQUEST_REDIRECTS: Record<string, string> = {
+  "/talep": REQUEST_ROUTES.openLand,
+  "/talep/tohum": REQUEST_ROUTES.openLand,
+};
+
 export type RequestRouteKey = keyof typeof REQUEST_ROUTES;
 
 /**
- * Sipariş niyetli CTA'lar için hedef: ödeme açıksa eski satın alma akışı,
- * talep toplama açıksa /talep/*, ikisi de kapalıysa /yakinda.
+ * Sipariş niyetli CTA'lar için hedef: talep toplama açıksa /talep/*, kapalıysa
+ * /yakinda. Eski satın alma akışına (/bireysel/*) artık HİÇBİR çağrı gitmez —
+ * o akış doğrudan tohum satıyordu; yeni sipariş sihirbazı yayına girdiğinde
+ * hedef burada tek yerden değişir.
  */
 export function orderCtaHref(kind: RequestRouteKey = "hub"): string {
-  if (TRANSACTIONS_ENABLED) {
-    if (kind === "seed") return "/bireysel/satin-al/siparis";
-    if (kind === "openLand") return "/bireysel/satin-al/arazi";
-    return "/bireysel/satin-al";
-  }
   if (REQUESTS_ENABLED) return REQUEST_ROUTES[kind];
   return "/yakinda";
 }

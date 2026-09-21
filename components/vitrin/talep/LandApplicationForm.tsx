@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
+import { REQUEST_ROUTES } from "@/lib/site-config";
 import { TR_ILLER_ALFABETIK, ilAdi } from "@/lib/tr-iller";
 import { AREA, AREA_UNITS, LAND_CONDITIONS, OWNERSHIP_TYPES, TIMING_OPTIONS } from "@/lib/requests/schema";
 import {
@@ -91,7 +93,23 @@ export default function LandApplicationForm() {
   }
 
   return (
-    <RequestFormShell onSubmit={onSubmit} submitting={form.submitting} formError={form.formError} summary={summary}>
+    <RequestFormShell
+      onSubmit={onSubmit}
+      submitting={form.submitting}
+      formError={form.formError}
+      summary={summary}
+      top={
+        <Link
+          href={REQUEST_ROUTES.openLand}
+          className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#1B6B3A] hover:text-[#22894a] transition-colors"
+        >
+          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} aria-hidden="true">
+            <path d="M19 12H5M11 5l-7 7 7 7" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          {t("backToSites")}
+        </Link>
+      }
+    >
       {/* 1 · Konum */}
       <SectionCard step={1} title={t("location.heading")} id="konum">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

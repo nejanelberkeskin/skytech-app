@@ -10,10 +10,12 @@ import type { ProjectSite } from "./types";
 
 export const SITES_HREF = "/sahalar";
 
-/** "Bu sahaya tohum topu bıraktır" çağrısının hedefi. */
+/**
+ * "Bu sahaya tohum topu bıraktır" çağrısının hedefi. Talep formu `?saha=<slug>`
+ * ile o sahayı seçili açar. Sihirbaz gelince: `/sahalar/${site.slug}/katil`.
+ */
 export function siteOrderHref(site: Pick<ProjectSite, "slug">): string {
-  void site; // sihirbaz gelince: `/sahalar/${site.slug}/katil`
-  return "/talep/acik-arazi";
+  return `/talep/acik-arazi?saha=${encodeURIComponent(site.slug)}`;
 }
 
 /** "Kendi arazim için işlem yaptırmak istiyorum" bağlantısı. */

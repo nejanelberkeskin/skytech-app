@@ -543,7 +543,7 @@ Bu bölüm 11. bölümdeki akış tarifinin yerine geçer.
 - Eski "Tahmini Karbon" kartı kaldırıldı (doğrulanmamış katsayı). Kapasite sayıları yalnız bu ekranda görünür.
 
 ### Sipariş çekirdeği — temel (Faz 3a; arayüz yok, hiçbir yerden çağrılmıyor)
-- `supabase/migrations/016_release_orders.sql` — **TASLAK, canlıya uygulanmadı.** `sales_settings`, `release_batches`,
+- `supabase/migrations/016_release_orders.sql` — **canlıya uygulandı (21 Eyl 2026, `release_orders_016`)**; önce canlıda geri alınan bir denemeyle 33 denetimden geçti. Deneme siparişleri `is_test=true` ile işaretlenir (oluştuktan sonra değişmez) ve yalnız onlar `purge_test_orders()` ile silinebilir; gerçek siparişler, belgeler ve olaylar silinemez/değiştirilemez. Fatura bilgisi (`invoice`) üyenin sütun yetkisi dışında. `sales_settings`, `release_batches`,
   `release_orders`, `order_documents` (değişmez), `order_events` (değişmez), `order_refunds`, `order_invoices`;
   kapasite işlevleri (satır kilidi), RLS + sütun bazlı yetki. Eski `orders/payments/certificates` tablolarına dokunmaz.
 - `lib/orders/types.ts` durumlar ve alan sözlüğü · `state.ts` durum makinesi (`assertTransition`, `canWithdraw`) ·

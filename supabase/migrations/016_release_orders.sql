@@ -1,7 +1,9 @@
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 016 — Tohum topu bıraktırma siparişleri (yeni satış modeli)
 -- ═══════════════════════════════════════════════════════════════════════════
--- TASLAK: canlı veritabanına yalnız onayla uygulanır.
+-- CANLIYA UYGULANDI: 21 Eylül 2026 (Supabase kaydı: release_orders_016).
+-- Uygulamadan önce aynı SQL, canlıda tek işlem içinde 33 denetimle denenip geri alındı
+-- (kısıtlar, tetikleyiciler, kapasite işlevleri, yetkiler, deneme siparişi temizliği).
 --
 -- Eski sipariş alanı (orders, order_allocations, payments, certificates) doğrudan
 -- tohum satıyordu, tutarı istemciden alıyordu; onay kaydı, sözleşme ve iade
@@ -20,10 +22,14 @@
 -- KAPALI; üye yalnız kendi siparişini, yalnız izin verilen SÜTUNLARLA okur. Yazma
 -- yalnız service_role (API). Kapasite ayırma satır kilidiyle tek fonksiyonda.
 --
+-- DENEME SİPARİŞLERİ: geliştirme ortamı ve canlı aynı veritabanını kullandığı için
+-- deneme siparişleri `is_test = true` ile işaretlenir (test ödeme sağlayıcısı ya da
+-- sanal POS'un deneme kipi). Gerçek siparişler silinemez ve belgeleri değiştirilemez;
+-- deneme siparişleri `purge_test_orders()` ile çocuk kayıtlarıyla birlikte temizlenir.
+-- `is_test` oluşturulduktan sonra DEĞİŞTİRİLEMEZ (gerçek bir sipariş sonradan "deneme"
+-- yapılıp silinemesin diye).
+--
 -- Geri alma: en alttaki "GERİ ALMA" bölümü.
--- Not: sipariş, belge ve olay satırları tetikleyiciyle silinmeye karşı korunur. Açılış
--- öncesi deneme kayıtlarını temizlemek gerekirse bunu yalnız veritabanı sahibi, ilgili
--- tetikleyicileri geçici olarak devre dışı bırakarak yapabilir (bilinçli bir sürtünme).
 -- ═══════════════════════════════════════════════════════════════════════════
 
 -- ── 0. Türler ──────────────────────────────────────────────────────────────
@@ -84,6 +90,7 @@ CREATE TABLE IF NOT EXISTS public.release_orders (
   user_id         uuid REFERENCES auth.users(id) ON DELETE SET NULL,   -- misafir siparişinde NULL
   locale          text NOT NULL DEFAULT 'tr' CHECK (locale IN ('tr', 'en', 'ru')),
   client_token    uuid UNIQUE,                                          -- idempotency
+  is_test         boolean NOT NULL DEFAULT false,                       -- deneme siparişi (oluştuktan sonra değişmez)
 
   -- saha
   land_id         uuid NOT NULL REFERENCES public.lands(id) ON DELETE RESTRICT,
@@ -163,6 +170,7 @@ CREATE INDEX IF NOT EXISTS release_orders_email_idx     ON public.release_orders
 CREATE INDEX IF NOT EXISTS release_orders_expiry_idx    ON public.release_orders (payment_expires_at)
   WHERE status IN ('draft', 'awaiting_payment', 'payment_failed');
 CREATE INDEX IF NOT EXISTS release_orders_withdrawal_idx ON public.release_orders (withdrawal_deadline) WHERE status = 'paid';
+CREATE INDEX IF NOT EXISTS release_orders_test_idx      ON public.release_orders (created_at) WHERE is_test;
 
 -- ── 4. Belgeler (değişmez) ─────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS public.order_documents (
@@ -246,6 +254,10 @@ LANGUAGE plpgsql
 SET search_path = ''
 AS $$
 BEGIN
+  -- Yalnız DENEME siparişlerinin çocuk kayıtları silinebilir (purge_test_orders); güncelleme asla.
+  IF TG_OP = 'DELETE' AND EXISTS (SELECT 1 FROM public.release_orders o WHERE o.id = OLD.order_id AND o.is_test) THEN
+    RETURN OLD;
+  END IF;
   RAISE EXCEPTION '% tablosundaki kayıtlar değiştirilemez ve silinemez (yasal saklama).', TG_TABLE_NAME
     USING ERRCODE = 'integrity_constraint_violation';
 END $$;
@@ -265,6 +277,9 @@ LANGUAGE plpgsql
 SET search_path = ''
 AS $$
 BEGIN
+  IF OLD.is_test THEN
+    RETURN OLD;
+  END IF;
   RAISE EXCEPTION 'Sipariş kayıtları silinemez (yasal saklama süresi).'
     USING ERRCODE = 'integrity_constraint_violation';
 END $$;
@@ -272,6 +287,24 @@ END $$;
 DROP TRIGGER IF EXISTS release_orders_no_delete ON public.release_orders;
 CREATE TRIGGER release_orders_no_delete BEFORE DELETE ON public.release_orders
   FOR EACH ROW EXECUTE FUNCTION public.forbid_order_delete();
+
+-- is_test oluşturulduktan sonra değişmez: gerçek sipariş "deneme" yapılıp silinemez.
+CREATE OR REPLACE FUNCTION public.freeze_order_is_test()
+RETURNS trigger
+LANGUAGE plpgsql
+SET search_path = ''
+AS $$
+BEGIN
+  IF NEW.is_test IS DISTINCT FROM OLD.is_test THEN
+    RAISE EXCEPTION 'is_test alanı sipariş oluşturulduktan sonra değiştirilemez.'
+      USING ERRCODE = 'integrity_constraint_violation';
+  END IF;
+  RETURN NEW;
+END $$;
+
+DROP TRIGGER IF EXISTS release_orders_is_test_frozen ON public.release_orders;
+CREATE TRIGGER release_orders_is_test_frozen BEFORE UPDATE OF is_test ON public.release_orders
+  FOR EACH ROW EXECUTE FUNCTION public.freeze_order_is_test();
 
 -- ── 10. Kapasite: ayır / geri ver / kesinleştir (satır kilidiyle) ──────────
 -- Sahalarda kapasite yalnız iç kullanım içindir; vitrine hiçbir yoldan çıkmaz.
@@ -326,11 +359,47 @@ BEGIN
    WHERE id = p_land_id;
 END $$;
 
+-- Deneme siparişlerini çocuk kayıtlarıyla birlikte siler; tuttukları kapasiteyi geri verir.
+CREATE OR REPLACE FUNCTION public.purge_test_orders(p_min_age interval DEFAULT interval '0')
+RETURNS integer
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = ''
+AS $$
+DECLARE
+  r record;
+  v_count integer := 0;
+BEGIN
+  FOR r IN
+    SELECT id, land_id, quantity, status
+      FROM public.release_orders
+     WHERE is_test AND created_at <= now() - p_min_age
+     FOR UPDATE
+  LOOP
+    IF r.status IN ('draft', 'awaiting_payment', 'payment_failed', 'paid', 'confirmed', 'scheduled',
+                    'withdrawal_requested', 'cancelled_by_seller') THEN
+      PERFORM public.release_reserved_capacity(r.land_id, r.quantity);
+    ELSIF r.status IN ('released', 'monitoring', 'completed') THEN
+      UPDATE public.lands SET filled_seeds = GREATEST(filled_seeds - r.quantity, 0) WHERE id = r.land_id;
+    END IF;
+    DELETE FROM public.order_invoices  WHERE order_id = r.id;
+    DELETE FROM public.order_refunds   WHERE order_id = r.id;
+    DELETE FROM public.order_events    WHERE order_id = r.id;
+    DELETE FROM public.order_documents WHERE order_id = r.id;
+    DELETE FROM public.release_orders  WHERE id = r.id;
+    v_count := v_count + 1;
+  END LOOP;
+  RETURN v_count;
+END $$;
+
 REVOKE ALL ON FUNCTION public.reserve_release_capacity(uuid, integer)  FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON FUNCTION public.release_reserved_capacity(uuid, integer) FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON FUNCTION public.commit_reserved_capacity(uuid, integer)  FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON FUNCTION public.forbid_mutation()      FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON FUNCTION public.forbid_order_delete()  FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON FUNCTION public.freeze_order_is_test() FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON FUNCTION public.purge_test_orders(interval) FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.purge_test_orders(interval) TO service_role;
 GRANT EXECUTE ON FUNCTION public.reserve_release_capacity(uuid, integer)  TO service_role;
 GRANT EXECUTE ON FUNCTION public.release_reserved_capacity(uuid, integer) TO service_role;
 GRANT EXECUTE ON FUNCTION public.commit_reserved_capacity(uuid, integer)  TO service_role;
@@ -352,17 +421,18 @@ REVOKE ALL ON public.sales_settings, public.release_batches, public.release_orde
 
 -- Üye kendi siparişini okur — yalnız aşağıdaki sütunlarla. Dışarıda kalanlar:
 -- ip_hash, user_agent, source_path, client_token, payment_token, payment_meta,
--- admin_note, consents (ham kayıt), iys_synced_at.
+-- admin_note, consents (ham kayıt), iys_synced_at ve invoice (T.C. kimlik / vergi no içerir —
+-- hesabım sayfaları bu bilgiyi sunucu ucundan, maskeli alır).
 DROP POLICY IF EXISTS release_orders_select_own ON public.release_orders;
 CREATE POLICY release_orders_select_own ON public.release_orders
   FOR SELECT TO authenticated USING (user_id = (SELECT auth.uid()));
 
 -- (user_id listede: politika ifadeleri sorguyu çalıştıran kullanıcının sütun yetkisiyle değerlendirilir.)
 GRANT SELECT (
-  id, user_id, order_no, status, locale, land_id, site_snapshot, season_label, batch_id,
+  id, user_id, order_no, status, is_test, locale, land_id, site_snapshot, season_label, batch_id,
   quantity, unit_price_kurus, total_kurus, vat_rate, currency,
   certificate_name, certificate_code, certificate_issued_at, certificate_cancelled_at,
-  buyer_type, buyer_first_name, buyer_last_name, buyer_email, buyer_phone, invoice,
+  buyer_type, buyer_first_name, buyer_last_name, buyer_email, buyer_phone,
   marketing_consent, documents_version, paid_at, withdrawal_deadline, performance_deadline,
   confirmed_at, scheduled_at, released_at, completed_at, video_notified_at,
   withdrawal_requested_at, cancelled_at, refunded_at, created_at, updated_at
@@ -399,6 +469,7 @@ COMMENT ON COLUMN public.release_orders.total_kurus IS 'KDV dâhil toplam, kuru�
 --   DROP FUNCTION public.reserve_release_capacity(uuid, integer),
 --                 public.release_reserved_capacity(uuid, integer),
 --                 public.commit_reserved_capacity(uuid, integer),
+--                 public.purge_test_orders(interval), public.freeze_order_is_test(),
 --                 public.forbid_mutation(), public.forbid_order_delete();
 --   DROP TYPE public.release_order_status, public.release_buyer_type;
 -- ═══════════════════════════════════════════════════════════════════════════

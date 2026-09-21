@@ -11,7 +11,7 @@
  *                   adresini döner. İstemci `redirectUrl`e gider.
  */
 import type { OrderSchedule } from "./schedule";
-import type { OrderPayloadInput } from "./schema";
+import type { OrderPayloadInput, WithdrawalRequestInput } from "./schema";
 import type { DocumentKind } from "./types";
 
 export interface OrderDocumentPreview {
@@ -94,4 +94,56 @@ export function previewOrder(input: OrderPreviewInput): Promise<PreviewResult> {
 
 export function submitOrder(payload: OrderPayloadInput): Promise<SubmitResult> {
   return post<{ orderNo: string; redirectUrl: string }>("/api/public/siparis", payload);
+}
+
+/* ── Cayma bildirimi ──────────────────────────────────────────────────────── */
+
+export type WithdrawalErrorCode =
+  | "validation"
+  | "not_found" //          sipariş no + e-posta eşleşmedi (hangisinin yanlış olduğu söylenmez)
+  | "not_eligible" //       cayma süresi dolmuş ya da sipariş bu aşamada caymaya uygun değil
+  | "already_requested" //  bu sipariş için cayma bildirimi zaten alınmış
+  | "rate_limited"
+  | "closed"
+  | "generic";
+
+export type WithdrawalResult =
+  | {
+      ok: true;
+      orderNo: string;
+      /** Bildirimin alındığı an — ISO */
+      receivedAt: string;
+      /** İadenin en geç yapılacağı gün — YYYY-MM-DD (bildirim + 14 gün) */
+      refundDueOn: string;
+    }
+  | { ok: false; error: WithdrawalErrorCode; fields?: Record<string, string> };
+
+const WITHDRAWAL_KNOWN: readonly WithdrawalErrorCode[] = [
+  "validation",
+  "not_found",
+  "not_eligible",
+  "already_requested",
+  "rate_limited",
+  "closed",
+];
+
+export async function requestWithdrawal(input: WithdrawalRequestInput): Promise<WithdrawalResult> {
+  try {
+    const res = await fetch("/api/public/cayma", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(input),
+    });
+    const data = (await res.json().catch(() => ({}))) as Record<string, unknown>;
+    if (res.ok && data.ok === true) return data as WithdrawalResult;
+    if (res.status === 429) return { ok: false, error: "rate_limited" };
+    const code =
+      typeof data.error === "string" && (WITHDRAWAL_KNOWN as readonly string[]).includes(data.error)
+        ? (data.error as WithdrawalErrorCode)
+        : "generic";
+    const fields = data.fields && typeof data.fields === "object" ? (data.fields as Record<string, string>) : undefined;
+    return { ok: false, error: code, fields };
+  } catch {
+    return { ok: false, error: "generic" };
+  }
 }

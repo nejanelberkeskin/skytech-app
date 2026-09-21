@@ -8,6 +8,9 @@
  * Tablolar: supabase/migrations/016_release_orders.sql
  */
 
+/** Sipariş numarası: SG-2026-XXXXXX (karıştırılan karakterler yok: 0/O, 1/I/L). */
+export const ORDER_NO_RE = /^SG-\d{4}-[A-HJKMNP-Z2-9]{6}$/;
+
 /* ── Durumlar ─────────────────────────────────────────────────────────────── */
 
 export const ORDER_STATUSES = [

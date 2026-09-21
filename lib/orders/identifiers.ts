@@ -7,6 +7,7 @@
  * çakışmada çağıran yeniden üretir.
  */
 import { randomInt } from "node:crypto";
+import { ORDER_NO_RE } from "./types";
 
 const ALPHABET = "ABCDEFGHJKMNPQRSTUVWXYZ23456789"; // 31 karakter
 
@@ -16,8 +17,8 @@ function randomCode(length: number): string {
   return out;
 }
 
-/** SG-2026-XXXXXX — yıl, siparişin oluşturulduğu (İstanbul) yılıdır. */
-export const ORDER_NO_RE = /^SG-\d{4}-[A-HJKMNP-Z2-9]{6}$/;
+/** SG-2026-XXXXXX — yıl, siparişin oluşturulduğu (İstanbul) yılıdır. Biçim: types.ts → ORDER_NO_RE */
+export { ORDER_NO_RE };
 
 export function generateOrderNo(at: Date = new Date()): string {
   const year = new Date(at.getTime() + 3 * 60 * 60 * 1000).getUTCFullYear();

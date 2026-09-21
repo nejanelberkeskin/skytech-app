@@ -202,4 +202,29 @@ assert.deepEqual(errs(parse({ invoice: { ...corp, mersis: "123" }, consents: { .
 assert.equal(S.resolveCertificateName({ certificateName: undefined, buyer: { firstName: "Ali_Can", lastName: "Öz<b>" } }), "AliCan Özb");
 assert.equal(S.resolveCertificateName({ certificateName: "Kızım Elif", buyer: { firstName: "Ali", lastName: "Öz" } }), "Kızım Elif");
 
+/* ── Cayma bildirimi şeması ve sipariş görünümü ───────────────────────────── */
+{
+  const w = (b) => S.withdrawalRequestSchema.safeParse(b);
+  let x = w({ orderNo: " sg-2026-rnek23 ", email: " AYSE@Example.com ", note: "" });
+  assert.ok(x.success);
+  assert.equal(x.data.orderNo, "SG-2026-RNEK23");
+  assert.equal(x.data.email, "ayse@example.com");
+  assert.equal(x.data.note, null);
+  assert.deepEqual(errs(w({ orderNo: "", email: "" })), { orderNo: "orderNoRequired", email: "emailRequired" });
+  assert.deepEqual(errs(w({ orderNo: "SG-2026-0O1ILX", email: "a@b.co" })), { orderNo: "orderNoInvalid" });
+
+  const View = await import(ROOT + "/lib/orders/view.ts");
+  const steps = (status) => View.timelineFor(status, {}).map((t) => t.state[0]).join("");
+  assert.equal(steps("paid"), "cuuuuu");
+  assert.equal(steps("scheduled"), "ddcuuu");
+  assert.equal(steps("completed"), "dddddd");
+  assert.equal(steps("refunded"), "cuuuuu", "iade/iptal durumlarında çizelge ilk adımda kalır");
+  for (const o of View.ORDER_VIEW_FIXTURES) {
+    assert.match(o.orderNo, T.ORDER_NO_RE);
+    assert.equal(o.canWithdraw, o.status === "paid", o.orderNo + ": cayma yalnız 'paid' durumunda");
+    assert.ok(!JSON.stringify(o).match(/tckn|taxId|ip_hash|payment_token|admin_note/i), "görünümde hassas alan olmamalı");
+    if (o.certificate) assert.ok(o.releasedOn, "sertifika yalnız bırakmadan sonra");
+  }
+}
+
 console.log("✓ sipariş çekirdeği testleri geçti");

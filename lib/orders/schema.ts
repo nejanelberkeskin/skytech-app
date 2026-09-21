@@ -10,6 +10,7 @@ import { TR_IL_KODLARI } from "@/lib/tr-iller";
 import { RELEASE_QTY } from "@/lib/pricing";
 import { certificateNameSchema, cleanText, normalizePhone, LOCALES } from "@/lib/requests/schema";
 import { isValidTaxId, isValidTckn } from "./tax-ids";
+import { ORDER_NO_RE } from "./types";
 
 const requiredText = (min: number, max: number, keys: { required: string; short: string }) =>
   z
@@ -191,3 +192,28 @@ export function resolveCertificateName(payload: Pick<OrderPayload, "certificateN
     .join("");
   return cleanText(fallback).slice(0, 60).trim();
 }
+
+/* ── Cayma bildirimi (/cayma) ─────────────────────────────────────────────── */
+
+/**
+ * Sipariş numarası + siparişte kullanılan e-posta birlikte istenir; ikisi
+ * eşleşmezse sunucu "bulunamadı" der (hangisinin yanlış olduğunu söylemez).
+ */
+export const withdrawalRequestSchema = z.object({
+  orderNo: z
+    .string("orderNoRequired")
+    .transform((v) => v.trim().toUpperCase())
+    .pipe(z.string().min(1, "orderNoRequired").regex(ORDER_NO_RE, "orderNoInvalid")),
+  email: z
+    .string("emailRequired")
+    .max(200, "tooLong")
+    .transform((v) => v.trim().toLowerCase())
+    .pipe(z.string().min(1, "emailRequired").pipe(z.email("emailInvalid"))),
+  /** İsteğe bağlı açıklama — cayma için gerekçe GEREKMEZ. */
+  note: optionalText(500),
+  locale: z.enum(LOCALES).default("tr"),
+  website: z.string().max(200).optional(),
+  elapsedMs: z.number().int().nonnegative().max(86_400_000).optional(),
+});
+
+export type WithdrawalRequestInput = z.input<typeof withdrawalRequestSchema>;

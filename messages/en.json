@@ -1574,5 +1574,55 @@
     "monitoring": "Monitoring and reporting",
     "current": "Current month",
     "video": "Around 6 months after release: footage of the work."
+  },
+  "certificatePage": {
+    "title": "Certificate of Participation",
+    "verification": "Certificate verification",
+    "valid": "This certificate is valid",
+    "cancelled": "This certificate has been cancelled",
+    "cancelledBand": "CANCELLED",
+    "cancelledDescription": "The order may have been cancelled under the right of withdrawal.",
+    "imageAlt": "Certificate of Participation issued to {name}",
+    "download": "Download image",
+    "downloading": "Preparing image…",
+    "downloaded": "Image download started.",
+    "downloadError": "The image could not be downloaded. Please try again.",
+    "copy": "Copy link",
+    "copied": "Link copied.",
+    "copyError": "The link could not be copied. You can copy it from your browser’s address bar.",
+    "share": "Share",
+    "shareError": "Sharing could not be opened. You can copy the link instead.",
+    "shareText": "I had {quantity} seed balls released at {site}. #SkytechGreen",
+    "quantity": "{quantity} seed balls",
+    "details": "Record of the work",
+    "meaning": "What does this certificate document?",
+    "records": "It documents the release by drone of the stated number of seed balls at the specified site.",
+    "monitoring": "The site is monitored in the following seasons.",
+    "video": "Footage of the work",
+    "sites": "Project Sites",
+    "notes": {
+      "document": "This is a Certificate of Participation, not a donation receipt. It does not provide a tax deduction.",
+      "nature": "The seed balls have been released into nature. Germination and growth depend on natural conditions and are not guaranteed."
+    },
+    "facts": {
+      "site": "Site",
+      "province": "Province",
+      "released": "Release date",
+      "issued": "Issue date",
+      "species": "Species",
+      "workType": "Work type",
+      "quantity": "Quantity released",
+      "code": "Certificate code"
+    },
+    "image": {
+      "quantity": "{quantity} seed balls",
+      "site": "were released by drone at {site}",
+      "date": "on {date}."
+    },
+    "workTypes": {
+      "ormanlastirma": "Reforestation",
+      "genclestirme": "Regeneration",
+      "ormanlastirma_genclestirme": "Reforestation – Regeneration"
+    }
   }
 }

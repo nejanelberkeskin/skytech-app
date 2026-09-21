@@ -1574,5 +1574,55 @@
     "monitoring": "İzleme ve raporlama",
     "current": "İçinde bulunduğumuz ay",
     "video": "Bırakmadan yaklaşık 6 ay sonra: çalışmanın görüntüleri."
+  },
+  "certificatePage": {
+    "title": "Katılım Sertifikası",
+    "verification": "Sertifika doğrulama",
+    "valid": "Bu sertifika geçerlidir",
+    "cancelled": "Bu sertifika iptal edilmiştir",
+    "cancelledBand": "İPTAL EDİLDİ",
+    "cancelledDescription": "Sipariş cayma hakkı kapsamında iptal edilmiş olabilir.",
+    "imageAlt": "{name} adına düzenlenmiş Katılım Sertifikası",
+    "download": "Görseli indir",
+    "downloading": "Görsel hazırlanıyor…",
+    "downloaded": "Görsel indirme işlemi başlatıldı.",
+    "downloadError": "Görsel indirilemedi. Lütfen tekrar deneyin.",
+    "copy": "Bağlantıyı kopyala",
+    "copied": "Bağlantı kopyalandı.",
+    "copyError": "Bağlantı kopyalanamadı. Tarayıcınızın adres çubuğundan kopyalayabilirsiniz.",
+    "share": "Paylaş",
+    "shareError": "Paylaşım açılamadı. Bağlantıyı kopyalayabilirsiniz.",
+    "shareText": "{site} sahasına {quantity} tohum topu bıraktırdım. #SkytechGreen",
+    "quantity": "{quantity} tohum topu",
+    "details": "Çalışmanın kaydı",
+    "meaning": "Bu sertifika neyi belgeler?",
+    "records": "Belirtilen sahaya, belirtilen adette tohum topunun dronla bırakıldığını belgeler.",
+    "monitoring": "Saha sonraki dönemlerde izlenir.",
+    "video": "Çalışmanın görüntüleri",
+    "sites": "Proje Uygulama Sahaları",
+    "notes": {
+      "document": "Bu belge bir Katılım Sertifikasıdır; bağış makbuzu değildir ve vergi indirimi sağlamaz.",
+      "nature": "Tohum topları doğaya bırakılmıştır; çimlenme ve gelişim doğal koşullara bağlıdır, garanti edilmez."
+    },
+    "facts": {
+      "site": "Saha",
+      "province": "İl",
+      "released": "Bırakma tarihi",
+      "issued": "Düzenlenme tarihi",
+      "species": "Türler",
+      "workType": "Çalışma türü",
+      "quantity": "Bırakılan adet",
+      "code": "Sertifika kodu"
+    },
+    "image": {
+      "quantity": "{quantity} tohum topu,",
+      "site": "{site} sahasına",
+      "date": "{date} tarihinde dronla bırakılmıştır."
+    },
+    "workTypes": {
+      "ormanlastirma": "Ormanlaştırma",
+      "genclestirme": "Gençleştirme",
+      "ormanlastirma_genclestirme": "Ormanlaştırma – Gençleştirme"
+    }
   }
 }

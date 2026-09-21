@@ -1511,5 +1511,68 @@
       "soon": "Coming Soon",
       "corporate": "Corporate Enquiry"
     }
+  },
+  "sitesPage": {
+    "title": "Project Sites",
+    "intro": "Take part in the recovery of fire-affected forests. Choose a site and have seed balls released there on your behalf.",
+    "description": "Explore the area, work type and species of each project site below.",
+    "ownLand": "I would like work carried out on my own land",
+    "fire": "Fire-affected site",
+    "hectares": "{value} hectares",
+    "participate": "Take part at this site",
+    "details": "Explore the site",
+    "info": "Get information",
+    "empty": {
+      "title": "New sites are being prepared",
+      "description": "Project sites will be listed here when participation opens. You can apply for work on your own land or ask about our activities."
+    },
+    "phases": {
+      "open": "Open for participation",
+      "full": "Fully subscribed",
+      "scheduled": "Release scheduled",
+      "released": "Release completed",
+      "monitoring": "Monitoring in progress"
+    },
+    "workTypes": {
+      "ormanlastirma": "Reforestation",
+      "genclestirme": "Regeneration",
+      "ormanlastirma_genclestirme": "Reforestation – Regeneration"
+    }
+  },
+  "siteDetail": {
+    "meta": "Explore the area, species and seed ball release schedule for {name}.",
+    "location": "Location",
+    "area": "Area",
+    "workType": "Work type",
+    "phase": "Work phase",
+    "about": "About the site",
+    "speciesTitle": "What is released at this site?",
+    "speciesNote": "Our specialists select species for the site’s climate and soil conditions; you do not need to choose.",
+    "gallery": "Site images",
+    "galleryAlt": "{name} — {location} — site image {number}",
+    "video": "Footage of the work",
+    "order": "Have seed balls released at this site",
+    "back": "Back to all sites",
+    "reasons": {
+      "kizilcam": "Native to the Mediterranean climate, it tolerates heat and drought. It is among the species that naturally return after forest fires.",
+      "karacam": "A pine native to upland and continental regions. Its tolerance of frost and drought helps it establish on challenging slopes.",
+      "sedir": "An emblematic species of the Taurus Mountains, it forms pure stands at higher elevations and is long-lived.",
+      "ardic": "Adapted to steep, rocky slopes, it helps hold soil in place and provides protective cover for other species."
+    },
+    "phaseInfo": {
+      "open": "This site is not currently accepting new participation.",
+      "full": "This site is fully subscribed. You can explore other sites.",
+      "scheduled": "The release date has been scheduled for this site.",
+      "released": "Seed ball release at this site has been completed.",
+      "monitoring": "Monitoring and reporting continue at this site."
+    }
+  },
+  "seasonTimeline": {
+    "title": "Work schedule",
+    "description": "Seed balls are released from October to March. Sites are surveyed and monitored, with reporting from April to September.",
+    "release": "Seed ball release",
+    "monitoring": "Monitoring and reporting",
+    "current": "Current month",
+    "video": "Around 6 months after release: footage of the work."
   }
 }

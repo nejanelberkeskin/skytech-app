@@ -1511,5 +1511,68 @@
       "soon": "Yakında",
       "corporate": "Kurumsal Bilgi Al"
     }
+  },
+  "sitesPage": {
+    "title": "Proje Uygulama Sahaları",
+    "intro": "Yangından etkilenmiş sahaların yeniden ormanlaşmasına katılın. Bir saha seçin; o sahaya sizin adınıza tohum topu bırakalım.",
+    "description": "Her sahanın alanını, çalışma türünü ve bırakılan türü aşağıda görebilirsiniz.",
+    "ownLand": "Kendi arazim için işlem yaptırmak istiyorum",
+    "fire": "Yangın Sahası",
+    "hectares": "{value} hektar",
+    "participate": "Bu sahaya katıl",
+    "details": "Sahayı incele",
+    "info": "Bilgi alın",
+    "empty": {
+      "title": "Yeni sahalar için hazırlık sürüyor",
+      "description": "Katılıma açılacak Proje Uygulama Sahalarını burada paylaşacağız. Kendi araziniz için başvurabilir veya çalışmalarımız hakkında bilgi alabilirsiniz."
+    },
+    "phases": {
+      "open": "Katılıma açık",
+      "full": "Kontenjan doldu",
+      "scheduled": "Bırakma planlandı",
+      "released": "Bırakma tamamlandı",
+      "monitoring": "İzleme sürüyor"
+    },
+    "workTypes": {
+      "ormanlastirma": "Ormanlaştırma",
+      "genclestirme": "Gençleştirme",
+      "ormanlastirma_genclestirme": "Ormanlaştırma – Gençleştirme"
+    }
+  },
+  "siteDetail": {
+    "meta": "{name}: sahanın alanını, türlerini ve tohum topu bırakma takvimini inceleyin.",
+    "location": "Konum",
+    "area": "Alan",
+    "workType": "Çalışma türü",
+    "phase": "Çalışmanın evresi",
+    "about": "Saha hakkında",
+    "speciesTitle": "Bu sahaya ne bırakılıyor?",
+    "speciesNote": "Tür, sahanın iklim ve toprak koşullarına göre uzman ekibimizce belirlenir; seçim yapmanız gerekmez.",
+    "gallery": "Sahadan görüntüler",
+    "galleryAlt": "{name} — {location} — saha görüntüsü {number}",
+    "video": "Çalışmanın görüntüleri",
+    "order": "Bu sahaya tohum topu bıraktır",
+    "back": "Tüm sahalara dön",
+    "reasons": {
+      "kizilcam": "Akdeniz ikliminin yerli türüdür; sıcağa ve kuraklığa dayanır. Yangın sonrası sahalarda doğal olarak geri gelen türlerin başında gelir.",
+      "karacam": "Yüksek ve karasal kesimlerin yerli çamıdır; dona ve kuraklığa toleransı sayesinde zorlu yamaçlarda tutunur.",
+      "sedir": "Toros Dağları’nın simge türüdür; yüksek kesimlerde saf orman oluşturur ve uzun ömürlüdür.",
+      "ardic": "Sarp ve taşlı yamaçlara uyum sağlar; toprağı tutar, diğer türler için koruyucu örtü oluşturur."
+    },
+    "phaseInfo": {
+      "open": "Bu saha şu anda yeni katılım almıyor.",
+      "full": "Bu sahanın kontenjanı doldu; diğer sahalara göz atabilirsiniz.",
+      "scheduled": "Bu saha için bırakma tarihi planlandı.",
+      "released": "Bu sahada tohum topu bırakma tamamlandı.",
+      "monitoring": "Bu sahada izleme ve raporlama sürüyor."
+    }
+  },
+  "seasonTimeline": {
+    "title": "Çalışma takvimi",
+    "description": "Tohum topu bırakma Ekim–Mart arasında yapılır. Nisan–Eylül döneminde sahalar incelenir, izlenir ve raporlanır.",
+    "release": "Tohum topu bırakma",
+    "monitoring": "İzleme ve raporlama",
+    "current": "İçinde bulunduğumuz ay",
+    "video": "Bırakmadan yaklaşık 6 ay sonra: çalışmanın görüntüleri."
   }
 }

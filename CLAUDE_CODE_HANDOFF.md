@@ -553,6 +553,22 @@ Bu bölüm 11. bölümdeki akış tarifinin yerine geçer.
   ayrı onay kutuları; **tutar alanı yok** — sunucu hesaplar).
 - [MM] bekleyen varsayımlar migration'da işaretli: KDV %20, fatura zamanı `on_performance`.
 
+### Hukuki belgeler (Faz 3b)
+- `lib/legal/`: belge = düz metin bloklarının listesi (`types.ts`). AYNI bloklardan `render-html.ts` (deterministik,
+  kaçışlı; siparişe özel DEĞİŞMEZ kopya + SHA-256) ve `render-pdf.ts` (jsPDF + gömülü Noto Sans; yalnız sunucu) üretir.
+  Şablonlar `templates/`: `pre-info.ts`, `contract.ts`, `withdrawal-form.ts`; iki belgede de geçen cümleler tek yerde
+  (`templates/shared.ts → TEXT`) durur, hukuk sayfaları da oradan okur → metinler birbirinden ayrışamaz.
+- `version.ts`: `LEGAL_DOCUMENTS_VERSION`. "-taslak" ekliyken (hukuk incelemesi bitmeden) sipariş uçları CANLIDA 503 döner.
+  Metin değişince sürüm artırılır; eski sürümü görmüş müşteri `documents_stale` alır ve yeniden onaylar.
+- `documents.ts`: `buildLegalContext()` + `buildOrderDocuments()` — önizleme ile sipariş kopyası aynı işlevden çıkar.
+  Bireyselde T.C. kimlik no belgeye YAZILMAZ. Kurumsal alıcıda 6502 uygulanmaz ama 14 gün cayma sözleşmesel tanınır, yetki Ankara.
+- Hukuk sayfaları (`/on-bilgilendirme`, `/mesafeli-satis-sozlesmesi`, `/cayma-ve-iade`, `/ifa-kosullari`, `/islem-rehberi`)
+  ve örnek PDF ucu (`/api/public/hukuk/ornek/[belge]`): canlıda yalnız `NEXT_PUBLIC_LEGAL_PAGES_ENABLED=true` iken;
+  geliştirmede ve Vercel önizlemesinde her zaman (`lib/legal/visibility.ts`). Taslakken `noindex`, sitemap'te yok.
+- `lib/company.ts`: satıcı künyesi tek kaynak; `missingCompanyFields()` açılış kontrolü.
+- Testler: `npm test` (Node'un yerleşik koşucusu + `scripts/test/alias-loader.mjs`; derleme gerekmez).
+  `LEGAL_DRAFTS_DIR=<klasör> npm test` örnek HTML + PDF çıktılarını yazar (avukat incelemesi için).
+
 ### Sıradaki (plan §Fazlar)
 Faz 3 sipariş çekirdeği (`release_orders`, sözleşmeler,
 cayma) → Faz 4 ödeme sağlayıcı katmanı. Sihirbaz yayına girince yalnız `lib/site-config.ts`

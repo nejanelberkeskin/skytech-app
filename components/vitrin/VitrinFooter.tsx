@@ -7,6 +7,7 @@ import KenxBadge from "./KenxBadge";
 import { ORG_LEGAL_NAME, ORG_PARENT_URL, ORG_SOCIAL } from "@/lib/seo";
 import { REQUESTS_ENABLED, REQUEST_ROUTES } from "@/lib/site-config";
 import { SITES_HREF } from "@/lib/sites/links";
+import { LEGAL_PAGES_ENABLED, SALES_LEGAL_PAGES } from "@/lib/legal/visibility";
 
 export default async function VitrinFooter() {
   const t = await getTranslations("footer");
@@ -32,6 +33,8 @@ export default async function VitrinFooter() {
     { label: t("legal.terms"), href: "/kullanim-kosullari" },
     { label: t("legal.kvkk"), href: "/kvkk" },
     { label: t("legal.cookies"), href: "/cerez-politikasi" },
+    // Satış hukuk sayfaları: metinler Türkçe olduğu için etiketleri de Türkçe; yalnız bayrak açıkken.
+    ...(LEGAL_PAGES_ENABLED ? SALES_LEGAL_PAGES.map((p) => ({ label: p.label, href: p.path })) : []),
   ];
 
   return (

@@ -61,6 +61,12 @@ const PUBLIC_PAGE_PATTERNS: RegExp[] = [
   /^\/talep(\/.*)?$/,
   /^\/yakinda(\/.*)?$/,
   /^\/gizlilik-politikasi$/,
+  // Satış hukuk sayfaları (bayrak kapalıyken sayfanın kendisi 404 döner — lib/legal/visibility.ts)
+  /^\/on-bilgilendirme$/,
+  /^\/mesafeli-satis-sozlesmesi$/,
+  /^\/cayma-ve-iade$/,
+  /^\/ifa-kosullari$/,
+  /^\/islem-rehberi$/,
   /^\/kullanim-kosullari$/,
   /^\/kvkk$/,
   /^\/cerez-politikasi$/,

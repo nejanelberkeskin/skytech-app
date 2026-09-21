@@ -3,6 +3,8 @@ import { localeUrl } from "@/lib/seo";
 import { getProjectSites } from "@/lib/sites/data";
 import { SITES_HREF, siteDetailHref } from "@/lib/sites/links";
 import { isSuspendedRoute } from "@/lib/site-config";
+import { LEGAL_PAGES_ENABLED, SALES_LEGAL_PAGES } from "@/lib/legal/visibility";
+import { isDraftLegalVersion } from "@/lib/legal/version";
 
 /**
  * sitemap.xml — Next.js otomatik /sitemap.xml'i bu fonksiyondan üretir.
@@ -72,10 +74,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const lastModified = new Date();
   // Bayraklarla /yakinda'ya yönlenen sayfaları sitemap'e koymayoruz —
   // yönlendirilen URL'ler arama motorlarına verilmemeli.
+  // Satış hukuk sayfaları yalnız yayımlandıklarında (bayrak açık, metin taslak değil) listelenir.
+  const legalPages: SitemapEntry[] =
+    LEGAL_PAGES_ENABLED && !isDraftLegalVersion()
+      ? SALES_LEGAL_PAGES.map((page) => ({ path: page.path, changeFrequency: "yearly" as const, priority: 0.3 }))
+      : [];
   const all: SitemapEntry[] = [
     ...VITRIN_PAGES,
     ...APP_ENTRY_PAGES,
     ...sitePages,
+    ...legalPages,
   ].filter((entry) => !isSuspendedRoute(entry.path));
 
   // Her sayfa için 3 dilde URL üret + alternates ile hreflang sinyali ver

@@ -4,6 +4,7 @@ import { SALES_ENABLED } from "@/lib/site-config";
 import { issuesToFieldErrors } from "@/lib/requests/schema";
 import { orderPreviewSchema } from "@/lib/orders/schema";
 import { buildPreview, checkSite } from "@/lib/orders/preview";
+import { isDraftLegalVersion } from "@/lib/legal/version";
 
 /**
  * POST /api/public/siparis/onizleme — sipariş sihirbazının 4. adımı için KESİN
@@ -14,13 +15,14 @@ import { buildPreview, checkSite } from "@/lib/orders/preview";
  *        400 { error:"validation", fields } · 409 { error:"site_unavailable"|"capacity" }
  *        429 · 503 { error:"closed"|"unavailable" }
  *
- * DURUM: hukuki şablonlar (Faz 3b) gelene kadar yalnız GELİŞTİRME ortamında
- * "ÖRNEK" damgalı yer tutucu belgeler döner; canlıda 503 "closed".
+ * Belgeler lib/legal şablonlarından üretilir. Şablon sürümü "-taslak" iken
+ * (hukuk incelemesi tamamlanmamışken) CANLIDA 503 "closed" döner: incelenmemiş
+ * metin müşteriye gösterilmez, satış bayrağı yanlışlıkla açılsa bile.
  */
 const MAX_BODY_BYTES = 20_000;
 
 export async function POST(req: NextRequest) {
-  if (!SALES_ENABLED || process.env.NODE_ENV === "production") {
+  if (!SALES_ENABLED || (process.env.NODE_ENV === "production" && isDraftLegalVersion())) {
     return NextResponse.json({ error: "closed" }, { status: 503 });
   }
 
@@ -46,5 +48,5 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: site.error }, { status: site.error === "unavailable" ? 503 : 409 });
   }
 
-  return NextResponse.json({ ok: true, ...buildPreview(parsed.data, site.site.name) });
+  return NextResponse.json({ ok: true, ...buildPreview(parsed.data, site.site) });
 }

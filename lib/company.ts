@@ -24,6 +24,8 @@ export const COMPANY = {
   kep: null as string | null,
   phone: null as string | null,
   tradeRegistryNo: null as string | null,
+  /** Mensubu olunan meslek odası (6563 sayılı Kanun gereği sitede belirtilir) — bekleniyor. */
+  chamber: null as string | null,
 } as const;
 
 export function companyAddressLine(): string {
@@ -33,5 +35,5 @@ export function companyAddressLine(): string {
 
 /** Açılıştan önce doldurulması gereken alanlar. */
 export function missingCompanyFields(): string[] {
-  return (["mersis", "kep", "phone", "tradeRegistryNo"] as const).filter((k) => !COMPANY[k]);
+  return (["mersis", "kep", "phone", "tradeRegistryNo", "chamber"] as const).filter((k) => !COMPANY[k]);
 }

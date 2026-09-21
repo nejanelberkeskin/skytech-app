@@ -4,7 +4,8 @@ import { SALES_ENABLED } from "@/lib/site-config";
 import { issuesToFieldErrors } from "@/lib/requests/schema";
 import { orderPayloadSchema } from "@/lib/orders/schema";
 import { generateOrderNo } from "@/lib/orders/identifiers";
-import { SAMPLE_DOCUMENTS_VERSION, checkSite } from "@/lib/orders/preview";
+import { checkSite } from "@/lib/orders/preview";
+import { LEGAL_DOCUMENTS_VERSION } from "@/lib/legal/version";
 
 /**
  * POST /api/public/siparis — tohum topu bıraktırma siparişi oluşturur ve ödeme
@@ -47,7 +48,7 @@ export async function POST(req: NextRequest) {
   const payload = parsed.data;
 
   // Müşterinin onayladığı metinler güncel sürüm mü? Değilse önizleme yeniden alınır.
-  if (payload.documentsVersion !== SAMPLE_DOCUMENTS_VERSION) {
+  if (payload.documentsVersion !== LEGAL_DOCUMENTS_VERSION) {
     return NextResponse.json({ error: "documents_stale" }, { status: 409 });
   }
 

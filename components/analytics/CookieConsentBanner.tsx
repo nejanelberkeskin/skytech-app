@@ -1,11 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
-import { CONSENT_STORAGE_KEY, updateConsent } from "@/lib/analytics";
-
-type Consent = "granted" | "denied";
+import { readConsent, subscribeConsent, writeConsent, type CookieConsent as Consent } from "@/lib/analytics";
 
 const REOPEN_EVENT = "open-cookie-preferences";
 
@@ -16,28 +14,23 @@ export function reopenCookiePreferences(): void {
 
 export default function CookieConsentBanner() {
   const t = useTranslations("cookieConsent");
-  const [visible, setVisible] = useState(false);
+  // Kayıtlı tercih depodan okunur (sunucuda ve ilk boyamada "bilinmiyor" → bant gösterilmez, titreme olmaz).
+  const stored = useSyncExternalStore<Consent | null | "unknown">(subscribeConsent, readConsent, () => "unknown");
+  const [reopened, setReopened] = useState(false);
 
   useEffect(() => {
-    const stored = localStorage.getItem(CONSENT_STORAGE_KEY) as Consent | null;
-    if (stored === "granted" || stored === "denied") {
-      updateConsent(stored === "granted");
-    } else {
-      setVisible(true);
-    }
-
-    function handleReopen() {
-      setVisible(true);
-    }
+    const handleReopen = () => setReopened(true);
     window.addEventListener(REOPEN_EVENT, handleReopen);
     return () => window.removeEventListener(REOPEN_EVENT, handleReopen);
   }, []);
 
   function choose(consent: Consent) {
-    localStorage.setItem(CONSENT_STORAGE_KEY, consent);
-    updateConsent(consent === "granted");
-    setVisible(false);
+    writeConsent(consent);
+    setReopened(false);
   }
+
+  // Tercih hiç yapılmadıysa ya da "Çerez Tercihleri"nden yeniden açıldıysa görünür.
+  const visible = reopened || stored === null;
 
   if (!visible) return null;
 

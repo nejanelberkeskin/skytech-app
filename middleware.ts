@@ -46,6 +46,8 @@ const PUBLIC_PAGE_PATTERNS: RegExp[] = [
   // Ödeme sonucu ve (yalnız deneme kipinde) deneme ödeme sayfası — misafir müşteri de görür
   /^\/odeme(\/.*)?$/,
   /^\/sertifika(\/.*)?$/,
+  /^\/siparis(\/.*)?$/,
+  /^\/cayma$/,
   /^\/kargo-takip(\/.*)?$/,
   /^\/bireysel\/odeme(\/.*)?$/,
   /^\/davet(\/.*)?$/,

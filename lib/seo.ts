@@ -16,10 +16,10 @@ export const SITE_URL =
   "https://skytechgreen.com";
 
 export const SITE_NAME = "Skytech Green";
-export const SITE_TAGLINE = "Tohum Toplarıyla Geleceği Ekin";
+export const SITE_TAGLINE = "Tohum Topu Teknolojisiyle Ormanlaştırma";
 export const SITE_DESCRIPTION =
-  "Dron teknolojisi ve tohum topu ile karbon nötr ağaçlandırma. " +
-  "Bireysel ve kurumsal çözümler, ölçülebilir etki, şeffaf tedarik zinciri.";
+  "Yangından etkilenmiş sahalara dronla tohum topu bırakıyoruz. " +
+  "Proje Uygulama Sahalarına katılım, yıllık izleme ve Faaliyet Raporu.";
 
 export const SITE_LOCALE = "tr_TR";
 export const SITE_LANGUAGE = "tr";

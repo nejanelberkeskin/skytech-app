@@ -232,7 +232,6 @@ function MapTooltip({
   y: number;
 }) {
   const t = useTranslations("projectsPage");
-  const totalTrees = projects.reduce((s, p) => s + p.trees, 0);
   const styles = status ? STATUS_STYLES[status] : null;
 
   return (
@@ -270,29 +269,14 @@ function MapTooltip({
         </div>
 
         {projects.length > 0 ? (
-          <>
-            <div className="space-y-2 mb-3">
-              {projects.map((p) => (
-                <div
-                  key={p.id}
-                  className="flex items-center justify-between text-xs text-[#a7d4a7]"
-                >
-                  <span className="truncate">{p.region}</span>
-                  <span className="font-bold text-white tabular-nums shrink-0 ml-3">
-                    {p.trees > 0 ? p.trees.toLocaleString("tr-TR") : t("map.calculating")}
-                  </span>
-                </div>
-              ))}
-            </div>
-            <div className="flex items-baseline justify-between pt-2 border-t border-white/10">
-              <span className="text-[10px] uppercase tracking-[0.18em] text-[#6b8f6b] font-bold">
-                {t("map.totalSeeds")}
-              </span>
-              <span className="text-base font-bold text-[#34d399] tabular-nums">
-                {totalTrees > 0 ? totalTrees.toLocaleString("tr-TR") : t("map.calculating")}
-              </span>
-            </div>
-          </>
+          /* Sahalarda tohum topu sayısı gösterilmez; yalnız saha adı listelenir. */
+          <ul className="space-y-2">
+            {projects.map((p) => (
+              <li key={p.id} className="text-xs text-[#a7d4a7] truncate">
+                {p.region}
+              </li>
+            ))}
+          </ul>
         ) : (
           <p className="text-xs text-[#6b8f6b]">{t("map.emptyProvince")}</p>
         )}

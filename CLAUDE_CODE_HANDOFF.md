@@ -706,8 +706,11 @@ Bu bölüm 11. bölümdeki akış tarifinin yerine geçer.
 - **Zamanlanmış iş:** `GET /api/cron/siparis-isleri` (günde bir, `vercel.json` → 03:00 UTC): süre dolumu · kesinleşme ·
   izleme dönemine geçiş · gitmemiş sertifika ve video bildirimleri. Yetki `Authorization: Bearer <CRON_SECRET>`;
   **`CRON_SECRET` Vercel'de tanımlı değilse uç kapalıdır (503)** — canlıya çıkmadan tanımlanmalı. İşler yinelenebilir.
-- **Saha çalışma günlüğü sözleşmesi** (`lib/sites/releases*.ts`): tamamlanan bırakmalar — tarih, başlık, video, rapor; ADET YOK.
-  Arayüzü Astra yapıyor (brif 09, taban `faz6a-saha-calismalari-sozlesmesi`).
+- **Saha çalışma günlüğü** (`lib/sites/releases*.ts` + Astra #46: `components/vitrin/sahalar/SiteReleases.tsx`,
+  `components/vitrin/shared/YouTubeLite.tsx`): saha sayfasında "Bu sahadaki çalışmalar" — tamamlanan bırakmalar (tarih, başlık,
+  video, izleme raporu; ADET YOK). Video tıklayınca yüklenir: oynat'a basılmadan DOM'da iframe / ytimg / preconnect yoktur,
+  basınca `youtube-nocookie.com`. Boş listede bölüm hiç çıkmaz. `?ornek=calisma` yalnız geliştirmede okunur (canlıda
+  `searchParams`'a dokunulmaz). `YouTubeLite` geneldir; sipariş / sertifika sayfalarında da kullanılabilir.
 - Sınama: betikle, taze deneme siparişinde uçtan uca (gerçek e-posta gönderilmeden; "başarılı gönderim" yolu sahte
   göndericiyle): sertifika kodu + yinelenebilirlik · herkese açık sertifikada kişisel veri yok · bildirim bir kez ·
   1 Nisan geçişi · geçersiz/erken video reddi · video düzeltmesinde yeniden bildirim yok · bildirim gitmeden `completed`

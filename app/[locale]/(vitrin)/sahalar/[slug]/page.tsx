@@ -40,7 +40,9 @@ export default async function SiteDetailPage({ params, searchParams }: Props) {
   setRequestLocale(locale);
   const site = await getProjectSiteBySlug(slug, locale);
   if (!site) notFound();
-  const { ornek } = await searchParams;
+  // `?ornek=` yalnız geliştirme örnekleri içindir. Canlıda `searchParams` HİÇ okunmaz: okunursa sayfa
+  // her istekte yeniden üretilir ve yukarıdaki `revalidate` (5 dakikalık önbellek) devre dışı kalır.
+  const ornek = process.env.NODE_ENV === "production" ? null : (await searchParams).ornek;
   const releases = await getSiteReleases(site.id, {
     sample: typeof ornek === "string" ? ornek : null,
   });

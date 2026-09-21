@@ -43,3 +43,20 @@ export function paymentResultPath(orderNo: string, orderId: string, locale: stri
   const token = signOrderToken(orderId);
   return `${prefix}/odeme/sonuc/${orderNo}${token ? `?t=${token}` : ""}`;
 }
+
+/* ── Erişim çerezi ────────────────────────────────────────────────────────────
+   E-postadaki bağlantı (`?t=`) ilk açılışta doğrulanır, belirteç adres çubuğundan silinir.
+   Sayfa yenilendiğinde ya da dil değiştirildiğinde erişim kaybolmasın diye aynı belirteç
+   yalnız sunucunun okuyabildiği (HttpOnly) bir çerezde tutulur. Çerez yeni bir yetki
+   VERMEZ: değeri yine imza doğrulamasından geçer; çalınması bağlantının çalınmasıyla aynıdır. */
+export const orderCookieName = (orderNo: string) => `sgo_${orderNo}`;
+
+export function orderCookieOptions() {
+  return {
+    httpOnly: true,
+    sameSite: "lax" as const,
+    secure: process.env.NODE_ENV === "production",
+    path: "/",
+    maxAge: 30 * 24 * 60 * 60,
+  };
+}

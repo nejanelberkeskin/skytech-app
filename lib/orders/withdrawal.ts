@@ -24,7 +24,7 @@ export { REFUND_DAYS, refundDueDay } from "./withdrawal-dates";
 
 export type WithdrawalOutcome =
   | { ok: true; order: ReleaseOrderRow; receivedAt: string; refundDueOn: string }
-  | { ok: false; error: "not_found" | "not_eligible" | "already_requested" };
+  | { ok: false; error: "not_found" | "not_eligible" | "already_requested" | "already_refunded" };
 
 export interface WithdrawalMeta {
   channel: "form" | "account";
@@ -43,7 +43,8 @@ export async function recordWithdrawal(
   if (!order || !order.paid_at || order.buyer_email.trim().toLowerCase() !== email.trim().toLowerCase()) {
     return { ok: false, error: "not_found" };
   }
-  if (order.status === "withdrawal_requested" || order.status === "cancelled_by_seller" || order.status === "refunded") {
+  if (order.status === "refunded") return { ok: false, error: "already_refunded" };
+  if (order.status === "withdrawal_requested" || order.status === "cancelled_by_seller") {
     return { ok: false, error: "already_requested" };
   }
   const now = new Date();

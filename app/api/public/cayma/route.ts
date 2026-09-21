@@ -12,7 +12,7 @@ import { recordWithdrawal, refundDueDay, sendWithdrawalEmails } from "@/lib/orde
  *
  * Yanıt: 200 { ok, orderNo, receivedAt, refundDueOn }
  *        400 { error:"validation", fields } · 404 { error:"not_found" }
- *        409 { error:"not_eligible"|"already_requested" } · 429 · 503 { error:"closed" }
+ *        409 { error:"not_eligible"|"already_requested"|"already_refunded" } · 429 · 503 { error:"closed" }
  *
  * Bildirim ulaştığı an geçerlidir: sipariş `withdrawal_requested` olur, bekleyen iade kaydı
  * açılır, müşteriye DERHAL teyit e-postası gider (yanıt bekletilmeden, `after()` içinde).
@@ -55,9 +55,8 @@ export async function POST(req: NextRequest) {
   if (process.env.NODE_ENV !== "production" && input.email === FIXTURE_EMAIL) {
     const fixture = ORDER_VIEW_FIXTURES.find((o) => o.orderNo === input.orderNo);
     if (fixture) {
-      if (fixture.status === "withdrawal_requested" || fixture.status === "refunded") {
-        return NextResponse.json({ error: "already_requested" }, { status: 409 });
-      }
+      if (fixture.status === "refunded") return NextResponse.json({ error: "already_refunded" }, { status: 409 });
+      if (fixture.status === "withdrawal_requested") return NextResponse.json({ error: "already_requested" }, { status: 409 });
       if (!fixture.canWithdraw) return NextResponse.json({ error: "not_eligible" }, { status: 409 });
       const now = new Date();
       return NextResponse.json({ ok: true, orderNo: fixture.orderNo, receivedAt: now.toISOString(), refundDueOn: refundDueDay(now) });

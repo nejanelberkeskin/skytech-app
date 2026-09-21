@@ -1570,7 +1570,8 @@
       "already_requested": "A withdrawal notice for this order has already been received; the refund process is under way.",
       "rate_limited": "Too many attempts in a short time. Please try again later.",
       "closed": "The online withdrawal form is currently closed. You can send your withdrawal notice to {email}.",
-      "generic": "Something went wrong. Please try again or email {email}."
+      "generic": "Something went wrong. Please try again or email {email}.",
+      "already_refunded": "The amount for this order has already been refunded. For questions, contact {email}."
     }
   },
   "carbonProgramPage": {

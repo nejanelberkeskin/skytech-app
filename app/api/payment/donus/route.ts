@@ -1,6 +1,6 @@
 import { after, NextRequest, NextResponse } from "next/server";
 import { rateLimit, getClientIP } from "@/lib/admin-auth";
-import { paymentResultPath } from "@/lib/orders/access";
+import { orderCookieName, orderCookieOptions, paymentResultPath, signOrderToken } from "@/lib/orders/access";
 import { sendPaidOrderEmails } from "@/lib/orders/after-payment";
 import { completePayment } from "@/lib/orders/payment-flow";
 import { getPaymentProvider } from "@/lib/payments";
@@ -47,7 +47,11 @@ export async function POST(req: NextRequest) {
       const origin = req.nextUrl.origin;
       after(() => sendPaidOrderEmails(order, origin));
     }
-    return to(req, paymentResultPath(order.order_no, order.id, order.locale));
+    // Sonuç sayfası yenilendiğinde erişim kaybolmasın: imzalı belirteç HttpOnly çereze de yazılır.
+    const res = to(req, paymentResultPath(order.order_no, order.id, order.locale));
+    const accessToken = signOrderToken(order.id);
+    if (accessToken) res.cookies.set(orderCookieName(order.order_no), accessToken, orderCookieOptions());
+    return res;
   } catch (e) {
     console.error("[odeme] dönüş hatası:", e instanceof Error ? e.message : e);
     return to(req, "/odeme/hata");

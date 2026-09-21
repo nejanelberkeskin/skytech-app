@@ -102,7 +102,8 @@ export type WithdrawalErrorCode =
   | "validation"
   | "not_found" //          sipariş no + e-posta eşleşmedi (hangisinin yanlış olduğu söylenmez)
   | "not_eligible" //       cayma süresi dolmuş ya da sipariş bu aşamada caymaya uygun değil
-  | "already_requested" //  bu sipariş için cayma bildirimi zaten alınmış
+  | "already_requested" //  bu sipariş için cayma bildirimi zaten alınmış; iade süreci sürüyor
+  | "already_refunded" //   bu siparişin bedeli zaten iade edilmiş
   | "rate_limited"
   | "closed"
   | "generic";
@@ -123,6 +124,7 @@ const WITHDRAWAL_KNOWN: readonly WithdrawalErrorCode[] = [
   "not_found",
   "not_eligible",
   "already_requested",
+  "already_refunded",
   "rate_limited",
   "closed",
 ];

@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { rateLimit, getClientIP } from "@/lib/admin-auth";
 import { createSupabaseServer } from "@/lib/supabase/server";
+import { orderCookieName } from "@/lib/orders/access";
 import { documentFileName, loadStoredDocuments, storedDocumentToPdf } from "@/lib/orders/after-payment";
 import { db } from "@/lib/orders/store";
 import { DOCUMENT_KINDS, type DocumentKind } from "@/lib/orders/types";
@@ -37,7 +38,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ no: 
   const limited = rateLimit(`siparis-belge:${getClientIP(req)}`, 60, 10 * 60_000);
   if (limited) return limited;
 
-  const token = req.nextUrl.searchParams.get("t");
+  const token = req.nextUrl.searchParams.get("t") ?? req.cookies.get(orderCookieName(no.trim().toUpperCase()))?.value ?? null;
   let userId: string | null = null;
   if (!token) {
     try {

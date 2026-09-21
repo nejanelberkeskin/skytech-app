@@ -5,7 +5,9 @@ import { Link } from "@/i18n/navigation";
 import SectionWrapper from "@/components/vitrin/SectionWrapper";
 import RetryPaymentButton from "@/components/vitrin/odeme/RetryPaymentButton";
 import { createSupabaseServer } from "@/lib/supabase/server";
+import { OrderAccessPrivacy } from "@/components/vitrin/siparis-durumu/OrderControls";
 import { orderPagePath, signOrderToken } from "@/lib/orders/access";
+import { readOrderCookie } from "@/lib/orders/access-cookie";
 import { formatLongDay, formatTrClock } from "@/lib/orders/dates";
 import { trToday } from "@/lib/orders/schedule";
 import { getAuthorizedOrder } from "@/lib/orders/view-data";
@@ -32,7 +34,7 @@ export default async function PaymentResultPage({ params, searchParams }: { para
   const [{ locale, no }, search] = await Promise.all([params, searchParams]);
   setRequestLocale(locale);
   const priceLocale: PriceLocale = locale === "en" || locale === "ru" ? locale : "tr";
-  const token = typeof search.t === "string" ? search.t : null;
+  const token = typeof search.t === "string" ? search.t : await readOrderCookie(no);
 
   let userId: string | null = null;
   if (!token) {
@@ -59,6 +61,7 @@ export default async function PaymentResultPage({ params, searchParams }: { para
   return (
     <SectionWrapper variant="light" className="!py-20 lg:!py-28">
       <div className="mx-auto max-w-2xl">
+        <OrderAccessPrivacy orderNo={order.order_no} />
         {order.is_test ? (
           <p className="mb-6 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-900">{t("test")}</p>
         ) : null}
@@ -124,7 +127,7 @@ export default async function PaymentResultPage({ params, searchParams }: { para
               </div>
               <RetryPaymentButton
                 orderNo={order.order_no}
-                token={token}
+                token={typeof search.t === "string" ? search.t : null}
                 labels={{
                   retry: t("failed.retry"),
                   retrying: t("failed.retrying"),

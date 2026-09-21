@@ -129,6 +129,7 @@ export const ORDER_VIEW_FIXTURES: PublicOrderView[] = [
     orderNo: "SG-2026-RNEK45", // partiye alındı
     status: "scheduled",
     createdOn: "2026-10-02",
+    schedule: { ...base.schedule, withdrawalLastDay: "2026-10-16" },
     canWithdraw: false,
     timeline: timelineFor("scheduled", { paid: "2026-10-02", confirmed: "2026-10-17", scheduled: "2026-11-05" }),
     documents: docs("SG-2026-RNEK45"),
@@ -143,6 +144,7 @@ export const ORDER_VIEW_FIXTURES: PublicOrderView[] = [
     orderNo: "SG-2026-RNEK67", // bırakıldı: sertifika + fatura var, video henüz yok
     status: "monitoring",
     createdOn: "2026-10-02",
+    schedule: { ...base.schedule, withdrawalLastDay: "2026-10-16" },
     quantity: 5000,
     totals: { unitPriceKurus: 1000, totalKurus: 5_000_000, vatRate: 20 },
     certificateName: "Örnek Lojistik A.Ş. Çalışanları",
@@ -160,6 +162,7 @@ export const ORDER_VIEW_FIXTURES: PublicOrderView[] = [
     orderNo: "SG-2026-RNEK89", // tamamlandı: video yayımlandı
     status: "completed",
     createdOn: "2026-10-02",
+    schedule: { ...base.schedule, withdrawalLastDay: "2026-10-16" },
     canWithdraw: false,
     timeline: timelineFor("completed", { paid: "2026-10-02", confirmed: "2026-10-17", scheduled: "2026-11-05", released: "2026-11-14", monitoring: "2027-04-01", completed: "2027-05-20" }),
     documents: docs("SG-2026-RNEK89"),

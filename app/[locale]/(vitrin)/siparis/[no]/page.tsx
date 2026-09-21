@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { createSupabaseServer } from "@/lib/supabase/server";
+import { readOrderCookie } from "@/lib/orders/access-cookie";
 import { getOrderView } from "@/lib/orders/view-data";
 import { ORDER_NO_RE } from "@/lib/orders/types";
 import { buildPageMetadata } from "@/lib/seo";
@@ -32,8 +33,10 @@ export default async function OrderPage({ params, searchParams }: Props) {
   const { locale, no } = await params;
   setRequestLocale(locale);
   if (!ORDER_NO_RE.test(no)) notFound();
-  const { t: token } = await searchParams;
-  // Misafir müşteri e-postadaki belirteçle, üye kendi siparişine oturumuyla erişir.
+  const { t: queryToken } = await searchParams;
+  // Misafir müşteri e-postadaki belirteçle (ilk açılıştan sonra erişim çereziyle), üye kendi
+  // siparişine oturumuyla erişir.
+  const token = typeof queryToken === "string" ? queryToken : await readOrderCookie(no);
   let userId: string | null = null;
   if (typeof token !== "string") {
     try {

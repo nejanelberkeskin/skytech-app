@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { rateLimit, getClientIP } from "@/lib/admin-auth";
 import { createSupabaseServer } from "@/lib/supabase/server";
-import { orderPagePath } from "@/lib/orders/access";
+import { orderCookieName, orderPagePath } from "@/lib/orders/access";
 import { ordersClosed } from "@/lib/orders/gate";
 import { startPayment } from "@/lib/orders/payment-flow";
 import { db } from "@/lib/orders/store";
@@ -27,7 +27,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ no:
 
   const { no } = await params;
   const body = (await req.json().catch(() => null)) as { t?: unknown } | null;
-  const token = typeof body?.t === "string" ? body.t : null;
+  const token = typeof body?.t === "string" ? body.t : (req.cookies.get(orderCookieName(no.trim().toUpperCase()))?.value ?? null);
 
   let userId: string | null = null;
   if (!token) {

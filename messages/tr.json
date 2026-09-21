@@ -1570,7 +1570,8 @@
       "already_requested": "Bu sipariş için cayma bildirimi daha önce alınmış; iade süreci sürüyor.",
       "rate_limited": "Kısa sürede çok fazla deneme yapıldı. Lütfen biraz sonra yeniden deneyin.",
       "closed": "Çevrim içi cayma formu şu anda kapalı. Cayma bildiriminizi {email} adresine yazabilirsiniz.",
-      "generic": "Bir şeyler ters gitti. Lütfen yeniden deneyin ya da {email} adresine yazın."
+      "generic": "Bir şeyler ters gitti. Lütfen yeniden deneyin ya da {email} adresine yazın.",
+      "already_refunded": "Bu siparişin bedeli daha önce iade edilmiş. Sorularınız için {email}."
     }
   },
   "carbonProgramPage": {

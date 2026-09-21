@@ -601,6 +601,10 @@ Bu bölüm 11. bölümdeki akış tarifinin yerine geçer.
 - **Erişim — `lib/orders/access.ts`:** misafir müşteri siparişine `?t=<HMAC>` ile erişir (numarayı bilmek yetmez); üye
   kendi siparişine oturumla. Anahtar `ORDER_LINK_SECRET` (**canlıya çıkmadan tanımlanmalı**; yoksa service role
   anahtarından türetilir — o anahtar döndürülürse e-postalardaki bağlantılar geçersizleşir).
+- **Erişim çerezi:** sipariş sayfası belirteci adres çubuğundan siler; silmeden önce `POST /api/public/siparis/<no>/erisim`
+  ile HttpOnly `sgo_<no>` çerezine çevirir (ödeme dönüş uçları çerezi doğrudan yazar). Böylece yenileme ve dil değişimi
+  404 vermez. Çerez yeni yetki vermez: değeri aynı imza doğrulamasından geçer. Sayfalar ve belge/yeniden-ödeme uçları
+  `?t=` yoksa çerezi okur (`lib/orders/access-cookie.ts`, `orderCookieName`).
 - **Görünüm — `lib/orders/view-data.ts`:** `getOrderView(no, { token, userId })` gerçek kaydı `PublicOrderView`'a çevirir;
   ödenmemiş siparişin sayfası yoktur (null). Geliştirmede `?t=ornek` örnekleri durur.
   Belgeler: `GET /api/public/siparis/<no>/belge/<kind>?t=…&bicim=html|pdf` (HTML = saklanan kopya, CSP sandbox; önbellek yok).

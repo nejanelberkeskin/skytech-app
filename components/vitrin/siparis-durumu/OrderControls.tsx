@@ -41,11 +41,22 @@ function withoutAccessQuery(value: unknown): unknown {
   return value;
 }
 
-/** Consume access only on the server; never retain or share the email-link token. */
-export function OrderAccessPrivacy() {
+/** Consume access only on the server; never retain or share the email-link token.
+ * Before the token is removed from the address bar it is exchanged for an HttpOnly cookie
+ * (readable by the server only), so a reload or a language switch keeps the page accessible. */
+export function OrderAccessPrivacy({ orderNo }: { orderNo?: string }) {
   useLayoutEffect(() => {
     const url = new URL(window.location.href);
     if (url.searchParams.has("t")) {
+      const token = url.searchParams.get("t");
+      if (token && orderNo) {
+        void fetch(`/api/public/siparis/${encodeURIComponent(orderNo)}/erisim`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ t: token }),
+          keepalive: true,
+        }).catch(() => undefined);
+      }
       url.searchParams.delete("t");
       window.history.replaceState(
         withoutAccessQuery(window.history.state),
@@ -53,7 +64,7 @@ export function OrderAccessPrivacy() {
         url,
       );
     }
-  }, []);
+  }, [orderNo]);
   return null;
 }
 

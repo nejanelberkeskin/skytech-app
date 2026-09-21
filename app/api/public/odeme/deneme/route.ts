@@ -2,7 +2,7 @@ import { after, NextRequest, NextResponse } from "next/server";
 import { rateLimit, getClientIP } from "@/lib/admin-auth";
 import { completePayment } from "@/lib/orders/payment-flow";
 import { sendPaidOrderEmails } from "@/lib/orders/after-payment";
-import { paymentResultPath } from "@/lib/orders/access";
+import { orderCookieName, orderCookieOptions, paymentResultPath, signOrderToken } from "@/lib/orders/access";
 import { getPaymentProvider } from "@/lib/payments";
 import { recordMockOutcome, verifyMockOutcome } from "@/lib/payments/mock";
 
@@ -36,10 +36,13 @@ export async function POST(req: NextRequest) {
     const origin = req.nextUrl.origin;
     after(() => sendPaidOrderEmails(order, origin));
   }
-  return NextResponse.json({
+  const res = NextResponse.json({
     ok: true,
     outcome: result.outcome,
     orderNo: order.order_no,
     redirectUrl: paymentResultPath(order.order_no, order.id, order.locale),
   });
+  const accessToken = signOrderToken(order.id);
+  if (accessToken) res.cookies.set(orderCookieName(order.order_no), accessToken, orderCookieOptions());
+  return res;
 }

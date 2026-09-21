@@ -6,6 +6,8 @@ import { sha256Hex } from "@/lib/legal/documents";
 import { sampleLegalContext } from "@/lib/legal/sample";
 import { contractDocument } from "@/lib/legal/templates/contract";
 import { preInfoDocument } from "@/lib/legal/templates/pre-info";
+import { kvkkNoticePublicDocument } from "@/lib/legal/templates/kvkk-notice";
+import type { LegalContext } from "@/lib/legal/types";
 import { withdrawalFormDocument } from "@/lib/legal/templates/withdrawal-form";
 import { legalPagesVisible } from "@/lib/legal/visibility";
 
@@ -13,7 +15,7 @@ import { legalPagesVisible } from "@/lib/legal/visibility";
  * GET /api/public/hukuk/ornek/[belge] — hukuki metinlerin ÖRNEK (yer tutuculu) PDF'i.
  * Kişisel veri içermez. Hukuk sayfaları görünür değilken 404.
  *
- *   belge: on-bilgilendirme | mesafeli-hizmet-sozlesmesi | cayma-formu
+ *   belge: on-bilgilendirme | mesafeli-hizmet-sozlesmesi | cayma-formu | kvkk-aydinlatma-metni
  */
 export const runtime = "nodejs";
 
@@ -21,6 +23,8 @@ const BUILDERS = {
   "on-bilgilendirme": preInfoDocument,
   "mesafeli-hizmet-sozlesmesi": contractDocument,
   "cayma-formu": withdrawalFormDocument,
+  // Genel metin: siparişe bağlı künye (sipariş no, tarih) yazılmaz.
+  "kvkk-aydinlatma-metni": (ctx: LegalContext) => kvkkNoticePublicDocument(ctx.version),
 } as const;
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ belge: string }> }) {

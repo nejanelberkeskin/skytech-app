@@ -1,7 +1,18 @@
 import type { Metadata } from "next";
 import { setRequestLocale } from "next-intl/server";
+import LegalBlocks from "@/components/vitrin/LegalBlocks";
 import LegalLayout, { LegalList, LegalP, LegalSection } from "@/components/vitrin/LegalLayout";
 import { buildPageMetadata } from "@/lib/seo";
+import { KVKK_NOTICE_TITLE, kvkkNoticeBlocks } from "@/lib/legal/templates/kvkk-notice";
+import { LEGAL_DOCUMENTS_VERSION, LEGAL_EFFECTIVE_LABEL } from "@/lib/legal/version";
+import { legalPagesVisible, samplePdfHref } from "@/lib/legal/visibility";
+
+/* KVKK Aydınlatma Metni.
+   YENİ metin (satış modeli v2: sipariş, ödeme, fatura, sertifika, ticari ileti, aktarımlar, saklama
+   süreleri) lib/legal/templates/kvkk-notice.ts'ten gelir — her siparişle birlikte saklanan kopyayla
+   AYNI kaynak. Hukuk incelemesi bitene kadar canlıda ESKİ metin kalır: yeni metin yalnız geliştirmede,
+   Vercel önizlemesinde ve NEXT_PUBLIC_LEGAL_PAGES_ENABLED=true iken görünür (diğer hukuk sayfalarıyla
+   aynı kural — lib/legal/visibility.ts). Bayrak açıldığında aşağıdaki eski metin bloğu silinebilir. */
 
 export async function generateMetadata({
   params,
@@ -27,6 +38,25 @@ export default async function KvkkPage({
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
+
+  if (legalPagesVisible()) {
+    return (
+      <LegalLayout title={KVKK_NOTICE_TITLE} path="/kvkk" effectiveDate={LEGAL_EFFECTIVE_LABEL}>
+        <LegalBlocks blocks={kvkkNoticeBlocks()} />
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-3 border-t border-black/8 pt-6 text-sm">
+          <a
+            href={samplePdfHref("kvkk-aydinlatma-metni")}
+            target="_blank"
+            rel="noopener"
+            className="font-semibold text-[#1B6B3A] underline decoration-[#1B6B3A]/30 underline-offset-4 hover:decoration-[#1B6B3A]"
+          >
+            Metni PDF olarak indir
+          </a>
+          <span className="text-xs text-[#6b8f6b]">Belge sürümü: {LEGAL_DOCUMENTS_VERSION}</span>
+        </div>
+      </LegalLayout>
+    );
+  }
 
   return (
     <LegalLayout title="KVKK Aydınlatma Metni" path="/kvkk" effectiveDate="6 Temmuz 2026">

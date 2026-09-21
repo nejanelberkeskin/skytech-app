@@ -1827,7 +1827,7 @@
       "badge": "Ödeme onaylandı",
       "title": "Siparişiniz alındı",
       "body": "Ödemeniz onaylandı ve sözleşmeniz kuruldu. Tohum topu bırakma siparişiniz kayda geçti.",
-      "email": "Sipariş teyidiniz; Ön Bilgilendirme Formu, Mesafeli Hizmet Sözleşmesi ve Cayma Formu ile birlikte {email} adresine e-postayla gönderilir. Birkaç dakika içinde ulaşmazsa gereksiz (spam) klasörünü kontrol edebilirsiniz.",
+      "email": "Sipariş teyidiniz; Ön Bilgilendirme Formu, Mesafeli Hizmet Sözleşmesi, Cayma Formu ve KVKK Aydınlatma Metni ile birlikte {email} adresine e-postayla gönderilir. Birkaç dakika içinde ulaşmazsa gereksiz (spam) klasörünü kontrol edebilirsiniz.",
       "deadline": "Tohum topları en geç {date} tarihine kadar bırakılır.",
       "withdrawal": "Cayma hakkınızı {date} günü sonuna kadar, gerekçe göstermeden kullanabilirsiniz.",
       "cta": "Siparişimi görüntüle",

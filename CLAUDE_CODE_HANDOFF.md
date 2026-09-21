@@ -723,6 +723,21 @@ Bu bölüm 11. bölümdeki akış tarifinin yerine geçer.
 - Eski `/hesabim/siparislerim` (tohum satışı) sayfasına dokunulmadı; Faz 8 temizliğinde kalkacak.
 - Sınama: sorgu biçimi canlı şemaya karşı doğrulandı; sayfa üye oturumu gerektirdiği için tarayıcıda DENENMEDİ.
 
+### KVKK Aydınlatma Metni (Faz 9a)
+- Yeni metin `lib/legal/templates/kvkk-notice.ts` (ziyaret · talep · üyelik · sipariş · sertifika · ticari ileti; alıcılar ve
+  yurt dışı aktarım; saklama süreleri; haklar ve başvuru). **Tek kaynak:** `/kvkk` sayfası da, her siparişle saklanan kopya da
+  (belge türü `kvkk_notice` — dördüncü belge; e-postaya PDF olarak eklenir, sihirbazda ve sipariş sayfasında listelenir) bu
+  bloklardan çıkar. Onay kaydındaki sürümle birlikte "müşteriye hangi metin gösterildi" ispatlanabilir.
+- **Canlıda eski metin durur:** yeni metin yalnız `legalPagesVisible()` iken (geliştirme, Vercel önizlemesi,
+  `NEXT_PUBLIC_LEGAL_PAGES_ENABLED=true`). Onaydan sonra `app/[locale]/(vitrin)/kvkk/page.tsx` içindeki eski blok silinir.
+- Metin KODLA UYUMLU tutulmalı (dosyanın başındaki liste): kart verisi bize gelmez · **T.C. kimlik / vergi no iyzico'ya
+  gönderilmez** (bu PR'da kapatıldı; `identityNumber` her zaman genel değer) · IP ham saklanmaz (özet) · sertifika sayfası
+  dizine kapalı. Sağlayıcı değişirse `PROCESSORS` listesi + sürüm güncellenir.
+- Belge modeline `subheading` blok türü eklendi (HTML `<h3>`, PDF kalın satır, sayfa bileşeni). Sürüm `2026-09.2-taslak`.
+- Avukat için: `web-brifler/hukuk-taslaklari/` yeniden üretildi (12 PDF + 12 HTML) + `KVKK-AVUKAT-NOTLARI.md`
+  (en önemli açık: m.9 yurt dışı aktarım güvencesi; saklama süresi önerileri; sertifikanın hukuki sebebi).
+- Devreden: `/gizlilik-politikasi` ve `/cerez-politikasi` bu metinle uyumlu hâle getirilecek (onaydan sonra).
+
 ### Sıradaki (plan §Fazlar)
 Faz 5c satış ayarları ekranı (fiyat/KDV/süreler + "sipariş alımı durduruldu"; sihirbaz fiyatı sunucudan almalı) → Faz 6 sertifika + zamanlanmış işler (süre dolumu, cayma süresi sonu → `confirmed`, video
 bildirimi).

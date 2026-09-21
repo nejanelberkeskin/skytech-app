@@ -14,8 +14,6 @@ export interface PaymentInitInput {
   /** Sağlayıcıya bildirilen alıcı kimliği: üye kimliği ya da misafir için siparişten türetilmiş değer */
   buyerId: string;
   buyer: { firstName: string; lastName: string; email: string; phone: string; ip: string | null };
-  /** Bireysel alıcı verdiyse T.C. kimlik no, kurumsalda vergi no; yoksa null (sağlayıcı genel değer kullanır) */
-  identityNumber: string | null;
   /** Fatura adresindeki ad: kurumsalda şirket unvanı; null ise alıcının adı soyadı */
   billingName: string | null;
   /** Fatura adresi (sağlayıcılar zorunlu tutar) */

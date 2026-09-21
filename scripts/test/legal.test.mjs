@@ -90,7 +90,7 @@ for (const [name, c] of Object.entries(cases)) {
     orderNo: c.orderNo,
   });
   const docs = D.buildOrderDocuments(ctx);
-  assert.deepEqual(docs.map((d) => d.kind), ["pre_info", "contract", "withdrawal_form"]);
+  assert.deepEqual(docs.map((d) => d.kind), ["pre_info", "contract", "withdrawal_form", "kvkk_notice"]);
 
   // deterministik: aynı bağlam → aynı HTML → aynı özet
   const again = D.buildOrderDocuments(ctx);
@@ -104,7 +104,29 @@ for (const [name, c] of Object.entries(cases)) {
     assert.ok(!/<script|onerror=|javascript:/i.test(d.html));
   });
 
-  const [pre, contract, form] = docs.map((d) => norm(d.html));
+  const [pre, contract, form, kvkk] = docs.map((d) => norm(d.html));
+
+  // KVKK Aydınlatma Metni: m.10'daki zorunlu unsurlar + kodun gerçekte yaptığıyla uyumlu beyanlar
+  for (const must of [
+    "SKYTECH HAVACILIK VE TEKNOLOJİ SANAYİ TİCARET ANONİM ŞİRKETİ", // veri sorumlusunun kimliği
+    "KVKK m.5/2-c", "KVKK m.5/2-ç", "KVKK m.5/2-e", "KVKK m.5/2-f", "KVKK m.5/1", // hukuki sebepler
+    "iyzico", "Gelir İdaresi Başkanlığı", "İleti Yönetim Sistemi", "Vercel", "Supabase", "Resend", // alıcılar
+    "yurt dışına aktarılır", "KVKK m.9",
+    "tamamen veya kısmen otomatik yollarla", // toplama yöntemi
+    "KVKK m.11", "Kişisel Verileri Koruma Kuruluna şikâyette", // haklar ve başvuru
+    "rıza beyanı değildir",
+    "güvenlik kodu tarafımıza ulaşmaz",
+    "T.C. kimlik ve vergi numaranız ödeme kuruluşuna aktarılmaz",
+    "bağlantısını bilen herkes tarafından görüntülenebilir",
+    "Bu izin siparişin şartı değildir",
+    "10 yıl",
+  ]) {
+    assert.ok(kvkk.includes(must), `${name}: aydınlatma metninde eksik → ${must}`);
+  }
+  // Genel metindir: alıcının kişisel verisi içine yazılmaz (yalnız künyedeki sipariş no ve tarih).
+  for (const personal of [ctx.buyer.email, ctx.buyer.phone, ctx.buyer.address]) {
+    assert.ok(!kvkk.includes(personal), `${name}: aydınlatma metnine alıcı verisi sızmış`);
+  }
   // m.5'teki zorunlu bilgiler (ön bilgilendirme)
   for (const must of [
     "SKYTECH HAVACILIK VE TEKNOLOJİ SANAYİ TİCARET ANONİM ŞİRKETİ",
@@ -188,7 +210,8 @@ for (const [name, c] of Object.entries(cases)) {
   const ctx = D.buildLegalContext({ input: evil, site, totals: totals(200), schedule: Sc.scheduleFor(now), orderDate: Sc.trToday(now) });
   for (const d of D.buildOrderDocuments(ctx)) {
     assert.ok(!/<script|<img|<b>/i.test(d.html), d.kind + ": kaçışlanmamış girdi");
-    assert.ok(d.kind === "withdrawal_form" || d.html.includes("&lt;script&gt;"));
+    // Cayma Formu ve KVKK Aydınlatma Metni alıcının adresini içermez.
+    assert.ok(d.kind === "withdrawal_form" || d.kind === "kvkk_notice" || d.html.includes("&lt;script&gt;"));
   }
 }
 console.log("✓ hukuki belge testleri geçti" + (WRITE ? ` — taslaklar yazıldı: ${OUT}` : ""));

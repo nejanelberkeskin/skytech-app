@@ -15,6 +15,8 @@ import type { BuyerType, DocumentKind } from "@/lib/orders/types";
 
 export type LegalBlock =
   | { type: "heading"; text: string }
+  /** Bölüm içi alt başlık (ör. "2.1. Siteyi ziyaret ettiğinizde"). */
+  | { type: "subheading"; text: string }
   | { type: "paragraph"; text: string }
   | { type: "list"; items: string[] }
   | { type: "table"; rows: [label: string, value: string][] }

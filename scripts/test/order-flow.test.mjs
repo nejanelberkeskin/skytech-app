@@ -43,7 +43,6 @@ const initInput = {
   amountKurus: 200_000,
   locale: "en",
   buyerId: "G-2f1c1e0a-5b7d",
-  identityNumber: null,
   billingName: null,
   buyer: { firstName: "A", lastName: "B", email: "a@example.com", phone: "+905000000000", ip: null },
   address: { line: "x", district: "y", province: "06", postalCode: null },

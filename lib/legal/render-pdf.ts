@@ -90,6 +90,14 @@ export function renderLegalPdf(document: LegalDocument, options: PdfOptions = {}
         y += 4;
         break;
       }
+      case "subheading": {
+        y += 4;
+        // Alt başlık sayfa sonunda yalnız kalmasın: ardından en az iki satır sığmalı.
+        ensure(3 * lineHeight(SIZE.body));
+        flow(block.text, PAGE.left, CONTENT_WIDTH, SIZE.body, "bold");
+        y += 3;
+        break;
+      }
       case "paragraph": {
         flow(block.text, PAGE.left, CONTENT_WIDTH, SIZE.body);
         y += 6;

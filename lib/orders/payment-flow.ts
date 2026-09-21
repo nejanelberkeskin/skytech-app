@@ -31,7 +31,6 @@ export async function startPayment(
     amountKurus: order.total_kurus,
     locale: order.locale,
     buyerId: order.user_id ?? `G-${order.id.slice(0, 13)}`,
-    identityNumber: order.invoice.type === "corporate" ? order.invoice.taxId : order.invoice.tckn,
     billingName: order.invoice.type === "corporate" ? order.invoice.companyTitle : null,
     buyer: {
       firstName: order.buyer_first_name,

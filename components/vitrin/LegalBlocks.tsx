@@ -16,6 +16,12 @@ export default function LegalBlocks({ blocks }: { blocks: LegalBlock[] }) {
                 {block.text}
               </h2>
             );
+          case "subheading":
+            return (
+              <h3 key={i} className="text-base lg:text-lg font-semibold text-[#0e2519] !mt-7">
+                {block.text}
+              </h3>
+            );
           case "paragraph":
             return (
               <p key={i} className="text-[15px] text-[#3d5a3d] leading-relaxed">

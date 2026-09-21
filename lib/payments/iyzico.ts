@@ -109,8 +109,9 @@ export const iyzicoProvider: PaymentProvider = {
         surname: input.buyer.lastName,
         gsmNumber: input.buyer.phone,
         email: input.buyer.email,
-        // Bireysel alıcı T.C. kimlik no vermek zorunda değildir; iyzico alanı zorunlu tuttuğu için genel değer.
-        identityNumber: input.identityNumber ?? "11111111111",
+        // Veri minimizasyonu: T.C. kimlik / vergi numarası ödeme kuruluşuna GÖNDERİLMEZ (yalnız fatura için
+        // alınır; aydınlatma metni de böyle söyler). iyzico alanı zorunlu tuttuğu için genel değer yazılır.
+        identityNumber: "11111111111",
         lastLoginDate: today,
         registrationDate: today,
         registrationAddress: input.address.line,

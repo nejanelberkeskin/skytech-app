@@ -12,6 +12,7 @@ const CSS = [
   "body{font:15px/1.65 -apple-system,'Segoe UI',Roboto,'Noto Sans',Arial,sans-serif;color:#1a2e1a;background:#fff;margin:0;padding:28px 24px 40px;max-width:760px}",
   "h1{font-size:22px;line-height:1.25;margin:0 0 6px;color:#0e2519}",
   "h2{font-size:16px;line-height:1.35;margin:28px 0 10px;color:#0e2519}",
+  "h3{font-size:14.5px;line-height:1.4;margin:20px 0 8px;color:#0e2519}",
   ".meta{font-size:12.5px;color:#4b6b4b;margin:0 0 20px;padding-bottom:14px;border-bottom:1px solid #d5e2d5}",
   ".meta span{display:inline-block;margin-right:18px}",
   "p{margin:0 0 12px}",
@@ -29,6 +30,8 @@ function renderBlock(block: LegalBlock): string {
   switch (block.type) {
     case "heading":
       return `<h2>${esc(block.text)}</h2>`;
+    case "subheading":
+      return `<h3>${esc(block.text)}</h3>`;
     case "paragraph":
       return `<p>${esc(block.text)}</p>`;
     case "note":

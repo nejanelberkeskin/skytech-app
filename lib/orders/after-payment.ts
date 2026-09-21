@@ -28,6 +28,7 @@ const FILE_NAMES: Record<string, string> = {
   pre_info: "on-bilgilendirme-formu",
   contract: "mesafeli-hizmet-sozlesmesi",
   withdrawal_form: "cayma-formu",
+  kvkk_notice: "kvkk-aydinlatma-metni",
 };
 
 /** Sipariş anında saklanan belgeleri (yapısal kaynak) döner. */

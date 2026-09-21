@@ -25,7 +25,7 @@ export const SALES_LEGAL_PAGES = [
   { path: "/islem-rehberi", label: "İşlem Rehberi" },
 ] as const;
 
-export type SamplePdfSlug = "on-bilgilendirme" | "mesafeli-hizmet-sozlesmesi" | "cayma-formu";
+export type SamplePdfSlug = "on-bilgilendirme" | "mesafeli-hizmet-sozlesmesi" | "cayma-formu" | "kvkk-aydinlatma-metni";
 
 /** Örnek PDF ucu — API adresidir; bağlantı düz <a> ile verilir (sayfa yönlendirmesi değildir). */
 export const samplePdfHref = (slug: SamplePdfSlug) => `/api/public/hukuk/ornek/${slug}`;

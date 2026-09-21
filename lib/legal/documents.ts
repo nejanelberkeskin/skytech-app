@@ -18,6 +18,7 @@ import type { DocumentKind, SiteSnapshot } from "@/lib/orders/types";
 import { renderLegalHtml } from "./render-html";
 import { contractDocument } from "./templates/contract";
 import { preInfoDocument } from "./templates/pre-info";
+import { kvkkNoticeDocument } from "./templates/kvkk-notice";
 import { withdrawalFormDocument } from "./templates/withdrawal-form";
 import type { LegalBuyer, LegalContext, LegalDocument, LegalSite } from "./types";
 import { LEGAL_DOCUMENTS_VERSION } from "./version";
@@ -98,7 +99,9 @@ export interface BuiltDocument {
 export const sha256Hex = (text: string) => createHash("sha256").update(text, "utf8").digest("hex");
 
 export function buildOrderDocuments(ctx: LegalContext): BuiltDocument[] {
-  return [preInfoDocument(ctx), contractDocument(ctx), withdrawalFormDocument(ctx)].map((document) => {
+  // KVKK Aydınlatma Metni de siparişle birlikte saklanır: müşteriye HANGİ sürümün gösterildiği
+  // sonradan ispatlanabilsin (onay kaydındaki sürüm numarası tek başına metni vermez).
+  return [preInfoDocument(ctx), contractDocument(ctx), withdrawalFormDocument(ctx), kvkkNoticeDocument(ctx)].map((document) => {
     const html = renderLegalHtml(document);
     return { kind: document.kind, title: document.title, version: document.version, document, html, sha256: sha256Hex(html) };
   });

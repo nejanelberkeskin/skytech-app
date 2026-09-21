@@ -1,5 +1,7 @@
 import type { MetadataRoute } from "next";
 import { localeUrl } from "@/lib/seo";
+import { getProjectSites } from "@/lib/sites/data";
+import { SITES_HREF, siteDetailHref } from "@/lib/sites/links";
 import { isSuspendedRoute } from "@/lib/site-config";
 
 /**
@@ -13,7 +15,8 @@ import { isSuspendedRoute } from "@/lib/site-config";
 
 interface SitemapEntry {
   path: string;
-  changeFrequency: "always" | "hourly" | "daily" | "weekly" | "monthly" | "yearly" | "never";
+  changeFrequency:
+    "always" | "hourly" | "daily" | "weekly" | "monthly" | "yearly" | "never";
   priority: number;
 }
 
@@ -43,7 +46,11 @@ const APP_ENTRY_PAGES: SitemapEntry[] = [
   // Uygulama akışlarının "girişi" kabul edilen anonim sayfalar
   { path: "/lands", changeFrequency: "weekly", priority: 0.7 },
   { path: "/bireysel/satin-al", changeFrequency: "weekly", priority: 0.85 },
-  { path: "/bireysel/satin-al/arazi", changeFrequency: "weekly", priority: 0.7 },
+  {
+    path: "/bireysel/satin-al/arazi",
+    changeFrequency: "weekly",
+    priority: 0.7,
+  },
   { path: "/kurumsal", changeFrequency: "monthly", priority: 0.7 },
   { path: "/kurumsal/teklif-al", changeFrequency: "monthly", priority: 0.7 },
   { path: "/kargo-takip", changeFrequency: "yearly", priority: 0.4 },
@@ -53,13 +60,24 @@ const APP_ENTRY_PAGES: SitemapEntry[] = [
 
 const LOCALES = ["tr", "en", "ru"] as const;
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const sites = await getProjectSites("tr").catch(() => []);
+  const sitePages: SitemapEntry[] = [
+    { path: SITES_HREF, changeFrequency: "weekly", priority: 0.9 },
+    ...sites.map((site) => ({
+      path: siteDetailHref(site),
+      changeFrequency: "weekly" as const,
+      priority: 0.8,
+    })),
+  ];
   const lastModified = new Date();
   // Bayraklarla /yakinda'ya yönlenen sayfaları sitemap'e koymayoruz —
   // yönlendirilen URL'ler arama motorlarına verilmemeli.
-  const all: SitemapEntry[] = [...VITRIN_PAGES, ...APP_ENTRY_PAGES].filter(
-    (entry) => !isSuspendedRoute(entry.path)
-  );
+  const all: SitemapEntry[] = [
+    ...VITRIN_PAGES,
+    ...APP_ENTRY_PAGES,
+    ...sitePages,
+  ].filter((entry) => !isSuspendedRoute(entry.path));
 
   // Her sayfa için 3 dilde URL üret + alternates ile hreflang sinyali ver
   return all.flatMap((entry) =>
@@ -70,9 +88,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: entry.priority,
       alternates: {
         languages: Object.fromEntries(
-          LOCALES.map((l) => [l, localeUrl(entry.path, l)])
+          LOCALES.map((l) => [l, localeUrl(entry.path, l)]),
         ),
       },
-    }))
+    })),
   );
 }

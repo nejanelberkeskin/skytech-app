@@ -53,6 +53,7 @@ const PUBLIC_PAGE_PATTERNS: RegExp[] = [
   /^\/dron-teknolojisi(\/.*)?$/,
   /^\/karbon-programi(\/.*)?$/,
   /^\/projeler(\/.*)?$/,
+  /^\/sahalar(\/.*)?$/,
   /^\/kurumsal-cozumler(\/.*)?$/,
   /^\/hakkimizda(\/.*)?$/,
   /^\/iletisim(\/.*)?$/,

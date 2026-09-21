@@ -84,6 +84,11 @@ export default async function OrderDetails({
   return (
     <div className="vitrin-container space-y-7 pb-20 pt-32 text-[#0e2519] sm:pt-40 motion-reduce:[&_*]:!transition-none motion-reduce:[&_*]:!animate-none">
       <OrderAccessPrivacy />
+      {order.isTest && (
+        <p className="rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-900">
+          {t("testOrder")}
+        </p>
+      )}
       <header className="space-y-4">
         <div className="flex flex-wrap items-center gap-4">
           <h1 className="display-headline text-3xl font-semibold sm:text-5xl">
@@ -170,16 +175,20 @@ export default async function OrderDetails({
                 label: t("summary.workType"),
                 value: sites(`workTypes.${order.site.workType}`),
               },
-              {
-                label: t("summary.species"),
-                value: order.species
-                  .map((s) =>
-                    seeds.has(`seeds.${s.slug}.name`)
-                      ? seeds(`seeds.${s.slug}.name`)
-                      : s.name,
-                  )
-                  .join(" · "),
-              },
+              ...(order.species.length
+                ? [
+                    {
+                      label: t("summary.species"),
+                      value: order.species
+                        .map((s) =>
+                          seeds.has(`seeds.${s.slug}.name`)
+                            ? seeds(`seeds.${s.slug}.name`)
+                            : s.name,
+                        )
+                        .join(" · "),
+                    },
+                  ]
+                : []),
               {
                 label: t("summary.quantity"),
                 value: formatCount(order.quantity, locale),
@@ -249,6 +258,9 @@ export default async function OrderDetails({
         </div>
       </div>
       <Card id="order-documents" title={t("documents.title")}>
+        {locale !== "tr" && (
+          <p className="mb-4 text-sm text-[#526352]">{t("documents.languageNote")}</p>
+        )}
         <ul className="divide-y divide-[#1B6B3A]/10">
           {order.documents.map((doc) => (
             <li

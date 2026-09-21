@@ -1491,7 +1491,8 @@
       "pdf": "PDF indir",
       "viewNamed": "{title} belgesini görüntüle",
       "pdfNamed": "{title} PDF belgesini indir",
-      "pending": "Belgeleriniz hazırlanıyor."
+      "pending": "Belgeleriniz hazırlanıyor.",
+      "languageNote": "Belgeler Türkçe düzenlenir."
     },
     "certificate": {
       "title": "Katılım Sertifikası",
@@ -1522,7 +1523,8 @@
       "title": "Sipariş görüntülenemiyor",
       "description": "Sipariş teyidi e-postanızdaki bağlantıyı kullanın. Sorun sürerse bizimle iletişime geçin.",
       "back": "Proje Uygulama Sahalarına dön"
-    }
+    },
+    "testOrder": "Deneme siparişi — gerçek bir ödeme alınmamıştır."
   },
   "withdrawalPage": {
     "title": "Cayma bildirimi",

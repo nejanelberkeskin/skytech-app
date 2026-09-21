@@ -1491,7 +1491,8 @@
       "pdf": "Download PDF",
       "viewNamed": "View {title}",
       "pdfNamed": "Download {title} as PDF",
-      "pending": "Your documents are being prepared."
+      "pending": "Your documents are being prepared.",
+      "languageNote": "The documents are issued in Turkish."
     },
     "certificate": {
       "title": "Certificate of Participation",
@@ -1522,7 +1523,8 @@
       "title": "Order cannot be displayed",
       "description": "Please use the link in your order confirmation email. Contact us if the problem persists.",
       "back": "Return to Project Sites"
-    }
+    },
+    "testOrder": "Test order — no real payment has been taken."
   },
   "withdrawalPage": {
     "title": "Withdrawal notice",

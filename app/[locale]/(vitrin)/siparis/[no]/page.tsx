@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { createSupabaseServer } from "@/lib/supabase/server";
 import { getOrderView } from "@/lib/orders/view-data";
 import { ORDER_NO_RE } from "@/lib/orders/types";
 import { buildPageMetadata } from "@/lib/seo";
@@ -32,8 +33,19 @@ export default async function OrderPage({ params, searchParams }: Props) {
   setRequestLocale(locale);
   if (!ORDER_NO_RE.test(no)) notFound();
   const { t: token } = await searchParams;
+  // Misafir müşteri e-postadaki belirteçle, üye kendi siparişine oturumuyla erişir.
+  let userId: string | null = null;
+  if (typeof token !== "string") {
+    try {
+      const auth = await createSupabaseServer();
+      userId = (await auth.auth.getUser()).data.user?.id ?? null;
+    } catch {
+      userId = null;
+    }
+  }
   const order = await getOrderView(no, {
     token: typeof token === "string" ? token : null,
+    userId,
   });
   if (!order) notFound();
   const formatter = new Intl.DateTimeFormat(

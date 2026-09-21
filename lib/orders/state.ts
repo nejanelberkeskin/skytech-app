@@ -11,8 +11,12 @@ import type { OrderStatus } from "./types";
 const TRANSITIONS: Record<OrderStatus, readonly OrderStatus[]> = {
   draft: ["awaiting_payment", "expired"],
   awaiting_payment: ["paid", "payment_failed", "expired"],
-  payment_failed: ["awaiting_payment", "expired"],
-  expired: [],
+  // Başarısız denemeden sonra müşteri yeniden dener (→ awaiting_payment). Doğrudan "paid":
+  // iki sekmede iki ödeme oturumu açıldıysa biri reddedilip diğeri onaylanabilir.
+  payment_failed: ["awaiting_payment", "paid", "expired"],
+  // Geç gelen ödeme: müşteri ödeme sayfasında süreyi aştıysa ve sağlayıcı yine de
+  // tahsil ettiyse sipariş geri açılır (para alınmışken sipariş "süresi doldu" kalamaz).
+  expired: ["paid"],
   // Ödeme alındı: cayma süresi içinde müşteri cayabilir; satıcı da iptal edebilir.
   paid: ["confirmed", "withdrawal_requested", "cancelled_by_seller"],
   // Cayma süresi doldu: yalnız satıcı kaynaklı iptal (ifa imkânsızlığı, erteleme reddi).

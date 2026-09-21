@@ -25,6 +25,8 @@ interface SendEmailParams {
   subject: string;
   html: string;
   replyTo?: string;
+  /** Resend ekleri: içerik base64 (ör. sözleşme PDF'leri). */
+  attachments?: { filename: string; content: string }[];
 }
 
 interface ResendResponse {
@@ -33,13 +35,16 @@ interface ResendResponse {
   message?: string;
 }
 
+/** RESEND_API_KEY yokken sendEmail'in döndürdüğü kimlik: e-posta GÖNDERİLMEDİ demektir. */
+export const SKIPPED_ID = "skipped-no-api-key";
+
 async function sendEmail(params: SendEmailParams): Promise<ResendResponse> {
   const apiKey = process.env.RESEND_API_KEY;
   const from = process.env.RESEND_FROM_EMAIL || "Skytech Green <noreply@skytechgreen.com>";
 
   if (!apiKey) {
     console.warn("[mail] RESEND_API_KEY not set — skipping email send");
-    return { id: "skipped-no-api-key" };
+    return { id: SKIPPED_ID };
   }
 
   const res = await fetch("https://api.resend.com/emails", {
@@ -54,6 +59,7 @@ async function sendEmail(params: SendEmailParams): Promise<ResendResponse> {
       subject: params.subject,
       html: params.html,
       reply_to: params.replyTo,
+      ...(params.attachments?.length ? { attachments: params.attachments } : {}),
     }),
   });
 
@@ -77,6 +83,8 @@ async function logEmail(
   resendId: string | null,
   error: string | null = null
 ) {
+  // Anahtar yokken (yerel geliştirme) hiçbir şey gönderilmez; "gönderildi" diye kayıt düşme.
+  if (resendId === SKIPPED_ID) return;
   try {
     const supabase = createServiceRoleClient();
     await supabase.from("email_logs").insert({
@@ -872,6 +880,255 @@ export async function sendServiceRequestConfirmation({ request, landName, accoun
     return result;
   } catch (e: unknown) {
     await logEmail("service_request_confirm", request.email, subject, request.id, null, errorMessage(e));
+    throw e;
+  }
+}
+
+// ═════════════════════════════════════════════════════════════════════
+// SİPARİŞ TEYİDİ — tohum topu bıraktırma siparişi (satış modeli v2)
+// ═════════════════════════════════════════════════════════════════════
+// İşlemsel e-postadır (izin gerektirmez, tanıtım içermez). Ödeme onaylanınca gider;
+// Ön Bilgilendirme Formu, Mesafeli Hizmet Sözleşmesi ve Cayma Formu PDF olarak eklenir —
+// mevzuatın aradığı "kalıcı veri saklayıcısı" budur.
+
+export interface OrderConfirmationInput {
+  orderId: string;
+  orderNo: string;
+  locale: "tr" | "en" | "ru";
+  email: string;
+  firstName: string;
+  siteName: string;
+  quantity: number;
+  totalText: string;
+  certificateName: string;
+  /** "31 Mart 2027" biçiminde, hazır metin */
+  performanceDeadlineText: string;
+  withdrawalLastDayText: string;
+  /** Belirteçli sipariş sayfası (mutlak adres) */
+  orderUrl: string;
+  isTest: boolean;
+  attachments: { filename: string; content: string }[];
+}
+
+const ORDER_TEXT = {
+  tr: {
+    subject: (no: string) => `Siparişiniz alındı — ${no}`,
+    title: "Siparişiniz Alındı",
+    sub: "Ödemeniz onaylandı; sözleşmeniz kuruldu",
+    hello: (n: string) => `Merhaba <strong>${n}</strong>,`,
+    intro: (no: string) =>
+      `Tohum topu bıraktırma siparişiniz kesinleşti. Sipariş numaranız: <strong style="font-family:monospace;font-size:16px;color:#059669;">${no}</strong>.`,
+    rows: { site: "Proje Uygulama Sahası", quantity: "Tohum topu adedi", total: "Toplam bedel (KDV dâhil)", certificate: "Sertifikadaki ad", deadline: "En geç bırakılacağı tarih", withdrawal: "Cayma hakkının son günü" },
+    next: "Tohum topu bırakma, cayma süresi dolduktan sonra ve yukarıdaki son tarihi aşmadan yapılır. Bırakma tamamlandığında Katılım Sertifikanız ve faturanız e-postayla gönderilir; çalışmanın görüntüleri izleme döneminde paylaşılır.",
+    docs: "Ön Bilgilendirme Formu, Mesafeli Hizmet Sözleşmesi ve Cayma Formu bu e-postanın ekindedir. Lütfen saklayın.",
+    withdraw: (d: string) => `Cayma hakkınızı ${d} günü sonuna kadar, hiçbir gerekçe göstermeden kullanabilirsiniz; bedelin tamamı 14 gün içinde ödemede kullandığınız araca iade edilir.`,
+    cta: "Siparişimi görüntüle",
+    contact: "Sorularınız için bu e-postayı yanıtlayabilir veya info@skytechgreen.com adresine yazabilirsiniz.",
+    test: "DENEME SİPARİŞİ — gerçek bir ödeme alınmamıştır.",
+  },
+  en: {
+    subject: (no: string) => `Your order is confirmed — ${no}`,
+    title: "Order Confirmed",
+    sub: "Your payment is approved and your contract is concluded",
+    hello: (n: string) => `Hello <strong>${n}</strong>,`,
+    intro: (no: string) =>
+      `Your seed ball release order is confirmed. Your order number is <strong style="font-family:monospace;font-size:16px;color:#059669;">${no}</strong>.`,
+    rows: { site: "Project Site", quantity: "Seed balls", total: "Total (VAT included)", certificate: "Name on certificate", deadline: "Released no later than", withdrawal: "Last day to withdraw" },
+    next: "The seed balls are released after the withdrawal period ends and no later than the date above. Once the release is completed, your Certificate of Participation and invoice are sent by e-mail; footage of the work is shared during the monitoring period.",
+    docs: "The Preliminary Information Form, the Distance Service Agreement and the Withdrawal Form are attached (issued in Turkish). Please keep them.",
+    withdraw: (d: string) => `You may withdraw without giving any reason until the end of ${d}; the full amount is refunded to your payment method within 14 days.`,
+    cta: "View my order",
+    contact: "For questions, reply to this e-mail or write to info@skytechgreen.com.",
+    test: "TEST ORDER — no real payment has been taken.",
+  },
+} as const;
+
+export async function sendOrderConfirmation(input: OrderConfirmationInput) {
+  const t = ORDER_TEXT[input.locale === "tr" ? "tr" : "en"];
+  const subject = (input.isTest ? "[DENEME] " : "") + t.subject(input.orderNo);
+  const rows: [string, string][] = [
+    [t.rows.site, input.siteName],
+    [t.rows.quantity, String(input.quantity)],
+    [t.rows.total, input.totalText],
+    [t.rows.certificate, input.certificateName],
+    [t.rows.deadline, input.performanceDeadlineText],
+    [t.rows.withdrawal, input.withdrawalLastDayText],
+  ];
+  const html = emailLayout(subject, `
+    <div class="header">
+      <h1>${esc(t.title)}</h1>
+      <p>${esc(t.sub)}</p>
+    </div>
+    <div class="body">
+      ${input.isTest ? `<p style="background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;padding:10px 14px;border-radius:8px;font-weight:600;">${esc(t.test)}</p>` : ""}
+      <p>${t.hello(esc(input.firstName))}</p>
+      <p>${t.intro(esc(input.orderNo))}</p>
+      <div class="info-box">
+        <table style="width:100%;border-collapse:collapse;font-size:14px;">
+          ${rows
+            .map(
+              ([k, v]) => `<tr>
+            <td style="padding:7px 12px 7px 0;color:#6b8f6b;vertical-align:top;width:190px;">${esc(k)}</td>
+            <td style="padding:7px 0;font-weight:600;color:#1e293b;vertical-align:top;">${esc(v)}</td>
+          </tr>`
+            )
+            .join("")}
+        </table>
+      </div>
+      <p>${esc(t.next)}</p>
+      <p>${esc(t.withdraw(input.withdrawalLastDayText))}</p>
+      <p style="text-align:center;margin:24px 0;"><a href="${esc(input.orderUrl)}" class="btn">${esc(t.cta)}</a></p>
+      <p style="color:#64748b;font-size:13px;">${esc(t.docs)}</p>
+      <p style="color:#64748b;font-size:13px;margin-top:20px;">${esc(t.contact)}</p>
+    </div>
+  `);
+
+  try {
+    const result = await sendEmail({ to: input.email, subject, html, attachments: input.attachments });
+    await logEmail("release_order_confirm", input.email, subject, input.orderId, result.id || null);
+    return result;
+  } catch (e: unknown) {
+    await logEmail("release_order_confirm", input.email, subject, input.orderId, null, errorMessage(e));
+    throw e;
+  }
+}
+
+/** Şirkete yeni sipariş bildirimi (kişisel veri asgari: ad, tutar, saha). */
+export async function sendOrderNotification(input: Pick<OrderConfirmationInput, "orderId" | "orderNo" | "siteName" | "quantity" | "totalText" | "isTest"> & { buyerName: string; buyerType: string }) {
+  const to = requestNotifyEmail();
+  const subject = `${input.isTest ? "[DENEME] " : ""}[Sipariş] ${input.orderNo} · ${input.siteName} — ${input.quantity} adet`;
+  const html = emailLayout(subject, `
+    <div class="header"><h1>Yeni Sipariş</h1><p>${esc(input.orderNo)}</p></div>
+    <div class="body">
+      <p><strong>${esc(input.buyerName)}</strong> (${esc(input.buyerType === "corporate" ? "kurumsal" : "bireysel")}) — ${esc(input.siteName)} sahasına <strong>${input.quantity}</strong> tohum topu, toplam <strong>${esc(input.totalText)}</strong>.</p>
+      <p>Ayrıntılar yönetim panelindeki Siparişler ekranındadır.</p>
+    </div>
+  `);
+  try {
+    const result = await sendEmail({ to, subject, html });
+    await logEmail("release_order_notify", to, subject, input.orderId, result.id || null);
+    return result;
+  } catch (e: unknown) {
+    await logEmail("release_order_notify", to, subject, input.orderId, null, errorMessage(e));
+    throw e;
+  }
+}
+
+// ═════════════════════════════════════════════════════════════════════
+// CAYMA BİLDİRİMİ TEYİDİ
+// ═════════════════════════════════════════════════════════════════════
+// Mevzuat gereği cayma bildirimi ulaştığında tüketiciye DERHAL teyit gönderilir.
+// Vazgeçirmeye yönelik hiçbir ifade içermez.
+
+export interface WithdrawalReceiptInput {
+  orderId: string;
+  orderNo: string;
+  locale: "tr" | "en" | "ru";
+  email: string;
+  firstName: string;
+  totalText: string;
+  /** "5 Kasım 2026" biçiminde, hazır metin */
+  receivedOnText: string;
+  refundDueOnText: string;
+  isTest: boolean;
+}
+
+const WITHDRAWAL_TEXT = {
+  tr: {
+    subject: (no: string) => `Cayma bildiriminiz alındı — ${no}`,
+    title: "Cayma Bildiriminiz Alındı",
+    sub: "İade süreci başlatıldı",
+    hello: (n: string) => `Merhaba <strong>${n}</strong>,`,
+    intro: (no: string, d: string) =>
+      `<strong style="font-family:monospace;">${no}</strong> numaralı siparişiniz için cayma bildiriminiz <strong>${d}</strong> tarihinde tarafımıza ulaşmıştır. Bildiriminiz geçerlidir; sizden başka bir işlem beklenmez.`,
+    rows: { total: "İade edilecek tutar", due: "İadenin en geç yapılacağı tarih" },
+    refund: "Bedelin tamamı, ödemede kullandığınız araca tek seferde ve masrafsız olarak iade edilir. İadenin hesabınıza yansıma süresi bankanıza göre değişebilir.",
+    contact: "Sorularınız için bu e-postayı yanıtlayabilir veya info@skytechgreen.com adresine yazabilirsiniz.",
+    test: "DENEME SİPARİŞİ — gerçek bir ödeme alınmamıştır.",
+  },
+  en: {
+    subject: (no: string) => `Your withdrawal notice has been received — ${no}`,
+    title: "Withdrawal Notice Received",
+    sub: "The refund process has started",
+    hello: (n: string) => `Hello <strong>${n}</strong>,`,
+    intro: (no: string, d: string) =>
+      `We received your withdrawal notice for order <strong style="font-family:monospace;">${no}</strong> on <strong>${d}</strong>. Your notice is valid; no further action is required from you.`,
+    rows: { total: "Amount to be refunded", due: "Refund will be made no later than" },
+    refund: "The full amount is refunded in a single payment, free of charge, to the payment method you used. The time it takes to appear in your account may vary by bank.",
+    contact: "For questions, reply to this e-mail or write to info@skytechgreen.com.",
+    test: "TEST ORDER — no real payment has been taken.",
+  },
+} as const;
+
+export async function sendWithdrawalReceipt(input: WithdrawalReceiptInput) {
+  const t = WITHDRAWAL_TEXT[input.locale === "tr" ? "tr" : "en"];
+  const subject = (input.isTest ? "[DENEME] " : "") + t.subject(input.orderNo);
+  const rows: [string, string][] = [
+    [t.rows.total, input.totalText],
+    [t.rows.due, input.refundDueOnText],
+  ];
+  const html = emailLayout(subject, `
+    <div class="header">
+      <h1>${esc(t.title)}</h1>
+      <p>${esc(t.sub)}</p>
+    </div>
+    <div class="body">
+      ${input.isTest ? `<p style="background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;padding:10px 14px;border-radius:8px;font-weight:600;">${esc(t.test)}</p>` : ""}
+      <p>${t.hello(esc(input.firstName))}</p>
+      <p>${t.intro(esc(input.orderNo), esc(input.receivedOnText))}</p>
+      <div class="info-box">
+        <table style="width:100%;border-collapse:collapse;font-size:14px;">
+          ${rows
+            .map(
+              ([k, v]) => `<tr>
+            <td style="padding:7px 12px 7px 0;color:#6b8f6b;vertical-align:top;width:220px;">${esc(k)}</td>
+            <td style="padding:7px 0;font-weight:600;color:#1e293b;vertical-align:top;">${esc(v)}</td>
+          </tr>`
+            )
+            .join("")}
+        </table>
+      </div>
+      <p>${esc(t.refund)}</p>
+      <p style="color:#64748b;font-size:13px;margin-top:20px;">${esc(t.contact)}</p>
+    </div>
+  `);
+
+  try {
+    const result = await sendEmail({ to: input.email, subject, html });
+    await logEmail("release_withdrawal_receipt", input.email, subject, input.orderId, result.id || null);
+    return result;
+  } catch (e: unknown) {
+    await logEmail("release_withdrawal_receipt", input.email, subject, input.orderId, null, errorMessage(e));
+    throw e;
+  }
+}
+
+/** Şirkete cayma bildirimi: iade 14 gün içinde yapılmalı. */
+export async function sendWithdrawalNotification(input: {
+  orderId: string;
+  orderNo: string;
+  buyerName: string;
+  siteName: string;
+  totalText: string;
+  refundDueOnText: string;
+  isTest: boolean;
+}) {
+  const to = requestNotifyEmail();
+  const subject = `${input.isTest ? "[DENEME] " : ""}[Cayma] ${input.orderNo} — iade en geç ${input.refundDueOnText}`;
+  const html = emailLayout(subject, `
+    <div class="header"><h1>Cayma Bildirimi</h1><p>${esc(input.orderNo)}</p></div>
+    <div class="body">
+      <p><strong>${esc(input.buyerName)}</strong>, ${esc(input.siteName)} sahasındaki siparişinden caydı. İade edilecek tutar: <strong>${esc(input.totalText)}</strong>.</p>
+      <p>Bedelin tamamı <strong>en geç ${esc(input.refundDueOnText)}</strong> tarihine kadar, ödemede kullanılan araca tek seferde iade edilmelidir. Sipariş için ayrılan kapasite iade tamamlanınca serbest kalır.</p>
+      <p>Müşteriye teyit e-postası gönderildi. Ayrıntılar yönetim panelindeki Siparişler ekranındadır.</p>
+    </div>
+  `);
+  try {
+    const result = await sendEmail({ to, subject, html });
+    await logEmail("release_withdrawal_notify", to, subject, input.orderId, result.id || null);
+    return result;
+  } catch (e: unknown) {
+    await logEmail("release_withdrawal_notify", to, subject, input.orderId, null, errorMessage(e));
     throw e;
   }
 }

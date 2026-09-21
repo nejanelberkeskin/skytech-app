@@ -1627,5 +1627,53 @@
       "genclestirme": "Regeneration",
       "ormanlastirma_genclestirme": "Reforestation – Regeneration"
     }
+  },
+  "paymentResultPage": {
+    "meta": {
+      "title": "Payment result"
+    },
+    "test": "Test order — no real payment has been taken.",
+    "rows": {
+      "orderNo": "Order number",
+      "site": "Project Site",
+      "quantity": "Seed balls",
+      "total": "Total (VAT included)"
+    },
+    "success": {
+      "badge": "Payment approved",
+      "title": "Your order is confirmed",
+      "body": "Your payment has been approved and your contract is concluded. Your seed ball release order has been recorded.",
+      "email": "Your order confirmation is sent by e-mail to {email} together with the Preliminary Information Form, the Distance Service Agreement and the Withdrawal Form. If it does not arrive within a few minutes, please check your spam folder.",
+      "deadline": "The seed balls will be released no later than {date}.",
+      "withdrawal": "You may withdraw, without giving any reason, until the end of {date}.",
+      "cta": "View my order",
+      "sites": "Project Sites"
+    },
+    "failed": {
+      "badge": "Payment not completed",
+      "title": "Your payment was not approved",
+      "body": "As the payment was not approved, the order amount has not been charged.",
+      "held": "Your order closes at {time} (Türkiye time); you can try the payment again until then.",
+      "hint": "If the problem continues, you can check with your bank that your card is enabled for online purchases and has sufficient limit, or use a different card.",
+      "retry": "Try the payment again",
+      "retrying": "Opening the payment page…"
+    },
+    "pending": {
+      "badge": "Awaiting payment",
+      "title": "Your payment has not been completed",
+      "body": "No payment approval has been received for this order yet."
+    },
+    "expired": {
+      "badge": "Time expired",
+      "title": "The payment time has expired",
+      "body": "The payment time reserved for this order has expired and the order is closed; the order amount has not been charged. You can create a new order if you wish.",
+      "cta": "Back to the site"
+    },
+    "errors": {
+      "expired": "The payment time for this order has expired. You can create a new order.",
+      "closed": "Online payment is currently closed. Please try again later.",
+      "rateLimited": "Too many attempts in a short time. Please try again in a few minutes.",
+      "generic": "The payment page could not be opened. Please try again."
+    }
   }
 }

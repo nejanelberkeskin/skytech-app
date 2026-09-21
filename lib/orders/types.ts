@@ -54,7 +54,8 @@ export const PAID_STATUSES: readonly OrderStatus[] = [
   "cancelled_by_seller",
 ];
 
-export const TERMINAL_STATUSES: readonly OrderStatus[] = ["expired", "completed", "refunded"];
+/** Çıkışı olmayan durumlar. ("expired" geç gelen ödemeyle "paid"e dönebildiği için burada yok.) */
+export const TERMINAL_STATUSES: readonly OrderStatus[] = ["completed", "refunded"];
 
 /* ── Alıcı ve fatura ──────────────────────────────────────────────────────── */
 
@@ -167,3 +168,56 @@ export type OrderEventType = (typeof ORDER_EVENT_TYPES)[number];
 
 /** Olayı kimin yaptığı: müşteri, sistem (zamanlanmış iş / geri çağrı) ya da yönetici. */
 export type OrderActor = "customer" | "system" | `admin:${string}`;
+
+/* ── Veritabanı satırı (release_orders) ───────────────────────────────────── */
+
+/** Tablonun sunucu tarafında okunan alanları (service role). İstemciye ASLA olduğu gibi gitmez. */
+export interface ReleaseOrderRow {
+  id: string;
+  order_no: string;
+  status: OrderStatus;
+  is_test: boolean;
+  user_id: string | null;
+  locale: "tr" | "en" | "ru";
+  client_token: string | null;
+  land_id: string;
+  site_snapshot: SiteSnapshot;
+  season_label: string;
+  batch_id: string | null;
+  quantity: number;
+  unit_price_kurus: number;
+  total_kurus: number;
+  vat_rate: number;
+  certificate_name: string;
+  certificate_code: string | null;
+  certificate_issued_at: string | null;
+  certificate_cancelled_at: string | null;
+  buyer_type: BuyerType;
+  buyer_first_name: string;
+  buyer_last_name: string;
+  buyer_email: string;
+  buyer_phone: string;
+  invoice: InvoiceInfo;
+  consents: OrderConsents;
+  marketing_consent: boolean;
+  documents_version: string;
+  payment_provider: string | null;
+  payment_token: string | null;
+  payment_id: string | null;
+  payment_started_at: string | null;
+  payment_expires_at: string | null;
+  paid_at: string | null;
+  withdrawal_deadline: string | null;
+  performance_deadline: string | null;
+  confirmed_at: string | null;
+  scheduled_at: string | null;
+  released_at: string | null;
+  completed_at: string | null;
+  video_notified_at: string | null;
+  withdrawal_requested_at: string | null;
+  withdrawal_channel: "form" | "account" | "email" | "phone" | "admin" | null;
+  cancelled_at: string | null;
+  refunded_at: string | null;
+  created_at: string;
+  updated_at: string;
+}

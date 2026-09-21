@@ -558,7 +558,8 @@ Bu bölüm 11. bölümdeki akış tarifinin yerine geçer.
   kaçışlı; siparişe özel DEĞİŞMEZ kopya + SHA-256) ve `render-pdf.ts` (jsPDF + gömülü Noto Sans; yalnız sunucu) üretir.
   Şablonlar `templates/`: `pre-info.ts`, `contract.ts`, `withdrawal-form.ts`; iki belgede de geçen cümleler tek yerde
   (`templates/shared.ts → TEXT`) durur, hukuk sayfaları da oradan okur → metinler birbirinden ayrışamaz.
-- `version.ts`: `LEGAL_DOCUMENTS_VERSION`. "-taslak" ekliyken (hukuk incelemesi bitmeden) sipariş uçları CANLIDA 503 döner.
+- `version.ts`: `LEGAL_DOCUMENTS_VERSION`. "-taslak" ekliyken (hukuk incelemesi bitmeden) canlı sitede sipariş alınmaz;
+  yalnız deneme sağlayıcısıyla, canlı site dışında deneme siparişi oluşturulabilir (kural: `lib/orders/gate.ts`).
   Metin değişince sürüm artırılır; eski sürümü görmüş müşteri `documents_stale` alır ve yeniden onaylar.
 - `documents.ts`: `buildLegalContext()` + `buildOrderDocuments()` — önizleme ile sipariş kopyası aynı işlevden çıkar.
   Bireyselde T.C. kimlik no belgeye YAZILMAZ. Kurumsal alıcıda 6502 uygulanmaz ama 14 gün cayma sözleşmesel tanınır, yetki Ankara.
@@ -569,7 +570,55 @@ Bu bölüm 11. bölümdeki akış tarifinin yerine geçer.
 - Testler: `npm test` (Node'un yerleşik koşucusu + `scripts/test/alias-loader.mjs`; derleme gerekmez).
   `LEGAL_DRAFTS_DIR=<klasör> npm test` örnek HTML + PDF çıktılarını yazar (avukat incelemesi için).
 
+### Sipariş kaydı, ödeme akışı, cayma (Faz 3c)
+**Akış:** sihirbaz → `POST /api/public/siparis/onizleme` (kesin tutar + takvim + belgeler; kayıt yok) →
+`POST /api/public/siparis` (sipariş + kapasite + belgeler; yanıt `redirectUrl`) → ödeme sayfası → dönüş →
+`/odeme/sonuc/<no>?t=` (onaylandı / tamamlanamadı + yeniden dene / süre doldu) → `/siparis/<no>?t=` (Astra, brif 08).
+
+- **Kapı — `lib/orders/gate.ts`:** satış bayrağı + yapılandırılmış ödeme sağlayıcısı + (metinler taslakken) yalnız deneme
+  siparişi ve yalnız canlı site dışında. Üç uç da (önizleme, sipariş, yeniden ödeme) aynı işlevi çağırır.
+- **Ayarlar — `lib/orders/settings.ts`:** fiyat/KDV/asgari adet/hazırlık süresi/ödeme süresi `sales_settings` tablosundan.
+  `quoteVersion()` = hukuki sürüm + fiyat + KDV + hazırlık süresi; önizleme bunu döner, sihirbaz `documentsVersion` olarak
+  geri yollar. Arada biri değiştiyse `documents_stale` → müşteri güncel tutarı görüp YENİDEN onaylar.
+  Sihirbazın anlık gösterimi `lib/pricing.ts` sabitlerinden; fiyat değişirse ikisi birlikte güncellenmeli (ayrışırsa log uyarısı).
+- **Oluşturma — `lib/orders/create.ts`:** `clientToken` ile tek sipariş (çift tıklama/ağ tekrarı) → o sahadaki süresi dolmuş
+  siparişleri kapat (tembel temizlik; ayrıca zamanlanmış iş Faz 6) → saha denetimi → kapasiteyi SATIR KİLİDİYLE ayır →
+  `draft` sipariş → üç belgenin değişmez HTML kopyası + SHA-256 (`order_documents`) → olaylar: `order_created`,
+  `consent_recorded` (her kutu: an + sürüm; IP özeti), `documents_generated` (belgelerin yapısal kaynağı da burada
+  saklanır; PDF her zaman bu kaynaktan üretilir → şablon değişse de müşterinin onayladığı metin).
+- **Ödeme — `lib/payments/` + `lib/orders/payment-flow.ts`:** sağlayıcı arayüzü `init / retrieve / refund`.
+  `PAYMENT_PROVIDER=mock|iyzico` (yalnız sunucu). `mock`: `/odeme/deneme/<belirteç>` sayfası sanal POS'un yerini tutar,
+  imzalı belirteç + imzalı sonuç; `VERCEL_ENV=production` iken ASLA çalışmaz; siparişler `is_test=true`.
+  `iyzico` henüz yok (Faz 4): `getPaymentProvider()` null → her şey "closed". Dönüşte sonuç SAĞLAYICIDAN sorgulanır,
+  tahsil edilen tutar siparişle karşılaştırılır, durum koşullu UPDATE ile bir kez değişir (çift geri çağrı güvenli).
+  - Cayma süresi ödeme anından başlar → `withdrawal_deadline` ödeme onayında yazılır.
+  - Tahsil edilmiş ödeme sahipsiz kalmaz: yeniden başlatılan ödemede eski oturumun dönüşü `payment_started`
+    olaylarındaki belirteç özetinden bulunur; `payment_failed` ve `expired` siparişe gelen onay da işlenir (geç ödemede
+    kapasite yeniden ayrılır; ayrılamazsa `payment_meta.capacityHeld=false` + olay → yönetim incelemeli).
+  - Aynı siparişe ikinci bir tahsilat gelirse `payment_succeeded {duplicate:true}` olayı yazılır → **Faz 5 yönetim
+    ekranı bunu "iade edilecek tahsilat" olarak göstermeli.**
+  - Faz 4 için: `startPayment` sağlayıcıya `callbackUrl = /api/payment/donus` verir; bu uç henüz YOK. iyzico dönüşü
+    başka kaynaktan POST geldiği için CSRF muafiyeti gerekir (`middleware.ts → CSRF_EXEMPT_PREFIXES`), işleyiş
+    `app/api/public/odeme/deneme/route.ts` ile aynı: `completePayment()` → `sendPaidOrderEmails()` → 303 `paymentResultPath()`.
+- **Erişim — `lib/orders/access.ts`:** misafir müşteri siparişine `?t=<HMAC>` ile erişir (numarayı bilmek yetmez); üye
+  kendi siparişine oturumla. Anahtar `ORDER_LINK_SECRET` (**canlıya çıkmadan tanımlanmalı**; yoksa service role
+  anahtarından türetilir — o anahtar döndürülürse e-postalardaki bağlantılar geçersizleşir).
+- **Görünüm — `lib/orders/view-data.ts`:** `getOrderView(no, { token, userId })` gerçek kaydı `PublicOrderView`'a çevirir;
+  ödenmemiş siparişin sayfası yoktur (null). Geliştirmede `?t=ornek` örnekleri durur.
+  Belgeler: `GET /api/public/siparis/<no>/belge/<kind>?t=…&bicim=html|pdf` (HTML = saklanan kopya, CSP sandbox; önbellek yok).
+- **E-posta — `lib/orders/after-payment.ts`, `lib/mail.ts`:** ödeme onayında müşteriye teyit (üç PDF ekli — "kalıcı veri
+  saklayıcısı") + şirkete bildirim; `after()` ile yanıtı bekletmez. Sonuç `email_sent` / `email_failed` olayı.
+  `RESEND_API_KEY` yoksa (yerel) gönderilmez, `email_logs`'a da yazılmaz; olay `email_failed {reason:"no_api_key"}`.
+- **Cayma — `lib/orders/withdrawal.ts`, `POST /api/public/cayma`:** sipariş no + e-posta (eşleşmezse `not_found`, hangisinin
+  yanlış olduğu söylenmez) → `paid → withdrawal_requested` + bekleyen `order_refunds` + olay + müşteriye DERHAL teyit.
+  İadenin kendisi (sağlayıcı `refund()` → `refunded`, kapasiteyi geri ver, sertifika iptali) Faz 5 yönetim ekranında.
+  `SALES_ENABLED` kapalıyken form da kapalıdır; satışı GEÇİCİ durdurmak gerekirse bayrağı kapatmak yerine
+  `sales_settings`'e "sipariş alımı durduruldu" alanı eklenmeli (cayma hakkı açık kalmalı).
+- Middleware: `/odeme/*` herkese açık sayfa (misafir müşteri). `/siparis/*` ve `/cayma` satırları Astra'nın PR'ında.
+- Deneme verisi: geliştirmede oluşan siparişler CANLI veritabanına `is_test=true` olarak yazılır ve sahada kapasite
+  tutar. Temizlik: `select public.purge_test_orders();` (kapasiteyi de geri verir) — **kullanıcı onayıyla**.
+
 ### Sıradaki (plan §Fazlar)
-Faz 3 sipariş çekirdeği (`release_orders`, sözleşmeler,
-cayma) → Faz 4 ödeme sağlayıcı katmanı. Sihirbaz yayına girince yalnız `lib/site-config.ts`
-(`REQUEST_ROUTES`) ve `lib/sites/links.ts` değişir; çağrılara dokunulmaz.
+Faz 4 iyzico sağlayıcısı (`init/retrieve/refund` + `/api/payment/donus`) → Faz 5 yönetim (siparişler, cayma/iade, fatura
+kuyruğu, partiler, ayarlar) → Faz 6 sertifika + zamanlanmış işler (süre dolumu, cayma süresi sonu → `confirmed`, video
+bildirimi). Sihirbaz (#31) birleşince `lib/site-config.ts` (`REQUEST_ROUTES`) → `/sahalar`, `/talep/acik-arazi` yönlendirmesi.

@@ -43,6 +43,8 @@ function localePath(path: string, locale: string): string {
 const PUBLIC_PAGE_PATTERNS: RegExp[] = [
   /^\/$/,
   /^\/checkout(\/.*)?$/,
+  // Ödeme sonucu ve (yalnız deneme kipinde) deneme ödeme sayfası — misafir müşteri de görür
+  /^\/odeme(\/.*)?$/,
   /^\/sertifika(\/.*)?$/,
   /^\/kargo-takip(\/.*)?$/,
   /^\/bireysel\/odeme(\/.*)?$/,

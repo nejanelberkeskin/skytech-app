@@ -1627,5 +1627,53 @@
       "genclestirme": "Gençleştirme",
       "ormanlastirma_genclestirme": "Ormanlaştırma – Gençleştirme"
     }
+  },
+  "paymentResultPage": {
+    "meta": {
+      "title": "Ödeme sonucu"
+    },
+    "test": "Deneme siparişi — gerçek bir ödeme alınmamıştır.",
+    "rows": {
+      "orderNo": "Sipariş numarası",
+      "site": "Proje Uygulama Sahası",
+      "quantity": "Tohum topu adedi",
+      "total": "Toplam bedel (KDV dâhil)"
+    },
+    "success": {
+      "badge": "Ödeme onaylandı",
+      "title": "Siparişiniz alındı",
+      "body": "Ödemeniz onaylandı ve sözleşmeniz kuruldu. Tohum topu bırakma siparişiniz kayda geçti.",
+      "email": "Sipariş teyidiniz; Ön Bilgilendirme Formu, Mesafeli Hizmet Sözleşmesi ve Cayma Formu ile birlikte {email} adresine e-postayla gönderilir. Birkaç dakika içinde ulaşmazsa gereksiz (spam) klasörünü kontrol edebilirsiniz.",
+      "deadline": "Tohum topları en geç {date} tarihine kadar bırakılır.",
+      "withdrawal": "Cayma hakkınızı {date} günü sonuna kadar, gerekçe göstermeden kullanabilirsiniz.",
+      "cta": "Siparişimi görüntüle",
+      "sites": "Proje Uygulama Sahaları"
+    },
+    "failed": {
+      "badge": "Ödeme tamamlanamadı",
+      "title": "Ödemeniz onaylanmadı",
+      "body": "Ödeme onaylanmadığı için sipariş bedeli tahsil edilmedi.",
+      "held": "Siparişiniz saat {time} (Türkiye saati) itibarıyla kapanır; o zamana kadar ödemeyi yeniden deneyebilirsiniz.",
+      "hint": "Sorun sürerse kartınızın internet alışverişine açık olduğunu ve limitini bankanızdan kontrol edebilir ya da farklı bir kart kullanabilirsiniz.",
+      "retry": "Ödemeyi yeniden dene",
+      "retrying": "Ödeme sayfası açılıyor…"
+    },
+    "pending": {
+      "badge": "Ödeme bekleniyor",
+      "title": "Ödemeniz tamamlanmadı",
+      "body": "Bu sipariş için henüz bir ödeme onayı ulaşmadı."
+    },
+    "expired": {
+      "badge": "Süre doldu",
+      "title": "Ödeme süresi doldu",
+      "body": "Bu sipariş için ayrılan ödeme süresi doldu ve sipariş kapandı; sipariş bedeli tahsil edilmedi. Dilerseniz yeni bir sipariş oluşturabilirsiniz.",
+      "cta": "Sahaya dön"
+    },
+    "errors": {
+      "expired": "Bu siparişin ödeme süresi doldu. Yeni bir sipariş oluşturabilirsiniz.",
+      "closed": "Çevrim içi ödeme şu anda kapalı. Lütfen daha sonra yeniden deneyin.",
+      "rateLimited": "Kısa sürede çok fazla deneme yapıldı. Lütfen birkaç dakika sonra yeniden deneyin.",
+      "generic": "Ödeme sayfası açılamadı. Lütfen yeniden deneyin."
+    }
   }
 }

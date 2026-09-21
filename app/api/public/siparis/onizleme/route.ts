@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { rateLimit, getClientIP } from "@/lib/admin-auth";
-import { SALES_ENABLED } from "@/lib/site-config";
 import { issuesToFieldErrors } from "@/lib/requests/schema";
 import { orderPreviewSchema } from "@/lib/orders/schema";
 import { buildPreview, checkSite } from "@/lib/orders/preview";
-import { isDraftLegalVersion } from "@/lib/legal/version";
+import { getSalesSettings } from "@/lib/orders/settings";
+import { ordersClosed } from "@/lib/orders/gate";
+import { getPaymentProvider } from "@/lib/payments";
 
 /**
  * POST /api/public/siparis/onizleme — sipariş sihirbazının 4. adımı için KESİN
@@ -15,16 +16,14 @@ import { isDraftLegalVersion } from "@/lib/legal/version";
  *        400 { error:"validation", fields } · 409 { error:"site_unavailable"|"capacity" }
  *        429 · 503 { error:"closed"|"unavailable" }
  *
- * Belgeler lib/legal şablonlarından üretilir. Şablon sürümü "-taslak" iken
- * (hukuk incelemesi tamamlanmamışken) CANLIDA 503 "closed" döner: incelenmemiş
- * metin müşteriye gösterilmez, satış bayrağı yanlışlıkla açılsa bile.
+ * Belgeler lib/legal şablonlarından üretilir. Sipariş ucuyla AYNI kapıyı kullanır
+ * (lib/orders/gate.ts): şablon sürümü "-taslak" iken canlı sitede 503 "closed" döner —
+ * incelenmemiş metin müşteriye gösterilmez, satış bayrağı yanlışlıkla açılsa bile.
  */
 const MAX_BODY_BYTES = 20_000;
 
 export async function POST(req: NextRequest) {
-  if (!SALES_ENABLED || (process.env.NODE_ENV === "production" && isDraftLegalVersion())) {
-    return NextResponse.json({ error: "closed" }, { status: 503 });
-  }
+  if (ordersClosed(getPaymentProvider())) return NextResponse.json({ error: "closed" }, { status: 503 });
 
   const limited = rateLimit(`siparis-onizleme:${getClientIP(req)}`, 30, 10 * 60_000);
   if (limited) return limited;
@@ -43,10 +42,15 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "validation", fields: issuesToFieldErrors(parsed.error.issues) }, { status: 400 });
   }
 
+  const settings = await getSalesSettings();
+  if (parsed.data.quantity < settings.minQuantity || parsed.data.quantity > settings.maxQuantity) {
+    return NextResponse.json({ error: "validation", fields: { quantity: "quantityMin" } }, { status: 400 });
+  }
+
   const site = await checkSite(parsed.data.landId, parsed.data.quantity);
   if (!site.ok) {
     return NextResponse.json({ error: site.error }, { status: site.error === "unavailable" ? 503 : 409 });
   }
 
-  return NextResponse.json({ ok: true, ...buildPreview(parsed.data, site.site) });
+  return NextResponse.json({ ok: true, ...buildPreview(parsed.data, site.site, settings) });
 }

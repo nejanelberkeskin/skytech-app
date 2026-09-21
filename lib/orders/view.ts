@@ -35,6 +35,8 @@ export interface OrderViewDocument {
 export interface PublicOrderView {
   orderNo: string;
   status: OrderStatus;
+  /** Deneme siparişi (deneme ödeme sağlayıcısı / sanal POS deneme kipi) — sayfada belirtilir. */
+  isTest: boolean;
   /** Sipariş tarihi — YYYY-MM-DD */
   createdOn: string;
   buyerFirstName: string;
@@ -94,6 +96,7 @@ const docs = (no: string) => [
 ];
 
 const base = {
+  isTest: false,
   buyerFirstName: "Ayşe",
   site: { name: "ÖRNEK · Çanakkale Proje Uygulama Sahası", slug: "ornek-canakkale-proje-uygulama-sahasi", location: "Eceabat, Çanakkale", workType: "ormanlastirma_genclestirme" as WorkType },
   species: [{ slug: "kizilcam", name: "Kızılçam" }],

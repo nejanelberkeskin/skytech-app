@@ -27,6 +27,10 @@ assert.ok(!St.canTransition("confirmed", "withdrawal_requested"), "cayma süresi
 assert.ok(!St.canTransition("draft", "paid"), "ödeme başlatılmadan ödenmiş olamaz");
 assert.ok(!St.canTransition("released", "refunded"), "bırakma sonrası iade akışı yok");
 assert.ok(!St.canTransition("expired", "awaiting_payment"));
+assert.ok(St.canTransition("expired", "paid"), "geç gelen ödeme siparişi geri açar");
+assert.ok(St.canTransition("payment_failed", "paid"), "başka sekmede onaylanan ödeme işlenir");
+assert.ok(!St.canTransition("payment_failed", "confirmed"));
+assert.ok(!St.canTransition("expired", "confirmed"));
 assert.throws(() => St.assertTransition("refunded", "paid"), St.InvalidTransitionError);
 St.assertTransition("paid", "confirmed");
 

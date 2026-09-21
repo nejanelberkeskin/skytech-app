@@ -17,4 +17,14 @@ export function getPaymentProvider(): PaymentProvider | null {
   return null;
 }
 
+/**
+ * Geçmiş bir siparişin ödendiği sağlayıcı (iade için). Etkin sağlayıcıdan farklı olabilir:
+ * iade her zaman ödemenin alındığı sağlayıcıdan yapılır.
+ */
+export function getProviderByName(name: string | null | undefined): PaymentProvider | null {
+  if (name === "mock") return mockAllowed() ? mockProvider : null;
+  if (name === "iyzico") return iyzicoConfigured() ? iyzicoProvider : null;
+  return null;
+}
+
 export type { PaymentProvider } from "./types";

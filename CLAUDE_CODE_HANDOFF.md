@@ -652,7 +652,26 @@ Bu bölüm 11. bölümdeki akış tarifinin yerine geçer.
 - **Faz 9 notu:** `CTA_MODE` hâlâ eski bayrağa bakıyor; satış açıldığında çağrı metinleri ("Talep Oluştur" → katılım dili)
   gözden geçirilmeli.
 
+### Yönetim — siparişler (Faz 5a)
+- Modül `birakma` → `/admin/birakma-siparisleri` (kenar çubuğunda "Siparişler"; eski tohum satışı modülü "Eski Siparişler").
+  Görüntüleme SUPER_ADMIN + FINANCE + OPERATIONS; **para ve fatura işlemleri SUPER_ADMIN + FINANCE**. OPERATIONS'a kimlik/vergi
+  no maskeli gider. Her işlem `admin_audit_logs` + siparişin `order_events` izine (`admin:<uuid>`) yazılır.
+- API: `GET /api/admin/release-orders` (liste, durum sayıları, uyarılar: iade bekleyen · fatura kesilecek · çift tahsilat ·
+  kapasitesiz ödeme), `GET|POST /api/admin/release-orders/[id]` (ayrıntı + işlemler), `…/[id]/belge/[kind]` (müşteriye giden
+  belgelerin aynısı). Liste açılırken tembel işler çalışır: süresi dolan ödenmemiş siparişler kapanır, cayma süresi dolan
+  `paid` siparişler `confirmed` olur (`confirmDueOrders`; zamanlanmış iş Faz 6).
+- İşlemler `lib/orders/admin-actions.ts`: `cancelBySeller` (→ bekleyen iade + müşteriye bildirim) · `executeRefund` (iade
+  ÖDEMENİN ALINDIĞI sağlayıcıdan; iade satırı karşılaştır-ve-yaz ile sahiplenilir → eşzamanlı ikinci istek `in_progress`;
+  başarıda `refunded`, kapasite serbest (`capacityHeld=false` ise dokunulmaz), sertifika iptal, müşteriye bildirim;
+  kesilmiş faturası varsa **iade faturası** kuyruğa girer, kesilmemişse kuyruktaki fatura iptal olur) · `refundDuplicate` ·
+  `queueInvoice` ("şimdi fatura kes") · `markInvoiceIssued` (fatura no / ETTN / tarih elle işlenir; e-fatura entegrasyonu yok).
+- Arayüz: sayfa + `components/admin/ReleaseOrderDetail.tsx`. Para işlemleri tek adımlı onay ister (tutar düğmenin üstünde).
+- Şirkete giden sipariş/cayma bildirimlerinde "Yönetim panelinde aç" bağlantısı (`?no=SG-…`).
+- **Sınama:** işlemler canlı veritabanındaki DENEME siparişlerinde betikle sınandı (iade, satıcı iptali, eşzamanlı iade,
+  çift tahsilat, fatura). Panel oturum gerektirdiği için sayfanın kendisi tarayıcıda DENENMEDİ (ayrıntı bileşeni geçici bir
+  önizlemeyle görüldü) — kullanıcı deneyecek.
+
 ### Sıradaki (plan §Fazlar)
-Faz 5 yönetim (siparişler, cayma/iade, fatura
+Faz 5b bırakma partileri (parti oluştur, kesinleşmiş siparişleri ata, bırakıldı işaretle → kapasite `filled`, fatura kuyruğu) → Faz 5 yönetim (siparişler, cayma/iade, fatura
 kuyruğu, partiler, ayarlar) → Faz 6 sertifika + zamanlanmış işler (süre dolumu, cayma süresi sonu → `confirmed`, video
 bildirimi).

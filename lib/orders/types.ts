@@ -204,6 +204,8 @@ export interface ReleaseOrderRow {
   payment_provider: string | null;
   payment_token: string | null;
   payment_id: string | null;
+  /** Sağlayıcıdan gelen ödeme özeti (kart verisi içermez) + iç işaretler (ör. capacityHeld:false) */
+  payment_meta: Record<string, unknown> | null;
   payment_started_at: string | null;
   payment_expires_at: string | null;
   paid_at: string | null;
@@ -217,7 +219,9 @@ export interface ReleaseOrderRow {
   withdrawal_requested_at: string | null;
   withdrawal_channel: "form" | "account" | "email" | "phone" | "admin" | null;
   cancelled_at: string | null;
+  cancel_reason: string | null;
   refunded_at: string | null;
+  admin_note: string | null;
   created_at: string;
   updated_at: string;
 }

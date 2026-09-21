@@ -73,9 +73,18 @@ export const ADMIN_MODULES: AdminModule[] = [
     allowedRoles: ["SUPER_ADMIN", "FINANCE", "OPERATIONS"],
   },
   {
+    // Satış modeli v2: sahaya tohum topu bıraktırma siparişleri (release_orders)
+    id: "birakma",
+    href: "/admin/birakma-siparisleri",
+    label: "Siparişler",
+    icon: "🌱",
+    allowedRoles: ["SUPER_ADMIN", "FINANCE", "OPERATIONS"],
+  },
+  {
+    // Eski tohum satışı akışı (kapalı); Faz 8 temizliğinde kalkacak
     id: "siparisler",
     href: "/admin/siparisler",
-    label: "Siparişler",
+    label: "Eski Siparişler",
     icon: "📦",
     allowedRoles: ["SUPER_ADMIN", "FINANCE", "OPERATIONS"],
   },

@@ -733,6 +733,9 @@ export function requestNotifyEmail(): string {
   return process.env.REQUEST_NOTIFY_EMAIL || process.env.CONTACT_NOTIFY_EMAIL || "info@skytechgreen.com";
 }
 
+/** Yönetim panelinde siparişi doğrudan açan bağlantı (oturum gerektirir). */
+const adminOrderUrl = (orderNo: string) => `${appUrl()}/admin/birakma-siparisleri?no=${encodeURIComponent(orderNo)}`;
+
 function appUrl(): string {
   return process.env.NEXT_PUBLIC_APP_URL || "https://skytechgreen.com";
 }
@@ -1001,7 +1004,7 @@ export async function sendOrderNotification(input: Pick<OrderConfirmationInput, 
     <div class="header"><h1>Yeni Sipariş</h1><p>${esc(input.orderNo)}</p></div>
     <div class="body">
       <p><strong>${esc(input.buyerName)}</strong> (${esc(input.buyerType === "corporate" ? "kurumsal" : "bireysel")}) — ${esc(input.siteName)} sahasına <strong>${input.quantity}</strong> tohum topu, toplam <strong>${esc(input.totalText)}</strong>.</p>
-      <p>Ayrıntılar yönetim panelindeki Siparişler ekranındadır.</p>
+      <p style="text-align:center;margin:24px 0;"><a href="${esc(adminOrderUrl(input.orderNo))}" class="btn">Yönetim panelinde aç</a></p>
     </div>
   `);
   try {
@@ -1120,7 +1123,8 @@ export async function sendWithdrawalNotification(input: {
     <div class="body">
       <p><strong>${esc(input.buyerName)}</strong>, ${esc(input.siteName)} sahasındaki siparişinden caydı. İade edilecek tutar: <strong>${esc(input.totalText)}</strong>.</p>
       <p>Bedelin tamamı <strong>en geç ${esc(input.refundDueOnText)}</strong> tarihine kadar, ödemede kullanılan araca tek seferde iade edilmelidir. Sipariş için ayrılan kapasite iade tamamlanınca serbest kalır.</p>
-      <p>Müşteriye teyit e-postası gönderildi. Ayrıntılar yönetim panelindeki Siparişler ekranındadır.</p>
+      <p>Müşteriye teyit e-postası gönderildi. İade, yönetim panelindeki sipariş ekranından yapılır.</p>
+      <p style="text-align:center;margin:24px 0;"><a href="${esc(adminOrderUrl(input.orderNo))}" class="btn">Yönetim panelinde aç</a></p>
     </div>
   `);
   try {
@@ -1132,3 +1136,123 @@ export async function sendWithdrawalNotification(input: {
     throw e;
   }
 }
+
+// ═════════════════════════════════════════════════════════════════════
+// SATICI KAYNAKLI İPTAL ve İADE TAMAMLANDI — müşteri bildirimleri
+// ═════════════════════════════════════════════════════════════════════
+
+export interface OrderNoticeInput {
+  orderId: string;
+  orderNo: string;
+  locale: "tr" | "en" | "ru";
+  email: string;
+  firstName: string;
+  totalText: string;
+  /** "5 Kasım 2026" biçiminde, hazır metin */
+  dateText: string;
+  isTest: boolean;
+}
+
+const NOTICE_TEXT = {
+  cancelled: {
+    tr: {
+      subject: (no: string) => `Siparişiniz iptal edildi — ${no}`,
+      title: "Siparişiniz İptal Edildi",
+      sub: "Bedelin tamamı iade edilecek",
+      intro: (no: string) =>
+        `<strong style="font-family:monospace;">${no}</strong> numaralı siparişinize konu tohum topu bırakma hizmetini sözleşmede belirtilen koşullarda ifa edemeyeceğimiz için siparişiniz tarafımızca iptal edilmiştir. Bu durum için özür dileriz.`,
+      rows: { total: "İade edilecek tutar", date: "İadenin en geç yapılacağı tarih" },
+      note: "Bedelin tamamı, ödemede kullandığınız araca tek seferde ve masrafsız olarak iade edilir. Sizden herhangi bir işlem beklenmez.",
+    },
+    en: {
+      subject: (no: string) => `Your order has been cancelled — ${no}`,
+      title: "Your Order Has Been Cancelled",
+      sub: "The full amount will be refunded",
+      intro: (no: string) =>
+        `As we are unable to perform the seed ball release service under order <strong style="font-family:monospace;">${no}</strong> on the terms set out in the contract, we have cancelled your order. We apologise for this.`,
+      rows: { total: "Amount to be refunded", date: "Refund will be made no later than" },
+      note: "The full amount is refunded in a single payment, free of charge, to the payment method you used. No action is required from you.",
+    },
+  },
+  refunded: {
+    tr: {
+      subject: (no: string) => `İadeniz yapıldı — ${no}`,
+      title: "İadeniz Yapıldı",
+      sub: "Bedelin tamamı iade edildi",
+      intro: (no: string) => `<strong style="font-family:monospace;">${no}</strong> numaralı siparişinizin bedeli, ödemede kullandığınız araca iade edilmiştir.`,
+      rows: { total: "İade edilen tutar", date: "İade tarihi" },
+      note: "İadenin hesabınıza ya da kart ekstrenize yansıma süresi bankanıza göre değişebilir.",
+    },
+    en: {
+      subject: (no: string) => `Your refund has been made — ${no}`,
+      title: "Your Refund Has Been Made",
+      sub: "The full amount has been refunded",
+      intro: (no: string) => `The amount for order <strong style="font-family:monospace;">${no}</strong> has been refunded to the payment method you used.`,
+      rows: { total: "Amount refunded", date: "Refund date" },
+      note: "The time it takes for the refund to appear in your account or card statement may vary by bank.",
+    },
+  },
+} as const;
+
+const NOTICE_COMMON = {
+  tr: {
+    hello: (n: string) => `Merhaba <strong>${n}</strong>,`,
+    contact: "Sorularınız için bu e-postayı yanıtlayabilir veya info@skytechgreen.com adresine yazabilirsiniz.",
+    test: "DENEME SİPARİŞİ — gerçek bir ödeme alınmamıştır.",
+  },
+  en: {
+    hello: (n: string) => `Hello <strong>${n}</strong>,`,
+    contact: "For questions, reply to this e-mail or write to info@skytechgreen.com.",
+    test: "TEST ORDER — no real payment has been taken.",
+  },
+} as const;
+
+async function sendOrderNotice(kind: keyof typeof NOTICE_TEXT, template: string, input: OrderNoticeInput) {
+  const lang = input.locale === "tr" ? "tr" : "en";
+  const t = NOTICE_TEXT[kind][lang];
+  const c = NOTICE_COMMON[lang];
+  const subject = (input.isTest ? "[DENEME] " : "") + t.subject(input.orderNo);
+  const rows: [string, string][] = [
+    [t.rows.total, input.totalText],
+    [t.rows.date, input.dateText],
+  ];
+  const html = emailLayout(subject, `
+    <div class="header">
+      <h1>${esc(t.title)}</h1>
+      <p>${esc(t.sub)}</p>
+    </div>
+    <div class="body">
+      ${input.isTest ? `<p style="background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;padding:10px 14px;border-radius:8px;font-weight:600;">${esc(c.test)}</p>` : ""}
+      <p>${c.hello(esc(input.firstName))}</p>
+      <p>${t.intro(esc(input.orderNo))}</p>
+      <div class="info-box">
+        <table style="width:100%;border-collapse:collapse;font-size:14px;">
+          ${rows
+            .map(
+              ([k, v]) => `<tr>
+            <td style="padding:7px 12px 7px 0;color:#6b8f6b;vertical-align:top;width:220px;">${esc(k)}</td>
+            <td style="padding:7px 0;font-weight:600;color:#1e293b;vertical-align:top;">${esc(v)}</td>
+          </tr>`
+            )
+            .join("")}
+        </table>
+      </div>
+      <p>${esc(t.note)}</p>
+      <p style="color:#64748b;font-size:13px;margin-top:20px;">${esc(c.contact)}</p>
+    </div>
+  `);
+  try {
+    const result = await sendEmail({ to: input.email, subject, html });
+    await logEmail(template, input.email, subject, input.orderId, result.id || null);
+    return result;
+  } catch (e: unknown) {
+    await logEmail(template, input.email, subject, input.orderId, null, errorMessage(e));
+    throw e;
+  }
+}
+
+/** Satıcı siparişi ifa edemeyecekse müşteriye bildirim (iade en geç bildirimden 14 gün sonra). */
+export const sendSellerCancellationNotice = (input: OrderNoticeInput) => sendOrderNotice("cancelled", "release_seller_cancel", input);
+
+/** İade sağlayıcıdan yapıldığında müşteriye bildirim. */
+export const sendRefundCompleted = (input: OrderNoticeInput) => sendOrderNotice("refunded", "release_refund_done", input);

@@ -148,6 +148,28 @@ if (Legal.isDraftLegalVersion()) {
 const quote = `${Legal.LEGAL_DOCUMENTS_VERSION}~1000.20.21`;
 assert.ok(quote.length <= 40, "teklif sürümü şemadaki 40 karakter sınırına sığmalı");
 
+/* ── Çift tahsilat tespiti ve panel adları ────────────────────────────────── */
+const Dup = await import(ROOT + "/lib/orders/duplicates.ts");
+const evs = [
+  { type: "payment_succeeded", data: { paymentId: "P1", paidKurus: 50_000, provider: "iyzico" } },
+  { type: "payment_succeeded", data: { duplicate: true, paymentId: "P2", paidKurus: 50_000, provider: "iyzico" } },
+  { type: "payment_succeeded", data: { duplicate: true, paymentId: "P3", paidKurus: 50_000, provider: "iyzico" } },
+  { type: "refund_succeeded", data: { duplicate: true, paymentId: "P2", refundId: "R1" } },
+  { type: "refund_succeeded", data: { refundId: "R0", amountKurus: 50_000 } }, // asıl sipariş iadesi: çift tahsilatla ilgisiz
+];
+assert.deepEqual(
+  Dup.duplicateChargesFrom(evs).map((d) => [d.paymentId, d.refunded]),
+  [["P2", true], ["P3", false]],
+  "asıl ödeme çift tahsilat sayılmaz; iade edilen işaretlenir"
+);
+assert.deepEqual(Dup.duplicateChargesFrom([]), []);
+const Labels = await import(ROOT + "/lib/orders/labels.ts");
+const Types = await import(ROOT + "/lib/orders/types.ts");
+for (const st of Types.ORDER_STATUSES) assert.ok(Labels.ORDER_STATUS_LABELS[st], "durum adı eksik: " + st);
+for (const ev of Types.ORDER_EVENT_TYPES) assert.ok(Labels.ORDER_EVENT_LABELS[ev], "olay adı eksik: " + ev);
+for (const k of Types.CONSENT_KEYS) assert.ok(Labels.CONSENT_LABELS[k], "onay adı eksik: " + k);
+for (const k of Types.DOCUMENT_KINDS) assert.ok(Labels.DOCUMENT_LABELS[k], "belge adı eksik: " + k);
+
 /* ── Tarih yazımı ─────────────────────────────────────────────────────────── */
 const nb = String.fromCharCode(0xa0);
 assert.equal(Dates.formatLongDay("2027-03-31", "tr"), `31${nb}Mart${nb}2027`);

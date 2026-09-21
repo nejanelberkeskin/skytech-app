@@ -1390,6 +1390,188 @@
       }
     }
   },
+  "orderStatusPage": {
+    "title": "Your order",
+    "description": "View your order status, seed ball release schedule, documents and refund information.",
+    "copy": "Copy order number",
+    "copied": "Order number copied.",
+    "copyFailed": "Could not copy. You can select and copy the order number.",
+    "greeting": "Hello {name}",
+    "createdOn": "Order date: {date}",
+    "statuses": {
+      "draft": "Draft",
+      "awaiting_payment": "Awaiting payment",
+      "payment_failed": "Payment unsuccessful",
+      "expired": "Expired",
+      "paid": "Paid",
+      "confirmed": "Confirmed",
+      "scheduled": "Scheduled",
+      "released": "Released",
+      "monitoring": "Monitoring",
+      "completed": "Completed",
+      "withdrawal_requested": "Withdrawal requested",
+      "cancelled_by_seller": "Cancelled",
+      "refunded": "Refunded"
+    },
+    "timeline": {
+      "title": "Order progress",
+      "stopped": "The release process is no longer proceeding. Refund information is shown above.",
+      "done": "Completed step",
+      "current": "Current step",
+      "upcoming": "Upcoming step",
+      "paid": {
+        "title": "Payment received",
+        "description": "Your order is confirmed; the 14-day withdrawal period is running."
+      },
+      "confirmed": {
+        "title": "Withdrawal period ended",
+        "description": "Your order can now be included in the release plan."
+      },
+      "scheduled": {
+        "title": "Release scheduled",
+        "description": "Your order has been assigned to a release operation."
+      },
+      "released": {
+        "title": "Seed balls released",
+        "description": "Your seed balls have been released at the site; your Certificate of Participation has been issued."
+      },
+      "monitoring": {
+        "title": "Monitoring period",
+        "description": "The site is being inspected and monitored, and reports are being prepared."
+      },
+      "completed": {
+        "title": "Completed",
+        "description": "Footage of the work has been shared."
+      }
+    },
+    "summary": {
+      "title": "Order summary",
+      "site": "Project Site",
+      "location": "Location",
+      "workType": "Type of work",
+      "species": "Species",
+      "quantity": "Seed ball quantity",
+      "unitPrice": "Service fee per seed ball",
+      "total": "Total service fee (VAT included)",
+      "certificateName": "Name on certificate"
+    },
+    "schedule": {
+      "title": "Release schedule",
+      "season": "Season: {season}",
+      "deadline": "Release will be completed by {date}.",
+      "originalDeadline": "Contractual deadline: {date}",
+      "releasedOn": "Release date: {date}"
+    },
+    "withdrawal": {
+      "title": "Your right of withdrawal",
+      "available": "You may exercise your right of withdrawal until the end of {date}.",
+      "action": "Submit a withdrawal notice",
+      "expired": "The withdrawal period for this order ended on {date}.",
+      "unavailable": "This order is not currently eligible for withdrawal. Contact us with any questions."
+    },
+    "refund": {
+      "withdrawal": "Withdrawal notice",
+      "seller_cancellation": "Cancellation by seller",
+      "pending": "Refund pending",
+      "succeeded": "Refund completed",
+      "requestedOn": "Notice date: {date}",
+      "dueOn": "The full amount will be refunded by {date}.",
+      "completedOn": "Refund date: {date}",
+      "bankNote": "The time it takes for the refund to appear in your account may vary by bank."
+    },
+    "documents": {
+      "title": "Order documents",
+      "kinds": {
+        "pre_info": "Pre-contract Information Form",
+        "contract": "Distance Service Agreement",
+        "withdrawal_form": "Withdrawal Form"
+      },
+      "hash": "Document hash: {hash}",
+      "view": "View",
+      "pdf": "Download PDF",
+      "viewNamed": "View {title}",
+      "pdfNamed": "Download {title} as PDF",
+      "pending": "Your documents are being prepared."
+    },
+    "certificate": {
+      "title": "Certificate of Participation",
+      "ready": "Your Certificate of Participation is ready.",
+      "cancelled": "The Certificate of Participation for this order has been cancelled.",
+      "view": "View certificate",
+      "pending": "Your certificate will be emailed when seed ball release is complete."
+    },
+    "video": {
+      "title": "Footage of the work",
+      "view": "Watch on YouTube",
+      "pending": "Footage will be shared by email during the monitoring period following release, approximately six months later."
+    },
+    "invoice": {
+      "title": "Invoice",
+      "issued": "Your invoice has been issued.",
+      "issuedOn": "Your invoice was issued on {date}.",
+      "pending": "Your invoice is being prepared.",
+      "notYet": "Your invoice will be issued and emailed after seed ball release is complete.",
+      "pdf": "Download invoice PDF"
+    },
+    "help": {
+      "title": "Contact us about your order",
+      "description": "Please include your order number when contacting us.",
+      "sites": "Project Sites"
+    },
+    "notFound": {
+      "title": "Order cannot be displayed",
+      "description": "Please use the link in your order confirmation email. Contact us if the problem persists.",
+      "back": "Return to Project Sites"
+    }
+  },
+  "withdrawalPage": {
+    "title": "Withdrawal notice",
+    "description": "You may withdraw without giving a reason within 14 days of payment. The full amount will be refunded within 14 days of your notice, to the same payment method, in one payment and at no cost to you.",
+    "form": {
+      "title": "Notice details",
+      "orderNo": "Order number",
+      "orderNoHint": "You can find it in your order confirmation email.",
+      "email": "Email used for the order",
+      "note": "Your note",
+      "noteHint": "You do not need to give a reason.",
+      "submit": "Send notice"
+    },
+    "confirm": {
+      "title": "Confirm your withdrawal notice",
+      "description": "This notice withdraws your order. The full amount you paid will be refunded within 14 days to the payment method you used.",
+      "submit": "Confirm withdrawal notice",
+      "cancel": "Cancel",
+      "submitting": "Sending…"
+    },
+    "success": {
+      "title": "Your withdrawal notice has been received.",
+      "receivedAt": "Received at",
+      "refundDueOn": "The full amount will be refunded by {date}.",
+      "email": "A confirmation email acknowledging receipt of your notice has been sent to your email address."
+    },
+    "closed": {
+      "title": "Online withdrawal form closed",
+      "description": "The online withdrawal form is currently closed. You can send your withdrawal notice to <email></email>."
+    },
+    "contact": {
+      "title": "Address for written notices",
+      "terms": "Withdrawal and Refund Terms"
+    },
+    "errors": {
+      "validation": "Please check the marked fields.",
+      "orderNoRequired": "Order number is required.",
+      "orderNoInvalid": "Enter a valid order number.",
+      "emailRequired": "Email is required.",
+      "emailInvalid": "Enter a valid email address.",
+      "tooLong": "The text is too long.",
+      "not_found": "This order number and email address did not match. Check the details in your order confirmation email.",
+      "not_eligible": "The withdrawal period for this order has ended, or the order is not eligible for withdrawal at this stage. For questions, contact {email}.",
+      "already_requested": "A withdrawal notice for this order has already been received; the refund process is under way.",
+      "rate_limited": "Too many attempts in a short time. Please try again later.",
+      "closed": "The online withdrawal form is currently closed. You can send your withdrawal notice to {email}.",
+      "generic": "Something went wrong. Please try again or email {email}."
+    }
+  },
   "carbonProgramPage": {
     "meta": {
       "title": "Carbon & Reporting — The Activity Report",

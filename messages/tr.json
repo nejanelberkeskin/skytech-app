@@ -1390,6 +1390,188 @@
       }
     }
   },
+  "orderStatusPage": {
+    "title": "Siparişiniz",
+    "description": "Siparişinizin durumunu, bırakma takvimini, belgelerini ve iade bilgilerini görüntüleyin.",
+    "copy": "Numarayı kopyala",
+    "copied": "Sipariş numarası kopyalandı.",
+    "copyFailed": "Kopyalanamadı. Sipariş numarasını seçerek kopyalayabilirsiniz.",
+    "greeting": "Merhaba {name}",
+    "createdOn": "Sipariş tarihi: {date}",
+    "statuses": {
+      "draft": "Taslak",
+      "awaiting_payment": "Ödeme bekleniyor",
+      "payment_failed": "Ödeme alınamadı",
+      "expired": "Süresi doldu",
+      "paid": "Ödendi",
+      "confirmed": "Kesinleşti",
+      "scheduled": "Planlandı",
+      "released": "Bırakıldı",
+      "monitoring": "İzlemede",
+      "completed": "Tamamlandı",
+      "withdrawal_requested": "Cayma bildirildi",
+      "cancelled_by_seller": "İptal edildi",
+      "refunded": "İade edildi"
+    },
+    "timeline": {
+      "title": "Siparişinizin aşamaları",
+      "stopped": "Bırakma süreci devam etmiyor. İade bilgileri yukarıdaki kartta yer alır.",
+      "done": "Tamamlanan adım",
+      "current": "Mevcut adım",
+      "upcoming": "Sıradaki adım",
+      "paid": {
+        "title": "Ödeme alındı",
+        "description": "Siparişiniz kesinleşti; 14 günlük cayma süresi işliyor."
+      },
+      "confirmed": {
+        "title": "Cayma süresi tamamlandı",
+        "description": "Siparişiniz bırakma planına alınabilir."
+      },
+      "scheduled": {
+        "title": "Bırakma planlandı",
+        "description": "Siparişiniz bir bırakma çalışmasına atandı."
+      },
+      "released": {
+        "title": "Tohum topları bırakıldı",
+        "description": "Tohum toplarınız sahaya bırakıldı; Katılım Sertifikanız düzenlendi."
+      },
+      "monitoring": {
+        "title": "İzleme dönemi",
+        "description": "Saha inceleniyor, izleniyor ve raporlanıyor."
+      },
+      "completed": {
+        "title": "Tamamlandı",
+        "description": "Çalışmanın görüntüleri paylaşıldı."
+      }
+    },
+    "summary": {
+      "title": "Sipariş özeti",
+      "site": "Proje Uygulama Sahası",
+      "location": "Konum",
+      "workType": "Çalışma türü",
+      "species": "Tür",
+      "quantity": "Tohum topu adedi",
+      "unitPrice": "Birim hizmet bedeli",
+      "total": "Toplam hizmet bedeli (KDV dâhil)",
+      "certificateName": "Sertifikadaki ad"
+    },
+    "schedule": {
+      "title": "Bırakma takvimi",
+      "season": "Sezon: {season}",
+      "deadline": "En geç {date} tarihine kadar bırakılır.",
+      "originalDeadline": "Sözleşmedeki son tarih: {date}",
+      "releasedOn": "Bırakma tarihi: {date}"
+    },
+    "withdrawal": {
+      "title": "Cayma hakkınız",
+      "available": "Cayma hakkınızı {date} günü sonuna kadar kullanabilirsiniz.",
+      "action": "Cayma bildiriminde bulun",
+      "expired": "Bu sipariş için cayma süresi {date} tarihinde doldu.",
+      "unavailable": "Bu sipariş şu anda caymaya uygun değil. Sorularınız için bize yazabilirsiniz."
+    },
+    "refund": {
+      "withdrawal": "Cayma bildirimi",
+      "seller_cancellation": "Satıcı kaynaklı iptal",
+      "pending": "İade bekleniyor",
+      "succeeded": "İade edildi",
+      "requestedOn": "Bildirim tarihi: {date}",
+      "dueOn": "Bedelin tamamı en geç {date} tarihine kadar iade edilir.",
+      "completedOn": "İade tarihi: {date}",
+      "bankNote": "İadenin hesabınıza yansıma süresi bankanıza göre değişebilir."
+    },
+    "documents": {
+      "title": "Sipariş belgeleri",
+      "kinds": {
+        "pre_info": "Ön Bilgilendirme Formu",
+        "contract": "Mesafeli Hizmet Sözleşmesi",
+        "withdrawal_form": "Cayma Formu"
+      },
+      "hash": "Belge özeti: {hash}",
+      "view": "Görüntüle",
+      "pdf": "PDF indir",
+      "viewNamed": "{title} belgesini görüntüle",
+      "pdfNamed": "{title} PDF belgesini indir",
+      "pending": "Belgeleriniz hazırlanıyor."
+    },
+    "certificate": {
+      "title": "Katılım Sertifikası",
+      "ready": "Katılım Sertifikanız hazır.",
+      "cancelled": "Bu siparişin Katılım Sertifikası iptal edildi.",
+      "view": "Sertifikayı görüntüle",
+      "pending": "Sertifikanız, tohum topu bırakma tamamlandığında e-postayla gönderilir."
+    },
+    "video": {
+      "title": "Çalışmanın görüntüleri",
+      "view": "YouTube'da görüntüle",
+      "pending": "Görüntüler, bırakmayı izleyen izleme döneminde (yaklaşık altı ay sonra) e-postayla paylaşılır."
+    },
+    "invoice": {
+      "title": "Fatura",
+      "issued": "Faturanız düzenlendi.",
+      "issuedOn": "Faturanız {date} tarihinde düzenlendi.",
+      "pending": "Faturanız hazırlanıyor.",
+      "notYet": "Faturanız, tohum topu bırakma tamamlandıktan sonra düzenlenir ve e-postayla gönderilir.",
+      "pdf": "Fatura PDF'ini indir"
+    },
+    "help": {
+      "title": "Siparişinizle ilgili iletişim",
+      "description": "Bize yazarken sipariş numaranızı belirtin.",
+      "sites": "Proje Uygulama Sahaları"
+    },
+    "notFound": {
+      "title": "Sipariş görüntülenemiyor",
+      "description": "Sipariş teyidi e-postanızdaki bağlantıyı kullanın. Sorun sürerse bizimle iletişime geçin.",
+      "back": "Proje Uygulama Sahalarına dön"
+    }
+  },
+  "withdrawalPage": {
+    "title": "Cayma bildirimi",
+    "description": "Ödeme tarihinden itibaren 14 gün içinde gerekçe göstermeden cayabilirsiniz. Bedelin tamamı bildiriminizden itibaren 14 gün içinde, aynı ödeme aracına, tek seferde ve masrafsız iade edilir.",
+    "form": {
+      "title": "Bildirim bilgileri",
+      "orderNo": "Sipariş numarası",
+      "orderNoHint": "Sipariş teyidi e-postanızda yer alır.",
+      "email": "Siparişte kullanılan e-posta",
+      "note": "Notunuz",
+      "noteHint": "Gerekçe belirtmeniz gerekmez.",
+      "submit": "Bildirimi gönder"
+    },
+    "confirm": {
+      "title": "Cayma bildiriminizi onaylayın",
+      "description": "Bu bildirimle siparişinizden cayarsınız. Ödediğiniz bedelin tamamı 14 gün içinde ödemede kullandığınız araca iade edilir.",
+      "submit": "Cayma bildirimini onayla",
+      "cancel": "Vazgeç",
+      "submitting": "Gönderiliyor…"
+    },
+    "success": {
+      "title": "Cayma bildiriminiz alındı.",
+      "receivedAt": "Alınma zamanı",
+      "refundDueOn": "Bedelin tamamı en geç {date} tarihine kadar iade edilir.",
+      "email": "Bildiriminizin ulaştığına dair teyit e-postası adresinize gönderildi."
+    },
+    "closed": {
+      "title": "Çevrim içi cayma formu kapalı",
+      "description": "Çevrim içi cayma formu şu anda kapalı. Cayma bildiriminizi <email></email> adresine yazabilirsiniz."
+    },
+    "contact": {
+      "title": "Yazılı bildirim adresi",
+      "terms": "Cayma ve İade Koşulları"
+    },
+    "errors": {
+      "validation": "Lütfen işaretli alanları kontrol edin.",
+      "orderNoRequired": "Sipariş numarası zorunludur.",
+      "orderNoInvalid": "Geçerli bir sipariş numarası girin.",
+      "emailRequired": "E-posta zorunludur.",
+      "emailInvalid": "Geçerli bir e-posta adresi girin.",
+      "tooLong": "Metin çok uzun.",
+      "not_found": "Bu sipariş numarası ile e-posta adresi eşleşmedi. Bilgileri sipariş teyidi e-postanızdan kontrol edin.",
+      "not_eligible": "Bu sipariş için cayma süresi dolmuş ya da sipariş bu aşamada caymaya uygun değil. Sorularınız için {email}.",
+      "already_requested": "Bu sipariş için cayma bildirimi daha önce alınmış; iade süreci sürüyor.",
+      "rate_limited": "Kısa sürede çok fazla deneme yapıldı. Lütfen biraz sonra yeniden deneyin.",
+      "closed": "Çevrim içi cayma formu şu anda kapalı. Cayma bildiriminizi {email} adresine yazabilirsiniz.",
+      "generic": "Bir şeyler ters gitti. Lütfen yeniden deneyin ya da {email} adresine yazın."
+    }
+  },
   "carbonProgramPage": {
     "meta": {
       "title": "Karbon ve Raporlama — Faaliyet Raporu",

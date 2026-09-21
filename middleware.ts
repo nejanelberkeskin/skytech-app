@@ -44,6 +44,8 @@ const PUBLIC_PAGE_PATTERNS: RegExp[] = [
   /^\/$/,
   /^\/checkout(\/.*)?$/,
   /^\/sertifika(\/.*)?$/,
+  /^\/siparis(\/.*)?$/,
+  /^\/cayma$/,
   /^\/kargo-takip(\/.*)?$/,
   /^\/bireysel\/odeme(\/.*)?$/,
   /^\/davet(\/.*)?$/,

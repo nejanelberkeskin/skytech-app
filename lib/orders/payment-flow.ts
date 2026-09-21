@@ -30,6 +30,9 @@ export async function startPayment(
     orderNo: order.order_no,
     amountKurus: order.total_kurus,
     locale: order.locale,
+    buyerId: order.user_id ?? `G-${order.id.slice(0, 13)}`,
+    identityNumber: order.invoice.type === "corporate" ? order.invoice.taxId : order.invoice.tckn,
+    billingName: order.invoice.type === "corporate" ? order.invoice.companyTitle : null,
     buyer: {
       firstName: order.buyer_first_name,
       lastName: order.buyer_last_name,
@@ -120,13 +123,15 @@ export async function completePayment(
     return { ok: true, outcome: "failed", order: failed ?? order };
   }
 
-  // Tahsil edilen tutar siparişle birebir aynı olmalı; değilse sipariş ödenmiş SAYILMAZ, elle incelenir.
-  if (result.paidKurus !== order.total_kurus) {
-    console.error(`[odeme] tutar uyuşmazlığı (${order.order_no})`);
+  // Tahsil edilen tutar (ve sağlayıcı bildiriyorsa sipariş referansı) siparişle birebir aynı olmalı;
+  // değilse sipariş ödenmiş SAYILMAZ, elle incelenir.
+  if (result.paidKurus !== order.total_kurus || (result.reference !== undefined && result.reference !== order.order_no)) {
+    console.error(`[odeme] tutar/referans uyuşmazlığı (${order.order_no})`);
     await addOrderEvent(supabase, order.id, "payment_failed", "system", {
       reason: "amount_mismatch",
       expectedKurus: order.total_kurus,
       paidKurus: result.paidKurus,
+      reference: result.reference ?? null,
       paymentId: result.paymentId,
     });
     return { ok: false, error: "amount_mismatch" };

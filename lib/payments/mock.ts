@@ -86,6 +86,6 @@ export const mockProvider: PaymentProvider = {
 
   async refund(): Promise<RefundResult> {
     if (!mockAllowed()) return { ok: false, error: "mock_disabled" };
-    return { ok: true, refundId: `MOCK-REFUND-${randomBytes(6).toString("hex")}` };
+    return { ok: true, refundId: `MOCK-REFUND-${randomBytes(6).toString("hex")}`, method: "refund" };
   },
 };

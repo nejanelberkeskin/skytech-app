@@ -589,7 +589,7 @@ Bu bölüm 11. bölümdeki akış tarifinin yerine geçer.
 - **Ödeme — `lib/payments/` + `lib/orders/payment-flow.ts`:** sağlayıcı arayüzü `init / retrieve / refund`.
   `PAYMENT_PROVIDER=mock|iyzico` (yalnız sunucu). `mock`: `/odeme/deneme/<belirteç>` sayfası sanal POS'un yerini tutar,
   imzalı belirteç + imzalı sonuç; `VERCEL_ENV=production` iken ASLA çalışmaz; siparişler `is_test=true`.
-  `iyzico` henüz yok (Faz 4): `getPaymentProvider()` null → her şey "closed". Dönüşte sonuç SAĞLAYICIDAN sorgulanır,
+  `iyzico`: bkz. Faz 4. Sağlayıcı yoksa `getPaymentProvider()` null → her şey "closed". Dönüşte sonuç SAĞLAYICIDAN sorgulanır,
   tahsil edilen tutar siparişle karşılaştırılır, durum koşullu UPDATE ile bir kez değişir (çift geri çağrı güvenli).
   - Cayma süresi ödeme anından başlar → `withdrawal_deadline` ödeme onayında yazılır.
   - Tahsil edilmiş ödeme sahipsiz kalmaz: yeniden başlatılan ödemede eski oturumun dönüşü `payment_started`
@@ -597,9 +597,7 @@ Bu bölüm 11. bölümdeki akış tarifinin yerine geçer.
     kapasite yeniden ayrılır; ayrılamazsa `payment_meta.capacityHeld=false` + olay → yönetim incelemeli).
   - Aynı siparişe ikinci bir tahsilat gelirse `payment_succeeded {duplicate:true}` olayı yazılır → **Faz 5 yönetim
     ekranı bunu "iade edilecek tahsilat" olarak göstermeli.**
-  - Faz 4 için: `startPayment` sağlayıcıya `callbackUrl = /api/payment/donus` verir; bu uç henüz YOK. iyzico dönüşü
-    başka kaynaktan POST geldiği için CSRF muafiyeti gerekir (`middleware.ts → CSRF_EXEMPT_PREFIXES`), işleyiş
-    `app/api/public/odeme/deneme/route.ts` ile aynı: `completePayment()` → `sendPaidOrderEmails()` → 303 `paymentResultPath()`.
+  - Dönüş adresi her sağlayıcı için `callbackUrl = /api/payment/donus` (bkz. Faz 4).
 - **Erişim — `lib/orders/access.ts`:** misafir müşteri siparişine `?t=<HMAC>` ile erişir (numarayı bilmek yetmez); üye
   kendi siparişine oturumla. Anahtar `ORDER_LINK_SECRET` (**canlıya çıkmadan tanımlanmalı**; yoksa service role
   anahtarından türetilir — o anahtar döndürülürse e-postalardaki bağlantılar geçersizleşir).
@@ -618,7 +616,27 @@ Bu bölüm 11. bölümdeki akış tarifinin yerine geçer.
 - Deneme verisi: geliştirmede oluşan siparişler CANLI veritabanına `is_test=true` olarak yazılır ve sahada kapasite
   tutar. Temizlik: `select public.purge_test_orders();` (kapasiteyi de geri verir) — **kullanıcı onayıyla**.
 
+### iyzico sağlayıcısı (Faz 4)
+- `lib/payments/iyzico.ts` — Ödeme Formu, iyzico'nun BARINDIRDIĞI sayfa (`paymentPageUrl`); kart verisi sunucumuza gelmez.
+  `PAYMENT_PROVIDER=iyzico` + `IYZICO_API_KEY` / `IYZICO_SECRET_KEY` / `IYZICO_BASE_URL`. Adres "sandbox" içeriyorsa
+  `isTest=true` → siparişler deneme siparişi olur; canlı anahtarlarla gerçek sipariş. Eski akışla aynı SDK (`lib/iyzico.ts`).
+  - `init`: tek kalem (`VIRTUAL`), `basketId` = sipariş no, `conversationId` = sipariş kimliği, **taksit kapalı** (`[1]` —
+    iade "tek seferde"; taksit açılacaksa müşteri kararı + komisyon). Bireysel alıcı T.C. no vermediyse `11111111111`.
+  - `retrieve`: `status=success` + `paymentStatus=SUCCESS` + `fraudStatus≠-1` → ödendi; tutar metni kuruşa kayan nokta
+    olmadan çevrilir (`priceToKurus`), para birimi TRY ve `basketId` siparişle karşılaştırılır (`reference`).
+    `fraudStatus=0` (iyzico incelemesinde) tahsil edilmiş sayılır; `payment_meta.fraudStatus` olarak görünür.
+  - `refund`: tamamı — önce ödeme kimliğiyle iade (v2), olmazsa kalem kimliğiyle, o da olmazsa aynı gün iptali.
+    Faz 5 yönetim ekranı çağıracak; henüz hiçbir yerden çağrılmıyor ve deneme ortamında SINANMADI.
+- `POST /api/payment/donus` — iyzico müşterinin tarayıcısını başka kaynaktan POST ile buraya gönderir (gövde: `token`).
+  CSRF'den muaf (`middleware.ts → CSRF_EXEMPT_PREFIXES`); güvenlik sonucun sunucudan sorgulanmasına dayanır. Her zaman
+  303: `/odeme/sonuc/<no>?t=` ya da sipariş bulunamazsa `/odeme/hata` (genel sayfa, üç dil).
+- Deneme ortamında doğrulanan: oturum açılışı (barındırılan sayfada doğru tutar), tamamlanmamış ödemenin dönüşü →
+  `payment_failed`, yeniden deneme yeni oturum açar, tanınmayan/bozuk belirteç → hata sayfası, diğer uçlarda CSRF sürüyor.
+  **Kart bilgisi girilmesi gereken başarılı ödeme adımını kullanıcı deneyecek** (iyzico deneme kartlarıyla).
+- Canlıya geçişte: canlı anahtarlar + `IYZICO_BASE_URL=https://api.iyzipay.com`, iyzico panelinde dönüş alan adı,
+  `ORDER_LINK_SECRET`, hukuki sürümden "-taslak" ekinin kalkması, `NEXT_PUBLIC_SALES_ENABLED=true`.
+
 ### Sıradaki (plan §Fazlar)
-Faz 4 iyzico sağlayıcısı (`init/retrieve/refund` + `/api/payment/donus`) → Faz 5 yönetim (siparişler, cayma/iade, fatura
+Faz 5 yönetim (siparişler, cayma/iade, fatura
 kuyruğu, partiler, ayarlar) → Faz 6 sertifika + zamanlanmış işler (süre dolumu, cayma süresi sonu → `confirmed`, video
 bildirimi). Sihirbaz (#31) birleşince `lib/site-config.ts` (`REQUEST_ROUTES`) → `/sahalar`, `/talep/acik-arazi` yönlendirmesi.

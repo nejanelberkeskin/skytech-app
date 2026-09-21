@@ -1859,5 +1859,16 @@
       "rateLimited": "Kısa sürede çok fazla deneme yapıldı. Lütfen birkaç dakika sonra yeniden deneyin.",
       "generic": "Ödeme sayfası açılamadı. Lütfen yeniden deneyin."
     }
+  },
+  "paymentErrorPage": {
+    "meta": {
+      "title": "Ödeme sonucu doğrulanamadı"
+    },
+    "badge": "Doğrulanamadı",
+    "title": "Ödemenizin sonucunu doğrulayamadık",
+    "body": "Ödeme sayfasından dönüşünüz bir siparişle eşleştirilemedi. Bu durum çoğunlukla ödeme tamamlanmadan sayfadan çıkıldığında ya da bağlantı kesildiğinde görülür.",
+    "charged": "Kartınızdan tahsilat yapıldıysa siparişiniz kayda geçmiş olabilir; lütfen sipariş teyidi e-postanızı kontrol edin. Tahsil edilmiş ve bir siparişe bağlanamamış her tutar iade edilir.",
+    "contact": "Teyit e-postası ulaşmadıysa ödeme saatini belirterek bize yazın:",
+    "cta": "Proje Uygulama Sahaları"
   }
 }

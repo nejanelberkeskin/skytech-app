@@ -78,6 +78,7 @@ const PUBLIC_PAGE_PATTERNS: RegExp[] = [
 
 const PUBLIC_API_PREFIXES: string[] = [
   "/api/payment/callback",
+  "/api/payment/donus",
   "/api/payment/guest-checkout",
   "/api/payment/checkout",
   "/api/payment/b2b-checkout",
@@ -93,7 +94,9 @@ function isPublicApi(pathname: string): boolean {
   return PUBLIC_API_PREFIXES.some((prefix) => pathname.startsWith(prefix));
 }
 
-const CSRF_EXEMPT_PREFIXES = ["/api/payment/callback"] as const;
+// Ödeme sağlayıcısının başka kaynaktan POST ettiği dönüş uçları. Güvenlikleri Origin'e değil,
+// sonucun sağlayıcıdan sunucu tarafında sorgulanmasına dayanır.
+const CSRF_EXEMPT_PREFIXES = ["/api/payment/callback", "/api/payment/donus"] as const;
 const MUTATION_METHODS = new Set(["POST", "PUT", "PATCH", "DELETE"]);
 
 export async function middleware(request: NextRequest) {

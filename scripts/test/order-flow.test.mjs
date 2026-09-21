@@ -42,6 +42,9 @@ const initInput = {
   orderNo: "SG-2026-ABCDEF",
   amountKurus: 200_000,
   locale: "en",
+  buyerId: "G-2f1c1e0a-5b7d",
+  identityNumber: null,
+  billingName: null,
   buyer: { firstName: "A", lastName: "B", email: "a@example.com", phone: "+905000000000", ip: null },
   address: { line: "x", district: "y", province: "06", postalCode: null },
   description: "deneme",
@@ -92,9 +95,33 @@ assert.equal(Pay.getPaymentProvider()?.name, "mock");
 delete process.env.VERCEL_ENV;
 delete process.env.PAYMENT_PROVIDER;
 assert.equal(Pay.getPaymentProvider(), null, "sağlayıcı yapılandırılmadıysa satış kapalıdır");
+// iyzico: anahtar yoksa seçilmez; deneme (sandbox) adresinde siparişler deneme siparişidir
 process.env.PAYMENT_PROVIDER = "iyzico";
-assert.equal(Pay.getPaymentProvider(), null, "iyzico henüz bağlanmadı");
+const savedKeys = [process.env.IYZICO_API_KEY, process.env.IYZICO_SECRET_KEY, process.env.IYZICO_BASE_URL];
+delete process.env.IYZICO_API_KEY;
+delete process.env.IYZICO_SECRET_KEY;
+assert.equal(Pay.getPaymentProvider(), null, "anahtar yoksa iyzico seçilmez");
+process.env.IYZICO_API_KEY = "sandbox-test";
+process.env.IYZICO_SECRET_KEY = "sandbox-test";
+process.env.IYZICO_BASE_URL = "https://sandbox-api.iyzipay.com";
+assert.equal(Pay.getPaymentProvider()?.name, "iyzico");
+assert.equal(Pay.getPaymentProvider()?.isTest, true, "sandbox adresi → deneme siparişi");
+process.env.IYZICO_BASE_URL = "https://api.iyzipay.com";
+assert.equal(Pay.getPaymentProvider()?.isTest, false, "canlı adres → gerçek sipariş");
+[process.env.IYZICO_API_KEY, process.env.IYZICO_SECRET_KEY, process.env.IYZICO_BASE_URL] = savedKeys;
+for (const k of ["IYZICO_API_KEY", "IYZICO_SECRET_KEY", "IYZICO_BASE_URL"]) if (process.env[k] === undefined) delete process.env[k];
 delete process.env.PAYMENT_PROVIDER;
+
+// tutar dönüşümü: kuruş ↔ iyzico ondalık metni (kayan nokta yok)
+const Iyz = await import(ROOT + "/lib/payments/iyzico.ts");
+assert.equal(Iyz.kurusToPrice(50_000), "500.00");
+assert.equal(Iyz.kurusToPrice(20_005), "200.05");
+assert.equal(Iyz.kurusToPrice(100_000_000), "1000000.00");
+for (const [given, kurus] of [["500.0", 50_000], [500, 50_000], ["500.00", 50_000], [200.05, 20_005], ["0.1", 10], ["1000000", 100_000_000], ["500.10000000", 50_010]]) {
+  assert.equal(Iyz.priceToKurus(given), kurus, `priceToKurus(${given})`);
+}
+for (const bad of ["500.005", "-5", "5e3", "", null, undefined, "abc", "1,50"]) assert.equal(Iyz.priceToKurus(bad), null, `geçersiz tutar: ${bad}`);
+for (const k of [1, 99, 100, 101, 1999, 123_456_789]) assert.equal(Iyz.priceToKurus(Iyz.kurusToPrice(k)), k, "gidiş-dönüş");
 
 /* ── Sipariş kapısı ───────────────────────────────────────────────────────── */
 const Gate = await import(ROOT + "/lib/orders/gate.ts");

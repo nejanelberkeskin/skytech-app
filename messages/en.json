@@ -1859,5 +1859,16 @@
       "rateLimited": "Too many attempts in a short time. Please try again in a few minutes.",
       "generic": "The payment page could not be opened. Please try again."
     }
+  },
+  "paymentErrorPage": {
+    "meta": {
+      "title": "Payment result could not be verified"
+    },
+    "badge": "Not verified",
+    "title": "We could not verify the result of your payment",
+    "body": "Your return from the payment page could not be matched to an order. This usually happens when the page is left before the payment is completed, or when the connection is interrupted.",
+    "charged": "If your card has been charged, your order may have been recorded; please check your order confirmation e-mail. Any amount that has been charged and cannot be matched to an order is refunded.",
+    "contact": "If the confirmation e-mail has not arrived, please write to us stating the time of payment:",
+    "cta": "Project Sites"
   }
 }

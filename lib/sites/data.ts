@@ -11,6 +11,7 @@ import { cache } from "react";
 import { createServiceRoleClient } from "@/lib/supabase/server";
 import { SEED_TYPES_FALLBACK } from "@/lib/seed-data";
 import { SITE_FIXTURES } from "./fixtures";
+import { SLUG_RE, slugify } from "./slug";
 import {
   WORK_TYPES,
   type ProjectSite,
@@ -41,18 +42,7 @@ const SPECIES_IMAGES = new Set(["kizilcam", "karacam", "sedir", "ardic"]);
 
 type Row = Record<string, unknown>;
 
-const TR_MAP: Record<string, string> = {
-  ç: "c", ğ: "g", ı: "i", ö: "o", ş: "s", ü: "u", â: "a", î: "i", û: "u",
-  Ç: "c", Ğ: "g", İ: "i", I: "i", Ö: "o", Ş: "s", Ü: "u",
-};
-
-export function slugify(input: string): string {
-  return input
-    .replace(/[çğıöşüâîûÇĞİIÖŞÜ]/g, (ch) => TR_MAP[ch] ?? ch)
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-}
+export { slugify };
 
 function pickI18n(value: unknown, locale: SiteLocale): string | null {
   if (!value || typeof value !== "object") return null;
@@ -175,7 +165,7 @@ export const getProjectSites = cache(async (locale: SiteLocale = "tr"): Promise<
 });
 
 export async function getProjectSiteBySlug(slug: string, locale: SiteLocale = "tr"): Promise<ProjectSite | null> {
-  if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(slug)) return null;
+  if (!SLUG_RE.test(slug)) return null;
   const sites = await getProjectSites(locale);
   return sites.find((s) => s.slug === slug) ?? null;
 }

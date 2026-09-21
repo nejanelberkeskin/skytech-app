@@ -6,9 +6,25 @@ export interface Land {
   capacity_seeds: number;
   filled_seeds: number;
   reserved_seeds: number;
-  status: "open" | "full";
+  status: "open" | "full" | "scheduled" | "seeded" | "monitoring" | "closed";
   is_public: boolean;
   created_at: string;
+  // ── Proje Uygulama Sahası alanları (migration 015) — yalnız yönetim uçları tam satırı okur
+  slug?: string | null;
+  province?: string | null;
+  district?: string | null;
+  area_hectares?: number | string | null; // numeric → PostgREST metin döndürebilir
+  is_fire_affected?: boolean;
+  fire_year?: number | null;
+  work_type?: "ormanlastirma" | "genclestirme" | "ormanlastirma_genclestirme";
+  species_slugs?: string[];
+  name_i18n?: Record<string, string>;
+  summary_i18n?: Record<string, string>;
+  cover_image?: string | null;
+  gallery?: string[];
+  video_url?: string | null;
+  sort_order?: number;
+  updated_at?: string;
 }
 
 // ── Auth / Profiles ──────────────────────────────────────────────────────────

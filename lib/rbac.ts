@@ -17,7 +17,7 @@ export const ROLE_META: Record<UserRole, { label: string; icon: string; color: s
   SUPER_ADMIN: { label: "Super Admin", icon: "👑", color: "text-amber-400 bg-amber-400/10", desc: "Tüm modüllere tam erişim" },
   FINANCE:     { label: "Muhasebe & Finans", icon: "💰", color: "text-blue-400 bg-blue-400/10", desc: "Ciro, faturalar, ödemeler" },
   OPERATIONS:  { label: "Operasyon", icon: "🚁", color: "text-orange-400 bg-orange-400/10", desc: "Drone, kargo, ekim süreçleri" },
-  ENGINEER:    { label: "Orman Mühendisi", icon: "🌲", color: "text-emerald-400 bg-emerald-400/10", desc: "Araziler, kapasite, ekoloji" },
+  ENGINEER:    { label: "Orman Mühendisi", icon: "🌲", color: "text-emerald-400 bg-emerald-400/10", desc: "Proje Uygulama Sahaları, kapasite" },
 };
 
 // ── Admin Modules (used for sidebar + permissions) ───────────────────────────
@@ -54,7 +54,7 @@ export const ADMIN_MODULES: AdminModule[] = [
   {
     id: "araziler",
     href: "/admin/araziler",
-    label: "Araziler & Kapasite",
+    label: "Sahalar & Kapasite",
     icon: "🌲",
     allowedRoles: ["SUPER_ADMIN", "ENGINEER"],
   },

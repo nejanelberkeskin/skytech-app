@@ -534,7 +534,15 @@ Bu bölüm 11. bölümdeki akış tarifinin yerine geçer.
 - Sayı/para biçimleri bilinçli olarak `Intl` kullanmaz (`formatCount`, `formatTry`, `formatHectares`):
   Node ile tarayıcı ICU'su ayrışınca hydration uyuşmazlığı çıkıyordu.
 
+### Yönetim — saha formu (Faz 2b)
+- `/admin/araziler` ("Sahalar & Kapasite"; SUPER_ADMIN, ENGINEER): il/ilçe, sayfa adresi, hektar, Yangın Sahası + yıl,
+  çalışma türü, sahaya bırakılan tür(ler), evre, yayın, sıra, kapasite, EN/RU ad, TR/EN/RU tanıtım, kapak, YouTube videosu.
+- Şema panel ve API'de ORTAK: `lib/sites/admin.ts` (migration 015 kısıtlarıyla birebir). Adres boşsa addan üretilir
+  (`lib/sites/slug.ts`), çakışırsa `-2`, `-3`… eklenir. Tür seçimi katalogla doğrulanır.
+- "Yayından al / Yayına al" yalnız `is_public`'i değiştirir; evreye dokunmaz (`full` artık vitrinde "Kontenjan doldu").
+- Eski "Tahmini Karbon" kartı kaldırıldı (doğrulanmamış katsayı). Kapasite sayıları yalnız bu ekranda görünür.
+
 ### Sıradaki (plan §Fazlar)
-Faz 2b yönetim panelinde saha alanları → Faz 3 sipariş çekirdeği (`release_orders`, sözleşmeler,
+Faz 3 sipariş çekirdeği (`release_orders`, sözleşmeler,
 cayma) → Faz 4 ödeme sağlayıcı katmanı. Sihirbaz yayına girince yalnız `lib/site-config.ts`
 (`REQUEST_ROUTES`) ve `lib/sites/links.ts` değişir; çağrılara dokunulmaz.

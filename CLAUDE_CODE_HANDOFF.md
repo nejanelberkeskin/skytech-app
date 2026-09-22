@@ -756,6 +756,21 @@ Bu bölüm 11. bölümdeki akış tarifinin yerine geçer.
   `16-inceleme-ve-yayin-notlari.md` dosyası ikinci görüş olarak yanına verilir (m.9 aktarım fişi, ETBİS karekod notu,
   VUK 5 yıl / TTK 10 yıl ayrımı, fatura zamanı uyarısı).
 
+### Çağrı metni ve çerez politikası (Faz 9c)
+- `CTA_MODE` (`lib/site-config.ts`) artık `SALES_ENABLED`'a bakar: satış açık → "Satın Al", değilse talep → "Talep Oluştur",
+  ikisi de kapalı → "yakında" metinleri. Eski tohum satışı bayrağı (`TRANSACTIONS_ENABLED`) çağrı metnini etkilemez. Hesabım
+  yan menüsündeki düğme de aynı kurala uyar.
+- `/cerez-politikasi` (#49'da gerçek döküme göre yeniden yazıldı) yığındaki özellikleri anlatır: sipariş erişim çerezi
+  `sgo_<no>` (zorunlu, HttpOnly, 30 gün), çalışma videoları (`youtube-nocookie.com`, yalnız oynatınca), iyzico ödeme sayfası.
+  Yeni bir çerez, depolama anahtarı ya da üçüncü taraf içerik eklenirse bu sayfa da güncellenir.
+- Google Analytics yalnız izinle yüklenir (#48, `components/analytics/GoogleAnalytics.tsx` + `lib/analytics.ts`); izin
+  yalnız analitik içindir, reklam sinyalleri her zaman kapalı. Harita ve video gibi üçüncü taraf gömmeler tıklayınca yüklenir
+  (`ClickToLoadFrame`, `YouTubeLite`) — yeni gömme eklerken aynı deseni kullanın.
+- Hukuk sayfalarındaki şirket künyesi (KVKK / Gizlilik / Kullanım Koşulları) ve eski `/davet` sayfasının kapatılması ayrı
+  PR'da (#51, `main` tabanlı).
+
 ### Sıradaki (plan §Fazlar)
-Faz 5c satış ayarları ekranı (fiyat/KDV/süreler + "sipariş alımı durduruldu"; sihirbaz fiyatı sunucudan almalı) → Faz 6 sertifika + zamanlanmış işler (süre dolumu, cayma süresi sonu → `confirmed`, video
-bildirimi).
+- `/kendi-arazim` sayfası (Astra, brif 11) teslim edilince: `/talep/arazime-ekim` → `/kendi-arazim` yönlendirmesi,
+  `REQUEST_ROUTES.land`, sahalar sayfasındaki ve Hesabım'daki bağlantılar, site haritası; eski sayfa kaldırılır.
+- Faz 5c satış ayarları ekranı (fiyat/KDV/süreler; "sipariş alımı durduruldu" için migration gerekir).
+- Faz 8 eski tohum satışı akışının temizliği (kapsam kararı: eski B2B teklif akışı kalacak mı?).

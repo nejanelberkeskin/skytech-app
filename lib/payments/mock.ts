@@ -84,8 +84,21 @@ export const mockProvider: PaymentProvider = {
       : { ok: true, status: "failure", reason: "Deneme: ödeme reddedildi", meta: { provider: "mock" } };
   },
 
+  /**
+   * Geliştirmede iade sonucu `MOCK_REFUND_OUTCOME` ile seçilir (web-brifler/17 §8):
+   * success (varsayılan) | rejected | unknown | not_sent. Canlı dağıtımda hiçbir koşulda çalışmaz.
+   */
   async refund(): Promise<RefundResult> {
-    if (!mockAllowed()) return { ok: false, error: "mock_disabled" };
-    return { ok: true, refundId: `MOCK-REFUND-${randomBytes(6).toString("hex")}`, method: "refund" };
+    if (!mockAllowed()) return { ok: false, error: "mock_disabled", outcome: "not_sent", errorCode: "config" };
+    switch (process.env.MOCK_REFUND_OUTCOME) {
+      case "rejected":
+        return { ok: false, error: "Deneme: sağlayıcı iadeyi reddetti.", outcome: "rejected", errorCode: "MOCK-REJECTED" };
+      case "unknown":
+        return { ok: false, error: "Deneme: sağlayıcı yanıt vermedi.", outcome: "unknown", errorCode: "timeout" };
+      case "not_sent":
+        return { ok: false, error: "Deneme: istek gönderilemedi.", outcome: "not_sent", errorCode: "config" };
+      default:
+        return { ok: true, refundId: `MOCK-REFUND-${randomBytes(6).toString("hex")}`, method: "refund" };
+    }
   },
 };

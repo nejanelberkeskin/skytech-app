@@ -102,7 +102,7 @@ export function publicPricing(s: SalesSettings): PublicPricing {
 export type SettingsChange = { field: keyof SalesSettings; from: unknown; to: unknown };
 
 /** İki ayar arasındaki farklar (denetim kaydı ve onay penceresi için). */
-export function diffSettings(before: SalesSettings, after: SalesSettings): SettingsChange[] {
+export function diffSettings(before: SalesSettings | Record<string, unknown>, after: SalesSettings): SettingsChange[] {
   const changes: SettingsChange[] = [];
   for (const field of Object.keys(after) as (keyof SalesSettings)[]) {
     const a = before[field];

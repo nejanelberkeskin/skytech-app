@@ -123,7 +123,7 @@ export async function PUT(request: NextRequest) {
         // E-posta hatası quote durumunu etkilemez
       }
 
-      await auditLog(supabase, {
+      const warnings = await auditLog(supabase, {
         admin: admin!,
         action: "UPDATE",
         entity: "quote",
@@ -133,6 +133,7 @@ export async function PUT(request: NextRequest) {
       });
 
       return NextResponse.json({
+        warnings,
         success: true,
         message: "Teklif onaylandı ve müşteriye bildirildi",
         status: "QUOTED",
@@ -162,7 +163,7 @@ export async function PUT(request: NextRequest) {
         return NextResponse.json({ error: updateError.message }, { status: 500 });
       }
 
-      await auditLog(supabase, {
+      const warnings = await auditLog(supabase, {
         admin: admin!,
         action: "UPDATE",
         entity: "quote",
@@ -172,6 +173,7 @@ export async function PUT(request: NextRequest) {
       });
 
       return NextResponse.json({
+        warnings,
         success: true,
         message: "Teklif reddedildi",
         status: "REJECTED",

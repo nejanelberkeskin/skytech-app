@@ -9,14 +9,14 @@ const response={json:(body,init)=>({body,status:init?.status??200,headers:init?.
 const duplicates=load('lib/orders/duplicates.ts');
 const order={id:'order',order_no:'SG-2026-TEST23',status:'withdrawal_requested',payment_id:'original',payment_provider:'mock',quantity:20,total_kurus:20000,payment_meta:{}};
 function query(data,error=null){const q={};for(const m of ['select','eq','in','order','limit','range','not'])q[m]=()=>q;q.maybeSingle=async()=>({data,error});q.then=(resolve,reject)=>Promise.resolve({data,error}).then(resolve,reject);return q;}
-function refundSetup({checkpointError=false,finishError=false,providerError=false}={}) {
- let calls=0,capacity=0,state=null;
+function refundSetup({checkpointError=false,finishError=false,providerError=false,checkpointFailures=0,lostCheckpointResponse=false}={}) {
+ let calls=0,capacity=0,state=null,storedResult=null,writes=0;
  const provider={name:'mock',refund:async()=>{calls++;await Promise.resolve();return providerError?{ok:false,error:'timeout'}:{ok:true,refundId:'fake',method:'refund'};}};
  const db={from(table){if(table==='release_orders')return query(order);if(table==='order_events')return query([{type:'payment_succeeded',data:{duplicate:true,paymentId:'extra',provider:'mock',paidKurus:20000}}]);
- if(table==='refund_operations')return {update(next){return {eq(){return this;},select(){return this;},async maybeSingle(){if(checkpointError)return {error:{code:'write_failure'}};state=next.state;return {data:{id:'op'},error:null};}};}};
+ if(table==='refund_operations')return {select:()=>query({state,result:storedResult}),update(next){return {eq(){return this;},select(){return this;},async maybeSingle(){writes++;if(checkpointError||writes<=checkpointFailures)return {error:{code:'write_failure'}};state=next.state;storedResult=next.result;if(lostCheckpointResponse&&writes===1)return {error:{code:'response_lost'}};return {data:{id:'op'},error:null};}};}};
  throw Error(table);},async rpc(name){if(name==='claim_refund_operation'){const fresh=state===null;if(fresh)state='started';return {data:{id:'op',state,fresh}};}if(name==='finish_refund_operation'){if(finishError)return {error:{code:'write_failure'}};if(state!=='completed')capacity++;state='completed';return {data:{...order,status:'refunded'}};}throw Error(name);}};
  const api=load('lib/orders/admin-actions.ts',{'@/lib/payments':{getProviderByName:()=>provider},'./duplicates':duplicates,'./store':{db:()=>db,transitionOrder:async()=>null,addOrderEvent:async()=>{}}});
- return {api,db,get calls(){return calls;},get capacity(){return capacity;},get state(){return state;}};
+ return {api,db,get calls(){return calls;},get capacity(){return capacity;},get state(){return state;},get writes(){return writes;}};
 }
 test('concurrent duplicate refund invokes provider once',async()=>{
  const x=refundSetup();const result=await Promise.all([x.api.refundDuplicate('order','extra','admin',null,x.db),x.api.refundDuplicate('order','extra','admin',null,x.db)]);
@@ -25,6 +25,12 @@ test('concurrent duplicate refund invokes provider once',async()=>{
 test('checkpoint failure never reports success or retries provider',async()=>{
  const x=refundSetup({checkpointError:true});assert.equal((await x.api.executeRefund('order','admin',null,x.db)).error,'unavailable');
  assert.equal((await x.api.executeRefund('order','admin',null,x.db)).error,'in_progress');assert.equal(x.calls,1);assert.equal(x.capacity,0);
+});
+test('checkpoint retries a transient DB failure or reads a committed lost response without repeating provider',async()=>{
+ for(const options of [{checkpointFailures:1},{lostCheckpointResponse:true}]){
+ const x=refundSetup(options);const result=await x.api.executeRefund('order','admin',null,x.db);
+ assert.equal(result.ok,true);assert.equal(x.calls,1);assert.equal(x.capacity,1);assert.ok(x.writes<=2);
+ }
 });
 test('local finalization failure retries only database, not provider',async()=>{
  const x=refundSetup({finishError:true});for(let i=0;i<2;i++)assert.equal((await x.api.executeRefund('order','admin',null,x.db)).error,'unavailable');
@@ -39,8 +45,8 @@ test('settings read or malformed row closes sales',async()=>{
  assert.equal((await api.getSalesSettings()).ordersPaused,true);
  }
 });
-test('audit insert failure retries, logs and rejects',async()=>{
- const api=load('lib/admin/audit.ts');let writes=0;await assert.rejects(api.auditLog({from:()=>({insert:async()=>{writes++;return {error:{code:'42501'}};}})},{admin:{user_id:'admin',email:'audit@example.com'},action:'UPDATE',entity:'test'}),/audit_unavailable/);assert.equal(writes,2);
+test('post-commit audit failure retries and returns an explicit warning without suggesting a business retry',async()=>{
+ const api=load('lib/admin/audit.ts');let writes=0;const warnings=await api.auditLog({from:()=>({insert:async()=>{writes++;return {error:{code:'42501'}};}})},{admin:{user_id:'admin',email:'audit@example.com'},action:'UPDATE',entity:'test'});assert.equal(warnings[0].code,'audit_unavailable');assert.equal(writes,2);
 });
 test('contact form: skipped email is 503; quota stops mail; oversized and missing notice rejected',async()=>{
  let mails=0,quota=0;

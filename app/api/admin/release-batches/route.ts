@@ -87,6 +87,6 @@ export async function POST(request: NextRequest) {
   );
   if (!result.ok) return NextResponse.json({ error: result.error }, { status: result.error === "not_found" ? 404 : result.error === "unavailable" ? 503 : 400 });
 
-  await auditLog(supabase, { admin, action: "CREATE", entity: "release_batch", entityId: result.batch.id, details: { landId: input.landId, seasonLabel: input.seasonLabel, plannedOn: input.plannedOn ?? null }, ip: getClientIP(request) });
-  return NextResponse.json({ ok: true, batch: result.batch }, { status: 201 });
+  const warnings = await auditLog(supabase, { admin, action: "CREATE", entity: "release_batch", entityId: result.batch.id, details: { landId: input.landId, seasonLabel: input.seasonLabel, plannedOn: input.plannedOn ?? null }, ip: getClientIP(request) });
+  return NextResponse.json({ ok: true, batch: result.batch, warnings }, { status: 201 });
 }

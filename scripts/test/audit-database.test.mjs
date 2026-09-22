@@ -30,6 +30,19 @@ test('database: last owner removal blocked for update/delete; second owner remov
  assert.equal((await db.query(`SELECT admin_id FROM admin_audit_logs WHERE action='CREATE' ORDER BY created_at DESC LIMIT 1`)).rows[0].admin_id,A);
  }finally{await db.close();}
 });
+test('database: null/nullable-role and multi-row owner changes cannot bypass the guard',async()=>{
+ const db=await setup();try{
+ await assert.rejects(db.exec(`UPDATE admin_users SET is_active=NULL`),/last_active_super_admin/);
+ await assert.rejects(db.exec(`UPDATE admin_users SET role=NULL`),/last_active_super_admin/);
+ await db.exec(`INSERT INTO admin_users VALUES('${B}','${B}','b@example.com','B','SUPER_ADMIN',true)`);
+ await assert.rejects(db.exec(`UPDATE admin_users SET is_active=false`),/last_active_super_admin/);
+ assert.equal((await db.query(`SELECT active_count FROM admin_owner_guard`)).rows[0].active_count,2);
+ await db.exec(`UPDATE admin_users SET role='ENGINEER' WHERE id='${B}'`);
+ const audit=(await db.query(`SELECT details FROM admin_audit_logs WHERE action='UPDATE' ORDER BY created_at DESC LIMIT 1`)).rows[0].details;
+ assert.deepEqual(audit.before,{role:'SUPER_ADMIN',is_active:true});assert.deepEqual(audit.after,{role:'ENGINEER',is_active:true});
+ await assert.rejects(db.exec(`UPDATE admin_users SET is_active=false WHERE id='${A}'`),/last_active_super_admin/);
+ }finally{await db.close();}
+});
 test('database: unique refund claim, atomic completion, idempotent capacity/invoice/audit',async()=>{
  const db=await setup();try{
  const claim=()=>db.query(`SELECT claim_refund_operation('${O}','mock','original',20000,false,'${A}') op`);

@@ -114,7 +114,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  await auditLog(supabase, {
+  const warnings = await auditLog(supabase, {
     admin: admin!,
     action: "CREATE",
     entity: "land",
@@ -123,7 +123,7 @@ export async function POST(req: NextRequest) {
     ip: getClientIP(req),
   });
 
-  return NextResponse.json(row, { status: 201 });
+  return NextResponse.json({ ...row, warnings }, { status: 201 });
 }
 
 // PUT — Saha güncelle (tam form) ya da hızlı yayından alma/açma
@@ -199,7 +199,7 @@ export async function PUT(req: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  await auditLog(supabase, {
+  const warnings = await auditLog(supabase, {
     admin: admin!,
     action: "UPDATE",
     entity: "land",
@@ -208,7 +208,7 @@ export async function PUT(req: NextRequest) {
     ip: getClientIP(req),
   });
 
-  return NextResponse.json(row);
+  return NextResponse.json({ ...row, warnings });
 }
 
 // DELETE — Saha sil (yalnız boş sahalar)
@@ -252,7 +252,7 @@ export async function DELETE(req: NextRequest) {
     return NextResponse.json({ error: message }, { status: error.code === "23503" ? 409 : 500 });
   }
 
-  await auditLog(supabase, {
+  const warnings = await auditLog(supabase, {
     admin: admin!,
     action: "DELETE",
     entity: "land",
@@ -261,5 +261,5 @@ export async function DELETE(req: NextRequest) {
     ip: getClientIP(req),
   });
 
-  return NextResponse.json({ success: true });
+  return NextResponse.json({ success: true, warnings });
 }

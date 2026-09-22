@@ -1,5 +1,7 @@
 "use client";
 
+import { adminFetch } from "@/lib/admin/client";
+
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import RoleGuard from "@/components/RoleGuard";
@@ -126,7 +128,7 @@ function Content() {
       if (status) sp.set("status", status);
       if (flag) sp.set("flag", flag);
       if (debouncedQ) sp.set("q", debouncedQ);
-      const res = await fetch(`/api/admin/release-orders?${sp.toString()}`);
+      const res = await adminFetch(`/api/admin/release-orders?${sp.toString()}`);
       if (!res.ok) throw new Error(String(res.status));
       const json = (await res.json()) as ListResponse;
       setData(json);
@@ -145,7 +147,7 @@ function Content() {
   const loadDetail = useCallback(async (id: string) => {
     setDetailLoading(true);
     try {
-      const res = await fetch(`/api/admin/release-orders/${id}`);
+      const res = await adminFetch(`/api/admin/release-orders/${id}`);
       if (!res.ok) throw new Error(String(res.status));
       setDetail((await res.json()) as Detail);
     } catch {
@@ -165,7 +167,7 @@ function Content() {
       if (!selectedId) return false;
       setError(null);
       try {
-        const res = await fetch(`/api/admin/release-orders/${selectedId}`, {
+        const res = await adminFetch(`/api/admin/release-orders/${selectedId}`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(body),

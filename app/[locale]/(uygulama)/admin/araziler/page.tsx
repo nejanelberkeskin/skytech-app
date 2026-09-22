@@ -1,5 +1,7 @@
 "use client";
 
+import { adminFetch } from "@/lib/admin/client";
+
 import { useEffect, useState, useCallback } from "react";
 import RoleGuard from "@/components/RoleGuard";
 import { CardStat, Button, Input, Select, Textarea } from "@/components/ui";
@@ -185,7 +187,7 @@ function SahalarContent() {
     setLoading(true);
     setLoadError(null);
     try {
-      const res = await fetch("/api/admin/lands?include=species");
+      const res = await adminFetch("/api/admin/lands?include=species");
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error ?? "Sahalar yüklenemedi.");
       setLands(Array.isArray(data.lands) ? (data.lands as Land[]) : []);
@@ -244,7 +246,7 @@ function SahalarContent() {
     setSaving(true);
     resetErrors();
     try {
-      const res = await fetch("/api/admin/lands", {
+      const res = await adminFetch("/api/admin/lands", {
         method: modalMode === "add" ? "POST" : "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(modalMode === "add" ? payload : { id: selectedLand?.id, ...payload }),
@@ -266,7 +268,7 @@ function SahalarContent() {
 
   // ── Yayından al / yayına al ───────────────────────────────────────────────
   const togglePublished = async (l: Land) => {
-    const res = await fetch("/api/admin/lands", {
+    const res = await adminFetch("/api/admin/lands", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id: l.id, maintenance: l.is_public }),
@@ -279,7 +281,7 @@ function SahalarContent() {
     if (!selectedLand) return;
     setSaving(true);
     setError(null);
-    const res = await fetch("/api/admin/lands", {
+    const res = await adminFetch("/api/admin/lands", {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id: selectedLand.id }),

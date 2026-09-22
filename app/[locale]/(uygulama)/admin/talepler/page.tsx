@@ -1,5 +1,7 @@
 "use client";
 
+import { adminFetch } from "@/lib/admin/client";
+
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import RoleGuard from "@/components/RoleGuard";
@@ -104,7 +106,7 @@ function TaleplerContent() {
       if (status) sp.set("status", status);
       if (type) sp.set("type", type);
       if (debouncedQ) sp.set("q", debouncedQ);
-      const res = await fetch(`/api/admin/requests?${sp.toString()}`);
+      const res = await adminFetch(`/api/admin/requests?${sp.toString()}`);
       if (!res.ok) throw new Error(String(res.status));
       const json = (await res.json()) as ListResponse;
       setData(json);
@@ -127,7 +129,7 @@ function TaleplerContent() {
     setSaving(true);
     setError(null);
     try {
-      const res = await fetch("/api/admin/requests", {
+      const res = await adminFetch("/api/admin/requests", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: selected.id, status: editStatus, adminNote: editNote }),

@@ -24,10 +24,14 @@ interface AuditEntry {
   ip?: string;
 }
 
+export type AuditWarning = { code: "audit_unavailable"; message: string; entity: string; entityId?: string };
+
+/** Post-commit audit: callers must surface warnings, never pretend the business write failed.
+ * Personnel/refund mutations retain mandatory audit in their database transaction. */
 export async function auditLog(
   supabase: SupabaseClient,
   entry: AuditEntry
-): Promise<void> {
+): Promise<AuditWarning[]> {
   for (let attempt = 0; attempt < 2; attempt++) {
     try {
       const { error } = await supabase.from("admin_audit_logs").insert({
@@ -36,11 +40,12 @@ export async function auditLog(
         details: entry.details ?? {}, ip_address: entry.ip ?? null,
       });
       if (error) throw new Error(error.code ?? "audit_insert_failed");
-      return;
-    } catch (error) {
+      return [];
+    } catch {
       if (attempt === 0) continue;
-      console.error("[audit] persistence_failed", { entity: entry.entity, action: entry.action });
-      throw new Error("audit_unavailable", { cause: error });
+      console.error("[audit] persistence_failed", { entity: entry.entity, entityId: entry.entityId, action: entry.action });
+      return [{ code: "audit_unavailable", message: "İşlem kaydedildi; denetim kaydı tamamlanamadı. Aynı işlemi yeniden yapmayın.", entity: entry.entity, entityId: entry.entityId }];
     }
   }
+  return [];
 }

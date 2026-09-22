@@ -1,5 +1,7 @@
 "use client";
 
+import { adminFetch } from "@/lib/admin/client";
+
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Button, Input, Select } from "@/components/ui";
 import { formatCount, formatTry } from "@/lib/pricing";
@@ -39,16 +41,19 @@ interface ReadinessItem {
 
 interface SettingsResponse {
   readiness?: { accepting: boolean; environment: string; items: ReadinessItem[] };
-  settings: SalesSettings;
+  settings: SalesSettings | null;
+  rawSettings: Record<string, unknown>;
+  fieldErrors?: Record<string, string>;
+  repairRequired?: boolean;
   updatedAt: string;
   defaults: SalesSettings;
-  quoteVersion: string;
+  quoteVersion: string | null;
   openCheckouts: number;
   history: HistoryItem[];
 }
 
 type Form = Record<"price" | "vat" | "min" | "max" | "presets" | "prep" | "ttl", string> & {
-  timing: InvoiceTiming;
+  timing: InvoiceTiming | "";
   paused: boolean;
 };
 
@@ -108,6 +113,7 @@ const SERVER_ERRORS: Record<string, string> = {
   conflict: "Ayarlar siz düzenlerken başka bir yönetici tarafından değiştirildi. Güncel değerler yüklendi; değişikliğinizi yeniden yapın.",
   unavailable: "Şu anda kaydedilemiyor; yeniden deneyin.",
   invalid_body: "Eksik ya da hatalı bilgi.",
+  repair_requires_pause: "Önce geçersiz ayarları satış kapalıyken düzeltin. Satışı sonra ayrı bir işlemle açabilirsiniz.",
   validation: "Bazı alanlar geçersiz; işaretli kutulara bakın.",
 };
 
@@ -154,6 +160,21 @@ function toForm(s: SalesSettings): Form {
   };
 }
 
+/** Invalid stored fields remain visible; defaults are only loaded by an explicit user action. */
+function repairForm(raw: Record<string, unknown>): Form {
+  const numberText = (v: unknown) => typeof v === "number" || typeof v === "string" ? String(v) : "";
+  return {
+    price: typeof raw.unitPriceKurus === "number" ? priceText(raw.unitPriceKurus) : numberText(raw.unitPriceKurus),
+    vat: numberText(raw.vatRate), min: numberText(raw.minQuantity), max: numberText(raw.maxQuantity),
+    presets: Array.isArray(raw.quantityPresets) ? raw.quantityPresets.map(numberText).join(", ") : "",
+    timing: raw.invoiceTiming === "on_payment" || raw.invoiceTiming === "on_performance" ? raw.invoiceTiming : "",
+    prep: numberText(raw.prepDays), ttl: numberText(raw.paymentTtlMinutes), paused: true,
+  };
+}
+function formErrors(fields: Record<string, string>) {
+  return Object.fromEntries(Object.entries(fields).map(([key, value]) => [FORM_FIELD[key as keyof SalesSettings] ?? key, value]));
+}
+
 function fromForm(f: Form): SalesSettings {
   return {
     unitPriceKurus: parsePrice(f.price),
@@ -161,7 +182,7 @@ function fromForm(f: Form): SalesSettings {
     maxQuantity: parseWhole(f.max),
     quantityPresets: f.presets.split(/[,;]+/).map((p) => p.trim()).filter(Boolean).map(parseWhole),
     vatRate: parseRate(f.vat),
-    invoiceTiming: f.timing,
+    invoiceTiming: f.timing as InvoiceTiming,
     prepDays: parseWhole(f.prep),
     paymentTtlMinutes: parseWhole(f.ttl),
     ordersPaused: f.paused,
@@ -169,6 +190,9 @@ function fromForm(f: Form): SalesSettings {
 }
 
 function valueText(field: string, value: unknown): string {
+  if (value === null || value === undefined) return "Geçersiz kayıt (boş)";
+  if (!["invoiceTiming", "ordersPaused"].includes(field) && !Array.isArray(value) &&
+      (typeof value !== "number" || !Number.isFinite(value))) return `Geçersiz kayıt (${String(value)})`;
   if (Array.isArray(value)) return value.map((v) => formatCount(Number(v), "tr")).join(" · ");
   switch (field) {
     case "unitPriceKurus": return formatTry(Number(value), "tr");
@@ -176,7 +200,7 @@ function valueText(field: string, value: unknown): string {
     case "invoiceTiming": return TIMING_LABELS[value as InvoiceTiming] ?? String(value);
     case "prepDays": return `${value} gün`;
     case "paymentTtlMinutes": return `${value} dakika`;
-    case "ordersPaused": return value ? "Durduruldu" : "Açık";
+    case "ordersPaused": return typeof value === "boolean" ? (value ? "Durduruldu" : "Açık") : "Geçersiz kayıt";
     default: return formatCount(Number(value), "tr");
   }
 }
@@ -236,12 +260,12 @@ export default function SalesSettingsForm() {
 
   const load = useCallback(async (keepMessage = false) => {
     try {
-      const res = await fetch("/api/admin/sales-settings", { cache: "no-store" });
+      const res = await adminFetch("/api/admin/sales-settings", { cache: "no-store" });
       if (!res.ok) throw new Error(String(res.status));
       const json = (await res.json()) as SettingsResponse;
       setData(json);
-      setForm(toForm(json.settings));
-      setFieldErrors({});
+      setForm(json.settings ? toForm(json.settings) : repairForm(json.rawSettings));
+      setFieldErrors(formErrors(json.fieldErrors ?? {}));
       setConfirming(null);
       if (!keepMessage) setError(null);
     } catch {
@@ -269,6 +293,7 @@ export default function SalesSettingsForm() {
   const errorFor = (key: keyof Form): string | undefined => {
     const code = fieldErrors[key];
     if (!code) return undefined;
+    if (key === "timing") return "Fatura zamanını seçin.";
     const field = (Object.keys(FORM_FIELD) as (keyof SalesSettings)[]).find((f) => FORM_FIELD[f] === key);
     return code === "range" && field ? RANGE_TEXT[field] : (ERROR_TEXT[code] ?? RANGE_TEXT[field ?? "unitPriceKurus"]);
   };
@@ -291,7 +316,7 @@ export default function SalesSettingsForm() {
       setConfirming(null);
       return;
     }
-    const changes = diffSettings(data.settings, parsed.data);
+    const changes = diffSettings(data.settings ?? data.rawSettings, parsed.data);
     if (changes.length === 0) {
       setSuccess("Değişiklik yok.");
       return;
@@ -304,7 +329,7 @@ export default function SalesSettingsForm() {
     setSaving(true);
     setError(null);
     try {
-      const res = await fetch("/api/admin/sales-settings", {
+      const res = await adminFetch("/api/admin/sales-settings", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ settings: confirming.next, expectedUpdatedAt: data.updatedAt }),
@@ -363,6 +388,10 @@ export default function SalesSettingsForm() {
         </div>
       ) : !data || !form ? null : (
         <>
+          {data.repairRequired && <div role="alert" className="rounded-xl border border-amber-400/40 bg-amber-500/10 p-4 text-sm text-amber-100">
+            Kayıtlı ayarlarda geçersiz alanlar var; yeni sipariş alımı kapalı. İşaretli alanları düzeltip kaydedin.
+            Onarım satış kapalıyken yapılır; yeniden açmak ayrı bir işlemdir.
+          </div>}
           {data.readiness && (
             <section className="bg-white/[0.03] ring-1 ring-white/[0.08] rounded-2xl p-5 space-y-3" aria-labelledby="hazirlik-baslik">
               <div className="flex items-baseline justify-between gap-3 flex-wrap">
@@ -387,7 +416,7 @@ export default function SalesSettingsForm() {
             </section>
           )}
 
-          <div className="bg-white/[0.03] ring-1 ring-white/[0.08] rounded-2xl p-5 text-sm text-slate-300 space-y-1">
+          {data.settings && <div className="bg-white/[0.03] ring-1 ring-white/[0.08] rounded-2xl p-5 text-sm text-slate-300 space-y-1">
             <p>
               <span className="text-slate-400">Şu an geçerli:</span>{" "}
               <span className="text-white font-medium">{formatTry(data.settings.unitPriceKurus, "tr")}</span> / tohum topu (KDV dâhil) ·
@@ -399,7 +428,7 @@ export default function SalesSettingsForm() {
             <p className="text-xs text-slate-500">
               Son kayıt: {when(data.updatedAt)} · Teklif sürümü <code className="text-slate-400">{data.quoteVersion}</code> · Ödeme bekleyen sipariş: {data.openCheckouts}
             </p>
-          </div>
+          </div>}
 
           <section
             className={`rounded-2xl p-5 space-y-3 border ${form.paused ? "bg-red-500/[0.06] border-red-500/30" : "bg-[var(--bg-surface)] border-white/[0.06]"}`}
@@ -408,6 +437,7 @@ export default function SalesSettingsForm() {
             <label className="flex items-start gap-3 cursor-pointer">
               <input
                 type="checkbox"
+                disabled={data.repairRequired}
                 checked={form.paused}
                 onChange={(e) => setPaused(e.target.checked)}
                 className="mt-0.5 h-4 w-4 accent-red-500"
@@ -484,7 +514,8 @@ export default function SalesSettingsForm() {
                 error={errorFor("ttl")}
                 helperText="Bu sürede ödenmeyen sipariş düşer; ayrılan kapasite geri verilir."
               />
-              <Select label="Fatura zamanı" value={form.timing} onChange={(e) => set("timing", e.target.value)}>
+              <Select label="Fatura zamanı" value={form.timing} onChange={(e) => set("timing", e.target.value)} error={errorFor("timing")}>
+                <option value="" disabled>Fatura zamanını seçin</option>
                 {(Object.keys(TIMING_LABELS) as InvoiceTiming[]).map((k) => (
                   <option key={k} value={k}>{TIMING_LABELS[k]}</option>
                 ))}
@@ -515,8 +546,8 @@ export default function SalesSettingsForm() {
           ) : (
             <div className="flex gap-3 flex-wrap">
               <Button variant="primary" onClick={review}>Değişiklikleri gözden geçir</Button>
-              <Button variant="ghost" onClick={() => { setForm(toForm(data.settings)); setFieldErrors({}); }}>Formu sıfırla</Button>
-              <Button variant="ghost" onClick={() => { setForm(toForm(data.defaults)); setFieldErrors({}); }}>Varsayılanları yükle</Button>
+              <Button variant="ghost" onClick={() => { setForm(data.settings ? toForm(data.settings) : repairForm(data.rawSettings)); setFieldErrors(formErrors(data.fieldErrors ?? {})); }}>Formu sıfırla</Button>
+              <Button variant="ghost" onClick={() => { setForm(toForm({ ...data.defaults, ordersPaused: data.repairRequired || data.defaults.ordersPaused })); setFieldErrors({}); }}>Varsayılanları yükle</Button>
             </div>
           )}
 

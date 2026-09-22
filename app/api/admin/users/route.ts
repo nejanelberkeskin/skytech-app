@@ -77,7 +77,7 @@ export async function POST(req: NextRequest) {
 
   if (createAuthErr) {
     // Auth kullanıcısı zaten varsa direkt admin_users'a ekle
-    if (!createAuthErr.message.includes("already registered")) {
+    if (createAuthErr.code !== "email_exists" && createAuthErr.code !== "user_already_exists") {
       return NextResponse.json({ error: createAuthErr.message }, { status: 500 });
     }
     // Mevcut auth kullanıcısını e-posta ile bul

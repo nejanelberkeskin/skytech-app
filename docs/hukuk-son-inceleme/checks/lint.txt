@@ -1,0 +1,451 @@
+
+> skytech-app@0.1.0 lint:check
+> eslint
+
+
+/Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/app/[locale]/(uygulama)/admin/ayarlar/page.tsx
+  46:21  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/app/[locale]/(uygulama)/admin/ayarlar/page.tsx:46:21
+  44 |   }, []);
+  45 |
+> 46 |   useEffect(() => { fetchSettings(); }, [fetchSettings]);
+     |                     ^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  47 |
+  48 |   useEffect(() => {
+  49 |     if (success) { const t = setTimeout(() => setSuccess(null), 3000); return () => clearTimeout(t); }  react-hooks/set-state-in-effect
+
+/Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/app/[locale]/(uygulama)/admin/b2b/page.tsx
+  59:21  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/app/[locale]/(uygulama)/admin/b2b/page.tsx:59:21
+  57 |   }, []);
+  58 |
+> 59 |   useEffect(() => { fetchQuotes(); }, [fetchQuotes]);
+     |                     ^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  60 |
+  61 |   useEffect(() => {
+  62 |     if (success) { const t = setTimeout(() => setSuccess(null), 4000); return () => clearTimeout(t); }  react-hooks/set-state-in-effect
+
+/Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/app/[locale]/(uygulama)/admin/katalog/page.tsx
+   5:43  warning  'Card' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               @typescript-eslint/no-unused-vars
+  55:21  error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/app/[locale]/(uygulama)/admin/katalog/page.tsx:55:21
+  53 |   }, []);
+  54 |
+> 55 |   useEffect(() => { fetchProducts(); }, [fetchProducts]);
+     |                     ^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  56 |
+  57 |   useEffect(() => {
+  58 |     if (success) { const t = setTimeout(() => setSuccess(null), 3000); return () => clearTimeout(t); }  react-hooks/set-state-in-effect
+
+/Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/app/[locale]/(uygulama)/admin/kullanicilar/page.tsx
+  174:21  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/app/[locale]/(uygulama)/admin/kullanicilar/page.tsx:174:21
+  172 |   }, []);
+  173 |
+> 174 |   useEffect(() => { load(); }, [load]);
+      |                     ^^^^ Avoid calling setState() directly within an effect
+  175 |
+  176 |   const toggleActive = async (u: AdminUser) => {
+  177 |     setActionError(null);  react-hooks/set-state-in-effect
+
+/Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/app/[locale]/(uygulama)/admin/operasyon/page.tsx
+  103:21  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/app/[locale]/(uygulama)/admin/operasyon/page.tsx:103:21
+  101 |   }, []);
+  102 |
+> 103 |   useEffect(() => { load(); }, [load]);
+      |                     ^^^^ Avoid calling setState() directly within an effect
+  104 |
+  105 |   const toggleAll = () => {
+  106 |     if (selected.size === queue.length) setSelected(new Set());  react-hooks/set-state-in-effect
+  187:45  error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                react/no-unescaped-entities
+  187:62  error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                react/no-unescaped-entities
+
+/Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/app/[locale]/(uygulama)/admin/page.tsx
+  246:5  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/app/[locale]/(uygulama)/admin/page.tsx:246:5
+  244 |
+  245 |   useEffect(() => {
+> 246 |     load();
+      |     ^^^^ Avoid calling setState() directly within an effect
+  247 |     // Her 60 saniyede otomatik yenile
+  248 |     const interval = setInterval(load, 60_000);
+  249 |     return () => clearInterval(interval);  react-hooks/set-state-in-effect
+
+/Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/app/[locale]/(uygulama)/admin/siparisler/page.tsx
+  470:21  error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/app/[locale]/(uygulama)/admin/siparisler/page.tsx:470:21
+  468 |   }, [search, statusFilter, typeFilter]);
+  469 |
+> 470 |   useEffect(() => { load(); }, [load]);
+      |                     ^^^^ Avoid calling setState() directly within an effect
+  471 |
+  472 |   const orders = data.orders;
+  473 |  react-hooks/set-state-in-effect
+  476:9   warning  'totalSeeds' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   @typescript-eslint/no-unused-vars
+
+/Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/app/[locale]/(uygulama)/bireysel/odeme/page.tsx
+  190:5   warning  'clearSeedCart' is assigned a value but never used     @typescript-eslint/no-unused-vars
+  190:20  warning  'clearReservation' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/app/[locale]/(uygulama)/bireysel/satin-al/arazi/page.tsx
+  275:21  warning  'seed' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             @typescript-eslint/no-unused-vars
+  347:21  error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/app/[locale]/(uygulama)/bireysel/satin-al/arazi/page.tsx:347:21
+  345 |   };
+  346 |
+> 347 |   useEffect(() => { fetchLands(); }, []);
+      |                     ^^^^^^^^^^ Avoid calling setState() directly within an effect
+  348 |
+  349 |   const closeModal = () => {
+  350 |     setSelectedLand(null);  react-hooks/set-state-in-effect
+
+/Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/app/[locale]/(uygulama)/bireysel/satin-al/siparis/page.tsx
+  14:10  warning  'added' is assigned a value but never used      @typescript-eslint/no-unused-vars
+  30:9   warning  'handleAdd' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/app/[locale]/(uygulama)/hesabim/davet-et-kazan/page.tsx
+  103:21  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/app/[locale]/(uygulama)/hesabim/davet-et-kazan/page.tsx:103:21
+  101 |   }, []);
+  102 |
+> 103 |   useEffect(() => { loadData(); }, [loadData]);
+      |                     ^^^^^^^^ Avoid calling setState() directly within an effect
+  104 |
+  105 |   if (loading) {
+  106 |     return (  react-hooks/set-state-in-effect
+
+/Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/app/[locale]/(uygulama)/hesabim/davet-et/page.tsx
+  161:21  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/app/[locale]/(uygulama)/hesabim/davet-et/page.tsx:161:21
+  159 |   }, []);
+  160 |
+> 161 |   useEffect(() => { loadProfile(); }, [loadProfile]);
+      |                     ^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  162 |
+  163 |   const referralLink = referralCode
+  164 |     ? `${APP_URL}/davet/${referralCode.toLowerCase()}`  react-hooks/set-state-in-effect
+
+/Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/app/[locale]/(uygulama)/hesabim/page.tsx
+  24:25  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/app/[locale]/(uygulama)/hesabim/page.tsx:24:25
+  22 |
+  23 |   useEffect(() => {
+> 24 |     if (target === 0) { setValue(0); return; }
+     |                         ^^^^^^^^ Avoid calling setState() directly within an effect
+  25 |     const start = performance.now();
+  26 |     const animate = (now: number) => {
+  27 |       const elapsed = now - start;  react-hooks/set-state-in-effect
+
+/Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/app/[locale]/(uygulama)/hesabim/siparislerim/page.tsx
+  232:5  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/app/[locale]/(uygulama)/hesabim/siparislerim/page.tsx:232:5
+  230 |
+  231 |   useEffect(() => {
+> 232 |     load();
+      |     ^^^^ Avoid calling setState() directly within an effect
+  233 |
+  234 |     /* ── Realtime: Sipariş durumu değiştiğinde otomatik yenile ────────── */
+  235 |     let channel: ReturnType<typeof supabase.channel> | null = null;  react-hooks/set-state-in-effect
+
+/Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/app/[locale]/(uygulama)/hesabim/telemetri/[id]/page.tsx
+    3:39  warning  'useCallback' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               @typescript-eslint/no-unused-vars
+  478:63  error    Error: Cannot call impure function during render
+
+`Date.now` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+/Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/app/[locale]/(uygulama)/hesabim/telemetri/[id]/page.tsx:478:63
+  476 |             {[
+  477 |               { label: "Tohum", value: orderData.seeds.toString(), icon: "🌱", color: "#10b981" },
+> 478 |               { label: "Yaş (gün)", value: String(Math.floor((Date.now() - new Date(orderData.plantedDate).getTime()) / 86400000)), icon: "📅", color: "#38bdf8" },
+      |                                                               ^^^^^^^^^^ Cannot call impure function
+  479 |               { label: "Hayatta", value: "98%", icon: "💚", color: "#34d399" },
+  480 |               { label: "Sonraki Drone", value: "2 gün", icon: "🛸", color: "#a78bfa" },
+  481 |             ].map((s) => (  react-hooks/purity
+  547:19  warning  'isFuture' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         @typescript-eslint/no-unused-vars
+
+/Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/app/[locale]/(uygulama)/kurumsal/panel/odeme/page.tsx
+   30:36  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   32:44  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  104:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/app/[locale]/(uygulama)/kurumsal/panel/page.tsx
+   401:3   warning  'companyName' is defined but never used   @typescript-eslint/no-unused-vars
+   487:3   warning  'userId' is defined but never used        @typescript-eslint/no-unused-vars
+   544:19  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   760:36  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  1268:3   warning  'companyId' is defined but never used     @typescript-eslint/no-unused-vars
+
+/Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/app/[locale]/(uygulama)/lands/page.tsx
+  38:21  error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/app/[locale]/(uygulama)/lands/page.tsx:38:21
+  36 |   };
+  37 |
+> 38 |   useEffect(() => { fetchLands(); setPage(1); }, [filter]);
+     |                     ^^^^^^^^^^ Avoid calling setState() directly within an effect
+  39 |
+  40 |   const totalCapacity = lands.reduce((s, l) => s + l.capacity_seeds, 0);
+  41 |   const totalFilled = lands.reduce((s, l) => s + l.filled_seeds, 0);  react-hooks/set-state-in-effect
+  38:50  warning  React Hook useEffect has a missing dependency: 'fetchLands'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       react-hooks/exhaustive-deps
+
+/Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/app/[locale]/(uygulama)/orman/[company-slug]/page.tsx
+  100:3   warning  'totalSeeds' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         @typescript-eslint/no-unused-vars
+  174:40  error    Error: Cannot call impure function during render
+
+`Math.random` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+/Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/app/[locale]/(uygulama)/orman/[company-slug]/page.tsx:174:40
+  172 |                   style={{
+  173 |                     animation: "glowPulse 2s ease-in-out infinite",
+> 174 |                     animationDelay: `${Math.random() * 1}s`,
+      |                                        ^^^^^^^^^^^^^ Cannot call impure function
+  175 |                   }}
+  176 |                 />
+  177 |               )}  react-hooks/purity
+  373:17  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        @next/next/no-img-element
+  702:31  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                react/no-unescaped-entities
+
+/Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/app/api/admin/b2b/route.ts
+  182:15  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/app/api/kurumsal/quotes/route.ts
+  8:27  warning  'request' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/app/api/payment/callback/route.ts
+  33:10  warning  'createCertificate' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/app/api/payment/guest-checkout/route.ts
+  172:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  173:60  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  173:70  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/app/api/public/orman/[slug]/route.ts
+  57:7   error  'regions' is never reassigned. Use 'const' instead  prefer-const
+  66:25  error  Unexpected any. Specify a different type            @typescript-eslint/no-explicit-any
+
+/Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/components/Cart.tsx
+  10:47  warning  'seedTotalPrice' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/components/ShippingTimeline.tsx
+  111:9  warning  'isDelivered' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/components/seo/WebVitalsReporter.tsx
+  17:7  warning  Unused eslint-disable directive (no problems were reported from 'no-console')
+
+/Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/components/vitrin/CustomCursor.tsx
+  35:5  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/components/vitrin/CustomCursor.tsx:35:5
+  33 |     if (typeof window === "undefined") return;
+  34 |     const mq = window.matchMedia("(hover: hover) and (pointer: fine)");
+> 35 |     setEnabled(mq.matches);
+     |     ^^^^^^^^^^ Avoid calling setState() directly within an effect
+  36 |     const onChange = () => setEnabled(mq.matches);
+  37 |     mq.addEventListener?.("change", onChange);
+  38 |     return () => mq.removeEventListener?.("change", onChange);  react-hooks/set-state-in-effect
+
+/Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/components/vitrin/TurkeyMap.tsx
+  177:25  warning  '_' is defined but never used                @typescript-eslint/no-unused-vars
+  178:27  warning  'list' is defined but never used             @typescript-eslint/no-unused-vars
+  342:7   warning  'totalX' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  343:7   warning  'totalY' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/components/vitrin/homepage/HowItWorks.tsx
+  33:7  warning  'itemVariants' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/components/vitrin/homepage/ImpactTabs.tsx
+  280:10  warning  'WaveIcon' is defined but never used  @typescript-eslint/no-unused-vars
+  305:10  warning  'DropIcon' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/components/vitrin/kurumsal/DeveloperApi.tsx
+    6:8   warning  'SectionHeading' is defined but never used                                                                                                                      @typescript-eslint/no-unused-vars
+  203:13  error    Do not use an `<a>` element to navigate to `/iletisim/`. Use `<Link />` from `next/link` instead. See: https://nextjs.org/docs/messages/no-html-link-for-pages  @next/next/no-html-link-for-pages
+  203:13  error    Do not use an `<a>` element to navigate to `/iletisim/`. Use `<Link />` from `next/link` instead. See: https://nextjs.org/docs/messages/no-html-link-for-pages  @next/next/no-html-link-for-pages
+  203:13  error    Do not use an `<a>` element to navigate to `/iletisim/`. Use `<Link />` from `next/link` instead. See: https://nextjs.org/docs/messages/no-html-link-for-pages  @next/next/no-html-link-for-pages
+  203:13  error    Do not use an `<a>` element to navigate to `/iletisim/`. Use `<Link />` from `next/link` instead. See: https://nextjs.org/docs/messages/no-html-link-for-pages  @next/next/no-html-link-for-pages
+  203:13  error    Do not use an `<a>` element to navigate to `/iletisim/`. Use `<Link />` from `next/link` instead. See: https://nextjs.org/docs/messages/no-html-link-for-pages  @next/next/no-html-link-for-pages
+  203:13  error    Do not use an `<a>` element to navigate to `/iletisim/`. Use `<Link />` from `next/link` instead. See: https://nextjs.org/docs/messages/no-html-link-for-pages  @next/next/no-html-link-for-pages
+  203:13  error    Do not use an `<a>` element to navigate to `/iletisim/`. Use `<Link />` from `next/link` instead. See: https://nextjs.org/docs/messages/no-html-link-for-pages  @next/next/no-html-link-for-pages
+  203:13  error    Do not use an `<a>` element to navigate to `/iletisim/`. Use `<Link />` from `next/link` instead. See: https://nextjs.org/docs/messages/no-html-link-for-pages  @next/next/no-html-link-for-pages
+  203:13  error    Do not use an `<a>` element to navigate to `/iletisim/`. Use `<Link />` from `next/link` instead. See: https://nextjs.org/docs/messages/no-html-link-for-pages  @next/next/no-html-link-for-pages
+  203:13  error    Do not use an `<a>` element to navigate to `/iletisim/`. Use `<Link />` from `next/link` instead. See: https://nextjs.org/docs/messages/no-html-link-for-pages  @next/next/no-html-link-for-pages
+
+/Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/lib/admin-context.tsx
+  5:15  warning  'UserRole' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/lib/cart-context.tsx
+   70:57  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/lib/cart-context.tsx:70:57
+  68 |       if (saved) {
+  69 |         const parsed = JSON.parse(saved) as CartItem[];
+> 70 |         if (Array.isArray(parsed) && parsed.length > 0) setSeedItems(parsed);
+     |                                                         ^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  71 |       }
+  72 |     } catch { /* bozuk veri — yoksay */ }
+  73 |     setHydrated(true);  react-hooks/set-state-in-effect
+  120:11  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/lib/cart-context.tsx:120:11
+  118 |         const parsed = JSON.parse(saved) as ReservationInfo;
+  119 |         if (parsed?.orderId && parsed.expiresAt > Date.now()) {
+> 120 |           setReservationState(parsed);
+      |           ^^^^^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  121 |         } else {
+  122 |           localStorage.removeItem("stg_reservation");
+  123 |         }              react-hooks/set-state-in-effect
+  163:25  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/lib/cart-context.tsx:163:25
+  161 |   // Geri sayım (sadece rezervasyon için)
+  162 |   useEffect(() => {
+> 163 |     if (!reservation) { setTimeLeft(0); return; }
+      |                         ^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  164 |
+  165 |     const tick = () => {
+  166 |       const remaining = Math.max(0, Math.floor((reservation.expiresAt - Date.now()) / 1000));                      react-hooks/set-state-in-effect
+
+/Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/lib/hooks/useCountUp.ts
+  17:7  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/lib/hooks/useCountUp.ts:17:7
+  15 |   useEffect(() => {
+  16 |     if (!enabled || target === 0) {
+> 17 |       setValue(target);
+     |       ^^^^^^^^ Avoid calling setState() directly within an effect
+  18 |       return;
+  19 |     }
+  20 |     if (startedRef.current) return;  react-hooks/set-state-in-effect
+
+/Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/types/iyzipay.d.ts
+  12:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  12:44  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  12:57  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  16:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  16:46  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  16:59  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+✖ 79 problems (50 errors, 29 warnings)
+  1 error and 1 warning potentially fixable with the `--fix` option.
+

@@ -3,25 +3,11 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import BreadCrumb from "@/components/vitrin/BreadCrumb";
 import SectionWrapper from "@/components/vitrin/SectionWrapper";
-import ClickToLoadFrame from "@/components/vitrin/shared/ClickToLoadFrame";
+import { COMPANY, companyAddressLine } from "@/lib/company";
 import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
 import LocalBusinessSchema from "@/components/seo/LocalBusinessSchema";
-import { buildPageMetadata, ORG_ADDRESS, ORG_GEO, ORG_LEGAL_NAME, ORG_SOCIAL } from "@/lib/seo";
+import { buildPageMetadata, ORG_SOCIAL } from "@/lib/seo";
 import { TRANSACTIONS_ENABLED } from "@/lib/site-config";
-
-const ADDRESS_LOCALITY = `${ORG_ADDRESS.district} / ${ORG_ADDRESS.city}, ${ORG_ADDRESS.country}`;
-
-/** Harita çerçevesi: iş merkezinin çevresi (~1,7 km × 1,4 km) ve işaret. */
-const MAP_EMBED_URL = (() => {
-  const { latitude: lat, longitude: lon } = ORG_GEO;
-  const bbox = [lon - 0.01, lat - 0.0065, lon + 0.01, lat + 0.0065].map((n) => n.toFixed(4)).join("%2C");
-  return `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${lat.toFixed(5)}%2C${lon.toFixed(5)}`;
-})();
-
-/** Yol tarifi: Google binayı adresten bulur (I Blok, haritadaki iş merkezi noktasından daha kesin). */
-const DIRECTIONS_URL = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
-  `${ORG_ADDRESS.street}, ${ORG_ADDRESS.district}/${ORG_ADDRESS.city}`,
-)}`;
 
 export async function generateMetadata({
   params,
@@ -53,8 +39,8 @@ export default async function IletisimPage({
     {
       Icon: PinIcon,
       title: t("contacts.address.title"),
-      primary: ORG_ADDRESS.street,
-      secondary: `${ADDRESS_LOCALITY}\n${ORG_LEGAL_NAME}`,
+      primary: COMPANY.address.line,
+      secondary: `${COMPANY.address.district} / ${COMPANY.address.province}, ${COMPANY.address.country}\n${COMPANY.legalName}`,
     },
     {
       Icon: PhoneIcon,
@@ -120,35 +106,18 @@ export default async function IletisimPage({
             <h2 className="text-2xl lg:text-3xl font-bold text-[#1a2e1a]">{t("map.title")}</h2>
           </div>
 
-          {/* Harita (tıklayınca yüklenir) + adres kartı — nokta ve adres lib/seo.ts'ten */}
-          <div className="relative aspect-[16/9] rounded-3xl overflow-hidden border border-black/5 shadow-xl bg-[#0a1f12]">
-            {/* OpenStreetMap embed — keyless + her yerde frameable
-                (Google'ın keyless ?output=embed formatı kaldırıldı: 404 + SAMEORIGIN).
-                Harita yalnız ziyaretçi "Haritayı göster" dediğinde yüklenir: sayfa açılırken
-                üçüncü tarafa istek gitmez (Çerez Politikası §3). Adres kartı her zaman görünür. */}
-            <ClickToLoadFrame
-              src={MAP_EMBED_URL}
-              title={t("map.title")}
-              buttonLabel={t("map.show")}
-              note={t("map.consentNote")}
-              icon={<PinIcon className="h-4 w-4" />}
-            />
-            {/* Adres kartı — haritanın üzerinde */}
-            <div className="absolute bottom-4 left-4 right-4 sm:right-auto sm:max-w-sm rounded-2xl px-5 py-4 flex items-start gap-3 pointer-events-none bg-[#0a1f12]/92 backdrop-blur-md border border-white/10 shadow-xl">
-              <PinIcon className="w-5 h-5 text-[#34d399] shrink-0 mt-0.5" />
-              <div>
-                <p className="text-sm font-bold text-white leading-snug">{ORG_ADDRESS.street}</p>
-                <p className="text-xs text-[#a7d4a7]">{ADDRESS_LOCALITY}</p>
-                <a
-                  href={DIRECTIONS_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 mt-2 text-xs font-semibold text-[#a3e635] hover:text-white transition-colors pointer-events-auto"
-                >
-                  {t("map.directions")} →
-                </a>
-              </div>
-            </div>
+          <div className="mx-auto max-w-3xl rounded-3xl bg-[#0a1f12] p-8 text-white sm:p-12">
+            <PinIcon className="mb-5 h-8 w-8 text-[#34d399]" />
+            <p className="text-lg font-bold">{COMPANY.address.line}</p>
+            <p className="mt-2 text-[#a7d4a7]">{COMPANY.address.district} / {COMPANY.address.province}, {COMPANY.address.country}</p>
+            <a
+              href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(companyAddressLine())}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-6 inline-flex min-h-11 items-center rounded-xl border border-white/30 px-5 font-semibold text-[#a3e635] hover:text-white"
+            >
+              {t("map.directions")} →
+            </a>
           </div>
         </div>
       </SectionWrapper>

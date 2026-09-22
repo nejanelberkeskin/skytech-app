@@ -159,7 +159,7 @@ export async function renderCertificate(
         { name: "Noto Sans", data: bold, weight: 700, style: "normal" },
       ],
       headers: {
-        "Cache-Control": "public, max-age=300, s-maxage=3600",
+        "Cache-Control": "private, no-store",
         "X-Robots-Tag": "noindex",
         "Content-Disposition": `inline; filename="${cert.code}-${format}-${locale}.png"`,
       },

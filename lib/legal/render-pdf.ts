@@ -15,7 +15,7 @@ import type { LegalBlock, LegalDocument } from "./types";
 const PAGE = { width: 595.28, height: 841.89, left: 56, right: 56, top: 60, bottom: 66 } as const;
 const CONTENT_WIDTH = PAGE.width - PAGE.left - PAGE.right;
 const LINE = 1.45;
-const SIZE = { title: 17, meta: 9, heading: 11.5, body: 10, table: 9.5, footer: 8 } as const;
+const SIZE = { title: 17, meta: 12, heading: 13, body: 12, table: 12, footer: 8 } as const;
 const COLOR = { text: "#1a2e1a", muted: "#4b6b4b", rule: "#d5e2d5", fill: "#f4f8f2" } as const;
 const FONT = "NotoSans";
 
@@ -200,7 +200,7 @@ export function renderLegalPdf(document: LegalDocument, options: PdfOptions = {}
     const footerY = PAGE.height - 38;
     doc.setDrawColor(COLOR.rule);
     doc.line(PAGE.left, footerY - 8, PAGE.left + CONTENT_WIDTH, footerY - 8);
-    doc.text(`${COMPANY.brand} · ${document.title} · ${document.meta[0]}`, PAGE.left, footerY, { baseline: "top" });
+    doc.text(`${COMPANY.brand} · ${document.title}`, PAGE.left, footerY, { baseline: "top" });
     const label = `Sayfa ${i} / ${pages}`;
     doc.text(label, PAGE.left + CONTENT_WIDTH - doc.getTextWidth(label), footerY, { baseline: "top" });
   }

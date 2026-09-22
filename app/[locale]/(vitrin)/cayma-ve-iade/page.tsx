@@ -63,7 +63,7 @@ export default async function CaymaVeIadePage({ params }: { params: Promise<{ lo
       <LegalSection no="3" title="Bedelin iadesi">
         <LegalP>{TEXT.withdrawalRefund}</LegalP>
         <LegalP>
-          İadenin hesabınıza yansıma süresi bankanıza göre değişebilir; bu süre Skytech Green&apos;in kontrolünde değildir.
+          Bankanın işlem süresi değişebilse de SATICI’nın süresinde ve eksiksiz iade yükümlülüğü devam eder. İade gerçekleşmezse yukarıdaki kanallardan başvurabilirsiniz.
         </LegalP>
       </LegalSection>
 

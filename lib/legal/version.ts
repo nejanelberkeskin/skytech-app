@@ -10,7 +10,7 @@
  *   "-taslak" → hukuk incelemesinden GEÇMEMİŞ metin. Satış bayrağı açılmadan önce
  *   inceleme tamamlanmalı ve ek kaldırılmalıdır (açılış kontrol listesi).
  */
-export const LEGAL_DOCUMENTS_VERSION = "2026-09.3-taslak";
+export const LEGAL_DOCUMENTS_VERSION = "2026-09.4-taslak";
 
 export const isDraftLegalVersion = (version: string = LEGAL_DOCUMENTS_VERSION) => version.endsWith("-taslak");
 
@@ -21,4 +21,4 @@ export const isDraftLegalVersion = (version: string = LEGAL_DOCUMENTS_VERSION) =
 export const LEGAL_EFFECTIVE_DATE = "";
 
 /** Hukuk sayfalarının başlığında görünen yürürlük bilgisi. */
-export const LEGAL_EFFECTIVE_LABEL = isDraftLegalVersion() ? "Taslak — hukuk incelemesinde" : LEGAL_EFFECTIVE_DATE || "—";
+export const LEGAL_EFFECTIVE_LABEL = isDraftLegalVersion() ? "Taslak — yayın bilgileri tamamlanıyor" : LEGAL_EFFECTIVE_DATE || "—";

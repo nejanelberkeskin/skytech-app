@@ -9,7 +9,7 @@
 export const COMPANY = {
   brand: "Skytech Green",
   legalName: "SKYTECH HAVACILIK VE TEKNOLOJİ SANAYİ TİCARET ANONİM ŞİRKETİ",
-  /** Kullanıcının 21 Eylül 2026 bildirimi. Adres Yenimahalle olduğundan vergi levhasıyla teyit edilmeli. */
+  /** Kullanıcı teyidi: 22 Eylül 2026. */
   taxOffice: "Kahramankazan",
   taxId: "7721661218",
   /**
@@ -29,6 +29,7 @@ export const COMPANY = {
   /** Sicil bilgileri (22 Eylül 2026, hukuk paketiyle bildirildi) — yayımdan önce sicil belgesiyle karşılaştırılmalı. */
   mersis: "0772166121800001" as string | null,
   tradeRegistryNo: "510174" as string | null,
+  tradeRegistryOffice: "Ankara Ticaret Sicili Müdürlüğü" as string | null,
   /** Ulusal Elektronik Tebligat Sistemi adresi — resmî tebligat içindir; KEP değildir, müşteri kanalı olarak GÖSTERİLMEZ. */
   uets: "25838-72218-78313" as string | null,
   /** Bekleniyor — mesafeli sözleşme ve "İletişim" sayfası için zorunlu. */
@@ -44,10 +45,10 @@ export function companyAddressLine(): string {
 
 /** Açılıştan önce doldurulması gereken alanlar. */
 export function missingCompanyFields(): string[] {
-  return (["mersis", "kep", "phone", "tradeRegistryNo", "chamber"] as const).filter((k) => !COMPANY[k]);
+  return (["mersis", "kep", "phone", "tradeRegistryNo", "tradeRegistryOffice", "chamber"] as const).filter((k) => !COMPANY[k]);
 }
 
 /** Ticaret sicil satırı: "Ankara Ticaret Sicili Müdürlüğü / 510174" (müdürlük teyit edilince eklenir). */
 export function tradeRegistryLine(): string | null {
-  return COMPANY.tradeRegistryNo ? `Ankara / ${COMPANY.tradeRegistryNo}` : null;
+  return COMPANY.tradeRegistryNo ? [COMPANY.tradeRegistryOffice, COMPANY.tradeRegistryNo].filter(Boolean).join(" / ") : null;
 }

@@ -63,6 +63,7 @@ export const EMPTY_CONSENTS = {
   kvkkRead: false,
   corporateAuthority: false,
   marketing: false,
+  certificatePublication: false,
 };
 export type Consents = typeof EMPTY_CONSENTS;
 export function invoiceInput(value: InvoiceValues) {

@@ -1,10 +1,11 @@
 import Image from "next/image";
+import { COMPANY } from "@/lib/company";
 import { Link } from "@/i18n/navigation";
 import { getTranslations } from "next-intl/server";
 import LanguageSwitcher from "./LanguageSwitcher";
 import CookiePreferencesLink from "./CookiePreferencesLink";
 import KenxBadge from "./KenxBadge";
-import { ORG_ADDRESS, ORG_LEGAL_NAME, ORG_PARENT_URL, ORG_SOCIAL } from "@/lib/seo";
+import { ORG_LEGAL_NAME, ORG_PARENT_URL, ORG_SOCIAL } from "@/lib/seo";
 import { SITES_HREF } from "@/lib/sites/links";
 import { LEGAL_PAGES_ENABLED, SALES_LEGAL_PAGES } from "@/lib/legal/visibility";
 
@@ -103,22 +104,7 @@ export default async function VitrinFooter() {
 
           {/* Newsletter + İletişim */}
           <div className="lg:col-span-4">
-            <p className="text-sm font-bold text-white uppercase tracking-wider mb-4">{t("newsletterTitle")}</p>
-            <p className="text-sm text-[#a7d4a7] mb-4">{t("newsletterDesc")}</p>
-            <form className="flex gap-2 mb-6">
-              <input
-                type="email"
-                placeholder="ornek@skytechgreen.com"
-                className="flex-1 px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-sm text-white placeholder:text-[#6b8f6b] focus:outline-none focus:border-[#22894a]/50"
-              />
-              <button
-                type="submit"
-                className="px-4 py-2.5 rounded-xl bg-gradient-to-br from-[#1B6B3A] to-[#22894a] text-white text-sm font-semibold hover:shadow-lg hover:shadow-[#1B6B3A]/30 transition-shadow"
-              >
-                {t("subscribe")}
-              </button>
-            </form>
-
+            <p className="text-sm font-bold text-white uppercase tracking-wider mb-4">{t("contactTitle")}</p>
             <div className="space-y-2.5 text-sm text-[#a7d4a7]">
               <p className="flex items-start gap-2">
                 <MailIcon className="w-4 h-4 text-[#22894a] mt-0.5 shrink-0" />
@@ -130,11 +116,7 @@ export default async function VitrinFooter() {
               </p>
               <p className="flex items-start gap-2">
                 <PinIcon className="w-4 h-4 text-[#22894a] mt-0.5 shrink-0" />
-                <span>
-                  {ORG_ADDRESS.street}
-                  <br />
-                  {ORG_ADDRESS.district} / {ORG_ADDRESS.city}, {ORG_ADDRESS.country}
-                </span>
+                <span>{COMPANY.address.line}<br />{COMPANY.address.district} / {COMPANY.address.province}, {COMPANY.address.country}</span>
               </p>
             </div>
           </div>

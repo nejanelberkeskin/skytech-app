@@ -46,6 +46,7 @@ export interface PublicOrderView {
   quantity: number;
   totals: { unitPriceKurus: number; totalKurus: number; vatRate: number };
   certificateName: string;
+  certificateNamePublic?: boolean;
   schedule: {
     seasonLabel: string;
     /** Sözleşmedeki kesin son tarih — YYYY-MM-DD */

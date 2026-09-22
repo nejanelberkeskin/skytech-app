@@ -3,8 +3,8 @@
  *
  * Tek şablon iki alıcı türüne hizmet eder: tüketici (6502 sayılı Kanun) ve
  * tüketici sıfatı taşımayan alıcı (kurumsal). İkincisinde Kanun uygulanmaz;
- * ancak müşterinin kararıyla 14 günlük cayma ve iade koşulları sözleşmesel
- * olarak aynen tanınır, yetkili mahkeme Ankara olur.
+ * 14 günlük cayma ve iade koşulları tüketici olmayan alıcıya da sözleşmesel
+ * olarak tanınır. Fatura türü tek başına tüketici sıfatını belirlemez.
  *
  * [AVUKAT] Bu metin bir TASLAKTIR; yayına alınmadan önce hukuk incelemesinden
  * geçmelidir. Özellikle: m.6 (ifanın imkânsızlaşmasında seçimlik haklar), m.9.4
@@ -57,9 +57,7 @@ export function contractDocument(ctx: LegalContext): LegalDocument {
     { type: "paragraph", text: `3.2. ${TEXT.serviceDefinition}` },
     {
       type: "paragraph",
-      text: corporate
-        ? "3.3. ALICI tüketici sıfatı taşımamaktadır. Bu sözleşmeye 6502 sayılı Tüketicinin Korunması Hakkında Kanun hükümleri uygulanmaz; bununla birlikte SATICI, bu sözleşmede yer alan cayma ve iade koşullarını ALICI'ya sözleşmesel olarak tanır."
-        : "3.3. Bu sözleşme, 6502 sayılı Tüketicinin Korunması Hakkında Kanun ve Mesafeli Sözleşmeler Yönetmeliği hükümlerine tabidir.",
+      text: "3.3. Tüketici sıfatı, işlemin ticari veya mesleki olmayan amaçla yapılmasına göre belirlenir. Bireysel veya kurumsal fatura seçimi tek başına bu sıfatı belirlemez. Tüketici işlemlerinde 6502 sayılı Kanunun emredici hükümleri uygulanır. Tüketici olmayan alıcıya da bu sözleşmedeki 14 günlük cayma ve iade imkânı sözleşmesel olarak tanınır.",
     },
 
     { type: "heading", text: "Madde 4 — Hizmetin nitelikleri ve bedeli" },
@@ -78,7 +76,7 @@ export function contractDocument(ctx: LegalContext): LegalDocument {
     },
     {
       type: "paragraph",
-      text: "5.2. Ödemenin herhangi bir nedenle gerçekleşmemesi veya banka kayıtlarında iptal edilmesi hâlinde sözleşme kurulmamış sayılır ve SATICI'nın ifa yükümlülüğü doğmaz.",
+      text: "5.2. İlk ödemenin başarısız olması hâlinde sipariş tamamlanmaz. Başarıyla kurulmuş sözleşmede sonradan ortaya çıkan ters ibraz, banka itirazı veya ödeme uyuşmazlığı sözleşmeyi kendiliğinden geçmişe etkili olarak yok saydırmaz; tarafların hak ve borçları somut duruma ve mevzuata göre değerlendirilir.",
     },
     { type: "paragraph", text: `5.3. ${TEXT.invoice}` },
 
@@ -111,11 +109,11 @@ export function contractDocument(ctx: LegalContext): LegalDocument {
     { type: "heading", text: "Madde 8 — Katılım Sertifikası ve görüntüler" },
     {
       type: "paragraph",
-      text: "8.1. Katılım Sertifikası, bırakma işlemi tamamlandıktan sonra ALICI'nın belirlediği adla düzenlenir ve e-posta ile iletilir. Sertifika; adı, sahayı, bırakılan tohum topu adedini, türü ve bırakma tarihini gösterir; Site'de herkese açık bir doğrulama sayfasında da görüntülenir. Bu sayfada ALICI'nın belirlediği ad dışında kişisel veri yer almaz.",
+      text: "8.1. Katılım Sertifikası, bırakma işlemi tamamlandıktan sonra ALICI'nın belirlediği adla düzenlenir ve e-posta ile iletilir. Sertifika; adı, sahayı, bırakılan tohum topu adedini, türü ve bırakma tarihini gösterir; Site’de paylaşılabilir bir doğrulama sayfası bulunur. Kişisel ad, ancak adın sahibi tarafından ayrıca ve isteğe bağlı olarak verilen yayın izniyle bu sayfada gösterilir. İzin verilmemesi siparişe veya sertifika hakkına engel değildir.",
     },
     {
       type: "paragraph",
-      text: "8.2. ALICI, sertifikada yer almasını istediği adın üçüncü bir kişiye ait olması hâlinde bu kişiyi bilgilendirdiğini ve adının herkese açık doğrulama sayfasında görüneceği konusunda onayını aldığını beyan eder. ALICI, sertifikadaki adın doğrulama sayfasından kaldırılmasını dilediği zaman talep edebilir.",
+      text: "8.2. Yayın izni; adın saha, adet ve tarih bilgileriyle bağlantıyı bilen kişilerce görülebilmesini kapsar ve ücretsiz olarak geri alınabilir. Başka bir kişinin adı için ALICI’nın beyanı o kişinin açık rızası yerine geçmez. İlgili kişi doğrudan aydınlatılıp geçerli izni kaydedilene kadar üçüncü kişinin adı herkese açık sayfada gizlenir. SATICI’nın aydınlatma ve başvuruyu sonuçlandırma yükümlülüğü ALICI’ya devredilmez.",
     },
     {
       type: "paragraph",
@@ -131,11 +129,11 @@ export function contractDocument(ctx: LegalContext): LegalDocument {
     { type: "paragraph", text: `9.2. ${TEXT.notADonation}` },
     {
       type: "paragraph",
-      text: "9.3. Proje Uygulama Sahaları orman idaresinin mevzuatına tabi alanlardır. Bu sözleşme ALICI'ya sahaya giriş, sahada işaretleme, tabela veya benzeri bir düzenleme yapma hakkı vermez.",
+      text: "9.3. Sahalar, hukuki statülerine göre ilgili arazi, orman, çevre ve uçuş mevzuatına tabidir. Bu sözleşme ALICI'ya sahaya giriş, sahada işaretleme, tabela veya benzeri bir düzenleme yapma hakkı vermez.",
     },
     {
       type: "paragraph",
-      text: `9.4. ${TEXT.speciesBySeller} Ekolojik veya idari bir zorunluluk nedeniyle sipariş anında belirtilen türün değiştirilmesi gerekirse SATICI, aynı sahaya uygun başka bir yerli türü kullanabilir ve bu durumu bırakmadan önce ALICI'ya bildirir. ALICI bu değişikliği kabul etmezse bildirimden itibaren 14 (on dört) gün içinde sözleşmeyi feshedebilir; bu durumda ödenen bedelin tamamı iade edilir.`,
+      text: `9.4. ${TEXT.speciesBySeller} Siparişte bildirilen tür, saha, adet, bedel veya ifa takviminde esaslı değişiklik gerekiyorsa SATICI nedeni ve önerilen yeni koşulları bırakmadan önce kalıcı veri saklayıcısıyla açıklar. Değişiklik ancak ALICI’nın açık kabulüyle uygulanır; cevap verilmemesi veya itiraz edilmemesi kabul değildir. Kabul alınamazsa ilk koşullar geçerlidir; bunlarla ifa mümkün değilse Madde 6.4 uygulanır. Önerinin değerlendirilmesi doğmuş iade hakkını veya kanuni süreleri ertelemez.`,
     },
 
     { type: "heading", text: "Madde 10 — Tarafların yükümlülükleri" },
@@ -152,10 +150,11 @@ export function contractDocument(ctx: LegalContext): LegalDocument {
       text: "10.3. Tarafların kontrolü dışında gelişen, öngörülemeyen ve tarafların borçlarını yerine getirmesini engelleyen hâller (doğal afet, orman yangını, salgın, savaş, resmî makam kararları, uçuş yasakları ve benzeri) mücbir sebep sayılır. Mücbir sebebin ifayı imkânsızlaştırması hâlinde Madde 6.4 uygulanır.",
     },
 
+    { type: "paragraph", text: "10.4. Tüketici, ayıplı hizmette mevzuattaki şartlarla hizmetin yeniden görülmesini, ortaya çıkan eserin ücretsiz onarımını, ayıp oranında bedel indirimini veya sözleşmeden dönmeyi talep edebilir; seçimlik hakkın niteliğine uygun hükümler ve tazminat hakları saklıdır. Sonuç garantisi verilmemesi, eksik veya sözleşmeye aykırı çalışmayı ayıpsız hâle getirmez." },
     { type: "heading", text: "Madde 11 — Kişisel verilerin korunması" },
     {
       type: "paragraph",
-      text: `11.1. ALICI'nın kişisel verileri, 6698 sayılı Kişisel Verilerin Korunması Kanunu'na uygun olarak; sözleşmenin kurulması ve ifası, faturalandırma, ödeme işlemleri, yasal yükümlülüklerin yerine getirilmesi ve ALICI ile iletişim amaçlarıyla işlenir. Ayrıntılı bilgi ${site}/kvkk adresindeki Aydınlatma Metni'nde yer alır.`,
+      text: `11.1. ALICI’nın kişisel verileri; sözleşmenin kurulması ve ifası, faturalandırma, ödeme işlemleri, yasal yükümlülüklerin yerine getirilmesi ve ALICI ile iletişim amaçlarıyla işlenir. Ayrıntılı bilgi ${site}/kvkk adresindeki Aydınlatma Metni'nde yer alır.`,
     },
     {
       type: "paragraph",
@@ -165,7 +164,7 @@ export function contractDocument(ctx: LegalContext): LegalDocument {
     { type: "heading", text: "Madde 12 — Bildirimler ve kayıtlar" },
     {
       type: "paragraph",
-      text: "12.1. Taraflar arasındaki bildirimler, mevzuatın yazılı şekil aradığı hâller dışında, e-posta ile yapılır.",
+      text: "12.1. İşlem bildirimleri e-posta ve uygun kalıcı veri saklayıcısıyla iletilir. Bu hüküm cayma ve ilgili kişi başvurusu için açıklanan diğer kanalları veya kanunun öngördüğü şekil şartlarını sınırlamaz.",
     },
     {
       type: "paragraph",
@@ -173,11 +172,11 @@ export function contractDocument(ctx: LegalContext): LegalDocument {
     },
     {
       type: "paragraph",
-      text: "12.3. Bu sözleşmeden doğan uyuşmazlıklarda SATICI'nın elektronik kayıtları ile ödeme kuruluşunun ve bankaların kayıtları, ALICI'nın aksini ispat hakkı saklı kalmak üzere, delil olarak değerlendirilir.",
+      text: "12.3. Tarafların elektronik kayıtları, yazışmaları, ödeme belgeleri ve diğer delilleri kanuni ispat kurallarına göre değerlendirilir. SATICI kayıtlarına kesin veya münhasır delil niteliği tanınmaz; ALICI’nın delil sunma ve itiraz hakları ile kanuni ispat yükü dağılımı değişmez.",
     },
 
     { type: "heading", text: "Madde 13 — Uyuşmazlıkların çözümü" },
-    { type: "paragraph", text: `13.1. ${corporate ? TEXT.disputesCorporate : TEXT.disputesConsumer}` },
+    { type: "paragraph", text: `13.1. ${TEXT.disputesConsumer} ${TEXT.disputesCorporate}` },
     { type: "paragraph", text: "13.2. Bu sözleşmeye Türkiye Cumhuriyeti hukuku uygulanır." },
 
     { type: "heading", text: "Madde 14 — Yürürlük" },
@@ -187,7 +186,7 @@ export function contractDocument(ctx: LegalContext): LegalDocument {
     },
     {
       type: "paragraph",
-      text: "14.2. Sözleşmenin herhangi bir hükmünün geçersiz sayılması, diğer hükümlerin geçerliliğini etkilemez.",
+      text: "14.2. Bir hükmün geçersizliğinin sözleşmenin kalanına etkisi emredici hukuk kurallarıyla belirlenir. Tüketici aleyhine haksız şartlar tüketiciyi bağlamaz; bu hüküm geçersiz şartı geçerli kılmaz.",
     },
   ];
 

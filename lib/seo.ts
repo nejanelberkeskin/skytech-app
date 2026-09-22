@@ -8,8 +8,8 @@
  */
 
 import type { Metadata } from "next";
-import { seoKeywords } from "./seo-keywords";
 import { COMPANY } from "./company";
+import { seoKeywords } from "./seo-keywords";
 
 export const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
@@ -42,7 +42,7 @@ export function ogLocaleAlternates(active: string): string[] {
   return LOCALES.filter((l) => l !== active).map((l) => LOCALE_TO_OG_LOCALE[l]);
 }
 
-export const ORG_LEGAL_NAME = "Skytech Havacılık A.Ş.";
+export const ORG_LEGAL_NAME = COMPANY.legalName;
 /** Bagli oldugumuz ana sirket. Footer'daki marka beyani buraya baglaniyor. */
 export const ORG_PARENT_URL = "https://skytechhavacilik.com";
 export const ORG_FOUNDED = "2021";

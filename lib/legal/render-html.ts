@@ -9,18 +9,18 @@ const esc = (v: string) =>
   v.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 
 const CSS = [
-  "body{font:15px/1.65 -apple-system,'Segoe UI',Roboto,'Noto Sans',Arial,sans-serif;color:#1a2e1a;background:#fff;margin:0;padding:28px 24px 40px;max-width:760px}",
+  "body{font:16px/1.65 -apple-system,'Segoe UI',Roboto,'Noto Sans',Arial,sans-serif;color:#1a2e1a;background:#fff;margin:0;padding:28px 24px 40px;max-width:760px}",
   "h1{font-size:22px;line-height:1.25;margin:0 0 6px;color:#0e2519}",
   "h2{font-size:16px;line-height:1.35;margin:28px 0 10px;color:#0e2519}",
-  "h3{font-size:14.5px;line-height:1.4;margin:20px 0 8px;color:#0e2519}",
-  ".meta{font-size:12.5px;color:#4b6b4b;margin:0 0 20px;padding-bottom:14px;border-bottom:1px solid #d5e2d5}",
+  "h3{font-size:16px;line-height:1.4;margin:20px 0 8px;color:#0e2519}",
+  ".meta{font-size:16px;color:#4b6b4b;margin:0 0 20px;padding-bottom:14px;border-bottom:1px solid #d5e2d5}",
   ".meta span{display:inline-block;margin-right:18px}",
   "p{margin:0 0 12px}",
   "ul{margin:0 0 14px;padding-left:22px}li{margin:0 0 8px}",
-  "table{width:100%;border-collapse:collapse;margin:0 0 16px;font-size:14px}",
+  "table{width:100%;border-collapse:collapse;margin:0 0 16px;font-size:16px}",
   "th,td{border:1px solid #d5e2d5;padding:7px 10px;text-align:left;vertical-align:top}",
   "th{width:34%;background:#f4f8f2;font-weight:600}",
-  ".note{background:#f4f8f2;border:1px solid #d5e2d5;border-radius:8px;padding:10px 14px;margin:0 0 16px;font-size:14px}",
+  ".note{background:#f4f8f2;border:1px solid #d5e2d5;border-radius:8px;padding:10px 14px;margin:0 0 16px;font-size:16px}",
   ".field{display:flex;gap:10px;align-items:flex-end;margin:0 0 18px}.field span{white-space:nowrap}",
   ".field i{flex:1;border-bottom:1px solid #6b8f6b;height:1.2em}",
   "@media print{body{padding:0;max-width:none}}",

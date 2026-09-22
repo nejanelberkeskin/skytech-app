@@ -117,7 +117,7 @@ for (const [name, c] of Object.entries(cases)) {
     "rıza beyanı değildir",
     "güvenlik kodu tarafımıza ulaşmaz",
     "T.C. kimlik ve vergi numaranız ödeme kuruluşuna aktarılmaz",
-    "bağlantısını bilen herkes tarafından görüntülenebilir",
+    "Kişisel ad varsayılan olarak gizlidir",
     "Bu izin siparişin şartı değildir",
     "10 yıl",
   ]) {
@@ -133,25 +133,25 @@ for (const [name, c] of Object.entries(cases)) {
     "Kahramankazan / 7721661218",
     "Macun Mah. Batı Bulvarı ATB İş Merkezi I Blok No: 244, Yenimahalle / Ankara",
     "0772166121800001", // MERSİS
-    "Ankara / 510174", // ticaret sicili
+    "Ankara Ticaret Sicili Müdürlüğü / 510174", // ticaret sicili
     "0850 308 2600",
     "info@skytechgreen.com",
     "tohum topunu insansız hava aracı (dron) ile bırakması",
     "Toplam bedel (tüm vergiler dâhil)",
     "Ek masraf",
     "3D Secure",
-    "Hizmetin ifa edileceği son tarih (kesin süre)",
+    "Tohum topu bırakma son tarihi (kesin süre)",
     "14 (on dört) gün içinde, hiçbir gerekçe göstermeksizin ve cezai şart ödemeksizin",
     "skytechgreen.com/cayma",
     "tek seferde",
     "cayma süresi dolmadan yapmaz",
-    "bağış veya yardım değildir",
-    "sonuç taahhüdünde bulunmaz",
+    "bağış, yardım veya yatırım değildir",
+    "karbon giderimi garanti edilmez",
   ]) {
     assert.ok(pre.includes(must), `${name}: ön bilgilendirmede eksik → ${must}`);
   }
   assert.ok(contract.includes("Madde 14 — Yürürlük") && contract.includes("Madde 7 — Cayma hakkı"));
-  assert.ok(contract.includes("sessiz kalmak, başka saha veya sezon önerisinin kabulü sayılmaz"), "6.4: sessizlik kabul değil");
+  assert.ok(contract.includes("sessizlik kabul değildir"), "6.4: sessizlik kabul değil");
   assert.ok(contract.includes("Cayma süresinin dolması; hizmetin ayıplı"), "7.5: süre sonrası haklar");
   // UETS resmî tebligat adresidir; müşteri belgelerinde görünmez.
   docs.forEach((d) => assert.ok(!d.html.includes("25838-72218-78313"), `${name}/${d.kind}: UETS belgeye sızmış`));
@@ -163,7 +163,7 @@ for (const [name, c] of Object.entries(cases)) {
   // yasaklı dil: ekim/dikim/demo/pilot/karbon nötr/garanti vaadi
   docs.forEach((d) => {
     const t = norm(d.html).toLocaleLowerCase("tr");
-    for (const bad of [" ekim ", "dikim", "fidan dik", "demo", "pilot", "karbon nötr", "çimlenme oranı", "garanti ed"]) {
+    for (const bad of [" ekim ", "dikim", "fidan dik", "demo", "pilot", "karbon nötr", "çimlenme oranı", "garanti eder"]) {
       // "Ekim–Mart" takvim adı meşrudur
       const cleaned = t.replace(/ekim–mart/g, "").replace(/1 ekim/g, "").replace(/ ekim 20\d\d/g, "");
       assert.ok(!cleaned.includes(bad), `${name}/${d.kind}: yasaklı ifade → "${bad}"`);
@@ -173,15 +173,15 @@ for (const [name, c] of Object.entries(cases)) {
   if (name === "bireysel") {
     assert.ok(pre.includes("Tüketici Hakem Heyetine") && !pre.includes("Ankara Mahkemeleri"));
     assert.ok(pre.includes("Ayşe Örnek") && pre.includes("2.000") && pre.includes("333,33"));
-    assert.ok(pre.includes("3 Kasım 2026 günü sonuna kadar"), "cayma son günü: 20 Ekim + 14");
+    assert.ok(pre.includes("3 Kasım 2026 olarak gösterilmiştir"), "cayma son günü: 20 Ekim + 14");
     assert.ok(pre.includes("31 Mart 2027") && pre.includes("10 Kasım 2026"));
-    assert.ok(contract.includes("6502 sayılı Tüketicinin Korunması Hakkında Kanun ve Mesafeli Sözleşmeler Yönetmeliği hükümlerine tabidir"));
+    assert.ok(contract.includes("fatura seçimi tek başına bu sıfatı belirlemez"));
     assert.ok(form.includes("SG-2026-RNEK23"));
   }
   if (name === "kurumsal") {
-    assert.ok(pre.includes("Ankara Mahkemeleri") && !pre.includes("Tüketici Hakem Heyetine"));
+    assert.ok(!pre.includes("Ankara Mahkemeleri") && pre.includes("Tüketici Hakem Heyetine"));
     assert.ok(pre.includes("Örnek Lojistik Anonim Şirketi") && pre.includes("Siparişi veren yetkili") && pre.includes("50.000"));
-    assert.ok(contract.includes("ALICI tüketici sıfatı taşımamaktadır") && contract.includes("7.5."));
+    assert.ok(contract.includes("Tüketici olmayan alıcıya da") && contract.includes("7.5."));
     assert.ok(pre.includes("Örnek Lojistik A.Ş. Çalışanları"));
   }
   if (name === "sonraki-sezon") {

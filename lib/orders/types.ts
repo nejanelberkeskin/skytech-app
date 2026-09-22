@@ -101,11 +101,15 @@ export type InvoiceInfo = IndividualInvoice | CorporateInvoice;
  * saklanır. KVKK kutusu rıza DEĞİL, "okudum, bilgi edindim" beyanıdır. Ticari
  * ileti izni isteğe bağlıdır ve satışın şartı yapılamaz.
  */
-export const CONSENT_KEYS = ["preInfo", "contract", "kvkkRead", "marketing", "corporateAuthority"] as const;
+export const CONSENT_KEYS = ["preInfo", "contract", "kvkkRead", "marketing", "corporateAuthority", "certificatePublication"] as const;
 export type ConsentKey = (typeof CONSENT_KEYS)[number];
 
 export interface ConsentRecord {
   granted: boolean;
+  /** Yayın izninin hangi ada verildiği; eski veya kapsamı belirsiz izin yayın açmaz. */
+  subjectName?: string;
+  /** Yayın izninin geri alınması ilk rıza kaydını silmez. */
+  revokedAt?: string;
   /** ISO zaman damgası — sunucu saatine göre. */
   at: string;
   /** Gösterilen metnin şablon sürümü (ör. "2026-10.1"). */

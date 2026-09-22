@@ -12,6 +12,7 @@
  */
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { signOrderToken, verifyOrderToken } from "./access";
+import { publicCertificateName, HIDDEN_CERTIFICATE_NAME } from "@/lib/certificates/publication";
 import { trToday } from "./schedule";
 import { canWithdraw } from "./state";
 import { db, getOrderByNo } from "./store";
@@ -106,6 +107,7 @@ export async function getOrderView(orderNo: string, access: OrderViewAccess = {}
     quantity: order.quantity,
     totals: { unitPriceKurus: order.unit_price_kurus, totalKurus: order.total_kurus, vatRate: Number(order.vat_rate) },
     certificateName: order.certificate_name,
+    certificateNamePublic: publicCertificateName(order) !== HIDDEN_CERTIFICATE_NAME,
     schedule: {
       seasonLabel: order.season_label,
       performanceDeadline: order.performance_deadline ?? "",

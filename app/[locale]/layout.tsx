@@ -1,7 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { Analytics } from "@vercel/analytics/next";
-import { SpeedInsights } from "@vercel/speed-insights/next";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { setRequestLocale, getMessages } from "next-intl/server";
 import { notFound } from "next/navigation";
@@ -134,8 +132,6 @@ export default async function LocaleLayout({
           {children}
           <GoogleAnalytics />
           <CookieConsentBanner />
-          <Analytics />
-          <SpeedInsights />
         </NextIntlClientProvider>
       </body>
     </html>

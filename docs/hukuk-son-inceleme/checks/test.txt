@@ -1,0 +1,81 @@
+
+> skytech-app@0.1.0 test
+> node --experimental-strip-types --disable-warning=ExperimentalWarning --import ./scripts/test/alias-loader.mjs --test "scripts/test/*.test.mjs"
+
+(node:57514) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/lib/certificates/publication.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ Eski veya izinsiz sertifikada ad gizli; ayrı kendi-adı izniyle görünür (0.391917ms)
+✔ Geri alınan, başka ada verilen veya üçüncü kişi için kullanılan rıza adı açmaz (0.119417ms)
+✔ Sunucu şeması hediye adı için yayın iznini reddeder; izinsiz hediye siparişini kabul eder (3.664208ms)
+✔ Aktarım hazırlığı varsayılan kapalı; özel yollar tüm dillerde ölçüm dışı (0.184459ms)
+✔ İzin geri alınması olay göndermez ve yüklü araçları kaldırmak için yeniler (0.15425ms)
+  bireysel       pre_info         html  11269  pdf  114565  sayfa 5  3d741658f668…
+  bireysel       contract         html  17815  pdf  121783  sayfa 8  91bc6cebf5ae…
+  bireysel       withdrawal_form  html   3639  pdf  101510  sayfa 2  d7da15e07fcb…
+  bireysel       kvkk_notice      html  16639  pdf  119775  sayfa 7  688f1e63c12f…
+  kurumsal       pre_info         html  11612  pdf  114761  sayfa 5  2467aeca74e2…
+  kurumsal       contract         html  18163  pdf  122098  sayfa 8  b45f614ad89f…
+  kurumsal       withdrawal_form  html   3642  pdf  101519  sayfa 2  2286769ca088…
+  kurumsal       kvkk_notice      html  16639  pdf  119771  sayfa 7  c11a1d4c44c1…
+  sonraki-sezon  pre_info         html  11450  pdf  114901  sayfa 5  1b60401183a8…
+  sonraki-sezon  contract         html  17996  pdf  122207  sayfa 8  c71507766b1c…
+  sonraki-sezon  withdrawal_form  html   3669  pdf  101544  sayfa 2  b61ea9d32389…
+  sonraki-sezon  kvkk_notice      html  16654  pdf  119803  sayfa 7  fcd8e80b76d0…
+✓ hukuki belge testleri geçti
+(node:57515) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/lib/legal/documents.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ scripts/test/legal.test.mjs (660.015583ms)
+✓ order-flow: erişim belirteci, deneme sağlayıcısı, tarih yazımı, iade günü, çizelge
+(node:57516) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/lib/orders/access.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ scripts/test/order-flow.test.mjs (126.448125ms)
+✓ sipariş çekirdeği testleri geçti
+(node:57517) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/lib/orders/types.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ scripts/test/orders.test.mjs (177.847833ms)
+✓ pricing testleri geçti
+(node:57518) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/lib/pricing.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ scripts/test/pricing.test.mjs (85.317833ms)
+✓ şema, biçim ve etiket testleri geçti
+(node:57519) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/lib/requests/schema.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ scripts/test/requests.test.mjs (162.527291ms)
+✓ satış ayarları testleri geçti
+(node:57520) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/lib/pricing.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ scripts/test/sales-settings.test.mjs (150.003333ms)
+✓ site-releases: YouTube kimliği çözümleme, gömme adresi, örnek kayıtlar
+(node:57521) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/lib/sites/releases.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ scripts/test/site-releases.test.mjs (100.37275ms)
+✓ yönetim şeması testleri geçti
+(node:57522) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/lib/sites/admin.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ scripts/test/sites-admin.test.mjs (152.44725ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 13
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 665.734458

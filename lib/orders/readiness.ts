@@ -37,6 +37,7 @@ const COMPANY_FIELD_LABELS: Record<string, string> = {
   kep: "KEP adresi",
   phone: "telefon",
   tradeRegistryNo: "ticaret sicil no",
+  tradeRegistryOffice: "ticaret sicil müdürlüğü",
   chamber: "meslek odası",
 };
 

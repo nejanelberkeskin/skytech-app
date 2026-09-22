@@ -6,6 +6,8 @@
  * telefon, fatura ve sipariş numarası ASLA çıkmaz. İade edilmiş siparişin sertifikası "iptal" görünür.
  * Canlı sitede deneme siparişlerinin sertifikaları gösterilmez. Geliştirmede iki ÖRNEK kod da çalışır.
  */
+import { publicCertificateName } from "./publication";
+import type { OrderConsents } from "@/lib/orders/types";
 import { createServiceRoleClient } from "@/lib/supabase/server";
 import { trToday } from "@/lib/orders/schedule";
 import type { SiteSnapshot } from "@/lib/orders/types";
@@ -62,7 +64,7 @@ export async function getPublicCertificate(rawCode: string): Promise<PublicCerti
     const supabase = createServiceRoleClient();
     let query = supabase
       .from("release_orders")
-      .select("certificate_code, certificate_name, certificate_issued_at, certificate_cancelled_at, quantity, site_snapshot, land_id, batch_id, released_at, is_test")
+      .select("certificate_code, certificate_name, consents, buyer_first_name, buyer_last_name, certificate_issued_at, certificate_cancelled_at, quantity, site_snapshot, land_id, batch_id, released_at, is_test")
       .eq("certificate_code", code);
     if (process.env.VERCEL_ENV === "production") query = query.eq("is_test", false);
     const { data: order, error } = await query.maybeSingle();
@@ -83,7 +85,7 @@ export async function getPublicCertificate(rawCode: string): Promise<PublicCerti
     return {
       code,
       status: order.certificate_cancelled_at ? "cancelled" : "valid",
-      displayName: order.certificate_name as string,
+      displayName: publicCertificateName({ certificate_name: order.certificate_name as string, buyer_first_name: order.buyer_first_name as string, buyer_last_name: order.buyer_last_name as string, consents: order.consents as OrderConsents }),
       quantity: order.quantity as number,
       siteName: site.name,
       siteSlug: landRow?.is_public && landRow.slug ? landRow.slug : null,

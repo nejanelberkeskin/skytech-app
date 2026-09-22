@@ -1,13 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
-import { CONSENT_STORAGE_KEY, updateConsent } from "@/lib/analytics";
-
-type Consent = "granted" | "denied";
+import { readConsent, subscribeConsent, writeConsent, type CookieConsent as Consent } from "@/lib/analytics";
 
 const REOPEN_EVENT = "open-cookie-preferences";
+
+const CHOICE_BUTTON =
+  "flex-1 min-h-11 px-4 py-2.5 rounded-xl text-sm font-semibold text-[#0e2519] bg-white border border-[#1B6B3A]/40 hover:bg-[#edf4e9] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1B6B3A] transition-colors";
 
 /** Footer'daki "Çerez Tercihleri" linkinden banner'ı yeniden açmak için. */
 export function reopenCookiePreferences(): void {
@@ -16,28 +17,23 @@ export function reopenCookiePreferences(): void {
 
 export default function CookieConsentBanner() {
   const t = useTranslations("cookieConsent");
-  const [visible, setVisible] = useState(false);
+  // Kayıtlı tercih depodan okunur (sunucuda ve ilk boyamada "bilinmiyor" → bant gösterilmez, titreme olmaz).
+  const stored = useSyncExternalStore<Consent | null | "unknown">(subscribeConsent, readConsent, () => "unknown");
+  const [reopened, setReopened] = useState(false);
 
   useEffect(() => {
-    const stored = localStorage.getItem(CONSENT_STORAGE_KEY) as Consent | null;
-    if (stored === "granted" || stored === "denied") {
-      updateConsent(stored === "granted");
-    } else {
-      setVisible(true);
-    }
-
-    function handleReopen() {
-      setVisible(true);
-    }
+    const handleReopen = () => setReopened(true);
     window.addEventListener(REOPEN_EVENT, handleReopen);
     return () => window.removeEventListener(REOPEN_EVENT, handleReopen);
   }, []);
 
   function choose(consent: Consent) {
-    localStorage.setItem(CONSENT_STORAGE_KEY, consent);
-    updateConsent(consent === "granted");
-    setVisible(false);
+    writeConsent(consent);
+    setReopened(false);
   }
+
+  // Tercih hiç yapılmadıysa ya da "Çerez Tercihleri"nden yeniden açıldıysa görünür.
+  const visible = reopened || stored === null;
 
   if (!visible) return null;
 
@@ -54,18 +50,11 @@ export default function CookieConsentBanner() {
           </Link>
         </p>
         <div className="flex items-center gap-2.5">
-          <button
-            type="button"
-            onClick={() => choose("denied")}
-            className="flex-1 px-4 py-2.5 rounded-xl text-sm font-semibold text-[#1a2e1a] bg-black/5 hover:bg-black/10 transition-colors"
-          >
+          {/* İki seçenek AYNI görünürlüktedir (renk, boyut, punto): ret düğmesi geri plana itilmez. */}
+          <button type="button" onClick={() => choose("denied")} className={CHOICE_BUTTON}>
             {t("rejectAll")}
           </button>
-          <button
-            type="button"
-            onClick={() => choose("granted")}
-            className="flex-1 vitrin-cta-primary !py-2.5 !px-4 justify-center"
-          >
+          <button type="button" onClick={() => choose("granted")} className={CHOICE_BUTTON}>
             {t("acceptAll")}
           </button>
         </div>

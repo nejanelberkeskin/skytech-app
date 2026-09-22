@@ -864,12 +864,13 @@ dil öneki korunur):
 - `payment/b2b-checkout`: iyzico belirteci artık **await** ile kaydediliyor. Önceden `void` ile başlatılan Supabase
   sorgusu hiç gönderilmiyordu; ödenen teklif "PAID" olamıyordu.
 
-**Veritabanı:** eski tablolar ve Mart–Nisan 2026 deneme kayıtları **silinmedi** (41 sipariş, 29 ödeme, 21 ayırım, 5 teklif).
-Bu kayıtların 17 ayırımı hâlâ kapasite tutuyor; yayındaki sahalardan yalnız İzmir'de 100 tohum topu. Temizlik ayrı
-onay ister.
+**Veritabanı (22 Eylül 2026, kullanıcı onayıyla):**
+- Eski tablolardaki Mart–Nisan deneme kayıtları silindi: 41 sipariş, 29 ödeme, 21 ayırım. Bütün sahaların `reserved_seeds`
+  değeri 0'a çekildi (yeni modelin o an tuttuğu kapasite yoktu).
+- Silinmeden önceki tam kopya: `outputs/yedekler/eski-deneme-kayitlari-2026-09-22.json`.
+- 5 eski kurumsal teklif kaydı duruyor. Eski tablolar da duruyor; B2B `orders` ve `payments` kullanıyor.
 
-**Migration 018** (`supabase/migrations/018_legacy_surface.sql`) hazır, **onay bekliyor**. Canlıda yalnız hata fırlatılıp
-geri alınan bir blokta denendi. İçeriği:
+**Migration 018** (`supabase/migrations/018_legacy_surface.sql`) **canlıda** (22 Eylül, onayla). İçeriği:
 - Eski üç rezervasyon fonksiyonunda anon/üye çalıştırma yetkisi kaldırılır.
 - `certificates` tablosundaki "herkes okur" politikası kaldırılır.
 - Kurumsal teklif yalnız "bekliyor" durumunda eklenebilir.
@@ -919,4 +920,4 @@ geri alınan bir blokta denendi. İçeriği:
 ### Sıradaki (plan §Fazlar)
 - `/kendi-arazim` sayfası (Astra, brif 11) teslim edilince: `/talep/arazime-ekim` → `/kendi-arazim` yönlendirmesi,
   `REQUEST_ROUTES.land`, sahalar sayfasındaki ve Hesabım'daki bağlantılar, site haritası; eski sayfa kaldırılır.
-- Migration 018 (onay) ve eski deneme kayıtlarının temizliği (onay).
+- (Migration 018 ve eski deneme kayıtlarının temizliği 22 Eylül'de yapıldı; birleşik sürümün uçtan uca denemesi geçti.)

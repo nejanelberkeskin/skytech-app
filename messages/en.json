@@ -725,7 +725,9 @@
     "map": {
       "badge": "Location",
       "title": "Visit Us",
-      "directions": "Get Directions"
+      "directions": "Get Directions",
+      "show": "Show the map",
+      "consentNote": "When you show it, the map loads from OpenStreetMap."
     },
     "social": {
       "badge": "Social Media",
@@ -1215,10 +1217,10 @@
     "description": "We release seed balls by drone over fire-affected sites. Join a Project Site or apply for your own land, and follow the work through reports and footage."
   },
   "cookieConsent": {
-    "message": "We use cookies to improve your experience and anonymously analyze site traffic.",
+    "message": "We use the cookies that are necessary for the site to work. If you allow it, we measure visits with Google Analytics; if you do not, no data is sent to Google. You can change your choice at any time under Cookie Preferences at the bottom of the page.",
     "policyLink": "Cookie Policy",
     "rejectAll": "Essential Only",
-    "acceptAll": "Accept All"
+    "acceptAll": "Allow Analytics"
   },
   "requestForms": {
     "common": {

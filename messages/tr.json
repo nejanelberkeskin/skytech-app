@@ -725,7 +725,9 @@
     "map": {
       "badge": "Konum",
       "title": "Bizi Ziyaret Edin",
-      "directions": "Yol Tarifi Al"
+      "directions": "Yol Tarifi Al",
+      "show": "Haritayı göster",
+      "consentNote": "Gösterdiğinizde harita OpenStreetMap'ten yüklenir."
     },
     "social": {
       "badge": "Sosyal Medya",
@@ -1215,10 +1217,10 @@
     "description": "Yangından etkilenmiş sahalara dronla tohum topu bırakıyoruz. Bir Proje Uygulama Sahasına katılın ya da kendi araziniz için başvurun; çalışmayı raporlarla ve görüntülerle izleyin."
   },
   "cookieConsent": {
-    "message": "Deneyiminizi iyileştirmek ve site trafiğini anonim olarak analiz etmek için çerezler kullanıyoruz.",
+    "message": "Sitenin çalışması için zorunlu çerezleri kullanıyoruz. İzin verirseniz ziyaretleri Google Analytics ile ölçeriz; izin vermezseniz Google'a hiçbir veri gönderilmez. Tercihinizi sayfanın altındaki Çerez Tercihleri'nden dilediğiniz an değiştirebilirsiniz.",
     "policyLink": "Çerez Politikası",
-    "rejectAll": "Sadece Zorunlu",
-    "acceptAll": "Tümünü Kabul Et"
+    "rejectAll": "Yalnız Zorunlu",
+    "acceptAll": "Analitiğe İzin Ver"
   },
   "requestForms": {
     "common": {

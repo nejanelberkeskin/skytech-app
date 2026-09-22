@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import BreadCrumb from "@/components/vitrin/BreadCrumb";
 import SectionWrapper from "@/components/vitrin/SectionWrapper";
+import ClickToLoadFrame from "@/components/vitrin/shared/ClickToLoadFrame";
 import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
 import LocalBusinessSchema from "@/components/seo/LocalBusinessSchema";
 import { buildPageMetadata, ORG_SOCIAL } from "@/lib/seo";
@@ -110,13 +111,15 @@ export default async function IletisimPage({
             {/* OpenStreetMap embed — keyless + her yerde frameable
                 (Google'ın keyless ?output=embed formatı kaldırıldı: 404 + SAMEORIGIN).
                 Koordinat: Google Business kaydı "Skytech Havacılık"
-                (maps.app.goo.gl/Tg3N3MsfhmvEmeMz9 → 40.0491034, 32.5976506). */}
-            <iframe
+                (maps.app.goo.gl/Tg3N3MsfhmvEmeMz9 → 40.0491034, 32.5976506).
+                Harita yalnız ziyaretçi "Haritayı göster" dediğinde yüklenir: sayfa açılırken
+                üçüncü tarafa istek gitmez (Çerez Politikası §3). Adres kartı her zaman görünür. */}
+            <ClickToLoadFrame
               src="https://www.openstreetmap.org/export/embed.html?bbox=32.5877%2C40.0426%2C32.6077%2C40.0556&layer=mapnik&marker=40.04910%2C32.59765"
               title={t("map.title")}
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              className="absolute inset-0 w-full h-full border-0"
+              buttonLabel={t("map.show")}
+              note={t("map.consentNote")}
+              icon={<PinIcon className="h-4 w-4" />}
             />
             {/* Adres kartı — haritanın üzerinde */}
             <div className="absolute bottom-4 left-4 right-4 sm:right-auto sm:max-w-sm rounded-2xl px-5 py-4 flex items-start gap-3 pointer-events-none bg-[#0a1f12]/92 backdrop-blur-md border border-white/10 shadow-xl">

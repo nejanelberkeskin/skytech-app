@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
+import type { User } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase/browser";
 import { Button, Card, CardStat } from "@/components/ui";
@@ -398,7 +399,6 @@ function PitchDeckModal({
 // ── QuoteAlert bileşeni ───────────────────────────────────────────────────────
 function QuoteAlert({
   quote,
-  companyName,
   onPayClick,
   onPitchClick,
 }: {
@@ -484,7 +484,6 @@ interface PoolInfo {
 
 function EmployeeDistributionSection({
   quote,
-  userId,
 }: {
   quote: CorporateQuote;
   userId: string;
@@ -541,8 +540,8 @@ function EmployeeDistributionSection({
       showToast("success", `✓ ${form.name} adına ${seeds} tohum tahsis edildi, e-posta gönderildi.`);
       setForm({ name: "", email: "", seeds: "1" });
       load();
-    } catch (err: any) {
-      showToast("error", err.message);
+    } catch (err: unknown) {
+      showToast("error", err instanceof Error ? err.message : "İşlem tamamlanamadı.");
     } finally {
       setSubmitting(false);
     }
@@ -757,7 +756,7 @@ function EmployeeDistributionSection({
 // ── Ana Sayfa ──────────────────────────────────────────────────────────────────
 export default function CorporateDashboard() {
   const router = useRouter();
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [quotes, setQuotes] = useState<CorporateQuote[]>([]);
   const [loading, setLoading] = useState(true);
   const [pitchQuote, setPitchQuote] = useState<CorporateQuote | null>(null);
@@ -1265,7 +1264,6 @@ function AIESGCopilot({
 
 // ── Embed + Public Forest Section ────────────────────────────────────────────
 function EmbedSection({
-  companyId,
   companyName,
 }: {
   companyId: string;

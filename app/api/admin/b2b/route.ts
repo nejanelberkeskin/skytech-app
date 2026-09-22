@@ -179,7 +179,7 @@ export async function PUT(request: NextRequest) {
     }
 
     return NextResponse.json({ error: "Invalid action" }, { status: 400 });
-  } catch (e: any) {
+  } catch (e: unknown) {
     console.error("B2B quote update error:", e);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }

@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import RoleGuard from "@/components/RoleGuard";
-import { Button, Input, Textarea, Select, Card, CardStat } from "@/components/ui";
+import { Button, Input, Textarea, Select, CardStat } from "@/components/ui";
 import type { SeedProduct } from "@/lib/types";
 
 const EMPTY_PRODUCT: Omit<SeedProduct, "id" | "created_at" | "updated_at"> = {
@@ -41,9 +41,9 @@ function KatalogContent() {
   const [deleteTarget, setDeleteTarget] = useState<SeedProduct | null>(null);
 
   const fetchProducts = useCallback(async () => {
-    setLoading(true);
     try {
       const res = await fetch("/api/admin/catalog");
+      if (!res.ok) throw new Error("unavailable");
       const data = await res.json();
       if (Array.isArray(data)) setProducts(data);
     } catch {
@@ -52,7 +52,15 @@ function KatalogContent() {
     setLoading(false);
   }, []);
 
-  useEffect(() => { fetchProducts(); }, [fetchProducts]);
+  useEffect(() => {
+    const controller = new AbortController();
+    fetch("/api/admin/catalog", { signal: controller.signal })
+      .then((res) => { if (!res.ok) throw new Error("unavailable"); return res.json(); })
+      .then((rows) => { if (!Array.isArray(rows)) throw new Error("invalid_response"); setProducts(rows); })
+      .catch(() => { if (!controller.signal.aborted) setError("Veriler yüklenemedi."); })
+      .finally(() => { if (!controller.signal.aborted) setLoading(false); });
+    return () => controller.abort();
+  }, []);
 
   useEffect(() => {
     if (success) { const t = setTimeout(() => setSuccess(null), 3000); return () => clearTimeout(t); }

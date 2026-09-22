@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { COMPANY } from "@/lib/company";
-import { SALES_ENABLED } from "@/lib/site-config";
 import { buildPageMetadata } from "@/lib/seo";
 import type { PriceLocale } from "@/lib/pricing";
 import WithdrawalForm from "@/components/vitrin/cayma/WithdrawalForm";
@@ -88,25 +87,11 @@ export default async function WithdrawalPage({ params, searchParams }: Props) {
             {t("description")}
           </p>
         </header>
-        {SALES_ENABLED ? (
-          <WithdrawalForm
-            locale={locale}
-            initialOrderNo={initialOrderNo}
-            formatReceipt={formatReceipt}
-          />
-        ) : (
-          <section
-            aria-labelledby="withdrawal-closed"
-            className="rounded-3xl border border-[#1B6B3A]/15 bg-[#f1f5ed] p-6 sm:p-8"
-          >
-            <h2 id="withdrawal-closed" className="text-xl font-semibold">
-              {t("closed.title")}
-            </h2>
-            <p className="mt-4 text-sm leading-relaxed text-[#526352]">
-              {t.rich("closed.description", { email: () => emailLink })}
-            </p>
-          </section>
-        )}
+        <WithdrawalForm
+          locale={locale}
+          initialOrderNo={initialOrderNo}
+          formatReceipt={formatReceipt}
+        />
         <section
           aria-labelledby="written-notice-title"
           className="border-t border-[#1B6B3A]/15 pt-6"

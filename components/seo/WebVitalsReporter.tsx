@@ -14,7 +14,6 @@ export default function WebVitalsReporter() {
   useReportWebVitals((metric) => {
     if (process.env.NODE_ENV === "development") {
       // CLS, FID, LCP, FCP, INP, TTFB
-      // eslint-disable-next-line no-console
       console.log(`[web-vitals] ${metric.name}:`, metric.value.toFixed(2), metric.rating);
     }
   });

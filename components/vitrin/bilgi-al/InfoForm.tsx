@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { trackLead } from "@/lib/analytics";
 
 const inputClass =
@@ -38,6 +39,7 @@ export default function InfoForm() {
       company: fd.get("company"),
       subject: fd.get("subject"),
       message: fd.get("message"),
+      noticeRead: fd.get("noticeRead") === "on",
       website: fd.get("website"), // honeypot
     };
 
@@ -47,11 +49,10 @@ export default function InfoForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-      const data = await res.json().catch(() => ({}));
 
       if (!res.ok) {
         setStatus("error");
-        setErrorMsg(typeof data.error === "string" ? data.error : t("form.error"));
+        setErrorMsg(res.status === 429 ? t("form.rateLimited") : t("form.error"));
         return;
       }
 
@@ -123,12 +124,14 @@ export default function InfoForm() {
         </div>
 
         <div className="flex items-start gap-3 text-xs text-[#6b8f6b] pt-2">
-          <input type="checkbox" required disabled={status === "submitting"} className="mt-1 accent-[#1B6B3A]" />
-          <p>{t("form.consent")}</p>
+          <input id="info-notice" name="noticeRead" type="checkbox" required disabled={status === "submitting"} className="mt-1 accent-[#1B6B3A]" />
+          <div><label htmlFor="info-notice" className="cursor-pointer">{t("form.consent")}</label>{" "}
+            <Link href="/kvkk" target="_blank" rel="noopener noreferrer" className="underline underline-offset-4">{t("form.privacyLink")}</Link>
+          </div>
         </div>
 
         {status === "error" && errorMsg && (
-          <p className="text-sm text-[#dc2626] bg-[#fef2f2] border border-[#fecaca] rounded-xl px-4 py-3">{errorMsg}</p>
+          <p role="alert" className="text-sm text-[#dc2626] bg-[#fef2f2] border border-[#fecaca] rounded-xl px-4 py-3">{errorMsg}</p>
         )}
 
         <button type="submit" disabled={status === "submitting"} className="vitrin-cta-primary w-full justify-center disabled:opacity-70">

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { sendContactFormNotification } from "@/lib/mail";
+import { SKIPPED_ID, sendContactFormNotification } from "@/lib/mail";
 
 /**
  * Public Bilgi-Al formu — Kimlik doğrulama gerektirmez.
@@ -15,12 +15,20 @@ import { sendContactFormNotification } from "@/lib/mail";
  *  - CSRF: middleware zaten /api/public/* için Origin header kontrolü yapıyor.
  */
 
+import { getClientIP } from "@/lib/admin-auth";
+import { hashIp } from "@/lib/requests/server";
+import { createServiceRoleClient } from "@/lib/supabase/server";
+
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export async function POST(req: NextRequest) {
   let body: Record<string, unknown>;
   try {
-    body = await req.json();
+    const text = await req.text();
+    if (new TextEncoder().encode(text).length > 24_000) return NextResponse.json({ error: "too_large" }, { status: 413 });
+    const parsed: unknown = JSON.parse(text);
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) throw new Error("invalid_body");
+    body = parsed as Record<string, unknown>;
   } catch {
     return NextResponse.json({ error: "Geçersiz istek gövdesi." }, { status: 400 });
   }
@@ -42,7 +50,7 @@ export async function POST(req: NextRequest) {
   if (!EMAIL_RE.test(email)) {
     return NextResponse.json({ error: "Geçerli bir e-posta adresi girin." }, { status: 400 });
   }
-  if (name.length > 200 || subject.length > 200 || message.length > 5000) {
+  if (name.length > 200 || email.length > 254 || (phone?.length ?? 0) > 40 || (company?.length ?? 0) > 200 || subject.length > 200 || message.length > 5000) {
     return NextResponse.json({ error: "Girilen metin çok uzun." }, { status: 400 });
   }
 
@@ -51,8 +59,16 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true });
   }
 
+  if (body.noticeRead !== true) return NextResponse.json({ error: "notice_required" }, { status: 400 });
   try {
-    await sendContactFormNotification({ name, email, phone, company, subject, message });
+    const ipKey = hashIp(getClientIP(req)) ?? "unknown";
+    const quota = await createServiceRoleClient().rpc("consume_contact_quota", { p_key: ipKey });
+    if (quota.error || typeof quota.data !== "number") return NextResponse.json({ error: "unavailable" }, { status: 503 });
+    if (quota.data > 0) return NextResponse.json({ error: "rate_limited" }, { status: 429, headers: { "Retry-After": String(quota.data) } });
+    const result = await sendContactFormNotification({ name, email, phone, company, subject, message });
+    if (!result.id || result.id === SKIPPED_ID) {
+      return NextResponse.json({ error: "unavailable" }, { status: 503 });
+    }
   } catch (e) {
     console.error("[bilgi-al] mail gönderilemedi:", e);
     return NextResponse.json(

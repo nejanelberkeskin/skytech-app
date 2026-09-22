@@ -1,7 +1,8 @@
 "use client";
 
 import { Suspense, useEffect, useState } from "react";
-import Link from "next/link";
+import { Link, getPathname } from "@/i18n/navigation";
+import { useLocale, useTranslations } from "next-intl";
 import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabase/browser";
 import { GOOGLE_AUTH_ENABLED } from "@/lib/site-config";
@@ -32,6 +33,9 @@ export default function RegisterPageWrapper() {
 }
 
 function RegisterPage() {
+  const t = useTranslations("authPages");
+  const locale = useLocale();
+  const localPath = (href: string) => getPathname({ locale, href });
   const router = useRouter();
   const searchParams = useSearchParams();
   const talepId = searchParams.get("talep");
@@ -58,11 +62,11 @@ function RegisterPage() {
 
     const fullName = form.fullName.trim();
     const email = form.email.trim().toLowerCase();
-    if (fullName.length < 2 || !email || !form.password) return setError("Tüm alanları doldurun.");
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return setError("Geçerli bir e-posta adresi girin.");
-    if (!passwordValid) return setError("Şifre en az 8 karakter olmalı.");
-    if (!passwordsMatch) return setError("Şifreler eşleşmiyor.");
-    if (!terms) return setError("Devam etmek için kullanım koşullarını ve gizlilik politikasını kabul edin.");
+    if (fullName.length < 2 || !email || !form.password) return setError(t("allFields"));
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return setError(t("validEmail"));
+    if (!passwordValid) return setError(t("minPassword"));
+    if (!passwordsMatch) return setError(t("mismatch"));
+    if (!terms) return setError(t("termsRequired"));
 
     setLoading(true);
     const { data, error: authError } = await supabase.auth.signUp({
@@ -70,7 +74,7 @@ function RegisterPage() {
       password: form.password,
       options: {
         data: { full_name: fullName, account_type: "individual", terms_accepted_at: new Date().toISOString() },
-        emailRedirectTo: `${window.location.origin}/api/auth/callback?next=/hesabim`,
+        emailRedirectTo: `${window.location.origin}/api/auth/callback?next=${encodeURIComponent(localPath("/hesabim"))}`,
       },
     });
 
@@ -78,12 +82,12 @@ function RegisterPage() {
       setLoading(false);
       setError(
         /already registered|already exists/i.test(authError.message)
-          ? "Bu e-posta zaten kayıtlı. Giriş yapmayı ya da şifrenizi sıfırlamayı deneyin."
+          ? t("registered")
           : /rate limit|too many/i.test(authError.message)
-            ? "Kısa sürede çok fazla deneme yapıldı. Lütfen birkaç dakika sonra tekrar deneyin."
+            ? t("rateLimited")
             : /weak|pwned|compromised/i.test(authError.message)
-              ? "Bu şifre yeterince güçlü değil ya da sızmış şifre listelerinde yer alıyor. Farklı bir şifre seçin."
-              : "Hesap oluşturulamadı. Lütfen tekrar deneyin."
+              ? t("weakPassword")
+              : t("registerError")
       );
       return;
     }
@@ -96,7 +100,7 @@ function RegisterPage() {
         .then(() => undefined, () => undefined);
       await claimPendingRequest(talepId);
       setLoading(false);
-      router.push("/hesabim");
+      router.push(localPath("/hesabim"));
       router.refresh();
       return;
     }
@@ -109,13 +113,15 @@ function RegisterPage() {
 
   const resend = async () => {
     if (!checkEmail || resent) return;
-    await supabase.auth.resend({ type: "signup", email: checkEmail });
+    const { error } = await supabase.auth.resend({ type: "signup", email: checkEmail, options: { emailRedirectTo: `${window.location.origin}/api/auth/callback?next=${encodeURIComponent(localPath("/hesabim"))}` } });
+    if (error) { setError(t("registerError")); return; }
+    setError(null);
     setResent(true);
   };
 
   if (checkEmail) {
     return (
-      <AuthShell title="E-postanızı Doğrulayın" subtitle="Hesabınızı etkinleştirmek için son bir adım kaldı.">
+      <AuthShell title={t("verifyTitle")} subtitle={t("verifySubtitle")}>
         <div className="liquid-glass relative rounded-3xl p-8 overflow-hidden text-center">
           <div className="relative z-10 space-y-4">
             <div className="w-14 h-14 mx-auto rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
@@ -125,16 +131,15 @@ function RegisterPage() {
               </svg>
             </div>
             <p className="text-sm text-emerald-200/60 leading-relaxed">
-              <strong className="text-white">{checkEmail}</strong> adresine bir doğrulama bağlantısı gönderdik. Bağlantıya
-              tıkladığınızda hesabınız açılır. E-posta birkaç dakika içinde gelmezse spam klasörünü kontrol edin.
-            </p>
+              <strong className="text-white">{checkEmail}</strong> {t("verifyMessage")}</p>
+            {error && <p role="alert" className="text-rose-300">{error}</p>}
             <button
               type="button"
               onClick={resend}
               disabled={resent}
               className="text-sm text-emerald-400 hover:text-emerald-300 font-medium transition-colors disabled:opacity-60"
             >
-              {resent ? "Tekrar gönderildi ✓" : "Bağlantıyı tekrar gönder"}
+              {resent ? t("resent") : t("resend")}
             </button>
           </div>
         </div>
@@ -144,14 +149,13 @@ function RegisterPage() {
 
   return (
     <AuthShell
-      title="Aramıza Katılın"
-      subtitle="Taleplerinizi tek yerden takip edin."
+      title={t("join")}
+      subtitle={t("joinSubtitle")}
       footer={
         <>
-          Zaten hesabınız var mı?{" "}
+          {t("haveAccount")}{" "}
           <Link href={talepId ? `/auth/login?talep=${encodeURIComponent(talepId)}` : "/auth/login"} className="text-emerald-400 hover:text-emerald-300 font-medium transition-colors">
-            Giriş Yap
-          </Link>
+            {t("login")}</Link>
         </>
       }
     >
@@ -159,52 +163,51 @@ function RegisterPage() {
         <div className="relative z-10 space-y-5">
           {talepId && (
             <p className="text-xs text-emerald-300 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl px-4 py-3">
-              Hesabınız oluşturulunca talebiniz otomatik olarak hesabınıza bağlanır.
-            </p>
+              {t("claimMessage")}</p>
           )}
 
           <div>
-            <label htmlFor="fullName" className="block text-sm font-medium text-emerald-200/50 mb-2">Ad Soyad</label>
-            <input id="fullName" value={form.fullName} onChange={(e) => set("fullName", e.target.value)} placeholder="Adınız Soyadınız" autoComplete="name" maxLength={120} className={authInputClass} />
+            <label htmlFor="fullName" className="block text-sm font-medium text-emerald-200/50 mb-2">{t("fullName")}</label>
+            <input id="fullName" value={form.fullName} onChange={(e) => set("fullName", e.target.value)} placeholder={t("namePlaceholder")} autoComplete="name" maxLength={120} className={authInputClass} />
           </div>
 
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-emerald-200/50 mb-2">E-posta</label>
+            <label htmlFor="email" className="block text-sm font-medium text-emerald-200/50 mb-2">{t("email")}</label>
             <input id="email" type="email" value={form.email} onChange={(e) => set("email", e.target.value)} placeholder="ornek@mail.com" autoComplete="email" className={authInputClass} />
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-emerald-200/50 mb-2">Şifre</label>
+              <label htmlFor="password" className="block text-sm font-medium text-emerald-200/50 mb-2">{t("password")}</label>
               <input
                 id="password"
                 type={showPass ? "text" : "password"}
                 value={form.password}
                 onChange={(e) => set("password", e.target.value)}
-                placeholder="En az 8 karakter"
+                placeholder={t("minPlaceholder")}
                 autoComplete="new-password"
                 className={form.password && !passwordValid ? authInputErrorClass : authInputClass}
               />
             </div>
             <div>
-              <label htmlFor="passwordConfirm" className="block text-sm font-medium text-emerald-200/50 mb-2">Şifre Tekrar</label>
+              <label htmlFor="passwordConfirm" className="block text-sm font-medium text-emerald-200/50 mb-2">{t("confirmPassword")}</label>
               <input
                 id="passwordConfirm"
                 type={showPass ? "text" : "password"}
                 value={form.passwordConfirm}
                 onChange={(e) => set("passwordConfirm", e.target.value)}
-                placeholder="Tekrarlayın"
+                placeholder={t("repeatPlaceholder")}
                 autoComplete="new-password"
                 className={form.passwordConfirm && !passwordsMatch ? authInputErrorClass : authInputClass}
               />
             </div>
           </div>
           {form.passwordConfirm && !passwordsMatch && (
-            <p className="text-xs text-rose-400 -mt-3">Şifreler eşleşmiyor.</p>
+            <p className="text-xs text-rose-400 -mt-3">{t("mismatch")}</p>
           )}
 
           <button type="button" onClick={() => setShowPass(!showPass)} className="text-xs text-emerald-200/30 hover:text-emerald-200/60 transition-colors">
-            {showPass ? "Şifreleri Gizle" : "Şifreleri Göster"}
+            {showPass ? t("hidePasswords") : t("showPasswords")}
           </button>
 
           <label className="flex items-start gap-3 cursor-pointer group">
@@ -216,9 +219,11 @@ function RegisterPage() {
               className="mt-0.5 w-4 h-4 shrink-0 accent-emerald-500"
             />
             <span className="text-xs text-emerald-200/40 group-hover:text-emerald-200/60 transition-colors leading-relaxed">
-              <Link href="/kullanim-kosullari" target="_blank" className="text-emerald-400/80 hover:text-emerald-300 underline underline-offset-2">Kullanım Koşulları</Link>,{" "}
-              <Link href="/gizlilik-politikasi" target="_blank" className="text-emerald-400/80 hover:text-emerald-300 underline underline-offset-2">Gizlilik Politikası</Link> ve{" "}
-              <Link href="/kvkk" target="_blank" className="text-emerald-400/80 hover:text-emerald-300 underline underline-offset-2">KVKK Aydınlatma Metni</Link>&apos;ni okudum, kabul ediyorum.
+              {t.rich("termsNotice", {
+                terms: (text) => <Link href="/kullanim-kosullari" target="_blank" rel="noopener noreferrer" className="underline text-emerald-300">{text}</Link>,
+                privacy: (text) => <Link href="/gizlilik-politikasi" target="_blank" rel="noopener noreferrer" className="underline text-emerald-300">{text}</Link>,
+                notice: (text) => <Link href="/kvkk" target="_blank" rel="noopener noreferrer" className="underline text-emerald-300">{text}</Link>,
+              })}
             </span>
           </label>
 
@@ -234,16 +239,15 @@ function RegisterPage() {
             {loading ? (
               <span className="flex items-center justify-center gap-2">
                 <span className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
-                Hesap oluşturuluyor…
-              </span>
-            ) : "Üye Ol"}
+                {t("creating")}</span>
+            ) : t("register")}
           </button>
 
           {GOOGLE_AUTH_ENABLED && (
             <>
               <div className="flex items-center gap-4">
                 <div className="flex-1 h-px bg-white/[0.06]" />
-                <span className="text-xs text-emerald-200/20">veya</span>
+                <span className="text-xs text-emerald-200/20">{t("or")}</span>
                 <div className="flex-1 h-px bg-white/[0.06]" />
               </div>
               <button
@@ -252,14 +256,13 @@ function RegisterPage() {
                   if (isRequestId(talepId)) savePendingClaim(talepId);
                   await supabase.auth.signInWithOAuth({
                     provider: "google",
-                    options: { redirectTo: `${window.location.origin}/api/auth/callback?next=/hesabim` },
+                    options: { redirectTo: `${window.location.origin}/api/auth/callback?next=${encodeURIComponent(localPath("/hesabim"))}` },
                   });
                 }}
                 className="w-full py-3.5 glass-subtle rounded-2xl text-emerald-100/60 hover:text-white hover:bg-white/[0.06] font-medium text-sm transition-all duration-300 flex items-center justify-center gap-3"
               >
                 <GoogleIcon />
-                Google ile Üye Ol
-              </button>
+                {t("googleRegister")}</button>
             </>
           )}
         </div>

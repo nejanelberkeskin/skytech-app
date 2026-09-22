@@ -15,13 +15,18 @@ interface Transaction {
 
 interface FinanceData {
   monthlyRevenue: number;
+  monthlyGross: number;
+  monthlyRefunds: number;
+  pendingRefundAmount: number;
+  b2bMonthlyRevenue: number;
+  pendingInvoices: number;
   pendingAmount: number;
   activeQuotes: number;
   recentTransactions: Transaction[];
 }
 
 function formatCurrency(n: number): string {
-  return n.toLocaleString("tr-TR", { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+  return n.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
 function formatDate(iso: string): string {
@@ -77,13 +82,17 @@ function FinansContent() {
 
   if (!data) return null;
 
-  const successCount = data.recentTransactions.filter((t) => t.status === "success").length;
+
 
   const cards = [
-    { label: "Bu Ay Ciro", value: `₺${formatCurrency(data.monthlyRevenue)}`, icon: "💰" },
+    { label: "Bırakma — bu ay net tahsilat", value: `₺${formatCurrency(data.monthlyRevenue)}`, icon: "💰" },
     { label: "Bekleyen Ödeme", value: `₺${formatCurrency(data.pendingAmount)}`, icon: "⏳" },
     { label: "Aktif Teklifler", value: `${data.activeQuotes} teklif`, icon: "🏢" },
-    { label: "Başarılı Ödeme", value: `${successCount}/${data.recentTransactions.length}`, icon: "✅" },
+    { label: "Bu ay brüt tahsilat", value: `₺${formatCurrency(data.monthlyGross)}`, icon: "💳" },
+    { label: "Bu ay tamamlanan iadeler", value: `₺${formatCurrency(data.monthlyRefunds)}`, icon: "↩" },
+    { label: "İade yükümlülüğü (henüz ödenmedi)", value: `₺${formatCurrency(data.pendingRefundAmount)}`, icon: "⏳" },
+    { label: "B2B — bu ay tahsilat", value: `₺${formatCurrency(data.b2bMonthlyRevenue)}`, icon: "🏢" },
+    { label: "Bekleyen faturalar", value: String(data.pendingInvoices), icon: "📄" },
   ];
 
   return (
@@ -92,7 +101,7 @@ function FinansContent() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-white">Finans & Faturalar</h1>
-          <p className="text-sm text-slate-400 mt-1">Ciro raporları, ödemeler ve kurumsal teklif onayları</p>
+          <p className="text-sm text-slate-400 mt-1">Bırakma siparişleri, tamamlanan iadeler ve ayrı B2B tahsilatları. Deneme siparişleri hariç.</p>
         </div>
         <button
           onClick={loadData}
@@ -116,6 +125,7 @@ function FinansContent() {
         ))}
       </div>
 
+      <p className="text-sm text-slate-400">Net tahsilat: İstanbul takvimine göre bu ay ödenen bırakma siparişleri eksi bu ay tamamlanan sipariş iadeleri. Bekleyen iadeler ayrıca gösterilir. B2B tahsilat ayı ödeme kaydının son güncellemesine dayanır. Çift tahsilat mutabakatı sipariş ayrıntısında takip edilir; bu ekran sağlayıcı hesap ekstresi değildir.</p>
       {/* Son İşlemler Tablosu */}
       <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
         <div className="px-5 py-4 border-b border-slate-800 flex items-center justify-between">
@@ -158,7 +168,7 @@ function FinansContent() {
                         t.status === "pending" ? "bg-amber-500/10 text-amber-400" :
                         "bg-red-500/10 text-red-400"
                       }`}>
-                        {t.status === "success" ? "Ödendi" : t.status === "pending" ? "Bekliyor" : "Başarısız"}
+                        {t.status === "success" ? "Ödendi" : t.status === "pending" ? "Bekliyor" : t.status === "refunded" ? "İade edildi" : t.status === "expired" ? "Süresi doldu" : "Başarısız"}
                       </span>
                     </td>
                   </tr>

@@ -5,7 +5,8 @@
     "soon": "Çok Yakında",
     "loading": "Yükleniyor...",
     "error": "Bir hata oluştu",
-    "scrollTop": "Yukarı çık"
+    "scrollTop": "Yukarı çık",
+    "close": "Kapat"
   },
   "nav": {
     "home": "Ana Sayfa",
@@ -592,8 +593,8 @@
     "titleAccent": "Doğanın Geri Dönüşü",
     "labelBefore": "Yangın Öncesi",
     "labelAfter": "Yangın Sonrası",
-    "altBefore": "Yangın öncesi çorak arazi",
-    "altAfter": "Yangın sonrası yeşeren orman"
+    "altBefore": "Yeşil orman görünümü",
+    "altAfter": "Yangından etkilenmiş arazi görünümü"
   },
   "aboutPage": {
     "meta": {
@@ -961,7 +962,7 @@
         "pre": "Kurumsal Ormanlaştırma",
         "highlight": "Sistem Modülleri"
       },
-      "subtitle": "Her büyüklükteki şirket için altı temel kurumsal çözüm.",
+      "subtitle": "Her büyüklükteki şirket için dört temel kurumsal çözüm.",
       "certificate": {
         "title": "Çalışan Bazlı Sertifika",
         "desc": "Her çalışana özel PDF sertifika otomatik üretilir, e-posta ile iletilir."
@@ -1058,14 +1059,16 @@
         "label": "Mesajınız",
         "placeholder": "Sorunuzu, ihtiyacınızı veya talebinizi detaylıca yazın..."
       },
-      "consent": "KVKK Aydınlatma Metni'ni okudum ve verilerimin işlenmesine onay veriyorum.",
+      "consent": "Kişisel verilerime ilişkin aydınlatma metnini okudum.",
       "submit": "Mesajı Gönder",
       "submitting": "Gönderiliyor...",
       "success": {
         "title": "Mesajınız Alındı!",
         "desc": "En kısa sürede size dönüş yapacağız. Teşekkür ederiz."
       },
-      "error": "Bir şeyler ters gitti. Lütfen tekrar deneyin veya doğrudan info@skytechgreen.com adresinden bize ulaşın."
+      "error": "Bir şeyler ters gitti. Lütfen tekrar deneyin veya doğrudan info@skytechgreen.com adresinden bize ulaşın.",
+      "privacyLink": "KVKK Aydınlatma Metni",
+      "rateLimited": "Çok fazla deneme yapıldı. Lütfen birkaç dakika sonra tekrar deneyin."
     },
     "topics": {
       "individual": "Sahaya Tohum Topu Bıraktırma",
@@ -1306,6 +1309,82 @@
       },
       "backToSites": "Proje Uygulama Sahalarına dön"
     }
+  },
+  "authPages": {
+    "home": "Skytech Green ana sayfa",
+    "linkError": "Bağlantı bu tarayıcıda doğrulanamadı. Hesabınız onaylandıysa giriş yapabilirsiniz; şifrenizi unuttuysanız yeni bağlantı isteyin.",
+    "confirmError": "Doğrulama bağlantısı geçersiz ya da süresi dolmuş. Giriş yapmayı deneyin; gerekiyorsa yeni bağlantı isteyin.",
+    "oauthError": "Google ile giriş tamamlanamadı. Lütfen tekrar deneyin.",
+    "required": "E-posta ve şifre zorunludur.",
+    "credentials": "E-posta veya şifre hatalı.",
+    "verifyRequired": "E-posta adresinizi doğrulamanız gerekiyor. Gelen kutunuzdaki bağlantıya tıklayın.",
+    "rateLimited": "Kısa sürede çok fazla deneme yapıldı. Lütfen birkaç dakika sonra tekrar deneyin.",
+    "loginError": "Giriş yapılamadı. Lütfen tekrar deneyin.",
+    "welcome": "Tekrar Hoş Geldiniz",
+    "loginSubtitle": "Hesabınıza giriş yaparak taleplerinizi takip edin.",
+    "noAccount": "Hesabınız yok mu?",
+    "register": "Üye Ol",
+    "email": "E-posta",
+    "password": "Şifre",
+    "forgotLink": "Şifremi unuttum",
+    "show": "Göster",
+    "hide": "Gizle",
+    "loggingIn": "Giriş yapılıyor…",
+    "login": "Giriş Yap",
+    "or": "veya",
+    "googleLogin": "Google ile Giriş Yap",
+    "allFields": "Tüm alanları doldurun.",
+    "validEmail": "Geçerli bir e-posta adresi girin.",
+    "minPassword": "Şifre en az 8 karakter olmalı.",
+    "mismatch": "Şifreler eşleşmiyor.",
+    "termsRequired": "Devam etmek için kullanım koşullarını kabul edip aydınlatma metinlerini okuyun.",
+    "registered": "Bu e-posta zaten kayıtlı. Giriş yapmayı ya da şifrenizi sıfırlamayı deneyin.",
+    "weakPassword": "Bu şifre yeterince güçlü değil ya da sızmış şifre listelerinde yer alıyor. Farklı bir şifre seçin.",
+    "registerError": "Hesap oluşturulamadı. Lütfen tekrar deneyin.",
+    "verifyTitle": "E-postanızı Doğrulayın",
+    "verifySubtitle": "Hesabınızı etkinleştirmek için son bir adım kaldı.",
+    "verifyMessage": "adresine bir doğrulama bağlantısı gönderdik. Bağlantıya tıkladığınızda hesabınız açılır. E-posta birkaç dakika içinde gelmezse spam klasörünü kontrol edin.",
+    "resent": "Tekrar gönderildi ✓",
+    "resend": "Bağlantıyı tekrar gönder",
+    "join": "Aramıza Katılın",
+    "joinSubtitle": "Taleplerinizi tek yerden takip edin.",
+    "haveAccount": "Zaten hesabınız var mı?",
+    "claimMessage": "Hesabınız oluşturulunca talebiniz otomatik olarak hesabınıza bağlanır.",
+    "fullName": "Ad Soyad",
+    "namePlaceholder": "Adınız Soyadınız",
+    "minPlaceholder": "En az 8 karakter",
+    "confirmPassword": "Şifre Tekrar",
+    "repeatPlaceholder": "Tekrarlayın",
+    "hidePasswords": "Şifreleri Gizle",
+    "showPasswords": "Şifreleri Göster",
+    "terms": "Kullanım Koşulları",
+    "privacy": "Gizlilik Politikası",
+    "and": "ve",
+    "notice": "KVKK Aydınlatma Metni",
+    "creating": "Hesap oluşturuluyor…",
+    "googleRegister": "Google ile Üye Ol",
+    "forgotTitle": "Şifremi Unuttum",
+    "forgotSubtitle": "E-posta adresinizi girin; şifre yenileme bağlantısı gönderelim.",
+    "backLogin": "← Giriş sayfasına dön",
+    "sentTitle": "Bağlantı gönderildi",
+    "sentMessage": "Bu e-posta adresi kayıtlıysa şifre yenileme bağlantısı birkaç dakika içinde gelir. Gelen kutunuzu ve spam klasörünü kontrol edin; bağlantı tek kullanımlıktır.",
+    "sending": "Gönderiliyor…",
+    "sendLink": "Bağlantı Gönder",
+    "samePassword": "Yeni şifre eskisiyle aynı olamaz.",
+    "resetError": "Şifre güncellenemedi. Bağlantının süresi dolmuş olabilir; yeni bir bağlantı isteyin.",
+    "invalidTitle": "Bağlantı Geçersiz",
+    "invalidSubtitle": "Şifre yenileme bağlantısı geçersiz ya da süresi dolmuş.",
+    "invalidMessage": "Bağlantılar tek kullanımlıktır ve kısa süre geçerlidir. Bağlantıyı, talebi yaptığınız tarayıcıda açtığınızdan emin olun ya da yeni bir bağlantı isteyin.",
+    "newLink": "Yeni Bağlantı İste",
+    "resetTitle": "Yeni Şifre Belirleyin",
+    "resetSubtitle": "Hesabınız için yeni bir şifre seçin.",
+    "updated": "Şifreniz güncellendi",
+    "redirecting": "Hesabınıza yönlendiriliyorsunuz…",
+    "newPassword": "Yeni Şifre",
+    "confirmNew": "Yeni Şifre Tekrar",
+    "updatePassword": "Şifreyi Güncelle",
+    "saving": "Kaydediliyor…",
+    "termsNotice": "<terms>Kullanım Koşulları</terms>’nı kabul ediyorum; <privacy>Gizlilik Politikası</privacy> ve <notice>KVKK Aydınlatma Metni</notice>’ni okudum."
   },
   "siteReleases": {
     "title": "Bu sahadaki çalışmalar",
@@ -1699,7 +1778,7 @@
     "release": "Tohum topu bırakma",
     "monitoring": "İzleme ve raporlama",
     "current": "İçinde bulunduğumuz ay",
-    "video": "Bırakmadan izleme takviminde: çalışmanın görüntüleri."
+    "video": "Bırakma ve izleme sürecinden çalışma görüntüleri."
   },
   "certificatePage": {
     "title": "Katılım Sertifikası",

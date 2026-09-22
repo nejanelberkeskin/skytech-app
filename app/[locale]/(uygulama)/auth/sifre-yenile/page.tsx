@@ -1,7 +1,8 @@
 "use client";
 
 import { Suspense, useEffect, useState } from "react";
-import Link from "next/link";
+import { Link, getPathname } from "@/i18n/navigation";
+import { useLocale, useTranslations } from "next-intl";
 import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabase/browser";
 import AuthShell, { authInputClass, authInputErrorClass } from "@/components/auth/AuthShell";
@@ -29,6 +30,9 @@ function Spinner() {
 }
 
 function SifreYenilePage() {
+  const t = useTranslations("authPages");
+  const locale = useLocale();
+  const localPath = (href: string) => getPathname({ locale, href });
   const router = useRouter();
   const searchParams = useSearchParams();
   const linkError = searchParams.get("error");
@@ -71,24 +75,24 @@ function SifreYenilePage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-    if (!passwordValid) return setError("Şifre en az 8 karakter olmalı.");
-    if (!passwordsMatch) return setError("Şifreler eşleşmiyor.");
+    if (!passwordValid) return setError(t("minPassword"));
+    if (!passwordsMatch) return setError(t("mismatch"));
     setLoading(true);
     const { error: err } = await supabase.auth.updateUser({ password });
     setLoading(false);
     if (err) {
       setError(
         /same password/i.test(err.message)
-          ? "Yeni şifre eskisiyle aynı olamaz."
+          ? t("samePassword")
           : /weak|pwned|compromised/i.test(err.message)
-            ? "Bu şifre yeterince güçlü değil ya da sızmış şifre listelerinde yer alıyor. Farklı bir şifre seçin."
-            : "Şifre güncellenemedi. Bağlantının süresi dolmuş olabilir; yeni bir bağlantı isteyin."
+            ? t("weakPassword")
+            : t("resetError")
       );
       return;
     }
     setDone(true);
     setTimeout(() => {
-      router.push("/hesabim");
+      router.push(localPath("/hesabim"));
       router.refresh();
     }, 1500);
   };
@@ -97,16 +101,13 @@ function SifreYenilePage() {
 
   if (ready === "invalid") {
     return (
-      <AuthShell title="Bağlantı Geçersiz" subtitle="Şifre yenileme bağlantısı geçersiz ya da süresi dolmuş.">
+      <AuthShell title={t("invalidTitle")} subtitle={t("invalidSubtitle")}>
         <div className="liquid-glass relative rounded-3xl p-8 overflow-hidden text-center">
           <div className="relative z-10 space-y-4">
             <p className="text-sm text-emerald-200/50 leading-relaxed">
-              Bağlantılar tek kullanımlıktır ve kısa süre geçerlidir. Bağlantıyı, talebi yaptığınız tarayıcıda açtığınızdan
-              emin olun ya da yeni bir bağlantı isteyin.
-            </p>
+              {t("invalidMessage")}</p>
             <Link href="/auth/sifremi-unuttum" className="inline-block w-full py-3.5 glass-btn rounded-2xl text-white font-medium transition-all">
-              Yeni Bağlantı İste
-            </Link>
+              {t("newLink")}</Link>
           </div>
         </div>
       </AuthShell>
@@ -114,43 +115,43 @@ function SifreYenilePage() {
   }
 
   return (
-    <AuthShell title="Yeni Şifre Belirleyin" subtitle="Hesabınız için yeni bir şifre seçin.">
+    <AuthShell title={t("resetTitle")} subtitle={t("resetSubtitle")}>
       {done ? (
         <div className="liquid-glass relative rounded-3xl p-8 overflow-hidden text-center">
           <div className="relative z-10">
-            <p className="text-lg font-bold text-white">Şifreniz güncellendi</p>
-            <p className="text-sm text-emerald-200/50 mt-2">Hesabınıza yönlendiriliyorsunuz…</p>
+            <p className="text-lg font-bold text-white">{t("updated")}</p>
+            <p className="text-sm text-emerald-200/50 mt-2">{t("redirecting")}</p>
           </div>
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="liquid-glass relative rounded-3xl p-8 overflow-hidden" noValidate>
           <div className="relative z-10 space-y-5">
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-emerald-200/50 mb-2">Yeni Şifre</label>
+              <label htmlFor="password" className="block text-sm font-medium text-emerald-200/50 mb-2">{t("newPassword")}</label>
               <input
                 id="password"
                 type={showPass ? "text" : "password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="En az 8 karakter"
+                placeholder={t("minPlaceholder")}
                 autoComplete="new-password"
                 className={password && !passwordValid ? authInputErrorClass : authInputClass}
               />
             </div>
             <div>
-              <label htmlFor="confirm" className="block text-sm font-medium text-emerald-200/50 mb-2">Yeni Şifre Tekrar</label>
+              <label htmlFor="confirm" className="block text-sm font-medium text-emerald-200/50 mb-2">{t("confirmNew")}</label>
               <input
                 id="confirm"
                 type={showPass ? "text" : "password"}
                 value={confirm}
                 onChange={(e) => setConfirm(e.target.value)}
-                placeholder="Tekrarlayın"
+                placeholder={t("repeatPlaceholder")}
                 autoComplete="new-password"
                 className={confirm && !passwordsMatch ? authInputErrorClass : authInputClass}
               />
             </div>
             <button type="button" onClick={() => setShowPass(!showPass)} className="text-xs text-emerald-200/30 hover:text-emerald-200/60 transition-colors">
-              {showPass ? "Şifreleri Gizle" : "Şifreleri Göster"}
+              {showPass ? t("hidePasswords") : t("showPasswords")}
             </button>
             {error && (
               <div role="alert" className="bg-rose-500/10 border border-rose-500/20 text-rose-300 text-sm px-4 py-3 rounded-2xl">{error}</div>
@@ -160,7 +161,7 @@ function SifreYenilePage() {
               disabled={loading}
               className="w-full py-3.5 glass-btn rounded-2xl text-white font-medium transition-all disabled:opacity-40 disabled:cursor-not-allowed"
             >
-              {loading ? "Kaydediliyor…" : "Şifreyi Güncelle"}
+              {loading ? t("saving") : t("updatePassword")}
             </button>
           </div>
         </form>

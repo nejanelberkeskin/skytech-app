@@ -1,6 +1,6 @@
 /**
  * Satış ayarları — SUNUCU tarafı. Tek satırlık `sales_settings` tablosundan okunur;
- * tablo okunamazsa lib/pricing.ts'teki varsayılanlara düşer (sipariş akışı durmaz).
+ * tablo okunamazsa sipariş kabulü durur; gösterim fiyatı bağlayıcı değildir.
  *
  * Yönetim panelindeki "Satış Ayarları" (`/admin/satis-ayarlari`) bu satırı değiştirir. Bağlayıcı
  * tutar her zaman buradaki değerlerle sunucuda hesaplanır (önizleme, sipariş, ödeme); sihirbaz ve
@@ -11,6 +11,7 @@ import { createServiceRoleClient } from "@/lib/supabase/server";
 import { LEGAL_DOCUMENTS_VERSION } from "@/lib/legal/version";
 import { QUANTITY_PRESETS, RELEASE_QTY, UNIT_PRICE_KURUS } from "@/lib/pricing";
 import { DEFAULT_PREP_DAYS } from "./schedule";
+import { salesSettingsSchema } from "./settings-schema";
 import type { SalesSettings } from "./settings-schema";
 
 export type { SalesSettings } from "./settings-schema";
@@ -63,18 +64,19 @@ export async function loadSalesSettings(
   if (error || !data) throw error ?? new Error("ayar satırı yok");
   const row = data as Record<string, unknown>;
   return {
-    settings: rowToSettings(row),
+    settings: salesSettingsSchema.parse(rowToSettings(row)),
     updatedAt: String(row.updated_at),
     updatedBy: (row.updated_by as string | null) ?? null,
   };
 }
 
-/** Bağlayıcı hesaplar için güncel ayarlar; tablo okunamazsa varsayılanlar. */
+/** Ayar okuması/doğrulaması başarısızsa sipariş kapısını kapatır. */
 export async function getSalesSettings(): Promise<SalesSettings> {
   try {
     return (await loadSalesSettings()).settings;
   } catch {
-    return DEFAULT_SALES_SETTINGS;
+    // Binding operations must never resume sales using a fallback price.
+    return { ...DEFAULT_SALES_SETTINGS, ordersPaused: true };
   }
 }
 
@@ -114,7 +116,7 @@ export async function updateSalesSettings(
   if (!row) return { ok: false, error: "conflict" };
   return {
     ok: true,
-    record: { settings: rowToSettings(row), updatedAt: String(row.updated_at), updatedBy: (row.updated_by as string | null) ?? null },
+    record: { settings: salesSettingsSchema.parse(rowToSettings(row)), updatedAt: String(row.updated_at), updatedBy: (row.updated_by as string | null) ?? null },
   };
 }
 

@@ -45,9 +45,9 @@ function B2BContent() {
   const [adminNote, setAdminNote] = useState("");
 
   const fetchQuotes = useCallback(async () => {
-    setLoading(true);
     try {
       const res = await fetch("/api/admin/b2b");
+      if (!res.ok) throw new Error("unavailable");
       const data = await res.json();
       if (Array.isArray(data)) setQuotes(data);
     } catch {
@@ -56,7 +56,15 @@ function B2BContent() {
     setLoading(false);
   }, []);
 
-  useEffect(() => { fetchQuotes(); }, [fetchQuotes]);
+  useEffect(() => {
+    const controller = new AbortController();
+    fetch("/api/admin/b2b", { signal: controller.signal })
+      .then((res) => { if (!res.ok) throw new Error("unavailable"); return res.json(); })
+      .then((rows) => { if (!Array.isArray(rows)) throw new Error("invalid_response"); setQuotes(rows); })
+      .catch(() => { if (!controller.signal.aborted) setError("Veriler yüklenemedi."); })
+      .finally(() => { if (!controller.signal.aborted) setLoading(false); });
+    return () => controller.abort();
+  }, []);
 
   useEffect(() => {
     if (success) { const t = setTimeout(() => setSuccess(null), 4000); return () => clearTimeout(t); }

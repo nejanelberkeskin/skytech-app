@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { supabase } from "@/lib/supabase/browser";
-import type { UserRole, AdminUser } from "@/lib/rbac";
+import type { AdminUser } from "@/lib/rbac";
 
 interface AdminContextType {
   admin: AdminUser | null;
@@ -20,9 +20,14 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let generation = 0;
+    let alive = true;
     const load = async () => {
+      const current = ++generation;
       const { data: session } = await supabase.auth.getSession();
+      if (!alive || current !== generation) return;
       if (!session.session) {
+        setAdmin(null);
         setLoading(false);
         return;
       }
@@ -37,19 +42,19 @@ export function AdminProvider({ children }: { children: ReactNode }) {
         .eq("is_active", true)
         .single();
 
-      if (data) {
-        setAdmin(data as AdminUser);
-      }
+      if (!alive || current !== generation) return;
+      setAdmin(data ? data as AdminUser : null);
       setLoading(false);
     };
 
     load();
 
     const { data: listener } = supabase.auth.onAuthStateChange(() => {
-      load();
+      // Avoid awaiting Supabase calls inside its auth lock.
+      setTimeout(() => { if (alive) void load(); }, 0);
     });
 
-    return () => listener.subscription.unsubscribe();
+    return () => { alive = false; generation++; listener.subscription.unsubscribe(); };
   }, []);
 
   return (

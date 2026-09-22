@@ -162,13 +162,15 @@ function KullanicilarContent() {
   const [actionError, setActionError] = useState<string | null>(null);
 
   const load = useCallback(async () => {
-    setLoading(true);
+    try {
     const res = await fetch("/api/admin/users");
+    if (!res.ok) throw new Error("Personel listesi alınamadı.");
     if (res.ok) {
       const data = await res.json();
       if (Array.isArray(data)) setUsers(data as AdminUser[]);
     }
-    setLoading(false);
+    } catch { setActionError("Personel listesi alınamadı. Lütfen yeniden deneyin."); }
+    finally { setLoading(false); }
   }, []);
 
   useEffect(() => { load(); }, [load]);

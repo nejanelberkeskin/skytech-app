@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import SectionHeading from "../SectionHeading";
+import { Link } from "@/i18n/navigation";
 
 type SampleKey = "install" | "cart" | "certificate" | "webhook";
 
@@ -200,7 +200,8 @@ app.post("/skytech/webhook", (req, res) => {
               <span className="text-[#a7d4a7]">$ </span>
               <span className="font-mono">curl -X POST https://api.skytechgreen.com/v1/seeds</span>
             </p>
-            <a
+            {/* Dil önekini korur: /en/kurumsal-cozumler → /en/iletisim */}
+            <Link
               href="/iletisim"
               className="inline-flex items-center gap-1.5 text-[#a3e635] font-bold hover:text-[#34d399]"
             >
@@ -208,7 +209,7 @@ app.post("/skytech/webhook", (req, res) => {
               <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
                 <path d="M5 12h14M13 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
-            </a>
+            </Link>
           </div>
         </motion.div>
       </div>

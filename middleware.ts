@@ -3,7 +3,7 @@ import type { NextRequest } from "next/server";
 import createIntlMiddleware from "next-intl/middleware";
 import { routing } from "@/i18n/routing";
 import { updateSession } from "@/lib/supabase/middleware";
-import { RETIRED_REQUEST_REDIRECTS, isSuspendedRoute, isTransactionOnlyAccountRoute } from "@/lib/site-config";
+import { RETIRED_REQUEST_REDIRECTS, isRetiredApi, isSuspendedApi, isSuspendedRoute, isTransactionOnlyAccountRoute } from "@/lib/site-config";
 
 /**
  * ════════════════════════════════════════════════════════════════════════
@@ -106,6 +106,14 @@ export async function middleware(request: NextRequest) {
 
   /* ── 1. API rotaları: locale prefix yok, mevcut logic ──────────────── */
   if (pathname.startsWith("/api/")) {
+    // Eski satış uçları kalıcı kapalı; B2B uçları B2B sayfalarıyla aynı bayrağa bağlı.
+    // Yöntemden ve kimlikten bağımsız, her şeyden ÖNCE uygulanır.
+    if (isRetiredApi(pathname)) {
+      return NextResponse.json({ error: "gone" }, { status: 410 });
+    }
+    if (isSuspendedApi(pathname)) {
+      return NextResponse.json({ error: "closed" }, { status: 503 });
+    }
     // CSRF
     if (
       MUTATION_METHODS.has(request.method) &&

@@ -18,7 +18,7 @@ Key facts:
 - [Tohumlarımız / Our Seeds](https://skytechgreen.com/tohumlarimiz): The native tree species used and their characteristics.
 - [Dron Teknolojisi / Drone Technology](https://skytechgreen.com/dron-teknolojisi): Autonomous GPS-precision flight and 200+ seeds per flight.
 - [Karbon ve Raporlama / Carbon & Reporting](https://skytechgreen.com/karbon-programi): What the Activity Report contains, what it can be used for, and why no carbon figures or carbon-neutral claims are made.
-- [Kurumsal Çözümler / Corporate Solutions](https://skytechgreen.com/kurumsal-cozumler): ESG partnership, per-employee PDF certificates, GRI/CDP/SASB-aligned reporting, API integration.
+- [Kurumsal Çözümler / Corporate Solutions](https://skytechgreen.com/kurumsal-cozumler): ESG partnership, per-employee PDF certificates, GRI/CDP/SASB-aligned reporting.
 - [Projeler / Projects](https://skytechgreen.com/projeler): Project Sites on an interactive map.
 - [Hakkımızda / About](https://skytechgreen.com/hakkimizda): Founding story, values and the interdisciplinary team.
 - [İletişim / Contact](https://skytechgreen.com/iletisim): Address, phone, email and social channels.

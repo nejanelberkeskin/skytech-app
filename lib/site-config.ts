@@ -78,6 +78,7 @@ const TRANSACTION_ROUTE_PATTERNS: RegExp[] = [
   /^\/kurumsal\/teklif-al(\/.*)?$/, // hesap yaratan B2B teklif formu
   /^\/lands(\/.*)?$/,               // arazi rezervasyonu
   /^\/kargo-takip(\/.*)?$/,         // sipariş yoksa kargo da yok
+  /^\/davet(\/.*)?$/,               // eski tavsiye programı (izinsiz ref_code çerezi yazıyordu)
 ];
 
 /** Üyelik rotaları — ACCOUNTS_ENABLED kapalıyken /yakinda'ya gider. */

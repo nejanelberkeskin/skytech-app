@@ -891,8 +891,32 @@ geri alınan bir blokta denendi. İçeriği:
 **Kalan eski izler (zararsız, sonra):** Yönetim → Katalog'daki fiyat/stok alanları, `lib/utils/format.ts`
 (`maskEmail`, `isValidUUID` kullanılmıyor), kullanılmayan birkaç simge, `IYZICO_SETUP.md` (eski akışı anlatıyor).
 
+### Hukuk incelemesi (Astra, #56) — yığına bağlandı
+- Astra'nın `hukuk-son-inceleme` dalı (taban `faz5c`) bu dalda birleştirildi. #56 ayrıca birleştirilmez.
+- **Metinler:** sürüm `2026-09.4-taslak`. Sözleşme, ön bilgilendirme, cayma, KVKK ve site politikaları
+  yeniden yazıldı. Gerekçe ve kaynaklar: `docs/hukuk-son-inceleme/`.
+- **Yasal sayfalar canlıda da yeni metni gösterir.** KVKK, Gizlilik ve Kullanım Koşulları artık tek kaynaktan
+  üretiliyor (`lib/legal/templates/site-policies.ts`, `kvkk-notice.ts`). Canlıdaki eski genel metin kaldırıldı;
+  sayfalarda "Taslak — hukuk incelemesinde" etiketi var.
+- **Sertifikada ad varsayılan olarak gizli.** Yalnız alıcının kendi adı için ayrı, isteğe bağlı yayın izni
+  verilir (`consents.certificatePublication` + `subjectName`, geri alınabilir). Üçüncü kişinin adı gizli kalır.
+  - Kod: `lib/certificates/publication.ts`.
+  - Uçlar: `/api/public/siparis/[no]/yayin-izni` (geri alma), `/api/public/siparis/[no]/sertifika` (özel indirme).
+  - Veritabanı değişmedi: izin mevcut `consents` JSON alanında.
+- **Analitik:** Google Analytics ve Vercel ölçümleri ayrı analitik iznine ve varsayılan kapalı
+  `NEXT_PUBLIC_ANALYTICS_TRANSFER_READY` anahtarına bağlı. Özel işlem sayfaları ölçüm dışı.
+- **İletişim:** harita çerçevesi kaldırıldı; adres kartı ve dış "yol tarifi" bağlantısı var. Alt bilgideki
+  bülten alanı kaldırıldı.
+- **Çakışma çözümü:** iletişim sayfası, alt bilgi ve yasal sayfalarda Astra'nın sürümü alındı. Künye tek kaynaktan
+  (`COMPANY`) okunuyor. Mesajlar anahtar düzeyinde üç yönlü birleştirildi.
+- **Açık işler (Astra'nın raporu §"Yayın öncesi"):**
+  - Sertifika ve izleme teslim süreleri.
+  - KEP ve meslek odası.
+  - KVKK m.9 aktarım dosyası.
+  - Özel sertifika indirme ve yayın iznini geri alma uçlarının gerçek oturumla uçtan uca kabulü.
+  - Analitik anahtarının ağ kaydıyla kabulü.
+
 ### Sıradaki (plan §Fazlar)
 - `/kendi-arazim` sayfası (Astra, brif 11) teslim edilince: `/talep/arazime-ekim` → `/kendi-arazim` yönlendirmesi,
   `REQUEST_ROUTES.land`, sahalar sayfasındaki ve Hesabım'daki bağlantılar, site haritası; eski sayfa kaldırılır.
-- Astra'nın `hukuk-son-inceleme` dalının (taban `faz5c`) yığınla bütünleştirilmesi.
 - Migration 018 (onay) ve eski deneme kayıtlarının temizliği (onay).

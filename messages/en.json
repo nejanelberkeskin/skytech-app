@@ -356,7 +356,7 @@
       },
       "integration": {
         "title": "Corporate Integration",
-        "description": "Full alignment via API integration, from the e-commerce cart to your ESG report."
+        "description": "A process tailored to your organization, with employee certificates and a dedicated account manager."
       },
       "compliance": {
         "title": "Legal Compliance",
@@ -456,7 +456,7 @@
       },
       "b2bIntegration": {
         "question": "How does B2B corporate integration work?",
-        "answer": "Our corporate panel includes modules such as employee list upload, automatic PDF certificate generation, an e-commerce \"add seeds to cart\" integration, and an ESG reporting API. A dedicated account manager is assigned and customization is carried out according to the organization's needs."
+        "answer": "Our corporate panel includes modules such as employee list upload and automatic PDF certificate generation. A dedicated account manager is assigned and customization is carried out according to the organization's needs."
       },
       "gift": {
         "question": "Can I send it as a gift?",
@@ -923,7 +923,7 @@
   "corporatePage": {
     "meta": {
       "title": "Corporate Solutions — ESG Partnership",
-      "description": "Custom corporate afforestation for your company, automatic PDF certificate per employee, GRI/CDP/SASB-compliant ESG reporting and e-commerce API integration."
+      "description": "Custom corporate afforestation for your company, automatic PDF certificate per employee and GRI/CDP/SASB-compliant ESG reporting."
     },
     "breadcrumb": {
       "label": "Corporate Solutions"
@@ -969,14 +969,6 @@
       "afforestation": {
         "title": "Corporate Afforestation",
         "desc": "A dedicated corporate area, drone footage videos, coordinate-based mapping."
-      },
-      "api": {
-        "title": "ESG Software API Integration",
-        "desc": "We automate the data flow by setting up API integration between our corporate dashboard and your ESG software. GRI, CDP and SASB compliant."
-      },
-      "ecommerce": {
-        "title": "E-commerce Integration",
-        "desc": "An \"Add 1 seed to cart\" widget — offer your customers an ecological experience."
       },
       "footprint": {
         "title": "Activity Report",
@@ -1026,39 +1018,6 @@
         "certDesc": "Sample Corp Inc. — corporate forest certificate",
         "certStatus": "Approved",
         "certTime": "2 minutes ago"
-      }
-    },
-    "api": {
-      "badge": "Developers & API",
-      "comingSoon": "Coming Soon",
-      "title": {
-        "pre": "A",
-        "highlight": "1-Line",
-        "post": "Seed Plugin for Your Store"
-      },
-      "intro": "Connect your sales to seed ball release work with the Skytech Green API. Certificate of Participation generation, webhooks and invoicing in one package.",
-      "copy": "Copy",
-      "copied": "Copied",
-      "earlyAccess": "Join the early access list",
-      "samples": {
-        "install": {
-          "label": "Installation"
-        },
-        "cart": {
-          "label": "Add Seed to Cart",
-          "comment": "Add 1 seed ball to the customer's cart",
-          "giftMessage": "A seed ball will be released for your order"
-        },
-        "certificate": {
-          "label": "Employee Certificate",
-          "comment": "Automatic PDF certificate for an employee on behalf of the company",
-          "commentUrl": "cert.pdfUrl → signed URL on S3"
-        },
-        "webhook": {
-          "label": "ESG Webhook",
-          "comment": "The webhook is triggered when a drone flight is completed",
-          "commentProcess": "Process into your ESG reporting system"
-        }
       }
     }
   },

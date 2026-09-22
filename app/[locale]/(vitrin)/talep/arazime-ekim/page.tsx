@@ -30,21 +30,21 @@ export default async function KendiArazimPage({
   setRequestLocale(locale);
   const [t, tSites] = await Promise.all([
     getTranslations("requestForms.land"),
-    getTranslations("requestForms.openLand"),
+    getTranslations("sitesPage"),
   ]);
 
   return (
     <>
       <BreadcrumbSchema
         items={[
-          { name: tSites("breadcrumb.label"), path: REQUEST_ROUTES.openLand },
+          { name: tSites("title"), path: REQUEST_ROUTES.openLand },
           { name: t("breadcrumb.label"), path: REQUEST_ROUTES.land },
         ]}
       />
       <BreadCrumb
         title={t("breadcrumb.title")}
         subtitle={t("breadcrumb.subtitle")}
-        items={[{ label: tSites("breadcrumb.label"), href: REQUEST_ROUTES.openLand }, { label: t("breadcrumb.label") }]}
+        items={[{ label: tSites("title"), href: REQUEST_ROUTES.openLand }, { label: t("breadcrumb.label") }]}
       />
       <SectionWrapper variant="light">
         <LandApplicationForm />

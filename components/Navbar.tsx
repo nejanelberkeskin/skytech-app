@@ -37,9 +37,8 @@ export default function Navbar() {
         </Link>
 
         <div className="hidden md:flex items-center gap-1">
-          <NavLink href="/lands">Araziler</NavLink>
+          <NavLink href="/sahalar">Proje Uygulama Sahaları</NavLink>
           <NavLink href="/kurumsal">Kurumsal</NavLink>
-          <NavLink href="/kargo-takip">Kargo Takip</NavLink>
         </div>
 
         <div className="flex items-center gap-3">

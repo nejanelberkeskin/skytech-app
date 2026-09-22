@@ -1345,69 +1345,6 @@
         "timing": "Timing"
       },
       "backToSites": "Back to Project Sites"
-    },
-    "openLand": {
-      "meta": {
-        "title": "Project Sites — Have Seed Balls Released on a Site",
-        "description": "Choose one of our fire-affected Project Sites and our drone team releases seed balls there on your behalf. A Certificate of Participation is issued in your name."
-      },
-      "breadcrumb": {
-        "label": "Project Sites",
-        "title": "Project Sites",
-        "subtitle": "Take part in bringing fire-affected sites back to forest. Choose a site and we release seed balls there on your behalf."
-      },
-      "top": {
-        "text": "Each site's area, type of work and released species are shown below.",
-        "ownLand": "I want this work done on my own land"
-      },
-      "empty": {
-        "title": "No site is open for participation right now",
-        "desc": "New Project Sites appear here as they open. You can apply for your own land or write to us for information.",
-        "contact": "Get info"
-      },
-      "site": {
-        "heading": "Which site?",
-        "sub": "Choose one of the Project Sites open for participation.",
-        "area": "Area",
-        "workType": "Work",
-        "species": "Species released",
-        "hectares": "{count, plural, one {{value} hectare} other {{value} hectares}}",
-        "fire": "Fire-affected site",
-        "fireWithYear": "Fire-affected site · {year}",
-        "workTypes": {
-          "ormanlastirma": "Reforestation",
-          "genclestirme": "Regeneration",
-          "ormanlastirma_genclestirme": "Reforestation – Regeneration"
-        },
-        "speciesNote": "The species is chosen by our specialists for the site's climate and soil; you do not need to choose.",
-        "details": "View site details"
-      },
-      "quantity": {
-        "heading": "How many seed balls?",
-        "sub": "Minimum {min}. Pick a preset or type any quantity you like.",
-        "label": "Number of seed balls"
-      },
-      "price": {
-        "unit": "Unit price",
-        "vat": "VAT included",
-        "total": "Estimated total",
-        "note": "No payment is taken at this stage; the total is for information only. Our team will get back to you about your request."
-      },
-      "certificate": {
-        "heading": "Which name should appear on the certificate?",
-        "sub": "Once the seed ball release is completed, a Certificate of Participation is issued in your name and sent by e-mail. You can enter your own name, someone else's or your organisation's.",
-        "label": "Name on certificate",
-        "placeholder": "Full name or organisation",
-        "hint": "Up to {max} characters. If left blank, your full name is used."
-      },
-      "summary": {
-        "site": "Site",
-        "species": "Species released",
-        "quantity": "Seed balls",
-        "unitPrice": "Unit price",
-        "total": "Estimated total",
-        "certificateName": "Name on certificate"
-      }
     }
   },
   "siteReleases": {

@@ -3,9 +3,11 @@
  *
  * Bağımsız aşamalar:
  *
- *  TRANSACTIONS_ENABLED  Sipariş / ödeme / kurumsal panel. Şu an KAPALI —
- *                        fiyat ve ödeme "çok yakında". Vercel'de
- *                        NEXT_PUBLIC_TRANSACTIONS_ENABLED=true ile açılır.
+ *  TRANSACTIONS_ENABLED  B2B: kurumsal teklif → ödeme → çalışan sertifikaları (sayfalar ve
+ *                        API uçları). Şu an KAPALI; NEXT_PUBLIC_TRANSACTIONS_ENABLED=true
+ *                        ile açılır — açmadan önce devir notundaki "B2B'yi açmadan önce"
+ *                        listesi tamamlanmalı. (Eski bireysel tohum satışı Faz 8'de
+ *                        kaldırıldı; bu bayrak artık yalnız B2B'yi açar.)
  *
  *  REQUESTS_ENABLED      Ödeme almadan talep toplama (/talep/*): Proje Uygulama
  *                        Sahasına tohum topu bıraktırma talebi ve kendi arazi
@@ -18,12 +20,12 @@
  *                        POS ve e-fatura hazır olunca NEXT_PUBLIC_SALES_ENABLED=true
  *                        ile açılır. Kapalıyken sipariş sihirbazı aynı arayüzle
  *                        ödeme almadan TALEP toplar (REQUESTS_ENABLED).
- *                        (TRANSACTIONS_ENABLED eski akışa aittir; o akış emekli olacak.)
+ *                        (TRANSACTIONS_ENABLED yalnız B2B'yi açar.)
  *
  *  ACCOUNTS_ENABLED      Üyelik (kayıt / giriş / hesabım). Varsayılan AÇIK;
  *                        NEXT_PUBLIC_ACCOUNTS_ENABLED=false ile kapatılır.
- *                        Ödemeye bağlı hesap sayfaları (siparişler, sertifikalar,
- *                        davet) TRANSACTIONS_ENABLED açılana kadar gizli kalır.
+ *                        B2B'ye bağlı hesap sayfası (sertifikalar)
+ *                        TRANSACTIONS_ENABLED açılana kadar gizli kalır.
  */
 export const TRANSACTIONS_ENABLED =
   process.env.NEXT_PUBLIC_TRANSACTIONS_ENABLED === "true";
@@ -96,18 +98,34 @@ export const CTA_MODE: CtaMode = SALES_ENABLED
 
 /* ── Askıya alınmış rotalar ──────────────────────────────────────────────── */
 
-/** Ödeme/sipariş akışları — TRANSACTIONS_ENABLED kapalıyken /yakinda'ya gider. */
+/** B2B sayfaları (kurumsal teklif → ödeme → çalışan sertifikaları) — TRANSACTIONS_ENABLED kapalıyken /yakinda'ya gider. */
 const TRANSACTION_ROUTE_PATTERNS: RegExp[] = [
-  /^\/bireysel(\/.*)?$/,            // sipariş + ödeme akışı
-  /^\/checkout(\/.*)?$/,            // ödeme sonuç ekranları
   /^\/kurumsal$/,                   // kurumsal app girişi
   /^\/kurumsal\/giris(\/.*)?$/,     // kurumsal giriş
   /^\/kurumsal\/panel(\/.*)?$/,     // kurumsal panel (ödeme gerektirir)
   /^\/kurumsal\/teklif-al(\/.*)?$/, // hesap yaratan B2B teklif formu
-  /^\/lands(\/.*)?$/,               // arazi rezervasyonu
-  /^\/kargo-takip(\/.*)?$/,         // sipariş yoksa kargo da yok
-  /^\/davet(\/.*)?$/,               // eski tavsiye programı (izinsiz ref_code çerezi yazıyordu)
+  /^\/fatura(\/.*)?$/,              // sipariş belgesi (yer tutucu satıcı bilgisi içeriyor)
+  /^\/orman(\/.*)?$/,               // şirket ormanı sayfası
 ];
+
+/**
+ * Eski bireysel tohum satışının KALDIRILAN sayfaları → yeni karşılıkları (Faz 8). Middleware kalıcı
+ * (308) yönlendirir, dil öneki korunur: eski yer imleri ve arama sonuçları 404'e düşmesin.
+ */
+const RETIRED_PAGE_REDIRECTS: [RegExp, string][] = [
+  [/^\/bireysel(\/.*)?$/, "/sahalar"],
+  [/^\/lands(\/.*)?$/, "/sahalar"],
+  [/^\/checkout(\/.*)?$/, "/"],
+  [/^\/kargo-takip(\/.*)?$/, "/"],
+  [/^\/davet(\/.*)?$/, "/"],
+  [/^\/bakim\/?$/, "/"],
+  [/^\/hesabim\/(siparislerim|rezervasyonlar|davet-et|davet-et-kazan|telemetri)(\/.*)?$/, "/hesabim"],
+];
+
+/** Kaldırılmış eski sayfaysa yeni hedefi, değilse null. */
+export function retiredPageRedirect(pathname: string): string | null {
+  return RETIRED_PAGE_REDIRECTS.find(([re]) => re.test(pathname))?.[1] ?? null;
+}
 
 /** Üyelik rotaları — ACCOUNTS_ENABLED kapalıyken /yakinda'ya gider. */
 const ACCOUNT_ROUTE_PATTERNS: RegExp[] = [
@@ -116,33 +134,18 @@ const ACCOUNT_ROUTE_PATTERNS: RegExp[] = [
 ];
 
 /**
- * Hesabım altındaki, yalnız ödeme açıkken anlamlı sayfalar. Üyelik açık ama
- * ödeme kapalıyken /hesabim'a yönlendirilir (boş sipariş/sertifika ekranı
- * gösterilmez).
+ * Hesabım altındaki, yalnız B2B açıkken anlamlı sayfa (çalışan sertifikaları). Üyelik açık ama
+ * B2B kapalıyken /hesabim'a yönlendirilir (boş sertifika ekranı gösterilmez).
  */
-const TRANSACTION_ONLY_ACCOUNT_PATTERNS: RegExp[] = [
-  /^\/hesabim\/(siparislerim|rezervasyonlar|sertifikalar|davet-et|davet-et-kazan|telemetri)(\/.*)?$/,
-];
+const TRANSACTION_ONLY_ACCOUNT_PATTERNS: RegExp[] = [/^\/hesabim\/sertifikalar(\/.*)?$/];
 
 /** Talep akışı rotaları — REQUESTS_ENABLED kapalıyken /yakinda'ya gider. */
 const REQUEST_ROUTE_PATTERNS: RegExp[] = [/^\/talep(\/.*)?$/];
 
-/** Geriye dönük uyumluluk: eski adıyla dışa açık liste (ödeme rotaları). */
-export const SUSPENDED_ROUTE_PATTERNS = TRANSACTION_ROUTE_PATTERNS;
-
-/**
- * B2B'nin (kurumsal teklif → ödeme → çalışan sertifikaları) herkese açık görünen sayfaları —
- * B2B'nin öteki sayfaları gibi TRANSACTIONS_ENABLED kapalıyken /yakinda'ya gider.
- */
-const B2B_PAGE_PATTERNS: RegExp[] = [
-  /^\/fatura(\/.*)?$/,              // sipariş belgesi (yer tutucu satıcı bilgisi içeriyor)
-  /^\/orman(\/.*)?$/,               // şirket ormanı sayfası
-];
 
 /** Bayraklara göre bu yol şu an /yakinda'ya yönlenmeli mi? */
 export function isSuspendedRoute(pathname: string): boolean {
   if (!TRANSACTIONS_ENABLED && TRANSACTION_ROUTE_PATTERNS.some((re) => re.test(pathname))) return true;
-  if (!TRANSACTIONS_ENABLED && B2B_PAGE_PATTERNS.some((re) => re.test(pathname))) return true;
   if (!ACCOUNTS_ENABLED && ACCOUNT_ROUTE_PATTERNS.some((re) => re.test(pathname))) return true;
   if (!REQUESTS_ENABLED && REQUEST_ROUTE_PATTERNS.some((re) => re.test(pathname))) return true;
   return false;

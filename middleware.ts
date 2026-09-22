@@ -3,7 +3,14 @@ import type { NextRequest } from "next/server";
 import createIntlMiddleware from "next-intl/middleware";
 import { routing } from "@/i18n/routing";
 import { updateSession } from "@/lib/supabase/middleware";
-import { RETIRED_REQUEST_REDIRECTS, isRetiredApi, isSuspendedApi, isSuspendedRoute, isTransactionOnlyAccountRoute } from "@/lib/site-config";
+import {
+  RETIRED_REQUEST_REDIRECTS,
+  isRetiredApi,
+  isSuspendedApi,
+  isSuspendedRoute,
+  isTransactionOnlyAccountRoute,
+  retiredPageRedirect,
+} from "@/lib/site-config";
 
 /**
  * ════════════════════════════════════════════════════════════════════════
@@ -42,15 +49,11 @@ function localePath(path: string, locale: string): string {
 /* ── Herkese açık sayfa rotaları (locale prefix'siz canonik form) ────── */
 const PUBLIC_PAGE_PATTERNS: RegExp[] = [
   /^\/$/,
-  /^\/checkout(\/.*)?$/,
   // Ödeme sonucu ve (yalnız deneme kipinde) deneme ödeme sayfası — misafir müşteri de görür
   /^\/odeme(\/.*)?$/,
   /^\/sertifika(\/.*)?$/,
   /^\/siparis(\/.*)?$/,
   /^\/cayma$/,
-  /^\/kargo-takip(\/.*)?$/,
-  /^\/bireysel\/odeme(\/.*)?$/,
-  /^\/davet(\/.*)?$/,
   /^\/fatura(\/.*)?$/,
   /^\/tohum-topu(\/.*)?$/,
   /^\/tohumlarimiz(\/.*)?$/,
@@ -79,10 +82,7 @@ const PUBLIC_PAGE_PATTERNS: RegExp[] = [
 const PUBLIC_API_PREFIXES: string[] = [
   "/api/payment/callback",
   "/api/payment/donus",
-  "/api/payment/guest-checkout",
-  "/api/payment/checkout",
   "/api/payment/b2b-checkout",
-  "/api/payment/status",
   "/api/public/",
   "/api/auth/",
   // Zamanlanmış işler: oturumla değil CRON_SECRET başlığıyla korunur (uç kendi denetler)
@@ -155,11 +155,17 @@ export async function middleware(request: NextRequest) {
     return response;
   };
 
+  /* ── 2a. Eski bireysel tohum satışının kaldırılan sayfaları (Faz 8) → yeni karşılıkları.
+     Kalıcı (308): eski yer imleri ve arama sonuçları boşa düşmesin. ───────────────────── */
+  const retiredPage = retiredPageRedirect(cleanPath);
+  if (retiredPage) {
+    return NextResponse.redirect(new URL(localePath(retiredPage, locale), request.url), 308);
+  }
+
   /* ── 2b. Askıya alınmış akışlar → /yakinda ─────────────────────────────
-     Bayraklar lib/site-config.ts'te: ödeme rotaları (bireysel, checkout,
-     kurumsal giriş/panel/teklif, lands, kargo-takip) TRANSACTIONS_ENABLED;
-     üyelik (auth, hesabim) ACCOUNTS_ENABLED; talep (/talep) REQUESTS_ENABLED.
-     Admin paneli bilinçli olarak kapsam DIŞINDA.
+     Bayraklar lib/site-config.ts'te: B2B sayfaları (kurumsal giriş/panel/teklif, fatura, orman)
+     TRANSACTIONS_ENABLED; üyelik (auth, hesabim) ACCOUNTS_ENABLED; talep (/talep)
+     REQUESTS_ENABLED. Admin paneli bilinçli olarak kapsam DIŞINDA.
      ────────────────────────────────────────────────────────────────────── */
   if (isSuspendedRoute(cleanPath)) {
     return NextResponse.redirect(new URL(localePath("/yakinda", locale), request.url));
@@ -186,24 +192,6 @@ export async function middleware(request: NextRequest) {
     // Supabase session refresh yine yapılır (cookie rotation için)
     const { response } = await updateSession(request);
     return withIntl(response);
-  }
-
-  /* ── 4. Bakım Modu: /bireysel/* ─────────────────────────────────────── */
-  if (cleanPath.startsWith("/bireysel")) {
-    try {
-      const settingsRes = await fetch(
-        `${request.nextUrl.origin}/api/public/settings`,
-        { next: { revalidate: 30 } }
-      );
-      if (settingsRes.ok) {
-        const settings = (await settingsRes.json()) as { maintenance_mode?: boolean };
-        if (settings.maintenance_mode) {
-          return NextResponse.rewrite(new URL(localePath("/bakim", locale), request.url));
-        }
-      }
-    } catch {
-      // ignore
-    }
   }
 
   /* ── 5. Auth flow + korumalı rotalar ────────────────────────────────── */

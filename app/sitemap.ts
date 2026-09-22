@@ -43,17 +43,10 @@ const VITRIN_PAGES: SitemapEntry[] = [
 ];
 
 const APP_ENTRY_PAGES: SitemapEntry[] = [
-  // Uygulama akışlarının "girişi" kabul edilen anonim sayfalar
-  { path: "/lands", changeFrequency: "weekly", priority: 0.7 },
-  { path: "/bireysel/satin-al", changeFrequency: "weekly", priority: 0.85 },
-  {
-    path: "/bireysel/satin-al/arazi",
-    changeFrequency: "weekly",
-    priority: 0.7,
-  },
+  // Uygulama akışlarının "girişi" kabul edilen anonim sayfalar (B2B; bayrak kapalıyken elenir).
+  // Eski bireysel tohum satışının sayfaları (/lands, /bireysel/*, /kargo-takip) Faz 8'de kaldırıldı.
   { path: "/kurumsal", changeFrequency: "monthly", priority: 0.7 },
   { path: "/kurumsal/teklif-al", changeFrequency: "monthly", priority: 0.7 },
-  { path: "/kargo-takip", changeFrequency: "yearly", priority: 0.4 },
   // /auth/login ve /auth/register: arama sonucunda görünmesinde fayda yok,
   // dahil etmiyoruz (robots.txt disallow'da da var).
 ];

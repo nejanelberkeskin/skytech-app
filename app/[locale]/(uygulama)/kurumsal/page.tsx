@@ -245,7 +245,7 @@ export default function CorporateLanding() {
             <KenxBadge tone="light" className="text-emerald-200/30" />
           </div>
           <div className="flex gap-6 text-sm text-emerald-200/30">
-            <Link href="/bireysel/satin-al" className="hover:text-white transition-colors">Bireysel</Link>
+            <Link href="/sahalar" className="hover:text-white transition-colors">Proje Uygulama Sahaları</Link>
             <Link href="/kurumsal/teklif-al" className="hover:text-white transition-colors">Teklif Al</Link>
           </div>
         </div>

@@ -45,58 +45,6 @@ export interface Profile {
   carbon_offset_kg?: number;   // Tahmini toplam karbon nötrleme (kg) — tohum × 0.025
 }
 
-// ── Gift Info ─────────────────────────────────────────────────────────────────
-/**
- * Arazi ekimini başka bir kişiye hediye etme bilgileri.
- * cart-context içinde ReservationInfo.gift olarak taşınır,
- * ödeme anında orders.gift_info (JSONB) kolonuna yazılır.
- */
-export interface GiftInfo {
-  recipientName: string;   // Hediye alıcısının adı
-  recipientEmail: string;  // Bildirim e-postası
-  giftNote: string;        // Kişisel hediye notu (opsiyonel)
-}
-
-// ── Shipping Status ───────────────────────────────────────────────────────────
-export type ShippingStatus = "PENDING" | "PREPARING" | "SHIPPED" | "DELIVERED";
-
-// ── Orders ───────────────────────────────────────────────────────────────────
-export interface Order {
-  id: string;
-  user_id: string | null;
-  buyer_email: string;
-  order_type: "physical" | "reservation" | "gift";
-  status: "pending" | "preparing" | "shipped" | "delivered" | "confirmed" | "expired";
-  total_seeds: number;
-  total_price: number;
-  shipping_address: string | null;
-  tracking_code: string | null;
-  gift_info: GiftInfo | null;  // Hediye ekimi varsa dolu, yoksa null
-  is_subscription: boolean;    // Otonom Karbon Aboneliği — aylık tekrarlayan ödeme
-  created_at: string;
-
-  // ── Referral (Davet Sistemi) ────────────────────────────────────────────────
-  referred_by?: string | null;       // Davet eden kullanıcının Profile ID'si
-
-  // ── Fiziksel Kargo Takip Alanları (opsiyonel — sadece physical siparişlerde) ──
-  shipping_status?: ShippingStatus;  // Aşamalı kargo durumu
-  courier_company?: string;          // Örn: "Yurtiçi Kargo", "Aras", "MNG", "Sendeo"
-  tracking_number?: string;          // Kargo takip kodu
-  tracking_url?: string;             // Kargo firması takip sayfası URL'i
-  shipped_at?: string;               // Kargoya verilme zamanı (ISO)
-  delivered_at?: string;             // Teslim edilme zamanı (ISO)
-}
-
-// ── Order Allocations ────────────────────────────────────────────────────────
-export interface OrderAllocation {
-  id: string;
-  order_id: string;
-  land_id: string;
-  seeds_allocated: number;
-  status: "reserved" | "confirmed" | "released" | "planted";
-  created_at: string;
-}
-
 // ── Certificates ─────────────────────────────────────────────────────────────
 export interface Certificate {
   id: string;
@@ -125,16 +73,6 @@ export interface SeedProduct {
   sort_order: number;
   created_at: string;
   updated_at: string;
-}
-
-// ── System Settings (Global Config) ─────────────────────────────────────────
-export interface SystemSettings {
-  id: string;
-  reservation_ttl_minutes: number;   // sepet timer süresi (dk)
-  maintenance_mode: boolean;         // B2C bakım modu
-  overflow_tolerance_pct: number;    // arazi taşma toleransı %
-  updated_at: string;
-  updated_by: string | null;
 }
 
 // ── Corporate Quotes (B2B Proforma) ─────────────────────────────────
@@ -230,22 +168,6 @@ export interface EmbedWidgetConfig {
   show_seeds: boolean;
   show_logo: boolean;
   custom_label: string | null;   // null = "Carbon Neutral Partner"
-}
-
-// ── API Types ────────────────────────────────────────────────────────────────
-export interface ReserveRequest {
-  buyer_email: string;
-  preferred_land_id: string;
-  requested_seeds: number;
-}
-
-export interface ReserveResponse {
-  order_id: string;
-  allocations: {
-    land_id: string;
-    land_name: string;
-    seeds: number;
-  }[];
 }
 
 // ── Service Requests (ödeme almadan toplanan talepler) ───────────────────────

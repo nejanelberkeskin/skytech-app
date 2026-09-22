@@ -2,6 +2,10 @@
 
 > **Tarih:** 16 Mart 2026
 > **Amaç:** Bu belge, Cowork modunda yapılan tüm geliştirmelerin özetini, mevcut dosya durumlarını, veritabanı şemasını ve devam edilmesi gereken işleri Claude Code'a aktarmak için hazırlanmıştır.
+>
+> **Not (22 Eylül 2026):** §2–§10 eski bireysel tohum satışını (sepet, arazi rezervasyonu, kargo, davet/ödül)
+> anlatır; o akış **Faz 8'de koddan kaldırıldı** (bkz. "Faz 8" bölümü). Bu bölümler tarihçe olarak durur.
+> Güncel yapı için "Satış modeli v2" bölümlerinden itibaren okuyun.
 
 ---
 
@@ -827,9 +831,68 @@ Bu bölüm 11. bölümdeki akış tarifinin yerine geçer.
 - `ORG_GEO` harita noktasıdır: OpenStreetMap'te ATB İş Merkezi alanının merkezi.
 - Adres değişirse yalnız `lib/company.ts` düzeltilir. Sözleşme metni de değişeceği için belge sürümü artırılır.
 
+### Eski bireysel satışın temizliği (Faz 8) — B2B korundu
+Kullanıcı kararı (22 Eylül 2026): eski B2C tohum satışı kalkar, **B2B (kurumsal teklif → ödeme → çalışan sertifikaları)
+kalır**. Önce güvenlik (#55, `main` tabanlı), sonra kod temizliği (bu PR).
+
+**Kaldırılanlar**
+- Sayfalar: `/bireysel/*`, `/lands`, `/kargo-takip`, `/davet/[code]`, `/bakim`, `/checkout/success`,
+  Hesabım'ın `siparislerim`, `rezervasyonlar`, `davet-et`, `davet-et-kazan`, `telemetri` alt sayfaları.
+- Yönetim: Eski Siparişler, Operasyon Merkezi, Sistem Ayarları (sayfalar, uçlar, menü).
+- Uçlar: `payment/guest-checkout`, `payment/checkout`, `payment/status`, `auth/claim-order` (tekil),
+  `orders/reserve|release`, `public/orders/track`, `public/referral`, `public/settings`, `public/catalog`,
+  `admin/orders(+shipping)`, `admin/operations`, `admin/settings`. Middleware bu yollara hâlâ **410** döner
+  (`RETIRED_API_PATTERNS`), dosya yanlışlıkla geri gelse bile açılmaz.
+- Kod: `components/Cart`, `LandCard`, `ShippingTimeline`, `lib/cart-context`, `lib/order/*`, `lib/user/referral`,
+  `OpenLandRequestForm` + `/talep/acik-arazi` sayfası ve `requestForms.openLand` çevirileri (41 anahtar × 3).
+  `lib/mail.ts`'ten B2C sipariş onayı, ekildi, kargo ve teslim şablonları. `lib/seed-data.ts` yalnız tür tipi ve yedek
+  liste. `lib/types.ts`'ten eski sipariş/ekim/ayar tipleri. `createServerSupabase` takma adı (adı yanıltıcıydı:
+  service role istemcisiydi).
+
+**Yönlendirmeler:** Kaldırılan sayfaların adresleri **308** ile yeni karşılıklarına gider (`RETIRED_PAGE_REDIRECTS`,
+dil öneki korunur):
+- `/bireysel/*` ve `/lands` → `/sahalar`
+- `/checkout`, `/kargo-takip`, `/davet`, `/bakim` → `/`
+- Hesabım'ın eski alt sayfaları → `/hesabim`
+
+`TRANSACTIONS_ENABLED` artık **yalnız B2B'yi** açar: `/kurumsal`, `/kurumsal/giris|panel|teklif-al`, `/fatura`, `/orman`,
+`/hesabim/sertifikalar` ve B2B API uçları.
+
+**B2B'ye dokunulan iki yer**
+- `payment/callback` yalnız B2B'ye hizmet eder. Kaldırılanlar: misafir dalı, B2C onay e-postası, eski ödeme sonrası
+  zinciri (profil sayaçları, sipariş sertifikası, saha "dolu"), davet ödülü. Bağlanamayan ödeme `/odeme/hata`'ya gider.
+- `payment/b2b-checkout`: iyzico belirteci artık **await** ile kaydediliyor. Önceden `void` ile başlatılan Supabase
+  sorgusu hiç gönderilmiyordu; ödenen teklif "PAID" olamıyordu.
+
+**Veritabanı:** eski tablolar ve Mart–Nisan 2026 deneme kayıtları **silinmedi** (41 sipariş, 29 ödeme, 21 ayırım, 5 teklif).
+Bu kayıtların 17 ayırımı hâlâ kapasite tutuyor; yayındaki sahalardan yalnız İzmir'de 100 tohum topu. Temizlik ayrı
+onay ister.
+
+**Migration 018** (`supabase/migrations/018_legacy_surface.sql`) hazır, **onay bekliyor**. Canlıda yalnız hata fırlatılıp
+geri alınan bir blokta denendi. İçeriği:
+- Eski üç rezervasyon fonksiyonunda anon/üye çalıştırma yetkisi kaldırılır.
+- `certificates` tablosundaki "herkes okur" politikası kaldırılır.
+- Kurumsal teklif yalnız "bekliyor" durumunda eklenebilir.
+
+**B2B'yi açmadan önce (TRANSACTIONS_ENABLED=true öncesi)**
+1. Canlı `corporate_quotes` tablosunda kodun beklediği sütunlar yok (`approved_price`, `paid_at`, `payment_id`,
+   `order_id`, …); yönetimin onay/fiyat akışı ve dönüş ucunun "PAID" güncellemesi çalışmaz. Migration gerekir.
+2. `payment/b2b-checkout` iyzico'ya örnek (sandbox) kimlik, IP ve adres gönderiyor; şirket bilgileriyle değiştirilmeli.
+3. B2B ödeme teyit e-postası yok (eski B2C şablonu kaldırıldı).
+4. Çalışan sertifikası görüntüleme sayfası yok (`/sertifika/<uuid>` yeni modelde 404). Herkese açık gösterim sunucu
+   tarafında, tahmin edilemez kodla tasarlanmalı.
+5. `/api/kurumsal/*` ve `/api/orders/invoice` oturumu `getSession()` ile okuyor; `getUser()` olmalı.
+6. `/fatura` yer tutucu satıcı bilgisi gösteriyor (vergi no "123 456 7890"); `lib/company.ts`'e bağlanmalı ya da
+   kaldırılmalı. `/api/public/orman` şirket kullanıcı kimliğini döndürüyor.
+7. Yönetim → Finans, B2B gelirini `total_amount`'tan okuyor, B2B `total_price` yazıyor (0 görünür). Genel Bakış eski
+   sipariş tablosunu sayıyor; yeni modelin (`release_orders`) cirosu hiçbir yerde toplanmıyor.
+8. Kurumsal teklif ekleme anon'a açık (kayıttan hemen sonra oturum yok diye). Sunucu ucuna taşınması daha güvenli.
+
+**Kalan eski izler (zararsız, sonra):** Yönetim → Katalog'daki fiyat/stok alanları, `lib/utils/format.ts`
+(`maskEmail`, `isValidUUID` kullanılmıyor), kullanılmayan birkaç simge, `IYZICO_SETUP.md` (eski akışı anlatıyor).
+
 ### Sıradaki (plan §Fazlar)
 - `/kendi-arazim` sayfası (Astra, brif 11) teslim edilince: `/talep/arazime-ekim` → `/kendi-arazim` yönlendirmesi,
   `REQUEST_ROUTES.land`, sahalar sayfasındaki ve Hesabım'daki bağlantılar, site haritası; eski sayfa kaldırılır.
-- Faz 8 eski tohum satışı akışının temizliği (kapsam kararı: eski B2B teklif akışı kalacak mı?). Eski
-  `OpenLandRequestForm` ve `/talep/acik-arazi` sayfası hâlâ sabit fiyatı okuyor ama adres sahalara yönlendiği için
-  görünmüyor — Faz 8'de silinecek.
+- Astra'nın `hukuk-son-inceleme` dalının (taban `faz5c`) yığınla bütünleştirilmesi.
+- Migration 018 (onay) ve eski deneme kayıtlarının temizliği (onay).

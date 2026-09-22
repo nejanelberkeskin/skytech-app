@@ -1345,69 +1345,6 @@
         "timing": "Zamanlama"
       },
       "backToSites": "Proje Uygulama Sahalarına dön"
-    },
-    "openLand": {
-      "meta": {
-        "title": "Proje Uygulama Sahaları — Sahaya Tohum Topu Bıraktırın",
-        "description": "Yangından etkilenmiş Proje Uygulama Sahalarından birini seçin; tohum toplarını dron ekibimiz sizin adınıza sahaya bıraksın. Katılım Sertifikanız adınıza düzenlensin."
-      },
-      "breadcrumb": {
-        "label": "Proje Uygulama Sahaları",
-        "title": "Proje Uygulama Sahaları",
-        "subtitle": "Yangından etkilenmiş sahaların yeniden ormanlaşmasına katılın. Bir saha seçin; o sahaya sizin adınıza tohum topu bırakalım."
-      },
-      "top": {
-        "text": "Her sahanın alanını, çalışma türünü ve bırakılan türü aşağıda görebilirsiniz.",
-        "ownLand": "Kendi arazim için işlem yaptırmak istiyorum"
-      },
-      "empty": {
-        "title": "Şu anda katılıma açık saha bulunmuyor",
-        "desc": "Yeni Proje Uygulama Sahaları açıldığında burada yer alır. Kendi araziniz için başvurabilir ya da bilgi almak için bize yazabilirsiniz.",
-        "contact": "Bilgi al"
-      },
-      "site": {
-        "heading": "Hangi sahaya bırakılsın?",
-        "sub": "Katılıma açık Proje Uygulama Sahalarından birini seçin.",
-        "area": "Alan",
-        "workType": "Çalışma",
-        "species": "Bırakılan tür",
-        "hectares": "{value} hektar",
-        "fire": "Yangın Sahası",
-        "fireWithYear": "Yangın Sahası · {year}",
-        "workTypes": {
-          "ormanlastirma": "Ormanlaştırma",
-          "genclestirme": "Gençleştirme",
-          "ormanlastirma_genclestirme": "Ormanlaştırma – Gençleştirme"
-        },
-        "speciesNote": "Tür, sahanın iklim ve toprak koşullarına göre uzman ekibimizce belirlenir; seçim yapmanız gerekmez.",
-        "details": "Sahayı incele"
-      },
-      "quantity": {
-        "heading": "Kaç tohum topu bırakılsın?",
-        "sub": "En az {min} adet. Hazır seçeneklerden birini seçin ya da dilediğiniz adedi yazın.",
-        "label": "Tohum topu adedi"
-      },
-      "price": {
-        "unit": "Birim bedel",
-        "vat": "KDV dâhil",
-        "total": "Tahmini tutar",
-        "note": "Bu aşamada ödeme alınmaz; tutar bilgi amaçlıdır. Ekibimiz talebinizle ilgili size dönüş yapar."
-      },
-      "certificate": {
-        "heading": "Sertifikada hangi ad yazsın?",
-        "sub": "Tohum topu bırakma tamamlandığında adınıza bir Katılım Sertifikası düzenlenir ve e-postayla gönderilir. Kendi adınızı, bir yakınınızın ya da kurumunuzun adını yazabilirsiniz.",
-        "label": "Sertifikadaki ad",
-        "placeholder": "Ad Soyad ya da kurum adı",
-        "hint": "En çok {max} karakter. Boş bırakırsanız ad soyadınız yazılır."
-      },
-      "summary": {
-        "site": "Saha",
-        "species": "Bırakılan tür",
-        "quantity": "Tohum topu",
-        "unitPrice": "Birim bedel",
-        "total": "Tahmini tutar",
-        "certificateName": "Sertifikadaki ad"
-      }
     }
   },
   "siteReleases": {

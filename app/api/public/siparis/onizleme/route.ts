@@ -5,7 +5,7 @@ import { orderPreviewSchema } from "@/lib/orders/schema";
 import { buildPreview, checkSite } from "@/lib/orders/preview";
 import { getSalesSettings } from "@/lib/orders/settings";
 import { quantityRangeError } from "@/lib/pricing";
-import { ordersClosed } from "@/lib/orders/gate";
+import { canAcceptOrders, ordersClosed } from "@/lib/orders/gate";
 import { getPaymentProvider } from "@/lib/payments";
 
 /**
@@ -44,6 +44,7 @@ export async function POST(req: NextRequest) {
   }
 
   const settings = await getSalesSettings();
+  if (!canAcceptOrders(getPaymentProvider(), settings)) return NextResponse.json({ error: "closed" }, { status: 503 });
   const range = quantityRangeError(parsed.data.quantity, settings);
   if (range) {
     return NextResponse.json({ error: "validation", fields: { quantity: range } }, { status: 400 });

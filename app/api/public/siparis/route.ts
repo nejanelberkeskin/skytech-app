@@ -5,7 +5,7 @@ import { issuesToFieldErrors, MIN_FILL_MS } from "@/lib/requests/schema";
 import { hashIp, sanitizeUserAgent } from "@/lib/requests/server";
 import { orderPayloadSchema } from "@/lib/orders/schema";
 import { createOrder } from "@/lib/orders/create";
-import { ordersClosed } from "@/lib/orders/gate";
+import { canAcceptOrders, ordersClosed } from "@/lib/orders/gate";
 import { startPayment } from "@/lib/orders/payment-flow";
 import { orderPagePath } from "@/lib/orders/access";
 import { getSalesSettings, quoteVersion } from "@/lib/orders/settings";
@@ -62,6 +62,8 @@ export async function POST(req: NextRequest) {
   // Müşterinin onayladığı teklif (metin sürümü + fiyat/KDV/takvim ayarları) hâlâ güncel mi?
   // Değilse sihirbaz önizlemeyi yeniden alır ve müşteri güncel tutarı YENİDEN onaylar.
   const settings = await getSalesSettings();
+  // Sipariş alımı yönetimden durdurulduysa (Satış Ayarları) sihirbaz talep kipine geçer.
+  if (!canAcceptOrders(provider, settings)) return NextResponse.json({ error: "closed" }, { status: 503 });
   if (payload.documentsVersion !== quoteVersion(settings)) {
     return NextResponse.json({ error: "documents_stale" }, { status: 409 });
   }

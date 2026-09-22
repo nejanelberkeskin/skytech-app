@@ -19,6 +19,8 @@ export interface SalesSettings {
   invoiceTiming: InvoiceTiming;
   prepDays: number;
   paymentTtlMinutes: number;
+  /** Yönetimden sipariş alımı durduruldu: yeni sipariş ve ödeme alınmaz, sihirbaz talep kipinde açılır. */
+  ordersPaused: boolean;
 }
 
 export const SETTINGS_LIMITS = {
@@ -56,6 +58,7 @@ export const salesSettingsSchema = z
     invoiceTiming: z.enum(["on_payment", "on_performance"], "invalid"),
     prepDays: whole(L.prepDays.min, L.prepDays.max),
     paymentTtlMinutes: whole(L.paymentTtlMinutes.min, L.paymentTtlMinutes.max),
+    ordersPaused: z.boolean("invalid"),
   })
   // Çapraz kurallar, başka bir alan hatalı olsa da çalışır (formda bütün hatalar tek seferde görünsün);
   // bu yüzden değerler burada yeniden denetlenir.

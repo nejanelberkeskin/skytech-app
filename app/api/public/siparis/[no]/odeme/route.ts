@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { rateLimit, getClientIP } from "@/lib/admin-auth";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import { orderCookieName, orderPagePath } from "@/lib/orders/access";
-import { ordersClosed } from "@/lib/orders/gate";
+import { canAcceptOrders, ordersClosed } from "@/lib/orders/gate";
+import { getSalesSettings } from "@/lib/orders/settings";
 import { startPayment } from "@/lib/orders/payment-flow";
 import { db } from "@/lib/orders/store";
 import { getAuthorizedOrder } from "@/lib/orders/view-data";
@@ -24,6 +25,8 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ no:
   const ip = getClientIP(req);
   const limited = rateLimit(`siparis-odeme:${ip}`, 10, 10 * 60_000);
   if (limited) return limited;
+  // Sipariş alımı yönetimden durdurulduysa ödeme de başlatılmaz; bekleyen sipariş süresi dolunca düşer.
+  if (!canAcceptOrders(provider, await getSalesSettings())) return NextResponse.json({ error: "closed" }, { status: 503 });
 
   const { no } = await params;
   const body = (await req.json().catch(() => null)) as { t?: unknown } | null;

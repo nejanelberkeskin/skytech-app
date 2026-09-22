@@ -2059,6 +2059,7 @@
       "certificateNameShort": "The name on the certificate must be at least {min} characters.",
       "certificateNameLong": "The name on the certificate can be at most {max} characters.",
       "certificateNameInvalid": "The name on the certificate may contain only letters, digits and basic punctuation."
-    }
+    },
+    "pausedNotice": "Online orders are temporarily paused. You can still send a participation request on this page; no payment is taken and our team will contact you."
   }
 }

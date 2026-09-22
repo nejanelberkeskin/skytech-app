@@ -789,14 +789,38 @@ Bu bölüm 11. bölümdeki akış tarifinin yerine geçer.
   oluşturulmuş siparişler kendi tutarı ve belgeleriyle sürer.
 - Fatura zamanı: parti "bırakıldı" işaretlenince açık satış faturası olmayan her sipariş, ayardan bağımsız olarak fatura
   kuyruğuna girer (ayar sonradan "ödemede"ye çevrilirse önceden ödenmiş siparişler faturasız kalmasın).
-- Yapılmadı: "sipariş alımı durduruldu" anahtarı — `sales_settings`'e sütun (migration) gerekir, onay bekliyor.
+- "Sipariş alımı durduruldu" anahtarı: Faz 5d (aşağıda).
 - Ortak `components/ui/Input.tsx`: etiket kutuya bağlı, hata / açıklama metni `aria-describedby` ile okunur (bütün
   yönetim formları).
+
+### Sipariş alımını durdurma (Faz 5d)
+- Migration **017** (`sales_settings.orders_paused boolean NOT NULL DEFAULT false`) — 22 Eylül 2026'da canlıya uygulandı
+  (kullanıcı onayıyla). Salt ek sütun; `updated_at` değişmedi.
+- Yönetim → Satış Ayarları'nın en üstünde "Çevrim içi sipariş alımını durdur" kutusu. Kaydetme, onay ve denetim kaydı
+  diğer alanlarla aynı; durdurma teklif sürümünü değiştirmez.
+- Kural `lib/orders/gate.ts`'te:
+  - `ordersClosed(provider)` veritabanına gitmez: bayrak, sağlayıcı, hukuki metin kilidi. Uçlar bunu hız sınırından önce çağırır.
+  - `canAcceptOrders(provider, settings)` = kapı açık **ve** durdurulmamış. Sipariş, önizleme ve ödeme başlatma uçları
+    ayarları okuduktan sonra bunu çağırır; katılım sayfası da kipi bununla belirler.
+  - **Yeni bir sipariş/ödeme ucu eklenirse ikisi de çağrılmalı.**
+- Durdurulunca:
+  - Önizleme, sipariş ve ödeme başlatma 503 `closed` döner.
+  - Sihirbaz talep kipinde açılır ve `orderWizard.pausedNotice` açıklamasını gösterir (tr/en/ru). Açık sihirbazdaki müşteri
+    "closed" alır, sayfa yenilenince talep kipine geçer.
+  - Ödeme bekleyen siparişler ödenemez; süresi dolunca düşer.
+  - iyzico sayfasına durdurmadan önce geçmiş bir müşterinin ödemesi yine işlenir (para alınmışsa sipariş ödenmiş olur).
+- Durdurma, alt bilgi ve menüdeki "Satın Al" metnini değiştirmez (metin derleme anındaki satış bayrağına bağlı);
+  düğme sahalara gider, sihirbaz orada açıklamayı gösterir.
+
+### Şirket adresi
+- Tek kaynak `lib/company.ts → COMPANY.address` (Macun Mah. Batı Bulvarı ATB İş Merkezi I Blok No: 244, Yenimahalle/Ankara).
+- `lib/seo.ts → ORG_ADDRESS` buradan türetilir: alt bilgi, İletişim sayfası, LocalBusiness / Organization yapısal verisi.
+- `ORG_GEO` harita noktasıdır: OpenStreetMap'te ATB İş Merkezi alanının merkezi.
+- Adres değişirse yalnız `lib/company.ts` düzeltilir. Sözleşme metni de değişeceği için belge sürümü artırılır.
 
 ### Sıradaki (plan §Fazlar)
 - `/kendi-arazim` sayfası (Astra, brif 11) teslim edilince: `/talep/arazime-ekim` → `/kendi-arazim` yönlendirmesi,
   `REQUEST_ROUTES.land`, sahalar sayfasındaki ve Hesabım'daki bağlantılar, site haritası; eski sayfa kaldırılır.
-- "Sipariş alımı durduruldu" anahtarı (migration onayı gerekir).
 - Faz 8 eski tohum satışı akışının temizliği (kapsam kararı: eski B2B teklif akışı kalacak mı?). Eski
   `OpenLandRequestForm` ve `/talep/acik-arazi` sayfası hâlâ sabit fiyatı okuyor ama adres sahalara yönlendiği için
   görünmüyor — Faz 8'de silinecek.

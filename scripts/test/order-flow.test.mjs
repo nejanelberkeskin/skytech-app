@@ -141,6 +141,11 @@ if (Legal.isDraftLegalVersion()) {
 } else {
   assert.equal(Gate.ordersClosed(realProvider), false, "metinler kesinleşince gerçek sağlayıcıyla açık");
 }
+// Yönetimden durdurma (Satış Ayarları → orders_paused): kapı açıkken bile sipariş ve ödeme alınmaz.
+delete process.env.VERCEL_ENV;
+assert.equal(Gate.canAcceptOrders(Mock.mockProvider, { ordersPaused: false }), !Gate.ordersClosed(Mock.mockProvider), "durdurulmamışsa kapıyla aynı");
+assert.equal(Gate.canAcceptOrders(Mock.mockProvider, { ordersPaused: true }), false, "durdurulunca sipariş alınmaz");
+assert.equal(Gate.canAcceptOrders(null, { ordersPaused: false }), false, "sağlayıcı yoksa kapalı");
 
 /* ── Teklif sürümü ────────────────────────────────────────────────────────── */
 // (settings.ts service role istemcisini içe aktardığı için burada yalnız biçim sözleşmesi sınanır.)

@@ -39,7 +39,10 @@ interface SettingsResponse {
   history: HistoryItem[];
 }
 
-type Form = Record<"price" | "vat" | "min" | "max" | "presets" | "prep" | "ttl", string> & { timing: InvoiceTiming };
+type Form = Record<"price" | "vat" | "min" | "max" | "presets" | "prep" | "ttl", string> & {
+  timing: InvoiceTiming;
+  paused: boolean;
+};
 
 const TIMING_LABELS: Record<InvoiceTiming, string> = {
   on_performance: "Bırakma yapılınca (önerilen)",
@@ -55,6 +58,7 @@ const FIELD_LABELS: Record<keyof SalesSettings, string> = {
   invoiceTiming: "Fatura zamanı",
   prepDays: "Hazırlık payı",
   paymentTtlMinutes: "Ödeme süresi",
+  ordersPaused: "Sipariş alımı",
 };
 
 /** Form alanı → ayar alanı (hata iletisini doğru kutuya koymak için). */
@@ -67,6 +71,7 @@ const FORM_FIELD: Record<keyof SalesSettings, keyof Form> = {
   invoiceTiming: "timing",
   prepDays: "prep",
   paymentTtlMinutes: "ttl",
+  ordersPaused: "paused",
 };
 
 const L = SETTINGS_LIMITS;
@@ -79,6 +84,7 @@ const RANGE_TEXT: Record<keyof SalesSettings, string> = {
   invoiceTiming: "Bir seçenek belirleyin.",
   prepDays: `${L.prepDays.min} ile ${L.prepDays.max} gün arasında olmalı.`,
   paymentTtlMinutes: `${L.paymentTtlMinutes.min} ile ${formatCount(L.paymentTtlMinutes.max, "tr")} dakika arasında olmalı.`,
+  ordersPaused: "Bir seçenek belirleyin.",
 };
 
 const ERROR_TEXT: Record<string, string> = {
@@ -136,6 +142,7 @@ function toForm(s: SalesSettings): Form {
     timing: s.invoiceTiming,
     prep: String(s.prepDays),
     ttl: String(s.paymentTtlMinutes),
+    paused: s.ordersPaused,
   };
 }
 
@@ -149,6 +156,7 @@ function fromForm(f: Form): SalesSettings {
     invoiceTiming: f.timing,
     prepDays: parseWhole(f.prep),
     paymentTtlMinutes: parseWhole(f.ttl),
+    ordersPaused: f.paused,
   };
 }
 
@@ -160,6 +168,7 @@ function valueText(field: string, value: unknown): string {
     case "invoiceTiming": return TIMING_LABELS[value as InvoiceTiming] ?? String(value);
     case "prepDays": return `${value} gün`;
     case "paymentTtlMinutes": return `${value} dakika`;
+    case "ordersPaused": return value ? "Durduruldu" : "Açık";
     default: return formatCount(Number(value), "tr");
   }
 }
@@ -168,6 +177,13 @@ function valueText(field: string, value: unknown): string {
 function consequences(changes: SettingsChange[], openCheckouts: number): string[] {
   const has = (f: keyof SalesSettings) => changes.some((c) => c.field === f);
   const out: string[] = [];
+  const pause = changes.find((c) => c.field === "ordersPaused");
+  if (pause?.to === true) {
+    out.push(
+      `Yeni sipariş ve ödeme alınmaz; sihirbaz talep kipinde açılır ve müşteriye kısa bir açıklama gösterir. Ödeme bekleyen siparişler (şu an ${openCheckouts}) ödenemez, süresi dolunca düşer ve ayrılan kapasite geri verilir. Ödenmiş siparişler, iadeler ve partiler etkilenmez.`,
+    );
+  }
+  if (pause?.to === false) out.push("Sipariş ve ödeme yeniden alınır.");
   if (changes.some((c) => QUOTE_FIELDS.includes(c.field))) {
     out.push(
       `Sihirbazın son adımındaki müşteriler güncel ${has("prepDays") ? "tutarı ve takvimi" : "tutarı"} görüp siparişi yeniden onaylar. Oluşturulmuş siparişler (şu an ${openCheckouts} ödeme bekleyen dâhil) kendi tutarı ve belgeleriyle sürer.`,
@@ -219,6 +235,11 @@ export default function SalesSettingsForm() {
     setLoading(false);
   }, []);
   useEffect(() => { load(); }, [load]);
+
+  const setPaused = (value: boolean) => {
+    setForm((f) => (f ? { ...f, paused: value } : f));
+    setConfirming(null);
+  };
 
   const set = (key: keyof Form, value: string) => {
     setForm((f) => (f ? { ...f, [key]: value } : f));
@@ -333,10 +354,35 @@ export default function SalesSettingsForm() {
               <span className="text-white font-medium">{formatTry(data.settings.unitPriceKurus, "tr")}</span> / tohum topu (KDV dâhil) ·
               en az {formatCount(data.settings.minQuantity, "tr")} · KDV %{rateText(data.settings.vatRate)} · hazırlık payı {data.settings.prepDays} gün
             </p>
+            {data.settings.ordersPaused && (
+              <p className="text-red-300 font-semibold">⏸ Çevrim içi sipariş alımı şu anda DURDURULDU.</p>
+            )}
             <p className="text-xs text-slate-500">
               Son kayıt: {when(data.updatedAt)} · Teklif sürümü <code className="text-slate-400">{data.quoteVersion}</code> · Ödeme bekleyen sipariş: {data.openCheckouts}
             </p>
           </div>
+
+          <section
+            className={`rounded-2xl p-5 space-y-3 border ${form.paused ? "bg-red-500/[0.06] border-red-500/30" : "bg-[var(--bg-surface)] border-white/[0.06]"}`}
+          >
+            <h2 className="font-semibold text-white text-sm">Sipariş alımı</h2>
+            <label className="flex items-start gap-3 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={form.paused}
+                onChange={(e) => setPaused(e.target.checked)}
+                className="mt-0.5 h-4 w-4 accent-red-500"
+                aria-describedby="siparis-alimi-aciklama"
+              />
+              <span>
+                <span className="block text-sm text-white font-medium">Çevrim içi sipariş alımını durdur</span>
+                <span id="siparis-alimi-aciklama" className="block text-xs text-slate-400 mt-1">
+                  Durdurulunca yeni sipariş ve ödeme alınmaz; sihirbaz talep kipinde açılır ve müşteriye kısa bir açıklama
+                  gösterir. Ödenmiş siparişler, iadeler ve partiler etkilenmez. Satış bayrağı ve hukuki metin kilidi ayrıca geçerlidir.
+                </span>
+              </span>
+            </label>
+          </section>
 
           <section className="bg-[var(--bg-surface)] border border-white/[0.06] rounded-2xl p-5 space-y-4">
             <h2 className="font-semibold text-white text-sm">Fiyat</h2>

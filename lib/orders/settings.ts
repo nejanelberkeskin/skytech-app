@@ -27,10 +27,11 @@ export const DEFAULT_SALES_SETTINGS: SalesSettings = {
   invoiceTiming: "on_performance",
   prepDays: DEFAULT_PREP_DAYS,
   paymentTtlMinutes: 45,
+  ordersPaused: false,
 };
 
 const COLUMNS =
-  "unit_price_kurus, min_quantity, max_quantity, quantity_presets, vat_rate, invoice_timing, prep_days, payment_ttl_minutes, updated_at, updated_by";
+  "unit_price_kurus, min_quantity, max_quantity, quantity_presets, vat_rate, invoice_timing, prep_days, payment_ttl_minutes, orders_paused, updated_at, updated_by";
 
 function rowToSettings(data: Record<string, unknown>): SalesSettings {
   return {
@@ -44,6 +45,7 @@ function rowToSettings(data: Record<string, unknown>): SalesSettings {
     invoiceTiming: data.invoice_timing === "on_payment" ? "on_payment" : "on_performance",
     prepDays: Number(data.prep_days),
     paymentTtlMinutes: Number(data.payment_ttl_minutes),
+    ordersPaused: data.orders_paused === true,
   };
 }
 
@@ -101,6 +103,7 @@ export async function updateSalesSettings(
       invoice_timing: next.invoiceTiming,
       prep_days: next.prepDays,
       payment_ttl_minutes: next.paymentTtlMinutes,
+      orders_paused: next.ordersPaused,
       updated_by: adminId,
     })
     .eq("id", true)

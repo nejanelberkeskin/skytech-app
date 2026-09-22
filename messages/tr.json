@@ -2059,6 +2059,7 @@
       "certificateNameShort": "Sertifikadaki ad en az {min} karakter olmalı.",
       "certificateNameLong": "Sertifikadaki ad en çok {max} karakter olabilir.",
       "certificateNameInvalid": "Sertifikadaki ad yalnız harf, rakam ve temel noktalama işaretlerinden oluşabilir."
-    }
+    },
+    "pausedNotice": "Çevrim içi sipariş alımına geçici olarak ara verildi. Bu sayfadan katılım talebinizi iletebilirsiniz; ödeme alınmaz, ekibimiz sizinle iletişime geçer."
   }
 }

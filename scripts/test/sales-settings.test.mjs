@@ -14,6 +14,7 @@ const base = {
   invoiceTiming: "on_performance",
   prepDays: 21,
   paymentTtlMinutes: 45,
+  ordersPaused: false,
 };
 const check = (patch) => {
   const r = S.salesSettingsSchema.safeParse({ ...base, ...patch });
@@ -41,6 +42,9 @@ assert.deepEqual(check({ invoiceTiming: "later" }), { invoiceTiming: "invalid" }
 assert.deepEqual(check({ prepDays: 14 }), { prepDays: "range" }, "hazırlık payı cayma süresinden (14 gün) uzun olmalı");
 assert.deepEqual(check({ prepDays: 121 }), { prepDays: "range" });
 assert.deepEqual(check({ paymentTtlMinutes: 9 }), { paymentTtlMinutes: "range" });
+assert.deepEqual(check({ ordersPaused: true }), {});
+assert.deepEqual(check({ ordersPaused: "evet" }), { ordersPaused: "invalid" });
+assert.deepEqual(check({ ordersPaused: undefined }), { ordersPaused: "invalid" }, "durdurma alanı zorunlu");
 // bir alan hatalıyken de çapraz kurallar çalışır (form bütün hataları tek seferde gösterir)
 assert.deepEqual(
   check({ unitPriceKurus: Number.NaN, minQuantity: 200, maxQuantity: 100, quantityPresets: [300, 250] }),
@@ -49,8 +53,8 @@ assert.deepEqual(
 assert.deepEqual(check({ unitPriceKurus: Number.NaN, quantityPresets: [100, 50] }), { unitPriceKurus: "invalid", quantityPresets: "presetsOrder" });
 assert.equal(S.salesSettingsSchema.safeParse(null).success, false, "nesne değilse çapraz kural çökmemeli");
 // bilinmeyen alan yazılmaz (şema atar)
-const extra = S.salesSettingsSchema.safeParse({ ...base, ordersPaused: true });
-assert.ok(extra.success && !("ordersPaused" in extra.data));
+const extra = S.salesSettingsSchema.safeParse({ ...base, discountPct: 10 });
+assert.ok(extra.success && !("discountPct" in extra.data));
 
 /* ── Fark ve teklif sürümü alanları ──────────────────────────────────────── */
 assert.deepEqual(S.diffSettings(base, { ...base }), []);
@@ -59,6 +63,8 @@ const diff = S.diffSettings(base, { ...base, unitPriceKurus: 1200, quantityPrese
 assert.deepEqual(diff.map((c) => c.field), ["unitPriceKurus", "quantityPresets"]);
 assert.deepEqual(diff[0], { field: "unitPriceKurus", from: 1000, to: 1200 });
 assert.deepEqual([...S.QUOTE_FIELDS].sort(), ["prepDays", "unitPriceKurus", "vatRate"], "quoteVersion ile aynı alanlar");
+assert.deepEqual(S.diffSettings(base, { ...base, ordersPaused: true }), [{ field: "ordersPaused", from: false, to: true }]);
+assert.ok(!S.QUOTE_FIELDS.includes("ordersPaused"), "durdurma teklif sürümünü değiştirmez");
 
 /* ── Sihirbazın gördüğü kurallar ─────────────────────────────────────────── */
 const pricing = S.publicPricing({ ...base, unitPriceKurus: 1250, minQuantity: 50, maxQuantity: 400, quantityPresets: [50, 100, 400] });

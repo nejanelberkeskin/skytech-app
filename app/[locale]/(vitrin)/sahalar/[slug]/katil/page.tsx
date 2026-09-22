@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { redirect } from "@/i18n/navigation";
-import { REQUESTS_ENABLED } from "@/lib/site-config";
-import { ordersClosed } from "@/lib/orders/gate";
+import { REQUESTS_ENABLED, SALES_ENABLED } from "@/lib/site-config";
+import { canAcceptOrders } from "@/lib/orders/gate";
 import { getPaymentProvider } from "@/lib/payments";
 import { getProjectSiteBySlug } from "@/lib/sites/data";
 import { siteDetailHref, siteOrderHref } from "@/lib/sites/links";
@@ -36,16 +36,18 @@ export default async function ParticipatePage({ params }: Props) {
   const site = await getProjectSiteBySlug(slug, locale);
   if (!site) notFound();
   if (!site.acceptsOrders) redirect({ href: siteDetailHref(site), locale });
-  // Kip, sipariş uçlarının kullandığı AYNI kapıdan okunur (bayrak + ödeme sağlayıcısı + hukuki
-  // metin sürümü): sipariş alınamıyorsa sihirbaz çıkmaz sokağa girmez, talep kipinde açılır.
-  const canOrder = !ordersClosed(getPaymentProvider());
-  if (!canOrder && !REQUESTS_ENABLED) redirect({ href: "/yakinda", locale });
   // Önbelleksiz: sihirbazın gösterdiği fiyat ve takvim, bağlayıcı önizlemeyle aynı satırdan gelir.
-  const [t, sites, seeds, settings] = await Promise.all([
+  const settings = await getSalesSettings();
+  // Kip, sipariş uçlarının kullandığı AYNI kapıdan okunur (bayrak + ödeme sağlayıcısı + hukuki metin
+  // sürümü + yönetimden durdurma): sipariş alınamıyorsa sihirbaz çıkmaz sokağa girmez, talep kipinde açılır.
+  const canOrder = canAcceptOrders(getPaymentProvider(), settings);
+  if (!canOrder && !REQUESTS_ENABLED) redirect({ href: "/yakinda", locale });
+  // Satış açıkken sipariş alımı yönetimden durdurulduysa müşteriye kısa bir açıklama gösterilir.
+  const paused = SALES_ENABLED && settings.ordersPaused;
+  const [t, sites, seeds] = await Promise.all([
     getTranslations({ locale, namespace: "orderWizard" }),
     getTranslations({ locale, namespace: "sitesPage" }),
     getTranslations({ locale, namespace: "ourSeeds" }),
-    getSalesSettings(),
   ]);
   const now = new Date();
   const schedule = scheduleFor(now, settings.prepDays);
@@ -72,6 +74,14 @@ export default async function ParticipatePage({ params }: Props) {
         <p className="mt-4 leading-relaxed text-[#3d5a3d]">
           {t("description")}
         </p>
+        {paused && (
+          <p
+            role="status"
+            className="mt-5 rounded-2xl border border-[#fed7aa] bg-[#fff7ed] px-5 py-4 text-sm leading-relaxed text-[#7c2d12]"
+          >
+            {t("pausedNotice")}
+          </p>
+        )}
       </header>
       <OrderWizard
         locale={locale}

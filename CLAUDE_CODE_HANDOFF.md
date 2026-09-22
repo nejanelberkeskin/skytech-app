@@ -741,6 +741,21 @@ Bu bölüm 11. bölümdeki akış tarifinin yerine geçer.
   (en önemli açık: m.9 yurt dışı aktarım güvencesi; saklama süresi önerileri; sertifikanın hukuki sebebi).
 - Devreden: `/gizlilik-politikasi` ve `/cerez-politikasi` bu metinle uyumlu hâle getirilecek (onaydan sonra).
 
+### Künye, sözleşme düzeltmeleri, SSS (Faz 9b)
+- `lib/company.ts`: telefon 0850 308 2600 · tescilli adres **Saray Mah. 60 Cad. No: 22, Kahramankazan/Ankara** (sitenin alt
+  bilgisi, İletişim sayfası ve Google İşletme kaydıyla aynı; 21 Eyl'de verilen Macun Mah. adresi ofis olabilir) · MERSİS
+  0772166121800001 · ticaret sicili Ankara / 510174 (müdürlük adı teyit edilince `tradeRegistryLine` güncellenir) · UETS
+  25838-72218-78313 (resmî tebligat; müşteri belgelerinde GÖRÜNMEZ). Kaynak: Astra'nın hukuk paketi
+  (`outputs/yayin-hukuk-paketi/`, kullanıcı bildirimi). Eksik: KEP, meslek odası.
+- Sözleşme (sürüm `2026-09.3-taslak`): m.6.4'e "tercih bildirilmezse iade; sessizlik kabul değil" · yeni m.7.5 "cayma
+  süresinin dolması ayıplı/geç/hiç ifa haklarını kaldırmaz" (cayma sayfasında da). Astra'nın diğer önerileri (özel
+  sertifika + ayrı yayın izni, tür değişikliğinde açık kabul, sertifika/izleme için ayrı son tarihler) ürün kararı
+  gerektirir — avukat notlarında.
+- SSS'ye beş satış sorusu (ödeme, cayma, sipariş durumu, ifa edilememe, fatura) — üç dilde, hukuk metinleriyle aynı koşullar.
+- Astra'nın hukuk paketi: 16 metin + Word. Avukat TEK seti (koddan üretilen `hukuk-taslaklari/`) incelemeli; Astra'nın
+  `16-inceleme-ve-yayin-notlari.md` dosyası ikinci görüş olarak yanına verilir (m.9 aktarım fişi, ETBİS karekod notu,
+  VUK 5 yıl / TTK 10 yıl ayrımı, fatura zamanı uyarısı).
+
 ### Sıradaki (plan §Fazlar)
 Faz 5c satış ayarları ekranı (fiyat/KDV/süreler + "sipariş alımı durduruldu"; sihirbaz fiyatı sunucudan almalı) → Faz 6 sertifika + zamanlanmış işler (süre dolumu, cayma süresi sonu → `confirmed`, video
 bildirimi).

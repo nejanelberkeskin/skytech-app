@@ -19,6 +19,12 @@ const FAQ_SLUGS = [
   "certificate",
   "gift",
   "notDonation",
+  // Sipariş, ödeme ve cayma (satış modeli v2) — yanıtlar lib/legal şablonlarındaki koşullarla aynı
+  "payment",
+  "withdrawal",
+  "orderStatus",
+  "nonPerformance",
+  "invoice",
   "carbonReport",
   "b2bIntegration",
 ] as const;

@@ -480,6 +480,26 @@
       "notDonation": {
         "question": "Is this a donation?",
         "answer": "No. What you buy from Skytech Green is a service: the release by drone of the number of seed balls you choose on the site you select. An invoice is issued for the service fee; your payment is not a donation and does not provide any tax deduction."
+      },
+      "payment": {
+        "question": "How do I pay?",
+        "answer": "You see the total (VAT included) in the order summary before paying; there are no extra charges. Payment is taken in a single instalment with 3D Secure on the secure page of the payment institution iyzico; your card details never reach Skytech Green. Once the payment is approved, the order confirmation, the Preliminary Information Form, the agreement and the Withdrawal Form are e-mailed to you."
+      },
+      "withdrawal": {
+        "question": "Can I withdraw from my order?",
+        "answer": "Yes. You may withdraw within 14 days of the date your payment is approved, without giving any reason. Simply send the notice through the withdrawal form on the site or by e-mail; the full amount you paid is refunded within 14 days, in a single payment, to the payment method you used. Seed balls are not released before the withdrawal period ends."
+      },
+      "invoice": {
+        "question": "When will I receive my invoice?",
+        "answer": "Your invoice is issued after the seed ball release is completed and sent by e-mail. Corporate buyers may ask for the invoice to be issued earlier. The order confirmation e-mail is not an invoice."
+      },
+      "nonPerformance": {
+        "question": "What happens if the release cannot be carried out?",
+        "answer": "Your agreement states a firm deadline. If the work cannot be carried out because of weather, administrative decisions or the site becoming inaccessible, we inform you; we either refund the full amount within 14 days or, if you approve, perform the service at another site or in the following season. Not responding is never taken as acceptance of another site or season."
+      },
+      "orderStatus": {
+        "question": "Where can I see the status of my order?",
+        "answer": "Through the personal link in your order confirmation e-mail, or, if you are a member, under My Account → My Orders. The page shows the stage of your order, your documents, the release date, your Certificate of Participation and, once published, footage of the work. Do not share the link with others."
       }
     }
   },

@@ -69,6 +69,7 @@ export default async function CaymaVeIadePage({ params }: { params: Promise<{ lo
 
       <LegalSection no="4" title="Cayma süresi ve hizmetin ifası">
         <LegalP>{TEXT.noEarlyPerformance}</LegalP>
+        <LegalP>{TEXT.rightsAfterWithdrawalPeriod}</LegalP>
       </LegalSection>
 
       <LegalSection no="5" title="Hizmetin süresinde ifa edilememesi">

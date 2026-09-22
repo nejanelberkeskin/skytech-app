@@ -115,7 +115,11 @@ export const TEXT = {
     "Bırakma tamamlandığında ALICI'ya e-posta ile bilgi verilir ve Katılım Sertifikası iletilir. Çalışmaya ilişkin görüntüler, bırakmayı izleyen izleme döneminde (bırakmadan yaklaşık altı ay sonra) e-posta ile paylaşılır.",
 
   lateOrImpossible:
-    "SATICI hizmeti yukarıdaki son tarihe kadar ifa edemezse ALICI sözleşmeyi feshedebilir; bu durumda ödenen bedelin tamamı, fesih bildiriminin SATICI'ya ulaştığı tarihten itibaren 14 (on dört) gün içinde yasal faiziyle birlikte iade edilir. Hava koşulları, idari kararlar veya sahaya erişimin engellenmesi gibi nedenlerle ifanın imkânsızlaşması hâlinde SATICI, durumu öğrendiği tarihten itibaren 3 (üç) gün içinde ALICI'ya bildirir ve ALICI'nın tercihine göre ya ödenen bedelin tamamını bildirim tarihinden itibaren 14 (on dört) gün içinde iade eder ya da hizmeti ALICI'nın onaylayacağı başka bir Proje Uygulama Sahasında veya izleyen bırakma sezonunda ifa eder.",
+    "SATICI hizmeti yukarıdaki son tarihe kadar ifa edemezse ALICI sözleşmeyi feshedebilir; bu durumda ödenen bedelin tamamı, fesih bildiriminin SATICI'ya ulaştığı tarihten itibaren 14 (on dört) gün içinde yasal faiziyle birlikte iade edilir. Hava koşulları, idari kararlar veya sahaya erişimin engellenmesi gibi nedenlerle ifanın imkânsızlaşması hâlinde SATICI, durumu öğrendiği tarihten itibaren 3 (üç) gün içinde ALICI'ya bildirir ve ALICI'nın tercihine göre ya ödenen bedelin tamamını bildirim tarihinden itibaren 14 (on dört) gün içinde iade eder ya da hizmeti ALICI'nın onaylayacağı başka bir Proje Uygulama Sahasında veya izleyen bırakma sezonunda ifa eder. ALICI bildirimden itibaren 14 (on dört) gün içinde bir tercih bildirmezse bedelin tamamı iade edilir; sessiz kalmak, başka saha veya sezon önerisinin kabulü sayılmaz.",
+
+  /** Cayma süresinin dolması diğer hakları etkilemez (sözleşme m.7 ve cayma sayfası). */
+  rightsAfterWithdrawalPeriod:
+    "Cayma süresinin dolması; hizmetin ayıplı, geç ya da hiç ifa edilmemesinden doğan hakları ve mevzuattan kaynaklanan diğer talepleri ortadan kaldırmaz.",
 
   withdrawalRightGeneral: TEXT_WITHDRAWAL_GENERAL,
 

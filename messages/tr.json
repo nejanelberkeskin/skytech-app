@@ -480,6 +480,26 @@
       "notDonation": {
         "question": "Bu bir bağış mı?",
         "answer": "Hayır. Skytech Green'de satın aldığınız şey bir hizmettir: seçtiğiniz sahaya, belirlediğiniz adette tohum topunun dronla bırakılması. Hizmet bedeli karşılığında fatura düzenlenir; ödemeniz bağış sayılmaz ve vergi indirimi sağlamaz."
+      },
+      "payment": {
+        "question": "Ödemeyi nasıl yaparım?",
+        "answer": "Toplam bedeli (KDV dâhil) ödeme öncesinde sipariş özetinde görürsünüz; ek bir masraf yoktur. Ödeme, ödeme kuruluşu iyzico'nun güvenli sayfasında 3D Secure ile tek çekim olarak alınır; kart bilgileriniz Skytech Green'e ulaşmaz. Ödeme onaylanınca sipariş teyidi, Ön Bilgilendirme Formu, sözleşme ve Cayma Formu e-postanıza gönderilir."
+      },
+      "withdrawal": {
+        "question": "Siparişten cayabilir miyim?",
+        "answer": "Evet. Ödemenizin onaylandığı tarihten itibaren 14 gün içinde, hiçbir gerekçe göstermeden cayabilirsiniz. Bildirimi sitedeki cayma formundan ya da e-postayla yapmanız yeterlidir; ödediğiniz bedelin tamamı 14 gün içinde ödemede kullandığınız araca tek seferde iade edilir. Tohum topu bırakma, cayma süresi dolmadan yapılmaz."
+      },
+      "invoice": {
+        "question": "Faturam ne zaman gelir?",
+        "answer": "Faturanız, tohum topu bırakma tamamlandıktan sonra düzenlenir ve e-postayla gönderilir. Kurumsal alıcılar faturanın daha önce düzenlenmesini talep edebilir. Sipariş teyidi e-postası fatura yerine geçmez."
+      },
+      "nonPerformance": {
+        "question": "Bırakma yapılamazsa ne olur?",
+        "answer": "Sözleşmenizde kesin bir son tarih yazar. Hava koşulları, idari kararlar ya da sahaya erişimin engellenmesi gibi nedenlerle çalışma yapılamazsa durumu size bildiririz; ödediğiniz bedelin tamamını 14 gün içinde iade eder ya da onaylarsanız hizmeti başka bir sahada veya izleyen sezonda yerine getiririz. Sessiz kalmanız başka bir saha ya da sezon önerisinin kabulü sayılmaz."
+      },
+      "orderStatus": {
+        "question": "Siparişimin durumunu nereden görürüm?",
+        "answer": "Sipariş teyidi e-postanızdaki size özel bağlantıdan; üyeyseniz Hesabım → Siparişlerim sayfasından. Sayfada siparişinizin aşaması, belgeleriniz, bırakma tarihi, Katılım Sertifikanız ve yayımlandığında çalışmanın görüntüleri yer alır. Bağlantıyı başkalarıyla paylaşmayın."
       }
     }
   },

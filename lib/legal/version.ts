@@ -10,7 +10,7 @@
  *   "-taslak" → hukuk incelemesinden GEÇMEMİŞ metin. Satış bayrağı açılmadan önce
  *   inceleme tamamlanmalı ve ek kaldırılmalıdır (açılış kontrol listesi).
  */
-export const LEGAL_DOCUMENTS_VERSION = "2026-09.2-taslak";
+export const LEGAL_DOCUMENTS_VERSION = "2026-09.3-taslak";
 
 export const isDraftLegalVersion = (version: string = LEGAL_DOCUMENTS_VERSION) => version.endsWith("-taslak");
 

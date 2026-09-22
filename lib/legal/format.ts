@@ -2,7 +2,7 @@
  * Hukuki metinlerde kullanılan biçimler — deterministik (Intl'e bağlı değil):
  * aynı sipariş her ortamda aynı metni, dolayısıyla aynı SHA-256 özetini üretir.
  */
-import { COMPANY, companyAddressLine } from "@/lib/company";
+import { COMPANY, companyAddressLine, tradeRegistryLine } from "@/lib/company";
 import { formatCount, formatTry } from "@/lib/pricing";
 
 const NBSP = String.fromCharCode(0xa0);
@@ -34,7 +34,7 @@ export function sellerRows(): [string, string][] {
   const rows: [string, string | null][] = [
     ["Unvan", COMPANY.legalName],
     ["MERSİS no", COMPANY.mersis],
-    ["Ticaret sicil no", COMPANY.tradeRegistryNo],
+    ["Ticaret sicili / no", tradeRegistryLine()],
     ["Vergi dairesi / no", `${COMPANY.taxOffice} / ${COMPANY.taxId}`],
     ["Adres", companyAddressLine()],
     ["Telefon", COMPANY.phone],

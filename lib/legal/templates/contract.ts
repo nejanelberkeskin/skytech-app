@@ -105,7 +105,8 @@ export function contractDocument(ctx: LegalContext): LegalDocument {
     { type: "paragraph", text: `7.2. ${TEXT.withdrawalHow()}` },
     { type: "paragraph", text: `7.3. ${TEXT.withdrawalRefund}` },
     { type: "paragraph", text: `7.4. ${TEXT.noEarlyPerformance}` },
-    ...(corporate ? ([{ type: "paragraph", text: `7.5. ${TEXT.corporateWithdrawal}` }] as LegalBlock[]) : []),
+    { type: "paragraph", text: `7.5. ${TEXT.rightsAfterWithdrawalPeriod}` },
+    ...(corporate ? ([{ type: "paragraph", text: `7.6. ${TEXT.corporateWithdrawal}` }] as LegalBlock[]) : []),
 
     { type: "heading", text: "Madde 8 — Katılım Sertifikası ve görüntüler" },
     {

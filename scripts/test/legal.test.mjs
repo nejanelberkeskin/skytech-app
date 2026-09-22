@@ -131,7 +131,10 @@ for (const [name, c] of Object.entries(cases)) {
   for (const must of [
     "SKYTECH HAVACILIK VE TEKNOLOJİ SANAYİ TİCARET ANONİM ŞİRKETİ",
     "Kahramankazan / 7721661218",
-    "Macun Mahallesi",
+    "Saray Mah. 60 Cad. No: 22",
+    "0772166121800001", // MERSİS
+    "Ankara / 510174", // ticaret sicili
+    "0850 308 2600",
     "info@skytechgreen.com",
     "tohum topunu insansız hava aracı (dron) ile bırakması",
     "Toplam bedel (tüm vergiler dâhil)",
@@ -148,6 +151,10 @@ for (const [name, c] of Object.entries(cases)) {
     assert.ok(pre.includes(must), `${name}: ön bilgilendirmede eksik → ${must}`);
   }
   assert.ok(contract.includes("Madde 14 — Yürürlük") && contract.includes("Madde 7 — Cayma hakkı"));
+  assert.ok(contract.includes("sessiz kalmak, başka saha veya sezon önerisinin kabulü sayılmaz"), "6.4: sessizlik kabul değil");
+  assert.ok(contract.includes("Cayma süresinin dolması; hizmetin ayıplı"), "7.5: süre sonrası haklar");
+  // UETS resmî tebligat adresidir; müşteri belgelerinde görünmez.
+  docs.forEach((d) => assert.ok(!d.html.includes("25838-72218-78313"), `${name}/${d.kind}: UETS belgeye sızmış`));
   assert.ok(form.includes("cayma hakkımı kullandığımı beyan ederim"));
 
   // T.C. kimlik no hiçbir belgede yer almaz; kart/ödeme ayrıntısı da

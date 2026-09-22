@@ -7,22 +7,22 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase/browser";
 import {
   BarChartIcon, PackageIcon, SproutIcon, CertificateIcon,
-  GiftIcon, TrophyIcon, SettingsIcon, AlertTriangleIcon, MailIcon,
+  SettingsIcon, AlertTriangleIcon, MailIcon,
 } from "@/components/ui/Icons";
-import { CTA_MODE, TRANSACTIONS_ENABLED, orderCtaHref } from "@/lib/site-config";
+import { CTA_MODE, SALES_ENABLED, TRANSACTIONS_ENABLED, orderCtaHref } from "@/lib/site-config";
 
-// `transactional: true` olanlar yalnız ödeme açıkken listelenir (middleware
-// de bu rotaları /hesabim'a katlar) — boş sipariş/sertifika ekranı gösterilmez.
+// `transactional: true` → B2B (kurumsal) açıkken listelenir (TRANSACTIONS_ENABLED; middleware de
+// kapalıyken bu rotaları /hesabim'a katlar). `sales: true` → yeni satış modeli açıkken.
+// Eski bireysel tohum satışının sayfaları (fiziksel siparişler, arazi ekimleri, davet/ödül) Faz 8'de kaldırıldı.
 const NAV_ITEMS = [
   { href: "/hesabim", label: "Genel Bakış", Icon: BarChartIcon, exact: true },
   { href: "/hesabim/taleplerim", label: "Taleplerim", Icon: MailIcon },
-  { href: "/hesabim/siparislerim", label: "Fiziksel Siparişlerim", Icon: PackageIcon, transactional: true },
-  { href: "/hesabim/rezervasyonlar", label: "Arazi Ekimlerim", Icon: SproutIcon, transactional: true },
+  // Satış modeli v2: sahaya tohum topu bıraktırma siparişleri (yalnız satış açıkken listelenir)
+  { href: "/hesabim/siparisler", label: "Siparişlerim", Icon: PackageIcon, sales: true },
+  // B2B çalışan sertifikaları (şirket hesabı)
   { href: "/hesabim/sertifikalar", label: "Sertifikalarım", Icon: CertificateIcon, transactional: true },
-  { href: "/hesabim/davet-et", label: "Davet Et & Kazan", Icon: GiftIcon, transactional: true },
-  { href: "/hesabim/davet-et-kazan", label: "Ödüllerim", Icon: TrophyIcon, transactional: true },
   { href: "/hesabim/profil", label: "Profil & Ayarlar", Icon: SettingsIcon },
-].filter((item) => TRANSACTIONS_ENABLED || !item.transactional);
+].filter((item: { transactional?: boolean; sales?: boolean }) => (TRANSACTIONS_ENABLED || !item.transactional) && (SALES_ENABLED || !item.sales));
 
 export default function HesabimLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -169,7 +169,7 @@ export default function HesabimLayout({ children }: { children: React.ReactNode 
             className="flex items-center justify-center gap-2 w-full py-3 rounded-2xl glass-btn text-sm font-medium text-white transition-all"
           >
             <SproutIcon className="w-4 h-4" />
-            {CTA_MODE === "order" ? "Tohum Satın Al" : "Talep Oluştur"}
+            {CTA_MODE === "order" ? "Satın Al" : "Talep Oluştur"}
           </Link>
           <button
             onClick={handleLogout}

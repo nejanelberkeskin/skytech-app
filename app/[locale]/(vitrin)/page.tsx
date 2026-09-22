@@ -3,7 +3,6 @@ import MarqueeStrip from "@/components/vitrin/homepage/MarqueeStrip";
 import ValueCards from "@/components/vitrin/homepage/ValueCards";
 import HowItWorks from "@/components/vitrin/homepage/HowItWorks";
 import SeedJourney from "@/components/vitrin/homepage/SeedJourney";
-import CarbonCalculator from "@/components/vitrin/homepage/CarbonCalculator";
 import ImpactTabs from "@/components/vitrin/homepage/ImpactTabs";
 import MagicLens from "@/components/vitrin/homepage/MagicLens";
 import AdvantagesGrid from "@/components/vitrin/homepage/AdvantagesGrid";
@@ -15,6 +14,7 @@ import FinalCTA from "@/components/vitrin/homepage/FinalCTA";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { buildPageMetadata } from "@/lib/seo";
+import { getPublicPricing } from "@/lib/orders/public-pricing";
 
 export async function generateMetadata({
   params,
@@ -36,6 +36,7 @@ export default async function VitrinHomePage({
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
+  const pricing = await getPublicPricing();
   return (
     <>
       <HeroSection />
@@ -43,14 +44,13 @@ export default async function VitrinHomePage({
       <ValueCards />
       <HowItWorks />
       <SeedJourney />
-      <CarbonCalculator />
       <ImpactTabs />
       <MagicLens />
       <AdvantagesGrid />
       <ComparisonTable />
       <BeforeAfter />
-      <ServicePackages />
-      <FAQSection />
+      <ServicePackages minQuantity={pricing.minQuantity} />
+      <FAQSection minQuantity={pricing.minQuantity} />
       <FinalCTA />
     </>
   );

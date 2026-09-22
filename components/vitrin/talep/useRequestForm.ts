@@ -7,8 +7,8 @@ import { supabase } from "@/lib/supabase/browser";
 import { trackLead } from "@/lib/analytics";
 import { ACCOUNTS_ENABLED } from "@/lib/site-config";
 import {
-  SEED_ITEMS_MAX,
-  SEED_QTY,
+  CERTIFICATE_NAME,
+  RELEASE_QTY,
   issuesToFieldErrors,
   requestPayloadSchema,
   type ContactInput,
@@ -64,7 +64,9 @@ export function useErrorText() {
   return useCallback(
     (key: string | undefined | null): string | null => {
       if (!key) return null;
-      const params = { min: SEED_QTY.min, max: key === "seedTooMany" ? SEED_ITEMS_MAX : SEED_QTY.max };
+      const params = key.startsWith("certificateName")
+        ? { min: CERTIFICATE_NAME.min, max: CERTIFICATE_NAME.max }
+        : { min: RELEASE_QTY.min, max: RELEASE_QTY.max };
       // Anahtar şemadan (dinamik) geldiği için next-intl'in statik tip
       // daraltmasını atlıyoruz; bilinmeyen anahtarda genel mesaja düşer.
       const translate = t as unknown as (k: string, p?: Record<string, number>) => string;

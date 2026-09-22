@@ -12,7 +12,9 @@ import {
   type RequestPayload,
 } from "@/lib/requests/schema";
 import { generateRequestNo, hashIp, sanitizeUserAgent } from "@/lib/requests/server";
-import type { ServiceRequest, ServiceRequestSeedItem } from "@/lib/types";
+import { PRICING_VISIBLE, quantityRangeError } from "@/lib/pricing";
+import { getSalesSettings } from "@/lib/orders/settings";
+import type { ServiceRequest } from "@/lib/types";
 
 /**
  * POST /api/public/talep — ödeme almadan talep oluşturur (kimlik gerekmez).
@@ -29,8 +31,9 @@ import type { ServiceRequest, ServiceRequestSeedItem } from "@/lib/types";
  *  4. Bot sinyalleri — honeypot doluysa DB'ye yazılmadan "ok" döner (bota
  *     fark ettirmeden); form MIN_FILL_MS'den hızlı doldurulmuşsa kayıt
  *     status='spam' ile yazılır, e-posta gitmez (kayıp olmaz, admin görür).
- *  5. Doğrulama — zod şeması; tohum slug'ları aktif katalogla, arazi
- *     açık/public sahalarla sunucuda doğrulanır. Adetler sınırlı.
+ *  5. Doğrulama — zod şeması; saha, yayındaki ve katılıma açık sahalarla
+ *     sunucuda doğrulanır. Adet alt/üst sınırı lib/pricing.ts'ten gelir.
+ *     Tahmini tutar istemciden ALINMAZ; burada yeniden hesaplanır.
  *  6. Idempotency — clientToken tekrar gelirse mevcut kayıt döner, çift
  *     kayıt ve çift e-posta oluşmaz.
  *  7. Kimlik — user_id yalnız oturum çerezinden; gövdeden asla alınmaz.
@@ -102,37 +105,25 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  // ── Türe özel sunucu doğrulaması (katalog / saha varlığı) ────────────────
-  let seedItems: ServiceRequestSeedItem[] = [];
+  // ── Türe özel sunucu doğrulaması (saha varlığı) ──────────────────────────
   let totalSeeds: number | null = null;
   let landId: string | null = null;
   let landName: string | null = null;
   let storedDetails: Record<string, unknown> = {};
 
-  if (details.type === "seed_purchase") {
-    const { data: catalog, error } = await supabase
-      .from("seed_catalog")
-      .select("slug, name")
-      .eq("is_active", true);
-    if (error) return dbError("catalog");
-    const bySlug = new Map((catalog ?? []).map((c) => [c.slug as string, c.name as string]));
-    if (details.seedItems.some((i) => !bySlug.has(i.slug))) {
+  if (details.type === "open_land_seeding") {
+    // Talep de siparişle aynı adet sınırlarına ve birim bedele bağlıdır (satış ayarları).
+    const settings = await getSalesSettings();
+    const range = quantityRangeError(details.quantity, settings);
+    if (range) {
       return NextResponse.json(
-        { error: "validation", fields: { "details.seedItems": "seedInvalid" } },
+        { error: "validation", fields: { "details.quantity": range } },
         { status: 400 }
       );
     }
-    seedItems = details.seedItems.map((i) => ({ slug: i.slug, name: bySlug.get(i.slug)!, quantity: i.quantity }));
-    totalSeeds = seedItems.reduce((s, i) => s + i.quantity, 0);
-    storedDetails = {
-      deliveryProvince: details.deliveryProvince,
-      deliveryDistrict: details.deliveryDistrict ?? null,
-      purpose: details.purpose ?? null,
-    };
-  } else if (details.type === "open_land_seeding") {
     const { data: land, error } = await supabase
       .from("lands")
-      .select("id, name, region, is_public, status")
+      .select("id, name, region, is_public, status, species_slugs")
       .eq("id", details.landId)
       .maybeSingle();
     if (error) return dbError("land");
@@ -145,7 +136,18 @@ export async function POST(req: NextRequest) {
     landId = land.id as string;
     landName = land.region ? `${land.name} (${land.region})` : (land.name as string);
     totalSeeds = details.quantity;
-    storedDetails = { quantity: details.quantity, dedication: details.dedication ?? null, landName };
+    storedDetails = {
+      quantity: details.quantity,
+      // null → sertifikaya talep sahibinin adı yazılır (formdaki ipucu böyle söyler).
+      certificateName: details.certificateName ?? null,
+      landName,
+      // Talep anında sahada bırakılan tür(ler) — bilgi amaçlı anlık kopya.
+      speciesSlugs: Array.isArray(land.species_slugs) ? land.species_slugs : [],
+      // Müşterinin gördüğü birim bedel ve tahmini tutar (kuruş). Bağlayıcı değil.
+      ...(PRICING_VISIBLE
+        ? { unitPriceKurus: settings.unitPriceKurus, estimatedTotalKurus: details.quantity * settings.unitPriceKurus }
+        : {}),
+    };
   } else {
     storedDetails = {
       province: details.province,
@@ -200,7 +202,7 @@ export async function POST(req: NextRequest) {
     locale: contact.locale,
     land_id: landId,
     total_seeds: totalSeeds,
-    seed_items: seedItems,
+    seed_items: [],
     details: storedDetails,
     message: contact.message ?? null,
     consent_at: new Date().toISOString(),
@@ -271,7 +273,7 @@ function dbError(stage: string) {
   return NextResponse.json({ error: "unavailable" }, { status: 503 });
 }
 
-/** Yalnız site içi yol saklanır ("/talep/tohum?utm=…" → "/talep/tohum"). */
+/** Yalnız site içi yol saklanır ("/talep/acik-arazi?saha=…" → "/talep/acik-arazi"). */
 function normalizeSourcePath(v: string | undefined): string | null {
   if (!v) return null;
   const path = v.startsWith("/") && !v.startsWith("//") ? v.split("?")[0].split("#")[0] : null;

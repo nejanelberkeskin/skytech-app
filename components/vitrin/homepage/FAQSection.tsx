@@ -2,7 +2,8 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
+import { formatCount, type PriceLocale } from "@/lib/pricing";
 import FAQSchema from "../../seo/FAQSchema";
 import SectionWrapper from "../SectionWrapper";
 import SectionHeading from "../SectionHeading";
@@ -11,24 +12,38 @@ const FAQ_SLUGS = [
   "seedBall",
   "sourcing",
   "droneEfficiency",
+  "species",
+  "calendar",
+  "hectare",
+  "minOrder",
   "tracking",
   "certificate",
-  "minOrder",
-  "b2bIntegration",
   "gift",
+  "notDonation",
+  // Sipariş, ödeme ve cayma (satış modeli v2) — yanıtlar lib/legal şablonlarındaki koşullarla aynı
+  "payment",
+  "withdrawal",
+  "orderStatus",
+  "nonPerformance",
+  "invoice",
+  "carbonReport",
+  "b2bIntegration",
 ] as const;
 
-function useFaqs() {
+function useFaqs(minQuantity: number) {
   const t = useTranslations("faqSection");
+  const min = formatCount(minQuantity, useLocale() as PriceLocale);
   return FAQ_SLUGS.map((slug) => ({
     q: t(`faqs.${slug}.question`),
-    a: t(`faqs.${slug}.answer`),
+    // En az adet satış ayarlarından gelir (yönetim → Satış Ayarları).
+    a: slug === "minOrder" ? t("faqs.minOrder.answer", { min }) : t(`faqs.${slug}.answer`),
   }));
 }
 
-export default function FAQSection() {
+/** `minQuantity`: satış ayarlarındaki en az adet (ana sayfa sunucuda okur). */
+export default function FAQSection({ minQuantity }: { minQuantity: number }) {
   const t = useTranslations("faqSection");
-  const FAQS = useFaqs();
+  const FAQS = useFaqs(minQuantity);
   const [openIdx, setOpenIdx] = useState<number | null>(0);
 
   return (

@@ -2,6 +2,10 @@
 
 > **Tarih:** 16 Mart 2026
 > **Amaç:** Bu belge, Cowork modunda yapılan tüm geliştirmelerin özetini, mevcut dosya durumlarını, veritabanı şemasını ve devam edilmesi gereken işleri Claude Code'a aktarmak için hazırlanmıştır.
+>
+> **Not (22 Eylül 2026):** §2–§10 eski bireysel tohum satışını (sepet, arazi rezervasyonu, kargo, davet/ödül)
+> anlatır; o akış **Faz 8'de koddan kaldırıldı** (bkz. "Faz 8" bölümü). Bu bölümler tarihçe olarak durur.
+> Güncel yapı için "Satış modeli v2" bölümlerinden itibaren okuyun.
 
 ---
 
@@ -489,3 +493,444 @@ CTA hedefleri `orderCtaHref(kind)`, etiket seçimi `CTA_MODE` ("order" | "reques
 ### Test
 - Mail göndermeden test: `.env.development.local` içine `RESEND_API_KEY=` (boş) koyup dev sunucuyu çalıştırın; `[mail] RESEND_API_KEY not set — skipping` loglanır. Test kayıtları `contact_name LIKE 'TEST%'` ile silinir.
 - `npm run i18n:check` — tr/en/ru anahtar eşitliği.
+
+---
+
+## 12. Satış Modeli v2 — Talep Akışının Yeniden Kurulması (21 Eylül 2026)
+
+Müşteri revizyonu (18 Eylül 2026): **doğrudan tohum satışı yok.** İki yol kaldı:
+(1) Proje Uygulama Sahasına tohum topu bıraktırma, (2) kendi arazim için başvuru.
+Bağlayıcı sözlük ve ana plan depo dışında: `web-brifler/03-…ANA-PLAN.md`, `04-…SOZLUGU.md`.
+Bu bölüm 11. bölümdeki akış tarifinin yerine geçer.
+
+### Akış
+- Sitedeki bütün "Talep Oluştur / Satın Al" çağrıları → `/talep/acik-arazi` (saha listesi + form).
+  Üstte küçük bağlantı: "Kendi arazim için işlem yaptırmak istiyorum" → `/talep/arazime-ekim`.
+- `/talep` (seçim sayfası) ve `/talep/tohum` (tohum talebi) **kaldırıldı**; middleware 307 ile
+  sahalara yönlendirir (`RETIRED_REQUEST_REDIRECTS`, dil öneki korunur). `seed_purchase` türü
+  API'de artık reddedilir; DB kısıtında eski kayıtlar için durur (`ACTIVE_REQUEST_TYPES` yeni türler).
+- `orderCtaHref()` artık eski `/bireysel/*` akışına hiçbir koşulda gitmez.
+- `?saha=<slug>` ile gelen ziyaretçide o saha seçili açılır (`lib/sites/links.ts → siteOrderHref`).
+
+### Saha ve sertifika sayfaları (GPT-6 Astra, PR #26 · #27)
+- `/sahalar` liste, `/sahalar/[slug]` ayrıntı (`components/vitrin/sahalar/*`), `SeasonTimeline`
+  (`components/vitrin/shared/`, `full` | `compact`). Veri: `lib/sites/data.ts`; bağlantılar yalnız `lib/sites/links.ts`.
+- `/sertifika/[kod]` doğrulama sayfası (noindex) + `GET /api/public/katilim-sertifikasi/[kod]/gorsel?b=dikey|yatay&dil=tr|en|ru`
+  (`next/og`, 1080×1350 ve 1200×630). Yerleşim ve arka plan: `lib/certificates/layout.ts` — müşterinin sertifika görseli
+  gelince `public/images/sertifika/` altına konur, `CERT_BACKGROUND` ve koordinatlar güncellenir. Fontlar `assets/fonts/`
+  (Noto Sans, OFL); dosya izine girdiği build çıktısında doğrulandı. Canlıda veri kaynağı henüz `null` döner (Faz 7).
+- Çapraz bağlantılar: talep formundaki saha kartı → saha sayfası (yeni sekme), `/projeler` → `/sahalar`, alt bilgi → `/sahalar`.
+  Eski `(uygulama)/sertifika/[id]` sayfası kaldırıldı.
+
+### Kurallar — tek kaynak
+| Ne | Nerede |
+|---|---|
+| Birim bedel (10 TL, KDV dâhil, kuruş tam sayı), en az 20 / en çok 100.000, hazır adetler 50·100·200·500·5000 | `lib/pricing.ts` |
+| Fiyatı formda gizleme | `NEXT_PUBLIC_PRICING_VISIBLE=false` (varsayılan: görünür) |
+| Sertifikadaki ad: 2–60 karakter, harf/rakam/temel noktalama | `lib/requests/schema.ts → certificateNameSchema` |
+| Saha verisi (hektar var, adet/kapasite YOK), tür müşteri tarafından seçilmez | `lib/sites/*` (migration 015) |
+| E-posta / hesabım / admin etiketleri | `lib/requests/labels.ts` |
+
+- Tahmini tutar istemciden alınmaz; API `details.unitPriceKurus` ve `estimatedTotalKurus` alanlarını
+  kendi hesaplayıp talebe yazar (müşterinin gördüğü fiyatın anlık kopyası; bağlayıcı değil).
+- Onay kutusu "açık rıza" dilinden çıkarıldı (`CONSENT_VERSION = "2026-09-21"`): talebe dönüş için
+  veri işleme rızaya dayanmaz; ticari ileti izni sipariş akışında ayrı ve isteğe bağlı alınacak.
+- Sayı/para biçimleri bilinçli olarak `Intl` kullanmaz (`formatCount`, `formatTry`, `formatHectares`):
+  Node ile tarayıcı ICU'su ayrışınca hydration uyuşmazlığı çıkıyordu.
+
+### Yönetim — saha formu (Faz 2b)
+- `/admin/araziler` ("Sahalar & Kapasite"; SUPER_ADMIN, ENGINEER): il/ilçe, sayfa adresi, hektar, Yangın Sahası + yıl,
+  çalışma türü, sahaya bırakılan tür(ler), evre, yayın, sıra, kapasite, EN/RU ad, TR/EN/RU tanıtım, kapak, YouTube videosu.
+- Şema panel ve API'de ORTAK: `lib/sites/admin.ts` (migration 015 kısıtlarıyla birebir). Adres boşsa addan üretilir
+  (`lib/sites/slug.ts`), çakışırsa `-2`, `-3`… eklenir. Tür seçimi katalogla doğrulanır.
+- "Yayından al / Yayına al" yalnız `is_public`'i değiştirir; evreye dokunmaz (`full` artık vitrinde "Kontenjan doldu").
+- Eski "Tahmini Karbon" kartı kaldırıldı (doğrulanmamış katsayı). Kapasite sayıları yalnız bu ekranda görünür.
+
+### Sipariş çekirdeği — temel (Faz 3a; arayüz yok, hiçbir yerden çağrılmıyor)
+- `supabase/migrations/016_release_orders.sql` — **canlıya uygulandı (21 Eyl 2026, `release_orders_016`)**; önce canlıda geri alınan bir denemeyle 33 denetimden geçti. Deneme siparişleri `is_test=true` ile işaretlenir (oluştuktan sonra değişmez) ve yalnız onlar `purge_test_orders()` ile silinebilir; gerçek siparişler, belgeler ve olaylar silinemez/değiştirilemez. Fatura bilgisi (`invoice`) üyenin sütun yetkisi dışında. `sales_settings`, `release_batches`,
+  `release_orders`, `order_documents` (değişmez), `order_events` (değişmez), `order_refunds`, `order_invoices`;
+  kapasite işlevleri (satır kilidi), RLS + sütun bazlı yetki. Eski `orders/payments/certificates` tablolarına dokunmaz.
+- `lib/orders/types.ts` durumlar ve alan sözlüğü · `state.ts` durum makinesi (`assertTransition`, `canWithdraw`) ·
+  `schedule.ts` takvim (sezon 1 Eki–31 Mar, cayma 14 gün, hazırlık payı 21 gün, yetişmeyen sipariş sonraki sezona;
+  İstanbul saatiyle) · `identifiers.ts` sipariş no `SG-YYYY-XXXXXX` ve sertifika kodu (yalnız sunucu) ·
+  `tax-ids.ts` TCKN/VKN sağlaması · `schema.ts` sihirbazın ortak zod şeması (alıcı, Bireysel/Kurumsal fatura,
+  ayrı onay kutuları; **tutar alanı yok** — sunucu hesaplar).
+- [MM] bekleyen varsayımlar migration'da işaretli: KDV %20, fatura zamanı `on_performance`.
+
+### Hukuki belgeler (Faz 3b)
+- `lib/legal/`: belge = düz metin bloklarının listesi (`types.ts`). AYNI bloklardan `render-html.ts` (deterministik,
+  kaçışlı; siparişe özel DEĞİŞMEZ kopya + SHA-256) ve `render-pdf.ts` (jsPDF + gömülü Noto Sans; yalnız sunucu) üretir.
+  Şablonlar `templates/`: `pre-info.ts`, `contract.ts`, `withdrawal-form.ts`; iki belgede de geçen cümleler tek yerde
+  (`templates/shared.ts → TEXT`) durur, hukuk sayfaları da oradan okur → metinler birbirinden ayrışamaz.
+- `version.ts`: `LEGAL_DOCUMENTS_VERSION`. "-taslak" ekliyken (hukuk incelemesi bitmeden) canlı sitede sipariş alınmaz;
+  yalnız deneme sağlayıcısıyla, canlı site dışında deneme siparişi oluşturulabilir (kural: `lib/orders/gate.ts`).
+  Metin değişince sürüm artırılır; eski sürümü görmüş müşteri `documents_stale` alır ve yeniden onaylar.
+- `documents.ts`: `buildLegalContext()` + `buildOrderDocuments()` — önizleme ile sipariş kopyası aynı işlevden çıkar.
+  Bireyselde T.C. kimlik no belgeye YAZILMAZ. Kurumsal alıcıda 6502 uygulanmaz ama 14 gün cayma sözleşmesel tanınır, yetki Ankara.
+- Hukuk sayfaları (`/on-bilgilendirme`, `/mesafeli-satis-sozlesmesi`, `/cayma-ve-iade`, `/ifa-kosullari`, `/islem-rehberi`)
+  ve örnek PDF ucu (`/api/public/hukuk/ornek/[belge]`): canlıda yalnız `NEXT_PUBLIC_LEGAL_PAGES_ENABLED=true` iken;
+  geliştirmede ve Vercel önizlemesinde her zaman (`lib/legal/visibility.ts`). Taslakken `noindex`, sitemap'te yok.
+- `lib/company.ts`: satıcı künyesi tek kaynak; `missingCompanyFields()` açılış kontrolü.
+- Testler: `npm test` (Node'un yerleşik koşucusu + `scripts/test/alias-loader.mjs`; derleme gerekmez).
+  `LEGAL_DRAFTS_DIR=<klasör> npm test` örnek HTML + PDF çıktılarını yazar (avukat incelemesi için).
+
+### Sipariş kaydı, ödeme akışı, cayma (Faz 3c)
+**Akış:** sihirbaz → `POST /api/public/siparis/onizleme` (kesin tutar + takvim + belgeler; kayıt yok) →
+`POST /api/public/siparis` (sipariş + kapasite + belgeler; yanıt `redirectUrl`) → ödeme sayfası → dönüş →
+`/odeme/sonuc/<no>?t=` (onaylandı / tamamlanamadı + yeniden dene / süre doldu) → `/siparis/<no>?t=` (Astra, brif 08).
+
+- **Kapı — `lib/orders/gate.ts`:** satış bayrağı + yapılandırılmış ödeme sağlayıcısı + (metinler taslakken) yalnız deneme
+  siparişi ve yalnız canlı site dışında. Üç uç da (önizleme, sipariş, yeniden ödeme) aynı işlevi çağırır.
+- **Ayarlar — `lib/orders/settings.ts`:** fiyat/KDV/asgari adet/hazırlık süresi/ödeme süresi `sales_settings` tablosundan.
+  `quoteVersion()` = hukuki sürüm + fiyat + KDV + hazırlık süresi; önizleme bunu döner, sihirbaz `documentsVersion` olarak
+  geri yollar. Arada biri değiştiyse `documents_stale` → müşteri güncel tutarı görüp YENİDEN onaylar.
+  Sihirbazın anlık gösterimi `lib/pricing.ts` sabitlerinden; fiyat değişirse ikisi birlikte güncellenmeli (ayrışırsa log uyarısı).
+- **Oluşturma — `lib/orders/create.ts`:** `clientToken` ile tek sipariş (çift tıklama/ağ tekrarı) → o sahadaki süresi dolmuş
+  siparişleri kapat (tembel temizlik; ayrıca zamanlanmış iş Faz 6) → saha denetimi → kapasiteyi SATIR KİLİDİYLE ayır →
+  `draft` sipariş → üç belgenin değişmez HTML kopyası + SHA-256 (`order_documents`) → olaylar: `order_created`,
+  `consent_recorded` (her kutu: an + sürüm; IP özeti), `documents_generated` (belgelerin yapısal kaynağı da burada
+  saklanır; PDF her zaman bu kaynaktan üretilir → şablon değişse de müşterinin onayladığı metin).
+- **Ödeme — `lib/payments/` + `lib/orders/payment-flow.ts`:** sağlayıcı arayüzü `init / retrieve / refund`.
+  `PAYMENT_PROVIDER=mock|iyzico` (yalnız sunucu). `mock`: `/odeme/deneme/<belirteç>` sayfası sanal POS'un yerini tutar,
+  imzalı belirteç + imzalı sonuç; `VERCEL_ENV=production` iken ASLA çalışmaz; siparişler `is_test=true`.
+  `iyzico`: bkz. Faz 4. Sağlayıcı yoksa `getPaymentProvider()` null → her şey "closed". Dönüşte sonuç SAĞLAYICIDAN sorgulanır,
+  tahsil edilen tutar siparişle karşılaştırılır, durum koşullu UPDATE ile bir kez değişir (çift geri çağrı güvenli).
+  - Cayma süresi ödeme anından başlar → `withdrawal_deadline` ödeme onayında yazılır.
+  - Tahsil edilmiş ödeme sahipsiz kalmaz: yeniden başlatılan ödemede eski oturumun dönüşü `payment_started`
+    olaylarındaki belirteç özetinden bulunur; `payment_failed` ve `expired` siparişe gelen onay da işlenir (geç ödemede
+    kapasite yeniden ayrılır; ayrılamazsa `payment_meta.capacityHeld=false` + olay → yönetim incelemeli).
+  - Aynı siparişe ikinci bir tahsilat gelirse `payment_succeeded {duplicate:true}` olayı yazılır → **Faz 5 yönetim
+    ekranı bunu "iade edilecek tahsilat" olarak göstermeli.**
+  - Dönüş adresi her sağlayıcı için `callbackUrl = /api/payment/donus` (bkz. Faz 4).
+- **Erişim — `lib/orders/access.ts`:** misafir müşteri siparişine `?t=<HMAC>` ile erişir (numarayı bilmek yetmez); üye
+  kendi siparişine oturumla. Anahtar `ORDER_LINK_SECRET` (**canlıya çıkmadan tanımlanmalı**; yoksa service role
+  anahtarından türetilir — o anahtar döndürülürse e-postalardaki bağlantılar geçersizleşir).
+- **Erişim çerezi:** sipariş sayfası belirteci adres çubuğundan siler; silmeden önce `POST /api/public/siparis/<no>/erisim`
+  ile HttpOnly `sgo_<no>` çerezine çevirir (ödeme dönüş uçları çerezi doğrudan yazar). Böylece yenileme ve dil değişimi
+  404 vermez. Çerez yeni yetki vermez: değeri aynı imza doğrulamasından geçer. Sayfalar ve belge/yeniden-ödeme uçları
+  `?t=` yoksa çerezi okur (`lib/orders/access-cookie.ts`, `orderCookieName`).
+- **Görünüm — `lib/orders/view-data.ts`:** `getOrderView(no, { token, userId })` gerçek kaydı `PublicOrderView`'a çevirir;
+  ödenmemiş siparişin sayfası yoktur (null). Geliştirmede `?t=ornek` örnekleri durur.
+  Belgeler: `GET /api/public/siparis/<no>/belge/<kind>?t=…&bicim=html|pdf` (HTML = saklanan kopya, CSP sandbox; önbellek yok).
+- **E-posta — `lib/orders/after-payment.ts`, `lib/mail.ts`:** ödeme onayında müşteriye teyit (üç PDF ekli — "kalıcı veri
+  saklayıcısı") + şirkete bildirim; `after()` ile yanıtı bekletmez. Sonuç `email_sent` / `email_failed` olayı.
+  `RESEND_API_KEY` yoksa (yerel) gönderilmez, `email_logs`'a da yazılmaz; olay `email_failed {reason:"no_api_key"}`.
+- **Cayma — `lib/orders/withdrawal.ts`, `POST /api/public/cayma`:** sipariş no + e-posta (eşleşmezse `not_found`, hangisinin
+  yanlış olduğu söylenmez) → `paid → withdrawal_requested` + bekleyen `order_refunds` + olay + müşteriye DERHAL teyit.
+  İadenin kendisi (sağlayıcı `refund()` → `refunded`, kapasiteyi geri ver, sertifika iptali) Faz 5 yönetim ekranında.
+  `SALES_ENABLED` kapalıyken form da kapalıdır; satışı GEÇİCİ durdurmak gerekirse bayrağı kapatmak yerine
+  `sales_settings`'e "sipariş alımı durduruldu" alanı eklenmeli (cayma hakkı açık kalmalı).
+- Middleware: `/odeme/*` herkese açık sayfa (misafir müşteri). `/siparis/*` ve `/cayma` satırları Astra'nın PR'ında.
+- Deneme verisi: geliştirmede oluşan siparişler CANLI veritabanına `is_test=true` olarak yazılır ve sahada kapasite
+  tutar. Temizlik: `select public.purge_test_orders();` (kapasiteyi de geri verir) — **kullanıcı onayıyla**.
+
+### iyzico sağlayıcısı (Faz 4)
+- `lib/payments/iyzico.ts` — Ödeme Formu, iyzico'nun BARINDIRDIĞI sayfa (`paymentPageUrl`); kart verisi sunucumuza gelmez.
+  `PAYMENT_PROVIDER=iyzico` + `IYZICO_API_KEY` / `IYZICO_SECRET_KEY` / `IYZICO_BASE_URL`. Adres "sandbox" içeriyorsa
+  `isTest=true` → siparişler deneme siparişi olur; canlı anahtarlarla gerçek sipariş. Eski akışla aynı SDK (`lib/iyzico.ts`).
+  - `init`: tek kalem (`VIRTUAL`), `basketId` = sipariş no, `conversationId` = sipariş kimliği, **taksit kapalı** (`[1]` —
+    iade "tek seferde"; taksit açılacaksa müşteri kararı + komisyon). Bireysel alıcı T.C. no vermediyse `11111111111`.
+  - `retrieve`: `status=success` + `paymentStatus=SUCCESS` + `fraudStatus≠-1` → ödendi; tutar metni kuruşa kayan nokta
+    olmadan çevrilir (`priceToKurus`), para birimi TRY ve `basketId` siparişle karşılaştırılır (`reference`).
+    `fraudStatus=0` (iyzico incelemesinde) tahsil edilmiş sayılır; `payment_meta.fraudStatus` olarak görünür.
+  - `refund`: tamamı — önce ödeme kimliğiyle iade (v2), olmazsa kalem kimliğiyle, o da olmazsa aynı gün iptali.
+    Faz 5 yönetim ekranı çağıracak; henüz hiçbir yerden çağrılmıyor ve deneme ortamında SINANMADI.
+- `POST /api/payment/donus` — iyzico müşterinin tarayıcısını başka kaynaktan POST ile buraya gönderir (gövde: `token`).
+  CSRF'den muaf (`middleware.ts → CSRF_EXEMPT_PREFIXES`); güvenlik sonucun sunucudan sorgulanmasına dayanır. Her zaman
+  303: `/odeme/sonuc/<no>?t=` ya da sipariş bulunamazsa `/odeme/hata` (genel sayfa, üç dil).
+- Deneme ortamında doğrulanan: oturum açılışı (barındırılan sayfada doğru tutar), tamamlanmamış ödemenin dönüşü →
+  `payment_failed`, yeniden deneme yeni oturum açar, tanınmayan/bozuk belirteç → hata sayfası, diğer uçlarda CSRF sürüyor.
+  **Kart bilgisi girilmesi gereken başarılı ödeme adımını kullanıcı deneyecek** (iyzico deneme kartlarıyla).
+- Canlıya geçişte: canlı anahtarlar + `IYZICO_BASE_URL=https://api.iyzipay.com`, iyzico panelinde dönüş alan adı,
+  `ORDER_LINK_SECRET`, hukuki sürümden "-taslak" ekinin kalkması, `NEXT_PUBLIC_SALES_ENABLED=true`.
+
+### Sihirbazın akışa bağlanması (Faz 4b; Astra'nın #31'i bu dalda birleşik)
+- "Satın Al / Talep Oluştur" çağrıları artık **`/sahalar`**'a gider (`REQUEST_ROUTES.hub = openLand = "/sahalar"`); oradan
+  sahanın sihirbazı `/sahalar/<slug>/katil` açılır. Eski `/talep/acik-arazi` (ve `/talep`, `/talep/tohum`) 307 ile
+  `/sahalar`'a; eski `?saha=<slug>` bağlantıları doğrudan o sahanın sihirbazına yönlenir (middleware; slug biçimi doğrulanır).
+  Eski açık arazi formu sayfası ve `OpenLandRequestForm` artık ULAŞILMAZ — Faz 8 temizliğinde silinecek.
+- Sihirbazın kipi (sipariş / talep) bayraktan değil **sipariş kapısından** okunur (`lib/orders/gate.ts`): bayrak açık ama
+  sağlayıcı yok ya da metinler taslak + canlı site ise sihirbaz çıkmaz sokağa girmez, talep kipinde açılır.
+- Özet adımında tür girilmemiş sahada boş satır gösterilmez; TR dışı dillerde "belgeler Türkçe düzenlenir" notu.
+- Alt bilgideki "Talep" hızlı bağlantısı kalktı (hedefi "Proje Uygulama Sahaları" ile aynı adresti).
+- **Faz 9 notu:** `CTA_MODE` hâlâ eski bayrağa bakıyor; satış açıldığında çağrı metinleri ("Talep Oluştur" → katılım dili)
+  gözden geçirilmeli.
+
+### Yönetim — siparişler (Faz 5a)
+- Modül `birakma` → `/admin/birakma-siparisleri` (kenar çubuğunda "Siparişler"; eski tohum satışı modülü "Eski Siparişler").
+  Görüntüleme SUPER_ADMIN + FINANCE + OPERATIONS; **para ve fatura işlemleri SUPER_ADMIN + FINANCE**. OPERATIONS'a kimlik/vergi
+  no maskeli gider. Her işlem `admin_audit_logs` + siparişin `order_events` izine (`admin:<uuid>`) yazılır.
+- API: `GET /api/admin/release-orders` (liste, durum sayıları, uyarılar: iade bekleyen · fatura kesilecek · çift tahsilat ·
+  kapasitesiz ödeme), `GET|POST /api/admin/release-orders/[id]` (ayrıntı + işlemler), `…/[id]/belge/[kind]` (müşteriye giden
+  belgelerin aynısı). Liste açılırken tembel işler çalışır: süresi dolan ödenmemiş siparişler kapanır, cayma süresi dolan
+  `paid` siparişler `confirmed` olur (`confirmDueOrders`; zamanlanmış iş Faz 6).
+- İşlemler `lib/orders/admin-actions.ts`: `cancelBySeller` (→ bekleyen iade + müşteriye bildirim) · `executeRefund` (iade
+  ÖDEMENİN ALINDIĞI sağlayıcıdan; iade satırı karşılaştır-ve-yaz ile sahiplenilir → eşzamanlı ikinci istek `in_progress`;
+  başarıda `refunded`, kapasite serbest (`capacityHeld=false` ise dokunulmaz), sertifika iptal, müşteriye bildirim;
+  kesilmiş faturası varsa **iade faturası** kuyruğa girer, kesilmemişse kuyruktaki fatura iptal olur) · `refundDuplicate` ·
+  `queueInvoice` ("şimdi fatura kes") · `markInvoiceIssued` (fatura no / ETTN / tarih elle işlenir; e-fatura entegrasyonu yok).
+- Arayüz: sayfa + `components/admin/ReleaseOrderDetail.tsx`. Para işlemleri tek adımlı onay ister (tutar düğmenin üstünde).
+- Şirkete giden sipariş/cayma bildirimlerinde "Yönetim panelinde aç" bağlantısı (`?no=SG-…`).
+- **Sınama:** işlemler canlı veritabanındaki DENEME siparişlerinde betikle sınandı (iade, satıcı iptali, eşzamanlı iade,
+  çift tahsilat, fatura). Panel oturum gerektirdiği için sayfanın kendisi tarayıcıda DENENMEDİ (ayrıntı bileşeni geçici bir
+  önizlemeyle görüldü) — kullanıcı deneyecek.
+
+### Yönetim — bırakma partileri (Faz 5b)
+- Modül `partiler` → `/admin/birakma-partileri`. Yönetim SUPER_ADMIN + OPERATIONS; FINANCE yalnız görüntüler.
+- `lib/orders/batches.ts`: `createBatch` · `updateBatch` · `deleteBatch` (yalnız hiçbir siparişin bağlı olmadığı parti) ·
+  `assignOrders` (yalnız `confirmed`, aynı saha + sezon, kapasitesi ayrılmış; biri uygunsuzsa hiçbiri alınmaz → `scheduled`) ·
+  `unassignOrder` (→ `confirmed`) · `completeRelease` (**geri alınamaz**: parti `released_on` yalnız NULL iken yazılarak
+  sahiplenilir → eşzamanlı ikinci istek işleyemez; siparişler `released`, `commit_reserved_capacity` ile kapasite kalıcıya
+  geçer, fatura zamanı "bırakmada" ise fatura kuyruğu dolar). Bırakma tarihi ileri olamaz ve her siparişin cayma süresi
+  o tarihten ÖNCE dolmuş olmalıdır.
+- API: `GET|POST /api/admin/release-batches`, `GET|PATCH|POST|DELETE /api/admin/release-batches/[id]`.
+  Liste ayrıca "partiye alınmayı bekleyen" siparişleri saha × sezon olarak verir.
+- Sipariş ayrıntısına `reserve_capacity` işlemi eklendi: geç ödemede kapasitesi ayrılamamış sipariş (saha kapasitesi
+  artırıldıktan sonra) buradan ayrılır; ayrılmadan partiye alınamaz.
+- **Faz 6'ya devreden:** bırakmada Katılım Sertifikası üretimi + müşteriye bildirim, `released → monitoring → completed`
+  geçişleri, video bağlantısı ve bildirimi, zamanlanmış işler.
+- Sınama: betikle, taze bir deneme siparişi üzerinde uçtan uca (kesinleşme → parti → atama/çıkarma → tarih denetimleri →
+  eşzamanlı iki bırakma isteğinden yalnız biri → `released` + fatura kuyruğu + kapasite `reserved→filled`). Sayfa tarayıcıda
+  DENENMEDİ (oturum gerekiyor).
+
+### Sertifika, bildirimler ve zamanlanmış işler (Faz 6)
+- **Katılım Sertifikası** bırakma tamamlanınca düzenlenir: `completeRelease` her siparişe benzersiz kod verir
+  (`lib/orders/certificates.ts → issueCertificate`, yinelenebilir). Herkese açık sayfa (`/sertifika/[kod]`, Astra #27) artık
+  gerçek kayıttan okur (`lib/certificates/data.ts`): yalnız seçilen ad, saha, adet, tarihler, video — e-posta/telefon/fatura/
+  sipariş no ÇIKMAZ; iade edilmiş siparişte "iptal"; canlıda deneme siparişlerinin sertifikası gösterilmez.
+- **Bildirim kuyrukları** (e-posta büyük partilerde isteği kilitlemesin diye): `sendPendingCertificateEmails` (gönderildi
+  bilgisi olay izinden: `email_sent` + `release_certificate`; son 14 günde düzenlenenler taranır) ve
+  `sendPendingVideoEmails` (`video_notified_at` boş olanlar). İkisi de işlemin ardından `after()` ile VE zamanlanmış işten
+  çağrılır; gönderilmişi yeniden göndermez. Müşteri e-postalarındaki bağlantı kökü canlıda hep asıl alan adı (`publicOrigin`).
+- **Çalışma videosu:** yönetim → parti ayrıntısı → "Çalışma videosu" (yalnız bırakılmış parti; yalnız YouTube bağlantısı —
+  `youtubeIdFrom`). İlk yayımda `video_published_at` yazılır, müşterilere e-posta gider, sipariş `completed` olur
+  (gerekirse `released → monitoring → completed` ardışık). Sonradan yalnız bağlantı düzeltilir; yeniden e-posta gitmez.
+  İzleme raporu bağlantısı da aynı ekrandan (saha sayfasında herkese açık görünür).
+- **Durum geçişleri:** `released → monitoring` bırakma sezonu bitince (1 Nisan; `startMonitoringDue`, ölçüt `seasonEndOf`).
+- **Zamanlanmış iş:** `GET /api/cron/siparis-isleri` (günde bir, `vercel.json` → 03:00 UTC): süre dolumu · kesinleşme ·
+  izleme dönemine geçiş · gitmemiş sertifika ve video bildirimleri. Yetki `Authorization: Bearer <CRON_SECRET>`;
+  **`CRON_SECRET` Vercel'de tanımlı değilse uç kapalıdır (503)** — canlıya çıkmadan tanımlanmalı. İşler yinelenebilir.
+- **Saha çalışma günlüğü** (`lib/sites/releases*.ts` + Astra #46: `components/vitrin/sahalar/SiteReleases.tsx`,
+  `components/vitrin/shared/YouTubeLite.tsx`): saha sayfasında "Bu sahadaki çalışmalar" — tamamlanan bırakmalar (tarih, başlık,
+  video, izleme raporu; ADET YOK). Video tıklayınca yüklenir: oynat'a basılmadan DOM'da iframe / ytimg / preconnect yoktur,
+  basınca `youtube-nocookie.com`. Boş listede bölüm hiç çıkmaz. `?ornek=calisma` yalnız geliştirmede okunur (canlıda
+  `searchParams`'a dokunulmaz). `YouTubeLite` geneldir; sipariş / sertifika sayfalarında da kullanılabilir.
+- Sınama: betikle, taze deneme siparişinde uçtan uca (gerçek e-posta gönderilmeden; "başarılı gönderim" yolu sahte
+  göndericiyle): sertifika kodu + yinelenebilirlik · herkese açık sertifikada kişisel veri yok · bildirim bir kez ·
+  1 Nisan geçişi · geçersiz/erken video reddi · video düzeltmesinde yeniden bildirim yok · bildirim gitmeden `completed`
+  olmuyor · çalışma günlüğü ve sipariş görünümü doluyor. Zamanlanmış iş ucu: kimliksiz/yanlış anahtar 401, doğru anahtar 200.
+
+### Hesabım — Siparişlerim (Faz 7)
+- `/hesabim/siparisler` (kenar menüde "Siparişlerim"; yalnız `SALES_ENABLED` iken listelenir). Üyenin siparişleri tarayıcıdan
+  **RLS ile** okunur (`release_orders_select_own` + sütun yetkisi: fatura/onay/ödeme ayrıntısı dışarıda). Yalnız ödenmiş
+  siparişler; kartta durum, saha, adet, tutar, son tarih / bırakma tarihi, sertifika, video, cayma bağlantısı (süre içindeyse).
+  Ayrıntı ve belgeler `/siparis/<no>` sayfasında (üye oturumuyla; belirteç gerekmez).
+- `POST /api/auth/claim-orders`: aynı e-postayla MİSAFİR olarak verilmiş siparişleri hesaba bağlar — yalnız hesabın e-postası
+  doğrulanmışsa, yalnız sahipsiz siparişler, yinelenebilir. Sayfa açılırken çağrılır.
+- Eski `/hesabim/siparislerim` (tohum satışı) sayfasına dokunulmadı; Faz 8 temizliğinde kalkacak.
+- Sınama: sorgu biçimi canlı şemaya karşı doğrulandı; sayfa üye oturumu gerektirdiği için tarayıcıda DENENMEDİ.
+
+### KVKK Aydınlatma Metni (Faz 9a)
+- Yeni metin `lib/legal/templates/kvkk-notice.ts` (ziyaret · talep · üyelik · sipariş · sertifika · ticari ileti; alıcılar ve
+  yurt dışı aktarım; saklama süreleri; haklar ve başvuru). **Tek kaynak:** `/kvkk` sayfası da, her siparişle saklanan kopya da
+  (belge türü `kvkk_notice` — dördüncü belge; e-postaya PDF olarak eklenir, sihirbazda ve sipariş sayfasında listelenir) bu
+  bloklardan çıkar. Onay kaydındaki sürümle birlikte "müşteriye hangi metin gösterildi" ispatlanabilir.
+- **Canlıda eski metin durur:** yeni metin yalnız `legalPagesVisible()` iken (geliştirme, Vercel önizlemesi,
+  `NEXT_PUBLIC_LEGAL_PAGES_ENABLED=true`). Onaydan sonra `app/[locale]/(vitrin)/kvkk/page.tsx` içindeki eski blok silinir.
+- Metin KODLA UYUMLU tutulmalı (dosyanın başındaki liste): kart verisi bize gelmez · **T.C. kimlik / vergi no iyzico'ya
+  gönderilmez** (bu PR'da kapatıldı; `identityNumber` her zaman genel değer) · IP ham saklanmaz (özet) · sertifika sayfası
+  dizine kapalı. Sağlayıcı değişirse `PROCESSORS` listesi + sürüm güncellenir.
+- Belge modeline `subheading` blok türü eklendi (HTML `<h3>`, PDF kalın satır, sayfa bileşeni). Sürüm `2026-09.2-taslak`.
+- Avukat için: `web-brifler/hukuk-taslaklari/` yeniden üretildi (12 PDF + 12 HTML) + `KVKK-AVUKAT-NOTLARI.md`
+  (en önemli açık: m.9 yurt dışı aktarım güvencesi; saklama süresi önerileri; sertifikanın hukuki sebebi).
+- Devreden: `/gizlilik-politikasi` ve `/cerez-politikasi` bu metinle uyumlu hâle getirilecek (onaydan sonra).
+
+### Künye, sözleşme düzeltmeleri, SSS (Faz 9b)
+- `lib/company.ts`: telefon 0850 308 2600 · sözleşme adresi **Macun Mah. Batı Bulvarı ATB İş Merkezi I Blok No: 244,
+  Yenimahalle/Ankara** (kullanıcı teyidi 22 Eyl; sitenin alt bilgisi / İletişim sayfasındaki Kahramankazan adresi farklı) · MERSİS
+  0772166121800001 · ticaret sicili Ankara / 510174 (müdürlük adı teyit edilince `tradeRegistryLine` güncellenir) · UETS
+  25838-72218-78313 (resmî tebligat; müşteri belgelerinde GÖRÜNMEZ). Kaynak: Astra'nın hukuk paketi
+  (`outputs/yayin-hukuk-paketi/`, kullanıcı bildirimi). Eksik: KEP, meslek odası.
+- Sözleşme (sürüm `2026-09.3-taslak`): m.6.4'e "tercih bildirilmezse iade; sessizlik kabul değil" · yeni m.7.5 "cayma
+  süresinin dolması ayıplı/geç/hiç ifa haklarını kaldırmaz" (cayma sayfasında da). Astra'nın diğer önerileri (özel
+  sertifika + ayrı yayın izni, tür değişikliğinde açık kabul, sertifika/izleme için ayrı son tarihler) ürün kararı
+  gerektirir — avukat notlarında.
+- SSS'ye beş satış sorusu (ödeme, cayma, sipariş durumu, ifa edilememe, fatura) — üç dilde, hukuk metinleriyle aynı koşullar.
+- Astra'nın hukuk paketi: 16 metin + Word. Avukat TEK seti (koddan üretilen `hukuk-taslaklari/`) incelemeli; Astra'nın
+  `16-inceleme-ve-yayin-notlari.md` dosyası ikinci görüş olarak yanına verilir (m.9 aktarım fişi, ETBİS karekod notu,
+  VUK 5 yıl / TTK 10 yıl ayrımı, fatura zamanı uyarısı).
+
+### Çağrı metni ve çerez politikası (Faz 9c)
+- `CTA_MODE` (`lib/site-config.ts`) artık `SALES_ENABLED`'a bakar: satış açık → "Satın Al", değilse talep → "Talep Oluştur",
+  ikisi de kapalı → "yakında" metinleri. Eski tohum satışı bayrağı (`TRANSACTIONS_ENABLED`) çağrı metnini etkilemez. Hesabım
+  yan menüsündeki düğme de aynı kurala uyar.
+- `/cerez-politikasi` (#49'da gerçek döküme göre yeniden yazıldı) yığındaki özellikleri anlatır: sipariş erişim çerezi
+  `sgo_<no>` (zorunlu, HttpOnly, 30 gün), çalışma videoları (`youtube-nocookie.com`, yalnız oynatınca), iyzico ödeme sayfası.
+  Yeni bir çerez, depolama anahtarı ya da üçüncü taraf içerik eklenirse bu sayfa da güncellenir.
+- Google Analytics yalnız izinle yüklenir (#48, `components/analytics/GoogleAnalytics.tsx` + `lib/analytics.ts`); izin
+  yalnız analitik içindir, reklam sinyalleri her zaman kapalı. Harita ve video gibi üçüncü taraf gömmeler tıklayınca yüklenir
+  (`ClickToLoadFrame`, `YouTubeLite`) — yeni gömme eklerken aynı deseni kullanın.
+- Hukuk sayfalarındaki şirket künyesi (KVKK / Gizlilik / Kullanım Koşulları) ve eski `/davet` sayfasının kapatılması ayrı
+  PR'da (#51, `main` tabanlı).
+
+### Satış ayarları (Faz 5c)
+- Yönetim → **Satış Ayarları** (`/admin/satis-ayarlari`, yalnız SUPER_ADMIN; form `components/admin/SalesSettingsForm.tsx`):
+  birim bedel, en az / en çok adet, hazır seçenekler, KDV, fatura zamanı, hazırlık payı, ödeme süresi. Kaydetmeden önce
+  değişiklikler ve sonuçları gösterilir; her kayıt `admin_audit_logs`'a alan alan yazılır (ekranda "Son değişiklikler").
+- Uç: `GET/PUT /api/admin/sales-settings`. PUT, ekranın açıldığı andaki `updated_at`'i ister; arada başkası kaydettiyse
+  409 döner, üzerine yazılmaz (`lib/orders/settings.ts → updateSalesSettings`).
+- Kurallar tek yerde, saf: `lib/orders/settings-schema.ts` (veritabanı kısıtlarıyla aynı sınırlar + en çok ≥ en az,
+  seçenekler sınırlar içinde ve artan). Değiştirilirse `scripts/test/sales-settings.test.mjs` güncellenir.
+- **Ayar nereye yansır:**
+  - Sihirbaz: bedel, adet sınırları, hazır seçenekler, takvim (katıl sayfası önbelleksiz okur).
+  - Önizleme / sipariş / talep uçları: adet sınırları ve bedel her istekte güncel satırdan.
+  - Ana sayfa (SSS'deki ve hizmet kartındaki en az adet) ile örnek ön bilgilendirme / sözleşme (sayfa + PDF):
+    `lib/orders/public-pricing.ts` üzerinden önbellekli (5 dk); kaydedince `revalidateTag(..., { expire: 0 })` ile hemen
+    tazelenir. Örnek PDF'in CDN önbelleği 5 dakika.
+- Şemalar (`lib/orders/schema.ts`, `lib/requests/schema.ts`) artık yalnız mutlak sınırları (1 – 1.000.000) denetler;
+  geçerli sınır uçlarda `quantityRangeError` ile denetlenir. `lib/pricing.ts` sabitleri yalnız varsayılandır.
+- Bedel / KDV / hazırlık payı değişirse teklif sürümü değişir: sihirbazın son adımındaki müşteri tutarı yeniden onaylar;
+  oluşturulmuş siparişler kendi tutarı ve belgeleriyle sürer.
+- Fatura zamanı: parti "bırakıldı" işaretlenince açık satış faturası olmayan her sipariş, ayardan bağımsız olarak fatura
+  kuyruğuna girer (ayar sonradan "ödemede"ye çevrilirse önceden ödenmiş siparişler faturasız kalmasın).
+- "Sipariş alımı durduruldu" anahtarı: Faz 5d (aşağıda).
+- Ortak `components/ui/Input.tsx`: etiket kutuya bağlı, hata / açıklama metni `aria-describedby` ile okunur (bütün
+  yönetim formları).
+
+### Sipariş alımını durdurma (Faz 5d)
+- Migration **017** (`sales_settings.orders_paused boolean NOT NULL DEFAULT false`) — 22 Eylül 2026'da canlıya uygulandı
+  (kullanıcı onayıyla). Salt ek sütun; `updated_at` değişmedi.
+- Yönetim → Satış Ayarları'nın en üstünde "Çevrim içi sipariş alımını durdur" kutusu. Kaydetme, onay ve denetim kaydı
+  diğer alanlarla aynı; durdurma teklif sürümünü değiştirmez.
+- Kural `lib/orders/gate.ts`'te:
+  - `ordersClosed(provider)` veritabanına gitmez: bayrak, sağlayıcı, hukuki metin kilidi. Uçlar bunu hız sınırından önce çağırır.
+  - `canAcceptOrders(provider, settings)` = kapı açık **ve** durdurulmamış. Sipariş, önizleme ve ödeme başlatma uçları
+    ayarları okuduktan sonra bunu çağırır; katılım sayfası da kipi bununla belirler.
+  - **Yeni bir sipariş/ödeme ucu eklenirse ikisi de çağrılmalı.**
+- Durdurulunca:
+  - Önizleme, sipariş ve ödeme başlatma 503 `closed` döner.
+  - Sihirbaz talep kipinde açılır ve `orderWizard.pausedNotice` açıklamasını gösterir (tr/en/ru). Açık sihirbazdaki müşteri
+    "closed" alır, sayfa yenilenince talep kipine geçer.
+  - Ödeme bekleyen siparişler ödenemez; süresi dolunca düşer.
+  - iyzico sayfasına durdurmadan önce geçmiş bir müşterinin ödemesi yine işlenir (para alınmışsa sipariş ödenmiş olur).
+- Durdurma, alt bilgi ve menüdeki "Satın Al" metnini değiştirmez (metin derleme anındaki satış bayrağına bağlı);
+  düğme sahalara gider, sihirbaz orada açıklamayı gösterir.
+
+### Satışa hazırlık kutusu
+- Satış Ayarları'nın en üstünde (`lib/orders/readiness.ts → salesReadiness`, GET yanıtında `readiness`).
+- "Şu an sipariş alınıyor mu?" sipariş uçlarıyla aynı kapıdan (`canAcceptOrders`) okunur.
+- Maddeler: satış bayrağı, ödeme sağlayıcısı (canlı / deneme), hukuki metin kilidi, durdurma, hukuk sayfalarının
+  görünürlüğü, künye eksikleri, e-posta anahtarı, `CRON_SECRET`, `ORDER_LINK_SECRET`, `NEXT_PUBLIC_APP_URL`.
+- Seviyeler: `blocker` siparişi şu an engelliyor, `warning` açılıştan önce tamamlanmalı.
+- **Gizli değerler dönmez**, yalnız tanımlı olup olmadıkları (`scripts/test/readiness.test.mjs` bunu sınıyor).
+- Yeni bir açılış ön koşulu eklenirse buraya bir madde eklenir.
+
+### Şirket adresi
+- Tek kaynak `lib/company.ts → COMPANY.address` (Macun Mah. Batı Bulvarı ATB İş Merkezi I Blok No: 244, Yenimahalle/Ankara).
+- `lib/seo.ts → ORG_ADDRESS` buradan türetilir: alt bilgi, İletişim sayfası, LocalBusiness / Organization yapısal verisi.
+- `ORG_GEO` harita noktasıdır: OpenStreetMap'te ATB İş Merkezi alanının merkezi.
+- Adres değişirse yalnız `lib/company.ts` düzeltilir. Sözleşme metni de değişeceği için belge sürümü artırılır.
+
+### Eski bireysel satışın temizliği (Faz 8) — B2B korundu
+Kullanıcı kararı (22 Eylül 2026): eski B2C tohum satışı kalkar, **B2B (kurumsal teklif → ödeme → çalışan sertifikaları)
+kalır**. Önce güvenlik (#55, `main` tabanlı), sonra kod temizliği (bu PR).
+
+**Kaldırılanlar**
+- Sayfalar: `/bireysel/*`, `/lands`, `/kargo-takip`, `/davet/[code]`, `/bakim`, `/checkout/success`,
+  Hesabım'ın `siparislerim`, `rezervasyonlar`, `davet-et`, `davet-et-kazan`, `telemetri` alt sayfaları.
+- Yönetim: Eski Siparişler, Operasyon Merkezi, Sistem Ayarları (sayfalar, uçlar, menü).
+- Uçlar: `payment/guest-checkout`, `payment/checkout`, `payment/status`, `auth/claim-order` (tekil),
+  `orders/reserve|release`, `public/orders/track`, `public/referral`, `public/settings`, `public/catalog`,
+  `admin/orders(+shipping)`, `admin/operations`, `admin/settings`. Middleware bu yollara hâlâ **410** döner
+  (`RETIRED_API_PATTERNS`), dosya yanlışlıkla geri gelse bile açılmaz.
+- Kod: `components/Cart`, `LandCard`, `ShippingTimeline`, `lib/cart-context`, `lib/order/*`, `lib/user/referral`,
+  `OpenLandRequestForm` + `/talep/acik-arazi` sayfası ve `requestForms.openLand` çevirileri (41 anahtar × 3).
+  `lib/mail.ts`'ten B2C sipariş onayı, ekildi, kargo ve teslim şablonları. `lib/seed-data.ts` yalnız tür tipi ve yedek
+  liste. `lib/types.ts`'ten eski sipariş/ekim/ayar tipleri. `createServerSupabase` takma adı (adı yanıltıcıydı:
+  service role istemcisiydi).
+
+**Yönlendirmeler:** Kaldırılan sayfaların adresleri **308** ile yeni karşılıklarına gider (`RETIRED_PAGE_REDIRECTS`,
+dil öneki korunur):
+- `/bireysel/*` ve `/lands` → `/sahalar`
+- `/checkout`, `/kargo-takip`, `/davet`, `/bakim` → `/`
+- Hesabım'ın eski alt sayfaları → `/hesabim`
+
+`TRANSACTIONS_ENABLED` artık **yalnız B2B'yi** açar: `/kurumsal`, `/kurumsal/giris|panel|teklif-al`, `/fatura`, `/orman`,
+`/hesabim/sertifikalar` ve B2B API uçları.
+
+**B2B'ye dokunulan iki yer**
+- `payment/callback` yalnız B2B'ye hizmet eder. Kaldırılanlar: misafir dalı, B2C onay e-postası, eski ödeme sonrası
+  zinciri (profil sayaçları, sipariş sertifikası, saha "dolu"), davet ödülü. Bağlanamayan ödeme `/odeme/hata`'ya gider.
+- `payment/b2b-checkout`: iyzico belirteci artık **await** ile kaydediliyor. Önceden `void` ile başlatılan Supabase
+  sorgusu hiç gönderilmiyordu; ödenen teklif "PAID" olamıyordu.
+
+**Veritabanı (22 Eylül 2026, kullanıcı onayıyla):**
+- Eski tablolardaki Mart–Nisan deneme kayıtları silindi: 41 sipariş, 29 ödeme, 21 ayırım. Bütün sahaların `reserved_seeds`
+  değeri 0'a çekildi (yeni modelin o an tuttuğu kapasite yoktu).
+- Silinmeden önceki tam kopya: `outputs/yedekler/eski-deneme-kayitlari-2026-09-22.json`.
+- 5 eski kurumsal teklif kaydı duruyor. Eski tablolar da duruyor; B2B `orders` ve `payments` kullanıyor.
+
+**Migration 018** (`supabase/migrations/018_legacy_surface.sql`) **canlıda** (22 Eylül, onayla). İçeriği:
+- Eski üç rezervasyon fonksiyonunda anon/üye çalıştırma yetkisi kaldırılır.
+- `certificates` tablosundaki "herkes okur" politikası kaldırılır.
+- Kurumsal teklif yalnız "bekliyor" durumunda eklenebilir.
+
+**B2B'yi açmadan önce (TRANSACTIONS_ENABLED=true öncesi)**
+1. Canlı `corporate_quotes` tablosunda kodun beklediği sütunlar yok (`approved_price`, `paid_at`, `payment_id`,
+   `order_id`, …); yönetimin onay/fiyat akışı ve dönüş ucunun "PAID" güncellemesi çalışmaz. Migration gerekir.
+2. `payment/b2b-checkout` iyzico'ya örnek (sandbox) kimlik, IP ve adres gönderiyor; şirket bilgileriyle değiştirilmeli.
+3. B2B ödeme teyit e-postası yok (eski B2C şablonu kaldırıldı).
+4. Çalışan sertifikası görüntüleme sayfası yok (`/sertifika/<uuid>` yeni modelde 404). Herkese açık gösterim sunucu
+   tarafında, tahmin edilemez kodla tasarlanmalı.
+5. `/api/kurumsal/*` ve `/api/orders/invoice` oturumu `getSession()` ile okuyor; `getUser()` olmalı.
+6. `/fatura` yer tutucu satıcı bilgisi gösteriyor (vergi no "123 456 7890"); `lib/company.ts`'e bağlanmalı ya da
+   kaldırılmalı. `/api/public/orman` şirket kullanıcı kimliğini döndürüyor.
+7. Yönetim → Finans, B2B gelirini `total_amount`'tan okuyor, B2B `total_price` yazıyor (0 görünür). (Genel Bakış artık
+   yeni modeli sayıyor — bkz. aşağıdaki "Genel Bakış" bölümü.)
+8. Kurumsal teklif ekleme anon'a açık (kayıttan hemen sonra oturum yok diye). Sunucu ucuna taşınması daha güvenli.
+
+**Kalan eski izler (zararsız, sonra):** Yönetim → Katalog'daki fiyat/stok alanları, `lib/utils/format.ts`
+(`maskEmail`, `isValidUUID` kullanılmıyor), kullanılmayan birkaç simge, `IYZICO_SETUP.md` (eski akışı anlatıyor).
+
+### Yönetim → Genel Bakış (Faz 8b)
+- Göstergeler yeni modelden hesaplanır (`/api/admin/dashboard`). Deneme siparişleri hariçtir. Eski `orders` sayılmaz.
+- Kartlar:
+  - Net tahsilat: ödendi, kesinleşti, partide, bırakıldı, izlemede ve tamamlandı durumları. İade bekleyenler hariç.
+  - Bırakılan tohum topu.
+  - Bekleyen işler: iade, kesilecek fatura, partiye alınacak sipariş.
+  - Bekleyen talep ve B2B teklifleri.
+  - Yayındaki saha sayısı ve boş kapasite.
+- Aylık tahsilat ve tohum topu grafikleri ödeme tarihine göre çizilir.
+- Kapasite uyarıları yalnız yayındaki sahalar için gösterilir (gizli demo sahalar yanlış alarm veriyordu).
+- "Karbon nötrleme" göstergesi kaldırıldı: sözlükte yasaklı ve dayanaksız bir iddiaydı. "Dikilen tohum" ve "Tohum satışı"
+  ifadeleri de kaldırıldı.
+
+### Hukuk incelemesi (Astra, #56) — yığına bağlandı
+- Astra'nın `hukuk-son-inceleme` dalı (taban `faz5c`) bu dalda birleştirildi. #56 ayrıca birleştirilmez.
+- **Metinler:** sürüm `2026-09.4-taslak`. Sözleşme, ön bilgilendirme, cayma, KVKK ve site politikaları
+  yeniden yazıldı. Gerekçe ve kaynaklar: `docs/hukuk-son-inceleme/`.
+- **Yasal sayfalar canlıda da yeni metni gösterir.** KVKK, Gizlilik ve Kullanım Koşulları artık tek kaynaktan
+  üretiliyor (`lib/legal/templates/site-policies.ts`, `kvkk-notice.ts`). Canlıdaki eski genel metin kaldırıldı;
+  sayfalarda "Taslak — hukuk incelemesinde" etiketi var.
+- **Sertifikada ad varsayılan olarak gizli.** Yalnız alıcının kendi adı için ayrı, isteğe bağlı yayın izni
+  verilir (`consents.certificatePublication` + `subjectName`, geri alınabilir). Üçüncü kişinin adı gizli kalır.
+  - Kod: `lib/certificates/publication.ts`.
+  - Uçlar: `/api/public/siparis/[no]/yayin-izni` (geri alma), `/api/public/siparis/[no]/sertifika` (özel indirme).
+  - Veritabanı değişmedi: izin mevcut `consents` JSON alanında.
+- **Analitik:** Google Analytics ve Vercel ölçümleri ayrı analitik iznine ve varsayılan kapalı
+  `NEXT_PUBLIC_ANALYTICS_TRANSFER_READY` anahtarına bağlı. Özel işlem sayfaları ölçüm dışı.
+- **İletişim:** harita çerçevesi kaldırıldı; adres kartı ve dış "yol tarifi" bağlantısı var. Alt bilgideki
+  bülten alanı kaldırıldı.
+- **Çakışma çözümü:** iletişim sayfası, alt bilgi ve yasal sayfalarda Astra'nın sürümü alındı. Künye tek kaynaktan
+  (`COMPANY`) okunuyor. Mesajlar anahtar düzeyinde üç yönlü birleştirildi.
+- **Açık işler (Astra'nın raporu §"Yayın öncesi"):**
+  - Sertifika ve izleme teslim süreleri.
+  - KEP ve meslek odası.
+  - KVKK m.9 aktarım dosyası.
+  - Özel sertifika indirme ve yayın iznini geri alma uçlarının gerçek oturumla uçtan uca kabulü.
+  - Analitik anahtarının ağ kaydıyla kabulü.
+
+### Sıradaki (plan §Fazlar)
+- `/kendi-arazim` sayfası (Astra, brif 11) teslim edilince: `/talep/arazime-ekim` → `/kendi-arazim` yönlendirmesi,
+  `REQUEST_ROUTES.land`, sahalar sayfasındaki ve Hesabım'daki bağlantılar, site haritası; eski sayfa kaldırılır.
+- (Migration 018 ve eski deneme kayıtlarının temizliği 22 Eylül'de yapıldı; birleşik sürümün uçtan uca denemesi geçti.)

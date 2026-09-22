@@ -1,6 +1,10 @@
 import type { MetadataRoute } from "next";
 import { localeUrl } from "@/lib/seo";
+import { getProjectSites } from "@/lib/sites/data";
+import { SITES_HREF, siteDetailHref } from "@/lib/sites/links";
 import { isSuspendedRoute } from "@/lib/site-config";
+import { LEGAL_PAGES_ENABLED, SALES_LEGAL_PAGES } from "@/lib/legal/visibility";
+import { isDraftLegalVersion } from "@/lib/legal/version";
 
 /**
  * sitemap.xml — Next.js otomatik /sitemap.xml'i bu fonksiyondan üretir.
@@ -13,7 +17,8 @@ import { isSuspendedRoute } from "@/lib/site-config";
 
 interface SitemapEntry {
   path: string;
-  changeFrequency: "always" | "hourly" | "daily" | "weekly" | "monthly" | "yearly" | "never";
+  changeFrequency:
+    "always" | "hourly" | "daily" | "weekly" | "monthly" | "yearly" | "never";
   priority: number;
 }
 
@@ -28,11 +33,9 @@ const VITRIN_PAGES: SitemapEntry[] = [
   { path: "/hakkimizda", changeFrequency: "monthly", priority: 0.7 },
   { path: "/iletisim", changeFrequency: "yearly", priority: 0.6 },
   { path: "/bilgi-al", changeFrequency: "yearly", priority: 0.6 },
-  // Talep toplama akışı (ödeme öncesi dönem)
-  { path: "/talep", changeFrequency: "weekly", priority: 0.9 },
-  { path: "/talep/tohum", changeFrequency: "weekly", priority: 0.85 },
+  // Talep toplama akışı. /talep, /talep/tohum ve /talep/acik-arazi kaldırıldı
+  // (sahalara yönleniyor) — yönlendirilen adres sitemap'e konmaz.
   { path: "/talep/arazime-ekim", changeFrequency: "monthly", priority: 0.8 },
-  { path: "/talep/acik-arazi", changeFrequency: "weekly", priority: 0.8 },
   { path: "/gizlilik-politikasi", changeFrequency: "yearly", priority: 0.3 },
   { path: "/kullanim-kosullari", changeFrequency: "yearly", priority: 0.3 },
   { path: "/kvkk", changeFrequency: "yearly", priority: 0.3 },
@@ -40,26 +43,40 @@ const VITRIN_PAGES: SitemapEntry[] = [
 ];
 
 const APP_ENTRY_PAGES: SitemapEntry[] = [
-  // Uygulama akışlarının "girişi" kabul edilen anonim sayfalar
-  { path: "/lands", changeFrequency: "weekly", priority: 0.7 },
-  { path: "/bireysel/satin-al", changeFrequency: "weekly", priority: 0.85 },
-  { path: "/bireysel/satin-al/arazi", changeFrequency: "weekly", priority: 0.7 },
+  // Uygulama akışlarının "girişi" kabul edilen anonim sayfalar (B2B; bayrak kapalıyken elenir).
+  // Eski bireysel tohum satışının sayfaları (/lands, /bireysel/*, /kargo-takip) Faz 8'de kaldırıldı.
   { path: "/kurumsal", changeFrequency: "monthly", priority: 0.7 },
   { path: "/kurumsal/teklif-al", changeFrequency: "monthly", priority: 0.7 },
-  { path: "/kargo-takip", changeFrequency: "yearly", priority: 0.4 },
   // /auth/login ve /auth/register: arama sonucunda görünmesinde fayda yok,
   // dahil etmiyoruz (robots.txt disallow'da da var).
 ];
 
 const LOCALES = ["tr", "en", "ru"] as const;
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const sites = await getProjectSites("tr").catch(() => []);
+  const sitePages: SitemapEntry[] = [
+    { path: SITES_HREF, changeFrequency: "weekly", priority: 0.9 },
+    ...sites.map((site) => ({
+      path: siteDetailHref(site),
+      changeFrequency: "weekly" as const,
+      priority: 0.8,
+    })),
+  ];
   const lastModified = new Date();
   // Bayraklarla /yakinda'ya yönlenen sayfaları sitemap'e koymayoruz —
   // yönlendirilen URL'ler arama motorlarına verilmemeli.
-  const all: SitemapEntry[] = [...VITRIN_PAGES, ...APP_ENTRY_PAGES].filter(
-    (entry) => !isSuspendedRoute(entry.path)
-  );
+  // Satış hukuk sayfaları yalnız yayımlandıklarında (bayrak açık, metin taslak değil) listelenir.
+  const legalPages: SitemapEntry[] =
+    LEGAL_PAGES_ENABLED && !isDraftLegalVersion()
+      ? SALES_LEGAL_PAGES.map((page) => ({ path: page.path, changeFrequency: "yearly" as const, priority: 0.3 }))
+      : [];
+  const all: SitemapEntry[] = [
+    ...VITRIN_PAGES,
+    ...APP_ENTRY_PAGES,
+    ...sitePages,
+    ...legalPages,
+  ].filter((entry) => !isSuspendedRoute(entry.path));
 
   // Her sayfa için 3 dilde URL üret + alternates ile hreflang sinyali ver
   return all.flatMap((entry) =>
@@ -70,9 +87,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: entry.priority,
       alternates: {
         languages: Object.fromEntries(
-          LOCALES.map((l) => [l, localeUrl(entry.path, l)])
+          LOCALES.map((l) => [l, localeUrl(entry.path, l)]),
         ),
       },
-    }))
+    })),
   );
 }

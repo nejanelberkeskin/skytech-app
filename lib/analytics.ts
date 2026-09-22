@@ -11,11 +11,19 @@
 export const GA_MEASUREMENT_ID = "G-E938FSNCWT";
 
 /** localStorage anahtarı — çerez tercihi burada saklanır: "granted" | "denied". */
-export const CONSENT_STORAGE_KEY = "skytech_cookie_consent";
+export const CONSENT_STORAGE_KEY = "skytech_cookie_consent_v2";
 
 /** Tercih değiştiğinde aynı sekmede yayımlanan olay (başka sekmeler `storage` olayını alır). */
 export const CONSENT_CHANGE_EVENT = "skytech-cookie-consent-change";
 
+/** Yurt dışı aktarım dosyası tamamlandıktan sonra dağıtım yapılandırmasında açılır. */
+export const ANALYTICS_TRANSFER_READY = process.env.NEXT_PUBLIC_ANALYTICS_TRANSFER_READY === "true";
+let memoryConsent: CookieConsent | null = null;
+export function analyticsAllowedPath(path: string): boolean {
+  const clean = path.replace(/^\/(en|ru)(?=\/|$)/, "");
+  return !/^\/(siparis|odeme|cayma|sertifika|hesabim|admin|giris|kayit|davet|auth|sifre)(\/|$)/.test(clean)
+    && !/\/katil(?:\/|$)/.test(clean);
+}
 export type CookieConsent = "granted" | "denied";
 
 /** Kayıtlı tercih; yoksa (ya da depolama erişilemezse) null. */
@@ -24,30 +32,44 @@ export function readConsent(): CookieConsent | null {
     const stored = window.localStorage.getItem(CONSENT_STORAGE_KEY);
     return stored === "granted" || stored === "denied" ? stored : null;
   } catch {
-    return null;
+    return memoryConsent;
   }
 }
 
 /** `useSyncExternalStore` aboneliği: tercih bu sekmede ya da başka bir sekmede değişince haber verir. */
 export function subscribeConsent(onChange: () => void): () => void {
   window.addEventListener(CONSENT_CHANGE_EVENT, onChange);
-  window.addEventListener("storage", onChange);
+  const storageChange = (event: StorageEvent) => {
+    if (event.key === CONSENT_STORAGE_KEY || event.key === null) {
+      if (readConsent() !== "granted") stopAnalytics();
+      onChange();
+    }
+  };
+  window.addEventListener("storage", storageChange);
   return () => {
     window.removeEventListener(CONSENT_CHANGE_EVENT, onChange);
-    window.removeEventListener("storage", onChange);
+    window.removeEventListener("storage", storageChange);
   };
 }
 
 /** Tercihi kaydeder ve dinleyenlere (GoogleAnalytics) duyurur. İzin geri alınırsa GA çerezleri silinir. */
 export function writeConsent(consent: CookieConsent): void {
+  memoryConsent = consent;
   try {
     window.localStorage.setItem(CONSENT_STORAGE_KEY, consent);
   } catch {
     /* depolama kapalı: tercih yalnız bu sayfa için geçerli olur */
   }
-  updateConsent(consent === "granted");
-  if (consent === "denied") clearAnalyticsCookies();
+  if (consent === "denied") stopAnalytics();
   window.dispatchEvent(new Event(CONSENT_CHANGE_EVENT));
+}
+
+/** İzin geri alınırken GA hemen devre dışı kalır; yüklenmiş sağlayıcılar sayfa yenilenerek kaldırılır. */
+export function stopAnalytics(): void {
+  window[`ga-disable-${GA_MEASUREMENT_ID}`] = true;
+  window.gtag = undefined;
+  clearAnalyticsCookies();
+  if (window.skytechAnalyticsLoaded) window.location.reload();
 }
 
 /** `_ga`, `_ga_<ölçüm kimliği>` ve benzeri GA çerezlerini bu alan adı ve üst alan adları için siler. */
@@ -71,6 +93,8 @@ type GtagEventParams = Record<string, string | number | boolean | undefined>;
 
 declare global {
   interface Window {
+    skytechAnalyticsLoaded?: boolean;
+    [key: `ga-disable-${string}`]: boolean | undefined;
     dataLayer?: unknown[];
     gtag?: (...args: unknown[]) => void;
   }
@@ -78,7 +102,7 @@ declare global {
 
 /** Genel GA4 event gönderici — gtag yoksa (engellenmiş/yüklenmemiş) sessizce çıkar. */
 export function trackEvent(name: string, params?: GtagEventParams): void {
-  if (typeof window === "undefined" || typeof window.gtag !== "function") return;
+  if (typeof window === "undefined" || !ANALYTICS_TRANSFER_READY || readConsent() !== "granted" || !analyticsAllowedPath(window.location.pathname) || typeof window.gtag !== "function") return;
   window.gtag("event", name, params);
 }
 
@@ -96,7 +120,7 @@ export function trackLead(params?: { subject?: string }): void {
  * sayfadaki GA'nın çerez yazmayı bırakması için). GA yüklü değilse no-op.
  */
 export function updateConsent(granted: boolean): void {
-  if (typeof window === "undefined" || typeof window.gtag !== "function") return;
+  if (typeof window === "undefined" || !ANALYTICS_TRANSFER_READY || readConsent() !== "granted" || !analyticsAllowedPath(window.location.pathname) || typeof window.gtag !== "function") return;
   // İzin yalnız analitiği kapsar; reklam sinyalleri her durumda kapalıdır (bkz. GoogleAnalytics.tsx).
   window.gtag("consent", "update", {
     analytics_storage: granted ? "granted" : "denied",

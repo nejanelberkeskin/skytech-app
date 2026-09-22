@@ -20,30 +20,31 @@ export async function generateMetadata({
   );
 }
 
-export default async function ArazimeEkimPage({
+/** Kendi arazim için işlem yaptırmak istiyorum — başvuru formu. (Adres tarihsel: /talep/arazime-ekim.) */
+export default async function KendiArazimPage({
   params,
 }: {
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const [t, tHub] = await Promise.all([
+  const [t, tSites] = await Promise.all([
     getTranslations("requestForms.land"),
-    getTranslations("requestsHub"),
+    getTranslations("sitesPage"),
   ]);
 
   return (
     <>
       <BreadcrumbSchema
         items={[
-          { name: tHub("breadcrumb.label"), path: REQUEST_ROUTES.hub },
+          { name: tSites("title"), path: REQUEST_ROUTES.openLand },
           { name: t("breadcrumb.label"), path: REQUEST_ROUTES.land },
         ]}
       />
       <BreadCrumb
         title={t("breadcrumb.title")}
         subtitle={t("breadcrumb.subtitle")}
-        items={[{ label: tHub("breadcrumb.label"), href: REQUEST_ROUTES.hub }, { label: t("breadcrumb.label") }]}
+        items={[{ label: tSites("title"), href: REQUEST_ROUTES.openLand }, { label: t("breadcrumb.label") }]}
       />
       <SectionWrapper variant="light">
         <LandApplicationForm />

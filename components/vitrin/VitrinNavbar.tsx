@@ -37,8 +37,9 @@ function useHasSessionCookie(): boolean {
 
 function useNavItems() {
   const t = useTranslations("nav");
+  // "Ana Sayfa" bilinçli olarak yok: logo zaten ana sayfaya gider ve geniş (8:1)
+  // logo kilidiyle birlikte menü satıra sığmıyordu.
   return [
-    { label: t("home"), href: "/" },
     {
       label: t("services"),
       href: "#",
@@ -61,9 +62,15 @@ export default function VitrinNavbar() {
   const tNav = useTranslations("nav");
   const tCommon = useTranslations("common");
   const [scrolled, setScrolled] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const pathname = usePathname();
+  // Menü durumu açıldığı sayfaya bağlı tutulur: rota değişince kendiliğinden kapanır
+  // (effect içinde setState gerekmez).
+  const [mobileOpenPath, setMobileOpenPath] = useState<string | null>(null);
+  const mobileOpen = mobileOpenPath === pathname;
+  const setMobileOpen = (open: boolean) => setMobileOpenPath(open ? pathname : null);
+  const [dropdown, setDropdown] = useState<{ label: string; path: string } | null>(null);
+  const openDropdown = dropdown?.path === pathname ? dropdown.label : null;
+  const setOpenDropdown = (label: string | null) => setDropdown(label ? { label, path: pathname } : null);
   const signedIn = useHasSessionCookie();
 
   const ctaHref = orderCtaHref("hub");
@@ -78,11 +85,6 @@ export default function VitrinNavbar() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
-
-  useEffect(() => {
-    setMobileOpen(false);
-    setOpenDropdown(null);
-  }, [pathname]);
 
   const isActive = (href: string) => {
     if (href === "/") return pathname === "/";
@@ -104,19 +106,21 @@ export default function VitrinNavbar() {
       >
         <div className="vitrin-container flex items-center justify-between">
           {/* Logo */}
-          <Link href="/" aria-label="Skytech Green ana sayfa" className="flex items-center group">
+          <Link href="/" aria-label="Skytech Green ana sayfa" className="flex items-center group min-w-0 mr-4">
             <Image
               src="/images/brand/logo.webp"
               alt="Skytech Green"
               width={320}
               height={40}
               priority
-              className="h-10 lg:h-11 w-auto transition-transform group-hover:scale-[1.03]"
+              /* Logo kilidi 8:1. Esnek satırda daralınca w-auto tek başına görseli eziyordu;
+                 object-contain oranı korur, max-w-full dar ekranda taşmayı önler. */
+              className="h-8 sm:h-9 xl:h-11 w-auto max-w-full object-contain object-left transition-transform group-hover:scale-[1.03]"
             />
           </Link>
 
           {/* Desktop Nav */}
-          <nav className="hidden lg:flex items-center gap-1">
+          <nav className="hidden xl:flex items-center gap-1">
             {NAV_ITEMS.map((item) => (
               <div
                 key={item.label}
@@ -126,7 +130,7 @@ export default function VitrinNavbar() {
               >
                 {item.children ? (
                   <button
-                    className={`px-4 py-2 text-sm font-medium rounded-lg flex items-center gap-1 transition-colors ${
+                    className={`px-4 py-2 text-sm font-medium rounded-lg flex items-center gap-1 whitespace-nowrap transition-colors ${
                       isActive("/tohum-topu") || isActive("/dron-teknolojisi") || isActive("/karbon-programi")
                         ? "text-[#1B6B3A]"
                         : "text-[#1a2e1a] hover:text-[#1B6B3A]"
@@ -138,7 +142,7 @@ export default function VitrinNavbar() {
                 ) : (
                   <Link
                     href={item.href}
-                    className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                    className={`px-4 py-2 text-sm font-medium rounded-lg whitespace-nowrap transition-colors ${
                       isActive(item.href)
                         ? "text-[#1B6B3A]"
                         : "text-[#1a2e1a] hover:text-[#1B6B3A]"
@@ -182,17 +186,17 @@ export default function VitrinNavbar() {
           </nav>
 
           {/* CTAs */}
-          <div className="hidden lg:flex items-center gap-3">
+          <div className="hidden xl:flex items-center gap-3 shrink-0">
             <LanguageSwitcher />
             {ACCOUNTS_ENABLED && (
               <Link
                 href={accountHref}
-                className="px-4 py-2 text-sm font-semibold text-[#1a2e1a] hover:text-[#1B6B3A] transition-colors"
+                className="px-4 py-2 text-sm font-semibold text-[#1a2e1a] hover:text-[#1B6B3A] whitespace-nowrap transition-colors"
               >
                 {accountLabel}
               </Link>
             )}
-            <Link href={ctaHref} className="vitrin-cta-primary !py-2.5 !px-5 !text-sm">
+            <Link href={ctaHref} className="vitrin-cta-primary !py-2.5 !px-5 !text-sm whitespace-nowrap">
               {ctaLabel}
             </Link>
           </div>
@@ -200,7 +204,7 @@ export default function VitrinNavbar() {
           {/* Mobile toggle */}
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="lg:hidden w-10 h-10 rounded-xl flex items-center justify-center text-[#1a2e1a] hover:bg-[#1B6B3A]/8 transition-colors"
+            className="xl:hidden shrink-0 w-10 h-10 rounded-xl flex items-center justify-center text-[#1a2e1a] hover:bg-[#1B6B3A]/8 transition-colors"
             aria-label={tNav("menu")}
           >
             {mobileOpen ? <CloseIcon className="w-5 h-5" /> : <MenuIcon className="w-5 h-5" />}
@@ -211,7 +215,7 @@ export default function VitrinNavbar() {
       {/* Mobile Drawer — Premium glass + stagger */}
       <AnimatePresence>
         {mobileOpen && (
-          <div className="lg:hidden fixed inset-0 z-40">
+          <div className="xl:hidden fixed inset-0 z-40">
             {/* Backdrop */}
             <motion.div
               initial={{ opacity: 0 }}
@@ -356,14 +360,6 @@ const drawerItemVariants = {
   },
 };
 
-function LeafIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 32 32" fill="none">
-      <path d="M27 5C27 5 22 4 16 6C10 8 6 13 6 19C6 22 8 25 11 26C8 24 7 21 7 19C7 14 11 9 17 8C12 11 9 16 9 20C9 24 11 27 14 27C20 27 26 22 27 5Z" fill="currentColor" />
-      <path d="M11 26C9 25 7 22 7 19C7 22 8 25 11 26Z" fill="currentColor" opacity="0.6" />
-    </svg>
-  );
-}
 function ChevronDownIcon({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>

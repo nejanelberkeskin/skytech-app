@@ -10,17 +10,17 @@
   "nav": {
     "home": "Ana Sayfa",
     "services": "Hizmetler",
-    "seedBall": "Tohum Topu",
+    "seedBall": "Tohum Topu Teknolojisi",
     "ourSeeds": "Tohumlarımız",
     "droneTech": "Dron Teknolojisi",
-    "carbonProgram": "Karbon Programı",
+    "carbonProgram": "Karbon ve Raporlama",
     "projects": "Projeler",
     "corporate": "Kurumsal",
     "about": "Hakkımızda",
     "contact": "İletişim",
     "login": "Giriş Yap",
     "signUp": "Hemen Başla",
-    "orderSeeds": "Tohum Sipariş Et",
+    "orderSeeds": "Satın Al",
     "menu": "Menü",
     "comingSoon": "Yakında",
     "requests": "Talep Oluştur",
@@ -28,26 +28,26 @@
     "register": "Üye Ol"
   },
   "hero": {
-    "badge": "Karbon Nötrleme · Şeffaf · Ölçülebilir",
+    "badge": "Ormanlaştırma · Gençleştirme · İzleme",
     "headlineLine1": "Doğayı Teknolojiyle",
     "headlineLine2": "Yeşertiyoruz",
-    "subtitle": "Drone teknolojisiyle tohum topu ekim faaliyetleri yapıyoruz. İnsansız hava araçları sayesinde arazi tahribatını sıfıra indiriyor, sarp bölgelerde doğal yaşamı aynen koruyoruz.",
-    "ctaPrimary": "Tohum Sipariş Et",
+    "subtitle": "Yangından etkilenmiş ve ulaşılması zor sahalara dronla tohum topu bırakıyoruz. Araziye girmeden çalıştığımız için toprağı ve doğal yaşamı örselemiyoruz.",
+    "ctaPrimary": "Satın Al",
     "ctaSecondary": "Kurumsal Çözümler",
     "trustForestRegions": "Orman Bölge Müdürlükleri ile koordineli",
-    "trustAnnualReport": "Yıllık drone raporlama",
-    "trustCertificate": "Karbon sertifikası",
+    "trustAnnualReport": "Dronla yıllık izleme",
+    "trustCertificate": "Katılım Sertifikası",
     "discover": "Keşfet",
-    "backgroundAlt": "Dron ile tohum topu ekimi yapılan orman arazisi",
+    "backgroundAlt": "Dronla tohum topu bırakılan orman sahası",
     "ctaRequest": "Talep Oluştur"
   },
   "valueCards": {
     "badge": "Neden Skytech Green?",
-    "subtitle": "Üç temel prensip üzerine inşa edilmiş, ölçülebilir ve sürdürülebilir bir ağaçlandırma sistemi.",
+    "subtitle": "Üç temel ilke üzerine kurulu, her adımı izlenebilir bir ormanlaştırma ve gençleştirme çalışması.",
     "items": {
       "zeroFootprint": {
         "title": "Sıfır Saha İzi",
-        "description": "Doğayı teknolojiyle yeşertiyoruz. Drone teknolojisi kullanarak tohum topu ekim faaliyetleri yapıyoruz. İnsansız hava araçları teknolojisi ile hem arazi tahribatını sıfıra indiriyoruz hem de sarp bölgelerde doğal yaşamı aynen koruyoruz.",
+        "description": "Tohum toplarını sahaya dronla bırakıyoruz. Araziye iş makinesi ve ekip girmediği için toprak yapısı bozulmuyor; sarp ve yangından etkilenmiş bölgelerde doğal yaşam korunuyor.",
         "stat": "%100",
         "statLabel": "Doğa Korumalı"
       },
@@ -58,8 +58,8 @@
         "statLabel": "İzlenebilirlik"
       },
       "annualReport": {
-        "title": "Yıllık Drone Raporlama",
-        "description": "Periyodik uçuş verileri, büyüme metrikleri ve karbon nötrleme sonuçlarınız kurumsal panomuzda anlık olarak güncellenir; doğrudan ESG raporlarınıza aktarılabilir.",
+        "title": "Dronla Yıllık İzleme",
+        "description": "Sahalar her yıl dronla yeniden görüntülenir. Gelişim verileri ve görüntüler Faaliyet Raporu'nda toplanır; kurumlar bu raporu sürdürülebilirlik raporlarında destekleyici belge olarak kullanabilir.",
         "stat": "12 ay",
         "statLabel": "İzleme"
       }
@@ -71,7 +71,7 @@
     "badge": "Süreç",
     "title": "Dört Adımda",
     "titleAccent": "Tam Otomasyon",
-    "subtitle": "Tohum seçiminden ESG raporlamasına kadar uçtan uca bilim ve teknoloji.",
+    "subtitle": "Tohum seçiminden izleme raporuna kadar her adımda bilim ve teknoloji.",
     "steps": {
       "research": {
         "title": "Tohum Topu Ar-Ge",
@@ -79,15 +79,15 @@
       },
       "analysis": {
         "title": "Hedef Alan Analizi",
-        "description": "Uygulamamız; uydu ve drone (İHA) görüntülerini analiz ederek sahanın topografik yapısını, toprağın nem içeriği ve ekosistemin yapısını inceler. Tohum topu atışı için en doğru hedef alanları yapay zekâ ile belirler. Orman Bölge Müdürlüğü koordinasyonuyla yasal izinleri alarak ormanlaştırma süreçlerini tamamen bilimsel ve güvenli hale getirir."
+        "description": "Uygulamamız; uydu ve dron görüntülerini analiz ederek sahanın topografik yapısını, toprağın nem içeriğini ve ekosistemin yapısını inceler. Tohum topu bırakmak için en uygun hedef alanları yapay zekâ ile belirler. Orman Bölge Müdürlüğü koordinasyonuyla yasal izinler alınır; süreç bilimsel ve güvenli biçimde yürütülür."
       },
       "distribution": {
-        "title": "Dronla Dağıtım",
-        "description": "Yüksek hassasiyetli GPS verileriyle yönlendirilen İHA filomuz, sıfır ekolojik tahribat prensibiyle tek bir uçuşta 200+ tohum topunu önceden optimize edilmiş hedef noktalara hatasız şekilde ulaştırıyoruz."
+        "title": "Dronla Bırakma",
+        "description": "Yüksek hassasiyetli GPS verileriyle yönlendirilen dron filomuz, tek bir uçuşta 200+ tohum topunu önceden belirlenmiş hedef noktalara bırakır. Araziye girilmediği için toprak ve bitki örtüsü zarar görmez."
       },
       "monitoring": {
-        "title": "Yıllık İzleme & ESG",
-        "description": "Yıllık İHA fotogrametrisi ile izlenen vejetasyon büyüme verileri ve kurumsal gösterge panelinde gerçek zamanlı sunulan karbon denkleştirme metrikleri anlık olarak görülür. ESG raporlama süreçlerine entegre edilebilir."
+        "title": "Yıllık İzleme ve Raporlama",
+        "description": "Sahalar her yıl dron fotogrametrisiyle yeniden görüntülenir; bitki örtüsünün gelişimi kayıt altına alınır. Sonuçlar Faaliyet Raporu olarak paylaşılır; kararlaştırılan izleme takviminde çalışmanın görüntüleri yayımlanır."
       }
     }
   },
@@ -100,11 +100,11 @@
       "fire": {
         "label": "Yangın Sonrası",
         "title": "Yanan Ormanları Yeniden Yeşertiyoruz",
-        "description": "Yanan orman arazilerinin ekolojik dinamiklerini geri kazandırmak için otonom drone filoları ve yüksek çimlenme oranlarına sahip tohum toplarımızla, geniş ölçekli alanlarda hızlı ve sürdürülebilir biçimde yeniden ormanlaştırma sürdürüyoruz.",
+        "description": "Yanan orman arazilerinin ekolojik dinamiklerini geri kazandırmak için otonom dron filoları ve yüksek çimlenme oranlarına sahip tohum toplarımızla, geniş ölçekli alanlarda hızlı ve sürdürülebilir biçimde yeniden ormanlaştırma sürdürüyoruz.",
         "bullets": [
           "İş güvenliği: Yangın sonrası gevşeyen toprak ve heyelan riskinde insan hayatını riske atmaz",
           "Altın zaman dilimi: Toprak besin değerini kaybetmeden, erozyon başlamadan hızla müdahale",
-          "GIS ile homojen dağılım: m² başına düşen tohum miktarı hassas ayarlanır",
+          "GIS ile homojen dağılım: m² başına düşen tohum topu miktarı hassas ayarlanır",
           "Dijital izlenebilirlik: Her koordinat kayıt altında, çimlenme uydudan takip edilir"
         ],
         "stat": "%65+",
@@ -118,11 +118,11 @@
             "items": [
               {
                 "title": "İş Gücü Tasarrufu",
-                "description": "İnsan gücüyle yapılacak ekim yöntemiyle yüzlerce işçinin haftalarca süren çalışmasını, otonom dron filoları çok kısa sürede tamamlar."
+                "description": "Geleneksel dikim yönteminde yüzlerce işçinin haftalarca süren çalışmasını, otonom dron filoları çok kısa sürede tamamlar."
               },
               {
                 "title": "İş Güvenliği",
-                "description": "Yangın sonrası gevşeyen toprak, devrilen ağaçlar ve heyelan riski barındıran tehlikeli arazilerde insan hayatını riske atmadan ekim yapar."
+                "description": "Yangın sonrası gevşeyen toprak, devrilen ağaçlar ve heyelan riski barındıran tehlikeli arazilerde insan hayatını riske atmadan tohum topu bırakır."
               }
             ]
           },
@@ -152,7 +152,7 @@
               },
               {
                 "title": "Düşük Maliyet",
-                "description": "Fidan yetiştirme, nakliye, çukur kazma ve dikim işçiliği maliyetlerini ortadan kaldırarak ağaçlandırma bütçesini optimize eder."
+                "description": "Fidan yetiştirme, nakliye, çukur kazma ve dikim işçiliği maliyetlerini ortadan kaldırarak ormanlaştırma bütçesini optimize eder."
               },
               {
                 "title": "Kritik Zaman Yönetimi",
@@ -165,15 +165,15 @@
             "items": [
               {
                 "title": "GIS ve Haritalama Entegrasyonu",
-                "description": "Alanın önceden çıkarılan 3 boyutlu haritaları sayesinde tohumlar rastgele değil, çimlenme olasılığı en yüksek mikro havzalara ve nemli noktalara nokta atışı bırakılır."
+                "description": "Alanın önceden çıkarılan 3 boyutlu haritaları sayesinde tohum topları rastgele değil, çimlenme olasılığı en yüksek mikro havzalara ve nemli noktalara hedefli olarak bırakılır."
               },
               {
                 "title": "Homojen Dağılım",
-                "description": "Sensörler ve otonom algoritmalarla m² başına düşecek tohum miktarı hassas ayarlanır; aşırı sıkışıklık veya boşluklar önlenir."
+                "description": "Sensörler ve otonom algoritmalarla m² başına düşecek tohum topu miktarı hassas ayarlanır; aşırı sıkışıklık veya boşluklar önlenir."
               },
               {
                 "title": "Dijital İzlenebilirlik",
-                "description": "Tohumların atıldığı koordinatlar sisteme kaydedildiği için, çimlenme başarısı ve bitki örtüsü gelişimi uydular veya dronlarla kolayca takip edilir."
+                "description": "Tohum toplarının bırakıldığı koordinatlar sisteme kaydedildiği için, çimlenme başarısı ve bitki örtüsü gelişimi uydular veya dronlarla kolayca takip edilir."
               }
             ]
           },
@@ -197,44 +197,44 @@
         "title": "Maden Sahalarının Ekolojik Restorasyonu",
         "description": "Madencilik sonucu doğal yapısı, bitki örtüsü ve toprak kalitesi bozulmuş sahaların restorasyonunu İHA ve optimize edilmiş tohum topu metodolojileriyle hızlandırıyoruz. Uzaktan algılama ve yapay zekâ ile topoğrafyası bozulmuş arazilerde vejetasyon başarısını artırıyor; kademeli ve sürdürülebilir bir orman ekosistemi kuruyoruz.",
         "bullets": [
-          "Bir drone uçuşunda 200+ tohum — geleneksel yöntemlere göre 10 kat daha hızlı",
+          "Bir dron uçuşunda 200+ tohum topu — geleneksel yöntemlere göre 10 kat daha hızlı",
           "Sıfır saha tahribatı: minimum çevresel ayak iziyle maksimum restorasyon etkisi",
           "Tam şeffaflık: tohumun türü, orijini, çimlenme oranı uçtan uca kayıt altında",
-          "Yıllık izleme: periyodik drone uçuşlarıyla yüksek çözünürlüklü dijital veri",
-          "Kurumsal entegrasyon: API ile e-ticaret sitenizdeki her satış doğrudan ESG raporlarınıza aktarılır",
+          "Yıllık izleme: periyodik dron uçuşlarıyla yüksek çözünürlüklü dijital veri",
+          "Kurumsal raporlama: her çalışma için saha, alan, tür ve görüntü içeren Faaliyet Raporu",
           "Yasal uyumluluk: Orman Bölge Müdürlükleri koordinasyonunda %100 yasal"
         ],
         "stat": "10×",
         "statLabel": "Geleneksele göre hız"
       },
       "carbon": {
-        "label": "Karbon Nötrleme",
-        "title": "Holding ve Şirketler İçin Uçtan Uca Karbon Nötrleme",
-        "description": "Yıllık sera gazı emisyonlarınızı uluslararası standartlarda hesaplıyor, drone teknolojisiyle yüksek karbon yutak alanları (biyo-karbon ekosistemleri) inşa ediyor ve tüm süreci şeffaf biçimde ESG raporlarınıza entegre ediyoruz. Kurumsal panelimiz ile ESG yazılımınız arasında API entegrasyonu sağlayarak veri akışını otomatik hale getiriyoruz.",
+        "label": "Kurumsal Katılım",
+        "title": "Kurumlar İçin Toplu Katılım ve Raporlama",
+        "description": "Şirketiniz adına Proje Uygulama Sahalarına tohum topu bıraktırın. Çalışmanın sahasını, alanını, türünü, tarihini ve görüntülerini içeren Faaliyet Raporu'nu sürdürülebilirlik raporlarınızın doğa ve toplumsal katkı bölümlerinde destekleyici belge olarak kullanın.",
         "bullets": [
-          "Şirket karbon ayak izi hesaplaması — uluslararası standartlarda",
-          "Markanıza özel, drone teknolojisiyle desteklenen orman",
-          "Çalışan sertifikası — bireysel karbon atıfı",
-          "ESG, GRI, CDP raporlarına hazır veri — API ile otomatik akış"
+          "Şirket adına düzenlenen Katılım Sertifikası",
+          "Saha, hektar, tür, tarih ve görüntü içeren Faaliyet Raporu",
+          "Çalışanlarınız ve paydaşlarınız için paylaşılabilir sertifikalar",
+          "Kurumsal fatura ve siparişe özel sözleşme"
         ],
-        "stat": "ESG",
-        "statLabel": "Tam uyum"
+        "stat": "Rapor",
+        "statLabel": "Her çalışma için"
       }
     }
   },
   "footer": {
-    "tagline": "Tohum toplarıyla geleceği ekiyoruz. Dron teknolojisi, ormancılık bilimi ve şeffaf tedarik zinciriyle ölçülebilir ağaçlandırma.",
+    "tagline": "Tohum Topu Teknolojisi, dron ve ormancılık bilimiyle yangından etkilenmiş sahaların yeniden ormanlaşmasına çalışıyoruz.",
     "servicesTitle": "Hizmetler",
     "quickLinksTitle": "Hızlı Linkler",
     "newsletterTitle": "Bültenimize Katılın",
-    "newsletterDesc": "Yeni projeler ve karbon nötrleme haberleri için.",
+    "newsletterDesc": "Yeni sahalar ve çalışma haberleri için.",
     "subscribe": "Abone Ol",
     "rightsReserved": "Tüm hakları saklıdır.",
     "brandOf": "Skytech Green, <link>{company}</link> markasıdır.",
     "services": {
-      "seedBall": "Tohum Topu",
+      "seedBall": "Tohum Topu Teknolojisi",
       "droneTech": "Dron Teknolojisi",
-      "carbonProgram": "Karbon Programı",
+      "carbonProgram": "Karbon ve Raporlama",
       "corporate": "Kurumsal Çözümler"
     },
     "quickLinks": {
@@ -242,7 +242,7 @@
       "projects": "Projeler",
       "info": "Bilgi Al",
       "contact": "İletişim",
-      "requests": "Talep Oluştur"
+      "sites": "Proje Uygulama Sahaları"
     },
     "legal": {
       "privacy": "Gizlilik Politikası",
@@ -250,7 +250,8 @@
       "kvkk": "KVKK",
       "cookies": "Çerez Politikası",
       "cookiePreferences": "Çerez Tercihleri"
-    }
+    },
+    "contactTitle": "İletişim"
   },
   "ourSeeds": {
     "meta": {
@@ -263,7 +264,7 @@
     "sectionBadge": "Türler",
     "sectionTitleLine": "Dört Yerli",
     "sectionTitleAccent": "Türümüz",
-    "sectionSubtitle": "Her tür, ekildiği bölgenin iklim ve toprak yapısına göre seçilir. Tohumlarımız Orman Bölge Müdürlükleri tedariklidir.",
+    "sectionSubtitle": "Her tür, bırakıldığı bölgenin iklim ve toprak yapısına göre seçilir. Tohumlarımız Orman Bölge Müdürlükleri tedariklidir.",
     "footnote": "Yöreye uygun tohumlarımız ilgili Orman Bölge Müdürlüklerinden tedarik edilmekte; tohumların tür bilgisi, ağaçlardan toplanma tarihleri ve orijin bilgileri blok zinciri teknolojisiyle güvenle doğrulanmaktadır.",
     "typeLabel": "Tür {number}",
     "labels": {
@@ -335,15 +336,15 @@
     "badge": "Avantajlar",
     "title": "Skytech Green Farkı",
     "titleAccent": "Altı Temel Üstünlük",
-    "subtitle": "Geleneksel ağaçlandırmadan dronlu ekime, her noktada ölçülebilir avantaj sağlıyoruz.",
+    "subtitle": "Geleneksel ağaçlandırmadan dronla tohum topu bırakmaya, her noktada ölçülebilir avantaj sağlıyoruz.",
     "items": {
       "speed": {
-        "title": "Hızlı Ekim",
-        "description": "Bir drone uçuşunda 200+ tohum. Geleneksel yöntemlere kıyasla 10 kat hız."
+        "title": "Hızlı Uygulama",
+        "description": "Bir dron uçuşunda 200+ tohum topu. Geleneksel yöntemlere kıyasla 10 kat hız."
       },
       "noDamage": {
         "title": "Sıfır Saha Tahribatı",
-        "description": "Havadan ekim, ekosistemi koruyor. İnsan ayağının değmediği bölgelere bile ulaşıyor."
+        "description": "Tohum topları havadan bırakılır; ekosistem korunur. İnsan ayağının değmediği bölgelere bile ulaşılır."
       },
       "transparency": {
         "title": "Tam Şeffaflık",
@@ -351,7 +352,7 @@
       },
       "monitoring": {
         "title": "Yıllık İzleme",
-        "description": "Periyodik uçuş verileri, büyüme metrikleri ve karbon nötrleme sonuçlarınız kurumsal panomuzda anlık olarak güncellenir."
+        "description": "Sahalar her yıl dronla yeniden görüntülenir; uçuş verileri ve gelişim görüntüleri Faaliyet Raporu'nda toplanır."
       },
       "integration": {
         "title": "Kurumsal Entegrasyon",
@@ -370,7 +371,7 @@
     "subtitle": "Ölçülebilir farkları yan yana koyduk. Karar sizin.",
     "traditional": {
       "heading": "Geleneksel Ağaçlandırma",
-      "imageAlt": "Geleneksel ağaçlandırma — elle ekim",
+      "imageAlt": "Geleneksel ağaçlandırma — elle fidan dikimi",
       "items": {
         "manual": "İnsan gücüyle, zorlu coğrafyalarda yetersiz",
         "damage": "Saha tahribatı kaçınılmaz",
@@ -380,13 +381,13 @@
       }
     },
     "skytech": {
-      "imageAlt": "Skytech Green drone ekim",
+      "imageAlt": "Skytech Green — dronla tohum topu bırakma",
       "items": {
-        "access": "Drone teknolojisiyle her bölgeye erişim",
+        "access": "Dron teknolojisiyle her bölgeye erişim",
         "noTrace": "Sıfır saha izi, ekosistem korunur",
         "verified": "Ağaçtan toplanma tarihi + orijin blok zinciri ile doğrulanır",
-        "reporting": "Yıllık drone raporlama, ESG entegre",
-        "distribution": "Bir uçuşta 200+ tohum dağıtımı"
+        "reporting": "Dronla yıllık izleme ve Faaliyet Raporu",
+        "distribution": "Bir uçuşta 200+ tohum topu"
       }
     }
   },
@@ -403,85 +404,55 @@
   },
   "marqueeStrip": {
     "keywords": {
-      "reforestation": "Ağaçlandırma",
-      "carbonNeutral": "Karbon Nötr",
-      "seedBall": "Tohum Topu",
+      "reforestation": "Ormanlaştırma",
+      "seedBall": "Tohum Topu Teknolojisi",
       "droneTech": "Dron Teknolojisi",
       "ecologicalImpact": "Ekolojik Etki",
       "sustainability": "Sürdürülebilirlik",
       "transparentSupply": "Şeffaf Tedarik",
-      "annualMonitoring": "Yıllık İzleme"
+      "annualMonitoring": "Yıllık İzleme",
+      "regeneration": "Gençleştirme"
     }
   },
   "finalCta": {
     "badge": "Şimdi Başlayın",
     "title": "Doğaya Yatırım,",
     "titleAccent": "Geleceğe Miras",
-    "subtitle": "Bireysel veya kurumsal — her katkı önemli. İlk tohumunuzu bugün ekin, etkinizi anında izleyin.",
+    "subtitle": "Bireysel ya da kurumsal — yangından etkilenmiş sahaların yeniden ormanlaşmasına katılın. Bir saha seçin; çalışmayı raporlarla ve görüntülerle izleyin.",
     "ctaPrimary": "Hemen Başla",
     "ctaComingSoon": "Yakında",
     "ctaSecondary": "Bize Ulaşın",
     "ctaRequest": "Talep Oluştur"
   },
-  "carbonCalculator": {
-    "badge": "Karbon Hesaplayıcı",
-    "titleLine1": "Etkinizi",
-    "titleAccent": "Anında Görün",
-    "subtitle": "Tohum sayısını, yılı ve çimlenme oranını ayarlayın — kaç ağaç yetişeceğini, kaç ton karbonun nötrleneceğini canlı izleyin.",
-    "sliders": {
-      "seeds": "Tohum Sayısı",
-      "years": "İzleme Süresi",
-      "germRate": "Çimlenme Oranı"
-    },
-    "units": {
-      "year": "yıl"
-    },
-    "formula": {
-      "label": "Formül:",
-      "text": "Tohum × çimlenme = ağaç · Ağaç × 5kg CO₂ × yıl = toplam karbon"
-    },
-    "results": {
-      "trees": "Yetişecek Ağaç",
-      "carbon": "Nötrlenecek Karbon",
-      "carbonSuffix": "ton CO₂",
-      "people": "Kişi Karbon Ayak İzi Nötrlenir",
-      "peopleSuffix": "kişi"
-    },
-    "cta": {
-      "start": "Bu Etkiyi Başlat — Tohum Sipariş Et",
-      "soon": "Yakında",
-      "request": "Bu Etkiyi Başlat — Talep Oluştur"
-    }
-  },
   "faqSection": {
     "badge": "Sıkça Sorulanlar",
     "titleLine1": "Aklınızdaki",
     "titleAccent": "Tüm Sorular",
-    "subtitle": "Tohum topundan dronlu ekime, karbon sertifikasından kurumsal entegrasyona — her şey burada.",
+    "subtitle": "Tohum Topu Teknolojisi'nden dronla bırakmaya, sertifikadan raporlamaya — merak edilenler burada.",
     "faqs": {
       "seedBall": {
-        "question": "Tohum topu nedir, nasıl çalışır?",
-        "answer": "Tohum topu; bitki tohumlarının kil ve organik besin maddeleriyle kaplanarak dış etkenlerden korunduğu, çimlenme başarısını %65+ üzerine çıkaran yenilikçi bir yapay kapsülleme yöntemidir. Doğa dostu bu biyoteknolojik yaklaşım, tohumları kuraklık ve canlı tüketimi gibi risklerden koruyarak toprağa güvenle tutunmalarını sağlar; yağmurla birlikte filizlenerek doğanın yenilenme hızını artırır."
+        "question": "Tohum Topu Teknolojisi nedir, nasıl çalışır?",
+        "answer": "Tohum Topu Teknolojisi; yerli tohumların kil ve organik besin maddeleriyle kapsüllenerek dış etkenlerden korunduğu, çimlenme başarısını %65+ üzerine çıkaran bir yöntemdir. Kapsül, tohumu kuraklık ve canlı tüketimi gibi risklerden korur; yağışla birlikte çözülür ve tohum doğal döngüsünde çimlenir."
       },
       "sourcing": {
         "question": "Tohumlar nereden tedarik ediliyor?",
         "answer": "Tüm tohumlar Orman Bölge Müdürlükleri iş birliğiyle tedarik edilir. Biyolojik çeşitliliğin korunması ve sürdürülebilirlik ilkeleri doğrultusunda; her tohum lotunun ağaçtan toplanma tarihi, genetik orijini ve taksonomik (tür) bilgisi blok zinciri teknolojisiyle kayıt altına alınır. Uçtan uca şeffaf yapılandırılan tedarik zincirimiz sayesinde müşterilerimiz tohum kimlik kartlarına ve sertifikasyon verilerine diledikleri an erişebilir."
       },
       "droneEfficiency": {
-        "question": "Drone ile ekim ne kadar verimli?",
-        "answer": "Tek bir uçuşta 200'den fazla tohum dağıtarak geleneksel yöntemlere kıyasla 10 kat hız ve yüksek maliyet etkinliği sunar. GPS hassasiyetli koordinatlar sayesinde insan ayağının ulaşamadığı eğimli ve yangın sonrası tahribat görmüş alanlara yüksek erişilebilirlik sağlar; santimetrik hassasiyetle kaynak verimliliğini maksimuma çıkarırken minimum karbon ayak iziyle sürdürülebilir bir çevresel etki yaratır."
+        "question": "Dronla tohum topu bırakma ne kadar verimli?",
+        "answer": "Tek bir uçuşta 200'den fazla tohum topu bırakarak geleneksel yöntemlere kıyasla 10 kat hız ve yüksek maliyet etkinliği sunar. GPS hassasiyetli koordinatlar sayesinde insan ayağının ulaşamadığı eğimli ve yangından etkilenmiş alanlara erişir; araziye girilmediği için toprak ve bitki örtüsü korunur."
       },
       "tracking": {
-        "question": "Ekilen tohumların büyümesini nasıl takip edebilirim?",
-        "answer": "Yıllık periyodik drone uçuşlarıyla bölge yeniden taranır, büyüme verisi kurumsal panonuza işlenir. Bireysel kullanıcılar dijital sertifikalarındaki QR kodla bölge görsellerine erişebilir. Kurumsal partnerler API ile gerçek zamanlı veriye ulaşır."
+        "question": "Bırakılan tohum toplarının gelişimini nasıl takip edebilirim?",
+        "answer": "Sahalar her yıl dronla yeniden görüntülenir. Kararlaştırılan izleme takviminde çalışmanın görüntülerini herkese açık bir video olarak yayımlar, bağlantısını e-postayla göndeririz. Kurumlar için sonuçlar ayrıca Faaliyet Raporu'nda toplanır."
       },
       "certificate": {
-        "question": "Karbon sertifikası ne için geçerli?",
-        "answer": "Sertifikalar; ESG raporlarında, GRI ve CDP gönderimlerinde, kurumsal sürdürülebilirlik beyanlarında kullanılabilir. Tüm ormanlaştırma ve karbon yutak alanı projeleri Orman Genel Müdürlüğü (OGM) Bölge Müdürlükleri koordinasyonunda, yasal ve bilimsel altyapıya uygun olarak yürütülür; %100 doğrulanabilir bir izleme zinciri sunarız."
+        "question": "Katılım Sertifikası nedir?",
+        "answer": "Tohum topları sahaya bırakıldıktan sonra e-postayla bir Katılım Sertifikası göndeririz. Sertifikada seçtiğiniz ad, saha, tarih ve tohum topu adedi yer alır; sosyal medyada paylaşabilirsiniz. Sertifika bir bağış makbuzu değildir ve vergi indirimi sağlamaz."
       },
       "minOrder": {
-        "question": "Minimum talep miktarı var mı?",
-        "answer": "Talep bırakmak için alt sınır yoktur; tür ve adedi siz belirlersiniz. Fiyat, teslimat ve kurumsal projelerde ölçek, ekibimizin dönüşünde sizinle birlikte netleşir."
+        "question": "En az kaç tohum topu bıraktırabilirim?",
+        "answer": "En az {min} tohum topu ile katılabilirsiniz. Hazır seçeneklerden birini kullanabilir ya da adedi kendiniz belirleyebilirsiniz; güncel bedel, saha seçtikten sonra katılım adımlarında gösterilir."
       },
       "b2bIntegration": {
         "question": "B2B kurumsal entegrasyon nasıl çalışır?",
@@ -489,7 +460,47 @@
       },
       "gift": {
         "question": "Hediye olarak gönderebilir miyim?",
-        "answer": "Evet. Tohum talebinde kullanım amacını \"Hediye\" olarak seçebilir, açık araziye ekim talebinde tohumların kimin adına ekileceğini belirtebilirsiniz. Ayrıntıları dönüşte birlikte netleştiririz."
+        "answer": "Evet. Sertifikada görünecek adı siz belirlersiniz; sevdiğiniz birinin adını yazarak Katılım Sertifikası'nı ona armağan edebilirsiniz."
+      },
+      "species": {
+        "question": "Hangi türün tohum topu bırakılacağını ben mi seçiyorum?",
+        "answer": "Hayır. Tür; sahanın iklimine, toprağına ve doğal bitki örtüsüne göre uzman ekibimizce belirlenir. Her sahanın sayfasında hangi türün bırakıldığını ve nedenini görebilirsiniz."
+      },
+      "calendar": {
+        "question": "Tohum topları ne zaman bırakılıyor?",
+        "answer": "Bırakma çalışmaları Ekim–Mart arasında yapılır; tohumun yağışla buluşması için en uygun dönem budur. Nisan–Eylül arasında sahalar incelenir, izlenir ve raporlanır. Kararlaştırılan izleme takviminde çalışmanın görüntülerini paylaşırız."
+      },
+      "hectare": {
+        "question": "Hektar ne demek?",
+        "answer": "Hektar bir alan ölçü birimidir: 1 hektar 10.000 metrekaredir, yani 10 dekara (dönüme) eşittir. Kabaca bir buçuk futbol sahası büyüklüğünde bir alan düşünebilirsiniz. Sahalarımızın büyüklüğünü hektar olarak belirtiyoruz."
+      },
+      "carbonReport": {
+        "question": "Bu çalışmayla karbon raporu ya da karbon kredisi alabilir miyim?",
+        "answer": "Hayır. Verdiğimiz belge bir Faaliyet Raporu'dur: çalışmanın sahasını, alanını, türlerini, tarihini, koordinatlarını ve görüntülerini kayıt altına alır. Karbon kredisi ya da karbon nötr belgesi değildir; sera gazı envanterinizden düşülemez, denkleştirme amacıyla kullanılamaz. Sahalardaki karbon tutumu bugün bağımsız bir kuruluşça hesaplanıp doğrulanmış değildir. Böyle bir doğrulama yapılırsa yöntemi ve sonuçlarıyla birlikte burada yayımlarız."
+      },
+      "notDonation": {
+        "question": "Bu bir bağış mı?",
+        "answer": "Hayır. Skytech Green'de satın aldığınız şey bir hizmettir: seçtiğiniz sahaya, belirlediğiniz adette tohum topunun dronla bırakılması. Hizmet bedeli karşılığında fatura düzenlenir; ödemeniz bağış sayılmaz ve vergi indirimi sağlamaz."
+      },
+      "payment": {
+        "question": "Ödemeyi nasıl yaparım?",
+        "answer": "Toplam bedeli (KDV dâhil) ödeme öncesinde sipariş özetinde görürsünüz; ek bir masraf yoktur. Ödeme, ödeme kuruluşu iyzico'nun güvenli sayfasında 3D Secure ile tek çekim olarak alınır; kart bilgileriniz Skytech Green'e ulaşmaz. Ödeme onaylanınca sipariş teyidi, Ön Bilgilendirme Formu, sözleşme ve Cayma Formu e-postanıza gönderilir."
+      },
+      "withdrawal": {
+        "question": "Siparişten cayabilir miyim?",
+        "answer": "Evet. Ödemenizin onaylandığı tarihten itibaren 14 gün içinde, hiçbir gerekçe göstermeden cayabilirsiniz. Bildirimi sitedeki cayma formundan ya da e-postayla yapmanız yeterlidir; ödediğiniz bedelin tamamı 14 gün içinde ödemede kullandığınız araca tek seferde iade edilir. Tohum topu bırakma, cayma süresi dolmadan yapılmaz."
+      },
+      "invoice": {
+        "question": "Faturam ne zaman gelir?",
+        "answer": "Faturanız, vergi mevzuatına uygun yasal sürede düzenlenip e-postayla iletilir."
+      },
+      "nonPerformance": {
+        "question": "Bırakma yapılamazsa ne olur?",
+        "answer": "Sözleşmenizde kesin bir son tarih yazar. Hava koşulları, idari kararlar ya da sahaya erişimin engellenmesi gibi nedenlerle çalışma yapılamazsa durumu size bildiririz; ödediğiniz bedelin tamamını 14 gün içinde iade eder ya da onaylarsanız hizmeti başka bir sahada veya izleyen sezonda yerine getiririz. Sessiz kalmanız başka bir saha ya da sezon önerisinin kabulü sayılmaz."
+      },
+      "orderStatus": {
+        "question": "Siparişimin durumunu nereden görürüm?",
+        "answer": "Sipariş teyidi e-postanızdaki size özel bağlantıdan; üyeyseniz Hesabım → Siparişlerim sayfasından. Sayfada siparişinizin aşaması, belgeleriniz, bırakma tarihi, Katılım Sertifikanız ve yayımlandığında çalışmanın görüntüleri yer alır. Bağlantıyı başkalarıyla paylaşmayın."
       }
     }
   },
@@ -526,57 +537,52 @@
     }
   },
   "servicePackages": {
-    "badge": "Hizmet Paketleri",
+    "badge": "Hizmetler",
     "titleLine1": "Size Uygun",
-    "titleAccent": "Çözümü Seçin",
-    "subtitle": "Bireysel kullanıcıdan kurumsal partnere — her ölçek için ölçülebilir etki.",
-    "mostPopular": "EN POPÜLER",
+    "titleAccent": "Yolu Seçin",
+    "subtitle": "Bir Proje Uygulama Sahasına katılın, kendi araziniz için başvurun ya da kurumunuz adına toplu katılım planlayın.",
+    "mostPopular": "ÖNERİLEN",
     "ctaFallback": {
-      "info": "Bilgi Al",
       "soon": "Yakında"
     },
     "packages": {
-      "diy": {
-        "name": "Kendin Ek",
-        "tag": "Bireysel",
-        "description": "Tohum topları adresinize teslim. Kendi bahçenize, arazinize veya seçtiğiniz alana siz ekersiniz.",
-        "features": [
-          "Adresinize kargo ile teslim",
-          "Tür çeşitliliği seçimi",
-          "Dijital sertifika",
-          "Ekim rehberi (PDF)",
-          "Topluluk forumu erişimi"
-        ],
-        "cta": "Tohum Sipariş Et",
-        "ctaRequest": "Tohum Talebi Oluştur"
-      },
-      "weplant": {
-        "name": "Biz Ekelim",
-        "tag": "Önerilen",
-        "description": "Profesyonel drone ekibi seçilen Skytech arazilerinde sizin adınıza ekim yapar. Yıllık izleme dahil.",
-        "features": [
-          "Profesyonel drone ekimi",
-          "GPS koordinatlı ekim raporu",
-          "Yıllık drone takip raporları",
-          "Karbon nötrleme sertifikası",
-          "Hediyeleştirme + paylaşılabilir profil"
-        ],
-        "cta": "Profesyonel Ekim Başlat",
-        "ctaRequest": "Ekim Talebi Oluştur"
-      },
       "corporate": {
-        "name": "Kurumsal Ormanlaştırma",
-        "tag": "B2B",
-        "description": "Şirketinize özel kurumsal orman + çalışan sertifikaları + ESG raporlama + API entegrasyonu.",
+        "name": "Kurumsal Katılım",
+        "tag": "Kurumlar",
+        "description": "Kurumunuz adına toplu katılım: çalışanlarınız ve iş ortaklarınız için Katılım Sertifikaları, kurumunuz için Faaliyet Raporu.",
         "features": [
-          "Şirket adına kurumsal alan",
-          "Çalışan başına bireysel sertifika",
-          "Drone uçuş kayıtları + saha videoları",
-          "ESG / GRI / CDP raporlama hazır veri",
-          "API + e-ticaret entegrasyonu",
-          "Özel hesap yöneticisi"
+          "Toplu adetlerde tohum topu bıraktırma",
+          "Çalışanlar ve iş ortakları için ayrı Katılım Sertifikaları",
+          "Saha, alan, tür ve tarih bilgisini içeren Faaliyet Raporu",
+          "Çalışmanın görüntüleri ve saha videosu",
+          "Kurumunuza kesilen fatura"
         ],
-        "cta": "Teklif Al"
+        "cta": "Bilgi Al"
+      },
+      "site": {
+        "name": "Sahaya Tohum Topu Bıraktırın",
+        "tag": "Bireysel ve kurumsal",
+        "description": "Yangından etkilenmiş bir Proje Uygulama Sahası seçin; tohum toplarını dron ekibimiz sizin adınıza sahaya bıraksın.",
+        "features": [
+          "Sahayı siz seçersiniz; tür sahaya göre belirlenir",
+          "En az {min} tohum topu, dilediğiniz adette",
+          "Adınıza düzenlenen Katılım Sertifikası",
+          "Bırakma Ekim–Mart, izleme Nisan–Eylül",
+          "Kararlaştırılan izleme takviminde çalışmanın görüntüleri"
+        ],
+        "cta": "Saha Seçin"
+      },
+      "ownLand": {
+        "name": "Kendi Arazim İçin",
+        "tag": "Arazi sahipleri",
+        "description": "Yanmış, bozulmuş ya da atıl araziniz için başvurun; keşfi, tür seçimini ve dronla tohum topu bırakmayı ekibimiz planlasın.",
+        "features": [
+          "Arazinize özel keşif ve planlama",
+          "İklime ve toprağa uygun yerli tür seçimi",
+          "Dronla tohum topu bırakma",
+          "Arazinize göre hazırlanan teklif"
+        ],
+        "cta": "Başvuru Yapın"
       }
     }
   },
@@ -592,7 +598,7 @@
   "aboutPage": {
     "meta": {
       "title": "Hakkımızda — Bilim, Teknoloji ve Doğa",
-      "description": "2021 Akdeniz yangınlarından doğan vizyon, orman mühendisleri + drone pilotları + yazılım ekibinden oluşan 36+ kişilik aile. Skytech Green'in kuruluş hikayesi ve değerleri."
+      "description": "2021 Akdeniz yangınlarından doğan vizyon, orman mühendisleri + dron pilotları + yazılım ekibinden oluşan 36+ kişilik aile. Skytech Green'in kuruluş hikayesi ve değerleri."
     },
     "breadcrumb": {
       "label": "Hakkımızda"
@@ -600,14 +606,14 @@
     "hero": {
       "title": "Bilim, Teknoloji ve Doğa. Üçünü Birleştiriyoruz.",
       "subtitle": "Skytech Green; iklim kriziyle mücadeleyi havacılık, ormancılık ve modern yazılımla birleştiren yeni nesil bir Eco-Tech platformudur.",
-      "imageAlt": "Skytech Green saha ekibi — drone operasyon"
+      "imageAlt": "Skytech Green saha ekibi — dron operasyon"
     },
     "story": {
       "badge": "Hikayemiz",
       "titleLead": "Yangın Sonrası",
       "titleAccent": "Bir Doğa Çağrısı",
       "paragraph1": "2021 Akdeniz orman yangınları sonrası, dronların hızla tohum bırakabildiğini, insan adımının zor ulaştığı bölgelere erişebildiğini gördük. Bilimsel altyapı + havacılık teknolojisi + şeffaf yazılım altyapısı — bu üçlüyü birleştirdik.",
-      "paragraph2": "Bugün <brand>Skytech Green</brand>, Türkiye genelinde üç bölgede dronlu ağaçlandırma yapıyor — kurumsal partnerlerin ESG hedeflerine, bireysel kullanıcıların karbon dengeleme isteklerine cevap veriyor.",
+      "paragraph2": "Bugün <brand>Skytech Green</brand>, Türkiye'de üç bölgedeki Proje Uygulama Sahalarında dronla tohum topu bırakıyor; kurumların ve bireylerin, yangından etkilenmiş sahaların yeniden ormanlaşmasına katılmasını sağlıyor.",
       "imageCaption": "Saha Ekibimiz"
     },
     "timeline": {
@@ -619,7 +625,7 @@
       "milestones": {
         "spark": {
           "title": "Akdeniz Yangınları & İlk Kıvılcım",
-          "description": "Manavgat ve Marmaris yangınları sonrası, drone teknolojisinin yangın bölgelerinde nasıl etkili olabileceği üzerine ar-ge çalışmaları başladı."
+          "description": "Manavgat ve Marmaris yangınları sonrası, dron teknolojisinin yangın bölgelerinde nasıl etkili olabileceği üzerine ar-ge çalışmaları başladı."
         },
         "talks": {
           "title": "Orman Genel Müdürlüğü ile Görüşmeler",
@@ -627,7 +633,7 @@
         },
         "protocols": {
           "title": "Çalışmalar ve Protokoller",
-          "description": "Orman Genel Müdürlüğü ile çalışmalar başlatıldı ve protokoller imzalandı. Çanakkale, İzmir ve Bursa'da demo sahalar hayata geçirildi."
+          "description": "Orman Genel Müdürlüğü ile çalışmalar başlatıldı ve protokoller imzalandı. Çanakkale, İzmir ve Bursa'da ilk Proje Uygulama Sahaları hayata geçirildi."
         }
       }
     },
@@ -640,7 +646,7 @@
       },
       "technology": {
         "title": "Teknoloji",
-        "desc": "Drone, GPS, uydu — en ileri araçları en iyi şekilde kullanırız."
+        "desc": "Dron, GPS, uydu — en ileri araçları en iyi şekilde kullanırız."
       },
       "transparency": {
         "title": "Şeffaflık",
@@ -654,13 +660,13 @@
     "team": {
       "badge": "Ekip",
       "title": "Disiplinler Arası <accent>Bir Aile</accent>",
-      "subtitle": "Orman mühendislerinden drone pilotlarına, yazılımcılardan proje koordinatörlerine — 36+ kişilik bir aile.",
+      "subtitle": "Orman mühendislerinden dron pilotlarına, yazılımcılardan proje koordinatörlerine — 36+ kişilik bir aile.",
       "foresters": {
         "name": "Orman Mühendisleri",
         "desc": "Tohum türü seçimi, formülasyon ve toprak analizi"
       },
       "pilots": {
-        "name": "Drone Pilotları & Operatörler",
+        "name": "Dron Pilotları & Operatörler",
         "desc": "Sertifikalı pilotlar, GPS hassasiyetli operasyon"
       },
       "coordinators": {
@@ -685,8 +691,8 @@
     },
     "cta": {
       "title": "Bu Yolculukta <accent>Bize Katılın</accent>",
-      "subtitle": "İlk tohumunuzu bugün ekin, etkinizi hemen izleyin. Birlikte daha yeşil bir gelecek mümkün.",
-      "primaryEnabled": "Tohum Sipariş Et",
+      "subtitle": "Bir saha seçin, tohum topu bıraktırın; çalışmayı raporlarla ve görüntülerle izleyin.",
+      "primaryEnabled": "Satın Al",
       "primaryDisabled": "Yakında",
       "secondary": "Bize Ulaşın",
       "primaryRequest": "Talep Oluştur"
@@ -706,8 +712,7 @@
     },
     "contacts": {
       "address": {
-        "title": "Adres",
-        "secondary": "Kahramankazan / Ankara, Türkiye\nSkytech Havacılık A.Ş."
+        "title": "Adres"
       },
       "phone": {
         "title": "Telefon",
@@ -727,7 +732,7 @@
     "social": {
       "badge": "Sosyal Medya",
       "title": "Hikayemizi Takip Edin",
-      "subtitle": "Drone uçuşları, saha videoları, ekip hikayeleri ve teknolojik atılımlar — sosyal medyada."
+      "subtitle": "Dron uçuşları, saha videoları, ekip hikayeleri ve teknolojik atılımlar — sosyal medyada."
     },
     "cta": {
       "title": "Hangi Yoldan <accent>İlerleyelim?</accent>",
@@ -751,7 +756,7 @@
     },
     "hero": {
       "title": "Bir Kürede Koca Bir Orman",
-      "subtitle": "Tohum topu — kil, organik gübre ve seçilmiş tohumların ormancılık bilimiyle birleştiği küçük bir mucize."
+      "subtitle": "Tohum Topu Teknolojisi — kil, organik madde ve seçilmiş yerli tohumların ormancılık bilimiyle kapsüllendiği yöntem."
     },
     "what": {
       "badge": "Tohum Topu Nedir?",
@@ -811,53 +816,54 @@
         "label": "Çimlenme Oranı"
       },
       "perFlight": {
-        "label": "Tohum / Drone Uçuşu"
-      },
-      "co2": {
-        "label": "CO₂ / Ağaç / Yıl"
+        "label": "Tohum Topu / Dron Uçuşu"
       },
       "lifespan": {
         "value": "25 yıl",
         "label": "Ortalama Yaşam"
+      },
+      "season": {
+        "label": "Bırakma Sezonu",
+        "value": "Ekim–Mart"
       }
     },
     "cta": {
-      "title": "Kendi <grad>Tohum Topunuzu</grad> Sipariş Edin",
-      "titleRequest": "Kendi <grad>Tohum Topunuzu</grad> Talep Edin",
-      "subtitle": "Adresinize teslim, kendi bahçenizde veya seçilen Skytech alanlarında profesyonel ekim ile.",
-      "buttonOrder": "Sipariş Ver",
+      "title": "Bir Sahaya <grad>Tohum Topu</grad> Bıraktırın",
+      "titleRequest": "Bir Sahaya <grad>Tohum Topu</grad> Bıraktırın",
+      "subtitle": "Bir Proje Uygulama Sahası seçin ya da kendi araziniz için başvurun; tohum toplarını dronla biz bırakalım.",
+      "buttonOrder": "Satın Al",
       "buttonSoon": "Yakında",
       "buttonRequest": "Talep Oluştur"
     }
   },
   "droneTechPage": {
     "meta": {
-      "title": "Dron Teknolojisi — Hassas Ekim, Sıfır Ayak İzi",
-      "description": "GPS hassasiyetli drone filomuz, ulaşılması zor bölgelerde insan ayağının değmediği alanlara tohum topu ekiyor. RTK GPS, LiDAR, otonom uçuş, 200+ tohum/uçuş.",
-      "imageAlt": "Skytech Green tarımsal ekim drone — hero shot"
+      "title": "Dron Teknolojisi — Hassas Bırakma, Sıfır Ayak İzi",
+      "description": "GPS hassasiyetli dron filomuz, ulaşılması zor bölgelerde insan ayağının değmediği alanlara tohum topu bırakıyor. RTK GPS, LiDAR, otonom uçuş, 200+ tohum topu/uçuş.",
+      "imageAlt": "Skytech Green tohum topu bırakma dronu"
     },
     "breadcrumb": {
       "label": "Dron Teknolojisi"
     },
     "schema": {
       "name": "Dron ile Ağaçlandırma Hizmeti",
-      "description": "GPS hassasiyetli, otonom uçuşlu profesyonel drone filomuzla bir uçuşta 200+ tohum atışı. Sıfır saha tahribatı, ulaşılması zor bölgelere erişim, tam izlenebilirlik."
+      "description": "GPS hassasiyetli, otonom uçuşlu profesyonel dron filomuzla bir uçuşta 200+ tohum topu bırakma. Sıfır saha tahribatı, ulaşılması zor bölgelere erişim, tam izlenebilirlik."
     },
     "hero": {
-      "title": "Hassas Ekim, Sıfır Ayak İzi",
-      "subtitle": "GPS hassasiyetli dronlarla, insan adımının ulaşamadığı bölgelere tohum topu ekiyoruz."
+      "title": "Hassas Bırakma, Sıfır Ayak İzi",
+      "subtitle": "GPS hassasiyetli dronlarla, insan adımının ulaşamadığı bölgelere tohum topu bırakıyoruz."
     },
     "system": {
-      "badge": "Drone Sistemi",
-      "heading": "<grad>Otonom Drone Filomuz</grad> Sahada",
+      "badge": "Dron Sistemi",
+      "heading": "<grad>Otonom Dron Filomuz</grad> Sahada",
       "p1": "Otonom uçuş kabiliyetine sahip insansız hava araçları (İHA), önceden tanımlanmış hedef koordinatlara yüksek hassasiyetle ulaşır ve tek operasyonda 200+ tohum topunu başarıyla yerleştirir.",
       "p2": "Yüksek hassasiyetli GPS verileriyle yönlendirilen İHA filomuz, <strong>sıfır ekolojik tahribat</strong> prensibiyle çalışır. Tüm uçuş kayıtları gerçek zamanlı olarak kurumsal panonuza işlenir — şeffaflık ve doğrulanabilirlik için.",
-      "imageAlt": "Skytech Green tarımsal ekim drone — premium ürün görseli",
+      "imageAlt": "Skytech Green dronu — tohum topu haznesiyle",
       "thermalCamera": "Termal Kamera"
     },
     "featuresSection": {
       "badge": "Teknik Özellikler",
-      "title": "Endüstri Lideri <grad>Drone Donanımı</grad>"
+      "title": "Endüstri Lideri <grad>Dron Donanımı</grad>"
     },
     "features": {
       "gps": {
@@ -870,11 +876,11 @@
       },
       "speed": {
         "title": "10x Hız",
-        "desc": "Geleneksel ekime göre on kat daha hızlı, ekim süresini günlerden saatlere indiriyor."
+        "desc": "Geleneksel dikime göre on kat daha hızlı; uygulama süresini günlerden saatlere indirir."
       },
       "autonomous": {
         "title": "Otonom Görev",
-        "desc": "Önceden planlanan rota; drone otonom uçar, görevi tamamlar, baz istasyonuna döner."
+        "desc": "Önceden planlanan rota; dron otonom uçar, görevi tamamlar, baz istasyonuna döner."
       },
       "access": {
         "title": "Ulaşılması Zor Bölgelere Erişim",
@@ -882,25 +888,25 @@
       },
       "tracking": {
         "title": "Yıllık Takip",
-        "desc": "Periyodik uçuş verileri, büyüme metrikleri ve karbon nötrleme sonuçlarınız kurumsal panomuzda anlık olarak güncellenir; doğrudan ESG raporlarınıza aktarılabilir."
+        "desc": "Sahalar her yıl dronla yeniden görüntülenir; uçuş verileri ve gelişim görüntüleri Faaliyet Raporu'nda toplanır."
       }
     },
     "processSection": {
       "badge": "Operasyon",
-      "title": "Dört Aşamada <grad>Drone Ekimi</grad>"
+      "title": "Dört Aşamada <grad>Dronla Bırakma</grad>"
     },
     "process": {
       "survey": {
         "title": "Bölge Taraması",
-        "desc": "Drone uydu ve LiDAR ile alan haritalanır, eğim ve toprak nem analizi yapılır."
+        "desc": "Dron uydu ve LiDAR ile alan haritalanır, eğim ve toprak nem analizi yapılır."
       },
       "plan": {
-        "title": "Ekim Planı",
-        "desc": "GPS koordinatlı ekim haritası oluşturulur. Yasal izinler Orman Bölge Müdürlüğü ile koordine edilir."
+        "title": "Bırakma Planı",
+        "desc": "GPS koordinatlı bırakma haritası oluşturulur. Yasal izinler Orman Bölge Müdürlüğü ile koordine edilir."
       },
       "seeding": {
-        "title": "Otonom Ekim",
-        "desc": "Drone planlanmış rotada otonom uçar, hesaplanmış noktalara tohum topu bırakır."
+        "title": "Otonom Bırakma",
+        "desc": "Dron planlanmış rotada otonom uçar, hesaplanmış noktalara tohum topu bırakır."
       },
       "reporting": {
         "title": "Raporlama",
@@ -908,125 +914,10 @@
       }
     },
     "cta": {
-      "title": "Projeniz İçin <grad>Drone Ekimi</grad> Planlayalım",
+      "title": "Araziniz İçin <grad>Çalışma</grad> Planlayalım",
       "subtitle": "Bölge analizi, yasal izin koordinasyonu ve operasyon planlaması — tek noktadan.",
       "buttonPrimary": "Teklif Al",
       "buttonSecondary": "Aktif Projeler"
-    }
-  },
-  "carbonProgramPage": {
-    "meta": {
-      "title": "Karbon Programı — Ölçülebilir, Şeffaf, Sertifikalı",
-      "description": "Karbon nötrleme programımız: dron ekimleriyle dengelenen CO₂, şeffaf metrikler, GRI/CDP uyumlu ESG raporlama. Kurumsal karbon sertifikası."
-    },
-    "breadcrumb": {
-      "label": "Karbon Programı"
-    },
-    "schema": {
-      "name": "Karbon Nötrleme Programı",
-      "description": "GRI/CDP/SASB uyumlu, IPCC standartlarında karbon ayak izi hesaplama ve dron ağaçlandırmayla nötrleme. Kurumsal ESG raporlarına entegre."
-    },
-    "hero": {
-      "title": "Holding ve Şirketler için Uçtan Uca Karbon Nötrleme",
-      "subtitle": "Yıllık sera gazı emisyonlarınızı uluslararası standartlarda hesaplıyor, drone teknolojisiyle yüksek karbon yutak alanları (biyo-karbon ekosistemleri) inşa ediyor ve tüm süreci şeffaf biçimde ESG raporlarınıza entegre ediyoruz."
-    },
-    "metrics": {
-      "badge": "Metrikler",
-      "title": {
-        "pre": "Ölçülebilir",
-        "highlight": "Karbon Etkisi"
-      },
-      "subtitle": "Her sayı IPCC standartlarına dayanır. Şeffaf, doğrulanabilir, denetlenebilir.",
-      "perTree": {
-        "label": "CO₂ / Ağaç / Yıl",
-        "desc": "Bir ağacın ortalama yıllık karbondioksit emilimi; tür, yaş ve iklime göre değişir."
-      },
-      "perHectare": {
-        "label": "CO₂ / ha / Yıl",
-        "desc": "Genç ağaçlandırma alanlarının ilk 20 yıldaki hektar başına karbon giderim aralığı."
-      },
-      "perSquareMeter": {
-        "label": "CO₂ / m² / Yıl",
-        "desc": "Akdeniz çam ormanlarında ölçülen organik karbon tutum hızı (2/3 toprak, 1/3 biyokütle)."
-      },
-      "compliant": {
-        "label": "Uyumlu",
-        "desc": "Veri formatlarımız uluslararası raporlama standartlarına uygundur."
-      }
-    },
-    "comparison": {
-      "badge": "Karbon Kredisi vs. Gerçek Ağaçlandırma",
-      "title": {
-        "pre": "Hangisi",
-        "highlight": "Gerçekten Etkili?"
-      },
-      "prosLabel": "Artılar:",
-      "consLabel": "Eksiler:",
-      "credit": {
-        "method": "Karbon Kredisi Satın Alma",
-        "pros": "Hızlı, kolay",
-        "cons": "Soyut, ölçülemez, çoğu zaman çift sayım"
-      },
-      "forest": {
-        "method": "Skytech Drone Ağaçlandırma",
-        "pros": "Fiziksel ağaç + GPS koordinatlı kayıt"
-      }
-    },
-    "faq": {
-      "badge": "SSS",
-      "title": {
-        "pre": "Karbon Programı",
-        "highlight": "Hakkında"
-      },
-      "validity": {
-        "question": "Karbon sertifikalarınız ne için geçerli?",
-        "answer": "Sertifikalarımız ESG raporlarında, GRI ve CDP gönderimlerinde, kurumsal sürdürülebilirlik beyanlarında kullanılabilir. Kurumumuz bünyesinde gerçekleştirilen tüm ormanlaştırma ve karbon yutak alanı projeleri Orman Genel Müdürlüğü (OGM) Bölge Müdürlükleri koordinasyonunda, yasal ve bilimsel altyapıya uygun olarak yürütülmektedir."
-      },
-      "calculation": {
-        "question": "Karbon hesaplaması nasıl yapılıyor?",
-        "answer": "Tohum sayısı × çimlenme oranı = ağaç sayısı; ağaç sayısı × ağaç başına yıllık CO₂ emilimi × izleme süresi = toplam karbon dengelemesi. Ağaç başına emilim aralığı (10–25 kg/yıl) ve hektar bazlı giderim hızları (4,5–40,7 t CO₂/ha/yıl) sayfanın altında listelenen akademik kaynaklara dayanır; tür, yaş ve iklime göre saha bazında güncellenir."
-      },
-      "individual": {
-        "question": "Bireysel olarak da katılabilir miyim?",
-        "answer": "Evet. Bireysel olarak da tohum talebi bırakabilir ya da açık sahalarımıza sizin adınıza ekim talep edebilirsiniz. Ekim yapılan sahaların gelişimi düzenli olarak izlenir."
-      },
-      "esg": {
-        "question": "ESG entegrasyonu nasıl çalışıyor?",
-        "answer": "Kurumsal panelinizde ESG yazılımınız arasında API entegrasyonu sağlayarak veri akışını otomatik hale getiriyoruz. Sistemimiz şirketinizin karbon ayak izini hesaplar ve bu doğrultuda markanıza özel, drone teknolojisiyle desteklenen bir orman oluşturur."
-      }
-    },
-    "references": {
-      "badge": "Bilimsel Kaynaklar",
-      "title": {
-        "pre": "Verilerimizin",
-        "highlight": "Dayanakları"
-      },
-      "subtitle": "Karbon hesaplama parametrelerimiz, hakemli akademik yayınlara ve bağımsız kurum kaynaklarına dayanır.",
-      "ref1": {
-        "text": "Ortalama ağaç başına yıllık CO₂ emilim aralığı — bağımsız karbon hesaplama derlemeleri ve orman yönetimi karbon muhasebesi kaynakları."
-      },
-      "ref2": {
-        "text": "Ağaçlandırma ve fidanlıkların ilk 20 yıldaki hektar başına karbon giderim hızı (4,5–40,7 t CO₂ ha⁻¹ yıl⁻¹)."
-      },
-      "ref3": {
-        "text": "Akdeniz çam ormanında organik karbon tutum hızı (~550 g CO₂ m⁻² yıl⁻¹)."
-      },
-      "ref4": {
-        "text": "Tohum topu kompozisyonu, atış yüksekliği ve çimlenme başarısı üzerine İHA tabanlı hassas ekim araştırması."
-      },
-      "note": "Not: Karbon giderim değerleri tür, yaş, iklim ve saha koşullarına göre değişir. Sunulan aralıklar bilimsel literatürdeki ortalamalardır; kurumsal projelerde saha bazlı ölçümlerle güncellenir."
-    },
-    "cta": {
-      "title": {
-        "pre": "Karbon Nötrleme",
-        "highlight": "Programına Katılın"
-      },
-      "subtitle": "Bireysel ya da kurumsal — ölçülebilir karbon dengeleme yolculuğu burada başlıyor.",
-      "primaryEnabled": "Kurumsal Teklif Al",
-      "primaryDisabled": "Bilgi Al",
-      "secondaryEnabled": "Bireysel Tohum Sipariş Et",
-      "secondaryDisabled": "Yakında",
-      "secondaryRequest": "Bireysel Talep Oluştur"
     }
   },
   "corporatePage": {
@@ -1039,7 +930,7 @@
     },
     "schema": {
       "name": "Kurumsal Ormanlaştırma ve ESG Çözümleri",
-      "description": "Şirketler için kurumsal orman kurulumu, çalışan başına PDF sertifika otomasyonu, GRI/CDP uyumlu karbon raporlama, REST API + e-ticaret eklenti entegrasyonu."
+      "description": "Şirketler için toplu katılım, çalışan başına Katılım Sertifikası, Faaliyet Raporu ve kurumsal faturalama."
     },
     "hero": {
       "title": "Promosyon Ürünleri Çöpe Gider. Kurumsal Ormanınız Sonsuza Kadar Yaşar.",
@@ -1077,7 +968,7 @@
       },
       "afforestation": {
         "title": "Kurumsal Ormanlaştırma",
-        "desc": "Kuruma özel kurumsal alan, drone çekim videoları, koordinatlı haritalama."
+        "desc": "Kuruma özel kurumsal alan, dron çekim videoları, koordinatlı haritalama."
       },
       "api": {
         "title": "ESG Yazılım API Entegrasyonu",
@@ -1088,8 +979,8 @@
         "desc": "\"Sepete 1 tohum ekle\" widget'ı — müşterilerinize ekoloji deneyimi sunun."
       },
       "footprint": {
-        "title": "Karbon Ayak İzi → Markanıza Özel Orman",
-        "desc": "Sistemimiz şirketinizin karbon ayak izini hesaplar ve bu doğrultuda markanıza özel, drone teknolojisiyle desteklenen bir orman oluşturur."
+        "title": "Faaliyet Raporu",
+        "desc": "Her çalışma için saha, alan, tür, tarih, koordinat ve görüntü içeren Faaliyet Raporu; sürdürülebilirlik raporlarınızda destekleyici belge olarak kullanılabilir."
       },
       "accountManager": {
         "title": "Özel Hesap Yöneticisi",
@@ -1101,7 +992,7 @@
         "pre": "Kurumsal Projenizi",
         "highlight": "Tasarlayalım"
       },
-      "subtitle": "Çalışan sayınız, karbon hedefiniz, ESG ihtiyaçlarınız — birlikte planlayalım. 24 saat içinde dönüş.",
+      "subtitle": "Çalışan sayınız, katılmak istediğiniz sahalar, raporlama ihtiyaçlarınız — birlikte planlayalım. Bir iş günü içinde dönüş.",
       "primaryEnabled": "Teklif Talep Et",
       "primaryDisabled": "Bilgi Al",
       "secondary": "Bize Ulaşın"
@@ -1112,20 +1003,20 @@
         "highlight": "Tek Pano",
         "rest": "Üzerinden Yönetin"
       },
-      "intro": "Çalışan ekleyin, karbon ayak izinizi hesaplayın, drone uçuş kayıtlarına erişin, ESG raporu indirin — hepsi kurumsal panelinizden.",
+      "intro": "Çalışan ekleyin, sertifikaları dağıtın, dron uçuş kayıtlarına ve Faaliyet Raporu'na erişin — hepsi kurumsal panelinizden.",
       "features": {
         "upload": "Çalışan listesi yükleme (CSV)",
         "certificate": "Otomatik sertifika üretimi",
-        "droneRecords": "Drone uçuş kayıtları",
-        "carbonPanel": "Karbon hesaplama paneli",
+        "droneRecords": "Dron uçuş kayıtları",
+        "carbonPanel": "Faaliyet Raporu arşivi",
         "esgModule": "ESG rapor modülü",
         "billing": "Faturalandırma & vergi"
       },
       "mockup": {
-        "droneLabel": "Drone — Çanakkale",
+        "droneLabel": "Dron — Çanakkale",
         "gpsStatus": "RTK GPS · Aktif",
-        "carbonLabel": "Karbon Nötrleme",
-        "carbonValue": "847 ton CO₂",
+        "carbonLabel": "Faaliyet Raporu",
+        "carbonValue": "3 saha",
         "quarterDelta": "+ %23 ÇEYREK",
         "treesLabel": "Ağaç",
         "employeesLabel": "Çalışan",
@@ -1145,7 +1036,7 @@
         "highlight": "1 Satır",
         "post": "Tohum Eklentisi"
       },
-      "intro": "Skytech Green SDK ile her satışınıza otomatik karbon nötrleme. PDF sertifika üretimi, ESG webhook'ları ve faturalandırma tek pakette.",
+      "intro": "Skytech Green API ile satışlarınızı tohum topu bırakma çalışmalarına bağlayın. Katılım Sertifikası üretimi, webhook'lar ve faturalandırma tek pakette.",
       "copy": "Kopyala",
       "copied": "Kopyalandı",
       "earlyAccess": "Erken erişim listesine katıl",
@@ -1155,8 +1046,8 @@
         },
         "cart": {
           "label": "Sepete Tohum Ekle",
-          "comment": "Müşterinin sepetine 1 tohum eklensin (1 ton CO₂ nötrleme = 200 tohum)",
-          "giftMessage": "Siparişiniz için bir tohum ekildi 🌱"
+          "comment": "Müşterinin sepetine 1 tohum topu eklensin",
+          "giftMessage": "Siparişiniz için bir tohum topu bırakılacak"
         },
         "certificate": {
           "label": "Çalışan Sertifikası",
@@ -1165,7 +1056,7 @@
         },
         "webhook": {
           "label": "ESG Webhook",
-          "comment": "Drone uçuşu tamamlandığında webhook tetiklenir",
+          "comment": "Dron uçuşu tamamlandığında webhook tetiklenir",
           "commentProcess": "ESG raporlama sisteminize işle"
         }
       }
@@ -1218,10 +1109,10 @@
       "error": "Bir şeyler ters gitti. Lütfen tekrar deneyin veya doğrudan info@skytechgreen.com adresinden bize ulaşın."
     },
     "topics": {
-      "individual": "Bireysel Tohum Talebi",
+      "individual": "Sahaya Tohum Topu Bıraktırma",
       "corporate": "Kurumsal Ormanlaştırma",
-      "esg": "ESG / Karbon Nötrleme",
-      "drone": "Drone Operasyonu",
+      "esg": "ESG / Raporlama",
+      "drone": "Dron Operasyonu",
       "press": "Basın / Medya",
       "partnership": "İş Birliği Önerisi",
       "other": "Diğer"
@@ -1241,8 +1132,8 @@
   },
   "comingSoonPage": {
     "meta": {
-      "title": "Yakında — Fiyatlandırma ve Online Ödeme",
-      "description": "Fiyatlandırma ve online ödeme çok yakında açılıyor. Şimdiden tohum, ekim ve arazi başvurusu talebi bırakabilir, hesap oluşturabilirsiniz."
+      "title": "Yakında — Çevrim İçi Ödeme",
+      "description": "Çevrim içi ödeme çok yakında açılıyor. Şimdiden bir Proje Uygulama Sahasına tohum topu bıraktırma talebi ya da kendi araziniz için başvuru bırakabilir, hesap oluşturabilirsiniz."
     },
     "badge": "Çok Yakında",
     "title": {
@@ -1250,8 +1141,8 @@
       "highlight": "Çok Yakında"
     },
     "body": {
-      "primary": "Fiyatlandırma ve online ödeme altyapımızda son hazırlıkları yapıyoruz. Bu aşamada talebinizi alıyor, fiyat ve planlamayı sizinle birlikte netleştiriyoruz.",
-      "secondary": "Tohum talebi, arazinize ekim başvurusu ya da açık sahalarımıza tohum talebi için formu doldurmanız yeterli; ekibimiz bir iş günü içinde dönüş yapar."
+      "primary": "Çevrim içi ödeme altyapımızda son hazırlıkları yapıyoruz. Bu aşamada talebinizi alıyor, ayrıntıları ve takvimi sizinle birlikte netleştiriyoruz.",
+      "secondary": "Bir Proje Uygulama Sahasına tohum topu bıraktırmak ya da kendi araziniz için başvurmak üzere formu doldurmanız yeterli; ekibimiz bir iş günü içinde dönüş yapar."
     },
     "cta": {
       "home": "Ana Sayfaya Dön",
@@ -1269,31 +1160,30 @@
   "projectsPage": {
     "meta": {
       "title": "Projeler & Harita — Sahadan Kanıt",
-      "description": "Çanakkale, İzmir ve Bursa'da sürdürdüğümüz pilot drone ağaçlandırma çalışmalarımız. İnteraktif Türkiye haritası ve il bazlı pilot saha detayları."
+      "description": "Çanakkale, İzmir ve Bursa'daki Proje Uygulama Sahalarımız. Etkileşimli Türkiye haritası ve il bazında saha bilgileri."
     },
     "breadcrumbTitle": "Sahadan Kanıt",
-    "breadcrumbSubtitle": "Çanakkale, İzmir ve Bursa'da pilot sahalarımızda çalışmalarımız sürüyor — gerçek dronelar, gerçek tohumlar.",
+    "breadcrumbSubtitle": "Çanakkale, İzmir ve Bursa'daki Proje Uygulama Sahalarımızda çalışmalarımız sürüyor.",
     "breadcrumbSchemaName": "Projeler",
     "stats": {
-      "pilotRegions": "Pilot Bölge",
+      "pilotRegions": "Proje Sahası",
       "provinces": "İl",
       "legalCompliance": "Yasal Uyum"
     },
     "map": {
       "badge": "İnteraktif Harita",
       "titleLine": "Türkiye",
-      "titleAccent": "Pilot Saha Haritası",
-      "subtitle": "Pilot sahalarımızı harita üzerinden keşfedin. İllerin üzerine gelin, detayları görün.",
+      "titleAccent": "Saha Haritası",
+      "subtitle": "Proje Uygulama Sahalarımızı harita üzerinden keşfedin. İllerin üzerine gelin, detayları görün.",
       "aria": "Türkiye Proje Haritası",
-      "totalSeeds": "Toplam Tohum",
-      "emptyProvince": "Bu ilde henüz aktif projemiz yok.",
-      "calculating": "Hesaplanıyor"
+      "emptyProvince": "Bu ilde henüz aktif projemiz yok."
     },
     "list": {
-      "badge": "Pilot Sahalar",
+      "badge": "Proje Uygulama Sahaları",
       "titleLine": "Sahada",
       "titleAccent": "Aktif Olduğumuz Bölgeler",
-      "subtitle": "Şu anda Çanakkale, İzmir ve Bursa'da pilot çalışmalarımız sürüyor. Alan çoğaldıkça yeni sahalar burada listelenecek."
+      "subtitle": "Şu anda Çanakkale, İzmir ve Bursa'da çalışmalarımız sürüyor. Yeni sahalar eklendikçe burada listelenecek.",
+      "sitesCta": "Sahaları İnceleyin"
     },
     "cta": {
       "titleLine": "Kendi",
@@ -1304,96 +1194,36 @@
     },
     "status": {
       "active": "Aktif",
-      "pilot": "Pilot",
+      "pilot": "Çalışma sürüyor",
       "completed": "Tamamlandı"
     },
     "items": {
       "canakkale": {
-        "region": "Pilot Saha",
-        "desc": "Orman Genel Müdürlüğü koordinasyonunda pilot ağaçlandırma çalışması."
+        "region": "Proje Uygulama Sahası",
+        "desc": "Orman Genel Müdürlüğü koordinasyonunda yürütülen ormanlaştırma ve gençleştirme çalışması."
       },
       "izmir": {
-        "region": "Pilot Saha",
-        "desc": "Drone destekli pilot ekim ve saha analizi çalışmaları."
+        "region": "Proje Uygulama Sahası",
+        "desc": "Dronla tohum topu bırakma ve saha analizi çalışmaları."
       },
       "bursa": {
-        "region": "Pilot Saha",
-        "desc": "Ekosistem restorasyonu odaklı pilot saha hazırlıkları."
+        "region": "Proje Uygulama Sahası",
+        "desc": "Ekosistem restorasyonu odaklı saha hazırlıkları."
       }
     }
   },
   "homeMeta": {
-    "title": "Tohum Toplarıyla Geleceği Ekin",
-    "description": "Dron teknolojisi ve tohum topu ile karbon nötr ağaçlandırma. Bireysel ve kurumsal çözümler, ölçülebilir etki, şeffaf tedarik zinciri."
+    "title": "Tohum Topu Teknolojisiyle Ormanlaştırma",
+    "description": "Yangından etkilenmiş sahalara dronla tohum topu bırakıyoruz. Bir Proje Uygulama Sahasına katılın ya da kendi araziniz için başvurun; çalışmayı raporlarla ve görüntülerle izleyin."
   },
   "cookieConsent": {
-    "message": "Sitenin çalışması için zorunlu çerezleri kullanıyoruz. İzin verirseniz ziyaretleri Google Analytics ile ölçeriz; izin vermezseniz Google'a hiçbir veri gönderilmez. Tercihinizi sayfanın altındaki Çerez Tercihleri'nden dilediğiniz an değiştirebilirsiniz.",
+    "message": "Google Analytics ve Vercel ziyaret ve hız ölçümleri isteğe bağlıdır. Gerekli aktarım koşulları tamamlandığında yalnız analitik izninizle yüklenirler. Reddetmek site kullanımınızı etkilemez. Tercihinizi Çerez Tercihleri bağlantısından değiştirebilirsiniz.",
     "policyLink": "Çerez Politikası",
     "rejectAll": "Yalnız Zorunlu",
     "acceptAll": "Analitiğe İzin Ver"
   },
-  "requestsHub": {
-    "meta": {
-      "title": "Talep Oluştur — Tohum, Ekim ve Arazi Başvurusu",
-      "description": "Ödeme yapmadan talep bırakın: tohum topu talebi, arazinize drone ile ekim başvurusu ya da açık sahalarımıza tohum talebi. Ekibimiz bir iş günü içinde size dönsün."
-    },
-    "breadcrumb": {
-      "label": "Talep Oluştur",
-      "title": "Talebinizi Bırakın, Sizi Arayalım",
-      "subtitle": "Fiyatlandırma ve online ödeme çok yakında. Bu aşamada talebinizi alıyor, tür, adet ve takvimi sizinle birlikte netleştiriyoruz."
-    },
-    "badge": "Ödeme yok · Taahhüt yok",
-    "cards": {
-      "seed": {
-        "tag": "Bireysel",
-        "title": "Tohum Talebi",
-        "desc": "Tohum toplarını adresinize gönderelim. Türü ve adedi seçin, gerisini birlikte planlayalım.",
-        "cta": "Tohum talebi oluştur"
-      },
-      "land": {
-        "tag": "Arazi sahibi",
-        "title": "Arazime Ekim Yapın",
-        "desc": "Yanmış, bozulmuş ya da atıl araziniz için drone ile ekim başvurusu. Keşif ve planlama bizden.",
-        "cta": "Başvuru yap"
-      },
-      "openLand": {
-        "tag": "Biz ekelim",
-        "title": "Açık Araziye Tohum",
-        "desc": "Skytech sahalarına sizin adınıza ekim yapalım. Sahayı ve tohum adedini seçin.",
-        "cta": "Talep oluştur"
-      }
-    },
-    "how": {
-      "title": "Nasıl işler?",
-      "steps": [
-        {
-          "title": "Talebinizi bırakın",
-          "desc": "Formu iki dakikada doldurun; hesap açmanız gerekmez."
-        },
-        {
-          "title": "Sizi arayalım",
-          "desc": "Ekibimiz bir iş günü içinde telefon ya da e-posta ile dönüş yapar."
-        },
-        {
-          "title": "Birlikte planlayalım",
-          "desc": "Tür, adet, fiyat ve takvimi görüşmede netleştiririz."
-        }
-      ]
-    },
-    "note": {
-      "title": "Fiyat ve ödeme",
-      "desc": "Fiyatlandırma ve online ödeme çok yakında açılıyor. Bu aşamada sizden ödeme istenmez; talebiniz sizi hiçbir şeye bağlamaz."
-    },
-    "account": {
-      "title": "Talebinizi takip edin",
-      "desc": "Ücretsiz hesap açarak taleplerinizin durumunu tek yerden izleyebilirsiniz.",
-      "cta": "Hesap oluştur",
-      "login": "Giriş yap"
-    }
-  },
   "requestForms": {
     "common": {
-      "backToHub": "Tüm talep türleri",
       "required": "zorunlu",
       "optional": "isteğe bağlı",
       "contact": {
@@ -1411,8 +1241,8 @@
         "messagePlaceholder": "Eklemek istediğiniz bir şey var mı?"
       },
       "prefilled": "İletişim bilgileriniz hesabınızdan dolduruldu; dilerseniz değiştirebilirsiniz.",
-      "consent": "<kvkk>KVKK Aydınlatma Metni</kvkk>'ni okudum; verilerimin talebimle ilgili iletişim için işlenmesine onay veriyorum.",
-      "noPayment": "Bu formla ödeme alınmaz. Fiyat ve planlama, ekibimizin dönüşünde netleşir.",
+      "consent": "<kvkk>KVKK Aydınlatma Metni</kvkk>'ni okudum; talebimle ilgili benimle iletişime geçilmesini istiyorum.",
+      "noPayment": "Bu formla ödeme alınmaz. Ayrıntılar ve takvim, ekibimizin dönüşünde netleşir.",
       "submit": "Talebi Gönder",
       "submitting": "Gönderiliyor…",
       "summary": {
@@ -1430,7 +1260,7 @@
         "next": [
           "Talebinizi inceliyoruz.",
           "Telefon ya da e-posta ile size dönüyoruz.",
-          "Tür, adet, fiyat ve takvimi birlikte netleştiriyoruz."
+          "Ayrıntıları ve takvimi birlikte netleştiriyoruz."
         ],
         "accountTitle": "Talebinizi hesabınızdan takip edin",
         "accountDesc": "Ücretsiz hesap açın; talebiniz otomatik olarak hesabınıza bağlansın.",
@@ -1451,13 +1281,9 @@
         "phoneInvalid": "Geçerli bir telefon numarası girin (örn. 5XX XXX XX XX).",
         "contactRequired": "Telefon veya e-postadan en az birini girin.",
         "consentRequired": "Devam etmek için onay kutusunu işaretleyin.",
-        "seedRequired": "En az bir tohum türü seçin.",
-        "seedTooMany": "En fazla {max} tür seçebilirsiniz.",
-        "seedDuplicate": "Aynı tür birden fazla eklenmiş.",
-        "seedInvalid": "Seçilen tür artık mevcut değil; sayfayı yenileyin.",
         "quantityInvalid": "Adet tam sayı olmalı.",
-        "quantityMin": "Adet en az {min} olmalı.",
-        "quantityMax": "Adet en fazla {max} olabilir.",
+        "quantityMin": "En az {min} tohum topu seçebilirsiniz.",
+        "quantityMax": "Tek talepte en çok {max} tohum topu seçebilirsiniz; daha fazlası için bize yazın.",
         "provinceRequired": "İl seçin.",
         "provinceInvalid": "Geçersiz il.",
         "areaRequired": "Alan büyüklüğünü girin.",
@@ -1468,52 +1294,20 @@
         "ownershipRequired": "Mülkiyet türünü seçin.",
         "timingRequired": "Zamanlama seçin.",
         "urlInvalid": "Bağlantı http(s):// ile başlamalı.",
-        "landInvalid": "Seçilen saha şu anda talebe kapalı; başka bir saha seçin."
-      }
-    },
-    "seed": {
-      "meta": {
-        "title": "Tohum Talebi — Tohum Toplarını Adresinize Gönderelim",
-        "description": "Kızılçam, karaçam, sedir ve ardıç tohum topları için talep bırakın. Tür ve adedi seçin; fiyat ve teslimatı ekibimiz sizinle netleştirsin. Ödeme yok."
-      },
-      "breadcrumb": {
-        "label": "Tohum Talebi",
-        "title": "Tohum Talebi",
-        "subtitle": "Türü ve adedi seçin, iletişim bilginizi bırakın. Fiyat ve teslimatı bir iş günü içinde sizinle netleştirelim."
-      },
-      "species": {
-        "heading": "Hangi türleri istiyorsunuz?",
-        "sub": "Bir ya da birden fazla tür seçin, adedini belirleyin. Adet, tohum topu sayısıdır.",
-        "quantity": "Adet",
-        "selected": "Seçildi",
-        "select": "Seç"
-      },
-      "delivery": {
-        "heading": "Teslimat",
-        "sub": "Kargo bilgileri dönüşte netleşir; şimdilik il yeterli.",
-        "province": "İl",
-        "provincePlaceholder": "İl seçin",
-        "district": "İlçe",
-        "districtPlaceholder": "İsteğe bağlı"
-      },
-      "purpose": {
-        "heading": "Kullanım amacı",
-        "sub": "İsteğe bağlı — doğru öneri için yardımcı olur."
-      },
-      "summary": {
-        "species": "Türler",
-        "total": "Toplam tohum",
-        "province": "İl"
+        "landInvalid": "Seçilen saha şu anda katılıma kapalı; başka bir saha seçin.",
+        "certificateNameShort": "Sertifikadaki ad en az {min} karakter olmalı.",
+        "certificateNameLong": "Sertifikadaki ad en çok {max} karakter olabilir.",
+        "certificateNameInvalid": "Sertifikadaki ad yalnız harf, rakam ve temel noktalama işaretlerinden oluşabilir."
       }
     },
     "land": {
       "meta": {
-        "title": "Arazime Ekim Yapın — Drone ile Ekim Başvurusu",
-        "description": "Yanmış, bozulmuş ya da atıl araziniz için drone ile tohum topu ekimi başvurusu. Konum, alan ve arazi durumunu paylaşın; keşif ve planlama bizden."
+        "title": "Kendi Arazim İçin — Dronla Tohum Topu Bırakma Başvurusu",
+        "description": "Yanmış, bozulmuş ya da atıl araziniz için dronla tohum topu bırakma başvurusu. Konum, alan ve arazi durumunu paylaşın; keşif ve planlama bizden."
       },
       "breadcrumb": {
-        "label": "Arazime Ekim Yapın",
-        "title": "Arazime Ekim Yapın",
+        "label": "Kendi Arazim İçin",
+        "title": "Kendi Arazim İçin Başvuru",
         "subtitle": "Arazinizi kısaca tanımlayın. Ekibimiz uygunluğu değerlendirip keşif ve planlama için sizinle iletişime geçsin."
       },
       "location": {
@@ -1539,50 +1333,682 @@
         "heading": "Mülkiyet"
       },
       "timing": {
-        "heading": "Ne zaman ekim istiyorsunuz?"
+        "heading": "Çalışmanın ne zaman yapılmasını istiyorsunuz?"
       },
       "notes": {
         "heading": "Erişim ve arazi notu",
-        "placeholder": "Yol durumu, eğim, su kaynağı, önceki ekimler… (isteğe bağlı)"
+        "placeholder": "Yol durumu, eğim, su kaynağı, önceki çalışmalar… (isteğe bağlı)"
       },
       "summary": {
         "location": "Konum",
         "area": "Alan",
         "condition": "Durum",
         "timing": "Zamanlama"
+      },
+      "backToSites": "Proje Uygulama Sahalarına dön"
+    }
+  },
+  "siteReleases": {
+    "title": "Bu sahadaki çalışmalar",
+    "intro": "Bu sahada tamamlanan tohum topu bırakma çalışmaları. Çalışmanın görüntüleri, bırakmayı izleyen izleme döneminde yayımlanır.",
+    "season": "{season} sezonu",
+    "play": "Videoyu oynat",
+    "playNamed": "{date} çalışmasının videosunu oynat",
+    "videoTitle": "{date} çalışma videosu",
+    "consentNote": "Oynattığınızda video YouTube'dan yüklenir.",
+    "publishedOn": "Yayımlanma: {date}",
+    "openOnYouTube": "YouTube'da aç",
+    "videoPending": "Bu çalışmanın görüntüleri izleme döneminde yayımlanacak.",
+    "report": "İzleme raporu (PDF)"
+  },
+  "orderStatusPage": {
+    "title": "Siparişiniz",
+    "description": "Siparişinizin durumunu, bırakma takvimini, belgelerini ve iade bilgilerini görüntüleyin.",
+    "copy": "Numarayı kopyala",
+    "copied": "Sipariş numarası kopyalandı.",
+    "copyFailed": "Kopyalanamadı. Sipariş numarasını seçerek kopyalayabilirsiniz.",
+    "greeting": "Merhaba {name}",
+    "createdOn": "Sipariş tarihi: {date}",
+    "statuses": {
+      "draft": "Taslak",
+      "awaiting_payment": "Ödeme bekleniyor",
+      "payment_failed": "Ödeme alınamadı",
+      "expired": "Süresi doldu",
+      "paid": "Ödendi",
+      "confirmed": "Kesinleşti",
+      "scheduled": "Planlandı",
+      "released": "Bırakıldı",
+      "monitoring": "İzlemede",
+      "completed": "Tamamlandı",
+      "withdrawal_requested": "Cayma bildirildi",
+      "cancelled_by_seller": "İptal edildi",
+      "refunded": "İade edildi"
+    },
+    "timeline": {
+      "title": "Siparişinizin aşamaları",
+      "stopped": "Bırakma süreci devam etmiyor. İade bilgileri yukarıdaki kartta yer alır.",
+      "done": "Tamamlanan adım",
+      "current": "Mevcut adım",
+      "upcoming": "Sıradaki adım",
+      "paid": {
+        "title": "Ödeme alındı",
+        "description": "Siparişiniz kesinleşti; 14 günlük cayma süresi işliyor."
+      },
+      "confirmed": {
+        "title": "Cayma süresi tamamlandı",
+        "description": "Siparişiniz bırakma planına alınabilir."
+      },
+      "scheduled": {
+        "title": "Bırakma planlandı",
+        "description": "Siparişiniz bir bırakma çalışmasına atandı."
+      },
+      "released": {
+        "title": "Tohum topları bırakıldı",
+        "description": "Tohum toplarınız sahaya bırakıldı; Katılım Sertifikanız düzenlendi."
+      },
+      "monitoring": {
+        "title": "İzleme dönemi",
+        "description": "Saha inceleniyor, izleniyor ve raporlanıyor."
+      },
+      "completed": {
+        "title": "Tamamlandı",
+        "description": "Çalışmanın görüntüleri paylaşıldı."
       }
     },
-    "openLand": {
-      "meta": {
-        "title": "Açık Araziye Tohum — Sizin Adınıza Ekelim",
-        "description": "Skytech'in açık sahalarına sizin adınıza drone ile tohum topu ekimi. Sahayı ve adedi seçin, isterseniz bir kişiye adayın; fiyatı ekibimiz sizinle netleştirsin."
+    "summary": {
+      "title": "Sipariş özeti",
+      "site": "Proje Uygulama Sahası",
+      "location": "Konum",
+      "workType": "Çalışma türü",
+      "species": "Tür",
+      "quantity": "Tohum topu adedi",
+      "unitPrice": "Birim hizmet bedeli",
+      "total": "Toplam hizmet bedeli (KDV dâhil)",
+      "certificateName": "Sertifikadaki ad"
+    },
+    "schedule": {
+      "title": "Bırakma takvimi",
+      "season": "Sezon: {season}",
+      "deadline": "En geç {date} tarihine kadar bırakılır.",
+      "originalDeadline": "Sözleşmedeki son tarih: {date}",
+      "releasedOn": "Bırakma tarihi: {date}"
+    },
+    "withdrawal": {
+      "title": "Cayma hakkınız",
+      "available": "Cayma hakkınızı {date} günü sonuna kadar kullanabilirsiniz.",
+      "action": "Cayma bildiriminde bulun",
+      "expired": "Sistemde hesaplanan olağan cayma son günü: {date}. Kanuni uzama ve ayıplı, geç veya hiç ifa edilmeyen hizmete ilişkin haklarınız saklıdır.",
+      "unavailable": "Bu sipariş şu anda caymaya uygun değil. Sorularınız için bize yazabilirsiniz."
+    },
+    "refund": {
+      "withdrawal": "Cayma bildirimi",
+      "seller_cancellation": "Satıcı kaynaklı iptal",
+      "pending": "İade bekleniyor",
+      "succeeded": "İade edildi",
+      "requestedOn": "Bildirim tarihi: {date}",
+      "dueOn": "Bedelin tamamı en geç {date} tarihine kadar iade edilir.",
+      "completedOn": "İade tarihi: {date}",
+      "bankNote": "İadenin hesabınıza yansıma süresi bankanıza göre değişebilir."
+    },
+    "documents": {
+      "title": "Sipariş belgeleri",
+      "kinds": {
+        "pre_info": "Ön Bilgilendirme Formu",
+        "contract": "Mesafeli Hizmet Sözleşmesi",
+        "withdrawal_form": "Cayma Formu"
       },
-      "breadcrumb": {
-        "label": "Açık Araziye Tohum",
-        "title": "Açık Araziye Tohum",
-        "subtitle": "Sahayı ve tohum adedini seçin. Tür seçimini bölgenin iklimine göre ekibimiz yapar; fiyatı dönüşte netleştiririz."
+      "hash": "Belge özeti: {hash}",
+      "view": "Görüntüle",
+      "pdf": "PDF indir",
+      "viewNamed": "{title} belgesini görüntüle",
+      "pdfNamed": "{title} PDF belgesini indir",
+      "pending": "Belgeleriniz hazırlanıyor.",
+      "languageNote": "Belgeler Türkçe düzenlenir."
+    },
+    "certificate": {
+      "title": "Katılım Sertifikası",
+      "ready": "Katılım Sertifikanız hazır.",
+      "cancelled": "Bu siparişin Katılım Sertifikası iptal edildi.",
+      "view": "Sertifikayı görüntüle",
+      "pending": "Sertifikanız, tohum topu bırakma tamamlandığında e-postayla gönderilir.",
+      "publication": {
+        "visible": "Adınız ayrı yayın izninizle herkese açık sertifikada görünebilir.",
+        "hidden": "Adınız herkese açık sertifikada gizlidir. Daha önce başkalarının kaydettiği kopyalar bu işlemle silinmez.",
+        "revoke": "Ad yayın iznimi geri al",
+        "pending": "İzin geri alınıyor…",
+        "error": "İzin geri alınamadı. Yeniden deneyebilir veya info@skytechgreen.com adresine yazabilirsiniz."
       },
-      "land": {
-        "heading": "Hangi sahaya ekelim?",
-        "sub": "Talebe açık sahalarımızdan birini seçin.",
-        "empty": "Şu anda talebe açık saha bulunmuyor. Bölge tercihinizi notunuza yazabilirsiniz.",
-        "region": "Bölge",
-        "open": "Talebe açık"
-      },
-      "quantity": {
-        "heading": "Kaç tohum?",
-        "sub": "Adet, tohum topu sayısıdır."
-      },
-      "dedication": {
-        "heading": "Kimin adına ekilsin?",
-        "sub": "İsteğe bağlı — hediye ediyorsanız alıcının adı.",
-        "placeholder": "Ad Soyad"
-      },
-      "summary": {
-        "land": "Saha",
-        "quantity": "Tohum adedi",
-        "dedication": "Adına"
-      }
+      "privateDownload": "Adı içeren özel sertifikamı indir"
+    },
+    "video": {
+      "title": "Çalışmanın görüntüleri",
+      "view": "YouTube'da görüntüle",
+      "pending": "Görüntüler, bırakmayı izleyen izleme döneminde e-postayla paylaşılır."
+    },
+    "invoice": {
+      "title": "Fatura",
+      "issued": "Faturanız düzenlendi.",
+      "issuedOn": "Faturanız {date} tarihinde düzenlendi.",
+      "pending": "Faturanız hazırlanıyor.",
+      "notYet": "Faturanız, vergi mevzuatına uygun yasal sürede düzenlenip e-postayla iletilir.",
+      "pdf": "Fatura PDF'ini indir"
+    },
+    "help": {
+      "title": "Siparişinizle ilgili iletişim",
+      "description": "Bize yazarken sipariş numaranızı belirtin.",
+      "sites": "Proje Uygulama Sahaları"
+    },
+    "notFound": {
+      "title": "Sipariş görüntülenemiyor",
+      "description": "Sipariş teyidi e-postanızdaki bağlantıyı kullanın. Sorun sürerse bizimle iletişime geçin.",
+      "back": "Proje Uygulama Sahalarına dön"
+    },
+    "testOrder": "Deneme siparişi — gerçek bir ödeme alınmamıştır."
+  },
+  "withdrawalPage": {
+    "title": "Cayma bildirimi",
+    "description": "Ödeme tarihinden itibaren 14 gün içinde gerekçe göstermeden cayabilirsiniz. Bedelin tamamı bildiriminizden itibaren 14 gün içinde, aynı ödeme aracına, tek seferde ve masrafsız iade edilir.",
+    "form": {
+      "title": "Bildirim bilgileri",
+      "orderNo": "Sipariş numarası",
+      "orderNoHint": "Sipariş teyidi e-postanızda yer alır.",
+      "email": "Siparişte kullanılan e-posta",
+      "note": "Notunuz",
+      "noteHint": "Gerekçe belirtmeniz gerekmez.",
+      "submit": "Bildirimi gönder"
+    },
+    "confirm": {
+      "title": "Cayma bildiriminizi onaylayın",
+      "description": "Bu bildirimle siparişinizden cayarsınız. Ödediğiniz bedelin tamamı 14 gün içinde ödemede kullandığınız araca iade edilir.",
+      "submit": "Cayma bildirimini onayla",
+      "cancel": "Vazgeç",
+      "submitting": "Gönderiliyor…"
+    },
+    "success": {
+      "title": "Cayma bildiriminiz alındı.",
+      "receivedAt": "Alınma zamanı",
+      "refundDueOn": "Bedelin tamamı en geç {date} tarihine kadar iade edilir.",
+      "email": "Bildiriminizin ulaştığına dair teyit e-postası adresinize gönderildi."
+    },
+    "closed": {
+      "title": "Çevrim içi cayma formu kapalı",
+      "description": "Çevrim içi cayma formu şu anda kapalı. Cayma bildiriminizi <email></email> adresine yazabilirsiniz."
+    },
+    "contact": {
+      "title": "Yazılı bildirim adresi",
+      "terms": "Cayma ve İade Koşulları"
+    },
+    "errors": {
+      "validation": "Lütfen işaretli alanları kontrol edin.",
+      "orderNoRequired": "Sipariş numarası zorunludur.",
+      "orderNoInvalid": "Geçerli bir sipariş numarası girin.",
+      "emailRequired": "E-posta zorunludur.",
+      "emailInvalid": "Geçerli bir e-posta adresi girin.",
+      "tooLong": "Metin çok uzun.",
+      "not_found": "Bu sipariş numarası ile e-posta adresi eşleşmedi. Bilgileri sipariş teyidi e-postanızdan kontrol edin.",
+      "not_eligible": "Başvurunuz bu otomatik akışta sonuçlandırılamadı. Cayma veya diğer yasal haklarınıza ilişkin bildiriminizi {email} adresine iletebilirsiniz. Bu mesaj hakkınızın bulunmadığına ilişkin bir karar değildir.",
+      "already_requested": "Bu sipariş için cayma bildirimi daha önce alınmış; iade süreci sürüyor.",
+      "rate_limited": "Kısa sürede çok fazla deneme yapıldı. Lütfen biraz sonra yeniden deneyin.",
+      "closed": "Çevrim içi cayma formu şu anda kapalı. Cayma bildiriminizi {email} adresine yazabilirsiniz.",
+      "generic": "Bir şeyler ters gitti. Lütfen yeniden deneyin ya da {email} adresine yazın.",
+      "already_refunded": "Bu siparişin bedeli daha önce iade edilmiş. Sorularınız için {email}."
     }
+  },
+  "carbonProgramPage": {
+    "meta": {
+      "title": "Karbon ve Raporlama — Faaliyet Raporu",
+      "description": "Her çalışma için saha, alan, tür, tarih, koordinat ve görüntü içeren Faaliyet Raporu düzenliyoruz. Raporun ne işe yaradığını ve ne olmadığını açıkça anlatıyoruz."
+    },
+    "breadcrumb": {
+      "label": "Karbon ve Raporlama"
+    },
+    "schema": {
+      "name": "Faaliyet Raporu ve İzleme",
+      "description": "Dronla tohum topu bırakma çalışmaları için saha, alan, tür, tarih, koordinat ve görüntü içeren Faaliyet Raporu ile yıllık izleme."
+    },
+    "hero": {
+      "title": "Karbon ve Raporlama",
+      "subtitle": "Yaptığımız işi belgeliyoruz; belgeleyemediğimiz bir şeyi vaat etmiyoruz. Faaliyet Raporu'nun ne olduğunu ve ne olmadığını burada bulabilirsiniz."
+    },
+    "report": {
+      "badge": "Faaliyet Raporu",
+      "title": {
+        "pre": "Her Çalışma",
+        "highlight": "Kayıt Altında"
+      },
+      "subtitle": "Tohum topu bırakılan her saha için bir Faaliyet Raporu düzenliyoruz. Raporda şunlar yer alır:",
+      "items": {
+        "site": {
+          "title": "Saha ve konum",
+          "desc": "Çalışmanın yapıldığı Proje Uygulama Sahası, ili ve ilçesi."
+        },
+        "area": {
+          "title": "Alan",
+          "desc": "Çalışılan alanın hektar cinsinden büyüklüğü."
+        },
+        "species": {
+          "title": "Tür ve tohum kaynağı",
+          "desc": "Sahaya bırakılan tür ya da türler ve tohumun tedarik edildiği kaynak."
+        },
+        "date": {
+          "title": "Tarih ve uçuş kaydı",
+          "desc": "Bırakmanın yapıldığı tarih ve dron uçuşlarına ait kayıtlar."
+        },
+        "coordinates": {
+          "title": "Koordinatlar",
+          "desc": "Tohum toplarının bırakıldığı alanın koordinatları."
+        },
+        "footage": {
+          "title": "Görüntüler ve izleme",
+          "desc": "Çalışma sırasında ve izleme döneminde dronla alınan görüntüler; yıllık izleme sonuçları."
+        }
+      }
+    },
+    "usage": {
+      "badge": "Kullanım",
+      "title": {
+        "pre": "Rapor Ne İşe Yarar,",
+        "highlight": "Ne Değildir?"
+      },
+      "can": {
+        "heading": "Nasıl kullanabilirsiniz",
+        "items": [
+          "Sürdürülebilirlik raporunuzun doğa, biyoçeşitlilik ve toplumsal katkı bölümlerinde destekleyici belge olarak",
+          "Kurum içi ve kurum dışı iletişimde, yapılan çalışmanın somut kaydı olarak",
+          "Çalışanlarınız ve paydaşlarınızla paylaşacağınız Katılım Sertifikaları'nın dayanağı olarak",
+          "Sahanın yıllar içindeki gelişimini izlemek için"
+        ]
+      },
+      "cannot": {
+        "heading": "Ne değildir",
+        "items": [
+          "Karbon kredisi ya da karbon nötr belgesi değildir",
+          "Sera gazı envanterinizden düşülemez; denkleştirme amacıyla kullanılamaz",
+          "Bağış makbuzu değildir; vergi indirimi sağlamaz",
+          "Çimlenme ya da ağaç sayısı garantisi vermez; tohumdan ağaca giden süreç yıllar alır ve doğal koşullara bağlıdır"
+        ]
+      }
+    },
+    "why": {
+      "badge": "Yaklaşımımız",
+      "title": {
+        "pre": "Karbon Konusunda",
+        "highlight": "Neden Temkinliyiz?"
+      },
+      "body": "Ormanlar karbon tutar; ancak bir çalışmanın ne kadar karbon tuttuğunu söyleyebilmek için yıllara yayılan ölçüm ve bağımsız doğrulama gerekir. Sahalarımızdaki karbon tutumu bugün bağımsız bir kuruluşça hesaplanıp doğrulanmış değildir. Bu nedenle rakam vermiyor, karbon nötrlüğü gibi iddialarda bulunmuyoruz.",
+      "points": [
+        "Kurumsal sera gazı envanterleri kurumun kendi faaliyet sınırını kapsar; üçüncü tarafın yürüttüğü bir orman çalışması bu envanterden düşülemez.",
+        "Karbon kredisi; tescilli bir proje, bağımsız geçerli kılma ve dönemsel ölçüm sonucunda, proje düzeyinde üretilir. Tek bir siparişle kredi elde edilmez.",
+        "Bağımsız bir doğrulama yapılırsa kapsamını, yöntemini ve sonuçlarını bu sayfada yayımlarız."
+      ]
+    },
+    "faq": {
+      "badge": "Sık Sorulanlar",
+      "title": {
+        "pre": "Karbon ve Rapor",
+        "highlight": "Soruları"
+      },
+      "items": {
+        "credit": {
+          "question": "Bu çalışmayla karbon raporu ya da karbon kredisi alabilir miyim?",
+          "answer": "Hayır. Verdiğimiz belge bir Faaliyet Raporu'dur: çalışmanın sahasını, alanını, türlerini, tarihini, koordinatlarını ve görüntülerini kayıt altına alır. Karbon kredisi ya da karbon nötr belgesi değildir; sera gazı envanterinizden düşülemez, denkleştirme amacıyla kullanılamaz."
+        },
+        "sustainability": {
+          "question": "Faaliyet Raporu'nu sürdürülebilirlik raporumda nasıl kullanırım?",
+          "answer": "Raporu; doğa, biyoçeşitlilik ve toplumsal katkı başlıklarında yaptığınız çalışmanın kanıtı olarak ekleyebilirsiniz. Emisyon azaltımı ya da giderimi olarak raporlamayın; bu tür beyanlar doğrulanmış karbon kredisi gerektirir."
+        },
+        "individual": {
+          "question": "Bireysel olarak da katılabilir miyim?",
+          "answer": "Evet. Bir Proje Uygulama Sahası seçip o sahaya tohum topu bıraktırabilirsiniz. Bırakma yapıldıktan sonra Katılım Sertifikanız, kararlaştırılan izleme takviminde de çalışmanın görüntüleri e-postayla iletilir."
+        },
+        "future": {
+          "question": "İleride karbon doğrulaması yapılacak mı?",
+          "answer": "Bu, proje düzeyinde tescil ve uzun süreli ölçüm gerektiren bir süreçtir. Böyle bir adım atıldığında kapsamını, yöntemini ve sonuçlarını burada açıkça paylaşırız; o güne kadar karbon miktarına ilişkin bir beyanda bulunmuyoruz."
+        }
+      }
+    },
+    "cta": {
+      "title": {
+        "pre": "Çalışmaya",
+        "highlight": "Katılın"
+      },
+      "subtitle": "Bireysel ya da kurumsal — bir saha seçin ya da kurumunuz için bilgi alın.",
+      "order": "Satın Al",
+      "request": "Talep Oluştur",
+      "soon": "Yakında",
+      "corporate": "Kurumsal Bilgi Al"
+    }
+  },
+  "sitesPage": {
+    "title": "Proje Uygulama Sahaları",
+    "intro": "Yangından etkilenmiş sahaların yeniden ormanlaşmasına katılın. Bir saha seçin; o sahaya sizin adınıza tohum topu bırakalım.",
+    "description": "Her sahanın alanını, çalışma türünü ve bırakılan türü aşağıda görebilirsiniz.",
+    "ownLand": "Kendi arazim için işlem yaptırmak istiyorum",
+    "fire": "Yangın Sahası",
+    "hectares": "{value} hektar",
+    "participate": "Bu sahaya katıl",
+    "details": "Sahayı incele",
+    "info": "Bilgi alın",
+    "empty": {
+      "title": "Yeni sahalar için hazırlık sürüyor",
+      "description": "Katılıma açılacak Proje Uygulama Sahalarını burada paylaşacağız. Kendi araziniz için başvurabilir veya çalışmalarımız hakkında bilgi alabilirsiniz."
+    },
+    "phases": {
+      "open": "Katılıma açık",
+      "full": "Kontenjan doldu",
+      "scheduled": "Bırakma planlandı",
+      "released": "Bırakma tamamlandı",
+      "monitoring": "İzleme sürüyor"
+    },
+    "workTypes": {
+      "ormanlastirma": "Ormanlaştırma",
+      "genclestirme": "Gençleştirme",
+      "ormanlastirma_genclestirme": "Ormanlaştırma – Gençleştirme"
+    }
+  },
+  "siteDetail": {
+    "meta": "{name}: sahanın alanını, türlerini ve tohum topu bırakma takvimini inceleyin.",
+    "location": "Konum",
+    "area": "Alan",
+    "workType": "Çalışma türü",
+    "phase": "Çalışmanın evresi",
+    "about": "Saha hakkında",
+    "speciesTitle": "Bu sahaya ne bırakılıyor?",
+    "speciesNote": "Tür, sahanın iklim ve toprak koşullarına göre uzman ekibimizce belirlenir; seçim yapmanız gerekmez.",
+    "gallery": "Sahadan görüntüler",
+    "galleryAlt": "{name} — {location} — saha görüntüsü {number}",
+    "video": "Çalışmanın görüntüleri",
+    "order": "Bu sahaya tohum topu bıraktır",
+    "back": "Tüm sahalara dön",
+    "reasons": {
+      "kizilcam": "Akdeniz ikliminin yerli türüdür; sıcağa ve kuraklığa dayanır. Yangın sonrası sahalarda doğal olarak geri gelen türlerin başında gelir.",
+      "karacam": "Yüksek ve karasal kesimlerin yerli çamıdır; dona ve kuraklığa toleransı sayesinde zorlu yamaçlarda tutunur.",
+      "sedir": "Toros Dağları’nın simge türüdür; yüksek kesimlerde saf orman oluşturur ve uzun ömürlüdür.",
+      "ardic": "Sarp ve taşlı yamaçlara uyum sağlar; toprağı tutar, diğer türler için koruyucu örtü oluşturur."
+    },
+    "phaseInfo": {
+      "open": "Bu saha şu anda yeni katılım almıyor.",
+      "full": "Bu sahanın kontenjanı doldu; diğer sahalara göz atabilirsiniz.",
+      "scheduled": "Bu saha için bırakma tarihi planlandı.",
+      "released": "Bu sahada tohum topu bırakma tamamlandı.",
+      "monitoring": "Bu sahada izleme ve raporlama sürüyor."
+    }
+  },
+  "seasonTimeline": {
+    "title": "Çalışma takvimi",
+    "description": "Tohum topu bırakma Ekim–Mart arasında yapılır. Nisan–Eylül döneminde sahalar incelenir, izlenir ve raporlanır.",
+    "release": "Tohum topu bırakma",
+    "monitoring": "İzleme ve raporlama",
+    "current": "İçinde bulunduğumuz ay",
+    "video": "Bırakmadan izleme takviminde: çalışmanın görüntüleri."
+  },
+  "certificatePage": {
+    "title": "Katılım Sertifikası",
+    "verification": "Sertifika doğrulama",
+    "valid": "Bu sertifika geçerlidir",
+    "cancelled": "Bu sertifika iptal edilmiştir",
+    "cancelledBand": "İPTAL EDİLDİ",
+    "cancelledDescription": "Sipariş cayma hakkı kapsamında iptal edilmiş olabilir.",
+    "imageAlt": "{name} adına düzenlenmiş Katılım Sertifikası",
+    "download": "Görseli indir",
+    "downloading": "Görsel hazırlanıyor…",
+    "downloaded": "Görsel indirme işlemi başlatıldı.",
+    "downloadError": "Görsel indirilemedi. Lütfen tekrar deneyin.",
+    "copy": "Bağlantıyı kopyala",
+    "copied": "Bağlantı kopyalandı.",
+    "copyError": "Bağlantı kopyalanamadı. Tarayıcınızın adres çubuğundan kopyalayabilirsiniz.",
+    "share": "Paylaş",
+    "shareError": "Paylaşım açılamadı. Bağlantıyı kopyalayabilirsiniz.",
+    "shareText": "{site} sahasına {quantity} tohum topu bıraktırdım. #SkytechGreen",
+    "quantity": "{quantity} tohum topu",
+    "details": "Çalışmanın kaydı",
+    "meaning": "Bu sertifika neyi belgeler?",
+    "records": "Belirtilen sahaya, belirtilen adette tohum topunun dronla bırakıldığını belgeler.",
+    "monitoring": "Saha sonraki dönemlerde izlenir.",
+    "video": "Çalışmanın görüntüleri",
+    "sites": "Proje Uygulama Sahaları",
+    "notes": {
+      "document": "Bu belge bir Katılım Sertifikasıdır; bağış makbuzu değildir ve vergi indirimi sağlamaz.",
+      "nature": "Tohum topları doğaya bırakılmıştır; çimlenme ve gelişim doğal koşullara bağlıdır, garanti edilmez."
+    },
+    "facts": {
+      "site": "Saha",
+      "province": "İl",
+      "released": "Bırakma tarihi",
+      "issued": "Düzenlenme tarihi",
+      "species": "Türler",
+      "workType": "Çalışma türü",
+      "quantity": "Bırakılan adet",
+      "code": "Sertifika kodu"
+    },
+    "image": {
+      "quantity": "{quantity} tohum topu,",
+      "site": "{site} sahasına",
+      "date": "{date} tarihinde dronla bırakılmıştır."
+    },
+    "workTypes": {
+      "ormanlastirma": "Ormanlaştırma",
+      "genclestirme": "Gençleştirme",
+      "ormanlastirma_genclestirme": "Ormanlaştırma – Gençleştirme"
+    }
+  },
+  "paymentResultPage": {
+    "meta": {
+      "title": "Ödeme sonucu"
+    },
+    "test": "Deneme siparişi — gerçek bir ödeme alınmamıştır.",
+    "rows": {
+      "orderNo": "Sipariş numarası",
+      "site": "Proje Uygulama Sahası",
+      "quantity": "Tohum topu adedi",
+      "total": "Toplam bedel (KDV dâhil)"
+    },
+    "success": {
+      "badge": "Ödeme onaylandı",
+      "title": "Siparişiniz alındı",
+      "body": "Ödemeniz onaylandı ve sözleşmeniz kuruldu. Tohum topu bırakma siparişiniz kayda geçti.",
+      "email": "Sipariş teyidiniz; Ön Bilgilendirme Formu, Mesafeli Hizmet Sözleşmesi, Cayma Formu ve KVKK Aydınlatma Metni ile birlikte {email} adresine e-postayla gönderilir. Birkaç dakika içinde ulaşmazsa gereksiz (spam) klasörünü kontrol edebilirsiniz.",
+      "deadline": "Tohum topları en geç {date} tarihine kadar bırakılır.",
+      "withdrawal": "Cayma hakkınızı {date} günü sonuna kadar, gerekçe göstermeden kullanabilirsiniz.",
+      "cta": "Siparişimi görüntüle",
+      "sites": "Proje Uygulama Sahaları"
+    },
+    "failed": {
+      "badge": "Ödeme tamamlanamadı",
+      "title": "Ödemeniz onaylanmadı",
+      "body": "Ödeme onaylanmadığı için sipariş bedeli tahsil edilmedi.",
+      "held": "Siparişiniz saat {time} (Türkiye saati) itibarıyla kapanır; o zamana kadar ödemeyi yeniden deneyebilirsiniz.",
+      "hint": "Sorun sürerse kartınızın internet alışverişine açık olduğunu ve limitini bankanızdan kontrol edebilir ya da farklı bir kart kullanabilirsiniz.",
+      "retry": "Ödemeyi yeniden dene",
+      "retrying": "Ödeme sayfası açılıyor…"
+    },
+    "pending": {
+      "badge": "Ödeme bekleniyor",
+      "title": "Ödemeniz tamamlanmadı",
+      "body": "Bu sipariş için henüz bir ödeme onayı ulaşmadı."
+    },
+    "expired": {
+      "badge": "Süre doldu",
+      "title": "Ödeme süresi doldu",
+      "body": "Bu sipariş için ayrılan ödeme süresi doldu ve sipariş kapandı; sipariş bedeli tahsil edilmedi. Dilerseniz yeni bir sipariş oluşturabilirsiniz.",
+      "cta": "Sahaya dön"
+    },
+    "errors": {
+      "expired": "Bu siparişin ödeme süresi doldu. Yeni bir sipariş oluşturabilirsiniz.",
+      "closed": "Çevrim içi ödeme şu anda kapalı. Lütfen daha sonra yeniden deneyin.",
+      "rateLimited": "Kısa sürede çok fazla deneme yapıldı. Lütfen birkaç dakika sonra yeniden deneyin.",
+      "generic": "Ödeme sayfası açılamadı. Lütfen yeniden deneyin."
+    }
+  },
+  "paymentErrorPage": {
+    "meta": {
+      "title": "Ödeme sonucu doğrulanamadı"
+    },
+    "badge": "Doğrulanamadı",
+    "title": "Ödemenizin sonucunu doğrulayamadık",
+    "body": "Ödeme sayfasından dönüşünüz bir siparişle eşleştirilemedi. Bu durum çoğunlukla ödeme tamamlanmadan sayfadan çıkıldığında ya da bağlantı kesildiğinde görülür.",
+    "charged": "Kartınızdan tahsilat yapıldıysa siparişiniz kayda geçmiş olabilir; lütfen sipariş teyidi e-postanızı kontrol edin. Tahsil edilmiş ve bir siparişe bağlanamamış her tutar iade edilir.",
+    "contact": "Teyit e-postası ulaşmadıysa ödeme saatini belirterek bize yazın:",
+    "cta": "Proje Uygulama Sahaları"
+  },
+  "orderWizard": {
+    "title": "Sahaya katılın",
+    "description": "Seçtiğiniz sahada dronla tohum topu bıraktırmak için bilgilerinizi adım adım tamamlayın.",
+    "orderMode": "Sipariş",
+    "requestMode": "Katılım talebi",
+    "next": "Devam",
+    "back": "Geri",
+    "retry": "Yeniden dene",
+    "submitting": "Gönderiliyor…",
+    "changeSite": "Sahayı değiştir",
+    "optional": "İsteğe bağlı",
+    "yes": "Evet",
+    "no": "Hayır",
+    "steps": {
+      "label": "Katılım adımları",
+      "quantity": "Miktar",
+      "certificate": "Sertifikadaki ad",
+      "buyer": "Alıcı ve fatura",
+      "contact": "İletişim",
+      "review": "Özet ve onay"
+    },
+    "quantity": {
+      "title": "Bırakılacak tohum topları",
+      "description": "Hazır adetlerden birini seçin veya adet girin.",
+      "label": "Tohum topu adedi",
+      "speciesNote": "Tür, sahanın iklim ve toprak koşullarına göre uzman ekibimizce belirlenir; seçim yapmanız gerekmez.",
+      "unit": "Birim hizmet bedeli",
+      "vatIncluded": "KDV dâhil",
+      "selected": "{count} tohum topu",
+      "change": "Adedi değiştir"
+    },
+    "certificate": {
+      "title": "Katılım Sertifikası",
+      "label": "Sertifikadaki ad",
+      "publicNote": "Paylaşım sayfasında adınız varsayılan olarak gizlidir. Kendi adınız için son adımda ayrıca yayın izni verebilirsiniz.",
+      "count": "{count} / {max} karakter",
+      "fallback": "Boş bırakırsanız adınız ve soyadınız yazılır.",
+      "placeholder": "Adınız Soyadınız",
+      "preview": "Katılım Sertifikası — {name}",
+      "delivery": "Sertifika, tohum topu bırakma tamamlandığında e-postayla gönderilir."
+    },
+    "buyer": {
+      "title": "Alıcı bilgileri",
+      "firstName": "Ad",
+      "lastName": "Soyad",
+      "email": "E-posta",
+      "phone": "Cep telefonu"
+    },
+    "invoice": {
+      "title": "Fatura bilgileri",
+      "type": "Fatura türü",
+      "individual": "Bireysel",
+      "corporate": "Kurumsal",
+      "province": "İl",
+      "selectProvince": "İl seçin",
+      "district": "İlçe",
+      "line": "Açık adres",
+      "address": "Fatura adresi",
+      "postalCode": "Posta kodu",
+      "tckn": "T.C. kimlik no",
+      "tcknHint": "İsteğe bağlıdır. Yazmazsanız faturanız T.C. kimlik numarası olmadan düzenlenir.",
+      "companyTitle": "Unvan",
+      "taxId": "Vergi no",
+      "taxIdHint": "10 haneli vergi no; şahıs işletmesi için 11 haneli T.C. kimlik no.",
+      "taxOffice": "Vergi dairesi",
+      "authorizedPerson": "Yetkili kişi",
+      "mersis": "MERSİS no",
+      "kep": "KEP adresi",
+      "poNumber": "Sipariş / PO no",
+      "eInvoiceUser": "e-Fatura mükellefiyim"
+    },
+    "review": {
+      "title": "Sipariş özeti",
+      "summaryLabel": "Katılım özeti",
+      "site": "Proje Uygulama Sahası",
+      "species": "Türler",
+      "total": "Toplam hizmet bedeli",
+      "vat": "Toplamın içindeki KDV (%{rate})",
+      "schedule": "Bırakma takvimi",
+      "deadline": "En geç {date} tarihine kadar bırakılır.",
+      "rolled": "Bu sezonun hazırlık süresi dolduğu için siparişiniz {season} sezonuna yazılır.",
+      "withdrawalTitle": "Cayma hakkı",
+      "withdrawal": "Ödeme tarihinden itibaren 14 gün içinde hiçbir gerekçe göstermeden cayabilirsiniz. Bedelin tamamı, bildiriminizden itibaren 14 gün içinde ödemeyi yaptığınız araca iade edilir. Tohum topu bırakma, cayma süresi dolmadan yapılmaz.",
+      "loading": "Tutar ve belgeler hazırlanıyor…",
+      "retryNote": "Özeti yüklemek için yeniden deneyin. Bilgileriniz korunuyor.",
+      "pay": "Siparişi Onayla ve Öde ({total})",
+      "obligation": "“Siparişi Onayla ve Öde” düğmesine bastığınızda ödeme yükümlülüğü altına girersiniz.",
+      "secure": "Ödeme, güvenli ödeme sayfasında 3D Secure ile alınır. Kart bilgileriniz Skytech Green'e ulaşmaz."
+    },
+    "consents": {
+      "title": "Belgeler ve beyanlar",
+      "preInfo": "Ön Bilgilendirme Formu'nu okudum, içeriğini teyit ediyorum.",
+      "contract": "Mesafeli Hizmet Sözleşmesi'ni okudum ve kabul ediyorum.",
+      "kvkkRead": "<kvkk>KVKK Aydınlatma Metni</kvkk>'ni okudum, bilgi edindim.",
+      "corporateAuthority": "Bu siparişi, fatura bilgilerini verdiğim kurum adına vermeye yetkili olduğumu beyan ederim.",
+      "marketing": "Skytech Green’in kampanya ve tanıtımlar için e-posta adresimi işlemesine ve bana e-postayla ticari ileti göndermesine isteğe bağlı olarak izin veriyorum. İznimi info@skytechgreen.com üzerinden veya iletideki ret bağlantısından ücretsiz geri alabilirim.",
+      "certificatePublication": "Sertifikada bana ait adın, saha, adet ve tarih bilgileriyle birlikte bağlantıyı bilen kişilere açık sayfada yayımlanmasına açık rıza veriyorum. İsteğe bağlıdır; sipariş sayfasından veya info@skytechgreen.com üzerinden ücretsiz geri alabilirim.",
+      "thirdPartyName": "Başka bir kişinin adı, o kişi doğrudan bilgilendirilip yayın izni alınana kadar paylaşım sayfasında gizlenir."
+    },
+    "documents": {
+      "title": "Sipariş belgeleri",
+      "read": "Oku",
+      "download": "İndir",
+      "close": "Kapat",
+      "readNamed": "{title} belgesini oku",
+      "downloadNamed": "{title} belgesini indir",
+      "languageNote": "Belgeler Türkçe düzenlenir."
+    },
+    "request": {
+      "submit": "Talebi Gönder",
+      "leaveRequest": "Talep bırak",
+      "review": "Talep özeti",
+      "estimated": "Tahmini hizmet bedeli",
+      "message": "Notunuz",
+      "note": "Bu aşamada ödeme alınmaz; tutar bilgi amaçlıdır. Ekibimiz talebinizle ilgili size dönüş yapar."
+    },
+    "errors": {
+      "validation": "Lütfen işaretli alanları kontrol edin.",
+      "capacity": "Seçtiğiniz adet bu sahada şu anda karşılanamıyor. Daha düşük bir adet deneyebilir ya da başka bir saha seçebilirsiniz.",
+      "site_unavailable": "Bu saha şu anda katılıma kapalı. Diğer Proje Uygulama Sahalarına göz atabilirsiniz.",
+      "documents_stale": "Sözleşme metinleri güncellendi. Lütfen yeniden okuyup onaylayın.",
+      "rate_limited": "Kısa sürede çok fazla deneme yapıldı. Lütfen biraz sonra yeniden deneyin.",
+      "closed": "Çevrim içi sipariş şu anda kapalı.",
+      "generic": "Bir şeyler ters gitti. Lütfen yeniden deneyin ya da info@skytechgreen.com adresine yazın.",
+      "firstNameRequired": "Ad zorunludur.",
+      "lastNameRequired": "Soyad zorunludur.",
+      "emailRequired": "E-posta zorunludur.",
+      "emailInvalid": "Geçerli bir e-posta adresi girin.",
+      "phoneRequired": "Cep telefonu zorunludur.",
+      "phoneInvalid": "Geçerli bir telefon numarası girin (örn. 5XX XXX XX XX).",
+      "tooLong": "Metin çok uzun.",
+      "invoiceTypeRequired": "Fatura türünü seçin.",
+      "provinceRequired": "İl seçin.",
+      "provinceInvalid": "Geçersiz il.",
+      "districtRequired": "İlçe zorunludur.",
+      "addressRequired": "Açık adres zorunludur.",
+      "addressShort": "Açık adres en az 10 karakter olmalı.",
+      "postalCodeInvalid": "Posta kodu 5 haneli olmalı.",
+      "tcknInvalid": "T.C. kimlik numarası hatalı görünüyor.",
+      "companyTitleRequired": "Unvan zorunludur.",
+      "taxIdRequired": "Vergi numarası zorunludur.",
+      "taxIdInvalid": "Vergi numarası hatalı görünüyor.",
+      "taxOfficeRequired": "Vergi dairesi zorunludur.",
+      "authorizedPersonRequired": "Yetkili kişi zorunludur.",
+      "mersisInvalid": "MERSİS numarası 16 haneli olmalı.",
+      "kepInvalid": "Geçerli bir KEP adresi girin.",
+      "preInfoRequired": "Devam etmek için Ön Bilgilendirme Formu'nu teyit edin.",
+      "contractRequired": "Devam etmek için sözleşmeyi kabul edin.",
+      "kvkkRequired": "Devam etmek için aydınlatma metnini okuduğunuzu belirtin.",
+      "corporateAuthorityRequired": "Devam etmek için yetki beyanını işaretleyin.",
+      "certificatePublicationSelfOnly": "Yayın iznini yalnız kendi adınız için verebilirsiniz.",
+      "quantityMin": "En az {min} tohum topu seçebilirsiniz.",
+      "quantityMax": "Tek siparişte en çok {max} tohum topu seçebilirsiniz; daha fazlası için bize yazın.",
+      "quantityInvalid": "Adet tam sayı olmalı.",
+      "certificateNameShort": "Sertifikadaki ad en az {min} karakter olmalı.",
+      "certificateNameLong": "Sertifikadaki ad en çok {max} karakter olabilir.",
+      "certificateNameInvalid": "Sertifikadaki ad yalnız harf, rakam ve temel noktalama işaretlerinden oluşabilir."
+    },
+    "pausedNotice": "Çevrim içi sipariş alımına geçici olarak ara verildi. Bu sayfadan katılım talebinizi iletebilirsiniz; ödeme alınmaz, ekibimiz sizinle iletişime geçer."
   }
 }

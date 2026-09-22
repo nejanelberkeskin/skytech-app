@@ -16,8 +16,8 @@ export interface AdminUser {
 export const ROLE_META: Record<UserRole, { label: string; icon: string; color: string; desc: string }> = {
   SUPER_ADMIN: { label: "Super Admin", icon: "👑", color: "text-amber-400 bg-amber-400/10", desc: "Tüm modüllere tam erişim" },
   FINANCE:     { label: "Muhasebe & Finans", icon: "💰", color: "text-blue-400 bg-blue-400/10", desc: "Ciro, faturalar, ödemeler" },
-  OPERATIONS:  { label: "Operasyon", icon: "🚁", color: "text-orange-400 bg-orange-400/10", desc: "Drone, kargo, ekim süreçleri" },
-  ENGINEER:    { label: "Orman Mühendisi", icon: "🌲", color: "text-emerald-400 bg-emerald-400/10", desc: "Araziler, kapasite, ekoloji" },
+  OPERATIONS:  { label: "Operasyon", icon: "🚁", color: "text-orange-400 bg-orange-400/10", desc: "Bırakma partileri, saha çalışmaları" },
+  ENGINEER:    { label: "Orman Mühendisi", icon: "🌲", color: "text-emerald-400 bg-emerald-400/10", desc: "Proje Uygulama Sahaları, kapasite" },
 };
 
 // ── Admin Modules (used for sidebar + permissions) ───────────────────────────
@@ -45,16 +45,9 @@ export const ADMIN_MODULES: AdminModule[] = [
     allowedRoles: ["SUPER_ADMIN", "FINANCE"],
   },
   {
-    id: "operasyon",
-    href: "/admin/operasyon",
-    label: "Operasyon Merkezi",
-    icon: "🚁",
-    allowedRoles: ["SUPER_ADMIN", "OPERATIONS"],
-  },
-  {
     id: "araziler",
     href: "/admin/araziler",
-    label: "Araziler & Kapasite",
+    label: "Sahalar & Kapasite",
     icon: "🌲",
     allowedRoles: ["SUPER_ADMIN", "ENGINEER"],
   },
@@ -73,11 +66,28 @@ export const ADMIN_MODULES: AdminModule[] = [
     allowedRoles: ["SUPER_ADMIN", "FINANCE", "OPERATIONS"],
   },
   {
-    id: "siparisler",
-    href: "/admin/siparisler",
+    // Satış modeli v2: sahaya tohum topu bıraktırma siparişleri (release_orders)
+    id: "birakma",
+    href: "/admin/birakma-siparisleri",
     label: "Siparişler",
-    icon: "📦",
+    icon: "🌱",
     allowedRoles: ["SUPER_ADMIN", "FINANCE", "OPERATIONS"],
+  },
+  {
+    // Bırakma partileri: kesinleşmiş siparişler partiye alınır, bırakma tamamlanınca işaretlenir
+    id: "partiler",
+    href: "/admin/birakma-partileri",
+    label: "Bırakma Partileri",
+    icon: "🚁",
+    allowedRoles: ["SUPER_ADMIN", "OPERATIONS", "FINANCE"],
+  },
+  {
+    // Satış ayarları: birim bedel, adet sınırları, hazır seçenekler, KDV, fatura zamanı, süreler
+    id: "satis-ayarlari",
+    href: "/admin/satis-ayarlari",
+    label: "Satış Ayarları",
+    icon: "🏷️",
+    allowedRoles: ["SUPER_ADMIN"],
   },
   {
     id: "b2b",
@@ -85,13 +95,6 @@ export const ADMIN_MODULES: AdminModule[] = [
     label: "B2B Teklifler",
     icon: "🏢",
     allowedRoles: ["SUPER_ADMIN", "FINANCE"],
-  },
-  {
-    id: "ayarlar",
-    href: "/admin/ayarlar",
-    label: "Sistem Ayarları",
-    icon: "⚙️",
-    allowedRoles: ["SUPER_ADMIN"],
   },
   {
     id: "kullanicilar",

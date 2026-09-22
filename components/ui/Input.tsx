@@ -1,4 +1,4 @@
-import { forwardRef, type InputHTMLAttributes, type TextareaHTMLAttributes, type ReactNode } from "react";
+import { forwardRef, useId, type InputHTMLAttributes, type SelectHTMLAttributes, type TextareaHTMLAttributes, type ReactNode } from "react";
 
 /* ═══════════════════════════════════════════════════════════════════════
    Input & Textarea — Skytech Green Design System
@@ -7,7 +7,8 @@ import { forwardRef, type InputHTMLAttributes, type TextareaHTMLAttributes, type
      - bg-white/[0.03] arka plan, border-white/[0.08] kenarlık
      - Focus: ring-1 ring-emerald-500, kenarlık aydınlanır
      - Error state: ring-red-500, kırmızı alt metin
-     - Label ve helper text entegrasyonu
+     - Label ve helper text entegrasyonu: etiket kutuya bağlıdır (htmlFor), hata ya da
+       açıklama metni ekran okuyucuda kutuyla birlikte okunur (aria-describedby)
    ═══════════════════════════════════════════════════════════════════════ */
 
 /* ── Shared wrapper styles ──────────────────────────────────────────── */
@@ -19,20 +20,22 @@ interface FieldWrapperProps {
   required?: boolean;
   children: ReactNode;
   className?: string;
+  /** Etiketin bağlandığı kutunun kimliği; hata ve açıklama metinleri buna göre adlandırılır. */
+  fieldId?: string;
 }
 
-function FieldWrapper({ label, helperText, error, required, children, className = "" }: FieldWrapperProps) {
+function FieldWrapper({ label, helperText, error, required, children, className = "", fieldId }: FieldWrapperProps) {
   return (
     <div className={className}>
       {label && (
-        <label className="block text-sm font-medium text-slate-300 mb-1.5">
+        <label htmlFor={fieldId} className="block text-sm font-medium text-slate-300 mb-1.5">
           {label}
           {required && <span className="text-emerald-500 ml-0.5">*</span>}
         </label>
       )}
       {children}
       {error && (
-        <p className="text-xs text-red-400 mt-1.5 flex items-center gap-1">
+        <p id={fieldId ? `${fieldId}-error` : undefined} className="text-xs text-red-400 mt-1.5 flex items-center gap-1">
           <svg className="w-3.5 h-3.5 shrink-0" viewBox="0 0 20 20" fill="currentColor">
             <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-5a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0v-4.5A.75.75 0 0110 5zm0 10a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
           </svg>
@@ -40,10 +43,25 @@ function FieldWrapper({ label, helperText, error, required, children, className 
         </p>
       )}
       {helperText && !error && (
-        <p className="text-xs text-slate-500 mt-1.5">{helperText}</p>
+        <p id={fieldId ? `${fieldId}-help` : undefined} className="text-xs text-slate-500 mt-1.5">{helperText}</p>
       )}
     </div>
   );
+}
+
+/** Kutunun kimliği (verilmezse üretilir) ve hata / açıklama metnine bağlayan aria öznitelikleri. */
+function useFieldA11y(id: string | undefined, error?: string, helperText?: string, describedBy?: string) {
+  const autoId = useId();
+  const fieldId = id ?? autoId;
+  const note = error ? `${fieldId}-error` : helperText ? `${fieldId}-help` : null;
+  return {
+    fieldId,
+    aria: {
+      id: fieldId,
+      "aria-invalid": error ? true : undefined,
+      "aria-describedby": [describedBy, note].filter(Boolean).join(" ") || undefined,
+    },
+  };
 }
 
 /* ── Input ──────────────────────────────────────────────────────────── */
@@ -74,9 +92,11 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
   ({ label, helperText, error, icon, iconRight, wrapperClassName, className = "", ...props }, ref) => {
     const hasIcon = !!icon;
     const hasIconRight = !!iconRight;
+    const { fieldId, aria } = useFieldA11y(props.id, error, helperText, props["aria-describedby"]);
 
     return (
       <FieldWrapper
+        fieldId={fieldId}
         label={label}
         helperText={helperText}
         error={error}
@@ -99,6 +119,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
               className,
             ].filter(Boolean).join(" ")}
             {...props}
+            {...aria}
           />
           {hasIconRight && (
             <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-500">
@@ -123,8 +144,10 @@ interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
 
 const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
   ({ label, helperText, error, wrapperClassName, className = "", ...props }, ref) => {
+    const { fieldId, aria } = useFieldA11y(props.id, error, helperText, props["aria-describedby"]);
     return (
       <FieldWrapper
+        fieldId={fieldId}
         label={label}
         helperText={helperText}
         error={error}
@@ -140,6 +163,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
             className,
           ].filter(Boolean).join(" ")}
           {...props}
+          {...aria}
         />
       </FieldWrapper>
     );
@@ -149,7 +173,7 @@ Textarea.displayName = "Textarea";
 
 /* ── Select ─────────────────────────────────────────────────────────── */
 
-interface SelectProps extends InputHTMLAttributes<HTMLSelectElement> {
+interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
   label?: string;
   helperText?: string;
   error?: string;
@@ -159,8 +183,10 @@ interface SelectProps extends InputHTMLAttributes<HTMLSelectElement> {
 
 const Select = forwardRef<HTMLSelectElement, SelectProps>(
   ({ label, helperText, error, wrapperClassName, className = "", children, ...props }, ref) => {
+    const { fieldId, aria } = useFieldA11y(props.id, error, helperText, props["aria-describedby"]);
     return (
       <FieldWrapper
+        fieldId={fieldId}
         label={label}
         helperText={helperText}
         error={error}
@@ -176,7 +202,8 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
               error ? inputError : "",
               className,
             ].filter(Boolean).join(" ")}
-            {...(props as any)}
+            {...props}
+            {...aria}
           >
             {children}
           </select>

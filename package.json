@@ -10,7 +10,8 @@
     "analyze": "ANALYZE=true next build",
     "typecheck": "tsc --noEmit",
     "lint:check": "eslint",
-    "i18n:check": "node scripts/i18n-parity.mjs"
+    "i18n:check": "node scripts/i18n-parity.mjs",
+    "test": "node --experimental-strip-types --disable-warning=ExperimentalWarning --import ./scripts/test/alias-loader.mjs --test \"scripts/test/*.test.mjs\""
   },
   "dependencies": {
     "@supabase/ssr": "^0.9.0",

@@ -2,25 +2,26 @@
 
 import type { ReactNode } from "react";
 import { useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
-import { REQUEST_ROUTES } from "@/lib/site-config";
 import { ErrorBanner, SummaryRowItem } from "./FormPrimitives";
 
 /**
- * Üç talep formunun ortak iskeleti: solda bölümler + gönder düğmesi,
+ * Talep formlarının ortak iskeleti: solda bölümler + gönder düğmesi,
  * sağda (masaüstü) yapışkan özet kartı ve "ödeme alınmaz" notu.
+ * `top`: formun üstündeki şerit (diğer akışa geçiş bağlantısı vb.).
  */
 export default function RequestFormShell({
   onSubmit,
   submitting,
   formError,
   summary,
+  top,
   children,
 }: {
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
   submitting: boolean;
   formError: string | null;
   summary: { label: string; value: ReactNode }[];
+  top?: ReactNode;
   children: ReactNode;
 }) {
   const t = useTranslations("requestForms.common");
@@ -28,12 +29,7 @@ export default function RequestFormShell({
   return (
     <form onSubmit={onSubmit} noValidate className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-10 max-w-6xl mx-auto">
       <div className="lg:col-span-2 space-y-6">
-        <Link href={REQUEST_ROUTES.hub} className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#1B6B3A] hover:text-[#22894a] transition-colors">
-          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
-            <path d="M19 12H5M11 5l-7 7 7 7" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-          {t("backToHub")}
-        </Link>
+        {top}
 
         {children}
 
@@ -46,7 +42,7 @@ export default function RequestFormShell({
           >
             {submitting ? t("submitting") : t("submit")}
             {!submitting && (
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
+              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} aria-hidden="true">
                 <path d="M5 12h14M13 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             )}

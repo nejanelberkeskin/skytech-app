@@ -44,6 +44,3 @@ export function createServiceRoleClient() {
     }
   );
 }
-
-// Eski uyumluluk için (kademeli geçiş)
-export const createServerSupabase = createServiceRoleClient;

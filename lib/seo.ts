@@ -8,6 +8,7 @@
  */
 
 import type { Metadata } from "next";
+import { COMPANY } from "./company";
 import { seoKeywords } from "./seo-keywords";
 
 export const SITE_URL =
@@ -16,10 +17,10 @@ export const SITE_URL =
   "https://skytechgreen.com";
 
 export const SITE_NAME = "Skytech Green";
-export const SITE_TAGLINE = "Tohum Toplarıyla Geleceği Ekin";
+export const SITE_TAGLINE = "Tohum Topu Teknolojisiyle Ormanlaştırma";
 export const SITE_DESCRIPTION =
-  "Dron teknolojisi ve tohum topu ile karbon nötr ağaçlandırma. " +
-  "Bireysel ve kurumsal çözümler, ölçülebilir etki, şeffaf tedarik zinciri.";
+  "Yangından etkilenmiş sahalara dronla tohum topu bırakıyoruz. " +
+  "Proje Uygulama Sahalarına katılım, yıllık izleme ve Faaliyet Raporu.";
 
 export const SITE_LOCALE = "tr_TR";
 export const SITE_LANGUAGE = "tr";
@@ -41,18 +42,28 @@ export function ogLocaleAlternates(active: string): string[] {
   return LOCALES.filter((l) => l !== active).map((l) => LOCALE_TO_OG_LOCALE[l]);
 }
 
-export const ORG_LEGAL_NAME = "Skytech Havacılık A.Ş.";
+export const ORG_LEGAL_NAME = COMPANY.legalName;
 /** Bagli oldugumuz ana sirket. Footer'daki marka beyani buraya baglaniyor. */
 export const ORG_PARENT_URL = "https://skytechhavacilik.com";
 export const ORG_FOUNDED = "2021";
 export const ORG_AREA_SERVED = "Türkiye";
+/**
+ * Şirket adresi — alt bilgi, İletişim sayfası ve yapısal veri buradan okur. Kaynağı sözleşmelerdeki
+ * künyeyle aynıdır (`lib/company.ts`): adres yalnız orada değiştirilir.
+ */
 export const ORG_ADDRESS = {
-  street: "Saray Mah. 60 Cad. No:22",
-  district: "Kahramankazan",
-  city: "Ankara",
-  country: "Türkiye",
+  street: COMPANY.address.line,
+  district: COMPANY.address.district,
+  city: COMPANY.address.province,
+  country: COMPANY.address.country,
   countryCode: "TR",
 };
+/**
+ * Harita noktası: OpenStreetMap'te "ATB İş Merkezi, Macun Mahallesi, Yenimahalle" alanının merkezi
+ * (Nominatim, 22 Eylül 2026). I Blok'un kesin noktası haritada yok; iş merkezi içinde kalır.
+ * İletişim sayfasındaki harita ve LocalBusiness yapısal verisi bunu kullanır.
+ */
+export const ORG_GEO = { latitude: 39.9487006, longitude: 32.770236 } as const;
 export const ORG_CONTACT = {
   email: "info@skytechgreen.com",
   // Birincil hat (sabit) — şemalarda bu kullanılır; ikincil mobil hat sayfalarda listelenir.

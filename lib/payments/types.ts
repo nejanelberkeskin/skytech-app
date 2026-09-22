@@ -50,9 +50,18 @@ export interface RefundInput {
   ip: string | null;
 }
 
+/**
+ * Başarısız iade denemesinin sınıfı (web-brifler/17 §3):
+ *   rejected — sağlayıcı açıkça reddetti ve kod DOĞRULANMIŞ kesin ret listesinde → yeniden denenebilir
+ *   not_sent — istek sağlayıcıya hiç gitmedi → yeniden denenebilir
+ *   unknown  — zaman aşımı, ağ hatası, beklenmeyen yanıt, listede olmayan kod → mutabakat gerekir
+ * Sınıf verilmemişse `unknown` sayılır (güvenli varsayılan).
+ */
+export type RefundFailureOutcome = "rejected" | "not_sent" | "unknown";
+
 export type RefundResult =
   | { ok: true; refundId: string; /** iade mi, aynı gün iptali mi */ method: "refund" | "cancel" }
-  | { ok: false; error: string };
+  | { ok: false; error: string; outcome?: RefundFailureOutcome; /** sağlayıcı kodu ya da timeout | network | config */ errorCode?: string };
 
 export interface PaymentProvider {
   readonly name: "mock" | "iyzico";

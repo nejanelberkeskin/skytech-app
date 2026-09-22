@@ -6,39 +6,11 @@ import { financeSummary } from '../../lib/admin/finance.ts';
 import { readPages } from '../../lib/admin/read-pages.ts';
 import { salesSettingsSchema } from '../../lib/orders/settings-schema.ts';
 const response={json:(body,init)=>({body,status:init?.status??200,headers:init?.headers})};
-const duplicates=load('lib/orders/duplicates.ts');
 const order={id:'order',order_no:'SG-2026-TEST23',status:'withdrawal_requested',payment_id:'original',payment_provider:'mock',quantity:20,total_kurus:20000,payment_meta:{}};
 function query(data,error=null){const q={};for(const m of ['select','eq','in','order','limit','range','not'])q[m]=()=>q;q.maybeSingle=async()=>({data,error});q.then=(resolve,reject)=>Promise.resolve({data,error}).then(resolve,reject);return q;}
-function refundSetup({checkpointError=false,finishError=false,providerError=false,checkpointFailures=0,lostCheckpointResponse=false}={}) {
- let calls=0,capacity=0,state=null,storedResult=null,writes=0;
- const provider={name:'mock',refund:async()=>{calls++;await Promise.resolve();return providerError?{ok:false,error:'timeout'}:{ok:true,refundId:'fake',method:'refund'};}};
- const db={from(table){if(table==='release_orders')return query(order);if(table==='order_events')return query([{type:'payment_succeeded',data:{duplicate:true,paymentId:'extra',provider:'mock',paidKurus:20000}}]);
- if(table==='refund_operations')return {select:()=>query({state,result:storedResult}),update(next){return {eq(){return this;},select(){return this;},async maybeSingle(){writes++;if(checkpointError||writes<=checkpointFailures)return {error:{code:'write_failure'}};state=next.state;storedResult=next.result;if(lostCheckpointResponse&&writes===1)return {error:{code:'response_lost'}};return {data:{id:'op'},error:null};}};}};
- throw Error(table);},async rpc(name){if(name==='claim_refund_operation'){const fresh=state===null;if(fresh)state='started';return {data:{id:'op',state,fresh}};}if(name==='finish_refund_operation'){if(finishError)return {error:{code:'write_failure'}};if(state!=='completed')capacity++;state='completed';return {data:{...order,status:'refunded'}};}throw Error(name);}};
- const api=load('lib/orders/admin-actions.ts',{'@/lib/payments':{getProviderByName:()=>provider},'./duplicates':duplicates,'./store':{db:()=>db,transitionOrder:async()=>null,addOrderEvent:async()=>{}}});
- return {api,db,get calls(){return calls;},get capacity(){return capacity;},get state(){return state;},get writes(){return writes;}};
-}
-test('concurrent duplicate refund invokes provider once',async()=>{
- const x=refundSetup();const result=await Promise.all([x.api.refundDuplicate('order','extra','admin',null,x.db),x.api.refundDuplicate('order','extra','admin',null,x.db)]);
- assert.equal(x.calls,1);assert.equal(result.filter(r=>r.ok).length,1);assert.equal(result.find(r=>!r.ok).error,'in_progress');
-});
-test('checkpoint failure never reports success or retries provider',async()=>{
- const x=refundSetup({checkpointError:true});assert.equal((await x.api.executeRefund('order','admin',null,x.db)).error,'unavailable');
- assert.equal((await x.api.executeRefund('order','admin',null,x.db)).error,'in_progress');assert.equal(x.calls,1);assert.equal(x.capacity,0);
-});
-test('checkpoint retries a transient DB failure or reads a committed lost response without repeating provider',async()=>{
- for(const options of [{checkpointFailures:1},{lostCheckpointResponse:true}]){
- const x=refundSetup(options);const result=await x.api.executeRefund('order','admin',null,x.db);
- assert.equal(result.ok,true);assert.equal(x.calls,1);assert.equal(x.capacity,1);assert.ok(x.writes<=2);
- }
-});
-test('local finalization failure retries only database, not provider',async()=>{
- const x=refundSetup({finishError:true});for(let i=0;i<2;i++)assert.equal((await x.api.executeRefund('order','admin',null,x.db)).error,'unavailable');
- assert.equal(x.calls,1);assert.equal(x.state,'provider_succeeded');assert.equal(x.capacity,0);
-});
-test('uncertain provider outcome cannot be reclaimed automatically',async()=>{
- const x=refundSetup({providerError:true});await x.api.executeRefund('order','admin',null,x.db);await x.api.executeRefund('order','admin',null,x.db);assert.equal(x.calls,1);assert.equal(x.state,'needs_review');
-});
+// İade testleri (eşzamanlı istek, kontrol noktası hatası, yanıtı kaybolan kayıt, yerel tamamlama, belirsiz sonuç)
+// iade uygulaması lib/refunds/service.ts'e taşındığı için scripts/test/refund-legacy-adapter.test.mjs'e taşındı;
+// aynı güvenceler orada gerçek 019/020 SQL'i ile sınanıyor.
 test('settings read or malformed row closes sales',async()=>{
  for(const data of [null,{unit_price_kurus:-1}]){
  const api=load('lib/orders/settings.ts',{'@/lib/supabase/server':{createServiceRoleClient:()=>({from:()=>query(data)})},'./settings-schema':{salesSettingsSchema},'@/lib/legal/version':{LEGAL_DOCUMENTS_VERSION:'test'},'@/lib/pricing':{UNIT_PRICE_KURUS:1000,RELEASE_QTY:{min:20,max:100000},QUANTITY_PRESETS:[20,100]},'./schedule':{DEFAULT_PREP_DAYS:15}});
@@ -57,8 +29,11 @@ test('contact form: skipped email is 503; quota stops mail; oversized and missin
  assert.equal((await api.POST(req({...body,noticeRead:false}))).status,400);assert.equal((await api.POST(req({...body,message:'x'.repeat(25000)}))).status,413);assert.equal((await api.POST(req(null))).status,400);
 });
 test('dashboard never returns revenue fields to non-finance roles and fails on partial query errors',async()=>{
+ // Claude (iade-mutabakati): Genel Bakış tek finans hesabına (SQL 020) taşındı; taklitler iki uygulamayla da çalışır.
+ const overview={definitionsVersion:1,currentMonth:{key:'2026-09'},allTime:{heldOrderValueKurus:0,heldOrderCount:0,releasedQuantity:0},liabilities:{orderRefundLiabilityCount:0,duplicateLiabilityCount:0,overdueRefundCount:0},operations:{awaitingBatchCount:0},months:[{key:'2026-09',netCashKurus:0,paidQuantity:0}]};
+ const permissions=load('lib/admin/permissions.ts',{'@/lib/admin-auth':{},'@/lib/api/envelope':{}});
  for(const role of ['SUPER_ADMIN','FINANCE','OPERATIONS','ENGINEER']){
- const api=load('app/api/admin/dashboard/route.ts',{'next/server':{NextResponse:response},'@/lib/supabase/server':{createServiceRoleClient:()=>({from:()=>query([])})},'@/lib/admin-auth':{requireAdmin:async()=>({admin:{role},error:null})}});
+ const api=load('app/api/admin/dashboard/route.ts',{'next/server':{NextResponse:response},'@/lib/supabase/server':{createServiceRoleClient:()=>({from:()=>query([])})},'@/lib/admin-auth':{requireAdmin:async()=>({admin:{role,is_active:true},error:null})},'@/lib/admin/permissions':permissions,'@/lib/finance/overview':{FINANCE_DEFINITIONS_VERSION:1,monthLabel:(k)=>k,loadFinanceOverview:async()=>overview}});
  const res=await api.GET({});assert.equal(res.status,200);const financial=['SUPER_ADMIN','FINANCE'].includes(role);assert.equal('netRevenueKurus' in res.body.kpis,financial);assert.equal('revenue' in res.body.monthlyGrowth[0],financial);
  }
 });

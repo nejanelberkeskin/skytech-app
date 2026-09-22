@@ -38,6 +38,9 @@ const VIEW_ROLES = ["SUPER_ADMIN", "FINANCE", "OPERATIONS"] as const;
 const MONEY_ROLES = ["SUPER_ADMIN", "FINANCE"] as const;
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
+// İade eylemleri sağlayıcıyı çağırır (en çok 3 × 15 sn); süre sınırı açık yazılır ki çağrı yarıda kesilmesin.
+export const maxDuration = 60;
+
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { admin, error: authError } = await requireAdmin(request, [...VIEW_ROLES]);
   if (authError || !admin) return authError ?? NextResponse.json({ error: "unauthorized" }, { status: 401 });

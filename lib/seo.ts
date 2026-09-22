@@ -9,6 +9,7 @@
 
 import type { Metadata } from "next";
 import { seoKeywords } from "./seo-keywords";
+import { COMPANY } from "./company";
 
 export const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
@@ -46,12 +47,15 @@ export const ORG_LEGAL_NAME = "Skytech Havacılık A.Ş.";
 export const ORG_PARENT_URL = "https://skytechhavacilik.com";
 export const ORG_FOUNDED = "2021";
 export const ORG_AREA_SERVED = "Türkiye";
-/** Şirket adresi (22 Eylül 2026 teyidi) — alt bilgi, İletişim sayfası ve yapısal veri buradan okur. */
+/**
+ * Şirket adresi — alt bilgi, İletişim sayfası ve yapısal veri buradan okur. Kaynağı sözleşmelerdeki
+ * künyeyle aynıdır (`lib/company.ts`): adres yalnız orada değiştirilir.
+ */
 export const ORG_ADDRESS = {
-  street: "Macun Mah. Batı Bulvarı ATB İş Merkezi I Blok No: 244",
-  district: "Yenimahalle",
-  city: "Ankara",
-  country: "Türkiye",
+  street: COMPANY.address.line,
+  district: COMPANY.address.district,
+  city: COMPANY.address.province,
+  country: COMPANY.address.country,
   countryCode: "TR",
 };
 /**

@@ -13,9 +13,9 @@ export const COMPANY = {
   taxOffice: "Kahramankazan",
   taxId: "7721661218",
   /**
-   * Şirketin sözleşmelerde ve hukuki metinlerde kullanılan adresi — kullanıcı teyidi, 22 Eylül 2026.
-   * Sitenin alt bilgisi ve İletişim sayfasındaki "Saray Mah. 60 Cad. No: 22, Kahramankazan" adresi
-   * (Google İşletme kaydı) bundan FARKLIDIR. Değişirse yalnız burası güncellenir (ve belge sürümü artırılır).
+   * Şirket adresi — kullanıcı teyidi, 22 Eylül 2026. Sözleşmeler ve hukuki metinlerin yanında sitenin alt
+   * bilgisi, İletişim sayfası ve yapısal veri de buradan okur (`lib/seo.ts → ORG_ADDRESS`). Değişirse yalnız
+   * burası güncellenir; sözleşme metni değiştiği için belge sürümü de artırılır. Harita noktası: `ORG_GEO`.
    */
   address: {
     line: "Macun Mah. Batı Bulvarı ATB İş Merkezi I Blok No: 244",

@@ -11,7 +11,7 @@ import { createServiceRoleClient } from "@/lib/supabase/server";
 import { LEGAL_DOCUMENTS_VERSION } from "@/lib/legal/version";
 import { QUANTITY_PRESETS, RELEASE_QTY, UNIT_PRICE_KURUS } from "@/lib/pricing";
 import { DEFAULT_PREP_DAYS } from "./schedule";
-import { salesSettingsSchema } from "./settings-schema";
+import { salesSettingsSchema, settingsFieldErrors } from "./settings-schema";
 import type { SalesSettings } from "./settings-schema";
 
 export type { SalesSettings } from "./settings-schema";
@@ -34,19 +34,18 @@ export const DEFAULT_SALES_SETTINGS: SalesSettings = {
 const COLUMNS =
   "unit_price_kurus, min_quantity, max_quantity, quantity_presets, vat_rate, invoice_timing, prep_days, payment_ttl_minutes, orders_paused, updated_at, updated_by";
 
-function rowToSettings(data: Record<string, unknown>): SalesSettings {
+/** Preserve malformed values for the authorized repair screen; never silently default them. */
+function rowToSettings(data: Record<string, unknown>): Record<string, unknown> {
   return {
-    unitPriceKurus: Number(data.unit_price_kurus),
-    minQuantity: Number(data.min_quantity),
-    maxQuantity: Number(data.max_quantity),
-    quantityPresets: Array.isArray(data.quantity_presets)
-      ? data.quantity_presets.map(Number)
-      : DEFAULT_SALES_SETTINGS.quantityPresets,
-    vatRate: Number(data.vat_rate),
-    invoiceTiming: data.invoice_timing === "on_payment" ? "on_payment" : "on_performance",
-    prepDays: Number(data.prep_days),
-    paymentTtlMinutes: Number(data.payment_ttl_minutes),
-    ordersPaused: data.orders_paused === true,
+    unitPriceKurus: data.unit_price_kurus,
+    minQuantity: data.min_quantity,
+    maxQuantity: data.max_quantity,
+    quantityPresets: data.quantity_presets,
+    vatRate: data.vat_rate,
+    invoiceTiming: data.invoice_timing,
+    prepDays: data.prep_days,
+    paymentTtlMinutes: data.payment_ttl_minutes,
+    ordersPaused: data.orders_paused,
   };
 }
 
@@ -56,18 +55,40 @@ export interface SalesSettingsRecord {
   updatedBy: string | null;
 }
 
-/** Ayar satırı olduğu gibi (yönetim ekranı ve önbellekli okuma için). Okunamazsa HATA fırlatır. */
-export async function loadSalesSettings(
+export interface AdminSalesSettingsRecord {
+  settings: SalesSettings | null;
+  rawSettings: Record<string, unknown>;
+  fieldErrors: Record<string, string>;
+  updatedAt: string;
+  updatedBy: string | null;
+}
+
+/** Only the protected admin endpoint may expose invalid raw values and a repair version. */
+export async function loadAdminSalesSettings(
   supabase: SupabaseClient = createServiceRoleClient(),
-): Promise<SalesSettingsRecord> {
+): Promise<AdminSalesSettingsRecord> {
   const { data, error } = await supabase.from("sales_settings").select(COLUMNS).eq("id", true).maybeSingle();
   if (error || !data) throw error ?? new Error("ayar satırı yok");
   const row = data as Record<string, unknown>;
+  if (typeof row.updated_at !== "string") throw new Error("ayar sürümü yok");
+  const rawSettings = rowToSettings(row);
+  const parsed = salesSettingsSchema.safeParse(rawSettings);
   return {
-    settings: salesSettingsSchema.parse(rowToSettings(row)),
-    updatedAt: String(row.updated_at),
-    updatedBy: (row.updated_by as string | null) ?? null,
+    settings: parsed.success ? parsed.data : null,
+    rawSettings,
+    fieldErrors: parsed.success ? {} : settingsFieldErrors(parsed.error),
+    updatedAt: row.updated_at,
+    updatedBy: typeof row.updated_by === "string" ? row.updated_by : null,
   };
+}
+
+/** Binding/public reads remain strict: malformed records never supply prices or reopen sales. */
+export async function loadSalesSettings(
+  supabase: SupabaseClient = createServiceRoleClient(),
+): Promise<SalesSettingsRecord> {
+  const record = await loadAdminSalesSettings(supabase);
+  if (!record.settings) throw new Error("ayar satırı geçersiz");
+  return { settings: record.settings, updatedAt: record.updatedAt, updatedBy: record.updatedBy };
 }
 
 /** Ayar okuması/doğrulaması başarısızsa sipariş kapısını kapatır. */

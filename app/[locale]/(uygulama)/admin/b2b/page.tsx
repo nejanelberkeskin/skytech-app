@@ -1,5 +1,7 @@
 "use client";
 
+import { adminFetch } from "@/lib/admin/client";
+
 import { useEffect, useState, useCallback } from "react";
 import RoleGuard from "@/components/RoleGuard";
 import { Button, Input, Textarea, Card } from "@/components/ui";
@@ -46,7 +48,7 @@ function B2BContent() {
 
   const fetchQuotes = useCallback(async () => {
     try {
-      const res = await fetch("/api/admin/b2b");
+      const res = await adminFetch("/api/admin/b2b");
       if (!res.ok) throw new Error("unavailable");
       const data = await res.json();
       if (Array.isArray(data)) setQuotes(data);
@@ -58,7 +60,7 @@ function B2BContent() {
 
   useEffect(() => {
     const controller = new AbortController();
-    fetch("/api/admin/b2b", { signal: controller.signal })
+    adminFetch("/api/admin/b2b", { signal: controller.signal })
       .then((res) => { if (!res.ok) throw new Error("unavailable"); return res.json(); })
       .then((rows) => { if (!Array.isArray(rows)) throw new Error("invalid_response"); setQuotes(rows); })
       .catch(() => { if (!controller.signal.aborted) setError("Veriler yüklenemedi."); })
@@ -115,7 +117,7 @@ function B2BContent() {
         body.approvedSeedCount = parseInt(approvedSeedCount);
       }
 
-      const res = await fetch("/api/admin/b2b", {
+      const res = await adminFetch("/api/admin/b2b", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),

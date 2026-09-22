@@ -4,6 +4,8 @@ BEGIN;
 
 -- A single counter row serializes concurrent owner removals, including direct SQL.
 LOCK TABLE public.admin_users IN SHARE ROW EXCLUSIVE MODE;
+UPDATE public.admin_users SET is_active = false WHERE is_active IS NULL;
+ALTER TABLE public.admin_users ALTER COLUMN is_active SET NOT NULL;
 CREATE TABLE public.admin_owner_guard (
   singleton boolean PRIMARY KEY DEFAULT true CHECK (singleton),
   active_count integer NOT NULL CHECK (active_count >= 0)
@@ -14,8 +16,8 @@ REVOKE ALL ON public.admin_owner_guard FROM PUBLIC, anon, authenticated;
 CREATE FUNCTION public.protect_admin_owner() RETURNS trigger LANGUAGE plpgsql SECURITY DEFINER SET search_path = '' AS $$
 DECLARE was_owner boolean := false; is_owner boolean := false;
 BEGIN
-  IF TG_OP <> 'INSERT' THEN was_owner := OLD.role = 'SUPER_ADMIN' AND OLD.is_active; END IF;
-  IF TG_OP <> 'DELETE' THEN is_owner := NEW.role = 'SUPER_ADMIN' AND NEW.is_active; END IF;
+  IF TG_OP <> 'INSERT' THEN was_owner := (OLD.role = 'SUPER_ADMIN') IS TRUE AND OLD.is_active IS TRUE; END IF;
+  IF TG_OP <> 'DELETE' THEN is_owner := (NEW.role = 'SUPER_ADMIN') IS TRUE AND NEW.is_active IS TRUE; END IF;
   IF was_owner AND NOT is_owner THEN
     UPDATE public.admin_owner_guard SET active_count = active_count - 1 WHERE singleton AND active_count > 1;
     IF NOT FOUND THEN RAISE EXCEPTION 'last_active_super_admin' USING ERRCODE = '23514'; END IF;
@@ -38,7 +40,9 @@ BEGIN
   INSERT INTO public.admin_audit_logs(admin_id, admin_email, action, entity, entity_id, details)
     VALUES (COALESCE(actor, '00000000-0000-0000-0000-000000000000'::uuid), COALESCE(actor_email, 'system/database'),
       CASE TG_OP WHEN 'INSERT' THEN 'CREATE' WHEN 'DELETE' THEN 'DELETE' ELSE 'UPDATE' END,
-      'admin_user', target->>'id', jsonb_build_object('databaseTransaction', true, 'role', target->>'role', 'is_active', target->'is_active'));
+      'admin_user', target->>'id', jsonb_build_object('databaseTransaction', true, 'role', target->>'role', 'is_active', target->'is_active',
+        'before', CASE WHEN TG_OP='INSERT' THEN NULL ELSE jsonb_build_object('role',OLD.role,'is_active',OLD.is_active) END,
+        'after', CASE WHEN TG_OP='DELETE' THEN NULL ELSE jsonb_build_object('role',NEW.role,'is_active',NEW.is_active) END));
   RETURN NULL;
 END $$;
 CREATE TRIGGER audit_admin_user_change AFTER INSERT OR UPDATE OR DELETE ON public.admin_users

@@ -76,8 +76,8 @@ export async function PATCH(request: NextRequest, { params }: Ctx) {
     supabase
   );
   if (!result.ok) return NextResponse.json({ error: result.error }, { status: STATUS_FOR[result.error] });
-  await auditLog(supabase, { admin, action: "UPDATE", entity: "release_batch", entityId: id, details: parsed.data, ip: getClientIP(request) });
-  return NextResponse.json({ ok: true, batch: result.batch });
+  const warnings = await auditLog(supabase, { admin, action: "UPDATE", entity: "release_batch", entityId: id, details: parsed.data, ip: getClientIP(request) });
+  return NextResponse.json({ ok: true, batch: result.batch, warnings });
 }
 
 const actionSchema = z.discriminatedUnion("action", [
@@ -101,14 +101,14 @@ export async function POST(request: NextRequest, { params }: Ctx) {
 
   if (input.action === "publish_video") {
     const published = await publishBatchVideo(id, input.videoUrl, supabase);
-    await auditLog(supabase, { admin, action: "UPDATE", entity: "release_batch", entityId: id, details: { action: "publish_video", ...published }, ip: getClientIP(request) });
+    const warnings = await auditLog(supabase, { admin, action: "UPDATE", entity: "release_batch", entityId: id, details: { action: "publish_video", ...published }, ip: getClientIP(request) });
     if (!published.ok) {
       const status = published.error === "not_found" ? 404 : published.error === "unavailable" ? 503 : published.error === "invalid_url" ? 400 : 409;
       return NextResponse.json({ error: published.error }, { status });
     }
     // İlk yayımda müşterilere bildirim gider (kalanını zamanlanmış iş tamamlar).
     if (published.firstPublication) after(() => sendPendingVideoEmails(origin));
-    return NextResponse.json(published);
+    return NextResponse.json({ ...published, warnings });
   }
 
   const result =
@@ -119,7 +119,7 @@ export async function POST(request: NextRequest, { params }: Ctx) {
         : await completeRelease(id, input.releasedOn, admin.user_id, supabase);
   if (input.action === "release" && result.ok) after(() => sendPendingCertificateEmails(origin));
 
-  await auditLog(supabase, {
+  const warnings = await auditLog(supabase, {
     admin,
     action: "UPDATE",
     entity: "release_batch",
@@ -128,7 +128,7 @@ export async function POST(request: NextRequest, { params }: Ctx) {
     ip: getClientIP(request),
   });
   if (!result.ok) return NextResponse.json({ error: result.error, detail: result.detail ?? null }, { status: STATUS_FOR[result.error] });
-  return NextResponse.json(result);
+  return NextResponse.json({ ...result, warnings });
 }
 
 export async function DELETE(request: NextRequest, { params }: Ctx) {
@@ -139,6 +139,6 @@ export async function DELETE(request: NextRequest, { params }: Ctx) {
   const supabase = createServiceRoleClient();
   const result = await deleteBatch(id, supabase);
   if (!result.ok) return NextResponse.json({ error: result.error, detail: result.detail ?? null }, { status: STATUS_FOR[result.error] });
-  await auditLog(supabase, { admin, action: "DELETE", entity: "release_batch", entityId: id, ip: getClientIP(request) });
-  return NextResponse.json({ ok: true });
+  const warnings = await auditLog(supabase, { admin, action: "DELETE", entity: "release_batch", entityId: id, ip: getClientIP(request) });
+  return NextResponse.json({ ok: true, warnings });
 }

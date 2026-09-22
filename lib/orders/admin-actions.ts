@@ -93,10 +93,29 @@ async function performRefund(order: ReleaseOrderRow, paymentId: string, amount: 
     } catch {
       result = { ok: false, error: "provider_outcome_unknown" };
     }
-    const checkpoint = await supabase.from("refund_operations").update({
-      state: result.ok ? "provider_succeeded" : "needs_review", result, updated_at: new Date().toISOString(),
-    }).eq("id", op.id).eq("state", "started").select("id").maybeSingle();
-    if (checkpoint.error || !checkpoint.data) return { ok: false, error: "unavailable", detail: "İade sonucu kaydedilemedi; sağlayıcı mutabakatı gerekli." };
+    // Retry only the local checkpoint. A lost DB response may mean the first write committed.
+    let checkpointSaved = false;
+    for (let attempt = 0; attempt < 2 && !checkpointSaved; attempt++) {
+      try {
+        const checkpoint = await supabase.from("refund_operations").update({
+          state: result.ok ? "provider_succeeded" : "needs_review", result, updated_at: new Date().toISOString(),
+        }).eq("id", op.id).eq("state", "started").select("id").maybeSingle();
+        checkpointSaved = !checkpoint.error && !!checkpoint.data;
+        if (!checkpointSaved) {
+          const existing = await supabase.from("refund_operations").select("state, result").eq("id", op.id).maybeSingle();
+          const stored = existing.data?.result as { ok?: boolean; refundId?: string } | undefined;
+          checkpointSaved = !existing.error && (result.ok
+            ? ["provider_succeeded", "completed"].includes(existing.data?.state) && stored?.ok === true && stored.refundId === result.refundId
+            : existing.data?.state === "needs_review" && stored?.ok === false);
+        }
+      } catch { /* Keep the durable claim; never repeat a provider call. */ }
+    }
+    if (!checkpointSaved) {
+      // Restricted server diagnostic: identifiers only, no buyer data, token, secret or provider payload.
+      console.error("[refund] checkpoint_unavailable", { operationId: op.id, orderId: order.id,
+        paymentId, ...(result.ok ? { refundId: result.refundId, method: result.method } : {}) });
+      return { ok: false, error: "unavailable", detail: `İade sonucu kaydedilemedi; mutabakat kaydı: ${op.id}.` };
+    }
     if (!result.ok) return { ok: false, error: "provider_error", detail: "Sağlayıcı sonucu mutabakat bekliyor." };
   }
   const done = await supabase.rpc("finish_refund_operation", { p_id: op.id });

@@ -1,5 +1,6 @@
 "use client";
 
+import AdminMutationWarnings from "./AdminMutationWarnings";
 import { containDialogTab } from "@/lib/hooks/dialog-keyboard";
 
 import { useEffect, useRef, useState } from "react";
@@ -141,7 +142,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
               <AdminSidebar mobile />
             </div>
           </dialog>
-          <main className="min-w-0 lg:ml-64 min-h-screen">{children}</main>
+          <main className="min-w-0 lg:ml-64 min-h-screen"><AdminMutationWarnings />{children}</main>
         </div>
       </div>
     </AdminProvider>

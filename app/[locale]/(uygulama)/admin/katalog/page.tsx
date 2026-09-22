@@ -1,5 +1,7 @@
 "use client";
 
+import { adminFetch } from "@/lib/admin/client";
+
 import { useEffect, useState, useCallback } from "react";
 import RoleGuard from "@/components/RoleGuard";
 import { Button, Input, Textarea, Select, CardStat } from "@/components/ui";
@@ -42,7 +44,7 @@ function KatalogContent() {
 
   const fetchProducts = useCallback(async () => {
     try {
-      const res = await fetch("/api/admin/catalog");
+      const res = await adminFetch("/api/admin/catalog");
       if (!res.ok) throw new Error("unavailable");
       const data = await res.json();
       if (Array.isArray(data)) setProducts(data);
@@ -54,7 +56,7 @@ function KatalogContent() {
 
   useEffect(() => {
     const controller = new AbortController();
-    fetch("/api/admin/catalog", { signal: controller.signal })
+    adminFetch("/api/admin/catalog", { signal: controller.signal })
       .then((res) => { if (!res.ok) throw new Error("unavailable"); return res.json(); })
       .then((rows) => { if (!Array.isArray(rows)) throw new Error("invalid_response"); setProducts(rows); })
       .catch(() => { if (!controller.signal.aborted) setError("Veriler yüklenemedi."); })
@@ -98,7 +100,7 @@ function KatalogContent() {
     try {
       const method = editingId ? "PUT" : "POST";
       const body = editingId ? { id: editingId, ...form } : form;
-      const res = await fetch("/api/admin/catalog", {
+      const res = await adminFetch("/api/admin/catalog", {
         method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
@@ -122,7 +124,7 @@ function KatalogContent() {
     if (!deleteTarget) return;
     setSaving(true);
     try {
-      const res = await fetch("/api/admin/catalog", {
+      const res = await adminFetch("/api/admin/catalog", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: deleteTarget.id }),
@@ -142,7 +144,7 @@ function KatalogContent() {
   };
 
   const toggleActive = async (p: SeedProduct) => {
-    const res = await fetch("/api/admin/catalog", {
+    const res = await adminFetch("/api/admin/catalog", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id: p.id, is_active: !p.is_active }),

@@ -1,5 +1,7 @@
 "use client";
 
+import { adminFetch } from "@/lib/admin/client";
+
 import { useCallback, useEffect, useMemo, useState } from "react";
 import RoleGuard from "@/components/RoleGuard";
 import { Button, Input, Select, Textarea } from "@/components/ui";
@@ -100,7 +102,7 @@ function Content() {
 
   const load = useCallback(async () => {
     try {
-      const res = await fetch("/api/admin/release-batches");
+      const res = await adminFetch("/api/admin/release-batches");
       if (!res.ok) throw new Error(String(res.status));
       const json = (await res.json()) as ListResponse;
       setData(json);
@@ -116,7 +118,7 @@ function Content() {
     setSaving(true);
     setError(null);
     try {
-      const res = await fetch("/api/admin/release-batches", {
+      const res = await adminFetch("/api/admin/release-batches", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ landId: form.landId, seasonLabel: form.seasonLabel, title: form.title.trim() || null, plannedOn: form.plannedOn || null, notes: form.notes.trim() || null }),
@@ -241,7 +243,7 @@ function BatchDetail({ id, canManage, onClose, onChanged, notify }: { id: string
 
   const load = useCallback(async () => {
     try {
-      const res = await fetch(`/api/admin/release-batches/${id}`);
+      const res = await adminFetch(`/api/admin/release-batches/${id}`);
       if (!res.ok) throw new Error(String(res.status));
       const json = (await res.json()) as DetailResponse;
       setDetail(json);
@@ -259,7 +261,7 @@ function BatchDetail({ id, canManage, onClose, onChanged, notify }: { id: string
   const send = async (method: "POST" | "PATCH" | "DELETE", body: Record<string, unknown> | null, okMessage: string) => {
     setBusy(true);
     try {
-      const res = await fetch(`/api/admin/release-batches/${id}`, { method, headers: { "Content-Type": "application/json" }, body: body ? JSON.stringify(body) : undefined });
+      const res = await adminFetch(`/api/admin/release-batches/${id}`, { method, headers: { "Content-Type": "application/json" }, body: body ? JSON.stringify(body) : undefined });
       const json = (await res.json().catch(() => ({}))) as { error?: string; detail?: string | null; skipped?: string[] };
       if (!res.ok) {
         notify(false, `${ERRORS[json.error ?? ""] ?? "İşlem başarısız oldu."}${json.detail ? ` (${json.detail})` : ""}`);

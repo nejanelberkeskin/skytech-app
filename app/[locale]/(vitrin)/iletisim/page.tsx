@@ -6,8 +6,22 @@ import SectionWrapper from "@/components/vitrin/SectionWrapper";
 import ClickToLoadFrame from "@/components/vitrin/shared/ClickToLoadFrame";
 import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
 import LocalBusinessSchema from "@/components/seo/LocalBusinessSchema";
-import { buildPageMetadata, ORG_SOCIAL } from "@/lib/seo";
+import { buildPageMetadata, ORG_ADDRESS, ORG_GEO, ORG_LEGAL_NAME, ORG_SOCIAL } from "@/lib/seo";
 import { TRANSACTIONS_ENABLED } from "@/lib/site-config";
+
+const ADDRESS_LOCALITY = `${ORG_ADDRESS.district} / ${ORG_ADDRESS.city}, ${ORG_ADDRESS.country}`;
+
+/** Harita çerçevesi: iş merkezinin çevresi (~1,7 km × 1,4 km) ve işaret. */
+const MAP_EMBED_URL = (() => {
+  const { latitude: lat, longitude: lon } = ORG_GEO;
+  const bbox = [lon - 0.01, lat - 0.0065, lon + 0.01, lat + 0.0065].map((n) => n.toFixed(4)).join("%2C");
+  return `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${lat.toFixed(5)}%2C${lon.toFixed(5)}`;
+})();
+
+/** Yol tarifi: Google binayı adresten bulur (I Blok, haritadaki iş merkezi noktasından daha kesin). */
+const DIRECTIONS_URL = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
+  `${ORG_ADDRESS.street}, ${ORG_ADDRESS.district}/${ORG_ADDRESS.city}`,
+)}`;
 
 export async function generateMetadata({
   params,
@@ -39,8 +53,8 @@ export default async function IletisimPage({
     {
       Icon: PinIcon,
       title: t("contacts.address.title"),
-      primary: "Saray Mah. 60 Cad. No:22",
-      secondary: t("contacts.address.secondary"),
+      primary: ORG_ADDRESS.street,
+      secondary: `${ADDRESS_LOCALITY}\n${ORG_LEGAL_NAME}`,
     },
     {
       Icon: PhoneIcon,
@@ -106,16 +120,14 @@ export default async function IletisimPage({
             <h2 className="text-2xl lg:text-3xl font-bold text-[#1a2e1a]">{t("map.title")}</h2>
           </div>
 
-          {/* Google Maps embed — Kahramankazan/Ankara ofis + adres kartı */}
+          {/* Harita (tıklayınca yüklenir) + adres kartı — nokta ve adres lib/seo.ts'ten */}
           <div className="relative aspect-[16/9] rounded-3xl overflow-hidden border border-black/5 shadow-xl bg-[#0a1f12]">
             {/* OpenStreetMap embed — keyless + her yerde frameable
                 (Google'ın keyless ?output=embed formatı kaldırıldı: 404 + SAMEORIGIN).
-                Koordinat: Google Business kaydı "Skytech Havacılık"
-                (maps.app.goo.gl/Tg3N3MsfhmvEmeMz9 → 40.0491034, 32.5976506).
                 Harita yalnız ziyaretçi "Haritayı göster" dediğinde yüklenir: sayfa açılırken
                 üçüncü tarafa istek gitmez (Çerez Politikası §3). Adres kartı her zaman görünür. */}
             <ClickToLoadFrame
-              src="https://www.openstreetmap.org/export/embed.html?bbox=32.5877%2C40.0426%2C32.6077%2C40.0556&layer=mapnik&marker=40.04910%2C32.59765"
+              src={MAP_EMBED_URL}
               title={t("map.title")}
               buttonLabel={t("map.show")}
               note={t("map.consentNote")}
@@ -125,10 +137,10 @@ export default async function IletisimPage({
             <div className="absolute bottom-4 left-4 right-4 sm:right-auto sm:max-w-sm rounded-2xl px-5 py-4 flex items-start gap-3 pointer-events-none bg-[#0a1f12]/92 backdrop-blur-md border border-white/10 shadow-xl">
               <PinIcon className="w-5 h-5 text-[#34d399] shrink-0 mt-0.5" />
               <div>
-                <p className="text-sm font-bold text-white leading-snug">Saray Mah. 60 Cad. No:22</p>
-                <p className="text-xs text-[#a7d4a7]">Kahramankazan / Ankara, Türkiye</p>
+                <p className="text-sm font-bold text-white leading-snug">{ORG_ADDRESS.street}</p>
+                <p className="text-xs text-[#a7d4a7]">{ADDRESS_LOCALITY}</p>
                 <a
-                  href="https://www.google.com/maps/dir/?api=1&destination=40.0491034,32.5976506"
+                  href={DIRECTIONS_URL}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1 mt-2 text-xs font-semibold text-[#a3e635] hover:text-white transition-colors pointer-events-auto"

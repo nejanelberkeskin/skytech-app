@@ -711,8 +711,7 @@
     },
     "contacts": {
       "address": {
-        "title": "Адрес",
-        "secondary": "Kahramankazan / Ankara, Türkiye\nSkytech Havacılık A.Ş."
+        "title": "Адрес"
       },
       "phone": {
         "title": "Телефон",

@@ -2,6 +2,7 @@ import { getTranslations } from "next-intl/server";
 import JsonLd from "./JsonLd";
 import {
   ORG_ADDRESS,
+  ORG_GEO,
   ORG_CONTACT,
   ORG_LEGAL_NAME,
   ORG_SAMEAS,
@@ -33,15 +34,15 @@ export default async function LocalBusinessSchema() {
         address: {
           "@type": "PostalAddress",
           streetAddress: ORG_ADDRESS.street,
-          addressLocality: ORG_ADDRESS.city,
-          addressRegion: ORG_ADDRESS.district,
+          // schema.org: addressLocality = ilçe/şehir, addressRegion = il
+          addressLocality: ORG_ADDRESS.district,
+          addressRegion: ORG_ADDRESS.city,
           addressCountry: ORG_ADDRESS.countryCode,
         },
-        // Google Business kaydı "Skytech Havacılık" (maps.app.goo.gl/Tg3N3MsfhmvEmeMz9)
         geo: {
           "@type": "GeoCoordinates",
-          latitude: 40.0491034,
-          longitude: 32.5976506,
+          latitude: ORG_GEO.latitude,
+          longitude: ORG_GEO.longitude,
         },
         telephone: ORG_CONTACT.phone,
         email: ORG_CONTACT.email,

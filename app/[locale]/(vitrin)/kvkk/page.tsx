@@ -63,8 +63,8 @@ export default async function KvkkPage({
       <LegalSection no="1" title="Veri Sorumlusu">
         <LegalP>
           6698 sayılı Kişisel Verilerin Korunması Kanunu (&quot;KVKK&quot;) uyarınca kişisel
-          verileriniz; veri sorumlusu sıfatıyla <strong>Skytech Havacılık A.Ş.</strong>{" "}
-          (Saray Mah. 60 Cad. No:22, Kahramankazan / Ankara) tarafından aşağıda açıklanan
+          verileriniz; veri sorumlusu sıfatıyla <strong>Skytech Havacılık ve Teknoloji Sanayi Ticaret A.Ş.</strong>{" "}
+          (Macun Mah. Batı Bulvarı ATB İş Merkezi I Blok No: 244, Yenimahalle / Ankara) tarafından aşağıda açıklanan
           kapsamda işlenmektedir.
         </LegalP>
       </LegalSection>

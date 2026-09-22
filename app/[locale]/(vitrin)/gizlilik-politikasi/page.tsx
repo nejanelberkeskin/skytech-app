@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { setRequestLocale } from "next-intl/server";
+import { Link } from "@/i18n/navigation";
 import LegalLayout, { LegalList, LegalP, LegalSection } from "@/components/vitrin/LegalLayout";
 import { buildPageMetadata } from "@/lib/seo";
 
@@ -32,7 +33,7 @@ export default async function GizlilikPolitikasiPage({
     <LegalLayout title="Gizlilik Politikası" path="/gizlilik-politikasi" effectiveDate="6 Temmuz 2026">
       <LegalSection no="1" title="Giriş">
         <LegalP>
-          Bu Gizlilik Politikası; Skytech Havacılık A.Ş. (&quot;Skytech&quot;, &quot;Şirket&quot;, &quot;biz&quot;)
+          Bu Gizlilik Politikası; Skytech Havacılık ve Teknoloji Sanayi Ticaret A.Ş. (&quot;Skytech&quot;, &quot;Şirket&quot;, &quot;biz&quot;)
           tarafından işletilen skytechgreen.com alan adlı web sitesi ve bağlı hizmetler
           (&quot;Platform&quot;) üzerinden toplanan kişisel verilerin nasıl işlendiğini,
           saklandığını ve korunduğunu açıklar. Platformu kullanarak bu politikada
@@ -40,9 +41,9 @@ export default async function GizlilikPolitikasiPage({
         </LegalP>
         <LegalP>
           Kişisel verilerin işlenmesine ilişkin ayrıntılı yasal aydınlatma için ayrıca{" "}
-          <a href="/kvkk" className="text-[#1B6B3A] font-semibold underline underline-offset-2">
+          <Link href="/kvkk" className="text-[#1B6B3A] font-semibold underline underline-offset-2">
             KVKK Aydınlatma Metni
-          </a>
+          </Link>
           ’ni inceleyebilirsiniz.
         </LegalP>
       </LegalSection>
@@ -105,17 +106,17 @@ export default async function GizlilikPolitikasiPage({
       <LegalSection no="6" title="Haklarınız">
         <LegalP>
           Kişisel verilerinize ilişkin erişim, düzeltme, silme ve itiraz haklarınızı{" "}
-          <a href="/kvkk" className="text-[#1B6B3A] font-semibold underline underline-offset-2">
+          <Link href="/kvkk" className="text-[#1B6B3A] font-semibold underline underline-offset-2">
             KVKK Aydınlatma Metni
-          </a>
+          </Link>
           ’nde açıklanan yöntemlerle kullanabilirsiniz.
         </LegalP>
       </LegalSection>
 
       <LegalSection no="7" title="İletişim">
         <LegalP>
-          Skytech Havacılık A.Ş. — Saray Mah. 60 Cad. No:22, Kahramankazan / Ankara,
-          Türkiye · info@skytechgreen.com
+          Skytech Havacılık ve Teknoloji Sanayi Ticaret A.Ş. — Macun Mah. Batı Bulvarı ATB İş Merkezi I Blok No: 244, Yenimahalle / Ankara,
+          Türkiye · info@skytechgreen.com · 0850 308 2600
         </LegalP>
         <LegalP>
           Bu politika gerektiğinde güncellenebilir; güncel sürüm her zaman bu sayfada

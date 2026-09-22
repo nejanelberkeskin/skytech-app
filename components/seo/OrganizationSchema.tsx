@@ -38,8 +38,9 @@ export default async function OrganizationSchema() {
         address: {
           "@type": "PostalAddress",
           streetAddress: ORG_ADDRESS.street,
-          addressRegion: ORG_ADDRESS.district,
-          addressLocality: ORG_ADDRESS.city,
+          // schema.org: addressLocality = ilçe/şehir, addressRegion = il
+          addressLocality: ORG_ADDRESS.district,
+          addressRegion: ORG_ADDRESS.city,
           addressCountry: ORG_ADDRESS.countryCode,
         },
         contactPoint: [

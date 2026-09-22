@@ -32,7 +32,7 @@ export default async function KullanimKosullariPage({
     <LegalLayout title="Kullanım Koşulları" path="/kullanim-kosullari" effectiveDate="6 Temmuz 2026">
       <LegalSection no="1" title="Taraflar ve Kapsam">
         <LegalP>
-          Bu Kullanım Koşulları; Skytech Havacılık A.Ş. (&quot;Skytech&quot;) tarafından işletilen
+          Bu Kullanım Koşulları; Skytech Havacılık ve Teknoloji Sanayi Ticaret A.Ş. (&quot;Skytech&quot;) tarafından işletilen
           skytechgreen.com web sitesi ile bu site üzerinden sunulan içerik ve hizmetlerin
           (&quot;Platform&quot;) kullanımını düzenler. Platformu ziyaret eden veya kullanan herkes
           (&quot;Kullanıcı&quot;) bu koşulları kabul etmiş sayılır.
@@ -96,8 +96,8 @@ export default async function KullanimKosullariPage({
           Mahkemeleri ve İcra Daireleri yetkilidir.
         </LegalP>
         <LegalP>
-          İletişim: Skytech Havacılık A.Ş. — Saray Mah. 60 Cad. No:22, Kahramankazan /
-          Ankara · info@skytechgreen.com
+          İletişim: Skytech Havacılık ve Teknoloji Sanayi Ticaret A.Ş. — Macun Mah. Batı Bulvarı ATB İş Merkezi I Blok No: 244, Yenimahalle / Ankara ·
+          info@skytechgreen.com · 0850 308 2600
         </LegalP>
       </LegalSection>
     </LegalLayout>

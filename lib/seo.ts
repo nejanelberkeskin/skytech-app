@@ -46,13 +46,20 @@ export const ORG_LEGAL_NAME = "Skytech Havacılık A.Ş.";
 export const ORG_PARENT_URL = "https://skytechhavacilik.com";
 export const ORG_FOUNDED = "2021";
 export const ORG_AREA_SERVED = "Türkiye";
+/** Şirket adresi (22 Eylül 2026 teyidi) — alt bilgi, İletişim sayfası ve yapısal veri buradan okur. */
 export const ORG_ADDRESS = {
-  street: "Saray Mah. 60 Cad. No:22",
-  district: "Kahramankazan",
+  street: "Macun Mah. Batı Bulvarı ATB İş Merkezi I Blok No: 244",
+  district: "Yenimahalle",
   city: "Ankara",
   country: "Türkiye",
   countryCode: "TR",
 };
+/**
+ * Harita noktası: OpenStreetMap'te "ATB İş Merkezi, Macun Mahallesi, Yenimahalle" alanının merkezi
+ * (Nominatim, 22 Eylül 2026). I Blok'un kesin noktası haritada yok; iş merkezi içinde kalır.
+ * İletişim sayfasındaki harita ve LocalBusiness yapısal verisi bunu kullanır.
+ */
+export const ORG_GEO = { latitude: 39.9487006, longitude: 32.770236 } as const;
 export const ORG_CONTACT = {
   email: "info@skytechgreen.com",
   // Birincil hat (sabit) — şemalarda bu kullanılır; ikincil mobil hat sayfalarda listelenir.

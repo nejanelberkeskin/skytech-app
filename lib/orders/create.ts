@@ -19,6 +19,7 @@ import { generateOrderNo } from "./identifiers";
 import { checkSite } from "./preview";
 import { scheduleFor, trToday } from "./schedule";
 import { resolveCertificateName, type OrderPayload } from "./schema";
+import { quantityRangeError } from "@/lib/pricing";
 import { orderTotals, type SalesSettings } from "./settings";
 import { addOrderEvent, db, transitionOrder } from "./store";
 import type { OrderConsents, ReleaseOrderRow } from "./types";
@@ -34,7 +35,8 @@ export interface CreateOrderMeta {
 
 export type CreateOrderResult =
   | { ok: true; order: ReleaseOrderRow; reused: boolean }
-  | { ok: false; error: "site_unavailable" | "capacity" | "quantity" | "unavailable" };
+  | { ok: false; error: "site_unavailable" | "capacity" | "unavailable" }
+  | { ok: false; error: "quantity"; field: "quantityMin" | "quantityMax" };
 
 const UNPAID = ["draft", "awaiting_payment", "payment_failed"] as const;
 
@@ -91,9 +93,8 @@ export async function createOrder(payload: OrderPayload, meta: CreateOrderMeta, 
   }
 
   // 3 · Saha, tutar, takvim (ayarlar çağırandan gelir: önizlemeyle aynı değerler)
-  if (payload.quantity < settings.minQuantity || payload.quantity > settings.maxQuantity) {
-    return { ok: false, error: "quantity" };
-  }
+  const range = quantityRangeError(payload.quantity, settings);
+  if (range) return { ok: false, error: "quantity", field: range };
   const site = await checkSite(payload.landId, payload.quantity);
   if (!site.ok) return { ok: false, error: site.error };
 

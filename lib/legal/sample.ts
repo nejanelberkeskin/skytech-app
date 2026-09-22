@@ -7,15 +7,24 @@
  * müşteriye giden sözleşme birbirinden ayrışamaz.
  */
 import { UNIT_PRICE_KURUS } from "@/lib/pricing";
-import { scheduleFor, trToday } from "@/lib/orders/schedule";
+import { DEFAULT_PREP_DAYS, scheduleFor, trToday } from "@/lib/orders/schedule";
 import type { LegalContext } from "./types";
 import { LEGAL_DOCUMENTS_VERSION } from "./version";
 
 const SAMPLE_QUANTITY = 100;
-const VAT_RATE = 20;
 
-export function sampleLegalContext(now: Date = new Date()): LegalContext {
-  const totalKurus = SAMPLE_QUANTITY * UNIT_PRICE_KURUS;
+/** Örnekteki bedel, KDV ve takvim satış ayarlarından gelir (çağıran okur); verilmezse varsayılanlar. */
+export interface SampleTerms {
+  unitPriceKurus: number;
+  vatRate: number;
+  prepDays: number;
+}
+
+const DEFAULT_TERMS: SampleTerms = { unitPriceKurus: UNIT_PRICE_KURUS, vatRate: 20, prepDays: DEFAULT_PREP_DAYS };
+
+export function sampleLegalContext(now: Date = new Date(), terms: SampleTerms = DEFAULT_TERMS): LegalContext {
+  const { unitPriceKurus, vatRate } = terms;
+  const totalKurus = SAMPLE_QUANTITY * unitPriceKurus;
   return {
     version: LEGAL_DOCUMENTS_VERSION,
     orderNo: null,
@@ -38,12 +47,12 @@ export function sampleLegalContext(now: Date = new Date()): LegalContext {
       species: ["[Sahaya bırakılan tür]"],
     },
     quantity: SAMPLE_QUANTITY,
-    unitPriceKurus: UNIT_PRICE_KURUS,
+    unitPriceKurus,
     totalKurus,
-    vatRate: VAT_RATE,
-    vatKurus: Math.round((totalKurus * VAT_RATE) / (100 + VAT_RATE)),
+    vatRate,
+    vatKurus: Math.round((totalKurus * vatRate) / (100 + vatRate)),
     certificateName: "[Alıcının belirlediği ad]",
-    schedule: scheduleFor(now),
+    schedule: scheduleFor(now, terms.prepDays),
   };
 }
 

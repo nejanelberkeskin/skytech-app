@@ -14,6 +14,7 @@ import FinalCTA from "@/components/vitrin/homepage/FinalCTA";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { buildPageMetadata } from "@/lib/seo";
+import { getPublicPricing } from "@/lib/orders/public-pricing";
 
 export async function generateMetadata({
   params,
@@ -35,6 +36,7 @@ export default async function VitrinHomePage({
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
+  const pricing = await getPublicPricing();
   return (
     <>
       <HeroSection />
@@ -47,8 +49,8 @@ export default async function VitrinHomePage({
       <AdvantagesGrid />
       <ComparisonTable />
       <BeforeAfter />
-      <ServicePackages />
-      <FAQSection />
+      <ServicePackages minQuantity={pricing.minQuantity} />
+      <FAQSection minQuantity={pricing.minQuantity} />
       <FinalCTA />
     </>
   );

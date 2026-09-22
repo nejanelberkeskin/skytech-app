@@ -4,7 +4,7 @@
  * Parti = bir sahada, bir sezonda, aynı gün yapılacak bırakma çalışması. Yalnız `confirmed`
  * (cayma süresi dolmuş) siparişler partiye alınır → `scheduled`. Parti "bırakıldı" işaretlenince
  * içindeki siparişler `released` olur, sahada ayrılan kapasite kalıcıya (`filled_seeds`) geçer ve
- * fatura zamanı "bırakmada" ise siparişler fatura kuyruğuna girer. Bu adım GERİ ALINAMAZ.
+ * açık satış faturası olmayan siparişler fatura kuyruğuna girer. Bu adım GERİ ALINAMAZ.
  *
  * Aynı adımda her siparişe Katılım Sertifikası kodu verilir; müşteri bildirimi çağıran uçtan
  * (`sendPendingCertificateEmails`) ve zamanlanmış işten gider.
@@ -12,7 +12,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { issueCertificate } from "./certificates";
 import { trToday } from "./schedule";
-import { getSalesSettings } from "./settings";
 import { addOrderEvent, db, transitionOrder } from "./store";
 import type { OrderActor, ReleaseOrderRow } from "./types";
 
@@ -172,7 +171,6 @@ export async function completeRelease(batchId: string, releasedOn: string, admin
   if (claimed.error) return { ok: false, error: "unavailable" };
   if (!claimed.data) return { ok: false, error: "invalid_state" };
 
-  const settings = await getSalesSettings();
   const releasedAt = new Date(`${releasedOn}T09:00:00Z`).toISOString(); // İstanbul 12:00 — gün kaymaz
   const skipped: string[] = [];
   let released = 0;
@@ -185,10 +183,12 @@ export async function completeRelease(batchId: string, releasedOn: string, admin
     await supabase.rpc("commit_reserved_capacity", { p_land_id: moved.land_id, p_quantity: moved.quantity });
     await addOrderEvent(supabase, moved.id, "release_completed", actorOf(adminUserId), { batchId, releasedOn });
     await issueCertificate(supabase, moved);
-    if (settings.invoiceTiming === "on_performance") {
-      const open = await supabase.from("order_invoices").select("id").eq("order_id", moved.id).eq("kind", "sale").in("status", ["pending", "issued"]).limit(1);
-      if (!open.data?.length) await supabase.from("order_invoices").insert({ order_id: moved.id, kind: "sale", provider: "manual", status: "pending", created_by: "system" });
-    }
+    // Bırakılan her siparişin açık bir satış faturası olmalı. "Ödemede" kipinde fatura ödeme anında
+    // kuyruğa girmiştir (burada bulunur, ikinci kez eklenmez). Ayar sonradan "bırakmada"dan "ödemede"ye
+    // çevrildiyse, önceden ödenmiş siparişler faturasız kalmasın diye koşul ayara bakmaz.
+    const open = await supabase.from("order_invoices").select("id").eq("order_id", moved.id).eq("kind", "sale").in("status", ["pending", "issued"]).limit(1);
+    if (open.error) console.error("[parti] satış faturası kuyruğu denetlenemedi — yönetimden elle eklenmeli:", moved.order_no);
+    else if (!open.data?.length) await supabase.from("order_invoices").insert({ order_id: moved.id, kind: "sale", provider: "manual", status: "pending", created_by: "system" });
     released++;
   }
   return { ok: true, released, skipped };

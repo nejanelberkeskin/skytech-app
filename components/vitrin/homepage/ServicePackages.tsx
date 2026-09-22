@@ -9,10 +9,10 @@ import {
   type MotionValue,
 } from "framer-motion";
 import { useRef } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import SectionWrapper from "../SectionWrapper";
 import { REQUESTS_ENABLED, orderCtaHref } from "@/lib/site-config";
-import { RELEASE_QTY } from "@/lib/pricing";
+import { formatCount, type PriceLocale } from "@/lib/pricing";
 
 /*
  * İki yol + kurumsal:
@@ -31,10 +31,11 @@ type Package = {
   highlight: boolean;
 };
 
-function usePackages(): Package[] {
+function usePackages(minQuantity: number): Package[] {
   const t = useTranslations("servicePackages");
+  const min = formatCount(minQuantity, useLocale() as PriceLocale);
   const features = (key: Package["key"]) =>
-    (t.raw(`packages.${key}.features`) as string[]).map((f) => f.replace("{min}", String(RELEASE_QTY.min)));
+    (t.raw(`packages.${key}.features`) as string[]).map((f) => f.replace("{min}", min));
   // Talep toplama kapalıysa çağrılar /yakinda'ya gider; etiket de ona göre değişir.
   const requestCta = (key: "ownLand" | "site", kind: "land" | "openLand") => ({
     label: REQUESTS_ENABLED ? t(`packages.${key}.cta`) : t("ctaFallback.soon"),
@@ -96,9 +97,10 @@ const headingVariants = {
   },
 };
 
-export default function ServicePackages() {
+/** `minQuantity`: satış ayarlarındaki en az adet (ana sayfa sunucuda okur). */
+export default function ServicePackages({ minQuantity }: { minQuantity: number }) {
   const t = useTranslations("servicePackages");
-  const PACKAGES = usePackages();
+  const PACKAGES = usePackages(minQuantity);
   return (
     <SectionWrapper variant="tinted" className="relative overflow-hidden !pb-32">
       {/* Aurora behind cards */}

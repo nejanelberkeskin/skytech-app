@@ -89,6 +89,14 @@ export const ADMIN_MODULES: AdminModule[] = [
     allowedRoles: ["SUPER_ADMIN", "OPERATIONS", "FINANCE"],
   },
   {
+    // Satış ayarları: birim bedel, adet sınırları, hazır seçenekler, KDV, fatura zamanı, süreler
+    id: "satis-ayarlari",
+    href: "/admin/satis-ayarlari",
+    label: "Satış Ayarları",
+    icon: "🏷️",
+    allowedRoles: ["SUPER_ADMIN"],
+  },
+  {
     // Eski tohum satışı akışı (kapalı); Faz 8 temizliğinde kalkacak
     id: "siparisler",
     href: "/admin/siparisler",

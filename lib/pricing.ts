@@ -1,23 +1,48 @@
 /**
- * Tohum topu bıraktırma hizmeti — fiyat ve adet kuralları (TEK KAYNAK).
+ * Tohum topu bıraktırma hizmeti — fiyat ve adet kurallarının VARSAYILANLARI ve biçimlendirme.
  *
- * İstemci de sunucu da buradan okur; form, şema, e-posta ve ileride sipariş
- * çekirdeği aynı sayıları kullanır. Para her yerde KURUŞ cinsinden tam sayıdır
- * (kayan nokta yok). Sipariş çekirdeği geldiğinde birim bedel yönetim
- * panelinden ayarlanabilir olacak; o zaman bu dosya yalnız varsayılanı taşır ve
- * tutar HER ZAMAN sunucuda yeniden hesaplanır — istemciden gelen tutara güvenilmez.
+ * Geçerli değerler yönetim panelindeki "Satış Ayarları"ndan gelir (`sales_settings` tablosu,
+ * `lib/orders/settings.ts`). Buradaki sabitler yalnız o tablo okunamadığında kullanılan
+ * varsayılanlardır. Para her yerde KURUŞ cinsinden tam sayıdır (kayan nokta yok); tutar HER ZAMAN
+ * sunucuda yeniden hesaplanır — istemciden gelen tutara güvenilmez.
  */
 
-/** Tohum topu başına hizmet bedeli — 10,00 TL, KDV dâhil. */
+/** Tohum topu başına hizmet bedeli — 10,00 TL, KDV dâhil (varsayılan). */
 export const UNIT_PRICE_KURUS = 1_000;
 
-/** Bir talepte/siparişte en az ve en çok tohum topu adedi. */
+/** Bir talepte/siparişte en az ve en çok tohum topu adedi (varsayılan). */
 export const RELEASE_QTY = { min: 20, max: 100_000 } as const;
 
-/** Hazır adet seçenekleri; bunların dışında serbest giriş de yapılabilir. */
+/** Hazır adet seçenekleri; bunların dışında serbest giriş de yapılabilir (varsayılan). */
 export const QUANTITY_PRESETS = [50, 100, 200, 500, 5_000] as const;
 
 export const DEFAULT_QUANTITY = 100;
+
+/**
+ * Adet için MUTLAK sınırlar — şemalar yalnız bunu denetler. Geçerli en az / en çok adet satış
+ * ayarlarından gelir ve sipariş, önizleme ve talep uçlarında ayrıca denetlenir.
+ */
+export const QTY_HARD_LIMITS = { min: 1, max: 1_000_000 } as const;
+
+/** Sihirbazın ve herkese açık sayfaların gördüğü fiyat/adet kuralları (satış ayarlarının alt kümesi). */
+export interface PublicPricing {
+  unitPriceKurus: number;
+  minQuantity: number;
+  maxQuantity: number;
+  quantityPresets: number[];
+}
+
+export const DEFAULT_PUBLIC_PRICING: PublicPricing = {
+  unitPriceKurus: UNIT_PRICE_KURUS,
+  minQuantity: RELEASE_QTY.min,
+  maxQuantity: RELEASE_QTY.max,
+  quantityPresets: [...QUANTITY_PRESETS],
+};
+
+/** Sihirbazın açılıştaki adedi: varsayılan, ayarlardaki sınırların içine çekilir. */
+export function initialQuantity(pricing: PublicPricing): number {
+  return Math.min(Math.max(DEFAULT_QUANTITY, pricing.minQuantity), pricing.maxQuantity);
+}
 
 /**
  * Birim bedel ve tahmini tutar talep formunda gösterilsin mi?
@@ -28,10 +53,23 @@ export const PRICING_VISIBLE = process.env.NEXT_PUBLIC_PRICING_VISIBLE !== "fals
 export type PriceLocale = "tr" | "en" | "ru";
 
 /** Geçerli adet için toplam (kuruş); geçersiz adette null. */
-export function totalKurus(quantity: number | null | undefined): number | null {
+export function totalKurus(
+  quantity: number | null | undefined,
+  pricing: PublicPricing = DEFAULT_PUBLIC_PRICING,
+): number | null {
   if (typeof quantity !== "number" || !Number.isInteger(quantity)) return null;
-  if (quantity < RELEASE_QTY.min || quantity > RELEASE_QTY.max) return null;
-  return quantity * UNIT_PRICE_KURUS;
+  if (quantity < pricing.minQuantity || quantity > pricing.maxQuantity) return null;
+  return quantity * pricing.unitPriceKurus;
+}
+
+/** Adet, ayarlardaki sınırların dışındaysa hata anahtarı (şemalarla aynı adlar); içindeyse null. */
+export function quantityRangeError(
+  quantity: number,
+  pricing: Pick<PublicPricing, "minQuantity" | "maxQuantity">,
+): "quantityMin" | "quantityMax" | null {
+  if (quantity < pricing.minQuantity) return "quantityMin";
+  if (quantity > pricing.maxQuantity) return "quantityMax";
+  return null;
 }
 
 /*

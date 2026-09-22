@@ -6,11 +6,9 @@ import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 import { SITES_HREF } from "@/lib/sites/links";
 import {
-  RELEASE_QTY,
-  QUANTITY_PRESETS,
-  DEFAULT_QUANTITY,
-  UNIT_PRICE_KURUS,
   PRICING_VISIBLE,
+  initialQuantity,
+  quantityRangeError,
   totalKurus,
   formatCount,
   formatTry,
@@ -71,12 +69,15 @@ export default function OrderWizard({
   schedule,
   dateLabels,
   timeline,
+  pricing,
 }: WizardProps) {
   const t = useTranslations("orderWizard");
   const requestErrors = useTranslations("requestForms.common.errors");
   const pathname = usePathname();
   const [step, setStep] = useState(1);
-  const [quantity, setQuantity] = useState<number | null>(DEFAULT_QUANTITY);
+  const [quantity, setQuantity] = useState<number | null>(() =>
+    initialQuantity(pricing),
+  );
   const [certificateName, setCertificateName] = useState("");
   const [buyer, setBuyer] = useState<Buyer>({
     firstName: "",
@@ -206,7 +207,7 @@ export default function OrderWizard({
     if (!key) return null;
     const params = key.startsWith("certificateName")
       ? { min: CERTIFICATE_NAME.min, max: CERTIFICATE_NAME.max }
-      : { min: RELEASE_QTY.min, max: RELEASE_QTY.max };
+      : { min: pricing.minQuantity, max: pricing.maxQuantity };
     return t.has(`errors.${key}`)
       ? t(`errors.${key}`, params)
       : requestErrors.has(key)
@@ -217,9 +218,11 @@ export default function OrderWizard({
     (stage: number): Record<string, string> => {
       if (stage === 1) {
         const result = orderPayloadSchema.shape.quantity.safeParse(quantity);
-        return result.success
-          ? {}
-          : { quantity: result.error.issues[0].message };
+        if (!result.success)
+          return { quantity: result.error.issues[0].message };
+        // Şema yalnız mutlak sınırları bilir; geçerli en az / en çok adet satış ayarlarından gelir.
+        const range = quantityRangeError(result.data, pricing);
+        return range ? { quantity: range } : {};
       }
       if (stage === 2) {
         const result = certificateNameSchema.safeParse(certificateName);
@@ -254,7 +257,7 @@ export default function OrderWizard({
           : prefix(issuesToFieldErrors(i.error.issues), "invoice")),
       };
     },
-    [quantity, certificateName, mode, contact, locale, buyer, invoice],
+    [quantity, certificateName, mode, contact, locale, buyer, invoice, pricing],
   );
 
   const showErrors = useCallback((fields: Record<string, string>) => {
@@ -426,7 +429,7 @@ export default function OrderWizard({
   const inOrderReview = step === 4 && mode === "order";
   const price = inOrderReview
     ? (preview?.totals.totalKurus ?? null)
-    : totalKurus(quantity);
+    : totalKurus(quantity, pricing);
   const showPrice = inOrderReview || PRICING_VISIBLE;
   const finalName =
     certificateName.trim() ||
@@ -657,9 +660,9 @@ export default function OrderWizard({
                       request.clearError("details.quantity");
                       invalidate();
                     }}
-                    min={RELEASE_QTY.min}
-                    max={RELEASE_QTY.max}
-                    quick={[...QUANTITY_PRESETS]}
+                    min={pricing.minQuantity}
+                    max={pricing.maxQuantity}
+                    quick={pricing.quantityPresets}
                     invalid={a.invalid}
                     describedBy={a.describedBy}
                     disabled={busy}
@@ -673,7 +676,8 @@ export default function OrderWizard({
               {PRICING_VISIBLE && (
                 <div className="rounded-2xl bg-[#f8faf5] p-4">
                   <p className="text-sm font-semibold">
-                    {t("quantity.unit")}: {formatTry(UNIT_PRICE_KURUS, locale)}
+                    {t("quantity.unit")}:{" "}
+                    {formatTry(pricing.unitPriceKurus, locale)}
                   </p>
                   <p className="mt-1 text-xs text-[#3d5a3d]">
                     {t("quantity.vatIncluded")}
@@ -836,7 +840,7 @@ export default function OrderWizard({
                     ? [
                         {
                           label: t("quantity.unit"),
-                          value: formatTry(UNIT_PRICE_KURUS, locale),
+                          value: formatTry(pricing.unitPriceKurus, locale),
                         },
                         {
                           label: t("request.estimated"),

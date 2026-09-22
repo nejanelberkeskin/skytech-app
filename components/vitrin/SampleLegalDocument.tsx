@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import LegalBlocks from "@/components/vitrin/LegalBlocks";
 import LegalLayout from "@/components/vitrin/LegalLayout";
 import { SAMPLE_NOTICE, sampleLegalContext } from "@/lib/legal/sample";
+import { getPublicSalesSettings } from "@/lib/orders/public-pricing";
 import { contractDocument } from "@/lib/legal/templates/contract";
 import { preInfoDocument } from "@/lib/legal/templates/pre-info";
 import { LEGAL_DOCUMENTS_VERSION, LEGAL_EFFECTIVE_LABEL } from "@/lib/legal/version";
@@ -14,7 +15,7 @@ const PDF_SLUG = { pre_info: "on-bilgilendirme", contract: "mesafeli-hizmet-sozl
  * "Ön Bilgilendirme Formu" ve "Mesafeli Satış Sözleşmesi" sayfalarının gövdesi:
  * siparişte kullanılan şablonun yer tutuculu örneği + PDF bağlantıları.
  */
-export default function SampleLegalDocument({
+export default async function SampleLegalDocument({
   kind,
   title,
   path,
@@ -24,7 +25,7 @@ export default function SampleLegalDocument({
   path: string;
 }) {
   if (!legalPagesVisible()) notFound();
-  const document = BUILDERS[kind](sampleLegalContext());
+  const document = BUILDERS[kind](sampleLegalContext(new Date(), await getPublicSalesSettings()));
 
   return (
     <LegalLayout title={title} path={path} effectiveDate={LEGAL_EFFECTIVE_LABEL}>

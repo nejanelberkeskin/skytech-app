@@ -7,7 +7,7 @@
  */
 import { z } from "zod";
 import { TR_IL_KODLARI } from "@/lib/tr-iller";
-import { RELEASE_QTY } from "@/lib/pricing";
+import { QTY_HARD_LIMITS } from "@/lib/pricing";
 import { certificateNameSchema, cleanText, normalizePhone, LOCALES } from "@/lib/requests/schema";
 import { isValidTaxId, isValidTckn } from "./tax-ids";
 import { ORDER_NO_RE } from "./types";
@@ -139,11 +139,12 @@ export const consentsSchema = z.object({
 const orderFields = z.object({
   /** Saha kimliği — sunucu yayında ve katılıma açık olduğunu ayrıca doğrular. */
   landId: z.uuid("landInvalid"),
+  // Geçerli en az / en çok adet satış ayarlarındadır; önizleme ve sipariş uçları ayrıca denetler.
   quantity: z
     .number("quantityInvalid")
     .int("quantityInvalid")
-    .min(RELEASE_QTY.min, "quantityMin")
-    .max(RELEASE_QTY.max, "quantityMax"),
+    .min(QTY_HARD_LIMITS.min, "quantityMin")
+    .max(QTY_HARD_LIMITS.max, "quantityMax"),
   /** Boşsa sertifikaya alıcının adı soyadı yazılır (sunucuda doldurulur). */
   certificateName: certificateNameSchema,
   buyer: buyerSchema,

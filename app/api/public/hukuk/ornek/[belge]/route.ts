@@ -4,6 +4,7 @@ import { renderLegalHtml } from "@/lib/legal/render-html";
 import { renderLegalPdf } from "@/lib/legal/render-pdf";
 import { sha256Hex } from "@/lib/legal/documents";
 import { sampleLegalContext } from "@/lib/legal/sample";
+import { getPublicSalesSettings } from "@/lib/orders/public-pricing";
 import { contractDocument } from "@/lib/legal/templates/contract";
 import { preInfoDocument } from "@/lib/legal/templates/pre-info";
 import { kvkkNoticePublicDocument } from "@/lib/legal/templates/kvkk-notice";
@@ -38,14 +39,15 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ belg
   const limited = rateLimit(`hukuk-pdf:${getClientIP(req)}`, 20, 10 * 60_000);
   if (limited) return limited;
 
-  const document = build(sampleLegalContext());
+  const document = build(sampleLegalContext(new Date(), await getPublicSalesSettings()));
   const pdf = renderLegalPdf(document, { sha256: sha256Hex(renderLegalHtml(document)) });
 
   return new Response(new Uint8Array(pdf), {
     headers: {
       "Content-Type": "application/pdf",
       "Content-Disposition": `inline; filename="skytech-green-${belge}-ornek.pdf"`,
-      "Cache-Control": "public, max-age=300, s-maxage=3600",
+      // Örnekteki bedel satış ayarlarından gelir; ayar değişince CDN'de en çok 5 dakika eski kalır.
+      "Cache-Control": "public, max-age=300, s-maxage=300",
       "X-Robots-Tag": "noindex",
     },
   });

@@ -170,7 +170,10 @@ assert.ok(!("total" in r.data) && !("totalKurus" in r.data), "şemada tutar alan
 r = parse({ totalKurus: 1, unitPriceKurus: 1 });
 assert.ok(r.success && !("totalKurus" in r.data));
 
-assert.deepEqual(errs(parse({ quantity: 19 })), { quantity: "quantityMin" });
+// Şema yalnız mutlak sınırları denetler; geçerli en az / en çok adet satış ayarlarındadır (uçlar denetler).
+assert.deepEqual(errs(parse({ quantity: 0 })), { quantity: "quantityMin" });
+assert.deepEqual(errs(parse({ quantity: 1_000_001 })), { quantity: "quantityMax" });
+assert.deepEqual(errs(parse({ quantity: 19 })), {}, "19 şemadan geçer; ayardaki en az adet uçta denetlenir");
 assert.deepEqual(errs(parse({ consents: { preInfo: true, contract: false, kvkkRead: true } })), { "consents.contract": "contractRequired" });
 assert.deepEqual(errs(parse({ consents: { preInfo: false, contract: true, kvkkRead: true } })), { "consents.preInfo": "preInfoRequired" });
 assert.deepEqual(errs(parse({ consents: { preInfo: true, contract: true } })), { "consents.kvkkRead": "kvkkRequired" });

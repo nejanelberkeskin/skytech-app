@@ -10,6 +10,8 @@ import { siteDetailHref, siteOrderHref } from "@/lib/sites/links";
 import { formatHectares, formatSiteLocation } from "@/lib/sites/format";
 import type { PriceLocale } from "@/lib/pricing";
 import { scheduleFor } from "@/lib/orders/schedule";
+import { getSalesSettings } from "@/lib/orders/settings";
+import { publicPricing } from "@/lib/orders/settings-schema";
 import { buildPageMetadata } from "@/lib/seo";
 import SeasonTimeline from "@/components/vitrin/shared/SeasonTimeline";
 import OrderWizard from "@/components/vitrin/siparis/OrderWizard";
@@ -38,13 +40,15 @@ export default async function ParticipatePage({ params }: Props) {
   // metin sürümü): sipariş alınamıyorsa sihirbaz çıkmaz sokağa girmez, talep kipinde açılır.
   const canOrder = !ordersClosed(getPaymentProvider());
   if (!canOrder && !REQUESTS_ENABLED) redirect({ href: "/yakinda", locale });
-  const [t, sites, seeds] = await Promise.all([
+  // Önbelleksiz: sihirbazın gösterdiği fiyat ve takvim, bağlayıcı önizlemeyle aynı satırdan gelir.
+  const [t, sites, seeds, settings] = await Promise.all([
     getTranslations({ locale, namespace: "orderWizard" }),
     getTranslations({ locale, namespace: "sitesPage" }),
     getTranslations({ locale, namespace: "ourSeeds" }),
+    getSalesSettings(),
   ]);
   const now = new Date();
-  const schedule = scheduleFor(now);
+  const schedule = scheduleFor(now, settings.prepDays);
   const formatter = new Intl.DateTimeFormat(
     locale === "en" ? "en-GB" : locale,
     { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" },
@@ -95,6 +99,7 @@ export default async function ParticipatePage({ params }: Props) {
           cover: site.coverImage,
         }}
         schedule={schedule}
+        pricing={publicPricing(settings)}
         dateLabels={dateLabels}
         timeline={
           <SeasonTimeline

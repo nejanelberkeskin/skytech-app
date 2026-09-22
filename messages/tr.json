@@ -451,7 +451,7 @@
       },
       "minOrder": {
         "question": "En az kaç tohum topu bıraktırabilirim?",
-        "answer": "En az 20 tohum topu ile katılabilirsiniz. Hazır seçeneklerden birini kullanabilir ya da adedi kendiniz belirleyebilirsiniz; güncel bedel saha sayfasında ve sipariş adımında gösterilir."
+        "answer": "En az {min} tohum topu ile katılabilirsiniz. Hazır seçeneklerden birini kullanabilir ya da adedi kendiniz belirleyebilirsiniz; güncel bedel, saha seçtikten sonra katılım adımlarında gösterilir."
       },
       "b2bIntegration": {
         "question": "B2B kurumsal entegrasyon nasıl çalışır?",

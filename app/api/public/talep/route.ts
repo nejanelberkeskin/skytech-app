@@ -12,7 +12,8 @@ import {
   type RequestPayload,
 } from "@/lib/requests/schema";
 import { generateRequestNo, hashIp, sanitizeUserAgent } from "@/lib/requests/server";
-import { PRICING_VISIBLE, UNIT_PRICE_KURUS } from "@/lib/pricing";
+import { PRICING_VISIBLE, quantityRangeError } from "@/lib/pricing";
+import { getSalesSettings } from "@/lib/orders/settings";
 import type { ServiceRequest } from "@/lib/types";
 
 /**
@@ -111,6 +112,15 @@ export async function POST(req: NextRequest) {
   let storedDetails: Record<string, unknown> = {};
 
   if (details.type === "open_land_seeding") {
+    // Talep de siparişle aynı adet sınırlarına ve birim bedele bağlıdır (satış ayarları).
+    const settings = await getSalesSettings();
+    const range = quantityRangeError(details.quantity, settings);
+    if (range) {
+      return NextResponse.json(
+        { error: "validation", fields: { "details.quantity": range } },
+        { status: 400 }
+      );
+    }
     const { data: land, error } = await supabase
       .from("lands")
       .select("id, name, region, is_public, status, species_slugs")
@@ -135,7 +145,7 @@ export async function POST(req: NextRequest) {
       speciesSlugs: Array.isArray(land.species_slugs) ? land.species_slugs : [],
       // Müşterinin gördüğü birim bedel ve tahmini tutar (kuruş). Bağlayıcı değil.
       ...(PRICING_VISIBLE
-        ? { unitPriceKurus: UNIT_PRICE_KURUS, estimatedTotalKurus: details.quantity * UNIT_PRICE_KURUS }
+        ? { unitPriceKurus: settings.unitPriceKurus, estimatedTotalKurus: details.quantity * settings.unitPriceKurus }
         : {}),
     };
   } else {

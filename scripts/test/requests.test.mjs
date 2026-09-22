@@ -32,9 +32,10 @@ let r = parse({ type: "open_land_seeding", landId: land, quantity: 20 });
 assert.ok(r.success, "20 adet kabul edilmeli");
 assert.equal(r.data.details.certificateName, undefined);
 
-r = parse({ type: "open_land_seeding", landId: land, quantity: 19 });
+// Şema yalnız mutlak sınırları denetler (1 – 1.000.000); ayardaki sınırları talep ucu denetler.
+r = parse({ type: "open_land_seeding", landId: land, quantity: 0 });
 assert.deepEqual(errs(r), { "details.quantity": "quantityMin" });
-r = parse({ type: "open_land_seeding", landId: land, quantity: 100001 });
+r = parse({ type: "open_land_seeding", landId: land, quantity: 1_000_001 });
 assert.deepEqual(errs(r), { "details.quantity": "quantityMax" });
 r = parse({ type: "open_land_seeding", landId: land, quantity: 20.5 });
 assert.deepEqual(errs(r), { "details.quantity": "quantityInvalid" });

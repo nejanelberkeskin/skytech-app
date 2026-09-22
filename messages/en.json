@@ -451,7 +451,7 @@
       },
       "minOrder": {
         "question": "What is the minimum number of seed balls?",
-        "answer": "You can take part with a minimum of 20 seed balls. You can use one of the preset options or set the quantity yourself; the current fee is shown on the site page and at the order step."
+        "answer": "The minimum number of seed balls is {min}. You can use one of the preset options or set the quantity yourself; the current fee is shown in the participation steps after you choose a site."
       },
       "b2bIntegration": {
         "question": "How does B2B corporate integration work?",

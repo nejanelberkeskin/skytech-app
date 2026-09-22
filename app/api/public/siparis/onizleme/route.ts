@@ -4,6 +4,7 @@ import { issuesToFieldErrors } from "@/lib/requests/schema";
 import { orderPreviewSchema } from "@/lib/orders/schema";
 import { buildPreview, checkSite } from "@/lib/orders/preview";
 import { getSalesSettings } from "@/lib/orders/settings";
+import { quantityRangeError } from "@/lib/pricing";
 import { ordersClosed } from "@/lib/orders/gate";
 import { getPaymentProvider } from "@/lib/payments";
 
@@ -43,8 +44,9 @@ export async function POST(req: NextRequest) {
   }
 
   const settings = await getSalesSettings();
-  if (parsed.data.quantity < settings.minQuantity || parsed.data.quantity > settings.maxQuantity) {
-    return NextResponse.json({ error: "validation", fields: { quantity: "quantityMin" } }, { status: 400 });
+  const range = quantityRangeError(parsed.data.quantity, settings);
+  if (range) {
+    return NextResponse.json({ error: "validation", fields: { quantity: range } }, { status: 400 });
   }
 
   const site = await checkSite(parsed.data.landId, parsed.data.quantity);

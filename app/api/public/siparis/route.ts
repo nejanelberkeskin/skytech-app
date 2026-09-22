@@ -85,7 +85,7 @@ export async function POST(req: NextRequest) {
   const created = await createOrder(payload, meta, settings);
   if (!created.ok) {
     if (created.error === "quantity") {
-      return NextResponse.json({ error: "validation", fields: { quantity: "quantityMin" } }, { status: 400 });
+      return NextResponse.json({ error: "validation", fields: { quantity: created.field } }, { status: 400 });
     }
     return NextResponse.json({ error: created.error }, { status: created.error === "unavailable" ? 503 : 409 });
   }

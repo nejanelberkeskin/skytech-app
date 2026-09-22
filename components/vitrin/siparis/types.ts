@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import type { OrderPayloadInput } from "@/lib/orders/schema";
 import type { OrderSchedule } from "@/lib/orders/schedule";
-import type { PriceLocale } from "@/lib/pricing";
+import type { PriceLocale, PublicPricing } from "@/lib/pricing";
 
 export interface WizardSite {
   id: string;
@@ -21,6 +21,8 @@ export interface WizardProps {
   schedule: OrderSchedule;
   dateLabels: Record<string, string>;
   timeline: ReactNode;
+  /** Satış ayarlarından: birim bedel, en az / en çok adet, hazır seçenekler. */
+  pricing: PublicPricing;
 }
 export type Buyer = OrderPayloadInput["buyer"];
 export interface InvoiceValues {

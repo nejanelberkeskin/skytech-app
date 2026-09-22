@@ -769,8 +769,34 @@ Bu bölüm 11. bölümdeki akış tarifinin yerine geçer.
 - Hukuk sayfalarındaki şirket künyesi (KVKK / Gizlilik / Kullanım Koşulları) ve eski `/davet` sayfasının kapatılması ayrı
   PR'da (#51, `main` tabanlı).
 
+### Satış ayarları (Faz 5c)
+- Yönetim → **Satış Ayarları** (`/admin/satis-ayarlari`, yalnız SUPER_ADMIN; form `components/admin/SalesSettingsForm.tsx`):
+  birim bedel, en az / en çok adet, hazır seçenekler, KDV, fatura zamanı, hazırlık payı, ödeme süresi. Kaydetmeden önce
+  değişiklikler ve sonuçları gösterilir; her kayıt `admin_audit_logs`'a alan alan yazılır (ekranda "Son değişiklikler").
+- Uç: `GET/PUT /api/admin/sales-settings`. PUT, ekranın açıldığı andaki `updated_at`'i ister; arada başkası kaydettiyse
+  409 döner, üzerine yazılmaz (`lib/orders/settings.ts → updateSalesSettings`).
+- Kurallar tek yerde, saf: `lib/orders/settings-schema.ts` (veritabanı kısıtlarıyla aynı sınırlar + en çok ≥ en az,
+  seçenekler sınırlar içinde ve artan). Değiştirilirse `scripts/test/sales-settings.test.mjs` güncellenir.
+- **Ayar nereye yansır:**
+  - Sihirbaz: bedel, adet sınırları, hazır seçenekler, takvim (katıl sayfası önbelleksiz okur).
+  - Önizleme / sipariş / talep uçları: adet sınırları ve bedel her istekte güncel satırdan.
+  - Ana sayfa (SSS'deki ve hizmet kartındaki en az adet) ile örnek ön bilgilendirme / sözleşme (sayfa + PDF):
+    `lib/orders/public-pricing.ts` üzerinden önbellekli (5 dk); kaydedince `revalidateTag(..., { expire: 0 })` ile hemen
+    tazelenir. Örnek PDF'in CDN önbelleği 5 dakika.
+- Şemalar (`lib/orders/schema.ts`, `lib/requests/schema.ts`) artık yalnız mutlak sınırları (1 – 1.000.000) denetler;
+  geçerli sınır uçlarda `quantityRangeError` ile denetlenir. `lib/pricing.ts` sabitleri yalnız varsayılandır.
+- Bedel / KDV / hazırlık payı değişirse teklif sürümü değişir: sihirbazın son adımındaki müşteri tutarı yeniden onaylar;
+  oluşturulmuş siparişler kendi tutarı ve belgeleriyle sürer.
+- Fatura zamanı: parti "bırakıldı" işaretlenince açık satış faturası olmayan her sipariş, ayardan bağımsız olarak fatura
+  kuyruğuna girer (ayar sonradan "ödemede"ye çevrilirse önceden ödenmiş siparişler faturasız kalmasın).
+- Yapılmadı: "sipariş alımı durduruldu" anahtarı — `sales_settings`'e sütun (migration) gerekir, onay bekliyor.
+- Ortak `components/ui/Input.tsx`: etiket kutuya bağlı, hata / açıklama metni `aria-describedby` ile okunur (bütün
+  yönetim formları).
+
 ### Sıradaki (plan §Fazlar)
 - `/kendi-arazim` sayfası (Astra, brif 11) teslim edilince: `/talep/arazime-ekim` → `/kendi-arazim` yönlendirmesi,
   `REQUEST_ROUTES.land`, sahalar sayfasındaki ve Hesabım'daki bağlantılar, site haritası; eski sayfa kaldırılır.
-- Faz 5c satış ayarları ekranı (fiyat/KDV/süreler; "sipariş alımı durduruldu" için migration gerekir).
-- Faz 8 eski tohum satışı akışının temizliği (kapsam kararı: eski B2B teklif akışı kalacak mı?).
+- "Sipariş alımı durduruldu" anahtarı (migration onayı gerekir).
+- Faz 8 eski tohum satışı akışının temizliği (kapsam kararı: eski B2B teklif akışı kalacak mı?). Eski
+  `OpenLandRequestForm` ve `/talep/acik-arazi` sayfası hâlâ sabit fiyatı okuyor ama adres sahalara yönlendiği için
+  görünmüyor — Faz 8'de silinecek.

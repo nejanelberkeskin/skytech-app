@@ -12,14 +12,16 @@ import {
   updateSalesSettings,
 } from "@/lib/orders/settings";
 import { QUOTE_FIELDS, diffSettings, salesSettingsSchema, settingsFieldErrors } from "@/lib/orders/settings-schema";
+import { salesReadiness } from "@/lib/orders/readiness";
 
 /**
  * Admin — Satış ayarları (tek satır `sales_settings`)
  *
  * GET /api/admin/sales-settings
- *   → { settings, updatedAt, defaults, quoteVersion, openCheckouts, history }
+ *   → { settings, updatedAt, defaults, quoteVersion, openCheckouts, history, readiness }
  *     openCheckouts: ödeme bekleyen (gerçek) sipariş sayısı — bu siparişler kendi tutarlarıyla sürer
  *     history: son değişiklikler (denetim kaydından: kim, ne zaman, hangi alan)
+ *     readiness: satışa hazırlık (lib/orders/readiness.ts) — gizli değer içermez, yalnız tanımlı mı
  * PUT /api/admin/sales-settings { settings, expectedUpdatedAt }
  *   → { ok, settings, updatedAt, quoteChanged } · 400 validation · 409 conflict (arada başkası kaydetti)
  *
@@ -66,6 +68,7 @@ export async function GET(request: NextRequest) {
       quoteVersion: quoteVersion(record.settings),
       openCheckouts: open.count ?? 0,
       history: past,
+      readiness: salesReadiness(record.settings),
     });
   } catch {
     return NextResponse.json({ error: "unavailable" }, { status: 503 });

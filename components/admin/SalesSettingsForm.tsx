@@ -30,7 +30,15 @@ interface HistoryItem {
   changes: { field: string; from: unknown; to: unknown }[];
 }
 
+interface ReadinessItem {
+  key: string;
+  level: "ok" | "warning" | "blocker";
+  label: string;
+  detail: string;
+}
+
 interface SettingsResponse {
+  readiness?: { accepting: boolean; environment: string; items: ReadinessItem[] };
   settings: SalesSettings;
   updatedAt: string;
   defaults: SalesSettings;
@@ -203,6 +211,13 @@ function consequences(changes: SettingsChange[], openCheckouts: number): string[
   return out;
 }
 
+const LEVEL_STYLE: Record<ReadinessItem["level"], { icon: string; className: string; sr: string }> = {
+  ok: { icon: "✓", className: "text-emerald-400", sr: "Hazır" },
+  warning: { icon: "!", className: "text-amber-300", sr: "Açılıştan önce tamamlanmalı" },
+  blocker: { icon: "✕", className: "text-red-400", sr: "Siparişi şu an engelliyor" },
+};
+const ENVIRONMENT_LABEL: Record<string, string> = { production: "canlı site", preview: "önizleme", development: "yerel geliştirme" };
+
 const when = (iso: string) => new Date(iso).toLocaleString("tr-TR", { dateStyle: "medium", timeStyle: "short" });
 
 export default function SalesSettingsForm() {
@@ -348,6 +363,30 @@ export default function SalesSettingsForm() {
         </div>
       ) : !data || !form ? null : (
         <>
+          {data.readiness && (
+            <section className="bg-white/[0.03] ring-1 ring-white/[0.08] rounded-2xl p-5 space-y-3" aria-labelledby="hazirlik-baslik">
+              <div className="flex items-baseline justify-between gap-3 flex-wrap">
+                <h2 id="hazirlik-baslik" className="font-semibold text-white text-sm">Satışa hazırlık</h2>
+                <span className="text-xs text-slate-500">{ENVIRONMENT_LABEL[data.readiness.environment] ?? data.readiness.environment}</span>
+              </div>
+              <p className={`text-sm font-semibold ${data.readiness.accepting ? "text-emerald-400" : "text-red-300"}`}>
+                {data.readiness.accepting ? "✓ Şu an sipariş alınıyor." : "✕ Şu an sipariş alınmıyor — sihirbaz talep topluyor."}
+              </p>
+              <ul className="space-y-2 text-sm">
+                {data.readiness.items.map((item) => (
+                  <li key={item.key} className="flex items-start gap-2.5">
+                    <span aria-hidden className={`w-4 shrink-0 text-center font-bold ${LEVEL_STYLE[item.level].className}`}>{LEVEL_STYLE[item.level].icon}</span>
+                    <span>
+                      <span className="sr-only">{LEVEL_STYLE[item.level].sr}: </span>
+                      <span className="text-slate-200">{item.label}</span>
+                      <span className="block text-xs text-slate-500">{item.detail}</span>
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
           <div className="bg-white/[0.03] ring-1 ring-white/[0.08] rounded-2xl p-5 text-sm text-slate-300 space-y-1">
             <p>
               <span className="text-slate-400">Şu an geçerli:</span>{" "}

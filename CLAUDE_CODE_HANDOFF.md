@@ -812,6 +812,15 @@ Bu bölüm 11. bölümdeki akış tarifinin yerine geçer.
 - Durdurma, alt bilgi ve menüdeki "Satın Al" metnini değiştirmez (metin derleme anındaki satış bayrağına bağlı);
   düğme sahalara gider, sihirbaz orada açıklamayı gösterir.
 
+### Satışa hazırlık kutusu
+- Satış Ayarları'nın en üstünde (`lib/orders/readiness.ts → salesReadiness`, GET yanıtında `readiness`).
+- "Şu an sipariş alınıyor mu?" sipariş uçlarıyla aynı kapıdan (`canAcceptOrders`) okunur.
+- Maddeler: satış bayrağı, ödeme sağlayıcısı (canlı / deneme), hukuki metin kilidi, durdurma, hukuk sayfalarının
+  görünürlüğü, künye eksikleri, e-posta anahtarı, `CRON_SECRET`, `ORDER_LINK_SECRET`, `NEXT_PUBLIC_APP_URL`.
+- Seviyeler: `blocker` siparişi şu an engelliyor, `warning` açılıştan önce tamamlanmalı.
+- **Gizli değerler dönmez**, yalnız tanımlı olup olmadıkları (`scripts/test/readiness.test.mjs` bunu sınıyor).
+- Yeni bir açılış ön koşulu eklenirse buraya bir madde eklenir.
+
 ### Şirket adresi
 - Tek kaynak `lib/company.ts → COMPANY.address` (Macun Mah. Batı Bulvarı ATB İş Merkezi I Blok No: 244, Yenimahalle/Ankara).
 - `lib/seo.ts → ORG_ADDRESS` buradan türetilir: alt bilgi, İletişim sayfası, LocalBusiness / Organization yapısal verisi.

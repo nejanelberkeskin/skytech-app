@@ -70,6 +70,7 @@ function consentRecords(payload: OrderPayload, at: string): OrderConsents {
     contract: rec(payload.consents.contract),
     kvkkRead: rec(payload.consents.kvkkRead),
     marketing: rec(payload.consents.marketing),
+    certificatePublication: { ...rec(payload.consents.certificatePublication), subjectName: resolveCertificateName(payload) },
     ...(payload.invoice.type === "corporate" ? { corporateAuthority: rec(payload.consents.corporateAuthority) } : {}),
   };
 }

@@ -6,6 +6,7 @@
  * tutar göndermez, gönderse de okunmaz — sunucu lib/pricing.ts ile hesaplar.
  */
 import { z } from "zod";
+import { isOwnCertificateName } from "@/lib/certificates/publication";
 import { TR_IL_KODLARI } from "@/lib/tr-iller";
 import { QTY_HARD_LIMITS } from "@/lib/pricing";
 import { certificateNameSchema, cleanText, normalizePhone, LOCALES } from "@/lib/requests/schema";
@@ -131,6 +132,7 @@ export const consentsSchema = z.object({
   contract: z.literal(true, "contractRequired"),
   kvkkRead: z.literal(true, "kvkkRequired"),
   marketing: z.boolean().default(false),
+  certificatePublication: z.boolean().default(false),
   corporateAuthority: z.boolean().default(false),
 });
 
@@ -162,6 +164,9 @@ const orderFields = z.object({
 });
 
 export const orderPayloadSchema = orderFields.superRefine((v, ctx) => {
+  if (v.consents.certificatePublication && !isOwnCertificateName(resolveCertificateName(v), v.buyer)) {
+    ctx.addIssue({ code: "custom", path: ["consents", "certificatePublication"], message: "certificatePublicationSelfOnly" });
+  }
   if (v.invoice.type === "corporate" && !v.consents.corporateAuthority) {
     ctx.addIssue({ code: "custom", path: ["consents", "corporateAuthority"], message: "corporateAuthorityRequired" });
   }

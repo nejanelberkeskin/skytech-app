@@ -6,6 +6,7 @@ import type { PublicOrderView } from "@/lib/orders/view";
 import { COMPANY } from "@/lib/company";
 import { SITES_HREF, siteDetailHref } from "@/lib/sites/links";
 import CopyOrderNumber, { OrderAccessPrivacy } from "./OrderControls";
+import CertificatePublicationControl from "./CertificatePublicationControl";
 import OrderTimeline from "./OrderTimeline";
 
 function Card({
@@ -318,6 +319,7 @@ export default async function OrderDetails({
                     ? t("certificate.cancelled")
                     : t("certificate.ready")}
                 </p>
+                <a href={`/api/public/siparis/${encodeURIComponent(order.orderNo)}/sertifika?dil=${locale}`} className={`${linkClass} mr-4`} referrerPolicy="no-referrer">{t("certificate.privateDownload")}</a>
                 <Link
                   href={`/sertifika/${order.certificate.code}`}
                   prefetch={false}
@@ -332,6 +334,7 @@ export default async function OrderDetails({
                 {t("certificate.pending")}
               </p>
             )}
+            <CertificatePublicationControl orderNo={order.orderNo} initiallyPublic={order.certificateNamePublic === true} />
           </Card>
         )}
         {(order.videoUrl || (order.releasedOn && !interrupted)) && (

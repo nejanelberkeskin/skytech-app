@@ -8,7 +8,7 @@ import { SITES_HREF, siteDetailHref } from "@/lib/sites/links";
 import { buildPageMetadata, localeUrl } from "@/lib/seo";
 import CertificateActions from "@/components/vitrin/sertifika/CertificateActions";
 
-export const revalidate = 300;
+export const dynamic = "force-dynamic";
 type Props = { params: Promise<{ locale: string; kod: string }> };
 const imageHref = (code: string, locale: string, format: "dikey" | "yatay") =>
   `/api/public/katilim-sertifikasi/${encodeURIComponent(code)}/gorsel?b=${format}&dil=${locale}`;

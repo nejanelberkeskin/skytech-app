@@ -1,5 +1,6 @@
 "use client";
 import type { ReactNode } from "react";
+import { isOwnCertificateName } from "@/lib/certificates/publication";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { formatCount, formatTry, type PriceLocale } from "@/lib/pricing";
@@ -144,7 +145,7 @@ export default function OrderReview({
         <label className="flex min-h-11 cursor-pointer items-start gap-3 py-3 text-sm leading-relaxed">
           <input
             type="checkbox"
-            required={key !== "marketing"}
+            required={key !== "marketing" && key !== "certificatePublication"}
             name={`consents.${key}`}
             checked={consents[key]}
             disabled={disabled}
@@ -261,6 +262,7 @@ export default function OrderReview({
           <p className="text-xs font-semibold uppercase tracking-wider text-[#3d5a3d]">
             {t("optional")}
           </p>
+          {isOwnCertificateName(certificateName, buyer) ? checkbox("certificatePublication") : <p className="py-3 text-sm">{t("consents.thirdPartyName")}</p>}
           {checkbox("marketing")}
         </div>
       </section>

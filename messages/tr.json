@@ -87,7 +87,7 @@
       },
       "monitoring": {
         "title": "Yıllık İzleme ve Raporlama",
-        "description": "Sahalar her yıl dron fotogrametrisiyle yeniden görüntülenir; bitki örtüsünün gelişimi kayıt altına alınır. Sonuçlar Faaliyet Raporu olarak paylaşılır; bırakmadan yaklaşık altı ay sonra çalışmanın görüntüleri yayımlanır."
+        "description": "Sahalar her yıl dron fotogrametrisiyle yeniden görüntülenir; bitki örtüsünün gelişimi kayıt altına alınır. Sonuçlar Faaliyet Raporu olarak paylaşılır; kararlaştırılan izleme takviminde çalışmanın görüntüleri yayımlanır."
       }
     }
   },
@@ -250,7 +250,8 @@
       "kvkk": "KVKK",
       "cookies": "Çerez Politikası",
       "cookiePreferences": "Çerez Tercihleri"
-    }
+    },
+    "contactTitle": "İletişim"
   },
   "ourSeeds": {
     "meta": {
@@ -443,7 +444,7 @@
       },
       "tracking": {
         "question": "Bırakılan tohum toplarının gelişimini nasıl takip edebilirim?",
-        "answer": "Sahalar her yıl dronla yeniden görüntülenir. Bırakmadan yaklaşık altı ay sonra çalışmanın görüntülerini herkese açık bir video olarak yayımlar, bağlantısını e-postayla göndeririz. Kurumlar için sonuçlar ayrıca Faaliyet Raporu'nda toplanır."
+        "answer": "Sahalar her yıl dronla yeniden görüntülenir. Kararlaştırılan izleme takviminde çalışmanın görüntülerini herkese açık bir video olarak yayımlar, bağlantısını e-postayla göndeririz. Kurumlar için sonuçlar ayrıca Faaliyet Raporu'nda toplanır."
       },
       "certificate": {
         "question": "Katılım Sertifikası nedir?",
@@ -467,7 +468,7 @@
       },
       "calendar": {
         "question": "Tohum topları ne zaman bırakılıyor?",
-        "answer": "Bırakma çalışmaları Ekim–Mart arasında yapılır; tohumun yağışla buluşması için en uygun dönem budur. Nisan–Eylül arasında sahalar incelenir, izlenir ve raporlanır. Bırakmadan yaklaşık altı ay sonra çalışmanın görüntülerini paylaşırız."
+        "answer": "Bırakma çalışmaları Ekim–Mart arasında yapılır; tohumun yağışla buluşması için en uygun dönem budur. Nisan–Eylül arasında sahalar incelenir, izlenir ve raporlanır. Kararlaştırılan izleme takviminde çalışmanın görüntülerini paylaşırız."
       },
       "hectare": {
         "question": "Hektar ne demek?",
@@ -491,7 +492,7 @@
       },
       "invoice": {
         "question": "Faturam ne zaman gelir?",
-        "answer": "Faturanız, tohum topu bırakma tamamlandıktan sonra düzenlenir ve e-postayla gönderilir. Kurumsal alıcılar faturanın daha önce düzenlenmesini talep edebilir. Sipariş teyidi e-postası fatura yerine geçmez."
+        "answer": "Faturanız, vergi mevzuatına uygun yasal sürede düzenlenip e-postayla iletilir."
       },
       "nonPerformance": {
         "question": "Bırakma yapılamazsa ne olur?",
@@ -567,7 +568,7 @@
           "En az {min} tohum topu, dilediğiniz adette",
           "Adınıza düzenlenen Katılım Sertifikası",
           "Bırakma Ekim–Mart, izleme Nisan–Eylül",
-          "Bırakmadan yaklaşık altı ay sonra çalışmanın görüntüleri"
+          "Kararlaştırılan izleme takviminde çalışmanın görüntüleri"
         ],
         "cta": "Saha Seçin"
       },
@@ -712,7 +713,7 @@
     "contacts": {
       "address": {
         "title": "Adres",
-        "secondary": "Kahramankazan / Ankara, Türkiye\nSkytech Havacılık A.Ş."
+        "secondary": "Yenimahalle / Ankara, Türkiye\nSkytech Havacılık A.Ş."
       },
       "phone": {
         "title": "Telefon",
@@ -1217,7 +1218,7 @@
     "description": "Yangından etkilenmiş sahalara dronla tohum topu bırakıyoruz. Bir Proje Uygulama Sahasına katılın ya da kendi araziniz için başvurun; çalışmayı raporlarla ve görüntülerle izleyin."
   },
   "cookieConsent": {
-    "message": "Sitenin çalışması için zorunlu çerezleri kullanıyoruz. İzin verirseniz ziyaretleri Google Analytics ile ölçeriz; izin vermezseniz Google'a hiçbir veri gönderilmez. Tercihinizi sayfanın altındaki Çerez Tercihleri'nden dilediğiniz an değiştirebilirsiniz.",
+    "message": "Google Analytics ve Vercel ziyaret ve hız ölçümleri isteğe bağlıdır. Gerekli aktarım koşulları tamamlandığında yalnız analitik izninizle yüklenirler. Reddetmek site kullanımınızı etkilemez. Tercihinizi Çerez Tercihleri bağlantısından değiştirebilirsiniz.",
     "policyLink": "Çerez Politikası",
     "rejectAll": "Yalnız Zorunlu",
     "acceptAll": "Analitiğe İzin Ver"
@@ -1500,7 +1501,7 @@
       "title": "Cayma hakkınız",
       "available": "Cayma hakkınızı {date} günü sonuna kadar kullanabilirsiniz.",
       "action": "Cayma bildiriminde bulun",
-      "expired": "Bu sipariş için cayma süresi {date} tarihinde doldu.",
+      "expired": "Sistemde hesaplanan olağan cayma son günü: {date}. Kanuni uzama ve ayıplı, geç veya hiç ifa edilmeyen hizmete ilişkin haklarınız saklıdır.",
       "unavailable": "Bu sipariş şu anda caymaya uygun değil. Sorularınız için bize yazabilirsiniz."
     },
     "refund": {
@@ -1533,19 +1534,27 @@
       "ready": "Katılım Sertifikanız hazır.",
       "cancelled": "Bu siparişin Katılım Sertifikası iptal edildi.",
       "view": "Sertifikayı görüntüle",
-      "pending": "Sertifikanız, tohum topu bırakma tamamlandığında e-postayla gönderilir."
+      "pending": "Sertifikanız, tohum topu bırakma tamamlandığında e-postayla gönderilir.",
+      "publication": {
+        "visible": "Adınız ayrı yayın izninizle herkese açık sertifikada görünebilir.",
+        "hidden": "Adınız herkese açık sertifikada gizlidir. Daha önce başkalarının kaydettiği kopyalar bu işlemle silinmez.",
+        "revoke": "Ad yayın iznimi geri al",
+        "pending": "İzin geri alınıyor…",
+        "error": "İzin geri alınamadı. Yeniden deneyebilir veya info@skytechgreen.com adresine yazabilirsiniz."
+      },
+      "privateDownload": "Adı içeren özel sertifikamı indir"
     },
     "video": {
       "title": "Çalışmanın görüntüleri",
       "view": "YouTube'da görüntüle",
-      "pending": "Görüntüler, bırakmayı izleyen izleme döneminde (yaklaşık altı ay sonra) e-postayla paylaşılır."
+      "pending": "Görüntüler, bırakmayı izleyen izleme döneminde e-postayla paylaşılır."
     },
     "invoice": {
       "title": "Fatura",
       "issued": "Faturanız düzenlendi.",
       "issuedOn": "Faturanız {date} tarihinde düzenlendi.",
       "pending": "Faturanız hazırlanıyor.",
-      "notYet": "Faturanız, tohum topu bırakma tamamlandıktan sonra düzenlenir ve e-postayla gönderilir.",
+      "notYet": "Faturanız, vergi mevzuatına uygun yasal sürede düzenlenip e-postayla iletilir.",
       "pdf": "Fatura PDF'ini indir"
     },
     "help": {
@@ -1601,7 +1610,7 @@
       "emailInvalid": "Geçerli bir e-posta adresi girin.",
       "tooLong": "Metin çok uzun.",
       "not_found": "Bu sipariş numarası ile e-posta adresi eşleşmedi. Bilgileri sipariş teyidi e-postanızdan kontrol edin.",
-      "not_eligible": "Bu sipariş için cayma süresi dolmuş ya da sipariş bu aşamada caymaya uygun değil. Sorularınız için {email}.",
+      "not_eligible": "Başvurunuz bu otomatik akışta sonuçlandırılamadı. Cayma veya diğer yasal haklarınıza ilişkin bildiriminizi {email} adresine iletebilirsiniz. Bu mesaj hakkınızın bulunmadığına ilişkin bir karar değildir.",
       "already_requested": "Bu sipariş için cayma bildirimi daha önce alınmış; iade süreci sürüyor.",
       "rate_limited": "Kısa sürede çok fazla deneme yapıldı. Lütfen biraz sonra yeniden deneyin.",
       "closed": "Çevrim içi cayma formu şu anda kapalı. Cayma bildiriminizi {email} adresine yazabilirsiniz.",
@@ -1714,7 +1723,7 @@
         },
         "individual": {
           "question": "Bireysel olarak da katılabilir miyim?",
-          "answer": "Evet. Bir Proje Uygulama Sahası seçip o sahaya tohum topu bıraktırabilirsiniz. Bırakma yapıldıktan sonra Katılım Sertifikanız, yaklaşık altı ay sonra da çalışmanın görüntüleri e-postayla iletilir."
+          "answer": "Evet. Bir Proje Uygulama Sahası seçip o sahaya tohum topu bıraktırabilirsiniz. Bırakma yapıldıktan sonra Katılım Sertifikanız, kararlaştırılan izleme takviminde de çalışmanın görüntüleri e-postayla iletilir."
         },
         "future": {
           "question": "İleride karbon doğrulaması yapılacak mı?",
@@ -1795,7 +1804,7 @@
     "release": "Tohum topu bırakma",
     "monitoring": "İzleme ve raporlama",
     "current": "İçinde bulunduğumuz ay",
-    "video": "Bırakmadan yaklaşık 6 ay sonra: çalışmanın görüntüleri."
+    "video": "Bırakmadan izleme takviminde: çalışmanın görüntüleri."
   },
   "certificatePage": {
     "title": "Katılım Sertifikası",
@@ -1940,7 +1949,7 @@
     "certificate": {
       "title": "Katılım Sertifikası",
       "label": "Sertifikadaki ad",
-      "publicNote": "Bu ad herkese açık sertifika sayfasında görünür.",
+      "publicNote": "Paylaşım sayfasında adınız varsayılan olarak gizlidir. Kendi adınız için son adımda ayrıca yayın izni verebilirsiniz.",
       "count": "{count} / {max} karakter",
       "fallback": "Boş bırakırsanız adınız ve soyadınız yazılır.",
       "placeholder": "Adınız Soyadınız",
@@ -2001,7 +2010,9 @@
       "contract": "Mesafeli Hizmet Sözleşmesi'ni okudum ve kabul ediyorum.",
       "kvkkRead": "<kvkk>KVKK Aydınlatma Metni</kvkk>'ni okudum, bilgi edindim.",
       "corporateAuthority": "Bu siparişi, fatura bilgilerini verdiğim kurum adına vermeye yetkili olduğumu beyan ederim.",
-      "marketing": "Skytech Green'in duyuru ve kampanyalarını e-posta ve SMS ile almak istiyorum. Bu izin siparişin şartı değildir; dilediğim an geri alabilirim."
+      "marketing": "Skytech Green’in kampanya ve tanıtımlar için e-posta adresimi işlemesine ve bana e-postayla ticari ileti göndermesine isteğe bağlı olarak izin veriyorum. İznimi info@skytechgreen.com üzerinden veya iletideki ret bağlantısından ücretsiz geri alabilirim.",
+      "certificatePublication": "Sertifikada bana ait adın, saha, adet ve tarih bilgileriyle birlikte bağlantıyı bilen kişilere açık sayfada yayımlanmasına açık rıza veriyorum. İsteğe bağlıdır; sipariş sayfasından veya info@skytechgreen.com üzerinden ücretsiz geri alabilirim.",
+      "thirdPartyName": "Başka bir kişinin adı, o kişi doğrudan bilgilendirilip yayın izni alınana kadar paylaşım sayfasında gizlenir."
     },
     "documents": {
       "title": "Sipariş belgeleri",
@@ -2054,6 +2065,7 @@
       "contractRequired": "Devam etmek için sözleşmeyi kabul edin.",
       "kvkkRequired": "Devam etmek için aydınlatma metnini okuduğunuzu belirtin.",
       "corporateAuthorityRequired": "Devam etmek için yetki beyanını işaretleyin.",
+      "certificatePublicationSelfOnly": "Yayın iznini yalnız kendi adınız için verebilirsiniz.",
       "quantityMin": "En az {min} tohum topu seçebilirsiniz.",
       "quantityMax": "Tek siparişte en çok {max} tohum topu seçebilirsiniz; daha fazlası için bize yazın.",
       "quantityInvalid": "Adet tam sayı olmalı.",

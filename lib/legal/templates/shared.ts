@@ -73,7 +73,9 @@ export function scheduleTable(ctx: LegalContext): LegalBlock {
     rows: [
       ["Bırakma sezonu", `${trLongDate(season.startsOn)} – ${trLongDate(season.endsOn)}`],
       ["En erken bırakma tarihi", trLongDate(earliestReleaseOn)],
-      ["Hizmetin ifa edileceği son tarih (kesin süre)", trLongDate(performanceDeadline)],
+      ["Tohum topu bırakma son tarihi (kesin süre)", trLongDate(performanceDeadline)],
+      ["Sertifika teslim son tarihi", "[YAYIN ÖNCESİ TAMAMLANACAK: siparişe özgü kesin tarih]"],
+      ["İzleme içeriği teslim son tarihi", "[YAYIN ÖNCESİ TAMAMLANACAK: siparişe özgü kesin tarih]"],
     ],
   };
 }
@@ -98,24 +100,24 @@ export const TEXT = {
     "Sahaya bırakılacak tür, sahanın iklim ve toprak koşullarına göre SATICI tarafından belirlenir; ALICI tür seçimi yapmaz.",
 
   noResultGuarantee:
-    "Hizmet bir iş görme edimidir: tohum toplarının sahaya bırakılmasını kapsar. Çimlenme, fidan gelişimi ve orman oluşumu doğa koşullarına bağlıdır; SATICI bu konularda bir sonuç taahhüdünde bulunmaz.",
+    "Hizmet; kararlaştırılan tohum toplarının hazırlanmasını ve sahaya bırakılmasını, Katılım Sertifikası ile izleme içeriğinin sunulmasını kapsar. Çimlenme, fidan gelişimi, orman oluşumu veya belirli bir karbon giderimi garanti edilmez. Bu açıklama, SATICI’nın mesleki özen, sözleşmeye uygun ifa ve ayıplı hizmetten doğan sorumluluğunu kaldırmaz.",
 
   notADonation:
-    "Bu hizmet bağış veya yardım değildir. ALICI'ya saha, ağaç ya da ürün üzerinde mülkiyet, kullanım veya adlandırma hakkı ile karbon kredisi, karbon denkleştirme veya benzeri bir hak vermez. Katılım Sertifikası bir bağış makbuzu ya da karbon belgesi değildir; vergi indirimi sağlamaz.",
+    "Bu işlem bir hizmet satın alımıdır; bağış, yardım veya yatırım değildir. ALICI’ya saha, ağaç veya ürün üzerinde mülkiyet, kullanım, tahsis ya da adlandırma hakkı; karbon kredisi veya denkleştirme hakkı vermez. Katılım Sertifikası bağış makbuzu veya karbon belgesi değildir. Vergisel sonuçlar alıcının durumu ve ilgili mevzuata göre belirlenir; vergi indirimi taahhüt edilmez.",
 
   noExtraCommunicationCost: "Uzaktan iletişim aracının kullanılması nedeniyle ALICI'ya ek bir maliyet yansıtılmaz.",
 
   invoice:
-    "Fatura, hizmetin ifasını (tohum topu bırakma işleminin tamamlanmasını) izleyen yedi gün içinde elektronik olarak (e-Arşiv Fatura veya e-Fatura) düzenlenir ve ALICI'nın e-posta adresine gönderilir.",
+    "Fatura, işlemin niteliğine ve yürürlükteki vergi mevzuatına uygun zamanda ve yasal süre içinde e-Fatura veya e-Arşiv Fatura olarak düzenlenir ve ALICI’ya iletilir. Peşin tahsilat, belgenin düzenlenme anı ve KDV’nin doğumu bakımından ilgili kurallarla birlikte değerlendirilir. Fatura veya muhasebe işlemleri, cayma ve iade hakkının kullanılmasının ön şartı değildir.",
 
   calendar:
     "Tohum topu bırakma işlemleri Ekim–Mart döneminde yapılır; Nisan–Eylül döneminde sahalar incelenir, izlenir ve raporlanır. Bırakma işlemi, cayma süresi dolmadan yapılmaz.",
 
   completionNotice:
-    "Bırakma tamamlandığında ALICI'ya e-posta ile bilgi verilir ve Katılım Sertifikası iletilir. Çalışmaya ilişkin görüntüler, bırakmayı izleyen izleme döneminde (bırakmadan yaklaşık altı ay sonra) e-posta ile paylaşılır.",
+    "Bırakma tamamlandığında ALICI’ya e-posta ile bilgi verilir. Katılım Sertifikası ve izleme içeriği, sipariş belgelerinde kendileri için ayrı ayrı kararlaştırılan kesin son tarihlere kadar e-posta veya kalıcı veri saklayıcısıyla sunulur. Bırakmanın tamamlanması, henüz teslim edilmemiş bu edimleri sona erdirmez.",
 
   lateOrImpossible:
-    "SATICI hizmeti yukarıdaki son tarihe kadar ifa edemezse ALICI sözleşmeyi feshedebilir; bu durumda ödenen bedelin tamamı, fesih bildiriminin SATICI'ya ulaştığı tarihten itibaren 14 (on dört) gün içinde yasal faiziyle birlikte iade edilir. Hava koşulları, idari kararlar veya sahaya erişimin engellenmesi gibi nedenlerle ifanın imkânsızlaşması hâlinde SATICI, durumu öğrendiği tarihten itibaren 3 (üç) gün içinde ALICI'ya bildirir ve ALICI'nın tercihine göre ya ödenen bedelin tamamını bildirim tarihinden itibaren 14 (on dört) gün içinde iade eder ya da hizmeti ALICI'nın onaylayacağı başka bir Proje Uygulama Sahasında veya izleyen bırakma sezonunda ifa eder. ALICI bildirimden itibaren 14 (on dört) gün içinde bir tercih bildirmezse bedelin tamamı iade edilir; sessiz kalmak, başka saha veya sezon önerisinin kabulü sayılmaz.",
+    "SATICI, kararlaştırılan ifa süresine uymakla yükümlüdür. Süresinde ifa edilmezse ALICI sözleşmeyi feshedebilir; tahsil edilen tüm bedel, fesih bildiriminin ulaşmasından itibaren 14 (on dört) gün içinde yasal faiziyle birlikte iade edilir. İfanın imkânsızlaşması hâlinde SATICI, durumu öğrendiği tarihten itibaren 3 (üç) gün içinde yazılı olarak veya kalıcı veri saklayıcısıyla bildirir ve tahsil edilen tüm bedeli bildirim tarihinden itibaren en geç 14 (on dört) gün içinde iade eder. Başka saha, tür veya sezon önerisi iadeyi durdurmaz ve süresini uzatmaz. Yeni bir hizmet ancak kapsamı, bedeli ve takvimi ayrıca açıklanıp ALICI’nın açık kabulü alınarak kararlaştırılır; sessizlik kabul değildir. Her hava veya izin sorunu kendiliğinden imkânsızlık sayılmaz; olayın gerçek etkisi ve SATICI’nın sorumluluğu değerlendirilir.",
 
   /** Cayma süresinin dolması diğer hakları etkilemez (sözleşme m.7 ve cayma sayfası). */
   rightsAfterWithdrawalPeriod:
@@ -124,23 +126,23 @@ export const TEXT = {
   withdrawalRightGeneral: TEXT_WITHDRAWAL_GENERAL,
 
   withdrawalRight: (lastDay: string): string =>
-    `${TEXT_WITHDRAWAL_GENERAL} Bu sipariş için cayma hakkı en geç ${lastDay} günü sonuna kadar kullanılabilir.`,
+    `${TEXT_WITHDRAWAL_GENERAL} Ödeme öncesi hesaplanan cayma son günü ${lastDay} olarak gösterilmiştir; sözleşmenin daha sonra kurulması veya kanuni süre uzaması bu tarihi ALICI aleyhine kısaltmaz. Cayma hakkında gereği gibi bilgilendirme yapılmamışsa tüketici 14 günlük süreyle bağlı değildir. Cayma hakkı, olağan cayma süresinin bitiminden itibaren bir yıl sonra sona erer. Bu bir yıllık süre içinde gereği gibi bilgilendirme yapılırsa 14 günlük süre bilgilendirme gününden itibaren başlar. Son günün kanuni tatile rastlamasından doğan haklar saklıdır.`,
 
   withdrawalHow: () =>
-    `Cayma bildirimi; ${withdrawalChannels()} yoluyla yapılabilir. Ekteki Cayma Formu kullanılabileceği gibi cayma kararını bildiren açık bir beyan da yeterlidir. İnternet sitesindeki form kullanıldığında, bildirimin SATICI'ya ulaştığı ALICI'ya derhal e-posta ile teyit edilir.`,
+    `Cayma bildirimi; ${withdrawalChannels()} yoluyla yapılabilir. Süresi dolmadan yazılı veya kalıcı veri saklayıcısıyla yöneltilen açık cayma beyanı yeterlidir. Örnek form, üyelik, gerekçe, telefon görüşmesi, belge yükleme veya elektronik başvuruda ıslak imza zorunlu tutulmaz. Sipariş numarası bilinmiyorsa kaydın bulunmasını sağlayan bilgilerle başvurulabilir. İnternet sitesindeki form kullanıldığında, bildirimin SATICI'ya ulaştığı ALICI'ya derhal e-posta ile teyit edilir.`,
 
   withdrawalRefund:
-    "Cayma hakkının kullanılması hâlinde ödenen bedelin tamamı, cayma bildiriminin SATICI'ya ulaştığı tarihten itibaren 14 (on dört) gün içinde, ALICI'nın ödemede kullandığı araca uygun şekilde, tek seferde ve ALICI'ya hiçbir masraf veya yükümlülük getirmeden iade edilir. Düzenlenmiş bir Katılım Sertifikası varsa iptal edilir.",
+    "Cayma bildiriminin SATICI’ya ulaştığı tarihten itibaren en geç 14 (on dört) gün içinde tahsil edilen bedelin tamamı, ALICI’nın ödemede kullandığı araca uygun şekilde, tek seferde ve ALICI’ya hiçbir masraf veya yükümlülük getirmeden iade edilir. Alındı teyidi ya da iç onay sürecinin gecikmesi iade süresini yeniden başlatmaz. SATICI’ya usulünce yöneltilmiş süresindeki beyanın geçerliliği, bildirimin daha sonra işleme alınması nedeniyle ortadan kalkmaz. Fatura iptali veya banka işlemleri kanuni iade yükümlülüğünü kaldırmaz.",
 
   noEarlyPerformance:
-    "SATICI, bırakma işlemini cayma süresi dolmadan yapmaz. Bu nedenle ALICI'dan cayma süresi içinde ifaya başlanmasına ilişkin bir onay istenmez ve cayma hakkının kaybına yol açan bir durum oluşmaz. Cayma süresi dolduktan sonra cayma hakkı kullanılamaz; bu tarihten sonra bedel iadesi yalnızca ifanın gecikmesi veya imkânsızlaşması hâllerinde söz konusu olur.",
+    "SATICI, bırakma işlemini cayma süresi dolmadan yapmaz; ALICI’dan bu süre içinde ifaya başlama veya cayma hakkından vazgeçme onayı alınmaz. Sertifikanın kişiye özel hazırlanması, bu hizmette tanınan cayma hakkını tek başına ortadan kaldırmaz. Cayma süresinin dolması ayıplı, geç veya hiç ifa edilmeyen hizmete ilişkin hakları ve diğer kanuni talepleri kaldırmaz.",
 
   corporateWithdrawal:
     "ALICI'nın tüketici sıfatı taşımadığı hâllerde de SATICI, bu bölümdeki cayma ve iade koşullarını ALICI'ya sözleşmesel olarak aynen tanır.",
 
   disputesConsumer:
-    "Tüketici sıfatını taşıyan ALICI, bu sözleşmeden doğan uyuşmazlıklarda, Ticaret Bakanlığınca her yıl ilan edilen parasal sınırlar dâhilinde yerleşim yerinin bulunduğu veya hizmeti satın aldığı yerdeki Tüketici Hakem Heyetine; bu sınırların üzerindeki uyuşmazlıklarda ise Tüketici Mahkemelerine başvurabilir.",
+    "Tüketici sıfatını taşıyan ALICI, yürürlükteki parasal görev sınırları içinde yerleşim yerinin bulunduğu veya tüketici işleminin yapıldığı yerdeki Tüketici Hakem Heyetine başvurabilir. Tüketici mahkemesinde dava açılması gereken uyuşmazlıklarda 6502 sayılı Kanun m.73/A uyarınca, kanuni istisnalar dışında önce arabulucuya başvurulur. Tüketicinin kanunen yetkili diğer mercilere başvuru hakları saklıdır.",
 
   disputesCorporate:
-    "ALICI'nın tüketici sıfatı taşımadığı hâllerde 6502 sayılı Tüketicinin Korunması Hakkında Kanun hükümleri uygulanmaz; bu sözleşmeden doğan uyuşmazlıklarda Ankara Mahkemeleri ve İcra Daireleri yetkilidir.",
+    "Tüketici niteliği, fatura türünden değil işlemin ticari veya mesleki amacından ve somut koşullarından belirlenir. Tüketici olmayan alıcıya da sözleşmedeki 14 günlük cayma ve iade hakları tanınır. Uyuşmazlıklarda genel görev ve yetki kuralları ile uygulanabildiği ölçüde dava şartı arabuluculuk hükümleri geçerlidir. Bu metin tüketicinin haklarını daraltan veya tüm alıcılar için münhasır Ankara yetkisi kuran bir hüküm içermez.",
 } as const;

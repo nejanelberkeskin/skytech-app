@@ -87,7 +87,7 @@
       },
       "monitoring": {
         "title": "Annual Monitoring & Reporting",
-        "description": "Sites are re-surveyed every year with drone photogrammetry and vegetation development is recorded. Results are shared as an Activity Report, and footage of the work is published about six months after the release."
+        "description": "Sites are re-surveyed every year with drone photogrammetry and vegetation development is recorded. Results are shared as an Activity Report, and footage of the work is published on the agreed monitoring schedule."
       }
     }
   },
@@ -250,7 +250,8 @@
       "kvkk": "KVKK",
       "cookies": "Cookie Policy",
       "cookiePreferences": "Cookie Preferences"
-    }
+    },
+    "contactTitle": "Contact"
   },
   "ourSeeds": {
     "meta": {
@@ -443,7 +444,7 @@
       },
       "tracking": {
         "question": "How can I follow the development of the released seed balls?",
-        "answer": "Sites are re-surveyed by drone every year. About six months after the release we publish footage of the work as a public video and send you the link by email. For organisations, the results are also compiled in the Activity Report."
+        "answer": "Sites are re-surveyed by drone every year. On the agreed monitoring schedule we publish footage of the work as a public video and send you the link by email. For organisations, the results are also compiled in the Activity Report."
       },
       "certificate": {
         "question": "What is the Certificate of Participation?",
@@ -467,7 +468,7 @@
       },
       "calendar": {
         "question": "When are the seed balls released?",
-        "answer": "Release work takes place between October and March — the best period for the seed to meet rainfall. From April to September the sites are inspected, monitored and reported on. About six months after the release we share footage of the work."
+        "answer": "Release work takes place between October and March — the best period for the seed to meet rainfall. From April to September the sites are inspected, monitored and reported on. On the agreed monitoring schedule we share footage of the work."
       },
       "hectare": {
         "question": "What is a hectare?",
@@ -491,7 +492,7 @@
       },
       "invoice": {
         "question": "When will I receive my invoice?",
-        "answer": "Your invoice is issued after the seed ball release is completed and sent by e-mail. Corporate buyers may ask for the invoice to be issued earlier. The order confirmation e-mail is not an invoice."
+        "answer": "Your invoice will be issued within the statutory period under tax rules and sent by email."
       },
       "nonPerformance": {
         "question": "What happens if the release cannot be carried out?",
@@ -567,7 +568,7 @@
           "From {min} seed balls, any quantity you like",
           "A Certificate of Participation in your name",
           "Release October–March, monitoring April–September",
-          "Footage of the work about six months after release"
+          "Footage of the work on the agreed monitoring schedule"
         ],
         "cta": "Choose a Site"
       },
@@ -712,7 +713,7 @@
     "contacts": {
       "address": {
         "title": "Address",
-        "secondary": "Kahramankazan / Ankara, Türkiye\nSkytech Havacılık A.Ş."
+        "secondary": "Yenimahalle / Ankara, Türkiye\nSkytech Havacılık A.Ş."
       },
       "phone": {
         "title": "Phone",
@@ -1217,7 +1218,7 @@
     "description": "We release seed balls by drone over fire-affected sites. Join a Project Site or apply for your own land, and follow the work through reports and footage."
   },
   "cookieConsent": {
-    "message": "We use the cookies that are necessary for the site to work. If you allow it, we measure visits with Google Analytics; if you do not, no data is sent to Google. You can change your choice at any time under Cookie Preferences at the bottom of the page.",
+    "message": "Google Analytics and Vercel traffic and performance measurement are optional. They load only with your analytics permission once the required transfer safeguards are in place. Refusing does not affect your use of the site. You can change your choice in Cookie Preferences.",
     "policyLink": "Cookie Policy",
     "rejectAll": "Essential Only",
     "acceptAll": "Allow Analytics"
@@ -1500,7 +1501,7 @@
       "title": "Your right of withdrawal",
       "available": "You may exercise your right of withdrawal until the end of {date}.",
       "action": "Submit a withdrawal notice",
-      "expired": "The withdrawal period for this order ended on {date}.",
+      "expired": "Ordinary withdrawal deadline calculated by the system: {date}. Statutory extensions and rights concerning defective, late or unperformed services remain available.",
       "unavailable": "This order is not currently eligible for withdrawal. Contact us with any questions."
     },
     "refund": {
@@ -1533,19 +1534,27 @@
       "ready": "Your Certificate of Participation is ready.",
       "cancelled": "The Certificate of Participation for this order has been cancelled.",
       "view": "View certificate",
-      "pending": "Your certificate will be emailed when seed ball release is complete."
+      "pending": "Your certificate will be emailed when seed ball release is complete.",
+      "publication": {
+        "visible": "Your name may appear on the public certificate with your separate permission.",
+        "hidden": "Your name is hidden on the public certificate. Copies previously saved by others are not deleted by this action.",
+        "revoke": "Withdraw name publication permission",
+        "pending": "Withdrawing permission…",
+        "error": "Could not withdraw permission. Try again or email info@skytechgreen.com."
+      },
+      "privateDownload": "Download my private named certificate"
     },
     "video": {
       "title": "Footage of the work",
       "view": "Watch on YouTube",
-      "pending": "Footage will be shared by email during the monitoring period following release, approximately six months later."
+      "pending": "Footage will be shared by email during the monitoring period following release."
     },
     "invoice": {
       "title": "Invoice",
       "issued": "Your invoice has been issued.",
       "issuedOn": "Your invoice was issued on {date}.",
       "pending": "Your invoice is being prepared.",
-      "notYet": "Your invoice will be issued and emailed after seed ball release is complete.",
+      "notYet": "Your invoice will be issued within the statutory period under tax rules and sent by email.",
       "pdf": "Download invoice PDF"
     },
     "help": {
@@ -1601,7 +1610,7 @@
       "emailInvalid": "Enter a valid email address.",
       "tooLong": "The text is too long.",
       "not_found": "This order number and email address did not match. Check the details in your order confirmation email.",
-      "not_eligible": "The withdrawal period for this order has ended, or the order is not eligible for withdrawal at this stage. For questions, contact {email}.",
+      "not_eligible": "Your request could not be completed automatically. Send your withdrawal or other legal claim to {email}. This message is not a decision that you have no legal right.",
       "already_requested": "A withdrawal notice for this order has already been received; the refund process is under way.",
       "rate_limited": "Too many attempts in a short time. Please try again later.",
       "closed": "The online withdrawal form is currently closed. You can send your withdrawal notice to {email}.",
@@ -1714,7 +1723,7 @@
         },
         "individual": {
           "question": "Can I take part as an individual?",
-          "answer": "Yes. You can choose a Project Site and have seed balls released there. After the release you receive your Certificate of Participation by email, and about six months later the footage of the work."
+          "answer": "Yes. You can choose a Project Site and have seed balls released there. After the release you receive your Certificate of Participation by email, and on the agreed monitoring schedule the footage of the work."
         },
         "future": {
           "question": "Will there be a carbon verification in the future?",
@@ -1940,7 +1949,7 @@
     "certificate": {
       "title": "Participation Certificate",
       "label": "Name on certificate",
-      "publicNote": "This name appears on the public certificate page.",
+      "publicNote": "Your name is hidden on the shared page by default. You may separately consent to publishing your own name in the final step.",
       "count": "{count} / {max} characters",
       "fallback": "If left blank, your first and last name will be used.",
       "placeholder": "Your full name",
@@ -2001,7 +2010,9 @@
       "contract": "I have read and accept the Distance Service Agreement.",
       "kvkkRead": "I have read the <kvkk>Personal Data Privacy Notice</kvkk> and have been informed.",
       "corporateAuthority": "I declare that I am authorized to place this order on behalf of the organization named in the invoice details.",
-      "marketing": "I would like to receive Skytech Green news and offers by email and SMS. This permission is not a condition of ordering and I can withdraw it at any time."
+      "marketing": "I optionally agree to Skytech Green processing my email address and emailing me offers and promotions. I can withdraw this permission free of charge at info@skytechgreen.com or using the unsubscribe link.",
+      "certificatePublication": "I explicitly consent to publishing my own name with the site, quantity and dates on the certificate page accessible to anyone with its link. This is optional; I can withdraw consent free of charge on the order page or via info@skytechgreen.com.",
+      "thirdPartyName": "Another person’s name stays hidden on the shared page until that person is informed directly and gives publication consent."
     },
     "documents": {
       "title": "Order documents",
@@ -2054,6 +2065,7 @@
       "contractRequired": "Accept the agreement to continue.",
       "kvkkRequired": "Indicate that you have read the privacy notice to continue.",
       "corporateAuthorityRequired": "Confirm your authority to continue.",
+      "certificatePublicationSelfOnly": "You can give publication consent only for your own name.",
       "quantityMin": "Select at least {min} seed balls.",
       "quantityMax": "Select up to {max} seed balls per order; contact us for larger quantities.",
       "quantityInvalid": "Quantity must be a whole number.",

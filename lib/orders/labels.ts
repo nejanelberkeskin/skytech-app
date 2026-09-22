@@ -57,6 +57,7 @@ export const CONSENT_LABELS: Record<string, string> = {
   contract: "Mesafeli Hizmet Sözleşmesi kabulü",
   kvkkRead: "KVKK aydınlatma metni okundu",
   marketing: "Ticari ileti izni (isteğe bağlı)",
+  certificatePublication: "Kendi adını sertifikada yayımlama izni (isteğe bağlı)",
   corporateAuthority: "Kurum adına yetki beyanı",
 };
 

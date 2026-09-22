@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import BreadCrumb from "@/components/vitrin/BreadCrumb";
 import SectionWrapper from "@/components/vitrin/SectionWrapper";
-import ClickToLoadFrame from "@/components/vitrin/shared/ClickToLoadFrame";
+import { COMPANY, companyAddressLine } from "@/lib/company";
 import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
 import LocalBusinessSchema from "@/components/seo/LocalBusinessSchema";
 import { buildPageMetadata, ORG_SOCIAL } from "@/lib/seo";
@@ -39,8 +39,8 @@ export default async function IletisimPage({
     {
       Icon: PinIcon,
       title: t("contacts.address.title"),
-      primary: "Saray Mah. 60 Cad. No:22",
-      secondary: t("contacts.address.secondary"),
+      primary: COMPANY.address.line,
+      secondary: `${COMPANY.address.district} / ${COMPANY.address.province}, ${COMPANY.address.country}\n${COMPANY.legalName}`,
     },
     {
       Icon: PhoneIcon,
@@ -106,37 +106,18 @@ export default async function IletisimPage({
             <h2 className="text-2xl lg:text-3xl font-bold text-[#1a2e1a]">{t("map.title")}</h2>
           </div>
 
-          {/* Google Maps embed — Kahramankazan/Ankara ofis + adres kartı */}
-          <div className="relative aspect-[16/9] rounded-3xl overflow-hidden border border-black/5 shadow-xl bg-[#0a1f12]">
-            {/* OpenStreetMap embed — keyless + her yerde frameable
-                (Google'ın keyless ?output=embed formatı kaldırıldı: 404 + SAMEORIGIN).
-                Koordinat: Google Business kaydı "Skytech Havacılık"
-                (maps.app.goo.gl/Tg3N3MsfhmvEmeMz9 → 40.0491034, 32.5976506).
-                Harita yalnız ziyaretçi "Haritayı göster" dediğinde yüklenir: sayfa açılırken
-                üçüncü tarafa istek gitmez (Çerez Politikası §3). Adres kartı her zaman görünür. */}
-            <ClickToLoadFrame
-              src="https://www.openstreetmap.org/export/embed.html?bbox=32.5877%2C40.0426%2C32.6077%2C40.0556&layer=mapnik&marker=40.04910%2C32.59765"
-              title={t("map.title")}
-              buttonLabel={t("map.show")}
-              note={t("map.consentNote")}
-              icon={<PinIcon className="h-4 w-4" />}
-            />
-            {/* Adres kartı — haritanın üzerinde */}
-            <div className="absolute bottom-4 left-4 right-4 sm:right-auto sm:max-w-sm rounded-2xl px-5 py-4 flex items-start gap-3 pointer-events-none bg-[#0a1f12]/92 backdrop-blur-md border border-white/10 shadow-xl">
-              <PinIcon className="w-5 h-5 text-[#34d399] shrink-0 mt-0.5" />
-              <div>
-                <p className="text-sm font-bold text-white leading-snug">Saray Mah. 60 Cad. No:22</p>
-                <p className="text-xs text-[#a7d4a7]">Kahramankazan / Ankara, Türkiye</p>
-                <a
-                  href="https://www.google.com/maps/dir/?api=1&destination=40.0491034,32.5976506"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 mt-2 text-xs font-semibold text-[#a3e635] hover:text-white transition-colors pointer-events-auto"
-                >
-                  {t("map.directions")} →
-                </a>
-              </div>
-            </div>
+          <div className="mx-auto max-w-3xl rounded-3xl bg-[#0a1f12] p-8 text-white sm:p-12">
+            <PinIcon className="mb-5 h-8 w-8 text-[#34d399]" />
+            <p className="text-lg font-bold">{COMPANY.address.line}</p>
+            <p className="mt-2 text-[#a7d4a7]">{COMPANY.address.district} / {COMPANY.address.province}, {COMPANY.address.country}</p>
+            <a
+              href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(companyAddressLine())}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-6 inline-flex min-h-11 items-center rounded-xl border border-white/30 px-5 font-semibold text-[#a3e635] hover:text-white"
+            >
+              {t("map.directions")} →
+            </a>
           </div>
         </div>
       </SectionWrapper>

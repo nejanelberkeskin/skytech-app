@@ -922,7 +922,7 @@ const ORDER_TEXT = {
     intro: (no: string) =>
       `Tohum topu bıraktırma siparişiniz kesinleşti. Sipariş numaranız: <strong style="font-family:monospace;font-size:16px;color:#059669;">${no}</strong>.`,
     rows: { site: "Proje Uygulama Sahası", quantity: "Tohum topu adedi", total: "Toplam bedel (KDV dâhil)", certificate: "Sertifikadaki ad", deadline: "En geç bırakılacağı tarih", withdrawal: "Cayma hakkının son günü" },
-    next: "Tohum topu bırakma, cayma süresi dolduktan sonra ve yukarıdaki son tarihi aşmadan yapılır. Bırakma tamamlandığında Katılım Sertifikanız ve faturanız e-postayla gönderilir; çalışmanın görüntüleri izleme döneminde paylaşılır.",
+    next: "Tohum topu bırakma, cayma süresi dolduktan sonra ve yukarıdaki son tarihi aşmadan yapılır. Katılım Sertifikanız ve izleme içeriği sipariş belgelerinde kararlaştırılan sürelerde sunulur. Faturanız vergi mevzuatına uygun yasal sürede düzenlenir ve e-postayla gönderilir.",
     docs: "Ön Bilgilendirme Formu, Mesafeli Hizmet Sözleşmesi, Cayma Formu ve KVKK Aydınlatma Metni bu e-postanın ekindedir. Lütfen saklayın.",
     withdraw: (d: string) => `Cayma hakkınızı ${d} günü sonuna kadar, hiçbir gerekçe göstermeden kullanabilirsiniz; bedelin tamamı 14 gün içinde ödemede kullandığınız araca iade edilir.`,
     cta: "Siparişimi görüntüle",
@@ -937,7 +937,7 @@ const ORDER_TEXT = {
     intro: (no: string) =>
       `Your seed ball release order is confirmed. Your order number is <strong style="font-family:monospace;font-size:16px;color:#059669;">${no}</strong>.`,
     rows: { site: "Project Site", quantity: "Seed balls", total: "Total (VAT included)", certificate: "Name on certificate", deadline: "Released no later than", withdrawal: "Last day to withdraw" },
-    next: "The seed balls are released after the withdrawal period ends and no later than the date above. Once the release is completed, your Certificate of Participation and invoice are sent by e-mail; footage of the work is shared during the monitoring period.",
+    next: "The seed balls are released after the withdrawal period ends and no later than the date above. Your Certificate of Participation and monitoring content are provided within the agreed periods. Your invoice is issued within the statutory period under tax rules and emailed to you.",
     docs: "The Preliminary Information Form, the Distance Service Agreement, the Withdrawal Form and the Personal Data Notice (KVKK) are attached (issued in Turkish). Please keep them.",
     withdraw: (d: string) => `You may withdraw without giving any reason until the end of ${d}; the full amount is refunded to your payment method within 14 days.`,
     cta: "View my order",

@@ -1,0 +1,178 @@
+
+> skytech-app@0.1.0 build
+> next build
+
+⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of /Users/nejanelberkeskin/Developer/skytechgreen/package-lock.json as the root directory.
+ To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
+ Detected additional lockfiles: 
+   * /Users/nejanelberkeskin/Developer/skytechgreen/skytech-app-hukuk/package-lock.json
+
+▲ Next.js 16.1.6 (Turbopack)
+- Experiments (use with caution):
+  · optimizePackageImports
+
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+  Creating an optimized production build ...
+✓ Compiled successfully in 3.4s
+  Running TypeScript ...
+  Collecting page data using 13 workers ...
+  Generating static pages using 13 workers (0/243) ...
+  Generating static pages using 13 workers (60/243) 
+[sites] sahalar okunamadı: supabaseUrl is required.
+  Generating static pages using 13 workers (121/243) 
+[sites] sahalar okunamadı: supabaseUrl is required.
+  Generating static pages using 13 workers (182/243) 
+[sites] sahalar okunamadı: supabaseUrl is required.
+[sites] sahalar okunamadı: supabaseUrl is required.
+[sites] sahalar okunamadı: supabaseUrl is required.
+[sites] sahalar okunamadı: supabaseUrl is required.
+[sites] sahalar okunamadı: supabaseUrl is required.
+✓ Generating static pages using 13 workers (243/243) in 124.6ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /_not-found
+├ ƒ /[locale]
+├ ƒ /[locale]/admin
+├ ƒ /[locale]/admin/araziler
+├ ƒ /[locale]/admin/ayarlar
+├ ƒ /[locale]/admin/b2b
+├ ƒ /[locale]/admin/birakma-partileri
+├ ƒ /[locale]/admin/birakma-siparisleri
+├ ƒ /[locale]/admin/finans
+├ ƒ /[locale]/admin/giris
+├ ƒ /[locale]/admin/katalog
+├ ƒ /[locale]/admin/kullanicilar
+├ ƒ /[locale]/admin/operasyon
+├ ƒ /[locale]/admin/satis-ayarlari
+├ ƒ /[locale]/admin/siparisler
+├ ƒ /[locale]/admin/talepler
+├ ƒ /[locale]/auth/login
+├ ƒ /[locale]/auth/register
+├ ƒ /[locale]/auth/sifre-yenile
+├ ƒ /[locale]/auth/sifremi-unuttum
+├ ƒ /[locale]/bakim
+├ ƒ /[locale]/bilgi-al
+├ ƒ /[locale]/bireysel/odeme
+├ ƒ /[locale]/bireysel/satin-al
+├ ƒ /[locale]/bireysel/satin-al/arazi
+├ ƒ /[locale]/bireysel/satin-al/siparis
+├ ƒ /[locale]/cayma
+├ ƒ /[locale]/cayma-ve-iade
+├ ƒ /[locale]/cerez-politikasi
+├ ƒ /[locale]/checkout/success
+├ ƒ /[locale]/davet/[code]
+├ ƒ /[locale]/dron-teknolojisi
+├ ƒ /[locale]/fatura/[orderId]
+├ ƒ /[locale]/gizlilik-politikasi
+├ ƒ /[locale]/hakkimizda
+├ ƒ /[locale]/hesabim
+├ ƒ /[locale]/hesabim/davet-et
+├ ƒ /[locale]/hesabim/davet-et-kazan
+├ ƒ /[locale]/hesabim/profil
+├ ƒ /[locale]/hesabim/rezervasyonlar
+├ ƒ /[locale]/hesabim/sertifikalar
+├ ƒ /[locale]/hesabim/siparisler
+├ ƒ /[locale]/hesabim/siparislerim
+├ ƒ /[locale]/hesabim/taleplerim
+├ ƒ /[locale]/hesabim/telemetri/[id]
+├ ƒ /[locale]/ifa-kosullari
+├ ƒ /[locale]/iletisim
+├ ƒ /[locale]/islem-rehberi
+├ ƒ /[locale]/karbon-programi
+├ ƒ /[locale]/kargo-takip
+├ ƒ /[locale]/kullanim-kosullari
+├ ƒ /[locale]/kurumsal
+├ ƒ /[locale]/kurumsal-cozumler
+├ ƒ /[locale]/kurumsal/giris
+├ ƒ /[locale]/kurumsal/panel
+├ ƒ /[locale]/kurumsal/panel/odeme
+├ ƒ /[locale]/kurumsal/panel/sertifikalar
+├ ƒ /[locale]/kurumsal/teklif-al
+├ ƒ /[locale]/kvkk
+├ ƒ /[locale]/lands
+├ ƒ /[locale]/mesafeli-satis-sozlesmesi
+├ ƒ /[locale]/odeme/deneme/[token]
+├ ƒ /[locale]/odeme/hata
+├ ƒ /[locale]/odeme/sonuc/[no]
+├ ƒ /[locale]/on-bilgilendirme
+├ ƒ /[locale]/orman/[company-slug]
+├ ƒ /[locale]/projeler
+├ ƒ /[locale]/sahalar
+├ ƒ /[locale]/sahalar/[slug]
+├ ƒ /[locale]/sahalar/[slug]/katil
+├ ƒ /[locale]/sertifika/[kod]
+├ ƒ /[locale]/siparis/[no]
+├ ƒ /[locale]/talep/acik-arazi
+├ ƒ /[locale]/talep/arazime-ekim
+├ ƒ /[locale]/tohum-topu
+├ ƒ /[locale]/tohumlarimiz
+├ ƒ /[locale]/yakinda
+├ ƒ /api/admin/b2b
+├ ƒ /api/admin/catalog
+├ ƒ /api/admin/dashboard
+├ ƒ /api/admin/finance
+├ ƒ /api/admin/lands
+├ ƒ /api/admin/operations
+├ ƒ /api/admin/orders
+├ ƒ /api/admin/orders/shipping
+├ ƒ /api/admin/release-batches
+├ ƒ /api/admin/release-batches/[id]
+├ ƒ /api/admin/release-orders
+├ ƒ /api/admin/release-orders/[id]
+├ ƒ /api/admin/release-orders/[id]/belge/[kind]
+├ ƒ /api/admin/requests
+├ ƒ /api/admin/sales-settings
+├ ƒ /api/admin/settings
+├ ƒ /api/admin/users
+├ ƒ /api/auth/callback
+├ ƒ /api/auth/claim-order
+├ ƒ /api/auth/claim-orders
+├ ƒ /api/auth/claim-request
+├ ƒ /api/auth/confirm
+├ ƒ /api/cron/siparis-isleri
+├ ƒ /api/embed/rozet/[company-slug]
+├ ƒ /api/kurumsal/employees
+├ ƒ /api/kurumsal/quotes
+├ ƒ /api/orders/invoice/[orderId]
+├ ƒ /api/orders/release
+├ ƒ /api/orders/reserve
+├ ƒ /api/payment/b2b-checkout
+├ ƒ /api/payment/callback
+├ ƒ /api/payment/checkout
+├ ƒ /api/payment/donus
+├ ƒ /api/payment/guest-checkout
+├ ƒ /api/payment/status
+├ ƒ /api/public/bilgi-al
+├ ƒ /api/public/catalog
+├ ƒ /api/public/cayma
+├ ƒ /api/public/hukuk/ornek/[belge]
+├ ƒ /api/public/katilim-sertifikasi/[kod]/gorsel
+├ ƒ /api/public/odeme/deneme
+├ ƒ /api/public/orders/track
+├ ƒ /api/public/orman/[slug]
+├ ƒ /api/public/referral/[code]
+├ ƒ /api/public/sertifika/[id]
+├ ƒ /api/public/settings
+├ ƒ /api/public/siparis
+├ ƒ /api/public/siparis/[no]/belge/[kind]
+├ ƒ /api/public/siparis/[no]/erisim
+├ ƒ /api/public/siparis/[no]/odeme
+├ ƒ /api/public/siparis/[no]/sertifika
+├ ƒ /api/public/siparis/[no]/yayin-izni
+├ ƒ /api/public/siparis/onizleme
+├ ƒ /api/public/talep
+├ ○ /apple-icon.png
+├ ○ /icon.png
+├ ○ /manifest.webmanifest
+├ ○ /robots.txt
+└ ○ /sitemap.xml
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

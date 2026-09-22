@@ -51,9 +51,9 @@ export default async function IfaKosullariPage({ params }: { params: Promise<{ l
         <LegalList
           items={[
             <>
-              <strong>Kesin son tarih:</strong> Her siparişte hizmetin ifa edileceği son tarih, siparişi onaylamadan önce
+              <strong>Kesin son tarih:</strong> Her siparişte tohum topu bırakmanın son tarihi, siparişi onaylamadan önce
               ekranda gösterilir; Ön Bilgilendirme Formu&apos;na ve sözleşmeye tarih olarak yazılır. Bu tarih, siparişin
-              yazıldığı bırakma sezonunun son günüdür (31 Mart).
+              yazıldığı bırakma sezonunun son günüdür (31 Mart). Sertifika ve izleme içeriği için ayrı son tarihler kararlaştırılır; bırakma tarihi bu edimlerin son tarihi sayılmaz.
             </>,
             <>
               <strong>Sezona yetişmeyen siparişler:</strong> Sipariş tarihi ile sezon sonu arasında cayma süresi ve hazırlık

@@ -8,6 +8,7 @@
  */
 
 import type { Metadata } from "next";
+import { COMPANY } from "./company";
 import { seoKeywords } from "./seo-keywords";
 
 export const SITE_URL =
@@ -41,14 +42,14 @@ export function ogLocaleAlternates(active: string): string[] {
   return LOCALES.filter((l) => l !== active).map((l) => LOCALE_TO_OG_LOCALE[l]);
 }
 
-export const ORG_LEGAL_NAME = "Skytech Havacılık A.Ş.";
+export const ORG_LEGAL_NAME = COMPANY.legalName;
 /** Bagli oldugumuz ana sirket. Footer'daki marka beyani buraya baglaniyor. */
 export const ORG_PARENT_URL = "https://skytechhavacilik.com";
 export const ORG_FOUNDED = "2021";
 export const ORG_AREA_SERVED = "Türkiye";
 export const ORG_ADDRESS = {
-  street: "Saray Mah. 60 Cad. No:22",
-  district: "Kahramankazan",
+  street: COMPANY.address.line,
+  district: COMPANY.address.district,
   city: "Ankara",
   country: "Türkiye",
   countryCode: "TR",

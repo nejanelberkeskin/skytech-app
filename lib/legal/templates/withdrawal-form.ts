@@ -7,7 +7,7 @@
 import { COMPANY, companyAddressLine } from "@/lib/company";
 import { count, money, trLongDate } from "../format";
 import type { LegalContext, LegalDocument } from "../types";
-import { ORDER_NO_PENDING, metaLines, withdrawalLastDay } from "./shared";
+import { TEXT, ORDER_NO_PENDING, metaLines, withdrawalLastDay } from "./shared";
 
 export function withdrawalFormDocument(ctx: LegalContext): LegalDocument {
   const site = COMPANY.website.replace(/^https?:\/\//, "");
@@ -48,7 +48,7 @@ export function withdrawalFormDocument(ctx: LegalContext): LegalDocument {
       },
       {
         type: "note",
-        text: `Cayma hakkı en geç ${withdrawalLastDay(ctx)} günü sonuna kadar kullanılabilir. Dilerseniz ${site}/cayma adresindeki formu da kullanabilirsiniz; bildiriminizin ulaştığı size derhal e-posta ile teyit edilir. Ödediğiniz bedelin tamamı, bildiriminizin ulaştığı tarihten itibaren 14 (on dört) gün içinde ödemede kullandığınız araca iade edilir.`,
+        text: `${TEXT.withdrawalRight(withdrawalLastDay(ctx))} Dilerseniz ${site}/cayma adresindeki formu da kullanabilirsiniz; bildiriminizin ulaştığı size derhal e-posta ile teyit edilir. Ödediğiniz bedelin tamamı, bildiriminizin ulaştığı tarihten itibaren 14 (on dört) gün içinde ödemede kullandığınız araca iade edilir.`,
       },
     ],
   };

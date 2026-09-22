@@ -24,13 +24,13 @@ export default function LegalBlocks({ blocks }: { blocks: LegalBlock[] }) {
             );
           case "paragraph":
             return (
-              <p key={i} className="text-[15px] text-[#3d5a3d] leading-relaxed">
+              <p key={i} className="text-base text-[#3d5a3d] leading-relaxed">
                 {block.text}
               </p>
             );
           case "note":
             return (
-              <p key={i} className="rounded-2xl border border-[#1B6B3A]/15 bg-[#f4f8f2] px-5 py-4 text-sm text-[#3d5a3d] leading-relaxed">
+              <p key={i} className="rounded-2xl border border-[#1B6B3A]/15 bg-[#f4f8f2] px-5 py-4 text-base text-[#3d5a3d] leading-relaxed">
                 {block.text}
               </p>
             );
@@ -38,7 +38,7 @@ export default function LegalBlocks({ blocks }: { blocks: LegalBlock[] }) {
             return (
               <ul key={i} className="space-y-2.5">
                 {block.items.map((item, j) => (
-                  <li key={j} className="flex items-start gap-2.5 text-[15px] text-[#3d5a3d] leading-relaxed">
+                  <li key={j} className="flex items-start gap-2.5 text-base text-[#3d5a3d] leading-relaxed">
                     <span className="shrink-0 w-1.5 h-1.5 rounded-full bg-[#22894a] mt-2.5" aria-hidden="true" />
                     <span>{item}</span>
                   </li>
@@ -48,7 +48,7 @@ export default function LegalBlocks({ blocks }: { blocks: LegalBlock[] }) {
           case "table":
             return (
               <div key={i} className="overflow-hidden rounded-2xl border border-black/8">
-                <table className="w-full text-sm">
+                <table className="w-full text-base">
                   <tbody>
                     {block.rows.map(([label, value], j) => (
                       <tr key={j} className="border-b border-black/5 last:border-0 align-top">
@@ -66,7 +66,7 @@ export default function LegalBlocks({ blocks }: { blocks: LegalBlock[] }) {
             return (
               <div key={i} className="space-y-5 pt-2">
                 {block.labels.map((label, j) => (
-                  <p key={j} className="flex items-end gap-3 text-[15px] text-[#3d5a3d]">
+                  <p key={j} className="flex items-end gap-3 text-base text-[#3d5a3d]">
                     <span className="whitespace-nowrap">{label}:</span>
                     <span className="flex-1 border-b border-[#6b8f6b]/60 h-5" aria-hidden="true" />
                   </p>

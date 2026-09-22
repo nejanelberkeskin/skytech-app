@@ -221,8 +221,8 @@ const KEYWORDS: KeywordMap = {
     ],
   },
   "/iletisim": {
-    tr: ["Skytech Green iletişim", "Ankara ofis", "Kahramankazan", "ağaçlandırma firması iletişim"],
-    en: ["Skytech Green contact", "Ankara office", "Kahramankazan", "reforestation company contact"],
+    tr: ["Skytech Green iletişim", "Ankara ofis", "Yenimahalle", "ağaçlandırma firması iletişim"],
+    en: ["Skytech Green contact", "Ankara office", "Yenimahalle", "reforestation company contact"],
     ru: ["Skytech Green контакты", "офис Анкара", "Кахраманказан", "контакты компании по лесовосстановлению"],
   },
   "/bilgi-al": {

@@ -21,7 +21,7 @@ export async function GET(
   const supabase = getSupabase();
   const { data, error } = await supabase
     .from("certificates")
-    .select("id, recipient_name, tree_count, forest_name, created_at")
+    .select("id, tree_count, forest_name, created_at")
     .eq("id", id)
     .single();
 
@@ -29,10 +29,10 @@ export async function GET(
     return NextResponse.json({ error: "Sertifika bulunamadı." }, { status: 404 });
   }
 
-  return NextResponse.json(data, {
+  return NextResponse.json({ ...data, recipient_name: "Ad paylaşılmıyor" }, {
     headers: {
-      // Cache for 1 hour on CDN; revalidate in background
-      "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400",
+      // Yayın izni olmayan eski kayıtların kişisel adı çıkmaz.
+      "Cache-Control": "private, no-store",
     },
   });
 }

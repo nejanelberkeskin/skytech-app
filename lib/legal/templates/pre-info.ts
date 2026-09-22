@@ -69,7 +69,7 @@ export function preInfoDocument(ctx: LegalContext): LegalDocument {
       type: "paragraph",
       text: "ALICI, talep ve şikâyetlerini yukarıda yer alan iletişim kanallarından SATICI'ya iletebilir; başvurular en kısa sürede yanıtlanır.",
     },
-    { type: "paragraph", text: isCorporate(ctx) ? TEXT.disputesCorporate : TEXT.disputesConsumer },
+    { type: "paragraph", text: `${TEXT.disputesConsumer} ${TEXT.disputesCorporate}` },
 
     { type: "heading", text: "8. Teyit" },
     {

@@ -1,40 +1,31 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServiceRoleClient } from "@/lib/supabase/server";
 import { requireAdmin } from "@/lib/admin-auth";
+import { can } from "@/lib/admin/permissions";
+import { FINANCE_DEFINITIONS_VERSION, loadFinanceOverview, monthLabel, type FinanceOverview } from "@/lib/finance/overview";
 
 /**
  * Admin — Genel Bakış göstergeleri (satış modeli v2).
  *
- * Kaynaklar: release_orders (deneme siparişleri HARİÇ), order_invoices, lands (yalnız yayındaki
- * sahalar), service_requests, corporate_quotes (B2B). Eski bireysel satışın `orders` tablosu Faz 8'de
- * kaldırılan akışa aitti; burada sayılmaz.
- *
- * Tutarlar kuruş (tam sayı). Aylık grafik TL döner (grafik bileşeni TL bekler).
+ * Sipariş ve para göstergeleri tek finans hesabından gelir (lib/finance/overview.ts, SQL 020): satır sınırı
+ * yok, deneme siparişleri hariç, dönem Europe/Istanbul. Tanımlar: web-brifler/18.
+ *   netRevenueKurus  = elde tutulan sipariş tutarı (tüm zamanlar; iade sürecindekiler ve iade edilenler hariç)
+ *   monthlyGrowth    = son 6 ay: net tahsilat (TL, nakit esası) ve ödeme ayına göre tohum topu adedi
+ * Para alanları (`netRevenueKurus`, `revenue`, `overview`) yalnız `finance.read` iznine döner.
+ * Alt sorgulardan biri bile okunamazsa 503: eksik veri sıfır gibi gösterilmez.
  */
-
-/** Parası elimizde ve iade sürecinde olmayan siparişler — net tahsilat bunlardan hesaplanır. */
-const COLLECTED = ["paid", "confirmed", "scheduled", "released", "monitoring", "completed"] as const;
-/** İadesi bekleyenler: müşteri cayma bildirdi ya da satıcı iptal etti, iade henüz yapılmadı. */
-const REFUND_PENDING = ["withdrawal_requested", "cancelled_by_seller"] as const;
-const RELEASED = ["released", "monitoring", "completed"] as const;
-
-const MONTH_LABEL = new Intl.DateTimeFormat("tr-TR", { month: "short", year: "2-digit", timeZone: "Europe/Istanbul" });
-const monthKey = (d: Date) => new Intl.DateTimeFormat("en-CA", { year: "numeric", month: "2-digit", timeZone: "Europe/Istanbul" }).format(d);
-
 export async function GET(request: NextRequest) {
   const { admin, error: authError } = await requireAdmin(request);
   if (authError) return authError;
 
-  const financial = admin?.role === "SUPER_ADMIN" || admin?.role === "FINANCE";
+  const financial = can(admin, "finance.read");
   const supabase = createServiceRoleClient();
 
-  const [ordersRes, invoicesRes, landsRes, b2bRes, newRequestsRes, contactedRequestsRes] = await Promise.all([
-    supabase
-      .from("release_orders")
-      .select("status, total_kurus, quantity, paid_at, batch_id")
-      .eq("is_test", false)
-      .not("paid_at", "is", null)
-      .limit(20_000),
+  const [overviewRes, invoicesRes, landsRes, b2bRes, newRequestsRes, contactedRequestsRes] = await Promise.all([
+    loadFinanceOverview(supabase).then(
+      (data): { data: FinanceOverview; error: null } => ({ data, error: null }),
+      (error: unknown) => ({ data: null, error })
+    ),
     // Kesilmeyi bekleyen faturalar (deneme siparişlerininki hariç)
     supabase
       .from("order_invoices")
@@ -47,29 +38,13 @@ export async function GET(request: NextRequest) {
     supabase.from("service_requests").select("id", { count: "exact", head: true }).eq("status", "contacted"),
   ]);
 
-  if ([ordersRes, invoicesRes, landsRes, b2bRes, newRequestsRes, contactedRequestsRes].some((r) => r.error)) {
+  const overview = overviewRes.data;
+  if (!overview || [invoicesRes, landsRes, b2bRes, newRequestsRes, contactedRequestsRes].some((r) => r.error)) {
     return NextResponse.json({ error: "unavailable" }, { status: 503 });
   }
 
-  const orders = ordersRes.data ?? [];
-  const inStatus = (list: readonly string[]) => orders.filter((o) => list.includes(o.status as string));
-  const collected = inStatus(COLLECTED);
   const publicLands = (landsRes.data ?? []).filter((l) => l.is_public);
   const b2bQuotes = b2bRes.data ?? [];
-
-  // ── Aylık tahsilat ve tohum topu (son 6 ay, ödeme tarihine göre) ─────────────
-  const now = new Date();
-  const months: { key: string; month: string; revenue: number; seeds: number }[] = [];
-  for (let i = 5; i >= 0; i--) {
-    const d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - i, 15));
-    months.push({ key: monthKey(d), month: MONTH_LABEL.format(d), revenue: 0, seeds: 0 });
-  }
-  for (const o of collected) {
-    const bucket = months.find((m) => m.key === monthKey(new Date(o.paid_at as string)));
-    if (!bucket) continue;
-    bucket.revenue += Number(o.total_kurus) / 100;
-    bucket.seeds += Number(o.quantity);
-  }
 
   // ── Yayındaki sahalarda kapasite uyarıları (%90 ve üzeri dolu) ───────────────
   const capacityAlerts = publicLands
@@ -80,22 +55,33 @@ export async function GET(request: NextRequest) {
     })
     .filter((l) => l.pct >= 90);
 
-  return NextResponse.json({
-    kpis: {
-      ...(financial ? { netRevenueKurus: collected.reduce((s, o) => s + Number(o.total_kurus), 0) } : {}),
-      orderCount: collected.length,
-      releasedQuantity: inStatus(RELEASED).reduce((s, o) => s + Number(o.quantity), 0),
-      pendingRefunds: inStatus(REFUND_PENDING).length,
-      pendingInvoices: invoicesRes.count ?? 0,
-      awaitingBatch: orders.filter((o) => o.status === "confirmed" && !o.batch_id).length,
-      publicSites: publicLands.length,
-      freeCapacity: publicLands.reduce((s, l) => s + Math.max(l.capacity_seeds - (l.filled_seeds ?? 0) - (l.reserved_seeds ?? 0), 0), 0),
-      pendingB2b: b2bQuotes.filter((q) => ["PENDING", "pending"].includes(q.status)).length,
-      quotedB2b: b2bQuotes.filter((q) => ["QUOTED", "quoted"].includes(q.status)).length,
-      newRequests: newRequestsRes.count ?? 0,
-      contactedRequests: contactedRequestsRes.count ?? 0,
+  return NextResponse.json(
+    {
+      definitionsVersion: FINANCE_DEFINITIONS_VERSION,
+      kpis: {
+        ...(financial ? { netRevenueKurus: overview.allTime.heldOrderValueKurus } : {}),
+        orderCount: overview.allTime.heldOrderCount,
+        releasedQuantity: overview.allTime.releasedQuantity,
+        pendingRefunds: overview.liabilities.orderRefundLiabilityCount,
+        pendingDuplicateRefunds: overview.liabilities.duplicateLiabilityCount,
+        overdueRefunds: overview.liabilities.overdueRefundCount,
+        pendingInvoices: invoicesRes.count ?? 0,
+        awaitingBatch: overview.operations.awaitingBatchCount,
+        publicSites: publicLands.length,
+        freeCapacity: publicLands.reduce((s, l) => s + Math.max(l.capacity_seeds - (l.filled_seeds ?? 0) - (l.reserved_seeds ?? 0), 0), 0),
+        pendingB2b: b2bQuotes.filter((q) => ["PENDING", "pending"].includes(q.status)).length,
+        quotedB2b: b2bQuotes.filter((q) => ["QUOTED", "quoted"].includes(q.status)).length,
+        newRequests: newRequestsRes.count ?? 0,
+        contactedRequests: contactedRequestsRes.count ?? 0,
+      },
+      monthlyGrowth: overview.months.map((m) => ({
+        month: monthLabel(m.key),
+        seeds: m.paidQuantity,
+        ...(financial ? { revenue: m.netCashKurus / 100 } : {}),
+      })),
+      capacityAlerts,
+      ...(financial ? { overview } : {}),
     },
-    monthlyGrowth: months.map(({ month, revenue, seeds }) => ({ month, seeds, ...(financial ? { revenue } : {}) })),
-    capacityAlerts,
-  });
+    { headers: { "Cache-Control": "private, no-store" } }
+  );
 }

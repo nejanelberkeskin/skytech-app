@@ -51,8 +51,11 @@ test('contact form: skipped email is 503; quota stops mail; oversized and missin
  assert.equal((await api.POST(req({...body,noticeRead:false}))).status,400);assert.equal((await api.POST(req({...body,message:'x'.repeat(25000)}))).status,413);assert.equal((await api.POST(req(null))).status,400);
 });
 test('dashboard never returns revenue fields to non-finance roles and fails on partial query errors',async()=>{
+ // Claude (iade-mutabakati): Genel Bakış tek finans hesabına (SQL 020) taşındı; taklitler iki uygulamayla da çalışır.
+ const overview={definitionsVersion:1,currentMonth:{key:'2026-09'},allTime:{heldOrderValueKurus:0,heldOrderCount:0,releasedQuantity:0},liabilities:{orderRefundLiabilityCount:0,duplicateLiabilityCount:0,overdueRefundCount:0},operations:{awaitingBatchCount:0},months:[{key:'2026-09',netCashKurus:0,paidQuantity:0}]};
+ const permissions=load('lib/admin/permissions.ts',{'@/lib/admin-auth':{},'@/lib/api/envelope':{}});
  for(const role of ['SUPER_ADMIN','FINANCE','OPERATIONS','ENGINEER']){
- const api=load('app/api/admin/dashboard/route.ts',{'next/server':{NextResponse:response},'@/lib/supabase/server':{createServiceRoleClient:()=>({from:()=>query([])})},'@/lib/admin-auth':{requireAdmin:async()=>({admin:{role},error:null})}});
+ const api=load('app/api/admin/dashboard/route.ts',{'next/server':{NextResponse:response},'@/lib/supabase/server':{createServiceRoleClient:()=>({from:()=>query([])})},'@/lib/admin-auth':{requireAdmin:async()=>({admin:{role,is_active:true},error:null})},'@/lib/admin/permissions':permissions,'@/lib/finance/overview':{FINANCE_DEFINITIONS_VERSION:1,monthLabel:(k)=>k,loadFinanceOverview:async()=>overview}});
  const res=await api.GET({});assert.equal(res.status,200);const financial=['SUPER_ADMIN','FINANCE'].includes(role);assert.equal('netRevenueKurus' in res.body.kpis,financial);assert.equal('revenue' in res.body.monthlyGrowth[0],financial);
  }
 });

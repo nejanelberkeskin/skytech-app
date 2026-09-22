@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useAdmin } from "@/lib/admin-context";
 import RoleGuard from "@/components/RoleGuard";
 import { CardStat } from "@/components/ui";
 import { ROLE_META } from "@/lib/rbac";
+import { formatCount, formatTry } from "@/lib/pricing";
 
 // ── Tip tanımları ─────────────────────────────────────────────────────────────
 interface MonthlyPoint {
@@ -22,15 +23,19 @@ interface CapacityAlert {
   is_public: boolean;
 }
 
+/** Satış modeli v2 göstergeleri (deneme siparişleri hariç) — kaynak: /api/admin/dashboard. */
 interface DashboardData {
   kpis: {
-    totalRevenue: number;
-    totalFilledSeeds: number;
-    totalCapacity: number;
-    carbonTons: number;
+    netRevenueKurus: number;
+    orderCount: number;
+    releasedQuantity: number;
+    pendingRefunds: number;
+    pendingInvoices: number;
+    awaitingBatch: number;
+    publicSites: number;
+    freeCapacity: number;
     pendingB2b: number;
     quotedB2b: number;
-    totalLands: number;
     newRequests: number;
     contactedRequests: number;
   };
@@ -69,7 +74,7 @@ function BarChart({ data }: { data: MonthlyPoint[] }) {
       viewBox={`0 0 ${W} ${H}`}
       className="w-full"
       style={{ height: 160 }}
-      aria-label="Aylık gelir grafiği"
+      aria-label="Aylık tahsilat grafiği"
     >
       {/* Y grid çizgileri */}
       {yTicks.map((t, i) => (
@@ -227,27 +232,34 @@ function DashboardContent() {
   const [loading, setLoading] = useState(true);
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
 
-  const load = async () => {
+  // Durum yalnız ağ yanıtından SONRA güncellenir (effect içinde eşzamanlı setState yok).
+  const fetchDashboard = useCallback(
+    () =>
+      fetch("/api/admin/dashboard")
+        .then((res) => (res.ok ? (res.json() as Promise<DashboardData>) : null))
+        .then((json) => {
+          if (json) {
+            setData(json);
+            setLastRefresh(new Date());
+          }
+        })
+        .catch((e) => console.error("Dashboard fetch error:", e))
+        .finally(() => setLoading(false)),
+    [],
+  );
+
+  /** "Yenile" düğmesi: yükleniyor göstergesiyle yeniden çeker. */
+  const load = () => {
     setLoading(true);
-    try {
-      const res = await fetch("/api/admin/dashboard");
-      if (res.ok) {
-        const json = await res.json();
-        setData(json);
-        setLastRefresh(new Date());
-      }
-    } catch (e) {
-      console.error("Dashboard fetch error:", e);
-    }
-    setLoading(false);
+    void fetchDashboard();
   };
 
   useEffect(() => {
-    load();
+    fetchDashboard();
     // Her 60 saniyede otomatik yenile
-    const interval = setInterval(load, 60_000);
+    const interval = setInterval(fetchDashboard, 60_000);
     return () => clearInterval(interval);
-  }, []);
+  }, [fetchDashboard]);
 
   if (!admin) return null;
 
@@ -294,15 +306,9 @@ function DashboardContent() {
           {(admin.role === "SUPER_ADMIN" || admin.role === "FINANCE") && (
             <CardStat
               icon="💰"
-              label="Toplam Ciro"
-              value={
-                kpis
-                  ? kpis.totalRevenue >= 1_000_000
-                    ? `₺${(kpis.totalRevenue / 1_000_000).toFixed(2)}M`
-                    : `₺${kpis.totalRevenue.toLocaleString("tr-TR")}`
-                  : "—"
-              }
-              sub="tüm zamanlar"
+              label="Net Tahsilat"
+              value={kpis ? formatTry(kpis.netRevenueKurus, "tr") : "—"}
+              sub={kpis ? `${formatCount(kpis.orderCount, "tr")} sipariş · KDV dâhil, iadeler hariç` : ""}
             />
           )}
           {(admin.role === "SUPER_ADMIN" || admin.role === "FINANCE" || admin.role === "OPERATIONS") && (
@@ -315,16 +321,18 @@ function DashboardContent() {
           )}
           <CardStat
             icon="🌱"
-            label="Dikilen Tohum"
-            value={kpis ? kpis.totalFilledSeeds.toLocaleString("tr-TR") : "—"}
-            sub="arazi toplamı"
+            label="Bırakılan Tohum Topu"
+            value={kpis ? formatCount(kpis.releasedQuantity, "tr") : "—"}
+            sub="bırakması tamamlanan siparişler"
           />
-          <CardStat
-            icon="♻️"
-            label="Karbon Nötrleme"
-            value={kpis ? `${kpis.carbonTons.toLocaleString("tr-TR")} Ton` : "—"}
-            sub="tahmini CO₂"
-          />
+          {(admin.role === "SUPER_ADMIN" || admin.role === "FINANCE" || admin.role === "OPERATIONS") && (
+            <CardStat
+              icon="🧾"
+              label="Bekleyen İşler"
+              value={kpis ? formatCount(kpis.pendingRefunds + kpis.pendingInvoices + kpis.awaitingBatch, "tr") : "—"}
+              sub={kpis ? `${kpis.pendingRefunds} iade · ${kpis.pendingInvoices} fatura · ${kpis.awaitingBatch} partiye alınacak` : ""}
+            />
+          )}
           {(admin.role === "SUPER_ADMIN" || admin.role === "FINANCE") && (
             <CardStat
               icon="🏢"
@@ -333,20 +341,12 @@ function DashboardContent() {
               sub={kpis ? `${kpis.quotedB2b} fiyatlandırıldı` : ""}
             />
           )}
-          {admin.role === "ENGINEER" && (
+          {(admin.role === "ENGINEER" || admin.role === "OPERATIONS") && (
             <CardStat
               icon="🗺️"
-              label="Aktif Arazi"
-              value={kpis ? `${kpis.totalLands}` : "—"}
-              sub="toplam alan"
-            />
-          )}
-          {admin.role === "OPERATIONS" && (
-            <CardStat
-              icon="📦"
-              label="Toplam Kapasite"
-              value={kpis ? kpis.totalCapacity.toLocaleString("tr-TR") : "—"}
-              sub="tohum kapasitesi"
+              label="Yayındaki Saha"
+              value={kpis ? `${kpis.publicSites}` : "—"}
+              sub={kpis ? `${formatCount(kpis.freeCapacity, "tr")} tohum topu boş kapasite` : ""}
             />
           )}
         </div>
@@ -359,8 +359,8 @@ function DashboardContent() {
           <div className="bg-[var(--bg-surface)] border border-white/[0.06] rounded-2xl p-5">
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h2 className="font-semibold text-white text-sm">Aylık Gelir</h2>
-                <p className="text-xs text-slate-500 mt-0.5">Son 6 ay</p>
+                <h2 className="font-semibold text-white text-sm">Aylık Tahsilat</h2>
+                <p className="text-xs text-slate-500 mt-0.5">Son 6 ay · ödeme tarihine göre, iadeler hariç</p>
               </div>
               <span className="text-xs text-emerald-400 bg-emerald-400/10 px-2.5 py-1 rounded-full">
                 💰 TL
@@ -377,8 +377,8 @@ function DashboardContent() {
           <div className="bg-[var(--bg-surface)] border border-white/[0.06] rounded-2xl p-5">
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h2 className="font-semibold text-white text-sm">Aylık Tohum Satışı</h2>
-                <p className="text-xs text-slate-500 mt-0.5">Son 6 ay</p>
+                <h2 className="font-semibold text-white text-sm">Aylık Tohum Topu (sipariş)</h2>
+                <p className="text-xs text-slate-500 mt-0.5">Son 6 ay · ödenen siparişlerdeki adet</p>
               </div>
               <span className="text-xs text-emerald-400 bg-emerald-400/10 px-2.5 py-1 rounded-full">
                 🌱 Adet
@@ -399,7 +399,7 @@ function DashboardContent() {
                     {data.monthlyGrowth
                       .reduce((s, d) => s + d.seeds, 0)
                       .toLocaleString("tr-TR")}{" "}
-                    <span className="text-xs font-normal text-slate-400">tohum</span>
+                    <span className="text-xs font-normal text-slate-400">tohum topu</span>
                   </p>
                 </div>
                 <div>
@@ -409,7 +409,7 @@ function DashboardContent() {
                       data.monthlyGrowth.reduce((s, d) => s + d.seeds, 0) /
                         (data.monthlyGrowth.filter((d) => d.seeds > 0).length || 1)
                     ).toLocaleString("tr-TR")}{" "}
-                    <span className="text-xs font-normal text-slate-400">tohum</span>
+                    <span className="text-xs font-normal text-slate-400">tohum topu</span>
                   </p>
                 </div>
               </div>
@@ -427,7 +427,7 @@ function DashboardContent() {
               Kapasite Uyarıları
             </h2>
             <span className="text-xs text-red-400 bg-red-400/10 px-2 py-0.5 rounded-full">
-              {data.capacityAlerts.length} arazi
+              {data.capacityAlerts.length} saha
             </span>
           </div>
 
@@ -441,7 +441,7 @@ function DashboardContent() {
                   <p className="text-sm font-medium text-white truncate">{alert.name}</p>
                   <p className="text-xs text-slate-500 mt-0.5">
                     {alert.available > 0
-                      ? `${alert.available.toLocaleString("tr-TR")} boş alan kaldı`
+                      ? `${alert.available.toLocaleString("tr-TR")} tohum topu yer kaldı`
                       : "Kapasite tamamen doldu"}
                   </p>
                 </div>
@@ -493,7 +493,7 @@ function DashboardContent() {
             <div>
               <p className="font-semibold text-emerald-400">Tüm Sistemler Normal</p>
               <p className="text-sm text-slate-400 mt-0.5">
-                Kapasitesi %90&apos;ın üzerinde olan arazi bulunmuyor.
+                Yayındaki sahalarda kapasitesi %90&apos;ın üzerinde olan saha yok.
               </p>
             </div>
           </div>

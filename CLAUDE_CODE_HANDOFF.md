@@ -885,12 +885,25 @@ dil öneki korunur):
 5. `/api/kurumsal/*` ve `/api/orders/invoice` oturumu `getSession()` ile okuyor; `getUser()` olmalı.
 6. `/fatura` yer tutucu satıcı bilgisi gösteriyor (vergi no "123 456 7890"); `lib/company.ts`'e bağlanmalı ya da
    kaldırılmalı. `/api/public/orman` şirket kullanıcı kimliğini döndürüyor.
-7. Yönetim → Finans, B2B gelirini `total_amount`'tan okuyor, B2B `total_price` yazıyor (0 görünür). Genel Bakış eski
-   sipariş tablosunu sayıyor; yeni modelin (`release_orders`) cirosu hiçbir yerde toplanmıyor.
+7. Yönetim → Finans, B2B gelirini `total_amount`'tan okuyor, B2B `total_price` yazıyor (0 görünür). (Genel Bakış artık
+   yeni modeli sayıyor — bkz. aşağıdaki "Genel Bakış" bölümü.)
 8. Kurumsal teklif ekleme anon'a açık (kayıttan hemen sonra oturum yok diye). Sunucu ucuna taşınması daha güvenli.
 
 **Kalan eski izler (zararsız, sonra):** Yönetim → Katalog'daki fiyat/stok alanları, `lib/utils/format.ts`
 (`maskEmail`, `isValidUUID` kullanılmıyor), kullanılmayan birkaç simge, `IYZICO_SETUP.md` (eski akışı anlatıyor).
+
+### Yönetim → Genel Bakış (Faz 8b)
+- Göstergeler yeni modelden hesaplanır (`/api/admin/dashboard`). Deneme siparişleri hariçtir. Eski `orders` sayılmaz.
+- Kartlar:
+  - Net tahsilat: ödendi, kesinleşti, partide, bırakıldı, izlemede ve tamamlandı durumları. İade bekleyenler hariç.
+  - Bırakılan tohum topu.
+  - Bekleyen işler: iade, kesilecek fatura, partiye alınacak sipariş.
+  - Bekleyen talep ve B2B teklifleri.
+  - Yayındaki saha sayısı ve boş kapasite.
+- Aylık tahsilat ve tohum topu grafikleri ödeme tarihine göre çizilir.
+- Kapasite uyarıları yalnız yayındaki sahalar için gösterilir (gizli demo sahalar yanlış alarm veriyordu).
+- "Karbon nötrleme" göstergesi kaldırıldı: sözlükte yasaklı ve dayanaksız bir iddiaydı. "Dikilen tohum" ve "Tohum satışı"
+  ifadeleri de kaldırıldı.
 
 ### Hukuk incelemesi (Astra, #56) — yığına bağlandı
 - Astra'nın `hukuk-son-inceleme` dalı (taban `faz5c`) bu dalda birleştirildi. #56 ayrıca birleştirilmez.

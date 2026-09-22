@@ -9,16 +9,17 @@
 export const COMPANY = {
   brand: "Skytech Green",
   legalName: "SKYTECH HAVACILIK VE TEKNOLOJİ SANAYİ TİCARET ANONİM ŞİRKETİ",
+  /** Kullanıcının 21 Eylül 2026 bildirimi. Adres Yenimahalle olduğundan vergi levhasıyla teyit edilmeli. */
   taxOffice: "Kahramankazan",
   taxId: "7721661218",
   /**
-   * Tescilli merkez adresi (sitenin alt bilgisi, İletişim sayfası ve Google İşletme kaydıyla aynı).
-   * 21 Eylül 2026'da verilen "Macun Mah. … Yenimahalle" adresi ofis adresi olabilir; sözleşmelerde
-   * sicildeki adres kullanılır. Değişirse yalnız burası güncellenir (ve belge sürümü artırılır).
+   * Şirketin sözleşmelerde ve hukuki metinlerde kullanılan adresi — kullanıcı teyidi, 22 Eylül 2026.
+   * Sitenin alt bilgisi ve İletişim sayfasındaki "Saray Mah. 60 Cad. No: 22, Kahramankazan" adresi
+   * (Google İşletme kaydı) bundan FARKLIDIR. Değişirse yalnız burası güncellenir (ve belge sürümü artırılır).
    */
   address: {
-    line: "Saray Mah. 60 Cad. No: 22",
-    district: "Kahramankazan",
+    line: "Macun Mah. Batı Bulvarı ATB İş Merkezi I Blok No: 244",
+    district: "Yenimahalle",
     province: "Ankara",
     country: "Türkiye",
   },

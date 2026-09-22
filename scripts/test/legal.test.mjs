@@ -131,7 +131,7 @@ for (const [name, c] of Object.entries(cases)) {
   for (const must of [
     "SKYTECH HAVACILIK VE TEKNOLOJİ SANAYİ TİCARET ANONİM ŞİRKETİ",
     "Kahramankazan / 7721661218",
-    "Saray Mah. 60 Cad. No: 22",
+    "Macun Mah. Batı Bulvarı ATB İş Merkezi I Blok No: 244, Yenimahalle / Ankara",
     "0772166121800001", // MERSİS
     "Ankara / 510174", // ticaret sicili
     "0850 308 2600",

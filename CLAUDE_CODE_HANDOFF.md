@@ -742,8 +742,8 @@ Bu bölüm 11. bölümdeki akış tarifinin yerine geçer.
 - Devreden: `/gizlilik-politikasi` ve `/cerez-politikasi` bu metinle uyumlu hâle getirilecek (onaydan sonra).
 
 ### Künye, sözleşme düzeltmeleri, SSS (Faz 9b)
-- `lib/company.ts`: telefon 0850 308 2600 · tescilli adres **Saray Mah. 60 Cad. No: 22, Kahramankazan/Ankara** (sitenin alt
-  bilgisi, İletişim sayfası ve Google İşletme kaydıyla aynı; 21 Eyl'de verilen Macun Mah. adresi ofis olabilir) · MERSİS
+- `lib/company.ts`: telefon 0850 308 2600 · sözleşme adresi **Macun Mah. Batı Bulvarı ATB İş Merkezi I Blok No: 244,
+  Yenimahalle/Ankara** (kullanıcı teyidi 22 Eyl; sitenin alt bilgisi / İletişim sayfasındaki Kahramankazan adresi farklı) · MERSİS
   0772166121800001 · ticaret sicili Ankara / 510174 (müdürlük adı teyit edilince `tradeRegistryLine` güncellenir) · UETS
   25838-72218-78313 (resmî tebligat; müşteri belgelerinde GÖRÜNMEZ). Kaynak: Astra'nın hukuk paketi
   (`outputs/yayin-hukuk-paketi/`, kullanıcı bildirimi). Eksik: KEP, meslek odası.

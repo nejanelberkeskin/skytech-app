@@ -3,6 +3,7 @@
 import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabase/browser";
+import type { User } from "@supabase/supabase-js";
 import type { CorporateQuote } from "@/lib/types";
 
 export default function PaymentPageWrapper() {
@@ -27,9 +28,9 @@ function PaymentPage() {
   const [tab, setTab] = useState<"quote" | "invoices">("quote");
   const [loading, setLoading] = useState(true);
   const [paymentLoading, setPaymentLoading] = useState(false);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [quote, setQuote] = useState<CorporateQuote | null>(null);
-  const [invoices, setInvoices] = useState<any[]>([]);
+  const [invoices, setInvoices] = useState<{ id: string; created_at: string; amount: number; status: string }[]>([]);
 
   useEffect(() => {
     const init = async () => {
@@ -101,8 +102,8 @@ function PaymentPage() {
       } else {
         alert("Ödeme başlatılamadı: " + (data.error || "Bilinmeyen hata"));
       }
-    } catch (error: any) {
-      alert("Ödeme hatası: " + (error?.message || "Bir hata oluştu"));
+    } catch (error: unknown) {
+      alert("Ödeme hatası: " + (error instanceof Error ? error.message : "Bir hata oluştu"));
     } finally {
       setPaymentLoading(false);
     }

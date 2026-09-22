@@ -244,7 +244,7 @@ export async function middleware(request: NextRequest) {
     return withIntl(response);
   }
 
-  return intlResponse;
+  return withIntl(response);
 }
 
 export const config = {

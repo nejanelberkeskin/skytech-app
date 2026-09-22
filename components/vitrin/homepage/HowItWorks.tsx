@@ -30,11 +30,6 @@ const containerVariants: Variants = {
   show: { transition: { staggerChildren: 0.14, delayChildren: 0.1 } },
 };
 
-const itemVariants: Variants = {
-  hidden: { opacity: 0, y: 40 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.9, ease: [0.16, 1, 0.3, 1] } },
-};
-
 export default function HowItWorks() {
   const t = useTranslations("howItWorks");
   const STEPS = useSteps();

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useParams } from "next/navigation";
 
 // ── Types ────────────────────────────────────────────────────────────
@@ -97,7 +98,6 @@ function getGeoRegion(regionStr: string | null): string | null {
 
 function TurkeyMapViz({
   regions,
-  totalSeeds,
 }: {
   regions: Record<string, number>;
   totalSeeds: number;
@@ -171,7 +171,7 @@ function TurkeyMapViz({
                   fill="rgba(16,185,129,0.15)"
                   style={{
                     animation: "glowPulse 2s ease-in-out infinite",
-                    animationDelay: `${Math.random() * 1}s`,
+                    animationDelay: `${(def.cx % 10) / 10}s`,
                   }}
                 />
               )}
@@ -370,7 +370,7 @@ export default function CompanyForestPage() {
               }}
             >
               {profile.logo_url ? (
-                <img
+                <Image width={80} height={80} unoptimized
                   src={profile.logo_url}
                   alt={profile.company_name}
                   className="w-full h-full object-contain rounded-2xl"
@@ -699,7 +699,7 @@ export default function CompanyForestPage() {
                 <strong style={{ color: "var(--text-primary)" }}>
                   {stats.total_seeds.toLocaleString("tr-TR")} tohum
                 </strong>{" "}
-                ekerek Türkiye'nin yeşil geleceğine katkı sağlıyor.
+                ekerek Türkiye’nin yeşil geleceğine katkı sağlıyor.
               </p>
               <div
                 className="mt-4 text-center py-3 rounded-xl text-xs font-bold tracking-wide"

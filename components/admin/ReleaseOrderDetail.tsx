@@ -289,10 +289,10 @@ export default function ReleaseOrderDetail({ detail, act, onClose }: { detail: D
                   <p className="text-white">{DOCUMENT_LABELS[d.kind] ?? d.title}</p>
                   <p className="text-[11px] text-slate-500 font-mono truncate">sürüm {d.template_version} · sha256 {d.sha256.slice(0, 16)}…</p>
                 </div>
-                <div className="flex gap-3 shrink-0">
+                {money && <div className="flex gap-3 shrink-0">
                   <a href={`/api/admin/release-orders/${o.id}/belge/${d.kind}?bicim=html`} target="_blank" rel="noopener noreferrer" className="text-emerald-300 hover:underline">Görüntüle</a>
                   <a href={`/api/admin/release-orders/${o.id}/belge/${d.kind}?bicim=pdf`} target="_blank" rel="noopener noreferrer" className="text-emerald-300 hover:underline">PDF</a>
-                </div>
+                </div>}
               </div>
             ))}
             {detail.documents.length === 0 && <p className="px-4 py-3 text-sm text-slate-500">Belge yok.</p>}

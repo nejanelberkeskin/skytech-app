@@ -129,7 +129,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     details = { invoiceNo: input.invoiceNo };
   }
 
-  await auditLog(supabase, {
+  const warnings = await auditLog(supabase, {
     admin,
     action: "UPDATE",
     entity: "release_order",
@@ -139,5 +139,5 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
   });
 
   if (!result.ok) return NextResponse.json({ error: result.error, detail: result.detail ?? null }, { status: STATUS_FOR[result.error] ?? 400 });
-  return NextResponse.json({ ok: true, status: result.order.status });
+  return NextResponse.json({ ok: true, status: result.order.status, warnings });
 }

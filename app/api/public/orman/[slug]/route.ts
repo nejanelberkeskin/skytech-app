@@ -54,7 +54,7 @@ export async function GET(
     .filter(Boolean) as string[];
 
   // 4. Fetch land regions via order_allocations
-  let regions: Record<string, number> = {};
+  const regions: Record<string, number> = {};
   if (orderIds.length > 0) {
     const { data: allocations } = await supabase
       .from("order_allocations")
@@ -63,7 +63,7 @@ export async function GET(
 
     for (const alloc of allocations ?? []) {
       const region =
-        (alloc.lands as any)?.region ?? "Bilinmeyen Bölge";
+        (alloc.lands as unknown as { region?: string } | null)?.region ?? "Bilinmeyen Bölge";
       regions[region] = (regions[region] ?? 0) + (alloc.seeds_allocated ?? 0);
     }
   }

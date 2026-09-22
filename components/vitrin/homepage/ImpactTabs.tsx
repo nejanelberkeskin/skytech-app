@@ -277,13 +277,6 @@ function FlameIcon({ className }: { className?: string }) {
     </svg>
   );
 }
-function WaveIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}>
-      <path d="M2 12c2-2 4-2 6 0s4 2 6 0 4-2 6 0M2 18c2-2 4-2 6 0s4 2 6 0 4-2 6 0M2 6c2-2 4-2 6 0s4 2 6 0 4-2 6 0" strokeLinecap="round" />
-    </svg>
-  );
-}
 function LandIcon({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}>
@@ -299,13 +292,6 @@ function AtomIcon({ className }: { className?: string }) {
       <ellipse cx="12" cy="12" rx="10" ry="4" />
       <ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(60 12 12)" />
       <ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(-60 12 12)" />
-    </svg>
-  );
-}
-function DropIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}>
-      <path d="M12 2c4 5 7 9 7 13a7 7 0 0 1-14 0c0-4 3-8 7-13z" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }

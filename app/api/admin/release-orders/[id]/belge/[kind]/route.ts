@@ -6,7 +6,7 @@ import { DOCUMENT_KINDS } from "@/lib/orders/types";
 
 /**
  * GET /api/admin/release-orders/[id]/belge/[kind]?bicim=html|pdf — siparişe özel belgenin
- * yönetim kopyası (müşteriye giden ile AYNI saklanan içerik). Roller: SUPER_ADMIN, FINANCE, OPERATIONS.
+ * yönetim kopyası (müşteriye giden ile AYNI saklanan içerik). Roller: SUPER_ADMIN, FINANCE (asıl belgeler maskelenmemiş fatura bilgisi içerir).
  */
 export const runtime = "nodejs";
 
@@ -14,7 +14,7 @@ const HEADERS = { "Cache-Control": "private, no-store", "X-Robots-Tag": "noindex
 const notFound = () => new Response(null, { status: 404, headers: HEADERS });
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string; kind: string }> }) {
-  const { error: authError } = await requireAdmin(request, ["SUPER_ADMIN", "FINANCE", "OPERATIONS"]);
+  const { error: authError } = await requireAdmin(request, ["SUPER_ADMIN", "FINANCE"]);
   if (authError) return authError;
   const { id, kind } = await params;
   if (!/^[0-9a-f-]{36}$/i.test(id) || !(DOCUMENT_KINDS as readonly string[]).includes(kind)) return notFound();

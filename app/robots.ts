@@ -19,6 +19,7 @@ export default function robots(): MetadataRoute.Robots {
         userAgent: "*",
         allow: "/",
         disallow: [
+          ...["/en", "/ru", "/tr"].flatMap((locale) => ["/admin", "/auth/", "/hesabim", "/kurumsal/panel", "/kurumsal/giris", "/fatura/", "/siparis/"].map((path) => locale + path)),
           "/admin",
           "/admin/",
           "/hesabim",
@@ -38,6 +39,7 @@ export default function robots(): MetadataRoute.Robots {
         userAgent: "OAI-SearchBot",
         allow: "/",
         disallow: [
+          ...["/en", "/ru", "/tr"].flatMap((locale) => ["/admin", "/auth/", "/hesabim", "/kurumsal/panel", "/kurumsal/giris", "/fatura/", "/siparis/"].map((path) => locale + path)),
           "/admin",
           "/hesabim",
           "/kurumsal/panel",
@@ -51,6 +53,7 @@ export default function robots(): MetadataRoute.Robots {
         userAgent: "PerplexityBot",
         allow: "/",
         disallow: [
+          ...["/en", "/ru", "/tr"].flatMap((locale) => ["/admin", "/auth/", "/hesabim", "/kurumsal/panel", "/kurumsal/giris", "/fatura/", "/siparis/"].map((path) => locale + path)),
           "/admin",
           "/hesabim",
           "/kurumsal/panel",

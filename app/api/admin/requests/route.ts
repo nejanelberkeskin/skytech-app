@@ -150,7 +150,7 @@ export async function PATCH(request: NextRequest) {
   }
   if (!data) return NextResponse.json({ error: "not_found" }, { status: 404 });
 
-  await auditLog(supabase, {
+  const warnings = await auditLog(supabase, {
     admin,
     action: "UPDATE",
     entity: "service_request",
@@ -159,5 +159,5 @@ export async function PATCH(request: NextRequest) {
     ip: getClientIP(request),
   });
 
-  return NextResponse.json({ ok: true, item: data });
+  return NextResponse.json({ ok: true, item: data, warnings });
 }

@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 import { supabase } from "@/lib/supabase/browser";
 
 export default function AdminLoginPage() {
@@ -51,7 +50,7 @@ export default function AdminLoginPage() {
     router.refresh();
   };
 
-  const inputClasses = "w-full px-4 py-3 bg-white/[0.03] border border-white/[0.08] rounded-2xl text-white placeholder-emerald-200/20 outline-none focus:border-emerald-500/40 focus:ring-1 focus:ring-emerald-500/20 transition-all";
+  const inputClasses = "w-full px-4 py-3 bg-white/[0.03] border border-white/[0.08] rounded-2xl text-white placeholder-emerald-100/60 outline-none focus:border-emerald-500/40 focus:ring-1 focus:ring-emerald-500/20 transition-all";
 
   return (
     <div className="relative min-h-screen flex items-center justify-center p-6">
@@ -67,26 +66,26 @@ export default function AdminLoginPage() {
             <span className="text-3xl">🛡️</span>
           </div>
           <h1 className="text-2xl font-bold text-white">Admin Paneli</h1>
-          <p className="text-emerald-200/40 text-sm mt-2">Skytech yönetim paneline giriş yapın.</p>
+          <p className="text-emerald-100/80 text-sm mt-2">Skytech yönetim paneline giriş yapın.</p>
         </div>
 
         <form onSubmit={handleLogin} className="liquid-glass rounded-3xl p-8 space-y-5 overflow-hidden relative">
           <div className="relative z-10">
             <div>
-              <label className="block text-sm font-medium text-emerald-200/50 mb-2">E-posta</label>
-              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)}
+              <label htmlFor="admin-email" className="block text-sm font-medium text-emerald-100/90 mb-2">E-posta</label>
+              <input id="admin-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)}
                 placeholder="admin@skytechgreen.com" autoComplete="email"
                 className={inputClasses} />
             </div>
             <div className="mt-5">
-              <label className="block text-sm font-medium text-emerald-200/50 mb-2">Şifre</label>
-              <input type="password" value={password} onChange={(e) => setPassword(e.target.value)}
+              <label htmlFor="admin-password" className="block text-sm font-medium text-emerald-100/90 mb-2">Şifre</label>
+              <input id="admin-password" type="password" value={password} onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••" autoComplete="current-password"
                 className={inputClasses} />
             </div>
 
             {error && (
-              <div className="mt-5 bg-rose-500/10 border border-rose-500/20 text-rose-400 text-sm px-4 py-3 rounded-2xl">{error}</div>
+              <div role="alert" className="mt-5 bg-rose-500/10 border border-rose-500/20 text-rose-400 text-sm px-4 py-3 rounded-2xl">{error}</div>
             )}
 
             <button type="submit" disabled={loading}
@@ -101,7 +100,7 @@ export default function AdminLoginPage() {
           </div>
         </form>
 
-        <p className="text-center text-xs text-emerald-200/20">
+        <p className="text-center text-xs text-emerald-100/80">
           <Link href="/" className="hover:text-white transition-colors">← Ana siteye dön</Link>
         </p>
       </div>

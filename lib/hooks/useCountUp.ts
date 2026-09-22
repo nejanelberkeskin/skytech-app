@@ -10,16 +10,9 @@ import { useEffect, useRef, useState } from "react";
  */
 export function useCountUp(target: number, duration = 2000, enabled = true): number {
   const [value, setValue] = useState(0);
-  const startedRef = useRef(false);
 
   useEffect(() => {
-    if (!enabled || target === 0) {
-      setValue(target);
-      return;
-    }
-    if (startedRef.current) return;
-    startedRef.current = true;
-
+    if (!enabled || target === 0) return;
     const start = performance.now();
     let raf = 0;
     const tick = (now: number) => {
@@ -33,7 +26,7 @@ export function useCountUp(target: number, duration = 2000, enabled = true): num
     return () => cancelAnimationFrame(raf);
   }, [target, duration, enabled]);
 
-  return value;
+  return !enabled || target === 0 ? 0 : value;
 }
 
 /**

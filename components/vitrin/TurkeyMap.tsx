@@ -174,8 +174,8 @@ export default function TurkeyMap({ projects }: Props) {
 
             {/* Pulse markers for active projects */}
             {Array.from(projectsByProvince.entries())
-              .filter(([_, list]) => list.some((p) => p.status === "active"))
-              .map(([key, list]) => {
+              .filter(([, list]) => list.some((p) => p.status === "active"))
+              .map(([key]) => {
                 const province = TURKEY_PROVINCES.find(
                   (p) => normalizeName(p.name) === key
                 );
@@ -332,15 +332,11 @@ function pathCenter(d: string): { x: number; y: number } | null {
   // Not perfectly accurate but good enough for marker placement.
   const numbers = d.match(/-?\d+\.?\d*/g);
   if (!numbers || numbers.length < 2) return null;
-  let totalX = 0;
-  let totalY = 0;
   let count = 0;
   for (let i = 0; i + 1 < numbers.length; i += 2) {
     const x = parseFloat(numbers[i]);
     const y = parseFloat(numbers[i + 1]);
     if (!isNaN(x) && !isNaN(y)) {
-      totalX += x;
-      totalY += y;
       count++;
     }
   }

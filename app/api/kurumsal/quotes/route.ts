@@ -1,11 +1,11 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { createSupabaseServer, createServiceRoleClient } from "@/lib/supabase/server";
 
 /**
  * Kurumsal kullanıcının kendi tekliflerini getiren API.
  * Auth: Cookie-based session — user can only see their OWN quotes.
  */
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     // ── Auth Guard ──────────────────────────────────────────────────────
     const supabaseAuth = await createSupabaseServer();

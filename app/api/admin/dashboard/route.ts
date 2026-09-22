@@ -22,9 +22,10 @@ const MONTH_LABEL = new Intl.DateTimeFormat("tr-TR", { month: "short", year: "2-
 const monthKey = (d: Date) => new Intl.DateTimeFormat("en-CA", { year: "numeric", month: "2-digit", timeZone: "Europe/Istanbul" }).format(d);
 
 export async function GET(request: NextRequest) {
-  const { error: authError } = await requireAdmin(request);
+  const { admin, error: authError } = await requireAdmin(request);
   if (authError) return authError;
 
+  const financial = admin?.role === "SUPER_ADMIN" || admin?.role === "FINANCE";
   const supabase = createServiceRoleClient();
 
   const [ordersRes, invoicesRes, landsRes, b2bRes, newRequestsRes, contactedRequestsRes] = await Promise.all([
@@ -46,7 +47,7 @@ export async function GET(request: NextRequest) {
     supabase.from("service_requests").select("id", { count: "exact", head: true }).eq("status", "contacted"),
   ]);
 
-  if (ordersRes.error || landsRes.error) {
+  if ([ordersRes, invoicesRes, landsRes, b2bRes, newRequestsRes, contactedRequestsRes].some((r) => r.error)) {
     return NextResponse.json({ error: "unavailable" }, { status: 503 });
   }
 
@@ -81,7 +82,7 @@ export async function GET(request: NextRequest) {
 
   return NextResponse.json({
     kpis: {
-      netRevenueKurus: collected.reduce((s, o) => s + Number(o.total_kurus), 0),
+      ...(financial ? { netRevenueKurus: collected.reduce((s, o) => s + Number(o.total_kurus), 0) } : {}),
       orderCount: collected.length,
       releasedQuantity: inStatus(RELEASED).reduce((s, o) => s + Number(o.quantity), 0),
       pendingRefunds: inStatus(REFUND_PENDING).length,
@@ -94,7 +95,7 @@ export async function GET(request: NextRequest) {
       newRequests: newRequestsRes.count ?? 0,
       contactedRequests: contactedRequestsRes.count ?? 0,
     },
-    monthlyGrowth: months.map(({ month, revenue, seeds }) => ({ month, revenue, seeds })),
+    monthlyGrowth: months.map(({ month, revenue, seeds }) => ({ month, seeds, ...(financial ? { revenue } : {}) })),
     capacityAlerts,
   });
 }

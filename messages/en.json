@@ -5,7 +5,8 @@
     "soon": "Coming Soon",
     "loading": "Loading...",
     "error": "Something went wrong",
-    "scrollTop": "Scroll to top"
+    "scrollTop": "Scroll to top",
+    "close": "Close"
   },
   "nav": {
     "home": "Home",
@@ -592,8 +593,8 @@
     "titleAccent": "Nature's Return",
     "labelBefore": "Before the Fire",
     "labelAfter": "After the Fire",
-    "altBefore": "Barren land before the fire",
-    "altAfter": "Forest greening after the fire"
+    "altBefore": "View of a green forest",
+    "altAfter": "View of land affected by fire"
   },
   "aboutPage": {
     "meta": {
@@ -961,7 +962,7 @@
         "pre": "Corporate Afforestation",
         "highlight": "System Modules"
       },
-      "subtitle": "Six core corporate solutions for companies of every size.",
+      "subtitle": "Four core corporate solutions for companies of every size.",
       "certificate": {
         "title": "Employee-Based Certificate",
         "desc": "A personalized PDF certificate is generated automatically for each employee and delivered by email."
@@ -1058,14 +1059,16 @@
         "label": "Your Message",
         "placeholder": "Describe your question, need or request in detail..."
       },
-      "consent": "I have read the KVKK (Personal Data Protection) Disclosure Statement and consent to the processing of my data.",
+      "consent": "I have read the notice about my personal data.",
       "submit": "Send Message",
       "submitting": "Sending...",
       "success": {
         "title": "Message Received!",
         "desc": "We will get back to you as soon as possible. Thank you."
       },
-      "error": "Something went wrong. Please try again or reach us directly at info@skytechgreen.com."
+      "error": "Something went wrong. Please try again or reach us directly at info@skytechgreen.com.",
+      "privacyLink": "Personal Data Notice",
+      "rateLimited": "Too many attempts. Please try again in a few minutes."
     },
     "topics": {
       "individual": "Seed Ball Release on a Project Site",
@@ -1306,6 +1309,82 @@
       },
       "backToSites": "Back to Project Sites"
     }
+  },
+  "authPages": {
+    "home": "Skytech Green home",
+    "linkError": "This link could not be verified in this browser. If your account is confirmed, sign in; otherwise request a new password reset link.",
+    "confirmError": "The verification link is invalid or expired. Try signing in or request a new link.",
+    "oauthError": "Google sign-in could not be completed. Please try again.",
+    "required": "Email and password are required.",
+    "credentials": "Incorrect email or password.",
+    "verifyRequired": "Please verify your email using the link in your inbox.",
+    "rateLimited": "Too many attempts. Please try again in a few minutes.",
+    "loginError": "Unable to sign in. Please try again.",
+    "welcome": "Welcome back",
+    "loginSubtitle": "Sign in to track your requests.",
+    "noAccount": "Don't have an account?",
+    "register": "Create account",
+    "email": "Email",
+    "password": "Password",
+    "forgotLink": "Forgot password?",
+    "show": "Show",
+    "hide": "Hide",
+    "loggingIn": "Signing in…",
+    "login": "Sign in",
+    "or": "or",
+    "googleLogin": "Sign in with Google",
+    "allFields": "Complete all fields.",
+    "validEmail": "Enter a valid email address.",
+    "minPassword": "Use at least 8 characters for your password.",
+    "mismatch": "Passwords do not match.",
+    "termsRequired": "Accept the terms of use and read the privacy notices to continue.",
+    "registered": "This email is already registered. Try signing in or resetting your password.",
+    "weakPassword": "This password is weak or has appeared in a data breach. Choose a different password.",
+    "registerError": "Unable to create your account. Please try again.",
+    "verifyTitle": "Verify your email",
+    "verifySubtitle": "One more step to activate your account.",
+    "verifyMessage": "— check this inbox for a verification link. Follow it to activate your account. If no message arrives, check your spam folder.",
+    "resent": "Sent again ✓",
+    "resend": "Resend link",
+    "join": "Join us",
+    "joinSubtitle": "Track your requests in one place.",
+    "haveAccount": "Already have an account?",
+    "claimMessage": "Your request will be linked to your account when it is created.",
+    "fullName": "Full name",
+    "namePlaceholder": "Your full name",
+    "minPlaceholder": "At least 8 characters",
+    "confirmPassword": "Confirm password",
+    "repeatPlaceholder": "Repeat password",
+    "hidePasswords": "Hide passwords",
+    "showPasswords": "Show passwords",
+    "terms": "Terms of Use",
+    "privacy": "Privacy Policy",
+    "and": "and",
+    "notice": "Personal Data Notice",
+    "creating": "Creating account…",
+    "googleRegister": "Sign up with Google",
+    "forgotTitle": "Forgot password",
+    "forgotSubtitle": "Enter your email to request a password reset link.",
+    "backLogin": "← Back to sign in",
+    "sentTitle": "Check your email",
+    "sentMessage": "If this email is registered, a password reset link will arrive shortly. Check your inbox and spam folder. The link can only be used once.",
+    "sending": "Sending…",
+    "sendLink": "Send link",
+    "samePassword": "Your new password must differ from your old password.",
+    "resetError": "Unable to update your password. The link may have expired; request a new one.",
+    "invalidTitle": "Invalid link",
+    "invalidSubtitle": "The password reset link is invalid or expired.",
+    "invalidMessage": "Links expire and can only be used once. Open the link in the browser where you requested it, or request a new link.",
+    "newLink": "Request new link",
+    "resetTitle": "Set a new password",
+    "resetSubtitle": "Choose a new password for your account.",
+    "updated": "Password updated",
+    "redirecting": "Redirecting to your account…",
+    "newPassword": "New password",
+    "confirmNew": "Confirm new password",
+    "updatePassword": "Update password",
+    "saving": "Saving…",
+    "termsNotice": "I accept the <terms>Terms of Use</terms> and have read the <privacy>Privacy Policy</privacy> and <notice>Personal Data Notice</notice>."
   },
   "siteReleases": {
     "title": "Work at this site",
@@ -1699,7 +1778,7 @@
     "release": "Seed ball release",
     "monitoring": "Monitoring and reporting",
     "current": "Current month",
-    "video": "Around 6 months after release: footage of the work."
+    "video": "Footage from the release and monitoring work."
   },
   "certificatePage": {
     "title": "Certificate of Participation",

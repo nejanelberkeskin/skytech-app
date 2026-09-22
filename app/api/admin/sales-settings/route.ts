@@ -7,7 +7,7 @@ import { auditLog } from "@/lib/admin/audit";
 import {
   DEFAULT_SALES_SETTINGS,
   SALES_SETTINGS_TAG,
-  loadSalesSettings,
+  loadAdminSalesSettings,
   quoteVersion,
   updateSalesSettings,
 } from "@/lib/orders/settings";
@@ -53,7 +53,7 @@ export async function GET(request: NextRequest) {
   const supabase = createServiceRoleClient();
   try {
     const [record, open, past] = await Promise.all([
-      loadSalesSettings(supabase),
+      loadAdminSalesSettings(supabase),
       supabase
         .from("release_orders")
         .select("id", { count: "exact", head: true })
@@ -63,12 +63,15 @@ export async function GET(request: NextRequest) {
     ]);
     return NextResponse.json({
       settings: record.settings,
+      rawSettings: record.rawSettings,
+      fieldErrors: record.fieldErrors,
+      repairRequired: !record.settings,
       updatedAt: record.updatedAt,
       defaults: DEFAULT_SALES_SETTINGS,
-      quoteVersion: quoteVersion(record.settings),
+      quoteVersion: record.settings ? quoteVersion(record.settings) : null,
       openCheckouts: open.count ?? 0,
       history: past,
-      readiness: salesReadiness(record.settings),
+      readiness: salesReadiness(record.settings ?? { ...DEFAULT_SALES_SETTINGS, ordersPaused: true }),
     });
   } catch {
     return NextResponse.json({ error: "unavailable" }, { status: 503 });
@@ -95,14 +98,17 @@ export async function PUT(request: NextRequest) {
   const supabase = createServiceRoleClient();
   let current;
   try {
-    current = await loadSalesSettings(supabase);
+    current = await loadAdminSalesSettings(supabase);
   } catch {
     return NextResponse.json({ error: "unavailable" }, { status: 503 });
   }
   if (current.updatedAt !== body.data.expectedUpdatedAt) {
     return NextResponse.json({ error: "conflict" }, { status: 409 });
   }
-  const changes = diffSettings(current.settings, next);
+  if (!current.settings && !next.ordersPaused) {
+    return NextResponse.json({ error: "repair_requires_pause", fields: { ordersPaused: "repair_requires_pause" } }, { status: 400 });
+  }
+  const changes = diffSettings(current.settings ?? current.rawSettings, next);
   if (changes.length === 0) {
     return NextResponse.json({ ok: true, unchanged: true, settings: current.settings, updatedAt: current.updatedAt, quoteChanged: false });
   }
@@ -113,7 +119,7 @@ export async function PUT(request: NextRequest) {
   }
 
   const quoteChanged = changes.some((c) => QUOTE_FIELDS.includes(c.field));
-  await auditLog(supabase, {
+  const warnings = await auditLog(supabase, {
     admin,
     action: "UPDATE",
     entity: ENTITY,
@@ -126,6 +132,7 @@ export async function PUT(request: NextRequest) {
 
   return NextResponse.json({
     ok: true,
+    warnings,
     settings: saved.record.settings,
     updatedAt: saved.record.updatedAt,
     quoteChanged,

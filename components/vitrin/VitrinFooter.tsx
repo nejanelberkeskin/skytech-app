@@ -4,7 +4,7 @@ import { getTranslations } from "next-intl/server";
 import LanguageSwitcher from "./LanguageSwitcher";
 import CookiePreferencesLink from "./CookiePreferencesLink";
 import KenxBadge from "./KenxBadge";
-import { ORG_LEGAL_NAME, ORG_PARENT_URL, ORG_SOCIAL } from "@/lib/seo";
+import { ORG_ADDRESS, ORG_LEGAL_NAME, ORG_PARENT_URL, ORG_SOCIAL } from "@/lib/seo";
 import { REQUESTS_ENABLED, REQUEST_ROUTES } from "@/lib/site-config";
 
 export default async function VitrinFooter() {
@@ -127,7 +127,11 @@ export default async function VitrinFooter() {
               </p>
               <p className="flex items-start gap-2">
                 <PinIcon className="w-4 h-4 text-[#22894a] mt-0.5 shrink-0" />
-                <span>Saray Mah. 60 Cad. No:22<br />Kahramankazan / Ankara, Türkiye</span>
+                <span>
+                  {ORG_ADDRESS.street}
+                  <br />
+                  {ORG_ADDRESS.district} / {ORG_ADDRESS.city}, {ORG_ADDRESS.country}
+                </span>
               </p>
             </div>
           </div>

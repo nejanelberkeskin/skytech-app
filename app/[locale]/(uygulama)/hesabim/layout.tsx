@@ -171,7 +171,7 @@ export default function HesabimLayout({ children }: { children: React.ReactNode 
             className="flex items-center justify-center gap-2 w-full py-3 rounded-2xl glass-btn text-sm font-medium text-white transition-all"
           >
             <SproutIcon className="w-4 h-4" />
-            {CTA_MODE === "order" ? "Tohum Satın Al" : "Talep Oluştur"}
+            {CTA_MODE === "order" ? "Satın Al" : "Talep Oluştur"}
           </Link>
           <button
             onClick={handleLogout}

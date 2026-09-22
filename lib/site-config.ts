@@ -81,9 +81,14 @@ export function orderCtaHref(kind: RequestRouteKey = "hub"): string {
   return "/yakinda";
 }
 
-/** CTA'lar "talep" mi "sipariş" mi "yakında" mı diyecek — metin seçimi için. */
+/**
+ * CTA'lar "satın al" mı "talep oluştur" mu "yakında" mı diyecek — metin seçimi için.
+ * "order" yeni satış modelinin bayrağına (SALES_ENABLED) bağlıdır; eski tohum satışı bayrağı
+ * (TRANSACTIONS_ENABLED) çağrı metnini etkilemez. Çağrıların hedefi her kipte aynıdır: /sahalar
+ * (sahanın sihirbazı, sipariş alınamıyorsa talep kipinde açılır).
+ */
 export type CtaMode = "order" | "request" | "soon";
-export const CTA_MODE: CtaMode = TRANSACTIONS_ENABLED
+export const CTA_MODE: CtaMode = SALES_ENABLED
   ? "order"
   : REQUESTS_ENABLED
     ? "request"

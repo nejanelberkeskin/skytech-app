@@ -11,7 +11,10 @@ import { buildPageMetadata } from "@/lib/seo";
        (components/analytics/GoogleAnalytics.tsx, lib/analytics.ts)
      • Oturum çerezleri: @supabase/ssr (lib/supabase/*) — yalnız üye girişi yapıldığında
      • Tarayıcı deposu: skytech_cookie_consent (lib/analytics.ts), skytech_pending_claim (lib/requests/client.ts)
-     • Gömülü üçüncü taraf içerik yalnız tıklanınca yüklenir (components/vitrin/shared/ClickToLoadFrame.tsx)
+     • Sipariş erişim çerezi sgo_<no>: lib/orders/access.ts (orderCookieOptions — HttpOnly, 30 gün)
+     • Gömülü üçüncü taraf içerik yalnız tıklanınca yüklenir (components/vitrin/shared/ClickToLoadFrame.tsx,
+       saha videoları: components/vitrin/shared/YouTubeLite.tsx — youtube-nocookie.com)
+     • Ödeme iyzico'nun barındırdığı sayfada alınır (lib/payments/iyzico.ts) — sitemize gömülü değildir
    Dil tercihi çerezle değil adresle tutulur (i18n/routing.ts → localeDetection: false). */
 
 const LINK = "text-[#1B6B3A] font-semibold underline underline-offset-2";
@@ -69,6 +72,12 @@ export default async function CerezPolitikasiPage({
               silinir; kapatmazsanız en çok 400 gün saklanır. Sağlayıcı: üyelik altyapımız Supabase.
             </>,
             <>
+              <strong>Sipariş erişim çerezi</strong> (<code>sgo_</code> ile başlayan, sipariş numaranızı içeren ad):
+              sipariş teyidi e-postanızdaki bağlantıyla sipariş sayfanızı açtığınızda yazılır; sayfayı yenilediğinizde ya
+              da dil değiştirdiğinizde siparişinizi yeniden görebilmenizi sağlar. Yalnızca sunucumuz okuyabilir, başka
+              sitelere gönderilmez; 30 gün sonra kendiliğinden silinir.
+            </>,
+            <>
               <strong>Çerez tercihiniz</strong> (tarayıcı deposu: <code>skytech_cookie_consent</code>): analitiğe izin
               verip vermediğinizi hatırlar; böylece her sayfada yeniden sorulmaz. Siz silene kadar durur.
             </>,
@@ -124,10 +133,28 @@ export default async function CerezPolitikasiPage({
 
       <LegalSection no="5" title="Üçüncü taraf içerikler">
         <LegalP>
-          Başka bir sağlayıcıdan gelen içerikler <strong>yalnızca siz istediğinizde</strong> yüklenir. İletişim
-          sayfasındaki harita, “Haritayı göster” düğmesine bastığınızda OpenStreetMap’ten yüklenir; basmadığınız
-          sürece OpenStreetMap’e hiçbir istek gitmez. Yüklendikten sonra o içerik kendi sağlayıcısının gizlilik
-          ve çerez koşullarına tabidir.
+          Başka bir sağlayıcıdan gelen içerikler <strong>yalnızca siz istediğinizde</strong> yüklenir:
+        </LegalP>
+        <LegalList
+          items={[
+            <>
+              <strong>Harita:</strong> İletişim sayfasındaki harita, “Haritayı göster” düğmesine bastığınızda
+              OpenStreetMap’ten yüklenir.
+            </>,
+            <>
+              <strong>Çalışma videoları:</strong> Proje Uygulama Sahası sayfalarındaki videolar, “Videoyu oynat”
+              düğmesine bastığınızda YouTube’un gizlilik geliştirilmiş kipinden (youtube-nocookie.com) yüklenir.
+              Oynatmaya başladığınızda YouTube kendi çerezlerini ve tarayıcı deposunu kullanabilir.
+            </>,
+          ]}
+        />
+        <LegalP>
+          Düğmeye basmadığınız sürece bu sağlayıcılara hiçbir istek gitmez. Yüklendikten sonra içerik, kendi
+          sağlayıcısının gizlilik ve çerez koşullarına tabidir.
+        </LegalP>
+        <LegalP>
+          Sipariş verdiğinizde ödeme, ödeme kuruluşu <strong>iyzico</strong>’nun güvenli ödeme sayfasında alınır. Bu
+          sayfa sitemize gömülü değildir; ödeme sırasında iyzico’nun kendi çerez ve gizlilik koşulları geçerlidir.
         </LegalP>
         <LegalP>
           Sitedeki sosyal medya simgeleri yalnızca bağlantıdır; tıklamadığınız sürece o platformlara veri

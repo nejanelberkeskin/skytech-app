@@ -101,12 +101,67 @@ const REQUEST_ROUTE_PATTERNS: RegExp[] = [/^\/talep(\/.*)?$/];
 /** Geriye dönük uyumluluk: eski adıyla dışa açık liste (ödeme rotaları). */
 export const SUSPENDED_ROUTE_PATTERNS = TRANSACTION_ROUTE_PATTERNS;
 
+/**
+ * B2B'nin (kurumsal teklif → ödeme → çalışan sertifikaları) herkese açık görünen sayfaları —
+ * B2B'nin öteki sayfaları gibi TRANSACTIONS_ENABLED kapalıyken /yakinda'ya gider.
+ */
+const B2B_PAGE_PATTERNS: RegExp[] = [
+  /^\/fatura(\/.*)?$/,              // sipariş belgesi (yer tutucu satıcı bilgisi içeriyor)
+  /^\/orman(\/.*)?$/,               // şirket ormanı sayfası
+];
+
 /** Bayraklara göre bu yol şu an /yakinda'ya yönlenmeli mi? */
 export function isSuspendedRoute(pathname: string): boolean {
   if (!TRANSACTIONS_ENABLED && TRANSACTION_ROUTE_PATTERNS.some((re) => re.test(pathname))) return true;
+  if (!TRANSACTIONS_ENABLED && B2B_PAGE_PATTERNS.some((re) => re.test(pathname))) return true;
   if (!ACCOUNTS_ENABLED && ACCOUNT_ROUTE_PATTERNS.some((re) => re.test(pathname))) return true;
   if (!REQUESTS_ENABLED && REQUEST_ROUTE_PATTERNS.some((re) => re.test(pathname))) return true;
   return false;
+}
+
+/* ── API uçları (middleware, sayfa kontrollerinden ÖNCE uygular) ─────────── */
+
+/**
+ * Eski bireysel tohum satışının API uçları — KALICI OLARAK KAPALI (410 Gone).
+ * Sayfaları /yakinda'ya gidiyordu ama uçları bayrağa bakmadan herkese açıktı: kimliksiz
+ * çağrıyla sahalarda kapasite ayrılabiliyor, sipariş/ödeme kaydı açılabiliyor, bir saha
+ * "dolu" yapılabiliyordu. Kodları Faz 8 temizliğinde silinir.
+ */
+const RETIRED_API_PATTERNS: RegExp[] = [
+  /^\/api\/payment\/guest-checkout\/?$/,
+  /^\/api\/payment\/checkout\/?$/,
+  /^\/api\/payment\/status\/?$/,
+  /^\/api\/auth\/claim-order\/?$/,           // tekil; yeni modelin claim-orders ucu açık kalır
+  /^\/api\/orders\/(reserve|release)\/?$/,
+  /^\/api\/public\/orders\/track\/?$/,
+  /^\/api\/public\/referral(\/.*)?$/,
+  /^\/api\/public\/settings\/?$/,
+  /^\/api\/public\/catalog\/?$/,
+];
+
+/**
+ * B2B API uçları — B2B sayfalarıyla aynı bayrağa bağlı: TRANSACTIONS_ENABLED kapalıyken
+ * 503 "closed". B2B akışı korunuyor; açılmadan önce veritabanı politikaları (kurumsal teklif
+ * ekleme, sertifika okuma) sıkılaştırılmalı.
+ */
+const B2B_API_PATTERNS: RegExp[] = [
+  /^\/api\/payment\/b2b-checkout\/?$/,
+  /^\/api\/payment\/callback\/?$/,
+  /^\/api\/kurumsal(\/.*)?$/,
+  /^\/api\/orders\/invoice(\/.*)?$/,
+  /^\/api\/public\/sertifika(\/.*)?$/,
+  /^\/api\/public\/orman(\/.*)?$/,
+  /^\/api\/embed\/rozet(\/.*)?$/,
+];
+
+/** Kalıcı olarak kapatılmış eski API ucu mu? (410) */
+export function isRetiredApi(pathname: string): boolean {
+  return RETIRED_API_PATTERNS.some((re) => re.test(pathname));
+}
+
+/** Bayrak kapalıyken kapalı olan B2B API ucu mu? (503) */
+export function isSuspendedApi(pathname: string): boolean {
+  return !TRANSACTIONS_ENABLED && B2B_API_PATTERNS.some((re) => re.test(pathname));
 }
 
 /** Üyelik açık ama ödeme kapalıyken /hesabim'a katlanacak alt sayfalar. */

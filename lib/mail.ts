@@ -96,7 +96,7 @@ async function logEmail(
 // ── Hata mesajı (unknown → string) ───────────────────────────────────
 
 function errorMessage(e: unknown): string {
-  return e instanceof Error ? errorMessage(e) : String(e);
+  return e instanceof Error ? e.message : String(e);
 }
 
 // ── HTML escape helper (XSS koruması) ────────────────────────────────

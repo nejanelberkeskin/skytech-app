@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServiceRoleClient } from "@/lib/supabase/server";
-import { requireAdmin } from "@/lib/admin-auth";
-import { can } from "@/lib/admin/permissions";
+import { hasFullScope, requireAdminAccess } from "@/lib/admin/permissions";
 import { FINANCE_DEFINITIONS_VERSION, loadFinanceOverview, monthLabel, type FinanceOverview } from "@/lib/finance/overview";
 
 /**
@@ -15,10 +14,11 @@ import { FINANCE_DEFINITIONS_VERSION, loadFinanceOverview, monthLabel, type Fina
  * Alt sorgulardan biri bile okunamazsa 503: eksik veri sıfır gibi gösterilmez.
  */
 export async function GET(request: NextRequest) {
-  const { admin, error: authError } = await requireAdmin(request);
-  if (authError) return authError;
+  const guard = await requireAdminAccess(request);
+  if (guard.error) return guard.error;
 
-  const financial = can(admin, "finance.read");
+  // Genel Bakış tüm kayıtların toplamıdır; kapsamı uygulamaz. Dar kapsamlı yetki para alanlarını açmaz.
+  const financial = hasFullScope(guard.access, "finance.read");
   const supabase = createServiceRoleClient();
 
   const [overviewRes, invoicesRes, landsRes, b2bRes, newRequestsRes, contactedRequestsRes] = await Promise.all([

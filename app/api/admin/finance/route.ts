@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requireAdmin } from "@/lib/admin-auth";
-import { can } from "@/lib/admin/permissions";
+import { requirePermission } from "@/lib/admin/permissions";
 import { createServiceRoleClient } from "@/lib/supabase/server";
 import type { B2bPayment } from "@/lib/admin/finance";
 import { readPages } from "@/lib/admin/read-pages";
@@ -24,9 +23,8 @@ interface RecentOrderRow {
 }
 
 export async function GET(request: NextRequest) {
-  const { admin, error } = await requireAdmin(request);
-  if (error) return error;
-  if (!can(admin, "finance.read")) return NextResponse.json({ error: "Bu işlem için yetkiniz yok." }, { status: 403 });
+  const guard = await requirePermission(request, "finance.read");
+  if (guard.error) return guard.error;
 
   try {
     const db = createServiceRoleClient();

@@ -1,7 +1,7 @@
 // İade görünümü, sağlayıcı sınıflandırması, izinler, finans normalizasyonu, iş sağlığı — ağ/DB yok.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { loadSource } from './load-source.mjs';
+import { loadSource, loadSource as load } from './load-source.mjs';
 import { REFUND_VIEW_FIXTURES as F, REFUND_QUEUE_FIXTURE, FIXTURE_NOW } from '../../lib/refunds/fixtures.ts';
 import { actionsFor } from '../../lib/refunds/model.ts';
 import { mapSqlError } from '../../lib/refunds/service.ts';
@@ -142,28 +142,19 @@ test('taklit sağlayıcı: MOCK_REFUND_OUTCOME kipleri, canlıda kapalı', async
 
 /* ── İzinler ──────────────────────────────────────────────────────────── */
 
-test('izinler: bugünkü rollere eşleme, pasif yönetici, hata biçimi', async () => {
-  const response = { json: (body, init) => ({ body, status: init?.status ?? 200 }) };
-  let auth = { admin: { role: 'FINANCE', is_active: true, user_id: 'u' }, error: null };
-  const envelope = loadSource('lib/api/envelope.ts', { 'next/server': { NextResponse: response } });
-  const p = loadSource('lib/admin/permissions.ts', {
-    '@/lib/admin-auth': { requireAdmin: async () => auth },
-    '@/lib/api/envelope': envelope,
+test('izinler: çözümlenmiş erişimle kontrol (rol eşlemesi artık veritabanında, 021)', async () => {
+  const keys = load('lib/admin/permission-keys.ts');
+  const permissions = load('lib/admin/permissions.ts', {
+    'next/server': {}, '@/lib/rbac': {}, '@/lib/admin-auth': {},
+    '@/lib/api/envelope': { fail: (status, code) => ({ status, code }) },
+    '@/lib/supabase/server': { createServiceRoleClient: () => ({}) },
+    './mfa': { sessionAssurance: async () => ({ aal: 'aal1', verifiedAt: null, enrolled: false }) },
+    './permission-keys': keys,
   });
-  const role = (r) => ({ role: r, is_active: true });
-  assert.deepEqual(p.permissionsOf(role('SUPER_ADMIN')), ['finance.read', 'refunds.execute', 'system.readiness.read', 'system.jobs.run']);
-  assert.deepEqual(p.permissionsOf(role('FINANCE')), ['finance.read', 'refunds.execute']);
-  assert.deepEqual(p.permissionsOf(role('OPERATIONS')), ['system.readiness.read']);
-  assert.deepEqual(p.permissionsOf(role('ENGINEER')), []);
-  assert.equal(p.can({ role: 'SUPER_ADMIN', is_active: false }, 'finance.read'), false);
-  assert.equal((await p.requirePermission({}, 'refunds.execute')).error, null);
-  const denied = await p.requirePermission({}, 'system.jobs.run');
-  assert.deepEqual([denied.error.status, denied.error.body.error.code], [403, 'forbidden']);
-  for (const [status, code] of [[401, 'unauthenticated'], [403, 'forbidden'], [500, 'unavailable']]) {
-    auth = { admin: null, error: { status } };
-    const r = await p.requirePermission({}, 'finance.read');
-    assert.deepEqual([r.error.body.ok, r.error.body.error.code], [false, code]);
-  }
+  const access = keys.toEffectiveAccess({ adminId: 'a', permissions: [{ key: 'refunds.execute', scopes: [{ kind: 'all' }] }], roles: [], limits: {} });
+  assert.equal(permissions.can(access, 'refunds.execute'), true);
+  assert.equal(permissions.can(access, 'staff.manage'), false);
+  assert.equal(permissions.can(null, 'refunds.execute'), false);
 });
 
 /* ── Finans ve iş sağlığı ─────────────────────────────────────────────── */

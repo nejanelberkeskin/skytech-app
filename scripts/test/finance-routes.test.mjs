@@ -22,7 +22,18 @@ const OVERVIEW = {
   months: ['2026-04', '2026-05', '2026-06', '2026-07', '2026-08', '2026-09'].map((key, i) => ({ key, orderCollectionsKurus: i * 1000, duplicateChargesKurus: 0, refundsKurus: 0, netCashKurus: i * 1000, paidQuantity: i })),
 };
 const overviewModule = load('lib/finance/overview.ts', {});
-const permissions = load('lib/admin/permissions.ts', { '@/lib/admin-auth': {}, '@/lib/api/envelope': {} });
+// İzin modülü taklit edilir: gerçek modül veritabanından etkili yetki okur (021).
+const ROLE_PERMISSIONS = { SUPER_ADMIN: ['finance.read', 'refunds.execute'], FINANCE: ['finance.read', 'refunds.execute'], OPERATIONS: [], ENGINEER: [] };
+const guardFor = (role) => ({ admin: { role, is_active: true, user_id: 'u', id: 'a', full_name: 'T', email: 't@example.invalid' },
+  access: { adminId: 'a', permissions: ROLE_PERMISSIONS[role].map((key) => ({ key, scopes: [{ kind: 'all' }] })), roles: [], limits: { refundKurus: null, enforced: false } }, error: null });
+const hasFull = (access, key) => Boolean(access?.permissions?.some((p) => p.key === key && p.scopes?.some((s) => s.kind === 'all')));
+const permissionsFor = (role) => ({
+  can: (access, key) => Boolean(access?.permissions?.some((p) => p.key === key)),
+  hasFullScope: hasFull,
+  requireAdminAccess: async () => guardFor(role),
+  requirePermission: async (_request, key) =>
+    ROLE_PERMISSIONS[role].includes(key) ? guardFor(role) : { admin: null, access: null, error: response.json({ ok: false, error: { code: 'forbidden', message: 'Bu işlem için yetkiniz yok.' } }, { status: 403 }) },
+});
 
 function db({ rpcError = null, tableErrors = {}, tables = {} } = {}) {
   return {
@@ -35,8 +46,7 @@ function dashboard(role, client) {
   return load('app/api/admin/dashboard/route.ts', {
     'next/server': { NextResponse: response },
     '@/lib/supabase/server': { createServiceRoleClient: () => client },
-    '@/lib/admin-auth': { requireAdmin: async () => ({ admin: { role, is_active: true }, error: null }) },
-    '@/lib/admin/permissions': permissions,
+    '@/lib/admin/permissions': permissionsFor(role),
     '@/lib/finance/overview': overviewModule,
   });
 }
@@ -68,8 +78,7 @@ test('Genel Bakış: finans hesabı ya da alt sorgu okunamazsa 503 (sıfır gös
 function finance(role, client) {
   return load('app/api/admin/finance/route.ts', {
     'next/server': { NextResponse: response },
-    '@/lib/admin-auth': { requireAdmin: async () => ({ admin: { role, is_active: true }, error: null }) },
-    '@/lib/admin/permissions': permissions,
+    '@/lib/admin/permissions': permissionsFor(role),
     '@/lib/supabase/server': { createServiceRoleClient: () => client },
     '@/lib/admin/read-pages': load('lib/admin/read-pages.ts', {}),
     '@/lib/finance/overview': overviewModule,

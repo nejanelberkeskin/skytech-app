@@ -11,14 +11,14 @@ export const IDS = {
   land: '20000000-0000-0000-0000-000000000001',
 };
 
-const MIGRATIONS = ['007_admin_audit_log.sql', '016_release_orders.sql', '017_sales_pause.sql', '019_audit_hardening.sql', '020_refund_reconciliation.sql'];
+const MIGRATIONS = ['007_admin_audit_log.sql', '016_release_orders.sql', '017_sales_pause.sql', '019_audit_hardening.sql', '020_refund_reconciliation.sql', '021_permission_core.sql'];
 
-export async function createDb({ upTo = '020_refund_reconciliation.sql' } = {}) {
+export async function createDb({ upTo = '021_permission_core.sql' } = {}) {
   const db = new PGlite();
   await db.exec(`CREATE ROLE anon; CREATE ROLE authenticated; CREATE ROLE service_role;
     CREATE SCHEMA auth; CREATE TABLE auth.users(id uuid PRIMARY KEY);
     CREATE FUNCTION auth.uid() RETURNS uuid LANGUAGE sql AS 'SELECT NULL::uuid';
-    CREATE TABLE admin_users(id uuid PRIMARY KEY DEFAULT gen_random_uuid(), user_id uuid UNIQUE, email text, full_name text, role text, is_active boolean);
+    CREATE TABLE admin_users(id uuid PRIMARY KEY DEFAULT gen_random_uuid(), user_id uuid UNIQUE, email text, full_name text, role text, is_active boolean, created_at timestamptz NOT NULL DEFAULT now(), updated_at timestamptz NOT NULL DEFAULT now());
     CREATE TABLE lands(id uuid PRIMARY KEY, reserved_seeds integer, filled_seeds integer, capacity_seeds integer, is_public boolean, status text);
     CREATE FUNCTION update_updated_at_column() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN NEW.updated_at = now(); RETURN NEW; END $$;
     INSERT INTO admin_users(user_id, email, full_name, role, is_active) VALUES

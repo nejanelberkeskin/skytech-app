@@ -1,12 +1,18 @@
 "use client";
 import { useEffect, useState } from "react";
-import { Input } from "@/components/ui";
+import { Button, Input } from "@/components/ui";
 import { MFA_PERMISSIONS } from "@/lib/admin/permission-keys";
 import { accessRequest } from "./transport";
 import { AccessPage, LoadError } from "./shared";
 import { permissionLabel } from "./labels";
+import RoleEditor from "./RoleEditor";
 import type { RoleView } from "./types";
 export default function RoleCatalog() {
+  const [editor, setEditor] = useState<{
+    source?: string;
+    edit: boolean;
+  } | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
   const [roles, setRoles] = useState<RoleView[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [revision, setRevision] = useState(0);
@@ -39,11 +45,43 @@ export default function RoleCatalog() {
         .toLocaleLowerCase("tr")
         .includes(search.toLocaleLowerCase("tr")),
     ) ?? [];
+  if (editor)
+    return (
+      <AccessPage
+        title="Roller ve izinler"
+        description="Rolün izinlerini ve etkilenen kayıtları inceleyerek kaydedin."
+      >
+        <RoleEditor
+          key={`${editor.source}:${editor.edit}`}
+          {...editor}
+          onClose={() => setEditor(null)}
+          onSaved={(message) => {
+            setNotice(message);
+            setRoles(null);
+            setRevision((n) => n + 1);
+            setEditor(null);
+          }}
+        />
+      </AccessPage>
+    );
   return (
     <AccessPage
       title="Roller ve izinler"
       description="Bir rolün neleri yapabildiğini inceleyin. Gerçek erişim, kişiye atanan kapsam ve süreyle birlikte belirlenir."
     >
+      {notice && (
+        <p role="status" className="text-emerald-200">
+          {notice}
+        </p>
+      )}
+      <Button
+        onClick={() => {
+          setNotice(null);
+          setEditor({ edit: false });
+        }}
+      >
+        Özel rol oluştur
+      </Button>
       <Input
         label="Rol veya izin ara"
         value={search}
@@ -68,6 +106,30 @@ export default function RoleCatalog() {
                 {role.isSystem ? "Sistem rolü · değiştirilemez" : "Özel rol"} ·{" "}
                 {role.permissions.length} izin
               </p>
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  variant="secondary"
+                  onClick={() => {
+                    setNotice(null);
+                    setEditor({ source: role.key, edit: false });
+                  }}
+                  aria-label={`${role.label} rolünü kopyala`}
+                >
+                  Kopyala
+                </Button>
+                {!role.isSystem && (
+                  <Button
+                    variant="secondary"
+                    onClick={() => {
+                      setNotice(null);
+                      setEditor({ source: role.key, edit: true });
+                    }}
+                    aria-label={`${role.label} rolünü düzenle`}
+                  >
+                    Düzenle
+                  </Button>
+                )}
+              </div>
               <details>
                 <summary className="min-h-11 cursor-pointer text-emerald-200">
                   İzinleri incele
@@ -94,8 +156,9 @@ export default function RoleCatalog() {
         <p className="text-slate-300">Aramanıza uygun rol bulunmuyor.</p>
       )}
       <p className="text-sm text-slate-400">
-        Bu sürümde hazır roller atanabilir; özel rol oluşturma ve izin düzenleme
-        henüz kullanılamıyor.
+        Sistem rollerini kopyalayarak özel roller oluşturabilirsiniz. Rol
+        değişiklikleri mevcut atamaları ve bekleyen davetleri etkiler;
+        kaydetmeden önce etkiyi inceleyin.
       </p>
     </AccessPage>
   );

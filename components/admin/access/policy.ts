@@ -12,10 +12,10 @@ export function hasFullPermission(
       ?.scopes.some((s) => s.kind === "all")
   );
 }
-const migrated: Record<string, Permission | "self"> = {
+const migrated: Record<string, Permission | readonly Permission[] | "self"> = {
   dashboard: "self",
-  kullanicilar: "staff.manage",
-  davetler: "staff.manage",
+  kullanicilar: ["staff.manage", "roles.manage"],
+  davetler: ["staff.manage", "staff.invite"],
   roller: "roles.manage",
   "islem-kaydi": "audit.read",
   guvenlik: "self",
@@ -27,7 +27,10 @@ export function visibleModules(me: AdminMe | null): AdminModule[] {
   return ADMIN_MODULES.filter((mod) => {
     const key = migrated[mod.id];
     if (key === "self") return true;
-    if (key) return hasFullPermission(me, key);
+    if (key)
+      return typeof key === "string"
+        ? hasFullPermission(me, key)
+        : key.some((p) => hasFullPermission(me, p));
     // Henüz izin/kapsam geçişi bitmeyen ekranları eski uçlardan daha geniş açma.
     return mod.allowedRoles.includes(me.admin.legacyRole as UserRole);
   });

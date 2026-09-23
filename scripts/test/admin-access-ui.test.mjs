@@ -43,3 +43,15 @@ test('unexpected HTTP 200 is uncertain; 409 retains conflict and warnings surviv
   globalThis.fetch=async()=>Response.json({ok:true,data:{id:'fixture'},warnings:[{code:'email_not_sent',message:'Gönderilemedi'}]});
   assert.equal((await accessRequest('/api/admin/invitations','POST',{})).warnings[0].code,'email_not_sent');
 });
+
+// These independent permissions must match the new API OR gates without opening legacy modules.
+test('standalone invitation and role managers see only the matching full-scope modules', () => {
+  const account = key => ({...ME_OWNER, admin:{...ME_OWNER.admin,legacyRole:'NONE'}, permissions:[{key,scopes:[{kind:'all'}]}]});
+  assert.equal(canVisit(account('staff.invite'),'/admin/davetler'),true);
+  assert.equal(canVisit(account('staff.invite'),'/admin/kullanicilar'),false);
+  assert.equal(canVisit(account('roles.manage'),'/admin/kullanicilar/fixture'),true);
+  assert.equal(canVisit(account('roles.manage'),'/admin/roller'),true);
+  assert.equal(canVisit(account('roles.manage'),'/admin/davetler'),false);
+  assert.equal(canVisit(account('roles.manage'),'/admin/araziler'),false);
+  assert.equal(canVisit({...account('staff.invite'),permissions:[{key:'staff.invite',scopes:[{kind:'assigned'}]}]},'/admin/davetler'),false);
+});

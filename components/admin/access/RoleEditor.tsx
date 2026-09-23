@@ -304,7 +304,8 @@ export default function RoleEditor({
           {detail && edit && (
             <p className="text-sm text-slate-300">
               Mevcut kullanım: {detail.usage.staffCount} kişi,{" "}
-              {detail.usage.activeAssignments} etkin atama,{" "}
+              {detail.usage.activeAssignments} etkin,{" "}
+              {detail.usage.scheduledAssignments} ileri tarihli atama,{" "}
               {detail.usage.pendingInvitations} bekleyen davet.
             </p>
           )}
@@ -386,9 +387,10 @@ export default function RoleEditor({
                 <>
                   <p className="text-amber-200">
                     Bu değişiklik {review.impact.usage.staffCount} kişinin{" "}
-                    {review.impact.usage.activeAssignments} etkin atamasını ve{" "}
-                    {review.impact.usage.pendingInvitations} bekleyen daveti
-                    etkiler.
+                    {review.impact.usage.activeAssignments} etkin,{" "}
+                    {review.impact.usage.scheduledAssignments} ileri tarihli
+                    atamasını ve {review.impact.usage.pendingInvitations}{" "}
+                    bekleyen daveti etkiler.
                   </p>
                   <PermissionList
                     title="Eklenecek izinler"
@@ -412,7 +414,8 @@ export default function RoleEditor({
                     <ul className="space-y-2 text-sm text-slate-300 break-words">
                       {review.impact.affectedStaff.map((s) => (
                         <li key={s.id}>
-                          {s.fullName} · {s.activeAssignments} etkin atama
+                          {s.fullName} · {s.activeAssignments} etkin,{" "}
+                          {s.scheduledAssignments} ileri tarihli atama
                         </li>
                       ))}
                       {review.impact.affectedInvitations.map((i) => (

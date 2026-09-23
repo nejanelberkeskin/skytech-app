@@ -1,11 +1,11 @@
 import type { NextRequest } from "next/server";
 import { z } from "zod";
-import { requirePermission } from "@/lib/admin/permissions";
+import { requireAnyPermission, requirePermission } from "@/lib/admin/permissions";
 import { UUID_RE, failFrom, isServiceError, readJson, reasonSchema, staffService } from "@/lib/admin/staff-http";
 import { fail, ok } from "@/lib/api/envelope";
 
 /**
- * GET   /api/admin/staff/{id} — personel ayrıntısı. İzin: staff.manage.
+ * GET   /api/admin/staff/{id} — personel ayrıntısı. İzin: staff.manage YA DA roles.manage (20 madde 7).
  * PATCH /api/admin/staff/{id} — aktiflik değişikliği. İzin: staff.manage (+ MFA).
  * Kendi kaydını değiştirmek ve son sahibi pasifleştirmek sunucuda engellenir.
  */
@@ -14,7 +14,7 @@ export const dynamic = "force-dynamic";
 const patchSchema = z.object({ isActive: z.boolean(), reason: reasonSchema }).strict();
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const guard = await requirePermission(request, "staff.manage");
+  const guard = await requireAnyPermission(request, ["staff.manage", "roles.manage"]);
   if (guard.error) return guard.error;
   const { id } = await params;
   if (!UUID_RE.test(id)) return fail(404, "not_found", "Personel kaydı bulunamadı.");

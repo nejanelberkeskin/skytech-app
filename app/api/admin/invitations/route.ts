@@ -1,7 +1,7 @@
 import type { NextRequest } from "next/server";
 import { after } from "next/server";
 import { z } from "zod";
-import { requirePermission } from "@/lib/admin/permissions";
+import { requireAnyPermission, requirePermission } from "@/lib/admin/permissions";
 import { DEFAULT_INVITATION_DAYS } from "@/lib/admin/staff";
 import { failFrom, isServiceError, readJson, scopeSchema, staffService } from "@/lib/admin/staff-http";
 import { SKIPPED_ID, publicOrigin, sendStaffInvitation } from "@/lib/mail";
@@ -9,7 +9,8 @@ import { fail, ok, type ApiWarning } from "@/lib/api/envelope";
 import { encodeCursor, readLimit } from "@/lib/admin/pagination";
 
 /**
- * GET  /api/admin/invitations — davet listesi. İzin: staff.manage.
+ * GET  /api/admin/invitations — davet listesi. İzin: staff.manage YA DA staff.invite (21 §3):
+ * davet eden kişi kendi gönderdiği davetin durumunu görebilmeli, yoksa aynı daveti tekrar oluşturur.
  * POST /api/admin/invitations — davet oluşturur ve e-posta gönderir. İzin: staff.invite (+ MFA).
  * Auth kullanıcısı oluşturulmaz, şifre üretilmez; kişi kendi hesabını kurar (web-brifler/19 §6.3).
  */
@@ -26,7 +27,7 @@ const bodySchema = z
   .strict();
 
 export async function GET(request: NextRequest) {
-  const guard = await requirePermission(request, "staff.manage");
+  const guard = await requireAnyPermission(request, ["staff.manage", "staff.invite"]);
   if (guard.error) return guard.error;
   const limit = readLimit(request.nextUrl.searchParams.get("limit"));
   const list = await staffService().invitations({ limit, cursor: request.nextUrl.searchParams.get("cursor") });

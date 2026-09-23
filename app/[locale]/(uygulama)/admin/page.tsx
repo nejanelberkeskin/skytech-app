@@ -2,6 +2,10 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useAdmin } from "@/lib/admin-context";
+import { Link } from "@/i18n/navigation";
+import JobsHealth from "@/components/admin/operations/JobsHealth";
+import { NetCashChart } from "@/components/admin/operations/FinanceSummary";
+import { FINANCE_DEFINITIONS } from "@/lib/finance/overview";
 import RoleGuard from "@/components/RoleGuard";
 import { CardStat } from "@/components/ui";
 import { ROLE_META } from "@/lib/rbac";
@@ -30,6 +34,8 @@ interface DashboardData {
     orderCount: number;
     releasedQuantity: number;
     pendingRefunds: number;
+    pendingDuplicateRefunds: number;
+    overdueRefunds: number;
     pendingInvoices: number;
     awaitingBatch: number;
     publicSites: number;
@@ -41,127 +47,6 @@ interface DashboardData {
   };
   monthlyGrowth: MonthlyPoint[];
   capacityAlerts: CapacityAlert[];
-}
-
-// ── SVG Bar Chart ─────────────────────────────────────────────────────────────
-function BarChart({ data }: { data: MonthlyPoint[] }) {
-  if (!data.length) return null;
-
-  const W = 600;
-  const H = 160;
-  const PAD = { top: 12, right: 16, bottom: 32, left: 56 };
-  const chartW = W - PAD.left - PAD.right;
-  const chartH = H - PAD.top - PAD.bottom;
-
-  const maxRevenue = Math.max(...data.map((d) => d.revenue), 1);
-  const barW = Math.floor((chartW / data.length) * 0.55);
-  const gap = chartW / data.length;
-
-  // Y eksen ticks (3 adet)
-  const yTicks = [0, 0.5, 1].map((r) => ({
-    val: maxRevenue * r,
-    y: PAD.top + chartH * (1 - r),
-  }));
-
-  const formatRevenue = (v: number) => {
-    if (v >= 1_000_000) return `₺${(v / 1_000_000).toFixed(1)}M`;
-    if (v >= 1_000) return `₺${(v / 1_000).toFixed(0)}K`;
-    return `₺${v}`;
-  };
-
-  return (
-    <svg
-      viewBox={`0 0 ${W} ${H}`}
-      className="w-full"
-      style={{ height: 160 }}
-      aria-label="Aylık tahsilat grafiği"
-    >
-      {/* Y grid çizgileri */}
-      {yTicks.map((t, i) => (
-        <g key={i}>
-          <line
-            x1={PAD.left}
-            x2={W - PAD.right}
-            y1={t.y}
-            y2={t.y}
-            stroke="rgba(255,255,255,0.06)"
-            strokeWidth="1"
-          />
-          <text
-            x={PAD.left - 8}
-            y={t.y + 4}
-            textAnchor="end"
-            fontSize="9"
-            fill="rgba(148,163,184,0.7)"
-          >
-            {formatRevenue(t.val)}
-          </text>
-        </g>
-      ))}
-
-      {/* Barlar */}
-      {data.map((d, i) => {
-        const x = PAD.left + i * gap + gap / 2 - barW / 2;
-        const pct = d.revenue / maxRevenue;
-        const barH = Math.max(pct * chartH, 2);
-        const y = PAD.top + chartH - barH;
-
-        return (
-          <g key={i}>
-            {/* Glow efekti */}
-            <rect
-              x={x - 1}
-              y={y - 1}
-              width={barW + 2}
-              height={barH + 2}
-              rx="5"
-              fill="rgba(16,185,129,0.12)"
-              filter="blur(4px)"
-            />
-            {/* Bar */}
-            <rect
-              x={x}
-              y={y}
-              width={barW}
-              height={barH}
-              rx="4"
-              fill="url(#emeraldGrad)"
-            />
-            {/* Değer etiketi (büyük barlarda göster) */}
-            {pct > 0.2 && (
-              <text
-                x={x + barW / 2}
-                y={y - 4}
-                textAnchor="middle"
-                fontSize="8"
-                fill="rgba(52,211,153,0.8)"
-              >
-                {formatRevenue(d.revenue)}
-              </text>
-            )}
-            {/* X ekseni ay etiketi */}
-            <text
-              x={x + barW / 2}
-              y={H - 4}
-              textAnchor="middle"
-              fontSize="9"
-              fill="rgba(148,163,184,0.6)"
-            >
-              {d.month}
-            </text>
-          </g>
-        );
-      })}
-
-      {/* Gradient tanımı */}
-      <defs>
-        <linearGradient id="emeraldGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#34d399" stopOpacity="0.9" />
-          <stop offset="100%" stopColor="#059669" stopOpacity="0.6" />
-        </linearGradient>
-      </defs>
-    </svg>
-  );
 }
 
 // ── Tohum Grafiği ─────────────────────────────────────────────────────────────
@@ -229,6 +114,7 @@ function SeedChart({ data }: { data: MonthlyPoint[] }) {
 function DashboardContent() {
   const { admin } = useAdmin();
   const [data, setData] = useState<DashboardData | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
 
@@ -236,14 +122,15 @@ function DashboardContent() {
   const fetchDashboard = useCallback(
     () =>
       fetch("/api/admin/dashboard")
-        .then((res) => (res.ok ? (res.json() as Promise<DashboardData>) : null))
+        .then((res) => { if (!res.ok) throw new Error("Genel Bakış verisi alınamadı; görünen eski değerleri güncel kabul etmeyin."); return res.json() as Promise<DashboardData>; })
         .then((json) => {
           if (json) {
+            setError(null);
             setData(json);
             setLastRefresh(new Date());
           }
         })
-        .catch((e) => console.error("Dashboard fetch error:", e))
+        .catch((e) => setError(e instanceof Error ? e.message : "Veri alınamadı."))
         .finally(() => setLoading(false)),
     [],
   );
@@ -267,11 +154,11 @@ function DashboardContent() {
   const kpis = data?.kpis;
 
   return (
-    <div className="p-8 space-y-8 animate-fade-in">
+    <div className="p-4 md:p-8 space-y-8 animate-fade-in">
       {/* ── Başlık ── */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <div className="flex items-center gap-3 mb-1">
+          <div className="flex flex-wrap items-center gap-3 mb-1">
             <h1 className="text-2xl font-bold text-white">Yönetim Paneli</h1>
             <span className={`inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1 rounded-full ${roleMeta.color}`}>
               {roleMeta.icon} {roleMeta.label}
@@ -294,6 +181,8 @@ function DashboardContent() {
         </button>
       </div>
 
+      {error && <p role="alert" className="rounded-xl border border-red-400/40 p-4 text-sm text-red-200">{error}</p>}
+
       {/* ── KPI Kartları ── */}
       {loading && !data ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -306,9 +195,9 @@ function DashboardContent() {
           {(admin.role === "SUPER_ADMIN" || admin.role === "FINANCE") && (
             <CardStat
               icon="💰"
-              label="Net Tahsilat"
+              label={FINANCE_DEFINITIONS.heldOrderValue.label}
               value={kpis ? formatTry(kpis.netRevenueKurus, "tr") : "—"}
-              sub={kpis ? `${formatCount(kpis.orderCount, "tr")} sipariş · KDV dâhil, iadeler hariç` : ""}
+              sub={kpis ? `${formatCount(kpis.orderCount, "tr")} sipariş · tüm zamanlar · iade sürecindekiler hariç` : ""}
             />
           )}
           {(admin.role === "SUPER_ADMIN" || admin.role === "FINANCE" || admin.role === "OPERATIONS") && (
@@ -329,8 +218,8 @@ function DashboardContent() {
             <CardStat
               icon="🧾"
               label="Bekleyen İşler"
-              value={kpis ? formatCount(kpis.pendingRefunds + kpis.pendingInvoices + kpis.awaitingBatch, "tr") : "—"}
-              sub={kpis ? `${kpis.pendingRefunds} iade · ${kpis.pendingInvoices} fatura · ${kpis.awaitingBatch} partiye alınacak` : ""}
+              value={kpis ? formatCount(kpis.pendingRefunds + kpis.pendingDuplicateRefunds + kpis.pendingInvoices + kpis.awaitingBatch, "tr") : "—"}
+              sub={kpis ? `${kpis.pendingRefunds} sipariş iadesi · ${kpis.pendingDuplicateRefunds} çift tahsilat · ${kpis.pendingInvoices} fatura · ${kpis.awaitingBatch} partiye alınacak` : ""}
             />
           )}
           {(admin.role === "SUPER_ADMIN" || admin.role === "FINANCE") && (
@@ -352,6 +241,9 @@ function DashboardContent() {
         </div>
       )}
 
+      {(admin.role === "SUPER_ADMIN" || admin.role === "FINANCE") && kpis && <div className={`rounded-xl border p-4 text-sm ${kpis.overdueRefunds ? "border-red-400/40 text-red-200" : "border-white/10 text-slate-300"}`}><p>{kpis.overdueRefunds} sipariş iadesinin son tarihi geçti.</p><Link href="/admin/iadeler" className="inline-flex min-h-11 items-center text-emerald-300 underline">İade kuyruğunu aç →</Link></div>}
+      {(admin.role === "SUPER_ADMIN" || admin.role === "OPERATIONS") && <JobsHealth canRun={admin.role === "SUPER_ADMIN"} />}
+
       {/* ── Grafikler ── */}
       {(admin.role === "SUPER_ADMIN" || admin.role === "FINANCE") && (
         <div className="grid md:grid-cols-2 gap-5">
@@ -359,15 +251,15 @@ function DashboardContent() {
           <div className="bg-[var(--bg-surface)] border border-white/[0.06] rounded-2xl p-5">
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h2 className="font-semibold text-white text-sm">Aylık Tahsilat</h2>
-                <p className="text-xs text-slate-500 mt-0.5">Son 6 ay · ödeme tarihine göre, iadeler hariç</p>
+                <h2 className="font-semibold text-white text-sm">Aylık net tahsilat</h2>
+                <p className="text-xs text-slate-500 mt-0.5">Son 6 ay · sipariş + çift tahsilat − tamamlanan iadeler · Türkiye takvimi</p>
               </div>
               <span className="text-xs text-emerald-400 bg-emerald-400/10 px-2.5 py-1 rounded-full">
                 💰 TL
               </span>
             </div>
             {data ? (
-              <BarChart data={data.monthlyGrowth} />
+              <NetCashChart months={data.monthlyGrowth} />
             ) : (
               <div className="h-40 bg-white/[0.03] rounded-xl animate-pulse" />
             )}
@@ -491,7 +383,7 @@ function DashboardContent() {
           <div className="flex items-center gap-3">
             <span className="text-2xl">✅</span>
             <div>
-              <p className="font-semibold text-emerald-400">Tüm Sistemler Normal</p>
+              <p className="font-semibold text-emerald-400">Saha kapasitesinde uyarı yok</p>
               <p className="text-sm text-slate-400 mt-0.5">
                 Yayındaki sahalarda kapasitesi %90&apos;ın üzerinde olan saha yok.
               </p>

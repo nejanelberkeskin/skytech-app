@@ -1,5 +1,6 @@
 "use client";
 
+import { containDialogTab } from "@/lib/hooks/dialog-keyboard";
 import { adminFetch } from "@/lib/admin/client";
 
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -107,6 +108,13 @@ function Content() {
   const [detail, setDetail] = useState<Detail | null>(null);
   const [detailLoading, setDetailLoading] = useState(false);
   const deepLinkHandled = useRef(false);
+  const detailDialog = useRef<HTMLDialogElement>(null);
+  const [refundBusy, setRefundBusy] = useState(false);
+  useEffect(() => {
+    const dialog = detailDialog.current;
+    if (selectedId) dialog?.showModal(); else dialog?.close();
+    return () => dialog?.close();
+  }, [selectedId]);
 
   useEffect(() => {
     const t = setTimeout(() => {
@@ -318,25 +326,13 @@ function Content() {
         </div>
       )}
 
-      {selectedId && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm" onClick={() => setSelectedId(null)}>
-          <div
-            className="glass border border-white/[0.08] rounded-2xl w-full max-w-3xl max-h-[92vh] overflow-y-auto shadow-2xl animate-scale-in"
-            onClick={(e) => e.stopPropagation()}
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="siparis-detay-baslik"
-          >
-            {!detail || detailLoading && detail.order.id !== selectedId ? (
-              <div className="flex items-center justify-center py-24">
-                <div className="w-8 h-8 border-2 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin" />
-              </div>
-            ) : (
-              <ReleaseOrderDetail detail={detail} act={act} onClose={() => setSelectedId(null)} />
-            )}
-          </div>
-        </div>
-      )}
+      <dialog ref={detailDialog} aria-busy={detailLoading} onKeyDown={containDialogTab} onCancel={e => { if (refundBusy) e.preventDefault(); else setSelectedId(null); }} aria-labelledby="siparis-detay-baslik" className="m-auto w-[calc(100%-2rem)] max-w-3xl max-h-[92vh] overflow-y-auto rounded-2xl bg-[#0b1410] p-0 text-white border border-white/10 backdrop:bg-black/70">
+        {selectedId && (!detail || detail.order.id !== selectedId ? (
+          <div className="p-8"><h2 id="siparis-detay-baslik">Sipariş ayrıntısı yükleniyor…</h2><Button disabled={refundBusy} variant="ghost" onClick={() => setSelectedId(null)}>Kapat</Button></div>
+        ) : (
+          <ReleaseOrderDetail key={detail.order.id} detail={detail} act={act} onClose={() => { if (!refundBusy) setSelectedId(null); }} onRefundBusy={setRefundBusy} onRefundChanged={() => { void Promise.all([loadDetail(selectedId), load()]); }} />
+        ))}
+      </dialog>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 // ── Role-Based Access Control (RBAC) System ─────────────────────────────────
 
-export type UserRole = "SUPER_ADMIN" | "FINANCE" | "OPERATIONS" | "ENGINEER";
+export type UserRole = "SUPER_ADMIN" | "FINANCE" | "OPERATIONS" | "ENGINEER" | "NONE";
 
 export interface AdminUser {
   id: string;
@@ -14,6 +14,7 @@ export interface AdminUser {
 
 // ── Role Metadata ────────────────────────────────────────────────────────────
 export const ROLE_META: Record<UserRole, { label: string; icon: string; color: string; desc: string }> = {
+  NONE: { label: "Özel erişim", icon: "👤", color: "text-slate-300", desc: "Atanan izinlerle sınırlı erişim" },
   SUPER_ADMIN: { label: "Super Admin", icon: "👑", color: "text-amber-400 bg-amber-400/10", desc: "Tüm modüllere tam erişim" },
   FINANCE:     { label: "Muhasebe & Finans", icon: "💰", color: "text-blue-400 bg-blue-400/10", desc: "Ciro, faturalar, ödemeler" },
   OPERATIONS:  { label: "Operasyon", icon: "🚁", color: "text-orange-400 bg-orange-400/10", desc: "Bırakma partileri, saha çalışmaları" },
@@ -110,6 +111,10 @@ export const ADMIN_MODULES: AdminModule[] = [
     icon: "👥",
     allowedRoles: ["SUPER_ADMIN"],
   },
+  { id: "davetler", href: "/admin/davetler", label: "Personel Davetleri", icon: "✉️", allowedRoles: ["SUPER_ADMIN"] },
+  { id: "roller", href: "/admin/roller", label: "Roller ve İzinler", icon: "🔑", allowedRoles: ["SUPER_ADMIN"] },
+  { id: "islem-kaydi", href: "/admin/islem-kaydi", label: "İşlem Geçmişi", icon: "📋", allowedRoles: ["SUPER_ADMIN", "FINANCE"] },
+  { id: "guvenlik", href: "/admin/guvenlik", label: "Hesap Güvenliği", icon: "🔒", allowedRoles: ["SUPER_ADMIN", "FINANCE", "OPERATIONS", "ENGINEER", "NONE"] },
 ];
 
 // ── Permission Helpers ───────────────────────────────────────────────────────

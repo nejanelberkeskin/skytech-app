@@ -1090,3 +1090,32 @@ export function publicOrigin(requestOrigin?: string | null): string {
   if (process.env.VERCEL_ENV === "production" || !requestOrigin) return appUrl();
   return requestOrigin;
 }
+
+/* ── Personel daveti ──────────────────────────────────────────────────────── */
+
+export interface StaffInvitationInput {
+  to: string;
+  roleLabel: string;
+  inviterName: string;
+  acceptUrl: string;
+  expiresAt: Date;
+}
+
+/**
+ * Personel daveti — tek kullanımlık bağlantı. Şifre içermez, oluşturmaz ve göndermez;
+ * kişi kendi hesabını kurar. Bağlantı yalnız bu e-postada bulunur.
+ */
+export async function sendStaffInvitation(input: StaffInvitationInput) {
+  const day = new Intl.DateTimeFormat("tr-TR", { dateStyle: "long", timeStyle: "short", timeZone: "Europe/Istanbul" }).format(input.expiresAt);
+  const html = emailLayout(
+    "Skytech Green yönetim daveti",
+    `
+      <p style="margin:0 0 12px;">Merhaba,</p>
+      <p style="margin:0 0 12px;">${esc(input.inviterName)}, Skytech Green yönetim paneline <strong>${esc(input.roleLabel)}</strong> yetkisiyle katılmanız için sizi davet etti.</p>
+      <p style="margin:0 0 20px;">Aşağıdaki bağlantıyla kendi hesabınızı kurabilirsiniz. Bağlantı tek kullanımlıktır ve <strong>${esc(day)}</strong> tarihine kadar geçerlidir.</p>
+      <p style="margin:0 0 20px;"><a href="${esc(input.acceptUrl)}" style="background:#2f6b3a;color:#ffffff;padding:12px 20px;border-radius:8px;text-decoration:none;display:inline-block;">Daveti kabul et</a></p>
+      <p style="margin:0;color:#6b8f6b;font-size:13px;">Bu daveti beklemiyorsanız bağlantıyı kullanmayın; davet kendiliğinden geçersiz olur. Bu e-posta şifre içermez.</p>
+    `
+  );
+  return sendEmail({ to: input.to, subject: "Skytech Green yönetim paneli daveti", html });
+}

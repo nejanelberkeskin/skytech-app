@@ -11,7 +11,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   if (guard.error) return guard.error;
   const { orderId } = await params;
   if (!UUID_RE.test(orderId)) return fail(404, "not_found", "Sipariş bulunamadı.");
-  const view = await refundService().orderView(orderId, can(guard.admin, "refunds.execute"));
+  const view = await refundService().orderView(orderId, can(guard.access, "refunds.execute"));
   if (isServiceError(view)) return failFrom(view);
   return ok(view);
 }

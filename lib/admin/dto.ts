@@ -6,6 +6,8 @@ export type { Permission, Scope, GrantedPermission, EffectiveAccess } from "./pe
 export { PERMISSIONS, MFA_PERMISSIONS, MFA_FRESHNESS_MINUTES } from "./permission-keys";
 export type { StaffView, StaffAssignmentView, InvitationView } from "./staff";
 export type { AccessPreview, PreviewChange } from "./preview";
+/** Özel roller ve saha seçenekleri (web-brifler/21 §2). */
+export type { RoleDetailView as RoleDetailDto, RoleUsage, RoleImpactPreview, SiteOptionView as SiteOptionDto } from "./roles";
 export type { Cursor } from "./pagination";
 
 import type { Scope } from "./permission-keys";

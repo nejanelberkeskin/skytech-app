@@ -2,7 +2,7 @@
  * Tipli örnek yanıtlar — arayüz gerçek veritabanı, e-posta ya da canlı yetki olmadan çalışsın diye.
  * Sözleşme: web-brifler/19. Kişisel veri yoktur; e-postalar `example.invalid` alanındadır.
  */
-import type { AdminMeDto, AuditEntryDto, PageDto, RoleDto } from "../dto";
+import type { AdminMeDto, AuditEntryDto, PageDto, RoleDetailDto, RoleDto, RoleImpactPreview, SiteOptionDto } from "../dto";
 import type { AccessPreview } from "../preview";
 import type { InvitationView, StaffView } from "../staff";
 
@@ -103,4 +103,83 @@ export const PREVIEW_BLOCKED: AccessPreview = {
   scopeChanges: [],
   legacyRoleChange: { from: "SUPER_ADMIN", to: "NONE" },
   blocked: { code: "last_active_owner", message: "Sistemde en az bir aktif ve süresiz sahip kalmalı. Önce yeni sahibi atayın." },
+};
+
+/* ── Özel roller (web-brifler/21) ─────────────────────────────────────────── */
+
+/** Düzenlenebilir özel rol: sürüm, kullanım sayıları ve parmak izi ile. */
+export const ROLE_DETAIL_CUSTOM: RoleDetailDto = {
+  key: "saha_sorumlusu",
+  label: "Saha sorumlusu",
+  description: "Atanmış sahalarda operasyon.",
+  permissions: ["sites.read", "batches.read", "monitoring.edit"],
+  isSystem: false,
+  version: NOW,
+  createdAt: "2026-09-20T09:00:00.000Z",
+  updatedBy: { adminId: "10000000-0000-0000-0000-000000000001", label: "Sistem Sahibi" },
+  usage: { activeAssignments: 2, scheduledAssignments: 1, staffCount: 3, pendingInvitations: 1, fingerprint: "4f2a9c1d8b6e0a374f2a9c1d8b6e0a37" },
+  sensitivePermissions: [],
+  globalOnlyPermissions: [],
+};
+
+/** Sistem rolü: kopyalanabilir, düzenlenemez. */
+export const ROLE_DETAIL_SYSTEM: RoleDetailDto = {
+  key: "owner",
+  label: "Sistem sahibi",
+  description: "Bütün yetkiler.",
+  permissions: ["staff.manage", "roles.manage", "audit.read"],
+  isSystem: true,
+  version: "2026-09-18T08:00:00.000Z",
+  createdAt: "2026-09-18T08:00:00.000Z",
+  updatedBy: null,
+  usage: { activeAssignments: 1, scheduledAssignments: 0, staffCount: 1, pendingInvitations: 0, fingerprint: "0a1b2c3d4e5f60710a1b2c3d4e5f6071" },
+  sensitivePermissions: ["staff.manage", "roles.manage"],
+  globalOnlyPermissions: ["staff.manage", "roles.manage"],
+};
+
+/** Etki önizlemesi: yazma yapılmadan "kim etkilenecek" sorusunun yanıtı. */
+export const ROLE_IMPACT_PREVIEW: RoleImpactPreview = {
+  role: { key: "saha_sorumlusu", label: "Saha sorumlusu", isSystem: false, version: NOW },
+  next: { label: "Saha sorumlusu", description: "Atanmış sahalarda operasyon.", permissions: ["sites.read", "batches.read"] },
+  added: [],
+  removed: ["monitoring.edit"],
+  unchanged: 2,
+  usage: { activeAssignments: 2, scheduledAssignments: 1, staffCount: 3, pendingInvitations: 1, fingerprint: "4f2a9c1d8b6e0a374f2a9c1d8b6e0a37" },
+  affectedStaff: [
+    { id: "a0000000-0000-0000-0000-000000000002", fullName: "Saha Sorumlusu", activeAssignments: 1, scheduledAssignments: 0 },
+    { id: "a0000000-0000-0000-0000-000000000003", fullName: "İkinci Sorumlu", activeAssignments: 1, scheduledAssignments: 0 },
+    { id: "a0000000-0000-0000-0000-000000000004", fullName: "Ekim Dönemi Sorumlusu", activeAssignments: 0, scheduledAssignments: 1 },
+  ],
+  /** E-posta maskelidir: rol yöneticisi davet listesini okuma yetkisi taşımayabilir. */
+  affectedInvitations: [{ id: "c0000000-0000-0000-0000-000000000001", email: "y***@example.invalid", status: "pending" }],
+  blocked: null,
+};
+
+/** Kaydetmede dönecek engel önizlemede de aynı kodla görünür. */
+export const ROLE_IMPACT_BLOCKED: RoleImpactPreview = {
+  ...ROLE_IMPACT_PREVIEW,
+  role: { key: "owner", label: "Sistem sahibi", isSystem: true, version: "2026-09-18T08:00:00.000Z" },
+  blocked: { code: "system_role_readonly", message: "Sistem rolleri düzenlenemez; kopyalayıp yeni rol oluşturabilirsiniz." },
+};
+
+/** Kapsamla sınırlanamayan izin eklenirken rolün dar kapsamlı ataması/daveti varsa kaydetme engellenir. */
+export const ROLE_IMPACT_SCOPE_CONFLICT: RoleImpactPreview = {
+  ...ROLE_IMPACT_PREVIEW,
+  next: { ...ROLE_IMPACT_PREVIEW.next, permissions: ["sites.read", "batches.read", "staff.invite"] },
+  added: ["staff.invite"],
+  removed: [],
+  blocked: {
+    code: "global_scope_conflict",
+    message: "Bu izinler kapsamla sınırlanamaz; rolün saha ya da atanmış işle sınırlı ataması veya daveti var. Önce onları \"tüm kayıtlar\" kapsamına alın ya da kaldırın.",
+    details: { permissions: ["staff.invite"], assignments: 1, invitations: 0 },
+  },
+};
+
+/** Kapsam seçicisi: yalnız kimlik, ad, slug, durum ve yayın bilgisi. */
+export const SITE_OPTIONS: PageDto<SiteOptionDto> = {
+  items: [
+    { id: SITE_A, name: "Antalya Sahası", slug: "antalya-sahasi", status: "open", isPublic: true },
+    { id: "20000000-0000-0000-0000-0000000000bb", name: "Muğla Sahası", slug: "mugla-sahasi", status: "preparing", isPublic: false },
+  ],
+  nextCursor: null,
 };

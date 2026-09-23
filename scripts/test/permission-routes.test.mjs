@@ -6,6 +6,7 @@ import { loadSource as load } from './load-source.mjs';
 import { createDb, one, restClient, IDS } from './pglite-db.mjs';
 import { retiredPageRedirect } from '../../lib/site-config.ts';
 import { analyticsAllowedPath } from '../../lib/analytics.ts';
+import * as gateHelpers from './admin-gate.mjs';
 
 const staffId = (db, user) => one(db, `SELECT id FROM admin_users WHERE user_id=$1`, [user]).then((r) => r.id);
 
@@ -37,12 +38,12 @@ const access = (keys) => ({ adminId: 'a', permissions: keys.map((key) => ({ key,
 const permissionKeys = load('lib/admin/permission-keys.ts');
 
 function rolesApi(keys) {
+  const { realGate } = gateHelpers;
   return load('app/api/admin/roles/route.ts', {
-    'next/server': {},
-    '@/lib/admin/permissions': {
-      hasFullScope: permissionKeys.hasFullScope,
-      requireAdminAccess: async () => ({ admin: { user_id: 'u' }, access: access(keys), error: null }),
-    },
+    zod: { z },
+    '@/lib/admin/permissions': realGate({ userId: 'u', access: access(keys) }),
+    '@/lib/admin/roles-http': { rolesService: () => { throw new Error('sözlük okuması servisi çağırmamalı'); } },
+    '@/lib/admin/staff-http': { failFrom: () => null, isServiceError: () => false, readJson: async () => ({}) },
     '@/lib/api/envelope': envelope,
     '@/lib/supabase/server': { createServiceRoleClient: () => ({ from: () => ({ select: () => ({ order: () => Promise.resolve({ data: [{ key: 'finance', label: 'Finans', description: '', permissions: ['finance.read'], is_system: true }], error: null }) }) }) }) },
   });

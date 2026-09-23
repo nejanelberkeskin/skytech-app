@@ -2,6 +2,7 @@ import type { NextRequest } from "next/server";
 import { requirePermission } from "@/lib/admin/permissions";
 import { maskAuditDetails } from "@/lib/admin/audit-read";
 import { createServiceRoleClient } from "@/lib/supabase/server";
+import { encodeCursor, keysetFilter, parseCursor, readLimit } from "@/lib/admin/pagination";
 import { ok, unavailable } from "@/lib/api/envelope";
 
 /**
@@ -16,12 +17,13 @@ export async function GET(request: NextRequest) {
   const guard = await requirePermission(request, "audit.read");
   if (guard.error) return guard.error;
   const params = request.nextUrl.searchParams;
-  const limit = Math.min(Math.max(Number.parseInt(params.get("limit") ?? "50", 10) || 50, 1), 200);
+  const limit = readLimit(params.get("limit"));
   const db = createServiceRoleClient();
   let query = db
     .from("admin_audit_logs")
     .select("id, created_at, admin_id, admin_email, action, entity, entity_id, details, ip_address")
     .order("created_at", { ascending: false })
+    .order("id", { ascending: false })
     .limit(limit);
   for (const [key, column] of [["entity", "entity"], ["entityId", "entity_id"], ["action", "action"], ["actorId", "admin_id"]] as const) {
     const value = params.get(key);
@@ -31,8 +33,9 @@ export async function GET(request: NextRequest) {
   const to = params.get("to");
   if (from && ISO.test(from)) query = query.gte("created_at", from);
   if (to && ISO.test(to)) query = query.lte("created_at", to);
-  const cursor = params.get("cursor");
-  if (cursor && ISO.test(cursor)) query = query.lt("created_at", cursor);
+  // Kararlı imleç: yalnız tarih kullanılırsa aynı saniyedeki kayıtlar atlanır.
+  const cursor = parseCursor(params.get("cursor"));
+  if (cursor) query = query.or(keysetFilter(cursor, false));
 
   const { data, error } = await query;
   if (error) return unavailable();
@@ -46,5 +49,6 @@ export async function GET(request: NextRequest) {
     details: maskAuditDetails(row.details),
     ip: (row.ip_address as string) ?? null,
   }));
-  return ok({ entries, nextCursor: entries.length === limit ? entries[entries.length - 1].at : null });
+  const last = entries[entries.length - 1];
+  return ok({ items: entries, nextCursor: entries.length === limit && last ? encodeCursor(last.at, last.id) : null });
 }

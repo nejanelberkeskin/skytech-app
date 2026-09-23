@@ -6,6 +6,8 @@
  */
 import { createHash, randomBytes } from "node:crypto";
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { keysetFilter, parseCursor, type Cursor } from "./pagination";
+import { buildAccessPreview, type AccessPreview, type PreviewChange } from "./preview";
 import type { Scope } from "./permission-keys";
 
 export type ServiceError = { ok: false; status: number; code: string; message: string; details?: Record<string, unknown> };
@@ -25,6 +27,7 @@ const SQL_ERRORS: Record<string, [number, string, string]> = {
   role_missing: [404, "not_found", "Rol bulunamadı."],
   assignment_missing: [404, "not_found", "Atama bulunamadı."],
   invitation_missing: [404, "not_found", "Davet bulunamadı."],
+  invalid_change: [400, "invalid_body", "Geçersiz değişiklik."],
   assignment_revoked: [409, "invalid_state", "Bu atama zaten kaldırılmış."],
   version_changed: [409, "version_changed", "Bu atamayı arada başkası değiştirdi. Görünümü yenileyin."],
   last_active_owner: [409, "last_active_owner", "Sistemde en az bir aktif sahip kalmalı. Önce yeni sahibi atayın."],
@@ -120,11 +123,23 @@ export function createStaffService(deps: StaffDeps) {
     return { ok: true as const, data };
   };
 
-  async function list(): Promise<StaffView[] | ServiceError> {
-    const { data, error } = await db.from("admin_users").select(STAFF_FIELDS).order("created_at", { ascending: true });
+  /** Kararlı sayfalama: (created_at, id) imleci. Aynı saniyedeki kayıtlar atlanmaz. */
+  async function list(page: { limit: number; cursor?: string | null } = { limit: 50 }): Promise<StaffView[] | ServiceError> {
+    let query = db.from("admin_users").select(STAFF_FIELDS).order("created_at", { ascending: true }).order("id", { ascending: true }).limit(page.limit);
+    const cursor: Cursor | null = parseCursor(page.cursor);
+    if (cursor) query = query.or(keysetFilter(cursor, true));
+    const { data, error } = await query;
     if (error) return unavailable();
     const rows = (data ?? []) as unknown as StaffRow[];
     return Promise.all(rows.map(async (r) => staffView(r, await deps.mfaStatus(r.user_id))));
+  }
+
+  /** Yazma YAPMAYAN yetki önizlemesi: kaydetmeden önce ne değişeceğini ve engel olup olmadığını döner. */
+  async function previewAssignment(actor: string, adminId: string, change: PreviewChange): Promise<AccessPreview | ServiceError> {
+    const { data, error } = await db.rpc("admin_preview_assignment", { p_actor: actor, p_admin: adminId, p_change: change });
+    if (error) return mapSqlError(error);
+    if (!data) return unavailable();
+    return buildAccessPreview(change, data);
   }
 
   async function detail(id: string): Promise<StaffView | ServiceError> {
@@ -150,8 +165,11 @@ export function createStaffService(deps: StaffDeps) {
   const setActive = (actor: string, adminId: string, active: boolean, reason: string | null) =>
     rpc("set_admin_active", { p_actor: actor, p_admin: adminId, p_active: active, p_reason: reason });
 
-  async function invitations(): Promise<InvitationView[] | ServiceError> {
-    const { data, error } = await db.from("admin_invitations").select(INVITATION_FIELDS).order("created_at", { ascending: false }).limit(200);
+  async function invitations(page: { limit: number; cursor?: string | null } = { limit: 50 }): Promise<InvitationView[] | ServiceError> {
+    let query = db.from("admin_invitations").select(INVITATION_FIELDS).order("created_at", { ascending: false }).order("id", { ascending: false }).limit(page.limit);
+    const cursor: Cursor | null = parseCursor(page.cursor);
+    if (cursor) query = query.or(keysetFilter(cursor, false));
+    const { data, error } = await query;
     if (error) return unavailable();
     return ((data ?? []) as unknown as InvitationRow[]).map(invitationView);
   }
@@ -195,7 +213,7 @@ export function createStaffService(deps: StaffDeps) {
 
   const migrationReport = () => rpc("admin_migration_report", {});
 
-  return { list, detail, assign, updateAssignment, revokeAssignment, setActive, invitations, invitationById, createInvitation, resendInvitation, revokeInvitation, acceptInvitation, migrationReport };
+  return { list, detail, previewAssignment, assign, updateAssignment, revokeAssignment, setActive, invitations, invitationById, createInvitation, resendInvitation, revokeInvitation, acceptInvitation, migrationReport };
 }
 
 export type StaffService = ReturnType<typeof createStaffService>;

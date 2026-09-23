@@ -443,6 +443,116 @@ BEGIN
   RETURN jsonb_build_object('admin', to_jsonb(v_admin), 'assignmentId', v_assignment, 'invitationId', v_inv.id);
 END $$;
 
+-- ── 7b. Yazma YAPMAYAN yetki önizlemesi ─────────────────────────────────────
+-- Arayüz "kaydetmeden önce ne değişecek?" sorusunu bu fonksiyonla sorar. Hiçbir satır yazılmaz;
+-- atama uçları önizleme için çağrılmaz (web-brifler/19 §6).
+
+-- Verilen (izin, kapsam) çiftlerini izin bazında KAYIPSIZ birleştirir; etkili yetkiyle aynı kural.
+CREATE FUNCTION public.admin_merge_permissions(p_grants jsonb) RETURNS jsonb
+LANGUAGE sql IMMUTABLE AS $$
+  WITH granted AS (
+    SELECT g->>'key' AS key, g->'scope' AS scope FROM jsonb_array_elements(COALESCE(p_grants, '[]'::jsonb)) g
+  ),
+  merged AS (
+    SELECT g.key,
+           CASE WHEN bool_or(g.scope->>'kind' = 'all') THEN jsonb_build_array('{"kind":"all"}'::jsonb)
+                ELSE COALESCE(
+                  CASE WHEN bool_or(g.scope->>'kind' = 'sites') THEN jsonb_build_array(jsonb_build_object('kind', 'sites', 'siteIds',
+                    (SELECT jsonb_agg(DISTINCT s) FROM granted g2, jsonb_array_elements_text(g2.scope->'siteIds') s
+                      WHERE g2.key = g.key AND g2.scope->>'kind' = 'sites'))) ELSE '[]'::jsonb END
+                  || CASE WHEN bool_or(g.scope->>'kind' = 'assigned') THEN jsonb_build_array('{"kind":"assigned"}'::jsonb) ELSE '[]'::jsonb END,
+                  '[]'::jsonb)
+           END AS scopes
+      FROM granted g GROUP BY g.key
+  )
+  SELECT COALESCE((SELECT jsonb_agg(jsonb_build_object('key', key, 'scopes', scopes) ORDER BY key) FROM merged), '[]'::jsonb);
+$$;
+
+/*
+ * p_change:
+ *   { "kind": "assign", "roleKey": "...", "scope": {...}, "endsAt": null|timestamptz }
+ *   { "kind": "update", "assignmentId": uuid, "scope": {...}, "endsAt": null|timestamptz }
+ *   { "kind": "revoke", "assignmentId": uuid }
+ * Dönen: { current: { permissions, legacyRole }, next: { permissions, legacyRole }, blocked: {code}|null }
+ */
+CREATE FUNCTION public.admin_preview_assignment(p_actor uuid, p_admin uuid, p_change jsonb) RETURNS jsonb
+LANGUAGE plpgsql STABLE SECURITY DEFINER SET search_path = '' AS $$
+DECLARE
+  v_kind text := p_change->>'kind';
+  v_role uuid;
+  v_scope jsonb := COALESCE(p_change->'scope', '{"kind":"all"}'::jsonb);
+  v_ends timestamptz := NULLIF(p_change->>'endsAt', '')::timestamptz;
+  v_assignment uuid := NULLIF(p_change->>'assignmentId', '')::uuid;
+  v_blocked text;
+  v_current jsonb; v_next jsonb; v_current_legacy text; v_next_legacy text;
+BEGIN
+  IF v_kind IS NULL OR v_kind NOT IN ('assign', 'update', 'revoke') THEN
+    RAISE EXCEPTION 'invalid_change' USING ERRCODE = '22023';
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM public.admin_users WHERE id = p_admin) THEN
+    RAISE EXCEPTION 'staff_missing' USING ERRCODE = 'P0002';
+  END IF;
+  IF v_kind = 'assign' THEN
+    SELECT id INTO v_role FROM public.admin_roles WHERE key = p_change->>'roleKey';
+    IF v_role IS NULL THEN RAISE EXCEPTION 'role_missing' USING ERRCODE = 'P0002'; END IF;
+  ELSE
+    SELECT role_id INTO v_role FROM public.admin_role_assignments WHERE id = v_assignment AND admin_user_id = p_admin;
+    IF v_role IS NULL THEN RAISE EXCEPTION 'assignment_missing' USING ERRCODE = 'P0002'; END IF;
+  END IF;
+
+  -- Kaydetmeyi engelleyecek durum (aynı kurallar, yazmadan).
+  IF NOT public.admin_has_permission(p_actor, 'roles.manage') THEN v_blocked := 'forbidden';
+  ELSIF (SELECT user_id FROM public.admin_users WHERE id = p_admin) = p_actor THEN v_blocked := 'self_assignment';
+  ELSIF v_kind <> 'revoke' AND NOT public.valid_admin_scope(v_scope) THEN v_blocked := 'invalid_scope';
+  ELSIF v_kind <> 'revoke' AND NOT public.admin_can_grant(p_actor, v_role, v_scope, v_ends) THEN v_blocked := 'escalation_blocked';
+  ELSIF (SELECT key FROM public.admin_roles WHERE id = v_role) = 'owner'
+        AND ((v_kind = 'revoke') OR (v_kind = 'update' AND (v_ends IS NOT NULL OR v_scope->>'kind' <> 'all')))
+        AND public.admin_owner_count(v_assignment) = 0 THEN v_blocked := 'last_active_owner';
+  END IF;
+
+  WITH active AS (
+    SELECT a.id, a.role_id, a.scope, a.ends_at, r.permissions, r.key AS role_key
+      FROM public.admin_role_assignments a JOIN public.admin_roles r ON r.id = a.role_id
+     WHERE a.admin_user_id = p_admin AND a.revoked_at IS NULL AND a.starts_at <= now()
+       AND (a.ends_at IS NULL OR a.ends_at > now())
+  ),
+  simulated AS (
+    SELECT id, role_id, scope, ends_at, permissions, role_key FROM active
+     WHERE v_kind = 'assign' OR id <> v_assignment
+    UNION ALL
+    SELECT COALESCE(v_assignment, '00000000-0000-0000-0000-000000000000'::uuid), v_role, v_scope, v_ends, r.permissions, r.key
+      FROM public.admin_roles r WHERE r.id = v_role AND v_kind <> 'revoke'
+  ),
+  flat_current AS (
+    SELECT jsonb_build_object('key', unnest(permissions), 'scope', scope) AS g FROM active
+  ),
+  flat_next AS (
+    SELECT jsonb_build_object('key', unnest(permissions), 'scope', scope) AS g FROM simulated
+  )
+  SELECT
+    public.admin_merge_permissions(COALESCE((SELECT jsonb_agg(g) FROM flat_current), '[]'::jsonb)),
+    public.admin_merge_permissions(COALESCE((SELECT jsonb_agg(g) FROM flat_next), '[]'::jsonb)),
+    COALESCE((SELECT CASE
+        WHEN bool_or(role_key = 'owner' AND ends_at IS NULL AND scope->>'kind' = 'all') THEN 'SUPER_ADMIN'
+        WHEN bool_or(role_key = 'finance' AND ends_at IS NULL AND scope->>'kind' = 'all') THEN 'FINANCE'
+        WHEN bool_or(role_key = 'operations' AND ends_at IS NULL AND scope->>'kind' = 'all') THEN 'OPERATIONS'
+        WHEN bool_or(role_key = 'engineer' AND ends_at IS NULL AND scope->>'kind' = 'all') THEN 'ENGINEER'
+        ELSE 'NONE' END FROM active), 'NONE'),
+    COALESCE((SELECT CASE
+        WHEN bool_or(role_key = 'owner' AND ends_at IS NULL AND scope->>'kind' = 'all') THEN 'SUPER_ADMIN'
+        WHEN bool_or(role_key = 'finance' AND ends_at IS NULL AND scope->>'kind' = 'all') THEN 'FINANCE'
+        WHEN bool_or(role_key = 'operations' AND ends_at IS NULL AND scope->>'kind' = 'all') THEN 'OPERATIONS'
+        WHEN bool_or(role_key = 'engineer' AND ends_at IS NULL AND scope->>'kind' = 'all') THEN 'ENGINEER'
+        ELSE 'NONE' END FROM simulated), 'NONE')
+    INTO v_current, v_next, v_current_legacy, v_next_legacy;
+
+  RETURN jsonb_build_object(
+    'current', jsonb_build_object('permissions', v_current, 'legacyRole', v_current_legacy),
+    'next', jsonb_build_object('permissions', v_next, 'legacyRole', v_next_legacy),
+    'blocked', CASE WHEN v_blocked IS NULL THEN NULL ELSE jsonb_build_object('code', v_blocked) END
+  );
+END $$;
+
 -- ── 8. Geçiş fark raporu ────────────────────────────────────────────────────
 CREATE FUNCTION public.admin_migration_report() RETURNS jsonb
 LANGUAGE sql STABLE SECURITY DEFINER SET search_path = '' AS $$
@@ -467,7 +577,8 @@ END $$;
 
 REVOKE ALL ON FUNCTION public.valid_admin_scope(jsonb), public.admin_effective_permissions(uuid), public.admin_has_permission(uuid, text),
   public.admin_legacy_role(uuid), public.admin_can_grant(uuid, uuid, jsonb, timestamptz), public.global_only_permission(text), public.admin_audit(uuid, text, text, text, jsonb),
-  public.admin_owner_count(uuid, boolean), public.assign_admin_role(uuid, uuid, text, jsonb, timestamptz, text),
+  public.admin_owner_count(uuid, boolean), public.admin_merge_permissions(jsonb), public.admin_preview_assignment(uuid, uuid, jsonb),
+  public.assign_admin_role(uuid, uuid, text, jsonb, timestamptz, text),
   public.update_admin_assignment(uuid, uuid, jsonb, timestamptz, timestamptz, text),
   public.revoke_admin_assignment(uuid, uuid, text), public.set_admin_active(uuid, uuid, boolean, text),
   public.create_admin_invitation(uuid, text, text, jsonb, timestamptz, text, timestamptz),
@@ -475,6 +586,7 @@ REVOKE ALL ON FUNCTION public.valid_admin_scope(jsonb), public.admin_effective_p
   public.accept_admin_invitation(text, uuid, text, text), public.admin_migration_report()
   FROM PUBLIC, anon, authenticated;
 GRANT EXECUTE ON FUNCTION public.admin_effective_permissions(uuid), public.admin_has_permission(uuid, text),
+  public.admin_preview_assignment(uuid, uuid, jsonb),
   public.assign_admin_role(uuid, uuid, text, jsonb, timestamptz, text),
   public.update_admin_assignment(uuid, uuid, jsonb, timestamptz, timestamptz, text),
   public.revoke_admin_assignment(uuid, uuid, text), public.set_admin_active(uuid, uuid, boolean, text),

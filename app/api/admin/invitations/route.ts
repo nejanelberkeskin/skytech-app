@@ -6,6 +6,7 @@ import { DEFAULT_INVITATION_DAYS } from "@/lib/admin/staff";
 import { failFrom, isServiceError, readJson, scopeSchema, staffService } from "@/lib/admin/staff-http";
 import { SKIPPED_ID, publicOrigin, sendStaffInvitation } from "@/lib/mail";
 import { fail, ok, type ApiWarning } from "@/lib/api/envelope";
+import { encodeCursor, readLimit } from "@/lib/admin/pagination";
 
 /**
  * GET  /api/admin/invitations — davet listesi. İzin: staff.manage.
@@ -27,9 +28,11 @@ const bodySchema = z
 export async function GET(request: NextRequest) {
   const guard = await requirePermission(request, "staff.manage");
   if (guard.error) return guard.error;
-  const list = await staffService().invitations();
+  const limit = readLimit(request.nextUrl.searchParams.get("limit"));
+  const list = await staffService().invitations({ limit, cursor: request.nextUrl.searchParams.get("cursor") });
   if (isServiceError(list)) return failFrom(list);
-  return ok({ invitations: list });
+  const last = list[list.length - 1];
+  return ok({ items: list, nextCursor: list.length === limit && last ? encodeCursor(last.createdAt, last.id) : null });
 }
 
 export async function POST(request: NextRequest) {

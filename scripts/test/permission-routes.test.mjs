@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { loadSource as load } from './load-source.mjs';
 import { createDb, one, restClient, IDS } from './pglite-db.mjs';
 import { retiredPageRedirect } from '../../lib/site-config.ts';
+import { analyticsAllowedPath } from '../../lib/analytics.ts';
 
 const staffId = (db, user) => one(db, `SELECT id FROM admin_users WHERE user_id=$1`, [user]).then((r) => r.id);
 
@@ -83,5 +84,9 @@ test('davet bağlantısı /personel-daveti yoluna gider (eski /davet kalıcı y�
   assert.equal(res.status, 201);
   assert.equal(sent.length, 1);
   assert.equal(sent[0].acceptUrl, 'https://skytechgreen.com/personel-daveti/DENEME-TOKEN');
-  assert.equal(retiredPageRedirect(new URL(sent[0].acceptUrl).pathname), null, 'gönderilen bağlantı yönlendirmeye düşmez');
+  const path = new URL(sent[0].acceptUrl).pathname;
+  assert.equal(retiredPageRedirect(path), null, 'gönderilen bağlantı yönlendirmeye düşmez');
+  for (const locale of ['', '/en', '/ru']) {
+    assert.equal(analyticsAllowedPath(locale + path), false, `davet belirteci ölçüme sızmamalı: ${locale + path}`);
+  }
 });

@@ -31,8 +31,11 @@ test('Sunucu şeması hediye adı için yayın iznini reddeder; izinsiz hediye s
 test('Aktarım hazırlığı varsayılan kapalı; özel yollar tüm dillerde ölçüm dışı', () => {
   assert.equal(ANALYTICS_TRANSFER_READY, false);
   for (const locale of ['', '/en', '/ru']) {
-    for (const path of ['/siparis/SG-2026-ABCDEF', '/cayma', '/odeme/sonuc/123', '/sertifika/SG-RNEK-2345', '/hesabim', '/admin', '/sahalar/ornek/katil']) assert.equal(analyticsAllowedPath(locale+path), false, locale+path);
+    for (const path of ['/siparis/SG-2026-ABCDEF', '/cayma', '/odeme/sonuc/123', '/sertifika/SG-RNEK-2345', '/hesabim', '/admin', '/sahalar/ornek/katil',
+      // Personel daveti: adres tek kullanımlık belirteç taşır, ölçüme (GA/Vercel) sızmamalı.
+      '/personel-daveti', '/personel-daveti/QmVsaXJ0ZWNfT3JuZWtfMTIzNDU2Nzg', '/personel-daveti/abc/def']) assert.equal(analyticsAllowedPath(locale+path), false, locale+path);
     assert.equal(analyticsAllowedPath(locale+'/sahalar/ornek'), true);
+    assert.equal(analyticsAllowedPath(locale+'/personel'), true, 'benzer adlı genel sayfa ölçülebilir kalır');
   }
 });
 test('İzin geri alınması olay göndermez ve yüklü araçları kaldırmak için yeniler', () => {

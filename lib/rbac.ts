@@ -45,6 +45,13 @@ export const ADMIN_MODULES: AdminModule[] = [
     allowedRoles: ["SUPER_ADMIN", "FINANCE"],
   },
   {
+    id: "iadeler",
+    href: "/admin/iadeler",
+    label: "İadeler & Mutabakat",
+    icon: "↩️",
+    allowedRoles: ["SUPER_ADMIN", "FINANCE"],
+  },
+  {
     id: "araziler",
     href: "/admin/araziler",
     label: "Sahalar & Kapasite",

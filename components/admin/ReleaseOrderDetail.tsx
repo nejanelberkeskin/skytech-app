@@ -1,5 +1,6 @@
 "use client";
 
+import RefundOrderPanel from "./operations/RefundOrderPanel";
 import { useState } from "react";
 import { Button, Input, Textarea } from "@/components/ui";
 import {
@@ -66,7 +67,7 @@ export const day = (d: string | null | undefined) => (d ? new Date(`${d}T12:00:0
 export type ReleaseOrderAct = (body: Record<string, unknown>, okMessage: string) => Promise<boolean>;
 
 
-export default function ReleaseOrderDetail({ detail, act, onClose }: { detail: Detail; act: ReleaseOrderAct; onClose: () => void }) {
+export default function ReleaseOrderDetail({ detail, act, onClose, onRefundChanged, onRefundBusy }: { detail: Detail; act: ReleaseOrderAct; onClose: () => void; onRefundChanged?: () => void; onRefundBusy?: (busy: boolean) => void }) {
   const o = detail.order;
   const inv = o.invoice;
   const addr = inv.address ?? {};
@@ -76,11 +77,13 @@ export default function ReleaseOrderDetail({ detail, act, onClose }: { detail: D
   const [reason, setReason] = useState("");
   const [confirming, setConfirming] = useState<"refund" | "cancel" | string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [refundBusy, setRefundBusy] = useState(false);
   const [invoiceNo, setInvoiceNo] = useState("");
   const [ettn, setEttn] = useState("");
   const [issuedOn, setIssuedOn] = useState(() => new Date(Date.now() + 3 * 3600_000).toISOString().slice(0, 10));
 
   const run = async (body: Record<string, unknown>, ok: string) => {
+    if (refundBusy) return false;
     setBusy(true);
     const done = await act(body, ok);
     setBusy(false);
@@ -109,7 +112,7 @@ export default function ReleaseOrderDetail({ detail, act, onClose }: { detail: D
           </h2>
           <p className="text-xs text-slate-400">{dt(s("created_at"))} · {(s("locale") ?? "tr").toUpperCase()} · {o.user_id ? "üye" : "misafir"}</p>
         </div>
-        <button onClick={onClose} className="text-slate-500 hover:text-white text-xl transition-colors" aria-label="Kapat">&times;</button>
+        <button disabled={refundBusy} onClick={onClose} className="text-slate-500 hover:text-white text-xl transition-colors" aria-label="Kapat">&times;</button>
       </div>
 
       <div className="p-6 space-y-6">
@@ -130,17 +133,7 @@ export default function ReleaseOrderDetail({ detail, act, onClose }: { detail: D
                 <span>
                   Aynı siparişe <strong>ikinci bir tahsilat</strong> yapılmış: {formatTry(d.paidKurus, "tr")} · ödeme kimliği <span className="font-mono">{d.paymentId}</span>
                 </span>
-                {money &&
-                  (confirming === `dup:${d.paymentId}` ? (
-                    <span className="flex gap-2">
-                      <Button size="sm" variant="primary" loading={busy} onClick={() => run({ action: "refund_duplicate", paymentId: d.paymentId }, "Çift tahsilat iade edildi.")}>
-                        {formatTry(d.paidKurus, "tr")} iade et
-                      </Button>
-                      <Button size="sm" variant="secondary" disabled={busy} onClick={() => setConfirming(null)}>Vazgeç</Button>
-                    </span>
-                  ) : (
-                    <Button size="sm" variant="secondary" onClick={() => setConfirming(`dup:${d.paymentId}`)}>Bu tahsilatı iade et</Button>
-                  ))}
+
               </div>
             ))}
           </div>
@@ -199,7 +192,9 @@ export default function ReleaseOrderDetail({ detail, act, onClose }: { detail: D
           </Grid>
         </Section>
 
-        {(detail.refunds.length > 0 || refundable) && (
+        {money && <RefundOrderPanel key={o.id} orderId={o.id} onChanged={onRefundChanged} onBusyChange={value => { setRefundBusy(value); onRefundBusy?.(value); }} />}
+
+        {!money && (detail.refunds.length > 0 || refundable) && (
           <Section title="İade">
             {detail.refunds.map((r) => (
               <div key={r.id} className="flex items-start justify-between gap-4 text-sm bg-white/[0.03] border border-white/[0.06] rounded-xl px-4 py-3">
@@ -211,23 +206,6 @@ export default function ReleaseOrderDetail({ detail, act, onClose }: { detail: D
                 <span className={`shrink-0 text-xs font-semibold ${r.status === "succeeded" ? "text-emerald-300" : r.status === "failed" ? "text-red-300" : "text-amber-300"}`}>{REFUND_STATUS_LABELS[r.status] ?? r.status}</span>
               </div>
             ))}
-            {refundable && money && (
-              <div className="pt-1">
-                {confirming === "refund" ? (
-                  <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-4 space-y-3">
-                    <p className="text-sm text-slate-200">
-                      <strong>{total}</strong> tutarın tamamı, ödemenin alındığı araca ({s("payment_provider")}) iade edilecek. Müşteriye bildirim e-postası gider; sahada ayrılan kapasite serbest kalır. Bu işlem geri alınamaz.
-                    </p>
-                    <div className="flex gap-3">
-                      <Button variant="primary" loading={busy} onClick={() => run({ action: "refund" }, "İade yapıldı; müşteriye bildirildi.")}>{total} iade et</Button>
-                      <Button variant="secondary" disabled={busy} onClick={() => setConfirming(null)}>Vazgeç</Button>
-                    </div>
-                  </div>
-                ) : (
-                  <Button variant="primary" onClick={() => setConfirming("refund")}>İadeyi yap</Button>
-                )}
-              </div>
-            )}
             {refundable && !money && <p className="text-xs text-slate-500">İade işlemini Muhasebe &amp; Finans ya da Super Admin yapabilir.</p>}
           </Section>
         )}

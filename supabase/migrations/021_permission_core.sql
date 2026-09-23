@@ -306,6 +306,10 @@ BEGIN
   v_before := jsonb_build_object('scope', v_row.scope, 'endsAt', v_row.ends_at);
   UPDATE public.admin_role_assignments SET scope = p_scope, ends_at = p_ends_at, reason = COALESCE(p_reason, reason), updated_at = now()
    WHERE id = p_assignment RETURNING * INTO v_row;
+  -- Kapsam daraltma ya da süre verme eski rol aynasını da değiştirir: aynı transaction'da yenilenir,
+  -- yoksa eski rol listesine dayanan uçlar geniş erişimi kabul etmeye devam eder.
+  UPDATE public.admin_users SET role = public.admin_legacy_role(v_row.admin_user_id), updated_at = now()
+   WHERE id = v_row.admin_user_id;
   PERFORM public.admin_audit(p_actor, 'UPDATE', 'admin_assignment', v_row.id::text,
     jsonb_build_object('adminId', v_row.admin_user_id, 'before', v_before,
                        'after', jsonb_build_object('scope', v_row.scope, 'endsAt', v_row.ends_at), 'reason', p_reason));

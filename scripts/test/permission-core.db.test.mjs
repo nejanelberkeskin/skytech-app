@@ -62,6 +62,34 @@ test('021: eski rol aynası yalnız tüm kayıtlar + süresiz atamada yazılır'
   } finally { await db.close(); }
 });
 
+test('021: atama daraltılınca eski rol aynası aynı işlemde yenilenir (P1 gerilemesi)', async () => {
+  const db = await createDb();
+  try {
+    const target = await staffId(db, IDS.finance);
+    const assignment = (await one(db, `SELECT id, updated_at FROM admin_role_assignments WHERE admin_user_id=$1 AND revoked_at IS NULL`, [target]));
+    assert.equal((await one(db, `SELECT role FROM admin_users WHERE id=$1`, [target])).role, 'FINANCE');
+
+    // all → sites: etkili kapsam daralır, eski rol aynası da NONE olmalı.
+    await one(db, `SELECT update_admin_assignment($1,$2,$3::jsonb,NULL,$4,'daralt') u`,
+      [IDS.superAdmin, assignment.id, JSON.stringify({ kind: 'sites', siteIds: [SITE_A] }), assignment.updated_at]);
+    assert.equal((await one(db, `SELECT role FROM admin_users WHERE id=$1`, [target])).role, 'NONE',
+      'dar kapsamlı kişi eski rol listesine dayanan uçlara giremez');
+    const scopes = (await effective(db, IDS.finance)).permissions.find((p) => p.key === 'finance.read').scopes;
+    assert.deepEqual(scopes, [{ kind: 'sites', siteIds: [SITE_A] }]);
+
+    // sites → all: ayna geri döner.
+    const v1 = (await one(db, `SELECT updated_at FROM admin_role_assignments WHERE id=$1`, [assignment.id])).updated_at;
+    await one(db, `SELECT update_admin_assignment($1,$2,'{"kind":"all"}'::jsonb,NULL,$3,'geri') u`, [IDS.superAdmin, assignment.id, v1]);
+    assert.equal((await one(db, `SELECT role FROM admin_users WHERE id=$1`, [target])).role, 'FINANCE');
+
+    // all → süreli: süreli erişim de eski rolü açmaz.
+    const v2 = (await one(db, `SELECT updated_at FROM admin_role_assignments WHERE id=$1`, [assignment.id])).updated_at;
+    await one(db, `SELECT update_admin_assignment($1,$2,'{"kind":"all"}'::jsonb,now() + interval '2 days',$3,'süre') u`, [IDS.superAdmin, assignment.id, v2]);
+    assert.equal((await one(db, `SELECT role FROM admin_users WHERE id=$1`, [target])).role, 'NONE');
+    assert.ok((await rows(db, `SELECT 1 FROM admin_audit_logs WHERE entity='admin_assignment' AND action='UPDATE'`)).length >= 3);
+  } finally { await db.close(); }
+});
+
 test('021: yetki yükseltme, kendine atama ve kapsam genişletme engellenir', async () => {
   const db = await createDb();
   try {

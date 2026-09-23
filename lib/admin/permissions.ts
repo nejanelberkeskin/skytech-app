@@ -96,6 +96,46 @@ export async function requirePermission(
   return { admin, access, assurance, error: null };
 }
 
+/**
+ * "Şu izinlerden herhangi biri" kapısı (web-brifler/21 §3). Davet eden kişinin rol sözlüğünü,
+ * saha seçeneklerini ve kendi davetlerini görebilmesi için gerekir.
+ *
+ * Kapsam kuralı tekildeki ile aynıdır: hiçbiri yoksa `forbidden`, izin var ama kapsam dar ise
+ * `scope_unsupported`. `mfa: false` yalnız OKUMA uçlarında kullanılır — yazma uçları tekil kapıyı kullanır.
+ */
+export async function requireAnyPermission(
+  request: NextRequest,
+  permissions: Permission[],
+  options: { scope?: "full" | "any"; mfa?: boolean } = {}
+): Promise<(PermissionGuard & { matched: Permission }) | Denied> {
+  const denied = (error: ReturnType<typeof fail>): Denied => ({ admin: null, access: null, assurance: null, error });
+  const guard = await requireAdminAccess(request);
+  if (guard.error) return guard;
+
+  const full = (options.scope ?? "full") === "full";
+  const held = permissions.filter((p) => hasPermission(guard.access, p));
+  const matched = held.find((p) => !full || hasFullScope(guard.access, p));
+  if (!matched) {
+    if (held.length === 0) return denied(fail(403, "forbidden", "Bu işlem için yetkiniz yok."));
+    return denied(
+      fail(403, "scope_unsupported", "Bu ekran sınırlı kapsamı (saha/atanmış iş) henüz uygulamıyor; yetkiniz bütün kayıtları kapsamıyor.", {
+        permission: held[0],
+        scopes: guard.access.permissions.find((p) => p.key === held[0])?.scopes ?? [],
+      })
+    );
+  }
+  if (options.mfa !== false && !mfaSatisfied(matched, guard.assurance) && mfaEnforced()) {
+    return denied(
+      fail(403, "mfa_required", "Bu işlem iki aşamalı doğrulama ister.", {
+        enrolled: guard.assurance.enrolled,
+        reason: !guard.assurance.enrolled ? "enrollment" : guard.assurance.aal !== "aal2" ? "challenge" : "stale",
+        freshnessMinutes: MFA_FRESHNESS_MINUTES,
+      })
+    );
+  }
+  return { ...guard, matched };
+}
+
 /** Yetki gerektirmeyen ama kimliği gereken okuma (ör. /api/admin/me). */
 export async function requireAdminAccess(request: NextRequest): Promise<PermissionGuard | Denied> {
   const denied = (error: ReturnType<typeof fail>): Denied => ({ admin: null, access: null, assurance: null, error });

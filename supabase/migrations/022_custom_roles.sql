@@ -438,6 +438,98 @@ BEGIN
   RETURN to_jsonb(v_row);
 END $$;
 
+-- ── 10. 021 atama önizlemesi: saha kimliği kaydetmeyle aynı kuralla ─────────
+-- Tetikleyici (§3) saha kimliğini yazarken denetler; önizleme de aynı engeli (invalid_scope +
+-- details.missingSiteIds) göstermeli, yoksa önizleme "engel yok" der ve kaydetme reddedilir.
+-- Gövde 021 ile aynıdır; farklar yalnız v_missing hesabı ve engel ayrıntısıdır (test doğrular).
+CREATE OR REPLACE FUNCTION public.admin_preview_assignment(p_actor uuid, p_admin uuid, p_change jsonb) RETURNS jsonb
+LANGUAGE plpgsql STABLE SECURITY DEFINER SET search_path = '' AS $$
+DECLARE
+  v_kind text := p_change->>'kind';
+  v_role uuid;
+  v_scope jsonb := COALESCE(p_change->'scope', '{"kind":"all"}'::jsonb);
+  v_ends timestamptz := NULLIF(p_change->>'endsAt', '')::timestamptz;
+  v_assignment uuid := NULLIF(p_change->>'assignmentId', '')::uuid;
+  v_blocked text;
+  v_current jsonb; v_next jsonb; v_current_legacy text; v_next_legacy text;
+  v_missing text[] := ARRAY[]::text[];
+BEGIN
+  IF v_kind IS NULL OR v_kind NOT IN ('assign', 'update', 'revoke') THEN
+    RAISE EXCEPTION 'invalid_change' USING ERRCODE = '22023';
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM public.admin_users WHERE id = p_admin) THEN
+    RAISE EXCEPTION 'staff_missing' USING ERRCODE = 'P0002';
+  END IF;
+  IF v_kind = 'assign' THEN
+    SELECT id INTO v_role FROM public.admin_roles WHERE key = p_change->>'roleKey';
+    IF v_role IS NULL THEN RAISE EXCEPTION 'role_missing' USING ERRCODE = 'P0002'; END IF;
+  ELSE
+    SELECT role_id INTO v_role FROM public.admin_role_assignments WHERE id = v_assignment AND admin_user_id = p_admin;
+    IF v_role IS NULL THEN RAISE EXCEPTION 'assignment_missing' USING ERRCODE = 'P0002'; END IF;
+  END IF;
+
+  -- 022: saha kimliği kaydetmedeki gibi yalnız kapsam YAZILIRKEN (atama ya da kapsam değişikliği) denetlenir.
+  IF v_kind <> 'revoke' AND public.valid_admin_scope(v_scope)
+     AND (v_kind = 'assign' OR v_scope IS DISTINCT FROM (SELECT scope FROM public.admin_role_assignments WHERE id = v_assignment)) THEN
+    v_missing := public.missing_scope_sites(v_scope);
+  END IF;
+  -- Kaydetmeyi engelleyecek durum (aynı kurallar, yazmadan).
+  IF NOT public.admin_has_permission(p_actor, 'roles.manage') THEN v_blocked := 'forbidden';
+  ELSIF (SELECT user_id FROM public.admin_users WHERE id = p_admin) = p_actor THEN v_blocked := 'self_assignment';
+  ELSIF v_kind <> 'revoke' AND NOT public.valid_admin_scope(v_scope) THEN v_blocked := 'invalid_scope';
+  ELSIF v_kind <> 'revoke' AND NOT public.admin_can_grant(p_actor, v_role, v_scope, v_ends) THEN v_blocked := 'escalation_blocked';
+  ELSIF (SELECT key FROM public.admin_roles WHERE id = v_role) = 'owner'
+        AND ((v_kind = 'revoke') OR (v_kind = 'update' AND (v_ends IS NOT NULL OR v_scope->>'kind' <> 'all')))
+        AND public.admin_owner_count(v_assignment) = 0 THEN v_blocked := 'last_active_owner';
+  ELSIF array_length(v_missing, 1) > 0 THEN v_blocked := 'invalid_scope';
+  END IF;
+
+  WITH active AS (
+    SELECT a.id, a.role_id, a.scope, a.ends_at, r.permissions, r.key AS role_key
+      FROM public.admin_role_assignments a JOIN public.admin_roles r ON r.id = a.role_id
+     WHERE a.admin_user_id = p_admin AND a.revoked_at IS NULL AND a.starts_at <= now()
+       AND (a.ends_at IS NULL OR a.ends_at > now())
+  ),
+  simulated AS (
+    SELECT id, role_id, scope, ends_at, permissions, role_key FROM active
+     WHERE v_kind = 'assign' OR id <> v_assignment
+    UNION ALL
+    SELECT COALESCE(v_assignment, '00000000-0000-0000-0000-000000000000'::uuid), v_role, v_scope, v_ends, r.permissions, r.key
+      FROM public.admin_roles r WHERE r.id = v_role AND v_kind <> 'revoke'
+  ),
+  flat_current AS (
+    SELECT jsonb_build_object('key', unnest(permissions), 'scope', scope) AS g FROM active
+  ),
+  flat_next AS (
+    SELECT jsonb_build_object('key', unnest(permissions), 'scope', scope) AS g FROM simulated
+  )
+  SELECT
+    public.admin_merge_permissions(COALESCE((SELECT jsonb_agg(g) FROM flat_current), '[]'::jsonb)),
+    public.admin_merge_permissions(COALESCE((SELECT jsonb_agg(g) FROM flat_next), '[]'::jsonb)),
+    COALESCE((SELECT CASE
+        WHEN bool_or(role_key = 'owner' AND ends_at IS NULL AND scope->>'kind' = 'all') THEN 'SUPER_ADMIN'
+        WHEN bool_or(role_key = 'finance' AND ends_at IS NULL AND scope->>'kind' = 'all') THEN 'FINANCE'
+        WHEN bool_or(role_key = 'operations' AND ends_at IS NULL AND scope->>'kind' = 'all') THEN 'OPERATIONS'
+        WHEN bool_or(role_key = 'engineer' AND ends_at IS NULL AND scope->>'kind' = 'all') THEN 'ENGINEER'
+        ELSE 'NONE' END FROM active), 'NONE'),
+    COALESCE((SELECT CASE
+        WHEN bool_or(role_key = 'owner' AND ends_at IS NULL AND scope->>'kind' = 'all') THEN 'SUPER_ADMIN'
+        WHEN bool_or(role_key = 'finance' AND ends_at IS NULL AND scope->>'kind' = 'all') THEN 'FINANCE'
+        WHEN bool_or(role_key = 'operations' AND ends_at IS NULL AND scope->>'kind' = 'all') THEN 'OPERATIONS'
+        WHEN bool_or(role_key = 'engineer' AND ends_at IS NULL AND scope->>'kind' = 'all') THEN 'ENGINEER'
+        ELSE 'NONE' END FROM simulated), 'NONE')
+    INTO v_current, v_next, v_current_legacy, v_next_legacy;
+
+  RETURN jsonb_build_object(
+    'current', jsonb_build_object('permissions', v_current, 'legacyRole', v_current_legacy),
+    'next', jsonb_build_object('permissions', v_next, 'legacyRole', v_next_legacy),
+    'blocked', CASE WHEN v_blocked IS NULL THEN NULL
+                    WHEN v_blocked = 'invalid_scope' AND array_length(v_missing, 1) > 0
+                      THEN jsonb_build_object('code', v_blocked, 'details', jsonb_build_object('missingSiteIds', to_jsonb(v_missing)))
+                    ELSE jsonb_build_object('code', v_blocked) END
+  );
+END $$;
+
 REVOKE ALL ON FUNCTION public.protect_system_roles(), public.admin_permission_keys(), public.admin_iso(timestamptz), public.missing_scope_sites(jsonb),
   public.check_role_scope(), public.admin_role_usage(uuid), public.admin_role_detail(uuid, text),
   public.admin_missing_grantable(uuid, text[]), public.admin_unknown_permissions(text[]), public.admin_holds_role(uuid, uuid),

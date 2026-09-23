@@ -105,6 +105,17 @@ export const PREVIEW_BLOCKED: AccessPreview = {
   blocked: { code: "last_active_owner", message: "Sistemde en az bir aktif ve süresiz sahip kalmalı. Önce yeni sahibi atayın." },
 };
 
+/** Seçilen sahalardan biri yok: önizleme kaydetmeyle aynı engeli ve kimlikleri döner (21 §3.5). */
+export const PREVIEW_MISSING_SITE: AccessPreview = {
+  ...PREVIEW_NARROWING,
+  change: { kind: "assign", roleKey: "engineer", scope: { kind: "sites", siteIds: [SITE_A, "20000000-0000-0000-0000-0000000000ff"] }, endsAt: null },
+  blocked: {
+    code: "invalid_scope",
+    message: "Kapsam geçersiz: seçilen sahalardan bazıları bulunamadı.",
+    details: { missingSiteIds: ["20000000-0000-0000-0000-0000000000ff"] },
+  },
+};
+
 /* ── Özel roller (web-brifler/21) ─────────────────────────────────────────── */
 
 /** Düzenlenebilir özel rol: sürüm, kullanım sayıları ve parmak izi ile. */

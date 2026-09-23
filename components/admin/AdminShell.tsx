@@ -1,18 +1,19 @@
 "use client";
 
+import { visibleModules } from "./access/policy";
 import AdminMutationWarnings from "./AdminMutationWarnings";
 import { containDialogTab } from "@/lib/hooks/dialog-keyboard";
 
 import { useEffect, useRef, useState } from "react";
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import { AdminProvider, useAdmin } from "@/lib/admin-context";
-import { getModulesForRole, ROLE_META } from "@/lib/rbac";
+import { ROLE_META } from "@/lib/rbac";
 import { supabase } from "@/lib/supabase/browser";
 
 function AdminSidebar({ mobile = false }: { mobile?: boolean }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { admin, loading } = useAdmin();
+  const { admin, me, loading, error, refresh } = useAdmin();
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -33,7 +34,8 @@ function AdminSidebar({ mobile = false }: { mobile?: boolean }) {
       <aside className={`${mobile ? "w-full relative min-h-96" : "hidden lg:flex w-64 fixed inset-y-0 left-0 z-20"} items-center justify-center`}
         style={{ background: "rgba(4,11,6,0.85)", backdropFilter: "blur(24px) saturate(1.6)", borderRight: "1px solid rgba(255,255,255,0.06)" }}>
         <div className="text-center px-4">
-          <p className="text-emerald-200/40 text-sm mb-3">Yönetici yetkisi bulunamadı.</p>
+          <p className="text-emerald-200/40 text-sm mb-3">{error ?? "Yönetici yetkisi bulunamadı."}</p>
+          <button onClick={() => void refresh()} className="min-h-11 px-4 text-white">Yeniden dene</button>
           <Link href="/admin/giris" className="text-sm text-emerald-400 hover:text-emerald-300 transition-colors">
             Giriş Yapın
           </Link>
@@ -42,7 +44,7 @@ function AdminSidebar({ mobile = false }: { mobile?: boolean }) {
     );
   }
 
-  const modules = getModulesForRole(admin.role);
+  const modules = visibleModules(me);
   const roleMeta = ROLE_META[admin.role];
 
   return (
@@ -67,7 +69,7 @@ function AdminSidebar({ mobile = false }: { mobile?: boolean }) {
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium text-white truncate">{admin.full_name}</p>
-            <p className="text-xs text-emerald-200/25 truncate">{roleMeta.label}</p>
+            <p className="text-xs text-emerald-200/25 truncate">{me?.roles.map(r => r.label).join(", ") || roleMeta.label}</p>
           </div>
         </div>
       </div>

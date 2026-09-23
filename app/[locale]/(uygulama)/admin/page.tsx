@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { hasFullPermission } from "@/components/admin/access/policy";
 import { useAdmin } from "@/lib/admin-context";
 import { Link } from "@/i18n/navigation";
 import JobsHealth from "@/components/admin/operations/JobsHealth";
@@ -14,7 +15,7 @@ import { formatCount, formatTry } from "@/lib/pricing";
 // ── Tip tanımları ─────────────────────────────────────────────────────────────
 interface MonthlyPoint {
   month: string;
-  revenue: number;
+  revenue?: number;
   seeds: number;
 }
 
@@ -30,7 +31,7 @@ interface CapacityAlert {
 /** Satış modeli v2 göstergeleri (deneme siparişleri hariç) — kaynak: /api/admin/dashboard. */
 interface DashboardData {
   kpis: {
-    netRevenueKurus: number;
+    netRevenueKurus?: number;
     orderCount: number;
     releasedQuantity: number;
     pendingRefunds: number;
@@ -112,7 +113,7 @@ function SeedChart({ data }: { data: MonthlyPoint[] }) {
 
 // ── Dashboard Content ─────────────────────────────────────────────────────────
 function DashboardContent() {
-  const { admin } = useAdmin();
+  const { admin, me } = useAdmin();
   const [data, setData] = useState<DashboardData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -192,11 +193,11 @@ function DashboardContent() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-          {(admin.role === "SUPER_ADMIN" || admin.role === "FINANCE") && (
+          {hasFullPermission(me, "finance.read") && (
             <CardStat
               icon="💰"
               label={FINANCE_DEFINITIONS.heldOrderValue.label}
-              value={kpis ? formatTry(kpis.netRevenueKurus, "tr") : "—"}
+              value={kpis ? kpis.netRevenueKurus !== undefined ? formatTry(kpis.netRevenueKurus, "tr") : "—" : "—"}
               sub={kpis ? `${formatCount(kpis.orderCount, "tr")} sipariş · tüm zamanlar · iade sürecindekiler hariç` : ""}
             />
           )}
@@ -222,7 +223,7 @@ function DashboardContent() {
               sub={kpis ? `${kpis.pendingRefunds} sipariş iadesi · ${kpis.pendingDuplicateRefunds} çift tahsilat · ${kpis.pendingInvoices} fatura · ${kpis.awaitingBatch} partiye alınacak` : ""}
             />
           )}
-          {(admin.role === "SUPER_ADMIN" || admin.role === "FINANCE") && (
+          {hasFullPermission(me, "finance.read") && (
             <CardStat
               icon="🏢"
               label="Bekleyen B2B"
@@ -241,11 +242,11 @@ function DashboardContent() {
         </div>
       )}
 
-      {(admin.role === "SUPER_ADMIN" || admin.role === "FINANCE") && kpis && <div className={`rounded-xl border p-4 text-sm ${kpis.overdueRefunds ? "border-red-400/40 text-red-200" : "border-white/10 text-slate-300"}`}><p>{kpis.overdueRefunds} sipariş iadesinin son tarihi geçti.</p><Link href="/admin/iadeler" className="inline-flex min-h-11 items-center text-emerald-300 underline">İade kuyruğunu aç →</Link></div>}
-      {(admin.role === "SUPER_ADMIN" || admin.role === "OPERATIONS") && <JobsHealth canRun={admin.role === "SUPER_ADMIN"} />}
+      {hasFullPermission(me, "finance.read") && kpis && <div className={`rounded-xl border p-4 text-sm ${kpis.overdueRefunds ? "border-red-400/40 text-red-200" : "border-white/10 text-slate-300"}`}><p>{kpis.overdueRefunds} sipariş iadesinin son tarihi geçti.</p><Link href="/admin/iadeler" className="inline-flex min-h-11 items-center text-emerald-300 underline">İade kuyruğunu aç →</Link></div>}
+      {hasFullPermission(me, "system.readiness.read") && <JobsHealth canRun={hasFullPermission(me, "system.jobs.run")} />}
 
       {/* ── Grafikler ── */}
-      {(admin.role === "SUPER_ADMIN" || admin.role === "FINANCE") && (
+      {hasFullPermission(me, "finance.read") && (
         <div className="grid md:grid-cols-2 gap-5">
           {/* Aylık Gelir */}
           <div className="bg-[var(--bg-surface)] border border-white/[0.06] rounded-2xl p-5">
@@ -259,7 +260,7 @@ function DashboardContent() {
               </span>
             </div>
             {data ? (
-              <NetCashChart months={data.monthlyGrowth} />
+              <NetCashChart months={data.monthlyGrowth.filter((point): point is MonthlyPoint & {revenue:number} => typeof point.revenue === "number")} />
             ) : (
               <div className="h-40 bg-white/[0.03] rounded-xl animate-pulse" />
             )}

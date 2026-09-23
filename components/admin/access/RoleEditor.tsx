@@ -49,6 +49,10 @@ export default function RoleEditor({
   const previewLock = useRef(false);
   const initialized = useRef(false);
   const heading = useRef<HTMLHeadingElement>(null);
+  const feedback = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (command.error) feedback.current?.focus();
+  }, [command.error]);
   const reviewHeading = useRef<HTMLHeadingElement>(null);
   useEffect(() => {
     heading.current?.focus();
@@ -89,6 +93,9 @@ export default function RoleEditor({
     };
   }, [source, edit, revision]);
   const canManage = hasFullPermission(me, "roles.manage");
+  const ungrantable = !edit
+    ? draft.permissions.filter((p) => !hasFullPermission(me, p))
+    : [];
   const ownRole = edit && me?.roles.some((r) => r.key === source);
   const immutable = edit && detail?.isSystem;
   const locked =
@@ -105,7 +112,7 @@ export default function RoleEditor({
   }
   async function prepare(e: React.FormEvent) {
     e.preventDefault();
-    if (locked || previewLock.current) return;
+    if (locked || previewLock.current || ungrantable.length) return;
     command.setError(null);
     command.setResult(null);
     const snapshot = structuredClone({
@@ -282,7 +289,9 @@ export default function RoleEditor({
           Güncel rolü yenile
         </Button>
       </div>
-      <Feedback command={command} />
+      <div ref={feedback} tabIndex={-1}>
+        <Feedback command={command} />
+      </div>
       {loadError ? (
         <LoadError error={loadError} retry={() => setRevision((n) => n + 1)} />
       ) : !loaded ? (
@@ -307,6 +316,13 @@ export default function RoleEditor({
               {detail.usage.activeAssignments} etkin,{" "}
               {detail.usage.scheduledAssignments} ileri tarihli atama,{" "}
               {detail.usage.pendingInvitations} bekleyen davet.
+            </p>
+          )}
+          {ungrantable.length > 0 && (
+            <p role="alert" className="text-amber-200 text-sm">
+              Kopyalanan veya seçilen izinlerden {ungrantable.length} tanesini
+              verme yetkiniz yok. Yeni rolü oluşturmak için bu izinleri
+              kaldırın.
             </p>
           )}
           <form hidden={!!review} onSubmit={prepare} className="space-y-5">
@@ -356,7 +372,9 @@ export default function RoleEditor({
             {!review && (
               <Button
                 type="submit"
-                disabled={locked || !draft.permissions.length}
+                disabled={
+                  locked || !draft.permissions.length || ungrantable.length > 0
+                }
               >
                 {previewBusy
                   ? "Etki hesaplanıyor…"

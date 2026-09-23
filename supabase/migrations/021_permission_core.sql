@@ -283,13 +283,16 @@ BEGIN
 END $$;
 
 CREATE FUNCTION public.update_admin_assignment(p_actor uuid, p_assignment uuid, p_scope jsonb,
-                                               p_ends_at timestamptz, p_expected_updated_at timestamptz, p_reason text) RETURNS jsonb
+                                               p_ends_at timestamptz, p_expected_updated_at timestamptz, p_reason text,
+                                               p_admin uuid DEFAULT NULL) RETURNS jsonb
 LANGUAGE plpgsql SECURITY DEFINER SET search_path = '' AS $$
 DECLARE v_row public.admin_role_assignments; v_before jsonb;
 BEGIN
   IF NOT public.admin_has_permission(p_actor, 'roles.manage') THEN RAISE EXCEPTION 'forbidden' USING ERRCODE = '42501'; END IF;
   SELECT * INTO v_row FROM public.admin_role_assignments WHERE id = p_assignment FOR UPDATE;
   IF NOT FOUND THEN RAISE EXCEPTION 'assignment_missing' USING ERRCODE = 'P0002'; END IF;
+  -- Adresteki personel ile kaydın sahibi eşleşmeli: yanlış kişinin ataması düzenlenemez.
+  IF p_admin IS NOT NULL AND v_row.admin_user_id <> p_admin THEN RAISE EXCEPTION 'assignment_missing' USING ERRCODE = 'P0002'; END IF;
   IF v_row.revoked_at IS NOT NULL THEN RAISE EXCEPTION 'assignment_revoked' USING ERRCODE = '55000'; END IF;
   IF (SELECT user_id FROM public.admin_users WHERE id = v_row.admin_user_id) = p_actor THEN
     RAISE EXCEPTION 'self_assignment' USING ERRCODE = '42501';
@@ -316,13 +319,15 @@ BEGIN
   RETURN to_jsonb(v_row);
 END $$;
 
-CREATE FUNCTION public.revoke_admin_assignment(p_actor uuid, p_assignment uuid, p_reason text) RETURNS jsonb
+CREATE FUNCTION public.revoke_admin_assignment(p_actor uuid, p_assignment uuid, p_reason text,
+                                               p_admin uuid DEFAULT NULL) RETURNS jsonb
 LANGUAGE plpgsql SECURITY DEFINER SET search_path = '' AS $$
 DECLARE v_row public.admin_role_assignments; v_key text;
 BEGIN
   IF NOT public.admin_has_permission(p_actor, 'roles.manage') THEN RAISE EXCEPTION 'forbidden' USING ERRCODE = '42501'; END IF;
   SELECT * INTO v_row FROM public.admin_role_assignments WHERE id = p_assignment FOR UPDATE;
   IF NOT FOUND THEN RAISE EXCEPTION 'assignment_missing' USING ERRCODE = 'P0002'; END IF;
+  IF p_admin IS NOT NULL AND v_row.admin_user_id <> p_admin THEN RAISE EXCEPTION 'assignment_missing' USING ERRCODE = 'P0002'; END IF;
   IF v_row.revoked_at IS NOT NULL THEN RETURN to_jsonb(v_row); END IF;
   IF (SELECT user_id FROM public.admin_users WHERE id = v_row.admin_user_id) = p_actor THEN
     RAISE EXCEPTION 'self_assignment' USING ERRCODE = '42501';
@@ -579,8 +584,8 @@ REVOKE ALL ON FUNCTION public.valid_admin_scope(jsonb), public.admin_effective_p
   public.admin_legacy_role(uuid), public.admin_can_grant(uuid, uuid, jsonb, timestamptz), public.global_only_permission(text), public.admin_audit(uuid, text, text, text, jsonb),
   public.admin_owner_count(uuid, boolean), public.admin_merge_permissions(jsonb), public.admin_preview_assignment(uuid, uuid, jsonb),
   public.assign_admin_role(uuid, uuid, text, jsonb, timestamptz, text),
-  public.update_admin_assignment(uuid, uuid, jsonb, timestamptz, timestamptz, text),
-  public.revoke_admin_assignment(uuid, uuid, text), public.set_admin_active(uuid, uuid, boolean, text),
+  public.update_admin_assignment(uuid, uuid, jsonb, timestamptz, timestamptz, text, uuid),
+  public.revoke_admin_assignment(uuid, uuid, text, uuid), public.set_admin_active(uuid, uuid, boolean, text),
   public.create_admin_invitation(uuid, text, text, jsonb, timestamptz, text, timestamptz),
   public.resend_admin_invitation(uuid, uuid, text, timestamptz), public.revoke_admin_invitation(uuid, uuid),
   public.accept_admin_invitation(text, uuid, text, text), public.admin_migration_report()
@@ -588,8 +593,8 @@ REVOKE ALL ON FUNCTION public.valid_admin_scope(jsonb), public.admin_effective_p
 GRANT EXECUTE ON FUNCTION public.admin_effective_permissions(uuid), public.admin_has_permission(uuid, text),
   public.admin_preview_assignment(uuid, uuid, jsonb),
   public.assign_admin_role(uuid, uuid, text, jsonb, timestamptz, text),
-  public.update_admin_assignment(uuid, uuid, jsonb, timestamptz, timestamptz, text),
-  public.revoke_admin_assignment(uuid, uuid, text), public.set_admin_active(uuid, uuid, boolean, text),
+  public.update_admin_assignment(uuid, uuid, jsonb, timestamptz, timestamptz, text, uuid),
+  public.revoke_admin_assignment(uuid, uuid, text, uuid), public.set_admin_active(uuid, uuid, boolean, text),
   public.create_admin_invitation(uuid, text, text, jsonb, timestamptz, text, timestamptz),
   public.resend_admin_invitation(uuid, uuid, text, timestamptz), public.revoke_admin_invitation(uuid, uuid),
   public.accept_admin_invitation(text, uuid, text, text), public.admin_migration_report() TO service_role;

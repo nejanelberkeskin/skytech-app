@@ -22,7 +22,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     const sent = await sendStaffInvitation({
       to: result.invitation.email, roleLabel: result.invitation.roleLabel,
       inviterName: guard.admin.full_name || guard.admin.email,
-      acceptUrl: `${publicOrigin(request.nextUrl.origin)}/davet/${result.token}`,
+      acceptUrl: `${publicOrigin(request.nextUrl.origin)}/personel-daveti/${result.token}`,
       expiresAt: new Date(result.invitation.expiresAt),
     });
     if (!sent?.id || sent.id === SKIPPED_ID) warnings.push({ code: "email_not_sent", message: "Davet yenilendi ancak e-posta gönderilemedi." });

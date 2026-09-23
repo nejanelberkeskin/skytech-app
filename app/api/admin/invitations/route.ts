@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
   });
   if (isServiceError(created)) return failFrom(created);
 
-  const acceptUrl = `${publicOrigin(request.nextUrl.origin)}/davet/${created.token}`;
+  const acceptUrl = `${publicOrigin(request.nextUrl.origin)}/personel-daveti/${created.token}`;
   const warnings: ApiWarning[] = [];
   try {
     const sent = await sendStaffInvitation({

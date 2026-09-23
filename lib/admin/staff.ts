@@ -153,14 +153,15 @@ export function createStaffService(deps: StaffDeps) {
   const assign = (actor: string, adminId: string, roleKey: string, scope: Scope, endsAt: string | null, reason: string | null) =>
     rpc("assign_admin_role", { p_actor: actor, p_admin: adminId, p_role_key: roleKey, p_scope: scope, p_ends_at: endsAt, p_reason: reason });
 
-  const updateAssignment = (actor: string, assignmentId: string, scope: Scope, endsAt: string | null, expectedVersion: string, reason: string | null) =>
+  /** `adminId` adresten gelir; kayıt başka personele aitse 404 döner (sahiplik doğrulaması). */
+  const updateAssignment = (actor: string, adminId: string, assignmentId: string, scope: Scope, endsAt: string | null, expectedVersion: string, reason: string | null) =>
     rpc("update_admin_assignment", {
       p_actor: actor, p_assignment: assignmentId, p_scope: scope, p_ends_at: endsAt,
-      p_expected_updated_at: expectedVersion, p_reason: reason,
+      p_expected_updated_at: expectedVersion, p_reason: reason, p_admin: adminId,
     });
 
-  const revokeAssignment = (actor: string, assignmentId: string, reason: string | null) =>
-    rpc("revoke_admin_assignment", { p_actor: actor, p_assignment: assignmentId, p_reason: reason });
+  const revokeAssignment = (actor: string, adminId: string, assignmentId: string, reason: string | null) =>
+    rpc("revoke_admin_assignment", { p_actor: actor, p_assignment: assignmentId, p_reason: reason, p_admin: adminId });
 
   const setActive = (actor: string, adminId: string, active: boolean, reason: string | null) =>
     rpc("set_admin_active", { p_actor: actor, p_admin: adminId, p_active: active, p_reason: reason });

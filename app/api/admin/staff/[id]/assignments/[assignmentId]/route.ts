@@ -32,7 +32,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
   const body = patchSchema.safeParse(await readJson(request));
   if (!body.success) return fail(400, "invalid_body", "Geçersiz istek: kapsam ve expectedVersion gerekli.");
   const service = staffService();
-  const result = await service.updateAssignment(guard.admin.user_id, p.assignmentId, body.data.scope, body.data.endsAt ?? null, body.data.expectedVersion, body.data.reason ?? null);
+  const result = await service.updateAssignment(guard.admin.user_id, p.id, p.assignmentId, body.data.scope, body.data.endsAt ?? null, body.data.expectedVersion, body.data.reason ?? null);
   if (isServiceError(result)) return failFrom(result);
   const detail = await service.detail(p.id);
   return isServiceError(detail) ? failFrom(detail) : ok(detail);
@@ -45,7 +45,7 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
   if (!p) return fail(404, "not_found", "Atama bulunamadı.");
   const body = z.object({ reason: reasonSchema }).strict().safeParse(await readJson(request));
   const service = staffService();
-  const result = await service.revokeAssignment(guard.admin.user_id, p.assignmentId, body.success ? body.data.reason ?? null : null);
+  const result = await service.revokeAssignment(guard.admin.user_id, p.id, p.assignmentId, body.success ? body.data.reason ?? null : null);
   if (isServiceError(result)) return failFrom(result);
   const detail = await service.detail(p.id);
   return isServiceError(detail) ? failFrom(detail) : ok(detail);

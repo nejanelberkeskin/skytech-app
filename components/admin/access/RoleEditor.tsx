@@ -106,7 +106,33 @@ export default function RoleEditor({
     !canManage ||
     !!ownRole ||
     !!immutable;
+  function fieldError(field: string) {
+    const error = command.error;
+    if (!(error instanceof AdminApiError)) return undefined;
+    const fields = error.details?.fields;
+    const codes: Record<string, string> = {
+      key: "role_exists",
+      label: "invalid_label",
+      description: "invalid_description",
+      reason: "note_required",
+      permissions: "invalid_permissions",
+    };
+    if (error.code === codes[field]) return error.message;
+    if (
+      error.code === "invalid_body" &&
+      Array.isArray(fields) &&
+      fields.some(
+        (value) =>
+          typeof value === "string" &&
+          (value === field || value.startsWith(`${field}.`)),
+      )
+    )
+      return "Bu alanı kontrol edin.";
+    return undefined;
+  }
   function change(next: Partial<Draft>) {
+    if (Object.keys(next).some((field) => fieldError(field)))
+      command.setError(null);
     setDraft((v) => ({ ...v, ...next }));
     setReview(null);
   }
@@ -330,6 +356,7 @@ export default function RoleEditor({
               {!edit && (
                 <Input
                   label="Rol anahtarı"
+                  error={fieldError("key")}
                   value={draft.key}
                   required
                   pattern="[a-z][a-z0-9_]{2,40}"
@@ -340,6 +367,7 @@ export default function RoleEditor({
               )}
               <Input
                 label="Rol adı"
+                error={fieldError("label")}
                 value={draft.label}
                 required
                 minLength={2}
@@ -348,10 +376,16 @@ export default function RoleEditor({
               />
               <Textarea
                 label="Rol açıklaması"
+                error={fieldError("description")}
                 value={draft.description}
                 maxLength={500}
                 onChange={(e) => change({ description: e.target.value })}
               />
+              {fieldError("permissions") && (
+                <p role="alert" className="text-red-200 text-sm">
+                  {fieldError("permissions")}
+                </p>
+              )}
               <PermissionFields
                 value={draft.permissions}
                 onChange={(permissions) => change({ permissions })}
@@ -360,6 +394,7 @@ export default function RoleEditor({
               {edit && (
                 <Textarea
                   label="Değişiklik gerekçesi"
+                  error={fieldError("reason")}
                   value={draft.reason}
                   required
                   minLength={10}

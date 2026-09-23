@@ -113,7 +113,7 @@ export const ADMIN_MODULES: AdminModule[] = [
   },
   { id: "davetler", href: "/admin/davetler", label: "Personel Davetleri", icon: "✉️", allowedRoles: ["SUPER_ADMIN"] },
   { id: "roller", href: "/admin/roller", label: "Roller ve İzinler", icon: "🔑", allowedRoles: ["SUPER_ADMIN"] },
-  { id: "islem-kaydi", href: "/admin/islem-kaydi", label: "İşlem Geçmişi", icon: "📋", allowedRoles: ["SUPER_ADMIN", "FINANCE"] },
+  { id: "islem-kaydi", href: "/admin/islem-kaydi", label: "İşlem Geçmişi", icon: "📋", allowedRoles: ["SUPER_ADMIN"] },
   { id: "guvenlik", href: "/admin/guvenlik", label: "Hesap Güvenliği", icon: "🔒", allowedRoles: ["SUPER_ADMIN", "FINANCE", "OPERATIONS", "ENGINEER", "NONE"] },
 ];
 

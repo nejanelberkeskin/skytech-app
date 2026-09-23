@@ -1,5 +1,5 @@
 import type { NextRequest } from "next/server";
-import { can, requirePermission } from "@/lib/admin/permissions";
+import { hasFullScope, requirePermission } from "@/lib/admin/permissions";
 import { ok } from "@/lib/api/envelope";
 import { failFrom, isServiceError, refundService } from "@/lib/refunds/http";
 
@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
     filter: params.get("filter") === "all" ? "all" : "open",
     includeTest: params.get("includeTest") === "1",
     limit,
-    canExecute: can(guard.access, "refunds.execute"),
+    canExecute: hasFullScope(guard.access, "refunds.execute"),
   });
   if (isServiceError(queue)) return failFrom(queue);
   return ok({ items: queue.items, total: queue.total, generatedAt: new Date().toISOString() });

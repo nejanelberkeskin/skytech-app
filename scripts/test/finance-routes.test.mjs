@@ -25,9 +25,11 @@ const overviewModule = load('lib/finance/overview.ts', {});
 // İzin modülü taklit edilir: gerçek modül veritabanından etkili yetki okur (021).
 const ROLE_PERMISSIONS = { SUPER_ADMIN: ['finance.read', 'refunds.execute'], FINANCE: ['finance.read', 'refunds.execute'], OPERATIONS: [], ENGINEER: [] };
 const guardFor = (role) => ({ admin: { role, is_active: true, user_id: 'u', id: 'a', full_name: 'T', email: 't@example.invalid' },
-  access: { adminId: 'a', permissions: ROLE_PERMISSIONS[role].map((key) => ({ key, scope: { kind: 'all' } })), roles: [], limits: { refundKurus: null } }, error: null });
+  access: { adminId: 'a', permissions: ROLE_PERMISSIONS[role].map((key) => ({ key, scopes: [{ kind: 'all' }] })), roles: [], limits: { refundKurus: null, enforced: false } }, error: null });
+const hasFull = (access, key) => Boolean(access?.permissions?.some((p) => p.key === key && p.scopes?.some((s) => s.kind === 'all')));
 const permissionsFor = (role) => ({
   can: (access, key) => Boolean(access?.permissions?.some((p) => p.key === key)),
+  hasFullScope: hasFull,
   requireAdminAccess: async () => guardFor(role),
   requirePermission: async (_request, key) =>
     ROLE_PERMISSIONS[role].includes(key) ? guardFor(role) : { admin: null, access: null, error: response.json({ ok: false, error: { code: 'forbidden', message: 'Bu işlem için yetkiniz yok.' } }, { status: 403 }) },

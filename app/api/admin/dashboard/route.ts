@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServiceRoleClient } from "@/lib/supabase/server";
-import { can, requireAdminAccess } from "@/lib/admin/permissions";
+import { hasFullScope, requireAdminAccess } from "@/lib/admin/permissions";
 import { FINANCE_DEFINITIONS_VERSION, loadFinanceOverview, monthLabel, type FinanceOverview } from "@/lib/finance/overview";
 
 /**
@@ -17,7 +17,8 @@ export async function GET(request: NextRequest) {
   const guard = await requireAdminAccess(request);
   if (guard.error) return guard.error;
 
-  const financial = can(guard.access, "finance.read");
+  // Genel Bakış tüm kayıtların toplamıdır; kapsamı uygulamaz. Dar kapsamlı yetki para alanlarını açmaz.
+  const financial = hasFullScope(guard.access, "finance.read");
   const supabase = createServiceRoleClient();
 
   const [overviewRes, invoicesRes, landsRes, b2bRes, newRequestsRes, contactedRequestsRes] = await Promise.all([

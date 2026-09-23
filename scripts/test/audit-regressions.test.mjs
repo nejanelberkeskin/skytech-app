@@ -31,8 +31,8 @@ test('contact form: skipped email is 503; quota stops mail; oversized and missin
 test('dashboard never returns revenue fields to non-finance roles and fails on partial query errors',async()=>{
  // Claude (iade-mutabakati): Genel Bakış tek finans hesabına (SQL 020) taşındı; taklitler iki uygulamayla da çalışır.
  const overview={definitionsVersion:1,currentMonth:{key:'2026-09'},allTime:{heldOrderValueKurus:0,heldOrderCount:0,releasedQuantity:0},liabilities:{orderRefundLiabilityCount:0,duplicateLiabilityCount:0,overdueRefundCount:0},operations:{awaitingBatchCount:0},months:[{key:'2026-09',netCashKurus:0,paidQuantity:0}]};
- const guard=(role)=>({admin:{role,is_active:true,user_id:'u'},access:{permissions:['SUPER_ADMIN','FINANCE'].includes(role)?[{key:'finance.read',scope:{kind:'all'}}]:[],roles:[],limits:{}},error:null});
- const permissions=(role)=>({can:(access,key)=>Boolean(access?.permissions?.some(p=>p.key===key)),requireAdminAccess:async()=>guard(role),requirePermission:async()=>guard(role)});
+ const guard=(role)=>({admin:{role,is_active:true,user_id:'u'},access:{permissions:['SUPER_ADMIN','FINANCE'].includes(role)?[{key:'finance.read',scopes:[{kind:'all'}]}]:[],roles:[],limits:{}},error:null});
+ const permissions=(role)=>({can:(access,key)=>Boolean(access?.permissions?.some(p=>p.key===key)),hasFullScope:(access,key)=>Boolean(access?.permissions?.some(p=>p.key===key&&p.scopes?.some(s=>s.kind==='all'))),requireAdminAccess:async()=>guard(role),requirePermission:async()=>guard(role)});
  for(const role of ['SUPER_ADMIN','FINANCE','OPERATIONS','ENGINEER']){
  const api=load('app/api/admin/dashboard/route.ts',{'next/server':{NextResponse:response},'@/lib/supabase/server':{createServiceRoleClient:()=>({from:()=>query([])})},'@/lib/admin/permissions':permissions(role),'@/lib/finance/overview':{FINANCE_DEFINITIONS_VERSION:1,monthLabel:(k)=>k,loadFinanceOverview:async()=>overview}});
  const res=await api.GET({});assert.equal(res.status,200);const financial=['SUPER_ADMIN','FINANCE'].includes(role);assert.equal('netRevenueKurus' in res.body.kpis,financial);assert.equal('revenue' in res.body.monthlyGrowth[0],financial);

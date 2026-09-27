@@ -172,8 +172,10 @@ export function createStaffService(deps: StaffDeps) {
   const setActive = (actor: string, adminId: string, active: boolean, reason: string | null) =>
     rpc("set_admin_active", { p_actor: actor, p_admin: adminId, p_active: active, p_reason: reason });
 
-  async function invitations(page: { limit: number; cursor?: string | null } = { limit: 50 }): Promise<InvitationView[] | ServiceError> {
+  async function invitations(page: { limit: number; cursor?: string | null; actorUserId: string; canViewAll: boolean }): Promise<InvitationView[] | ServiceError> {
     let query = db.from("admin_invitations").select(INVITATION_FIELDS).order("created_at", { ascending: false }).order("id", { ascending: false }).limit(page.limit);
+    // Actor and visibility come only from the authenticated route guard, never query parameters.
+    if (!page.canViewAll) query = query.eq("created_by", page.actorUserId);
     const cursor: Cursor | null = parseCursor(page.cursor);
     if (cursor) query = query.or(keysetFilter(cursor, false));
     const { data, error } = await query;

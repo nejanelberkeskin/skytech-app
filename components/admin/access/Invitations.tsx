@@ -15,6 +15,7 @@ export default function Invitations() {
   const { me } = useAdmin();
   const command = useAccessCommand();
   const canInvite = hasFullPermission(me, "staff.invite");
+  const canViewAll = hasFullPermission(me, "staff.manage");
   const [list, setList] = useState<InvitationView[] | null>(null);
   const [roles, setRoles] = useState<RoleView[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -82,7 +83,7 @@ export default function Invitations() {
     return () => {
       token.value++;
     };
-  }, [load]);
+  }, [load, canViewAll]);
   const selectedPermissions = roles.find((r) => r.key === roleKey)?.permissions;
   const invalidScope = invalidRoleScope(selectedPermissions, scope);
   const review = () => {
@@ -166,6 +167,12 @@ export default function Invitations() {
       >
         Davetleri yenile
       </Button>
+      <p className="text-sm text-slate-300">
+        {canViewAll
+          ? "Tüm personel davetlerini görüyorsunuz."
+          : "Yalnız sizin oluşturduğunuz davetler gösterilir. Başka yöneticilerin davetlerini göremez veya değiştiremezsiniz."}
+        {!canInvite && " Bu ekranı salt okunur kullanıyorsunuz. Davet oluşturmak, yeniden göndermek veya iptal etmek için ayrıca davet yetkisi gerekir."}
+      </p>
       <Feedback command={command} />
       {canInvite && (
         <form

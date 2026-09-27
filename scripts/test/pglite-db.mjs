@@ -13,9 +13,9 @@ export const IDS = {
   siteB: '20000000-0000-0000-0000-0000000000bb',
 };
 
-const MIGRATIONS = ['007_admin_audit_log.sql', '016_release_orders.sql', '017_sales_pause.sql', '019_audit_hardening.sql', '020_refund_reconciliation.sql', '021_permission_core.sql', '022_custom_roles.sql'];
+const MIGRATIONS = ['007_admin_audit_log.sql', '016_release_orders.sql', '017_sales_pause.sql', '019_audit_hardening.sql', '020_refund_reconciliation.sql', '021_permission_core.sql', '022_custom_roles.sql', '023_invitation_ownership.sql'];
 
-export async function createDb({ upTo = '022_custom_roles.sql' } = {}) {
+export async function createDb({ upTo = '023_invitation_ownership.sql' } = {}) {
   const db = new PGlite();
   await db.exec(`CREATE ROLE anon; CREATE ROLE authenticated; CREATE ROLE service_role;
     CREATE SCHEMA auth; CREATE TABLE auth.users(id uuid PRIMARY KEY);
@@ -111,7 +111,8 @@ function parseFilter(expr, params, join = ' OR ') {
       const op = OPS[m[2]];
       if (!op) throw new Error(`desteklenmeyen işleç: ${m[2]}`);
       params.push(unquote(m[3]));
-      return `${column(m[1])}::text ${op} $${params.length}::text`;
+      // Let PostgreSQL infer UUID/timestamp/text types, as real PostgREST does.
+      return `${column(m[1])} ${op} $${params.length}`;
     })
     .join(join);
 }
@@ -135,7 +136,12 @@ export function restClient(db, hooks = {}) {
       }
     };
     const q = {
-      select(cols) { st.cols = cols.replace(/\s+/g, ' '); return q; },
+      select(cols) {
+        st.cols = cols.replace(/\s+/g, ' ');
+        if (table === 'admin_invitations') st.cols = st.cols.replace('admin_roles(key, label)',
+          "(SELECT jsonb_build_object('key', r.key, 'label', r.label) FROM admin_roles r WHERE r.id = admin_invitations.role_id) AS admin_roles");
+        return q;
+      },
       eq(col, value) { add(`${column(col)}::text = ?::text`, String(value)); return q; },
       neq(col, value) { add(`${column(col)}::text <> ?::text`, String(value)); return q; },
       in(col, values) { add(`${column(col)}::text = ANY(?::text[])`, values.map(String)); return q; },

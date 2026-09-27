@@ -7,6 +7,7 @@ import type { ApiWarning } from "@/lib/api/envelope";
 import { AdminApiError } from "../operations/client";
 import { accessRequest } from "./transport";
 import { canVisit } from "./policy";
+import AccessProblem from "./AccessProblem";
 import SecurityPanel from "./SecurityPanel";
 export function AccessTabs() {
   const { me } = useAdmin();
@@ -127,14 +128,7 @@ export function Feedback({
 }) {
   return (
     <div className="space-y-3">
-      {command.error && (
-        <p
-          role="alert"
-          className="border border-red-400/40 rounded-xl p-4 text-sm text-red-200"
-        >
-          {command.error.message}
-        </p>
-      )}
+      {command.error && <AccessProblem problem={command.error} />}
       {command.warnings.map((w, i) => (
         <p
           key={i}

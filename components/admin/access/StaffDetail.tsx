@@ -9,6 +9,8 @@ import { AccessPage, Feedback, LoadError, useAccessCommand } from "./shared";
 import { activeAssignment, hasFullPermission } from "./policy";
 import { expiryInput, permissionLabel, scopeLabel, toExpiry } from "./labels";
 import { AdminApiError, istanbulDate } from "../operations/client";
+import { requiresFullScope, invalidRoleScope } from "./role-form";
+import AccessProblem from "./AccessProblem";
 import ScopeFields from "./ScopeFields";
 import type {
   AccessPreview,
@@ -99,6 +101,13 @@ export default function StaffDetail({ id }: { id: string }) {
   useEffect(() => {
     if (preview) confirmation.current?.focus();
   }, [preview]);
+  const selectedPermissions = roles.find(
+    (r) => r.key === draft?.roleKey,
+  )?.permissions;
+  const invalidScope =
+    !!draft &&
+    draft.kind !== "revoke" &&
+    invalidRoleScope(selectedPermissions, draft.scope);
   const own = person?.userId === me?.admin.userId;
   const busy = command.busy || previewBusy || loading;
   const edit = (kind: "update" | "revoke", a: StaffAssignmentView) => {
@@ -122,6 +131,8 @@ export default function StaffDetail({ id }: { id: string }) {
     if (!draft || own || !canManage || previewLock.current || command.uncertain)
       return;
     try {
+      if (invalidScope)
+        throw new Error("Bu rol için Tüm kayıtlar kapsamını açıkça seçin.");
       if (!draft.roleKey) throw new Error("Rol seçin.");
       if (!draft.reason.trim())
         throw new Error("Değişiklik gerekçesini yazın.");
@@ -443,6 +454,7 @@ export default function StaffDetail({ id }: { id: string }) {
                     )}
                     {draft.kind !== "revoke" && (
                       <ScopeFields
+                        fullScopeOnly={requiresFullScope(selectedPermissions)}
                         scope={draft.scope}
                         onChange={(scope) => change({ scope })}
                         endsAt={draft.endsAt}
@@ -457,7 +469,11 @@ export default function StaffDetail({ id }: { id: string }) {
                       onChange={(e) => change({ reason: e.target.value })}
                     />
                     <div className="flex gap-2">
-                      <Button type="submit" loading={previewBusy}>
+                      <Button
+                        type="submit"
+                        loading={previewBusy}
+                        disabled={invalidScope}
+                      >
                         Değişikliği önizle
                       </Button>
                       <Button
@@ -521,9 +537,7 @@ export default function StaffDetail({ id }: { id: string }) {
                       </p>
                     )}
                     {preview.data.blocked ? (
-                      <p role="alert" className="text-red-200">
-                        {preview.data.blocked.message}
-                      </p>
+                      <AccessProblem problem={preview.data.blocked} />
                     ) : (
                       <Button
                         loading={command.busy}

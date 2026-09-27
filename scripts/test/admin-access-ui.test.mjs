@@ -43,3 +43,42 @@ test('unexpected HTTP 200 is uncertain; 409 retains conflict and warnings surviv
   globalThis.fetch=async()=>Response.json({ok:true,data:{id:'fixture'},warnings:[{code:'email_not_sent',message:'Gönderilemedi'}]});
   assert.equal((await accessRequest('/api/admin/invitations','POST',{})).warnings[0].code,'email_not_sent');
 });
+
+// These independent permissions must match the new API OR gates without opening legacy modules.
+test('standalone invitation and role managers see only the matching full-scope modules', () => {
+  const account = key => ({...ME_OWNER, admin:{...ME_OWNER.admin,legacyRole:'NONE'}, permissions:[{key,scopes:[{kind:'all'}]}]});
+  assert.equal(canVisit(account('staff.invite'),'/admin/davetler'),true);
+  assert.equal(canVisit(account('staff.invite'),'/admin/kullanicilar'),false);
+  assert.equal(canVisit(account('roles.manage'),'/admin/kullanicilar/fixture'),true);
+  assert.equal(canVisit(account('roles.manage'),'/admin/roller'),true);
+  assert.equal(canVisit(account('roles.manage'),'/admin/davetler'),false);
+  assert.equal(canVisit(account('roles.manage'),'/admin/araziler'),false);
+  assert.equal(canVisit({...account('staff.invite'),permissions:[{key:'staff.invite',scopes:[{kind:'assigned'}]}]},'/admin/davetler'),false);
+});
+
+test('role reconciliation compares content, ignores reason/order, and preserves meaningful changes', async () => {
+  const {sameRoleContent, copiedRoleLabel, invalidRoleScope} = await import('../../components/admin/access/role-form.ts');
+  const saved={label:'Saha ekibi',description:'Saha kayıtları',permissions:['sites.read','batches.read']};
+  assert.equal(sameRoleContent(saved,{...saved,label:' Saha ekibi ',permissions:['batches.read','sites.read'],reason:'Yeni gerekçe'}),true);
+  for (const change of [{label:'Başka ekip'},{description:'Yeni açıklama'},{permissions:['sites.read']}])
+    assert.equal(sameRoleContent(saved,{...saved,...change}),false);
+  assert.ok(copiedRoleLabel('İ'.repeat(80)).length<=80);
+  assert.ok(copiedRoleLabel('🌳'.repeat(40)).length<=80);
+  assert.equal(copiedRoleLabel('Saha'),'Saha kopyası');
+  assert.equal(invalidRoleScope(['sites.read'],{kind:'sites',siteIds:['fixture']}),false);
+  for (const permission of ['staff.invite','staff.manage','roles.manage']) {
+    assert.equal(invalidRoleScope([permission],{kind:'all'}),false);
+    assert.equal(invalidRoleScope([permission],{kind:'assigned'}),true);
+    assert.equal(invalidRoleScope([permission],{kind:'sites',siteIds:['fixture']}),true);
+  }
+});
+test('actionable API details are whitelisted, type checked and labelled without exposing extra payload', async () => {
+  const {accessErrorDetails} = await import('../../components/admin/access/error-details.ts');
+  assert.deepEqual(accessErrorDetails('escalation_blocked',{missing:['staff.invite'],token:'SECRET'}),['Verilemeyen izinler: Personel davet etme']);
+  assert.deepEqual(accessErrorDetails('invalid_scope',{missingSiteIds:['missing-site']}),['Bulunamayan saha kimlikleri: missing-site']);
+  assert.deepEqual(accessErrorDetails('invalid_permissions',{unknown:['future.permission']}),['Bilinmeyen izinler: future.permission']);
+  assert.deepEqual(accessErrorDetails('global_scope_conflict',{permissions:['roles.manage'],assignments:2,invitations:0,sql:'SECRET'}),['Tüm kayıtlar kapsamı gerektiren izinler: Rol ve erişim atama','Dar kapsamlı atama sayısı: 2','Dar kapsamlı davet sayısı: 0']);
+  for (const details of [null,[],{missing:[null,42,{}]},{missing:'SECRET'}]) assert.deepEqual(accessErrorDetails('escalation_blocked',details),[]);
+  assert.deepEqual(accessErrorDetails('global_scope_conflict',{assignments:-1,invitations:'SECRET'}),[]);
+  assert.deepEqual(accessErrorDetails('unknown',{token:'SECRET'}),[]);
+});

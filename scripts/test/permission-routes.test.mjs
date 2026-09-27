@@ -35,7 +35,6 @@ test('atama güncelleme/kaldırma: adresteki personel ile kaydın sahibi eşleş
 const response = { json: (body, init) => ({ body, status: init?.status ?? 200 }) };
 const envelope = load('lib/api/envelope.ts', { 'next/server': { NextResponse: response } });
 const access = (keys) => ({ adminId: 'a', permissions: keys.map((key) => ({ key, scopes: [{ kind: 'all' }] })), roles: [], limits: { refundKurus: null, enforced: false } });
-const permissionKeys = load('lib/admin/permission-keys.ts');
 
 function rolesApi(keys) {
   const { realGate } = gateHelpers;

@@ -9,6 +9,8 @@ import { accessRequest } from "./transport";
 import { Feedback, LoadError, useAccessCommand } from "./shared";
 import { hasFullPermission } from "./policy";
 import { permissionLabel } from "./labels";
+import AccessProblem from "./AccessProblem";
+import { copiedRoleLabel, sameRoleContent } from "./role-form";
 import PermissionFields from "./PermissionFields";
 type Draft = {
   key: string;
@@ -75,7 +77,7 @@ export default function RoleEditor({
           initialized.current = true;
           setDraft({
             key: edit ? data.key : "",
-            label: edit ? data.label : `${data.label} kopyası`,
+            label: edit ? data.label : copiedRoleLabel(data.label),
             description: data.description,
             permissions: data.permissions,
             reason: "",
@@ -86,12 +88,25 @@ export default function RoleEditor({
         if (alive) {
           setLoaded(false);
           setLoadError(e.message);
+          if (
+            e instanceof AdminApiError &&
+            (e.status === 401 ||
+              (e.status === 403 && e.code !== "mfa_required"))
+          )
+            void refresh();
         }
       });
     return () => {
       alive = false;
     };
-  }, [source, edit, revision]);
+  }, [source, edit, revision, refresh]);
+  const unchanged = edit && !!detail && sameRoleContent(draft, detail);
+  const reviewUnchanged =
+    edit &&
+    !!review?.impact &&
+    !!detail &&
+    detail.version === review.impact.role.version &&
+    sameRoleContent(review.impact.next, detail);
   const canManage = hasFullPermission(me, "roles.manage");
   const ungrantable = !edit
     ? draft.permissions.filter((p) => !hasFullPermission(me, p))
@@ -138,7 +153,8 @@ export default function RoleEditor({
   }
   async function prepare(e: React.FormEvent) {
     e.preventDefault();
-    if (locked || previewLock.current || ungrantable.length) return;
+    if (locked || previewLock.current || ungrantable.length || unchanged)
+      return;
     command.setError(null);
     command.setResult(null);
     const snapshot = structuredClone({
@@ -178,6 +194,19 @@ export default function RoleEditor({
           permissions: snapshot.permissions,
         },
       );
+      // The preview omits the current description. Read the same version before comparing content.
+      const current = await accessRequest<RoleDetailDto>(
+        `/api/admin/roles/${encodeURIComponent(source!)}`,
+      );
+      setDetail(current.data);
+      if (current.data.version !== data.role.version) {
+        command.setError(
+          new Error(
+            "Rol önizleme sırasında değişti. Taslağınız korundu; etkiyi yeniden inceleyin.",
+          ),
+        );
+        return;
+      }
       setReview({ draft: snapshot, impact: data });
     } catch (e) {
       command.setError(
@@ -204,7 +233,8 @@ export default function RoleEditor({
       !canManage ||
       ownRole ||
       immutable ||
-      review.impact?.blocked
+      review.impact?.blocked ||
+      reviewUnchanged
     )
       return;
     const snapshot = review;
@@ -271,9 +301,16 @@ export default function RoleEditor({
         );
       } else
         command.setResult(
-          "Güncel rol alındı. Taslağınız korundu; kaydetmek için etkiyi yeniden inceleyin.",
+          sameRoleContent(draft, data)
+            ? "Güncel rol taslağınızla aynı. Değişikliğiniz uygulanmış görünüyor; tekrar kayıt gönderilmedi."
+            : "Güncel rol alındı. Taslağınız korundu; kaydetmek için etkiyi yeniden inceleyin.",
         );
     } catch (e) {
+      if (
+        e instanceof AdminApiError &&
+        (e.status === 401 || (e.status === 403 && e.code !== "mfa_required"))
+      )
+        void refresh();
       if (!edit && e instanceof AdminApiError && e.status === 404) {
         command.reset();
         command.setResult(
@@ -404,11 +441,20 @@ export default function RoleEditor({
                 />
               )}
             </fieldset>
+            {unchanged && (
+              <p role="status" className="text-sm text-slate-300">
+                Kaydedilecek değişiklik yok. Rol adı, açıklaması ve izinleri
+                güncel kayıtla aynı.
+              </p>
+            )}
             {!review && (
               <Button
                 type="submit"
                 disabled={
-                  locked || !draft.permissions.length || ungrantable.length > 0
+                  locked ||
+                  unchanged ||
+                  !draft.permissions.length ||
+                  ungrantable.length > 0
                 }
               >
                 {previewBusy
@@ -477,9 +523,7 @@ export default function RoleEditor({
                     </ul>
                   </details>
                   {review.impact.blocked && (
-                    <p role="alert" className="text-red-200">
-                      {review.impact.blocked.message}
-                    </p>
+                    <AccessProblem problem={review.impact.blocked} />
                   )}
                 </>
               ) : (
@@ -496,6 +540,12 @@ export default function RoleEditor({
                   </p>
                 </>
               )}
+              {reviewUnchanged && (
+                <p role="status" className="text-slate-300">
+                  Güncel rol ile önizlenen bilgiler aynı; tekrar kayıt
+                  gerekmiyor.
+                </p>
+              )}
               <div className="flex flex-wrap gap-3">
                 <Button
                   type="button"
@@ -504,6 +554,7 @@ export default function RoleEditor({
                     command.busy ||
                     command.uncertain ||
                     !canManage ||
+                    reviewUnchanged ||
                     !!review.impact?.blocked
                   }
                 >

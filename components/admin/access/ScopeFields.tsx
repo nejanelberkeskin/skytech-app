@@ -9,12 +9,14 @@ export default function ScopeFields({
   endsAt,
   onEndChange,
   disabled = false,
+  fullScopeOnly = false,
 }: {
   scope: Scope;
   onChange: (s: Scope) => void;
   endsAt: string;
   onEndChange: (s: string) => void;
   disabled?: boolean;
+  fullScopeOnly?: boolean;
 }) {
   return (
     <div className="space-y-4">
@@ -33,10 +35,25 @@ export default function ScopeFields({
         }
       >
         <option value="all">Tüm kayıtlar</option>
-        <option value="sites">Belirli sahalar</option>
-        <option value="assigned">Kişiye atanmış işler</option>
+        <option value="sites" disabled={fullScopeOnly}>
+          Belirli sahalar
+        </option>
+        <option value="assigned" disabled={fullScopeOnly}>
+          Kişiye atanmış işler
+        </option>
       </Select>
-      {scope.kind === "sites" && (
+      {fullScopeOnly && (
+        <p
+          className="text-sm text-amber-200"
+          role={scope.kind !== "all" ? "alert" : undefined}
+        >
+          Bu rol personel veya rol yönetimi izni içerdiği için yalnız “Tüm
+          kayıtlar” kapsamında kullanılabilir.
+          {scope.kind !== "all" &&
+            " Mevcut seçiminiz korunuyor. Devam etmek için kapsamı açıkça değiştirin veya başka bir rol seçin."}
+        </p>
+      )}
+      {scope.kind === "sites" && !fullScopeOnly && (
         <SitePicker
           ids={scope.siteIds}
           onChange={(siteIds) => onChange({ kind: "sites", siteIds })}

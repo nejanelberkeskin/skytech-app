@@ -30,11 +30,7 @@ const groups: Record<string, string> = {
   sales: "Satış",
   system: "Sistem",
 };
-export const globalOnly = new Set<string>([
-  "staff.invite",
-  "staff.manage",
-  "roles.manage",
-]);
+import { globalOnly } from "./role-form";
 export default function PermissionFields({
   value,
   onChange,

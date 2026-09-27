@@ -8,6 +8,7 @@ import { AccessPage, Feedback, LoadError, useAccessCommand } from "./shared";
 import { hasFullPermission } from "./policy";
 import { permissionLabel, scopeLabel, toExpiry } from "./labels";
 import { istanbulDate } from "../operations/client";
+import { requiresFullScope, invalidRoleScope } from "./role-form";
 import ScopeFields from "./ScopeFields";
 import type { InvitationView, PageDto, RoleView } from "./types";
 export default function Invitations() {
@@ -42,7 +43,9 @@ export default function Invitations() {
     | null
   >(null);
   const confirmationHeading = useRef<HTMLHeadingElement>(null);
-  useEffect(() => { if (confirm) confirmationHeading.current?.focus(); }, [confirm]);
+  useEffect(() => {
+    if (confirm) confirmationHeading.current?.focus();
+  }, [confirm]);
   const generation = useRef({ value: 0 });
   const load = useCallback(async () => {
     const current = ++generation.current.value;
@@ -80,8 +83,14 @@ export default function Invitations() {
       token.value++;
     };
   }, [load]);
+  const selectedPermissions = roles.find((r) => r.key === roleKey)?.permissions;
+  const invalidScope = invalidRoleScope(selectedPermissions, scope);
   const review = () => {
     try {
+      if (invalidScope)
+        throw new Error(
+          "Bu rol için Tüm kayıtlar kapsamını seçin veya başka bir rol seçin.",
+        );
       if (!email.trim() || !/^\S+@\S+\.\S+$/.test(email.trim()))
         throw new Error("Geçerli bir e-posta adresi girin.");
       if (!roles.some((r) => r.key === roleKey)) throw new Error("Rol seçin.");
@@ -216,6 +225,7 @@ export default function Invitations() {
               </details>
             )}
             <ScopeFields
+              fullScopeOnly={requiresFullScope(selectedPermissions)}
               scope={scope}
               onChange={(v) => {
                 setScope(v);
@@ -238,7 +248,9 @@ export default function Invitations() {
                 update();
               }}
             />
-            <Button type="submit">Daveti incele</Button>
+            <Button type="submit" disabled={invalidScope}>
+              Daveti incele
+            </Button>
           </fieldset>
         </form>
       )}
@@ -247,7 +259,11 @@ export default function Invitations() {
           className="rounded-xl border border-amber-300/40 p-5 space-y-3"
           aria-label="Davet işlemi onayı"
         >
-          <h2 ref={confirmationHeading} tabIndex={-1} className="text-white font-semibold">
+          <h2
+            ref={confirmationHeading}
+            tabIndex={-1}
+            className="text-white font-semibold"
+          >
             {confirm.kind === "create"
               ? "Davet gönderilsin mi?"
               : confirm.kind === "resend"

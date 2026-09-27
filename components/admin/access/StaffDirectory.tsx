@@ -5,10 +5,12 @@ import { Link } from "@/i18n/navigation";
 import { accessRequest } from "./transport";
 import { AccessPage, LoadError } from "./shared";
 import { scopeLabel } from "./labels";
-import { activeAssignment } from "./policy";
+import { useAdmin } from "@/lib/admin-context";
+import { activeAssignment, canVisit } from "./policy";
 import { istanbulDate } from "../operations/client";
 import type { StaffView } from "./types";
 export default function StaffDirectory() {
+  const { me } = useAdmin();
   const [staff, setStaff] = useState<StaffView[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [revision, setRevision] = useState(0);
@@ -41,7 +43,12 @@ export default function StaffDirectory() {
       alive = false;
     };
   }, [revision, cursor]);
-  const matches = staff?.filter(s => `${s.fullName} ${s.email}`.toLocaleLowerCase("tr").includes(search.toLocaleLowerCase("tr"))) ?? [];
+  const matches =
+    staff?.filter((s) =>
+      `${s.fullName} ${s.email}`
+        .toLocaleLowerCase("tr")
+        .includes(search.toLocaleLowerCase("tr")),
+    ) ?? [];
   return (
     <AccessPage
       title="Personel yönetimi"
@@ -64,12 +71,14 @@ export default function StaffDirectory() {
         >
           Listeyi yenile
         </Button>
-        <Link
-          href="/admin/davetler"
-          className="inline-flex min-h-11 items-center px-4 rounded-xl bg-emerald-600 text-white text-sm"
-        >
-          Davetleri yönet
-        </Link>
+        {canVisit(me, "/admin/davetler") && (
+          <Link
+            href="/admin/davetler"
+            className="inline-flex min-h-11 items-center px-4 rounded-xl bg-emerald-600 text-white text-sm"
+          >
+            Davetleri yönet
+          </Link>
+        )}
       </div>
       {error ? (
         <LoadError error={error} retry={() => setRevision((n) => n + 1)} />
@@ -79,62 +88,64 @@ export default function StaffDirectory() {
         </p>
       ) : (
         <ul className="space-y-3">
-          {matches            .map((person) => (
-              <li
-                key={person.id}
-                className="rounded-2xl border border-white/10 p-5 space-y-3"
-              >
-                <div className="flex flex-wrap justify-between gap-3">
-                  <div>
-                    <Link
-                      className="text-white font-semibold underline underline-offset-4"
-                      href={`/admin/kullanicilar/${person.id}`}
-                    >
-                      {person.fullName}
-                    </Link>
-                    <p className="text-sm text-slate-400 break-all">
-                      {person.email}
-                    </p>
-                  </div>
-                  <span
-                    className={
-                      person.isActive ? "text-emerald-200" : "text-slate-400"
-                    }
+          {matches.map((person) => (
+            <li
+              key={person.id}
+              className="rounded-2xl border border-white/10 p-5 space-y-3"
+            >
+              <div className="flex flex-wrap justify-between gap-3">
+                <div>
+                  <Link
+                    className="text-white font-semibold underline underline-offset-4"
+                    href={`/admin/kullanicilar/${person.id}`}
                   >
-                    {person.isActive ? "Aktif" : "Pasif"}
-                  </span>
+                    {person.fullName}
+                  </Link>
+                  <p className="text-sm text-slate-400 break-all">
+                    {person.email}
+                  </p>
                 </div>
-                <ul className="space-y-1 text-sm text-slate-300">
-                  {person.assignments.map((a) => (
-                    <li key={a.id} className="break-words">
-                      {a.roleLabel} · {scopeLabel(a.scope)} ·{" "}
-                      {a.endsAt
-                        ? `Bitiş: ${istanbulDate(a.endsAt)}`
-                        : "Süresiz"}
-                      {!activeAssignment(a) && " · Şu anda geçerli değil"}
-                    </li>
-                  ))}
-                </ul>
-                <p className="text-xs text-slate-400">
-                  Ek doğrulama:{" "}
-                  {person.mfa === null
-                    ? "Durum alınamadı"
-                    : person.mfa.enrolled
-                      ? "Uygulama kayıtlı"
-                      : "Kurulmamış"}
-                </p>
-                <Link
-                  href={`/admin/kullanicilar/${person.id}`}
-                  className="inline-flex min-h-11 items-center text-sm text-emerald-200 underline"
+                <span
+                  className={
+                    person.isActive ? "text-emerald-200" : "text-slate-400"
+                  }
                 >
-                  Yetkileri incele →
-                </Link>
-              </li>
-            ))}
+                  {person.isActive ? "Aktif" : "Pasif"}
+                </span>
+              </div>
+              <ul className="space-y-1 text-sm text-slate-300">
+                {person.assignments.map((a) => (
+                  <li key={a.id} className="break-words">
+                    {a.roleLabel} · {scopeLabel(a.scope)} ·{" "}
+                    {a.endsAt ? `Bitiş: ${istanbulDate(a.endsAt)}` : "Süresiz"}
+                    {!activeAssignment(a) && " · Şu anda geçerli değil"}
+                  </li>
+                ))}
+              </ul>
+              <p className="text-xs text-slate-400">
+                Ek doğrulama:{" "}
+                {person.mfa === null
+                  ? "Durum alınamadı"
+                  : person.mfa.enrolled
+                    ? "Uygulama kayıtlı"
+                    : "Kurulmamış"}
+              </p>
+              <Link
+                href={`/admin/kullanicilar/${person.id}`}
+                className="inline-flex min-h-11 items-center text-sm text-emerald-200 underline"
+              >
+                Yetkileri incele →
+              </Link>
+            </li>
+          ))}
         </ul>
       )}
       {staff && matches.length === 0 && (
-        <p className="text-slate-300">{search ? "Bu sayfada aramanıza uygun personel yok." : "Personel kaydı bulunmuyor."}</p>
+        <p className="text-slate-300">
+          {search
+            ? "Bu sayfada aramanıza uygun personel yok."
+            : "Personel kaydı bulunmuyor."}
+        </p>
       )}
       <div className="flex gap-3">
         {cursor && (

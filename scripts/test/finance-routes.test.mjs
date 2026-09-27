@@ -23,7 +23,7 @@ const OVERVIEW = {
 };
 const overviewModule = load('lib/finance/overview.ts', {});
 // İzin modülü taklit edilir: gerçek modül veritabanından etkili yetki okur (021).
-const ROLE_PERMISSIONS = { SUPER_ADMIN: ['finance.read', 'refunds.execute'], FINANCE: ['finance.read', 'refunds.execute'], OPERATIONS: [], ENGINEER: [] };
+const ROLE_PERMISSIONS = { SUPER_ADMIN: ['finance.read', 'refunds.execute', 'orders.read', 'batches.read', 'sites.read', 'invoices.read', 'requests.read'], FINANCE: ['finance.read', 'refunds.execute', 'orders.read', 'invoices.read'], OPERATIONS: ['orders.read', 'batches.read', 'sites.read'], ENGINEER: [] };
 const guardFor = (role) => ({ admin: { role, is_active: true, user_id: 'u', id: 'a', full_name: 'T', email: 't@example.invalid' },
   access: { adminId: 'a', permissions: ROLE_PERMISSIONS[role].map((key) => ({ key, scopes: [{ kind: 'all' }] })), roles: [], limits: { refundKurus: null, enforced: false } }, error: null });
 const hasFull = (access, key) => Boolean(access?.permissions?.some((p) => p.key === key && p.scopes?.some((s) => s.kind === 'all')));
@@ -48,26 +48,29 @@ function dashboard(role, client) {
     '@/lib/supabase/server': { createServiceRoleClient: () => client },
     '@/lib/admin/permissions': permissionsFor(role),
     '@/lib/finance/overview': overviewModule,
+    '@/lib/admin/read-pages': load('lib/admin/read-pages.ts'),
   });
 }
 
-test('Genel Bakış: finans rolüne tek hesaptan tutarlar; diğer rollere yalnız sayılar', async () => {
+test('Genel Bakış: tek hesap değişmez; metrikler yalnız ilgili okuma iznine döner', async () => {
   const fin = await dashboard('FINANCE', db()).GET({});
   assert.equal(fin.status, 200);
   assert.equal(fin.body.kpis.netRevenueKurus, 70000, 'elde tutulan sipariş tutarı (tüm zamanlar)');
   assert.equal(fin.body.kpis.pendingRefunds, 1);
   assert.equal(fin.body.kpis.pendingDuplicateRefunds, 1);
   assert.equal(fin.body.kpis.overdueRefunds, 1);
-  assert.equal(fin.body.kpis.awaitingBatch, 2);
+  assert.equal('awaitingBatch' in fin.body.kpis, false);
   assert.equal(fin.body.monthlyGrowth.length, 6);
   assert.deepEqual(fin.body.monthlyGrowth[5], { month: 'Eyl 26', seeds: 5, revenue: 50 });
-  assert.equal(fin.body.overview.currentMonth.netCashKurus, 40000);
+  assert.equal('overview' in fin.body, false);
   const ops = await dashboard('OPERATIONS', db()).GET({});
   assert.equal(ops.status, 200);
   assert.equal('netRevenueKurus' in ops.body.kpis, false);
   assert.equal('revenue' in ops.body.monthlyGrowth[0], false);
   assert.equal('overview' in ops.body, false);
   assert.equal(ops.body.kpis.orderCount, 3);
+  assert.equal(ops.body.kpis.awaitingBatch, 2);
+  assert.equal('pendingRefunds' in ops.body.kpis, false);
 });
 
 test('Genel Bakış: finans hesabı ya da alt sorgu okunamazsa 503 (sıfır gösterilmez)', async () => {

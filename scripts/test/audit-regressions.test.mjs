@@ -7,7 +7,7 @@ import { readPages } from '../../lib/admin/read-pages.ts';
 import { salesSettingsSchema } from '../../lib/orders/settings-schema.ts';
 const response={json:(body,init)=>({body,status:init?.status??200,headers:init?.headers})};
 const order={id:'order',order_no:'SG-2026-TEST23',status:'withdrawal_requested',payment_id:'original',payment_provider:'mock',quantity:20,total_kurus:20000,payment_meta:{}};
-function query(data,error=null){const q={};for(const m of ['select','eq','in','order','limit','range','not'])q[m]=()=>q;q.maybeSingle=async()=>({data,error});q.then=(resolve,reject)=>Promise.resolve({data,error}).then(resolve,reject);return q;}
+function query(data,error=null,count){const q={};for(const m of ['select','eq','in','order','limit','range','not'])q[m]=()=>q;q.maybeSingle=async()=>({data,error});q.then=(resolve,reject)=>Promise.resolve({data,error,count}).then(resolve,reject);return q;}
 // İade testleri (eşzamanlı istek, kontrol noktası hatası, yanıtı kaybolan kayıt, yerel tamamlama, belirsiz sonuç)
 // iade uygulaması lib/refunds/service.ts'e taşındığı için scripts/test/refund-legacy-adapter.test.mjs'e taşındı;
 // aynı güvenceler orada gerçek 019/020 SQL'i ile sınanıyor.
@@ -28,14 +28,14 @@ test('contact form: skipped email is 503; quota stops mail; oversized and missin
  assert.equal((await api.POST(req(body))).status,503);quota=60;const blocked=await api.POST(req(body));assert.equal(blocked.status,429);assert.equal(blocked.headers['Retry-After'],'60');assert.equal(mails,1);
  assert.equal((await api.POST(req({...body,noticeRead:false}))).status,400);assert.equal((await api.POST(req({...body,message:'x'.repeat(25000)}))).status,413);assert.equal((await api.POST(req(null))).status,400);
 });
-test('dashboard never returns revenue fields to non-finance roles and fails on partial query errors',async()=>{
+test('dashboard omits ungranted metric groups and preserves finance values',async()=>{
  // Claude (iade-mutabakati): Genel Bakış tek finans hesabına (SQL 020) taşındı; taklitler iki uygulamayla da çalışır.
  const overview={definitionsVersion:1,currentMonth:{key:'2026-09'},allTime:{heldOrderValueKurus:0,heldOrderCount:0,releasedQuantity:0},liabilities:{orderRefundLiabilityCount:0,duplicateLiabilityCount:0,overdueRefundCount:0},operations:{awaitingBatchCount:0},months:[{key:'2026-09',netCashKurus:0,paidQuantity:0}]};
  const guard=(role)=>({admin:{role,is_active:true,user_id:'u'},access:{permissions:['SUPER_ADMIN','FINANCE'].includes(role)?[{key:'finance.read',scopes:[{kind:'all'}]}]:[],roles:[],limits:{}},error:null});
  const permissions=(role)=>({can:(access,key)=>Boolean(access?.permissions?.some(p=>p.key===key)),hasFullScope:(access,key)=>Boolean(access?.permissions?.some(p=>p.key===key&&p.scopes?.some(s=>s.kind==='all'))),requireAdminAccess:async()=>guard(role),requirePermission:async()=>guard(role)});
  for(const role of ['SUPER_ADMIN','FINANCE','OPERATIONS','ENGINEER']){
- const api=load('app/api/admin/dashboard/route.ts',{'next/server':{NextResponse:response},'@/lib/supabase/server':{createServiceRoleClient:()=>({from:()=>query([])})},'@/lib/admin/permissions':permissions(role),'@/lib/finance/overview':{FINANCE_DEFINITIONS_VERSION:1,monthLabel:(k)=>k,loadFinanceOverview:async()=>overview}});
- const res=await api.GET({});assert.equal(res.status,200);const financial=['SUPER_ADMIN','FINANCE'].includes(role);assert.equal('netRevenueKurus' in res.body.kpis,financial);assert.equal('revenue' in res.body.monthlyGrowth[0],financial);
+ const api=load('app/api/admin/dashboard/route.ts',{'next/server':{NextResponse:response},'@/lib/supabase/server':{createServiceRoleClient:()=>({from:()=>query([],null,0)})},'@/lib/admin/permissions':permissions(role),'@/lib/admin/read-pages':{readPages},'@/lib/finance/overview':{FINANCE_DEFINITIONS_VERSION:1,monthLabel:(k)=>k,loadFinanceOverview:async()=>overview}});
+ const res=await api.GET({});assert.equal(res.status,200);const financial=['SUPER_ADMIN','FINANCE'].includes(role);assert.equal('netRevenueKurus' in res.body.kpis,financial);assert.equal(res.body.monthlyGrowth?.[0]?.revenue !== undefined,financial);if(!financial)assert.deepEqual(res.body.kpis,{});
  }
 });
 test('finance uses integer kuruş, separates pending refunds, B2B, and Istanbul month boundary',()=>{
@@ -62,12 +62,5 @@ test('operations cannot retrieve original document HTML/PDF',async()=>{
  for(const format of ['html','pdf']) assert.equal((await api.GET({url:'http://local?bicim='+format},{params:Promise.resolve({id:'30000000-0000-0000-0000-000000000001',kind:'contract'})})).status,403);
  assert.equal(touched,false);
 });
-test('user route surfaces database last-owner conflict as 409 for update/delete',async()=>{
- const api=load('app/api/admin/users/route.ts',{
-  'next/server':{NextResponse:response},
-  '@/lib/admin-auth':{requireAdmin:async()=>({admin:{user_id:'10000000-0000-0000-0000-000000000001'},error:null})},
-  '@/lib/supabase/server':{createServiceRoleClient:()=>({rpc:async()=>({error:{message:'last_active_super_admin',code:'23514'}})})},
- });
- const req={json:async()=>({id:'10000000-0000-0000-0000-000000000001',is_active:false})};
- assert.equal((await api.PUT(req)).status,409);assert.equal((await api.DELETE(req)).status,409);
-});
+// /api/admin/users is retired: its 410/no-side-effect contract is covered by
+// legacy-users-retirement.test.mjs. SQL last-owner guards remain tested separately.

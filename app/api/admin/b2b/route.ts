@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServiceRoleClient } from "@/lib/supabase/server";
-import { sendB2BQuoteReadyEmail } from "@/lib/mail";
+import { sendB2BQuoteReadyEmail, SKIPPED_ID } from "@/lib/mail";
 import { requireAdmin, getClientIP } from "@/lib/admin-auth";
 import { auditLog } from "@/lib/admin/audit";
 
@@ -48,11 +48,12 @@ export async function GET(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   const { admin, error: authError } = await requireAdmin(request, ["SUPER_ADMIN", "FINANCE"]);
   if (authError) return authError;
+  if (!admin?.user_id) return NextResponse.json({ error: "Doğrulanmış yönetici oturumu bulunamadı." }, { status: 401 });
 
   try {
     const supabase = createServiceRoleClient();
     const body = await request.json();
-    const { quoteId, action, approvedPrice, approvedSeedCount, adminNote, adminUserId } = body;
+    const { quoteId, action, approvedPrice, approvedSeedCount, adminNote } = body;
 
     if (!quoteId || !action) {
       return NextResponse.json(
@@ -96,7 +97,7 @@ export async function PUT(request: NextRequest) {
           approved_seed_count: approvedSeedCount,
           admin_note: adminNote || null,
           quoted_at: new Date().toISOString(),
-          quoted_by: admin?.user_id || adminUserId || null,
+          quoted_by: admin.user_id,
         })
         .eq("id", quoteId);
 
@@ -105,10 +106,12 @@ export async function PUT(request: NextRequest) {
         return NextResponse.json({ error: updateError.message }, { status: 500 });
       }
 
-      // Müşteriye e-posta gönder
+      // Quote persistence and transport acceptance are separate results. Missing
+      // credentials or an ambiguous response must never claim customer delivery.
+      let notificationStatus: "accepted" | "not_configured" | "unconfirmed" = "unconfirmed";
       try {
         const pricePerSeed = approvedSeedCount > 0 ? approvedPrice / approvedSeedCount : 0;
-        await sendB2BQuoteReadyEmail({
+        const receipt = await sendB2BQuoteReadyEmail({
           email: quote.corporate_email,
           companyName: quote.company_name,
           contactPerson: quote.contact_person,
@@ -118,13 +121,15 @@ export async function PUT(request: NextRequest) {
           adminNote: adminNote || undefined,
           pricePerSeed,
         });
-      } catch (emailErr) {
-        console.error("Quote email failed (non-blocking):", emailErr);
-        // E-posta hatası quote durumunu etkilemez
+        if (receipt.id === SKIPPED_ID) notificationStatus = "not_configured";
+        else if (typeof receipt.id === "string" && receipt.id.trim()) notificationStatus = "accepted";
+      } catch {
+        console.error("[b2b] quote_notification_unconfirmed");
+        // The approved quote stays saved; do not encourage repeating the mutation.
       }
 
       const warnings = await auditLog(supabase, {
-        admin: admin!,
+        admin,
         action: "UPDATE",
         entity: "quote",
         entityId: quoteId,
@@ -135,7 +140,12 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({
         warnings,
         success: true,
-        message: "Teklif onaylandı ve müşteriye bildirildi",
+        message: notificationStatus === "accepted"
+          ? "Teklif onaylandı; e-posta gönderim için kabul edildi."
+          : notificationStatus === "not_configured"
+            ? "Teklif onaylandı. E-posta gönderimi yapılandırılmadığı için müşteri bildirimi gönderilmedi. Teklifi yeniden onaylamayın; bildirim için yöneticiyle görüşün."
+            : "Teklif onaylandı. Müşteri e-postasının gönderimi doğrulanamadı. Teklifi yeniden onaylamayın; bildirim kaydını kontrol edin.",
+        notification: { status: notificationStatus },
         status: "QUOTED",
       });
     }
@@ -155,7 +165,7 @@ export async function PUT(request: NextRequest) {
           status: "REJECTED",
           admin_note: adminNote || null,
           quoted_at: new Date().toISOString(),
-          quoted_by: adminUserId || null,
+          quoted_by: admin.user_id,
         })
         .eq("id", quoteId);
 
@@ -164,7 +174,7 @@ export async function PUT(request: NextRequest) {
       }
 
       const warnings = await auditLog(supabase, {
-        admin: admin!,
+        admin,
         action: "UPDATE",
         entity: "quote",
         entityId: quoteId,

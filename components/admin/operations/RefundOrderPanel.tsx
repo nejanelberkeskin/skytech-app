@@ -1,5 +1,5 @@
 "use client";
-import { useRouter } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Button, Input, Select, Textarea } from "@/components/ui";
 import type { ApiWarning } from "@/lib/api/envelope";
@@ -28,6 +28,7 @@ export default function RefundOrderPanel({ orderId, onChanged, onBusyChange }: {
   const lock = useRef(false);
   const [stale, setStale] = useState(false);
   const [denied, setDenied] = useState(false);
+  const [mfaRequired, setMfaRequired] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<string | null>(null);
   const [warnings, setWarnings] = useState<ApiWarning[]>([]);
@@ -44,7 +45,7 @@ export default function RefundOrderPanel({ orderId, onChanged, onBusyChange }: {
     try {
       const response = await adminRequest<RefundOrderView>(`/api/admin/refunds/orders/${encodeURIComponent(orderId)}`);
       if (generation !== latest.current.value) return;
-      setView(response.data); setBlockedUntil(prev => Object.fromEntries(Object.entries(prev).filter(([, until]) => Date.parse(until) > Date.now()))); setStale(false); setDenied(false); setLoading(false);
+      setView(response.data); setBlockedUntil(prev => Object.fromEntries(Object.entries(prev).filter(([, until]) => Date.parse(until) > Date.now()))); setStale(false); setDenied(false); setMfaRequired(false); setLoading(false);
       if (!keepError) setError(null);
     } catch (e) {
       if (e instanceof AdminApiError && e.status === 401) router.replace("/admin/giris");
@@ -83,7 +84,8 @@ export default function RefundOrderPanel({ orderId, onChanged, onBusyChange }: {
       if (e instanceof AdminApiError && e.status === 401) router.replace("/admin/giris");
       const code = e instanceof AdminApiError ? e.code : "network";
       setError(code === "attempt_changed" ? "Başka biri bu işlemde değişiklik yaptı. Güncel durum yüklendi; notunuz korundu. İşlemi yeniden seçip kontrol edin." : errorText(e));
-      if (e instanceof AdminApiError && e.status === 403) { setDenied(true); setSelection(null); }
+      if (code === "mfa_required") { setMfaRequired(true); setDenied(true); setSelection(null); }
+      else if (e instanceof AdminApiError && e.status === 403) { setDenied(true); setSelection(null); }
       else if (["invalid_refund_id", "note_required", "evidence_required"].includes(code)) {
         setFields({ [code === "invalid_refund_id" ? "refundId" : code === "note_required" ? "note" : "source"]: errorText(e) });
       } else {
@@ -98,6 +100,10 @@ export default function RefundOrderPanel({ orderId, onChanged, onBusyChange }: {
     <div className="flex flex-wrap items-start justify-between gap-3"><div><h2 className="text-xl font-semibold text-white">İade ve mutabakat</h2>{view && <p className="mt-1 text-sm text-slate-300 break-all">{view.order.orderNo} · {ORDER_STATUS_LABELS[view.order.status as keyof typeof ORDER_STATUS_LABELS] ?? view.order.status}{view.order.isTest && <strong className="ml-2 text-amber-200">Deneme</strong>}</p>}</div><Button variant="secondary" disabled={busy || loading} onClick={() => { setLoading(true); setSelection(null); void refresh(); }}>Görünümü yenile</Button></div>
     <div ref={feedback} tabIndex={-1} className="space-y-2 outline-none">
       {error && <p role="alert" className="rounded-xl border border-red-400/40 bg-red-500/10 p-4 text-sm text-red-200">{error}</p>}
+      {mfaRequired && <div className="rounded-xl border border-amber-400/40 p-4 space-y-2 text-sm text-amber-100">
+        <p>Bu işlem doğrulama gerektiği için başlatılmadı. Hesap güvenliğinde iki aşamalı doğrulamayı tamamlayın; bu ekrana dönüp “Görünümü yenile” düğmesine basın ve güncel işlemi yeniden seçip onaylayın. İşlem otomatik olarak gönderilmez.</p>
+        <Link href="/admin/guvenlik" target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center underline">Hesap güvenliğini aç (yeni sekme)</Link>
+      </div>}
       {result && <p role="status" className="rounded-xl border border-white/15 p-4 text-sm text-white">{result}</p>}
       {warnings.map((w, i) => <p key={`${w.code}:${i}`} role="alert" className="rounded-xl border border-amber-400/40 bg-amber-500/10 p-4 text-sm text-amber-100 break-words">{w.message}</p>)}
     </div>

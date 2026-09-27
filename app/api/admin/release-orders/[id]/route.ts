@@ -2,6 +2,7 @@ import { after, NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { createServiceRoleClient } from "@/lib/supabase/server";
 import { requireAdmin, getClientIP } from "@/lib/admin-auth";
+import { requirePermission } from "@/lib/admin/permissions";
 import { auditLog } from "@/lib/admin/audit";
 import {
   cancelBySeller,
@@ -91,6 +92,12 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
   // Not ve kapasite ayırma para hareketi değildir; görüntüleyebilen her rol yapabilir.
   if (input.action !== "note" && input.action !== "reserve_capacity" && !(MONEY_ROLES as readonly string[]).includes(admin.role)) {
     return NextResponse.json({ error: "forbidden" }, { status: 403 });
+  }
+
+  // Eski istemciler de yeni iade ucuyla aynı izin, tam kapsam ve MFA kapısından geçer.
+  if (input.action === "refund" || input.action === "refund_duplicate") {
+    const guard = await requirePermission(request, "refunds.execute");
+    if (guard.error) return guard.error;
   }
 
   const supabase = createServiceRoleClient();

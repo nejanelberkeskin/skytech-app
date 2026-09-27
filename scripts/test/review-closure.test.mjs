@@ -36,14 +36,8 @@ test('catalog creation with real audit helper returns committed record and warni
  const result=await api.POST({json:async()=>({slug:'test',name:'Test',price:1})});
  assert.equal(result.status,201);assert.equal(result.body.id,'catalog-id');assert.equal(result.body.warnings[0].code,'audit_unavailable');assert.equal(creates,1);assert.equal(audits,2);
 });
-test('existing Auth account is matched by error code, paginated, and its password is never updated',async()=>{
- for(const code of ['email_exists','user_already_exists']){
- let pages=[],rpcCalls=0;
- const db={from:()=>query(null),auth:{admin:{createUser:async()=>({error:{code,message:'Unrelated translated message'}}),listUsers:async({page})=>{pages.push(page);return {data:{users:page===1?Array.from({length:1000},()=>({id:'other',email:'other@example.invalid'})):[{id:'existing-id',email:'known@example.invalid'}]},error:null};}}},rpc:async(name,args)=>{assert.equal(name,'create_admin_user');assert.equal(args.p_user,'existing-id');rpcCalls++;return {data:{id:'staff-id'},error:null};}};
- const api=load('app/api/admin/users/route.ts',{'next/server':{NextResponse:response},'@/lib/supabase/server':{createServiceRoleClient:()=>db},'@/lib/admin-auth':auth});
- const result=await api.POST({json:async()=>({email:'known@example.invalid',full_name:'Known',role:'ENGINEER'})});assert.equal(result.status,201);assert.equal(result.body.temp_password,undefined);assert.deepEqual(pages,[1,2]);assert.equal(rpcCalls,1);
- }
-});
+// Legacy direct Auth creation is retired. The replacement no-Auth/no-password
+// guarantee is exercised in legacy-users-retirement.test.mjs.
 test('browser admin client surfaces warning while preserving the original response body',async(t)=>{
  const prior=globalThis.window;let shown=0;globalThis.window={dispatchEvent(event){assert.equal(event.type,'admin:audit-warning');shown++;}};
  t.after(()=>{if(prior===undefined)delete globalThis.window;else globalThis.window=prior;});

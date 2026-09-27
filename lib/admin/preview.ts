@@ -20,8 +20,11 @@ export interface AccessPreview {
   /** İzin kalıyor ama kapsamı değişiyor. */
   scopeChanges: { key: Permission; from: Scope[]; to: Scope[] }[];
   legacyRoleChange: { from: string; to: string } | null;
-  /** Kaydetme denenirse dönecek engel; null ise kaydedilebilir. */
-  blocked: { code: string; message: string } | null;
+  /**
+   * Kaydetme denenirse dönecek engel; null ise kaydedilebilir. `details` kaydetme hatasının
+   * `details` alanıyla aynıdır (ör. `invalid_scope` → `{ missingSiteIds }`, 21 §3.5).
+   */
+  blocked: { code: string; message: string; details?: Record<string, unknown> } | null;
 }
 
 const BLOCK_MESSAGES: Record<string, string> = {
@@ -35,7 +38,7 @@ const BLOCK_MESSAGES: Record<string, string> = {
 const sameScopes = (a: Scope[], b: Scope[]) => JSON.stringify(a) === JSON.stringify(b);
 
 export function buildAccessPreview(change: PreviewChange, raw: unknown): AccessPreview {
-  const data = (raw ?? {}) as { current?: unknown; next?: unknown; blocked?: { code?: unknown } | null };
+  const data = (raw ?? {}) as { current?: unknown; next?: unknown; blocked?: { code?: unknown; details?: unknown } | null };
   const current = toEffectiveAccess({ permissions: (data.current as { permissions?: unknown })?.permissions ?? [] });
   const next = toEffectiveAccess({ permissions: (data.next as { permissions?: unknown })?.permissions ?? [] });
   const currentByKey = new Map(current.permissions.map((p) => [p.key, p.scopes]));
@@ -50,6 +53,10 @@ export function buildAccessPreview(change: PreviewChange, raw: unknown): AccessP
   const currentLegacy = String((data.current as { legacyRole?: unknown })?.legacyRole ?? "NONE");
   const nextLegacy = String((data.next as { legacyRole?: unknown })?.legacyRole ?? "NONE");
   const code = typeof data.blocked?.code === "string" ? data.blocked.code : null;
+  const details = data.blocked?.details && typeof data.blocked.details === "object" ? (data.blocked.details as Record<string, unknown>) : null;
+  const message = code === "invalid_scope" && details?.missingSiteIds
+    ? "Kapsam geçersiz: seçilen sahalardan bazıları bulunamadı."
+    : code ? BLOCK_MESSAGES[code] ?? "Bu değişiklik kaydedilemez." : "";
 
   return {
     change,
@@ -59,6 +66,6 @@ export function buildAccessPreview(change: PreviewChange, raw: unknown): AccessP
     removed,
     scopeChanges,
     legacyRoleChange: currentLegacy === nextLegacy ? null : { from: currentLegacy, to: nextLegacy },
-    blocked: code ? { code, message: BLOCK_MESSAGES[code] ?? "Bu değişiklik kaydedilemez." } : null,
+    blocked: code ? { code, message, ...(details ? { details } : {}) } : null,
   };
 }

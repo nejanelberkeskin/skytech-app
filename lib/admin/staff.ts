@@ -40,8 +40,14 @@ const SQL_ERRORS: Record<string, [number, string, string]> = {
 };
 
 export function mapSqlError(error: { message?: string; details?: string | null } | null | undefined): ServiceError {
-  const known = SQL_ERRORS[String(error?.message ?? "").trim()];
+  const code = String(error?.message ?? "").trim();
+  const known = SQL_ERRORS[code];
   if (!known) return unavailable();
+  // 022 tetikleyicisi bulunamayan saha kimliklerini DETAIL'de virgülle verir (21 §3.5).
+  const missing = String(error?.details ?? "").split(",").map((s) => s.trim()).filter((s) => /^[0-9a-f-]{36}$/i.test(s));
+  if (code === "invalid_scope" && missing.length) {
+    return err(known[0], known[1], "Kapsam geçersiz: seçilen sahalardan bazıları bulunamadı.", { missingSiteIds: missing });
+  }
   return err(known[0], known[1], known[2]);
 }
 

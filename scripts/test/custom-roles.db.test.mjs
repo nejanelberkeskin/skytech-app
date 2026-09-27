@@ -356,6 +356,15 @@ test('022: 021 yazıcıları yalnız rol kilidi farkıyla yeniden tanımlandı (
     assert.ok(start >= 0, `${name} bulunamadı`);
     return src.slice(start, src.indexOf('END $$;', start) + 7);
   };
+  // Atama önizlemesi: farklar yalnız saha kimliği hesabı ve engel ayrıntısı.
+  const preview = body(m22, 'admin_preview_assignment', 'CREATE OR REPLACE FUNCTION')
+    .replace('CREATE OR REPLACE FUNCTION', 'CREATE FUNCTION')
+    .replace('  v_missing text[] := ARRAY[]::text[];\n', '')
+    .replace(/  -- 022: saha kimliği[^\n]*\n  IF v_kind <> 'revoke' AND public\.valid_admin_scope\(v_scope\)\n[^\n]*\n    v_missing := public\.missing_scope_sites\(v_scope\);\n  END IF;\n/, '')
+    .replace("  ELSIF array_length(v_missing, 1) > 0 THEN v_blocked := 'invalid_scope';\n", '')
+    .replace(/    'blocked', CASE WHEN v_blocked IS NULL THEN NULL\n[^\n]*\n[^\n]*\n                    ELSE jsonb_build_object\('code', v_blocked\) END\n/,
+             "    'blocked', CASE WHEN v_blocked IS NULL THEN NULL ELSE jsonb_build_object('code', v_blocked) END\n");
+  assert.equal(preview, body(m21, 'admin_preview_assignment', 'CREATE FUNCTION'), 'admin_preview_assignment: 021 gövdesinden sapma');
   for (const name of ['assign_admin_role', 'update_admin_assignment', 'create_admin_invitation']) {
     const normalized = body(m22, name, 'CREATE OR REPLACE FUNCTION')
       .replace('CREATE OR REPLACE FUNCTION', 'CREATE FUNCTION')
@@ -364,4 +373,58 @@ test('022: 021 yazıcıları yalnız rol kilidi farkıyla yeniden tanımlandı (
     assert.equal(normalized, body(m21, name, 'CREATE FUNCTION'), `${name}: 021 gövdesinden sapma`);
     assert.match(body(m22, name, 'CREATE OR REPLACE FUNCTION'), /admin_roles WHERE [^;]* FOR SHARE;/, `${name}: rol kilidi yok`);
   }
+});
+
+test('022: atama önizlemesi saha kimliğini kaydetmeyle aynı kuralla denetler (engel = kaydetme kodu)', async () => {
+  const db = await createDb();
+  try {
+    const ops = await staffId(db, IDS.operations);
+    const pv = (change) => one(db, `SELECT admin_preview_assignment($1,$2,$3::jsonb) p`, [IDS.superAdmin, ops, JSON.stringify(change)]).then((r) => r.p);
+    const future = new Date(Date.now() + 30 * 86_400_000).toISOString();
+
+    const bad = await pv({ kind: 'assign', roleKey: 'engineer', scope: { kind: 'sites', siteIds: [IDS.siteA, MISSING_SITE] }, endsAt: null });
+    assert.deepEqual(bad.blocked, { code: 'invalid_scope', details: { missingSiteIds: [MISSING_SITE] } });
+    assert.equal(await sqlError(assign(db, IDS.superAdmin, ops, 'engineer', { kind: 'sites', siteIds: [IDS.siteA, MISSING_SITE] })), 'invalid_scope',
+      'kaydetme de aynı kodu verir');
+    assert.equal((await pv({ kind: 'assign', roleKey: 'engineer', scope: { kind: 'sites', siteIds: [IDS.siteA] }, endsAt: null })).blocked, null);
+
+    // Kapsam değişmiyorsa silinmiş saha engellemez: kaydetme de engellemez (yalnız kapsam yazılırken denetim)
+    const a = await assign(db, IDS.superAdmin, ops, 'engineer', { kind: 'sites', siteIds: [IDS.siteB] });
+    await db.query(`DELETE FROM lands WHERE id=$1`, [IDS.siteB]);
+    const same = await pv({ kind: 'update', assignmentId: a.id, scope: { kind: 'sites', siteIds: [IDS.siteB] }, endsAt: future });
+    assert.equal(same.blocked, null, 'önizleme engel göstermez');
+    const cur = await one(db, `SELECT updated_at FROM admin_role_assignments WHERE id=$1`, [a.id]);
+    await one(db, `SELECT update_admin_assignment($1,$2,$3::jsonb,$4,$5,'süre verme',$6) u`,
+      [IDS.superAdmin, a.id, JSON.stringify({ kind: 'sites', siteIds: [IDS.siteB] }), future, cur.updated_at, ops]);
+
+    const changed = await pv({ kind: 'update', assignmentId: a.id, scope: { kind: 'sites', siteIds: [IDS.siteA, IDS.siteB] }, endsAt: null });
+    assert.equal(changed.blocked.code, 'invalid_scope', 'kapsam değişince silinmiş saha engeller');
+    assert.deepEqual(changed.blocked.details, { missingSiteIds: [IDS.siteB] });
+    assert.equal((await pv({ kind: 'revoke', assignmentId: a.id })).blocked, null, 'kaldırma hiçbir zaman engellenmez');
+  } finally { await db.close(); }
+});
+
+test('022: personel servisi invalid_scope ayrıntısını (missingSiteIds) önizlemede ve kaydetmede taşır', async () => {
+  const db = await createDb();
+  try {
+    const { createStaffService, mapSqlError } = await import('../../lib/admin/staff.ts');
+    const { restClient } = await import('./pglite-db.mjs');
+    const service = createStaffService({ db: restClient(db), mfaStatus: async () => null, now: () => new Date() });
+    const ops = await staffId(db, IDS.operations);
+    const scope = { kind: 'sites', siteIds: [MISSING_SITE] };
+
+    const preview = await service.previewAssignment(IDS.superAdmin, ops, { kind: 'assign', roleKey: 'engineer', scope, endsAt: null });
+    assert.equal(preview.blocked.code, 'invalid_scope');
+    assert.deepEqual(preview.blocked.details, { missingSiteIds: [MISSING_SITE] });
+    assert.match(preview.blocked.message, /bulunamadı/);
+
+    const saved = await service.assign(IDS.superAdmin, ops, 'engineer', scope, null, 'deneme');
+    assert.equal(saved.status, 422);
+    assert.equal(saved.code, 'invalid_scope');
+    assert.deepEqual(saved.details, { missingSiteIds: [MISSING_SITE] }, 'sözleşme 21 §3.5');
+
+    // Biçim hatası (DETAIL yok) eski genel mesajı korur
+    assert.equal(mapSqlError({ message: 'invalid_scope', details: null }).details, undefined);
+    assert.equal(mapSqlError({ message: 'invalid_scope', details: null }).message, 'Kapsam geçersiz.');
+  } finally { await db.close(); }
 });

@@ -52,41 +52,52 @@ export interface EffectiveAccess {
 
 export const EMPTY_ACCESS: EffectiveAccess = { adminId: null, permissions: [], roles: [], limits: { refundKurus: null, enforced: false } };
 
-const isPermission = (value: unknown): value is Permission => (PERMISSIONS as readonly string[]).includes(String(value));
+const isPermission = (value: unknown): value is Permission =>
+  typeof value === "string" && (PERMISSIONS as readonly string[]).includes(value);
 
-function toScope(value: unknown): Scope {
-  const raw = (value ?? {}) as { kind?: unknown; siteIds?: unknown };
-  if (raw.kind === "sites" && Array.isArray(raw.siteIds)) return { kind: "sites", siteIds: raw.siteIds.map(String) };
-  if (raw.kind === "assigned") return { kind: "assigned" };
-  return { kind: "all" };
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
+
+/** Eksik/bozuk kapsam erişim vermez; yalnız açık `all` bütün kayıtları açar. */
+function toScope(value: unknown): Scope | null {
+  if (!isRecord(value)) return null;
+  if (value.kind === "all") return { kind: "all" };
+  if (value.kind === "assigned") return { kind: "assigned" };
+  if (
+    value.kind === "sites" && Array.isArray(value.siteIds) && value.siteIds.length > 0 &&
+    value.siteIds.every((id): id is string => typeof id === "string" && id.trim().length > 0)
+  ) {
+    return { kind: "sites", siteIds: [...value.siteIds] };
+  }
+  return null;
 }
 
-/** Veritabanı yanıtını tipli erişime çevirir; tanınmayan izin adı yok sayılır (varsayılan ret). */
+/** Veritabanı yanıtını tipli erişime çevirir; tanınmayan izin/kapsam yok sayılır (varsayılan ret). */
 export function toEffectiveAccess(raw: unknown): EffectiveAccess {
-  const data = (raw ?? {}) as Record<string, unknown>;
+  const data = isRecord(raw) ? raw : {};
   const permissions = Array.isArray(data.permissions) ? data.permissions : [];
   const roles = Array.isArray(data.roles) ? data.roles : [];
-  const limits = (data.limits ?? {}) as { refundKurus?: unknown; enforced?: unknown };
+  const limits = isRecord(data.limits) ? data.limits : {};
   return {
     adminId: typeof data.adminId === "string" ? data.adminId : null,
-    permissions: permissions
-      .map((p) => p as { key?: unknown; scopes?: unknown })
-      .filter((p) => isPermission(p.key))
-      .map((p) => ({
-        key: p.key as Permission,
-        scopes: (Array.isArray(p.scopes) ? p.scopes : []).map(toScope),
-      }))
-      .filter((p) => p.scopes.length > 0),
-    roles: roles.map((r) => {
-      const role = r as Record<string, unknown>;
-      return {
+    permissions: permissions.flatMap((p): GrantedPermission[] => {
+      if (!isRecord(p) || !isPermission(p.key)) return [];
+      const scopes = (Array.isArray(p.scopes) ? p.scopes : [])
+        .map(toScope).filter((scope): scope is Scope => scope !== null);
+      return scopes.length > 0 ? [{ key: p.key, scopes }] : [];
+    }),
+    roles: roles.flatMap((role): EffectiveAccess["roles"] => {
+      if (!isRecord(role)) return [];
+      const scope = toScope(role.scope);
+      if (!scope) return [];
+      return [{
         key: String(role.key ?? ""),
         label: String(role.label ?? ""),
-        scope: toScope(role.scope),
+        scope,
         assignmentId: String(role.assignmentId ?? ""),
         version: typeof role.version === "string" ? role.version : null,
         endsAt: typeof role.endsAt === "string" ? role.endsAt : null,
-      };
+      }];
     }),
     limits: { refundKurus: typeof limits.refundKurus === "number" ? limits.refundKurus : null, enforced: limits.enforced === true },
   };

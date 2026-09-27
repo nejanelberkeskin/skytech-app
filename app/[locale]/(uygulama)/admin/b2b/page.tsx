@@ -41,6 +41,7 @@ function B2BContent() {
   const [actionLoading, setActionLoading] = useState(false);
   const [success, setSuccess] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [notificationWarning, setNotificationWarning] = useState<{ quoteId: string; companyName: string; message: string } | null>(null);
 
   const [approvedPrice, setApprovedPrice] = useState("");
   const [approvedSeedCount, setApprovedSeedCount] = useState("");
@@ -128,7 +129,16 @@ function B2BContent() {
       if (!res.ok) {
         setError(data.error || "İşlem başarısız oldu.");
       } else {
-        setSuccess(data.message || "İşlem başarıyla kaydedildi.");
+        if (action === "approve" && data.notification?.status !== "accepted") {
+          setSuccess(null);
+          setNotificationWarning({
+            quoteId: selectedQuote.id,
+            companyName: selectedQuote.company_name,
+            message: data.message || "Teklif kaydedildi; müşteri e-postasının gönderimi doğrulanamadı. Teklifi yeniden onaylamayın; bildirim kaydını kontrol edin.",
+          });
+        } else {
+          setSuccess(data.message || "İşlem başarıyla kaydedildi.");
+        }
         setSelectedQuote(null);
         fetchQuotes();
       }
@@ -160,6 +170,16 @@ function B2BContent() {
       </div>
 
       {/* Bildirimler */}
+      {notificationWarning && (
+        <div role="alert" className="bg-amber-500/10 ring-1 ring-amber-500/30 text-amber-200 px-4 py-3 rounded-xl text-sm flex items-start gap-3">
+          <div className="flex-1 min-w-0 break-words">
+            <p className="font-semibold">{notificationWarning.companyName}</p>
+            <p className="text-xs mb-1">Teklif: {notificationWarning.quoteId}</p>
+            <p>{notificationWarning.message}</p>
+          </div>
+          <button type="button" onClick={() => setNotificationWarning(null)} className="shrink-0 underline underline-offset-2">Bildirimi kapat</button>
+        </div>
+      )}
       {success && (
         <div className="bg-emerald-500/10 ring-1 ring-emerald-500/30 text-emerald-400 px-4 py-3 rounded-xl text-sm flex items-center gap-2 animate-fade-in">
           <span>✅</span> {success}

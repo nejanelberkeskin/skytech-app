@@ -112,15 +112,15 @@ export function salesReadiness(settings: Pick<SalesSettings, "ordersPaused">, en
     env.RESEND_API_KEY ? "ok" : "warning",
     env.RESEND_API_KEY ? "E-posta gönderimi tanımlı" : "E-posta gönderilmiyor",
     env.RESEND_API_KEY
-      ? "Sipariş teyidi, belgeler ve bildirimler gönderilir."
+      ? "Gönderim anahtarı tanımlı. Gönderen alan adının doğrulandığı, bildirim işlerinin çalıştığı ve e-postaların teslim edildiği bu kontrolde doğrulanmaz."
       : "RESEND_API_KEY tanımlı değil: sipariş teyidi ve belgeler müşteriye gitmez.",
   );
   add(
     "cron",
     env.CRON_SECRET ? "ok" : "warning",
-    env.CRON_SECRET ? "Zamanlanmış işler tanımlı" : "Zamanlanmış işler kapalı",
+    env.CRON_SECRET ? "Zamanlanmış iş anahtarı tanımlı" : "Zamanlanmış işler kapalı",
     env.CRON_SECRET
-      ? "Süresi dolan siparişler düşer, cayma süresi dolanlar kesinleşir, bildirimler gider."
+      ? "İş uçlarının kimlik doğrulama anahtarı tanımlı. Zamanlayıcının kurulduğu ve çalıştığı bu kontrolde doğrulanmaz; son çalışma sonucunu Zamanlanmış İşler ekranından kontrol edin."
       : "CRON_SECRET tanımlı değil: ödenmeyen siparişler kendiliğinden düşmez (kapasite ayrılı kalır), kesinleşme ve bildirimler yalnız yönetim ekranları açıldıkça işler.",
   );
   add(

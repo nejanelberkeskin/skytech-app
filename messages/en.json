@@ -469,7 +469,7 @@
       },
       "calendar": {
         "question": "When are the seed balls released?",
-        "answer": "Release work takes place between October and March — the best period for the seed to meet rainfall. From April to September the sites are inspected, monitored and reported on. On the agreed monitoring schedule we share footage of the work."
+        "answer": "Release work takes place between November and March — the best period for the seed to meet rainfall. From April to September the sites are inspected, monitored and reported on. On the agreed monitoring schedule we share footage of the work."
       },
       "hectare": {
         "question": "What is a hectare?",
@@ -568,7 +568,7 @@
           "You choose the site; the species is set by the site",
           "From {min} seed balls, any quantity you like",
           "A Certificate of Participation in your name",
-          "Release October–March, monitoring April–September",
+          "Release November–March, monitoring April–September",
           "Footage of the work on the agreed monitoring schedule"
         ],
         "cta": "Choose a Site"
@@ -825,7 +825,7 @@
       },
       "season": {
         "label": "Release Season",
-        "value": "Oct–Mar"
+        "value": "Nov–Mar"
       }
     },
     "cta": {
@@ -1774,9 +1774,10 @@
   },
   "seasonTimeline": {
     "title": "Work schedule",
-    "description": "Seed balls are released from October to March. Sites are surveyed and monitored, with reporting from April to September.",
+    "description": "Seed balls are released from November to March. Sites are surveyed and monitored, with reporting from April to September.",
     "release": "Seed ball release",
     "monitoring": "Monitoring and reporting",
+    "offSeason": "Outside release season",
     "current": "Current month",
     "video": "Footage from the release and monitoring work."
   },

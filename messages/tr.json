@@ -469,7 +469,7 @@
       },
       "calendar": {
         "question": "Tohum topları ne zaman bırakılıyor?",
-        "answer": "Bırakma çalışmaları Ekim–Mart arasında yapılır; tohumun yağışla buluşması için en uygun dönem budur. Nisan–Eylül arasında sahalar incelenir, izlenir ve raporlanır. Kararlaştırılan izleme takviminde çalışmanın görüntülerini paylaşırız."
+        "answer": "Bırakma çalışmaları Kasım–Mart arasında yapılır; tohumun yağışla buluşması için en uygun dönem budur. Nisan–Eylül arasında sahalar incelenir, izlenir ve raporlanır. Kararlaştırılan izleme takviminde çalışmanın görüntülerini paylaşırız."
       },
       "hectare": {
         "question": "Hektar ne demek?",
@@ -568,7 +568,7 @@
           "Sahayı siz seçersiniz; tür sahaya göre belirlenir",
           "En az {min} tohum topu, dilediğiniz adette",
           "Adınıza düzenlenen Katılım Sertifikası",
-          "Bırakma Ekim–Mart, izleme Nisan–Eylül",
+          "Bırakma Kasım–Mart, izleme Nisan–Eylül",
           "Kararlaştırılan izleme takviminde çalışmanın görüntüleri"
         ],
         "cta": "Saha Seçin"
@@ -825,7 +825,7 @@
       },
       "season": {
         "label": "Bırakma Sezonu",
-        "value": "Ekim–Mart"
+        "value": "Kasım–Mart"
       }
     },
     "cta": {
@@ -1774,9 +1774,10 @@
   },
   "seasonTimeline": {
     "title": "Çalışma takvimi",
-    "description": "Tohum topu bırakma Ekim–Mart arasında yapılır. Nisan–Eylül döneminde sahalar incelenir, izlenir ve raporlanır.",
+    "description": "Tohum topu bırakma Kasım–Mart arasında yapılır. Nisan–Eylül döneminde sahalar incelenir, izlenir ve raporlanır.",
     "release": "Tohum topu bırakma",
     "monitoring": "İzleme ve raporlama",
+    "offSeason": "Bırakma sezonu dışında",
     "current": "İçinde bulunduğumuz ay",
     "video": "Bırakma ve izleme sürecinden çalışma görüntüleri."
   },

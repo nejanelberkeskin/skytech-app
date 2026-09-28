@@ -1,7 +1,7 @@
 /**
  * Takvim kuralları — cayma süresi, bırakma sezonu ve sözleşmedeki KESİN son tarih.
  *
- *  • Tohum topu bırakma sezonu: 1 Ekim – 31 Mart. Nisan–Eylül izleme ve raporlama.
+ *  • Tohum topu bırakma sezonu: 1 Kasım – 31 Mart. Nisan–Eylül izleme ve raporlama.
  *  • Cayma süresi: sözleşmenin kurulduğu (ödemenin alındığı) günden itibaren 14 gün.
  *    Bırakma bu süre dolmadan yapılmaz; "erken ifa onayı" alınmaz.
  *  • Sipariş tarihi ile sezon sonu arasında cayma + hazırlık payı kalmıyorsa sipariş
@@ -21,7 +21,7 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 export interface ReleaseSeason {
   /** "2026-2027" */
   label: string;
-  /** Sezonun ilk günü — YYYY-MM-DD (1 Ekim) */
+  /** Sezonun ilk günü — YYYY-MM-DD (1 Kasım) */
   startsOn: string;
   /** Sezonun son günü — YYYY-MM-DD (31 Mart); sözleşmedeki kesin son tarih */
   endsOn: string;
@@ -66,13 +66,13 @@ export function trToday(at: Date = new Date()): string {
 }
 
 function seasonStartingIn(year: number): ReleaseSeason {
-  return { label: `${year}-${year + 1}`, startsOn: iso(year, 10, 1), endsOn: iso(year + 1, 3, 31) };
+  return { label: `${year}-${year + 1}`, startsOn: iso(year, 11, 1), endsOn: iso(year + 1, 3, 31) };
 }
 
-/** İçinde bulunulan ya da (Nisan–Eylül'de) yaklaşan bırakma sezonu. */
+/** İçinde bulunulan ya da (Nisan–Ekim'de) yaklaşan bırakma sezonu. */
 export function seasonFor(at: Date = new Date()): ReleaseSeason {
   const { y, m } = trParts(at);
-  return seasonStartingIn(m >= 10 ? y : m <= 3 ? y - 1 : y);
+  return seasonStartingIn(m >= 11 ? y : m <= 3 ? y - 1 : y);
 }
 
 /** "2026-2027" → sezonun son günü "2027-03-31"; biçim bozuksa null. */

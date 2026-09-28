@@ -37,9 +37,9 @@ export const OWNERSHIP_LABELS: Dict<"own" | "institution" | "cooperative" | "oth
 };
 
 export const TIMING_LABELS: Dict<"this_season" | "six_months" | "flexible"> = {
-  tr: { this_season: "Bu bırakma sezonu (Ekim–Mart)", six_months: "6 ay içinde", flexible: "Esnek" },
-  en: { this_season: "This release season (Oct–Mar)", six_months: "Within 6 months", flexible: "Flexible" },
-  ru: { this_season: "В этот сезон сброса (октябрь–март)", six_months: "В течение 6 месяцев", flexible: "Гибко" },
+  tr: { this_season: "Bu bırakma sezonu (Kasım–Mart)", six_months: "6 ay içinde", flexible: "Esnek" },
+  en: { this_season: "This release season (Nov–Mar)", six_months: "Within 6 months", flexible: "Flexible" },
+  ru: { this_season: "В этот сезон сброса (ноябрь–март)", six_months: "В течение 6 месяцев", flexible: "Гибко" },
 };
 
 export const AREA_UNIT_LABELS: Dict<"dekar" | "hektar"> = {

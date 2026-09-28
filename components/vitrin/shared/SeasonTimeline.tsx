@@ -14,7 +14,7 @@ export default async function SeasonTimeline({
 }: Props) {
   const t = await getTranslations({ locale, namespace: "seasonTimeline" });
   const compact = variant === "compact";
-  const months = Array.from({ length: 12 }, (_, i) => (i + 9) % 12);
+  const months = Array.from({ length: 12 }, (_, i) => (i + 10) % 12);
   const formatter = new Intl.DateTimeFormat(locale, {
     month: "short",
     timeZone: "UTC",
@@ -35,10 +35,11 @@ export default async function SeasonTimeline({
         </div>
       )}
       <div
-        className={`mb-4 grid grid-cols-2 gap-3 ${compact ? "text-xs" : "text-sm"}`}
+        className={`mb-4 grid grid-cols-1 gap-2 sm:grid-cols-3 sm:gap-3 ${compact ? "text-xs" : "text-sm"}`}
       >
         <p className="font-semibold text-[#1B6B3A]">{t("release")}</p>
         <p className="font-semibold text-[#3d5a3d]">{t("monitoring")}</p>
+        <p className="text-[#3d5a3d]">{t("offSeason")}</p>
       </div>
       <ol
         className={`grid grid-cols-12 ${compact ? "gap-px" : "gap-1 sm:gap-2"}`}
@@ -50,7 +51,7 @@ export default async function SeasonTimeline({
             className="min-w-0 text-center"
           >
             <div
-              className={`h-2 ${i < 6 ? "bg-[#1B6B3A]" : "bg-[#c3d4bd]"} ${i === 0 || i === 6 ? "rounded-l-full" : ""} ${i === 5 || i === 11 ? "rounded-r-full" : ""}`}
+              className={`h-2 ${i < 5 ? "bg-[#1B6B3A]" : i < 11 ? "bg-[#c3d4bd]" : "bg-[#e4e7df]"} ${i === 0 || i === 5 || i === 11 ? "rounded-l-full" : ""} ${i === 4 || i === 10 || i === 11 ? "rounded-r-full" : ""}`}
             />
             <span
               className={`mt-3 block whitespace-nowrap text-[9px] sm:text-xs ${month === currentMonth ? "font-bold text-[#0e2519] underline decoration-2 underline-offset-4" : "text-[#3d5a3d]"}`}
@@ -60,7 +61,7 @@ export default async function SeasonTimeline({
                 .replace(/\.$/u, "")}
             </span>
             <span className="sr-only">
-              {i < 6 ? t("release") : t("monitoring")}
+              {i < 5 ? t("release") : i < 11 ? t("monitoring") : t("offSeason")}
               {month === currentMonth ? ` · ${t("current")}` : ""}
             </span>
           </li>

@@ -50,29 +50,37 @@ assert.ok(!St.canWithdraw("paid", null));
 /* ── Takvim ───────────────────────────────────────────────────────────────── */
 const at = (iso) => new Date(iso);
 // sezon sınırları (İstanbul saatiyle)
-assert.deepEqual(Sc.seasonFor(at("2026-09-21T09:00:00Z")), { label: "2026-2027", startsOn: "2026-10-01", endsOn: "2027-03-31" });
+assert.deepEqual(Sc.seasonFor(at("2026-09-21T09:00:00Z")), { label: "2026-2027", startsOn: "2026-11-01", endsOn: "2027-03-31" });
 assert.equal(Sc.seasonFor(at("2026-12-15T09:00:00Z")).label, "2026-2027");
 assert.equal(Sc.seasonFor(at("2027-02-10T09:00:00Z")).label, "2026-2027");
 assert.equal(Sc.seasonFor(at("2027-04-01T09:00:00Z")).label, "2027-2028");
-// 30 Eylül 21:30 UTC = 1 Ekim 00:30 İstanbul → yeni sezon başladı
+// İstanbul tarihi UTC tarihinden farklı olabilir; Ekim henüz bırakma sezonu değildir.
 assert.equal(Sc.trToday(at("2026-09-30T21:30:00Z")), "2026-10-01");
 // 31 Mart 20:59 UTC = 31 Mart 23:59 İstanbul → hâlâ eski sezon; 21:00 UTC → 1 Nisan
 assert.equal(Sc.seasonFor(at("2027-03-31T20:59:00Z")).label, "2026-2027");
 assert.equal(Sc.seasonFor(at("2027-03-31T21:00:00Z")).label, "2027-2028");
 
-// Eylül'de sipariş: sezon 1 Ekim'de başlar; en erken bırakma hazırlık payından sonra
+// Eylül'de sipariş: sezon 1 Kasım'da başlar; Ekim'de bırakma yapılmaz
 let sch = Sc.scheduleFor(at("2026-09-21T09:00:00Z"));
 assert.equal(sch.season.label, "2026-2027");
 assert.equal(sch.performanceDeadline, "2027-03-31");
-assert.equal(sch.earliestReleaseOn, "2026-10-12"); // 21 Eylül + 21 gün
+assert.equal(sch.earliestReleaseOn, "2026-11-01"); // hazırlık daha önce bitse de sezon beklenir
 assert.equal(sch.rolledToNextSeason, false);
 // cayma: 21 Eylül + 14 gün = 5 Ekim, İstanbul gün sonu = 5 Ekim 20:59:59.999 UTC
 assert.equal(sch.withdrawalDeadline, "2026-10-05T20:59:59.999Z");
 
 // Haziran'da sipariş: en erken bırakma sezon başı
 sch = Sc.scheduleFor(at("2026-06-10T09:00:00Z"));
-assert.equal(sch.earliestReleaseOn, "2026-10-01");
+assert.equal(sch.earliestReleaseOn, "2026-11-01");
 assert.equal(sch.performanceDeadline, "2027-03-31");
+
+// Ekim siparişleri ve İstanbul gece sınırı Kasım başlangıcını erkene çekemez.
+for (const stamp of ["2026-10-01T00:00:00Z", "2026-10-11T09:00:00Z", "2026-10-31T20:59:59Z", "2026-10-31T21:00:00Z"]) {
+  const autumn = Sc.scheduleFor(at(stamp));
+  assert.equal(autumn.season.startsOn, "2026-11-01");
+  assert.ok(autumn.earliestReleaseOn >= "2026-11-01", stamp);
+  assert.equal(autumn.performanceDeadline, "2027-03-31");
+}
 
 // Sezon sonuna yetişmeyen sipariş sonraki sezona yazılır
 sch = Sc.scheduleFor(at("2027-03-10T09:00:00Z")); // +21 = 31 Mart → yetişir (sınırda)
@@ -81,7 +89,7 @@ assert.equal(sch.earliestReleaseOn, "2027-03-31");
 sch = Sc.scheduleFor(at("2027-03-11T09:00:00Z")); // +21 = 1 Nisan → yetişmez
 assert.equal(sch.rolledToNextSeason, true);
 assert.equal(sch.season.label, "2027-2028");
-assert.equal(sch.earliestReleaseOn, "2027-10-01");
+assert.equal(sch.earliestReleaseOn, "2027-11-01");
 assert.equal(sch.performanceDeadline, "2028-03-31");
 
 // hazırlık payı cayma süresinden kısa verilemez (en az 15 gün)

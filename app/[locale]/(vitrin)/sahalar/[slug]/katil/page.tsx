@@ -59,7 +59,7 @@ export default async function ParticipatePage({ params }: Props) {
   const firstYear = Number(schedule.season.label.slice(0, 4));
   const dateLabels: Record<string, string> = {};
   for (let y = firstYear - 1; y <= firstYear + 3; y++) {
-    for (const day of [`${y}-10-01`, `${y + 1}-03-31`])
+    for (const day of [`${y}-11-01`, `${y + 1}-03-31`])
       dateLabels[day] = formatter.format(new Date(`${day}T12:00:00Z`));
   }
   return (

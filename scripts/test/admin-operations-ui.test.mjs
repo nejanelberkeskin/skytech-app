@@ -5,7 +5,7 @@ import { REFUND_VIEW_FIXTURES } from '../../lib/refunds/fixtures.ts';
 import * as model from '../../lib/refunds/model.ts';
 import { canAccessPath, getModulesForRole } from '../../lib/rbac.ts';
 const form = load('components/admin/operations/refund-form.ts', {'@/lib/refunds/model':model});
-const client = load('components/admin/operations/client.ts');
+const client = load('components/admin/operations/client.ts', {'@/components/admin/access/labels': load('components/admin/access/labels.ts')});
 const completeDraft = { refundId:'provider-123',source:'provider_panel',reference:'ref-1',note:'Sağlayıcı panelinden işlem doğrulandı.' };
 
 test('İade formu: kanıt, gerekçe ve başarılı iade kimliği zorunlu',()=>{
@@ -64,4 +64,32 @@ test('Transport: 409 sürüm bilgisi, 403 yetki ve 503 hata boş veriyle maskele
    await assert.rejects(client.adminRequest('/api/test'),e=>e.code===code && e.status===status && !!e.details.availableAt);
   }
  }finally{globalThis.fetch=original;}
+});
+
+
+test('Yetki açıklaması: bilinen eksik izinleri adlarıyla ve tekrarsız gösterir', () => {
+ const error = new client.AdminApiError('forbidden', 'Bu değişiklik için yetkiniz yok.', 403,
+   {reason:'missing_permission', permissions:['sites.edit','sites.edit','sites.capacity.manage','private@example.invalid','__proto__']});
+ const text=client.errorText(error);
+ assert.match(text,/Eksik yetki: Saha bilgilerini düzenleme \(sites.edit\), Saha kapasitesini değiştirme \(sites.capacity.manage\)/);
+ assert.equal(text.includes('private@example.invalid'),false);
+ assert.equal(text.includes('__proto__'),false);
+});
+test('Yetki açıklaması: kapsam eksikliği, izin yokluğu veya MFA diye gösterilmez', () => {
+ for (const [reason, expected] of [['out_of_scope','Bu kayıt için kapsamı yetersiz olan yetki'],['all_scope_required','Tüm kayıtları kapsaması gereken yetki']]) {
+  const text=client.errorText(new client.AdminApiError('forbidden','Kapsam yetersiz.',403,{reason,permissions:['sites.edit']}));
+  assert.ok(text.includes(expected));assert.equal(text.includes('Eksik yetki'),false);
+ }
+});
+test('Yetki açıklaması: MFA, farklı durum kodları ve tanınmayan detaylarda özgün mesaj korunur', () => {
+ for (const [code,status,details] of [
+  ['mfa_required',403,{reason:'stale',permissions:['sites.publish']}],
+  ['forbidden',401,{reason:'missing_permission',permissions:['sites.edit']}],
+  ['forbidden',403,{reason:'future_reason',permissions:['sites.edit']}],
+  ['forbidden',403,{reason:'missing_permission',permissions:['unknown',null,42,{}]}],
+  ['forbidden',403,{reason:'missing_permission',permissions:'sites.edit'}],
+  ['forbidden',403,null],
+ ]) assert.equal(client.errorText(new client.AdminApiError(code,'Özgün mesaj',status,details)),'Özgün mesaj');
+ assert.equal(client.errorText(new Error('Yerel hata')),'Yerel hata');
+ assert.equal(client.errorText(null),'Veri alınamadı. Yeniden deneyin.');
 });

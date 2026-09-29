@@ -180,6 +180,7 @@ function SahalarContent() {
   const [loading, setLoading] = useState(true), [loadError, setLoadError] = useState<string | null>(null);
   const [modalMode, setModalMode] = useState<ModalMode>(null), [selectedLand, setSelectedLand] = useState<Land | null>(null);
   const [form, setForm] = useState<SiteForm>(EMPTY_FORM);
+  const [verificationRequired, setVerificationRequired] = useState(false);
   const [saving, setSaving] = useState(false), [blocked, setBlocked] = useState(false);
   const [error, setError] = useState<string | null>(null), [success, setSuccess] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
@@ -191,7 +192,7 @@ function SahalarContent() {
       const { data } = await accessRequest<SiteAdminListDto>("/api/admin/lands?include=species");
       if (!state.current.alive || generation !== state.current.generation) return;
       if (!Array.isArray(data?.items) || !data.capabilities || !data.scope || !data.mfa) throw new Error("Saha yanıtı okunamadı.");
-      setData(data); setBlocked(false);
+      setData(data); setBlocked(false); setVerificationRequired(false);
     } catch (e) {
       if (!state.current.alive || generation !== state.current.generation) return;
       setLoadError(errorText(e));
@@ -223,6 +224,7 @@ function SahalarContent() {
       if (e instanceof AdminApiError && e.details?.fields && typeof e.details.fields === "object") setFieldErrors(Object.fromEntries(Object.entries(e.details.fields).filter((pair): pair is [string, string] => typeof pair[1] === "string")));
       const editable = e instanceof AdminApiError && ["invalid_body", "slug_taken"].includes(e.code);
       setBlocked(!editable);
+      setVerificationRequired(e instanceof AdminApiError && e.code === "mfa_required");
       if (e instanceof AdminApiError && [401,403,404].includes(e.status) && e.code !== "mfa_required") { setModalMode(null); setSelectedLand(null); setData(null); void refresh(); }
     } finally { state.current.busy = false; if (state.current.alive) setSaving(false); }
   };
@@ -234,6 +236,7 @@ function SahalarContent() {
   const handleDelete = () => { if (selectedLand && data?.capabilities.delete) void mutate("DELETE", { id: selectedLand.id }); };
   const editCaps = modalMode === "add" ? { edit: true, capacity: true, publish: !!data?.capabilities.createPublic } : selectedLand?.capabilities ?? { edit: false, capacity: false, publish: false };
   // ── Metrikler ─────────────────────────────────────────────────────────────
+  const needsVerification = verificationRequired || (!blocked && data?.mfa.enforced && !data.mfa.satisfied && (data.capabilities.create || data.items.some(s => s.capabilities.publish || s.capabilities.capacity)));
   const published = lands.filter((l) => l.isPublic && l.status !== "closed");
   const openCount = published.filter((l) => l.status === "open").length;
   const totalHectares = published.reduce((s, l) => s + (hectares(l) ?? 0), 0);
@@ -257,7 +260,10 @@ function SahalarContent() {
       </div>
 
       {data && <p className="text-sm text-slate-300">{data.scope.kind === "all" ? "Kapsam: tüm sahalar" : `Kapsam: yetkili olduğunuz ${data.scope.siteIds.length} saha`}</p>}
-      {(blocked || (data?.mfa.enforced && !data.mfa.satisfied && (data.capabilities.create || data.items.some(s => s.capabilities.publish || s.capabilities.capacity)))) && <div className="rounded-xl border border-amber-400/30 p-4 text-sm text-amber-100 space-y-3"><p>{blocked ? "İşlem yeniden gönderilmeyecek. Güncel kayıtları yüklemek için listeyi yenileyin." : "Yayın ve kapasite değişiklikleri için yeniden doğrulama gerekir."}</p><Link href="/admin/guvenlik" target="_blank" rel="noopener noreferrer" className="underline">Hesap güvenliğini aç (yeni sekme)</Link><p>Doğrulamadan sonra listeyi yenileyip işlemi yeniden seçin.</p></div>}
+      {(blocked || needsVerification) && <div className="rounded-xl border border-amber-400/30 p-4 text-sm text-amber-100 space-y-3">
+        <p>{blocked ? "İşlem yeniden gönderilmeyecek. Güncel kayıtları yüklemek için listeyi yenileyin." : "Yayın ve kapasite değişiklikleri için yeniden doğrulama gerekir."}</p>
+        {needsVerification && <><Link href="/admin/guvenlik" target="_blank" rel="noopener noreferrer" className="underline">Hesap güvenliğini aç (yeni sekme)</Link><p>Doğrulamadan sonra listeyi yenileyip işlemi yeniden seçin.</p></>}
+      </div>}
       {success && <p role="status" className="text-emerald-200">{success}</p>}
       {warnings.map((w,i) => <p role="alert" key={i} className="text-amber-100">{w.message} İşlemi tekrar göndermeyin.</p>)}
       {error && !modalMode && <p role="alert" className="text-red-200">{error}</p>}

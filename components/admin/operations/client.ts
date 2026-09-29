@@ -1,4 +1,5 @@
 /** Browser transport only; the server owns permissions, amounts and transitions. No mutation retries. */
+import { permissionLabels } from "@/components/admin/access/labels";
 import type { ApiWarning } from "@/lib/api/envelope";
 
 export class AdminApiError extends Error {
@@ -28,5 +29,20 @@ export async function adminRequest<T>(url: string, body?: object, signal?: Abort
   return { data: json.data, warnings: Array.isArray(json.warnings) ? json.warnings : [] };
 }
 
-export const errorText = (error: unknown) => error instanceof Error ? error.message : "Veri alınamadı. Yeniden deneyin.";
+export function errorText(error: unknown): string {
+  const message = error instanceof Error ? error.message : "Veri alınamadı. Yeniden deneyin.";
+  if (!(error instanceof AdminApiError) || error.status !== 403 || error.code !== "forbidden") return message;
+  const permissions = error.details?.permissions;
+  if (!Array.isArray(permissions)) return message;
+  // Only the client-owned dictionary is rendered; arbitrary detail values stay out of the UI.
+  const labels = Object.entries(permissionLabels)
+    .filter(([key]) => permissions.includes(key))
+    .map(([key, label]) => `${label} (${key})`);
+  if (labels.length === 0) return message;
+  const reason = error.details?.reason;
+  const explanation = reason === "missing_permission" ? "Eksik yetki"
+    : reason === "out_of_scope" ? "Bu kayıt için kapsamı yetersiz olan yetki"
+    : reason === "all_scope_required" ? "Tüm kayıtları kapsaması gereken yetki" : null;
+  return explanation ? `${message} ${explanation}: ${labels.join(", ")}. Erişiminizi yetkili yöneticinizle kontrol edin.` : message;
+}
 export const istanbulDate = (value: string | null | undefined) => value ? new Date(value).toLocaleString("tr-TR", { dateStyle: "medium", timeStyle: "short", timeZone: "Europe/Istanbul" }) : "—";

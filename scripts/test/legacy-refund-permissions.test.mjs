@@ -113,7 +113,7 @@ test('Guard uses existing rollout setting; invoice action now needs invoices.man
 });
 
 test('MFA denial is not retried by the actual browser transport (403 or 428)', async t => {
-  const client = load('components/admin/operations/client.ts');
+  const client = load('components/admin/operations/client.ts', {'@/components/admin/access/labels': load('components/admin/access/labels.ts')});
   for (const status of [403, 428]) {
     let calls = 0;
     t.mock.method(globalThis, 'fetch', async () => { calls++; return Response.json({ ok: false, error: { code: 'mfa_required', message: 'Doğrulama gerekli.' } }, { status }); });

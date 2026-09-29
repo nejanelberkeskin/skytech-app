@@ -54,9 +54,20 @@ test('patched iyzipay still exposes checkout/refund SDK methods without a networ
 });
 test('operations cannot retrieve original document HTML/PDF',async()=>{
  let touched=false;
+ // Gerçek izin kapısı; operasyon şablonunda orders.documents.read yok (021). Belge sorgusu hiç çalışmaz.
+ const envelope=load('lib/api/envelope.ts',{'next/server':{NextResponse:{json:(body,init)=>({body,status:init?.status??200})}}});
+ const keys=load('lib/admin/permission-keys.ts');
+ const operations=['orders.read','orders.note','sites.read','batches.read'].map(key=>({key,scopes:[{kind:'all'}]}));
+ const gate=load('lib/admin/permissions.ts',{
+  '@/lib/admin-auth':{requireAdmin:async()=>({admin:{user_id:'ops',role:'OPERATIONS'},error:null})},
+  '@/lib/api/envelope':envelope,
+  '@/lib/supabase/server':{createServiceRoleClient:()=>({rpc:async()=>({data:{adminId:'ops',permissions:operations,roles:[]},error:null})})},
+  './mfa':{sessionAssurance:async()=>({aal:'aal2',enrolled:true,verifiedAt:new Date().toISOString()})},'./permission-keys':keys,
+ });
  const api=load('app/api/admin/release-orders/[id]/belge/[kind]/route.ts',{
   '@/lib/supabase/server':{createServiceRoleClient:()=>{touched=true;throw Error('must not query');}},
-  '@/lib/admin-auth':{requireAdmin:async(_req,roles)=>({error:roles.includes('OPERATIONS')?null:{status:403}})},
+  '@/lib/admin/permissions':gate,'@/lib/api/envelope':envelope,
+  '@/lib/orders/admin-access':load('lib/orders/admin-access.ts',{'@/lib/admin/permissions':gate}),
   '@/lib/orders/after-payment':{},'@/lib/orders/types':{DOCUMENT_KINDS:['contract']},
  });
  for(const format of ['html','pdf']) assert.equal((await api.GET({url:'http://local?bicim='+format},{params:Promise.resolve({id:'30000000-0000-0000-0000-000000000001',kind:'contract'})})).status,403);

@@ -3,6 +3,7 @@ import { z } from "zod";
 import { createServiceRoleClient } from "@/lib/supabase/server";
 import { requireAdmin, getClientIP } from "@/lib/admin-auth";
 import { requirePermission } from "@/lib/admin/permissions";
+import { ACTION_PERMISSION, LEGACY_REFUND_ROLES, isRefundAction } from "@/lib/orders/admin-access";
 import { auditLog } from "@/lib/admin/audit";
 import {
   cancelBySeller,
@@ -32,11 +33,14 @@ import type { ReleaseOrderRow } from "@/lib/orders/types";
  *      reserve_capacity  {}                            — geç ödemede ayrılamamış kapasiteyi şimdi ayır
  *      invoice_issued    { invoiceId, invoiceNo, ettn?, issuedOn }
  *
- * Görüntüleme: SUPER_ADMIN, FINANCE, OPERATIONS. Para ve fatura işlemleri: SUPER_ADMIN, FINANCE.
- * OPERATIONS rolüne kimlik/vergi numarası maskeli gider. Her işlem admin_audit_logs'a yazılır.
+ * Görüntüleme: SUPER_ADMIN, FINANCE, OPERATIONS. OPERATIONS rolüne kimlik/vergi numarası maskeli gider.
+ * Eylemler: her eylem kendi iznini tam kapsamla ister (web-brifler/27 §2); MFA izin sözlüğünden gelir.
+ * İade eylemleri ayrıca eski SUPER_ADMIN/FINANCE rolünü ister (SQL 019 bağımlılığı). Reddedilen istekte
+ * iş servisi, sağlayıcı, e-posta ve audit çağrılmaz. Her işlem admin_audit_logs'a yazılır.
  */
 const VIEW_ROLES = ["SUPER_ADMIN", "FINANCE", "OPERATIONS"] as const;
 const MONEY_ROLES = ["SUPER_ADMIN", "FINANCE"] as const;
+const noStore = { headers: { "Cache-Control": "private, no-store" } };
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 // İade eylemleri sağlayıcıyı çağırır (en çok 3 × 15 sn); süre sınırı açık yazılır ki çağrı yarıda kesilmesin.
@@ -80,25 +84,24 @@ const STATUS_FOR: Record<string, number> = {
 };
 
 export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const { admin, error: authError } = await requireAdmin(request, [...VIEW_ROLES]);
-  if (authError || !admin) return authError ?? NextResponse.json({ error: "unauthorized" }, { status: 401 });
+  // Önce oturum ve aktif personel (izin sorgusu yok); eylemin izni gövde okunduktan sonra (27 §2).
+  const session = await requireAdmin(request);
+  if (session.error || !session.admin) return session.error ?? NextResponse.json({ error: "unauthorized" }, { status: 401, ...noStore });
   const { id } = await params;
-  if (!UUID_RE.test(id)) return NextResponse.json({ error: "invalid_id" }, { status: 400 });
+  if (!UUID_RE.test(id)) return NextResponse.json({ error: "invalid_id" }, { status: 400, ...noStore });
 
   const parsed = actionSchema.safeParse(await request.json().catch(() => null));
-  if (!parsed.success) return NextResponse.json({ error: "invalid_body" }, { status: 400 });
+  if (!parsed.success) return NextResponse.json({ error: "invalid_body" }, { status: 400, ...noStore });
   const input = parsed.data;
 
-  // Not ve kapasite ayırma para hareketi değildir; görüntüleyebilen her rol yapabilir.
-  if (input.action !== "note" && input.action !== "reserve_capacity" && !(MONEY_ROLES as readonly string[]).includes(admin.role)) {
-    return NextResponse.json({ error: "forbidden" }, { status: 403 });
+  // İade talebi SQL 019'da eski rolü denetler; API aynı sınırı izin sorgusundan önce korur (rol yükseltmesi yok).
+  if (isRefundAction(input.action) && !LEGACY_REFUND_ROLES.includes(session.admin.role)) {
+    return NextResponse.json({ error: "forbidden" }, { status: 403, ...noStore });
   }
-
-  // Eski istemciler de yeni iade ucuyla aynı izin, tam kapsam ve MFA kapısından geçer.
-  if (input.action === "refund" || input.action === "refund_duplicate") {
-    const guard = await requirePermission(request, "refunds.execute");
-    if (guard.error) return guard.error;
-  }
+  // Eylemin izni: tam kapsam + (hassas izinde) yeniden doğrulanmış oturum. Eski rol listesi kapı değildir.
+  const guard = await requirePermission(request, ACTION_PERMISSION[input.action]);
+  if (guard.error) return guard.error;
+  const admin = guard.admin;
 
   const supabase = createServiceRoleClient();
   const ip = getClientIP(request);

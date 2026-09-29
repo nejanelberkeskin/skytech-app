@@ -3,8 +3,8 @@
  *
  * Her çalışma `job_runs`a yazılır (020): kim/ne zaman/sonuç. Aynı iş aynı anda bir kez çalışır (tek satırlık
  * kilit). Cron'da kayıt tutulamazsa (ör. 020 henüz uygulanmadı) iş YİNE çalışır; elle çalıştırmada kilit
- * alınamazsa çalışmaz. Sipariş listesi açıldığında yapılan süre dolumu/kesinleşme (GET yan etkisi) cron
- * sağlığı doğrulanana kadar yerinde kalır; bu modül onu kaldırmaz.
+ * alınamazsa çalışmaz. Sipariş ve parti listelerinin GET'i artık süre dolumu/kesinleşme yapmaz (web-brifler/27,
+ * 31): bu işleri yalnız zamanlayıcı ya da yönetimden elle çalıştırma yapar.
  */
 import type { SupabaseClient } from "@supabase/supabase-js";
 
@@ -49,7 +49,7 @@ export interface JobHealth {
   lastRun: JobRunView | null;
   lastSuccessAt: string | null;
   lastFailureAt: string | null;
-  /** Sipariş listesi GET'i hâlâ süre dolumu/kesinleşme yapıyor (cron doğrulanınca kaldırılacak). */
+  /** Liste ekranı açılınca süre dolumu/kesinleşme yapılıyor mu? Artık hayır (27, 31); alan geriye uyum için kalır. */
   listViewSideEffects: boolean;
   checkedAt: string;
 }
@@ -147,7 +147,7 @@ export function healthFrom(job: JobName, runs: JobRunRow[], cronConfigured: bool
     lastRun: sorted[0] ? view(sorted[0]) : null,
     lastSuccessAt: lastSuccess?.finished_at ? new Date(lastSuccess.finished_at).toISOString() : null,
     lastFailureAt: lastFailure?.finished_at ? new Date(lastFailure.finished_at).toISOString() : null,
-    listViewSideEffects: true,
+    listViewSideEffects: false,
     checkedAt: now.toISOString(),
   };
 }

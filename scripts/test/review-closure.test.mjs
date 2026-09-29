@@ -20,13 +20,18 @@ test('repair route enforces paused sales and version; valid repair survives post
  let data={...row,unit_price_kurus:99}, writes=0;
  const db={from(table){if(table!=='sales_settings')return query([]);return {...query(data),update(next){writes++;data={...data,...next,updated_at:'2026-09-22T12:01:00Z'};return query([data]);}};}};
  const settings=settingsModule(db);
- const api=load('app/api/admin/sales-settings/route.ts',{'next/server':{NextResponse:response},'next/cache':{revalidateTag:()=>{}},zod:{z},'@/lib/supabase/server':{createServiceRoleClient:()=>db},'@/lib/admin-auth':auth,'@/lib/admin/audit':{auditLog:async()=>[{code:'audit_unavailable'}]},'@/lib/orders/settings':settings,'@/lib/orders/settings-schema':settingsSchema,'@/lib/orders/readiness':{salesReadiness:s=>({accepting:!s.ordersPaused})}});
- const res=await api.GET({});assert.equal(res.status,200);assert.equal(res.body.repairRequired,true);assert.equal(res.body.quoteVersion,null);assert.equal(res.body.readiness.accepting,false);
+ // İzin kapısı bu testin konusu değil (web-brifler/32; sales-settings-access.test.mjs): tam yetkili, doğrulanmış oturum.
+ const envelope=load('lib/api/envelope.ts',{'next/server':{NextResponse:response}});
+ const assurance={aal:'aal2',verifiedAt:new Date().toISOString(),enrolled:true};
+ const permissions={hasFullScope:()=>true,mfaEnforced:()=>false,mfaSatisfied:()=>true,requireAnyPermission:async()=>({admin,access:{permissions:[]},assurance,error:null,matched:'sales.pricing.manage'})};
+ const api=load('app/api/admin/sales-settings/route.ts',{'next/cache':{revalidateTag:()=>{}},zod:{z},'@/lib/supabase/server':{createServiceRoleClient:()=>db},'@/lib/admin-auth':auth,'@/lib/admin/permissions':permissions,'@/lib/admin/permission-set':{evaluatePermissionSet:()=>null,permissionSetResponse:()=>{throw new Error('beklenmeyen ret');}},'@/lib/admin/audit':{auditLog:async()=>[{code:'audit_unavailable'}]},'@/lib/api/envelope':envelope,'@/lib/orders/gate':{canAcceptOrders:(_p,s)=>!s.ordersPaused},'@/lib/payments':{getPaymentProvider:()=>null},'@/lib/orders/settings':settings,'@/lib/orders/settings-schema':settingsSchema,'@/lib/orders/readiness':{salesReadiness:s=>({accepting:!s.ordersPaused}),loadReadinessEvidence:async()=>({scheduler:null,email:null})}});
+ const res=await api.GET({});assert.equal(res.status,200);assert.equal(res.body.data.state.repairRequired,true);assert.equal(res.body.data.state.ordersPaused,true,'geçersiz kayıt satışı kapalı sayar');assert.equal(res.body.data.settings.quoteVersion,null);assert.equal(res.body.data.readiness.accepting,false);
  const valid={...settings.DEFAULT_SALES_SETTINGS,ordersPaused:false};
  const request=(s,version=row.updated_at)=>({json:async()=>({settings:s,expectedUpdatedAt:version})});
- assert.equal((await api.PUT(request(valid))).body.error,'repair_requires_pause');assert.equal(writes,0);
+ assert.equal((await api.PUT(request(valid))).body.error.code,'repair_requires_pause');assert.equal(writes,0);
  assert.equal((await api.PUT(request({...valid,ordersPaused:true},'2026-09-21T12:00:00Z'))).status,409);assert.equal(writes,0);
- const saved=await api.PUT(request({...valid,ordersPaused:true}));assert.equal(saved.status,200);assert.equal(saved.body.ok,true);assert.equal(saved.body.warnings[0].code,'audit_unavailable');assert.equal(writes,1);assert.equal(saved.body.settings.ordersPaused,true);
+ assert.equal((await api.PUT({json:async()=>({ordersPaused:true,expectedUpdatedAt:row.updated_at})})).body.error.code,'repair_required','geçersiz kayıtta hızlı durdurma yok');assert.equal(writes,0);
+ const saved=await api.PUT(request({...valid,ordersPaused:true}));assert.equal(saved.status,200);assert.equal(saved.body.ok,true);assert.equal(saved.body.warnings[0].code,'audit_unavailable');assert.equal(writes,1);assert.equal(saved.body.data.state.ordersPaused,true);
  assert.equal((await settings.loadSalesSettings(db)).settings.ordersPaused,true);
 });
 test('catalog creation with real audit helper returns committed record and warning, not retryable failure',async()=>{

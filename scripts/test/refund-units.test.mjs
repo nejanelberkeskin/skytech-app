@@ -178,7 +178,7 @@ test('iş sağlığı: durumlar', () => {
   const ok = healthFrom('siparis-isleri', [run(), run({ id: 'x', started_at: '2026-09-22T11:55:00Z', finished_at: null, ok: null })], true, now);
   assert.equal(ok.status, 'ok');
   assert.equal(ok.running, true);
-  assert.equal(ok.listViewSideEffects, true);
+  assert.equal(ok.listViewSideEffects, false, 'sipariş ve parti listeleri artık iş tetiklemiyor (27, 31)');
   assert.equal(JSON.stringify(ok).includes('SECRET'), false);
 });
 

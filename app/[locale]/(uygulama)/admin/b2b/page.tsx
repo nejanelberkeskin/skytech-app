@@ -3,6 +3,7 @@
 import { adminFetch } from "@/lib/admin/client";
 
 import { useEffect, useState, useCallback, useRef } from "react";
+import { containDialogTab } from "@/lib/hooks/dialog-keyboard";
 import { useAdmin } from "@/lib/admin-context";
 import RoleGuard from "@/components/RoleGuard";
 import { Button, Input, Textarea, Card } from "@/components/ui";
@@ -270,8 +271,7 @@ function B2BContent() {
 
       {/* Detay / Onay Modalı */}
       {selectedQuote && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
-          <div role="dialog" aria-modal="true" aria-label="Kurumsal teklif" className="glass border border-white/[0.08] rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl animate-scale-in">
+        <QuoteDialog busy={actionLoading} onClose={()=>setSelectedQuote(null)}>
             {/* Modal başlık */}
             <div className="px-6 py-4 border-b border-white/[0.06] flex items-center justify-between">
               <div>
@@ -405,8 +405,7 @@ function B2BContent() {
                 </Card>
               )}
             </div>
-          </div>
-        </div>
+        </QuoteDialog>
       )}
     </div>
   );
@@ -419,4 +418,10 @@ function InfoField({ label, value }: { label: string; value: string }) {
       <p className="text-sm text-white font-medium">{value}</p>
     </div>
   );
+}
+
+function QuoteDialog({busy,onClose,children}:{busy:boolean;onClose:()=>void;children:React.ReactNode}) {
+ const ref=useRef<HTMLDialogElement>(null);
+ useEffect(()=>{const el=ref.current,previous=document.activeElement instanceof HTMLElement?document.activeElement:null;el?.showModal();return()=>{el?.close();if(previous?.isConnected)previous.focus();};},[]);
+ return <dialog ref={ref} aria-label="Kurumsal teklif" aria-busy={busy} onKeyDown={containDialogTab} onCancel={e=>{if(busy)e.preventDefault();else onClose();}} className="m-auto w-[calc(100%-1rem)] max-w-2xl max-h-[90dvh] overflow-y-auto rounded-2xl border border-white/15 bg-[#0b1410] text-white p-0 backdrop:bg-black/70">{children}</dialog>;
 }

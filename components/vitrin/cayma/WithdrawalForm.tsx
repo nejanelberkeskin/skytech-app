@@ -19,6 +19,8 @@ import {
   ErrorBanner,
 } from "@/components/vitrin/talep/FormPrimitives";
 
+import { isReceiptTimestamp } from "./receipt-date";
+
 type Receipt = Extract<WithdrawalResult, { ok: true }>;
 type ReceiptLabels = { receivedAt: string; refundDueOn: string };
 type Props = {
@@ -122,9 +124,7 @@ export default function WithdrawalForm({
     if (
       result.ok &&
       (result.orderNo !== input.orderNo ||
-        typeof result.receivedAt !== "string" ||
-        !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{1,3})?(Z|[+-]\d{2}:\d{2})$/.test(result.receivedAt) ||
-        !Number.isFinite(Date.parse(result.receivedAt)) ||
+        !isReceiptTimestamp(result.receivedAt) ||
         typeof result.refundDueOn !== "string" ||
         !/^\d{4}-\d{2}-\d{2}$/.test(result.refundDueOn) ||
         !Number.isFinite(Date.parse(`${result.refundDueOn}T12:00:00Z`)) ||

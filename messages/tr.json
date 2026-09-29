@@ -1213,11 +1213,11 @@
       },
       "success": {
         "title": "Talebiniz alındı",
-        "desc": "Ekibimiz bir iş günü içinde sizinle iletişime geçecek.",
+        "desc": "Ekibimiz talebinizi inceleyip verdiğiniz iletişim bilgileri üzerinden size dönüş yapacak.",
         "numberLabel": "Talep numaranız",
         "copy": "Kopyala",
         "copied": "Kopyalandı",
-        "emailNote": "Onay e-postası {email} adresine gönderildi.",
+        "emailNote": "İletişim e-posta adresiniz: {email}. Teyit e-postası ulaşmazsa talep numaranızla bize yazabilirsiniz.",
         "nextTitle": "Sırada ne var?",
         "next": [
           "Talebinizi inceliyoruz.",
@@ -1400,6 +1400,12 @@
     "report": "İzleme raporu (PDF)"
   },
   "orderStatusPage": {
+    "access": {
+      "pending": "Bu tarayıcıda sipariş erişimi hazırlanıyor. Lütfen işlem tamamlanana kadar sayfayı yenilemeyin veya dili değiştirmeyin.",
+      "failed": "Bu tarayıcıda sipariş erişimi hazırlanamadı. Yeniden deneyebilirsiniz. Sayfayı yeniler veya dili değiştirirseniz e-postanızdaki sipariş bağlantısını yeniden açmanız gerekebilir.",
+      "unavailable": "Bu bağlantıyla sipariş erişimi doğrulanamadı. E-postanızdaki sipariş bağlantısını yeniden açın. Sorun sürerse sipariş numaranızla bize ulaşın.",
+      "retry": "Sipariş erişimini yeniden dene"
+    },
     "title": "Siparişiniz",
     "description": "Siparişinizin durumunu, bırakma takvimini, belgelerini ve iade bilgilerini görüntüleyin.",
     "copy": "Numarayı kopyala",

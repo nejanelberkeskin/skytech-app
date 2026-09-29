@@ -1,6 +1,6 @@
 "use client";
 
-import { useLayoutEffect, useState } from "react";
+import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 
 /** Next.js stores both page-query segments and rendered search in history.state.
@@ -41,31 +41,83 @@ function withoutAccessQuery(value: unknown): unknown {
   return value;
 }
 
-/** Consume access only on the server; never retain or share the email-link token.
- * Before the token is removed from the address bar it is exchanged for an HttpOnly cookie
- * (readable by the server only), so a reload or a language switch keeps the page accessible. */
+/** Clear the URL immediately. Keep the token only in this mounted component's
+ * memory for an explicit retry; never copy it into links or browser storage. */
 export function OrderAccessPrivacy({ orderNo }: { orderNo?: string }) {
-  useLayoutEffect(() => {
-    const url = new URL(window.location.href);
-    if (url.searchParams.has("t")) {
-      const token = url.searchParams.get("t");
-      if (token && orderNo) {
-        void fetch(`/api/public/siparis/${encodeURIComponent(orderNo)}/erisim`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ t: token }),
-          keepalive: true,
-        }).catch(() => undefined);
+  return <OrderAccessExchange key={orderNo ?? "no-order"} orderNo={orderNo} />;
+}
+
+function OrderAccessExchange({ orderNo }: { orderNo?: string }) {
+  const t = useTranslations("orderStatusPage.access");
+  const [phase, setPhase] = useState<"idle" | "pending" | "failed" | "unavailable">("idle");
+  const token = useRef<string | null>(null);
+  const active = useRef(false);
+  const started = useRef(false);
+  const busy = useRef(false);
+
+  const exchange = useCallback(async () => {
+    if (!active.current || busy.current || !token.current || !orderNo) return;
+    busy.current = true;
+    setPhase("pending");
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 10000);
+    try {
+      const response = await fetch(`/api/public/siparis/${encodeURIComponent(orderNo)}/erisim`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ t: token.current }),
+        credentials: "same-origin",
+        cache: "no-store",
+        redirect: "error",
+        signal: controller.signal,
+      });
+      const result: unknown = await response.json().catch(() => null);
+      if (!active.current) return;
+      if (response.ok && result && typeof result === "object" && "ok" in result && result.ok === true) {
+        token.current = null;
+        setPhase("idle");
+      } else if (response.status === 404) {
+        token.current = null;
+        setPhase("unavailable");
+      } else {
+        setPhase("failed");
       }
-      url.searchParams.delete("t");
-      window.history.replaceState(
-        withoutAccessQuery(window.history.state),
-        "",
-        url,
-      );
+    } catch {
+      if (active.current) setPhase("failed");
+    } finally {
+      clearTimeout(timeout);
+      busy.current = false;
     }
   }, [orderNo]);
-  return null;
+
+  useLayoutEffect(() => {
+    active.current = true;
+    const url = new URL(window.location.href);
+    if (url.searchParams.has("t")) {
+      token.current = orderNo ? url.searchParams.get("t") : null;
+      url.searchParams.delete("t");
+      window.history.replaceState(withoutAccessQuery(window.history.state), "", url);
+    }
+    if (token.current && !started.current) {
+      started.current = true;
+      // Deferring also avoids duplicate exchange requests during Strict Mode setup.
+      queueMicrotask(() => { void exchange(); });
+    }
+    return () => { active.current = false; };
+  }, [orderNo, exchange]);
+
+  if (phase === "idle") return null;
+  return (
+    <div className="rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-950">
+      <p role="status" aria-live="polite">{t(phase)}</p>
+      {phase === "failed" && (
+        <button type="button" onClick={() => void exchange()}
+          className="mt-3 min-h-11 rounded-lg border border-amber-800 px-4 py-2 font-semibold focus-visible:outline-2 focus-visible:outline-offset-4">
+          {t("retry")}
+        </button>
+      )}
+    </div>
+  );
 }
 
 export default function CopyOrderNumber({ orderNo }: { orderNo: string }) {

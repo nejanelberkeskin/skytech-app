@@ -985,7 +985,7 @@
         "pre": "Kurumsal Projenizi",
         "highlight": "Tasarlayalım"
       },
-      "subtitle": "Çalışan sayınız, katılmak istediğiniz sahalar, raporlama ihtiyaçlarınız — birlikte planlayalım. Bir iş günü içinde dönüş.",
+      "subtitle": "Çalışan sayınız, katılmak istediğiniz sahalar, raporlama ihtiyaçlarınız — birlikte planlayalım.",
       "primaryEnabled": "Teklif Talep Et",
       "primaryDisabled": "Bilgi Al",
       "secondary": "Bize Ulaşın"
@@ -1025,12 +1025,12 @@
   "infoPage": {
     "meta": {
       "title": "Bilgi Al — Sorularınızı Yanıtlayalım",
-      "description": "Bireysel veya kurumsal Skytech Green soruları için bilgi formu — 24 saat içinde uzman ekibimizden dönüş garantisi."
+      "description": "Bireysel veya kurumsal Skytech Green sorularınızı bilgi formuyla ekibimize iletin."
     },
     "breadcrumb": {
       "label": "Bilgi Al",
       "title": "Merak Ettiğiniz Her Şeyi Sorun",
-      "subtitle": "Formu doldurun — 24 saat içinde uzman ekibimiz dönüş yapsın. Bireysel ya da kurumsal, fark etmez."
+      "subtitle": "Bireysel veya kurumsal sorularınızı form aracılığıyla ekibimize iletin."
     },
     "form": {
       "heading": "İletişim Formu",
@@ -1081,11 +1081,11 @@
     },
     "info": {
       "response": {
-        "title": "24 Saat Yanıt",
-        "desc": "İş günlerinde 24 saat, hafta sonu pazartesi sabahı dönüş garantisi."
+        "title": "Talebinizin değerlendirilmesi",
+        "desc": "Ekibimiz talebinizi inceler ve verdiğiniz iletişim bilgileri üzerinden sizinle iletişime geçer."
       },
       "email": {
-        "desc": "Doğrudan e-posta ile de ulaşabilirsiniz — 24 saat aktif."
+        "desc": "Sorularınızı doğrudan e-posta ile de iletebilirsiniz."
       },
       "phone": {
         "desc": "Hafta içi 09:00 - 18:00 arası telefonla erişim."
@@ -1104,7 +1104,7 @@
     },
     "body": {
       "primary": "Çevrim içi ödeme altyapımızda son hazırlıkları yapıyoruz. Bu aşamada talebinizi alıyor, ayrıntıları ve takvimi sizinle birlikte netleştiriyoruz.",
-      "secondary": "Bir Proje Uygulama Sahasına tohum topu bıraktırmak ya da kendi araziniz için başvurmak üzere formu doldurmanız yeterli; ekibimiz bir iş günü içinde dönüş yapar."
+      "secondary": "Bir Proje Uygulama Sahasına tohum topu bıraktırmak ya da kendi araziniz için başvurmak üzere formu doldurabilirsiniz. Ekibimiz başvurunuzu inceleyerek sizinle iletişime geçer."
     },
     "cta": {
       "home": "Ana Sayfaya Dön",

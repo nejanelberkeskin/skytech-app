@@ -11,7 +11,7 @@ import type { ServiceRequest } from "@/lib/types";
 type Row = ServiceRequest & { land: { name: string; region: string | null } | null };
 
 const STATUS_HINT: Record<ServiceRequest["status"], string> = {
-  new: "Talebiniz alındı; ekibimiz bir iş günü içinde dönüş yapacak.",
+  new: "Talebiniz alındı ve ekibimizin değerlendirmesini bekliyor.",
   contacted: "Ekibimiz sizinle iletişime geçti; ayrıntıları birlikte netleştiriyoruz.",
   quoted: "Teklif tarafınıza iletildi.",
   converted: "Talebiniz sonuçlandı. Teşekkür ederiz!",

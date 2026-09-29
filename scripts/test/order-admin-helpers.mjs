@@ -81,72 +81,93 @@ export const USERS = {
 };
 
 // ── Okuma uçları için PostgREST alt kümesi (27 §4) ───────────────────────────
-// Sayım (count/head), sayfa aralığı, JSON yolu seçimi (alias:col->>key), `rel!inner(...)` birleştirme ve
-// birleştirilmiş kolon süzgeci. Her sorgu `log`a yazılır: yetkisiz kaynağın sorgulanmadığı ölçülebilir.
+// Sayım (count/head), sayfa aralığı, JSON yolu seçimi (alias:col->>key, alias:col->key), `!inner`
+// birleştirme (alt → üst: JOIN; üst → alt: EXISTS, PostgREST'in üst satırı süzme anlamı) ve birleştirilmiş
+// kolon süzgeci. Her sorgu koşul ve parametreleriyle `log`a yazılır; yazma denemesi `writes`e sayılıp reddedilir.
 const asJson = (value) => JSON.parse(JSON.stringify(value, (_k, v) => (typeof v === 'bigint' ? Number(v) : v)));
+const CHILD_OF_ORDERS = new Set(['order_refunds', 'order_invoices', 'order_events', 'order_documents']);
 
-export function orderClient(db, { failTables = [], log = [] } = {}) {
+export function orderClient(db, { failTables = [], log = [], writes = [] } = {}) {
   const fails = new Set(failTables);
   function from(table) {
-    const st = { cols: '*', rawCols: '*', count: false, head: false, where: [], params: [], orders: [], limit: null, offset: null, joins: [] };
+    const st = { cols: '*', rawCols: '*', count: false, head: false, where: [], params: [], orders: [], limit: null, offset: null,
+      parents: [], children: new Map() };
     const P = (v) => { st.params.push(v); return `$${st.params.length}`; };
     const colRef = (c) => {
       let m = /^(\w+)\.(\w+)$/.exec(c);
-      if (m) return `${m[1]}.${m[2]}`;
+      if (m) return { rel: m[1], sql: `${m[1]}.${m[2]}` };
       m = /^(\w+)->>(\w+)$/.exec(c);
-      if (m) return `t.${m[1]}->>'${m[2]}'`;
+      if (m) return { rel: null, sql: `t.${m[1]}->>'${m[2]}'` };
       if (!/^\w+$/.test(c)) throw new Error(`desteklenmeyen kolon: ${c}`);
-      return `t.${c}`;
+      return { rel: null, sql: `t.${c}` };
     };
-    const selectSql = (cols) => cols.split(/,(?![^(]*\))/).map((s) => s.trim()).filter(Boolean).map((s) => {
-      let m = /^(\w+)!inner\(([^)]*)\)$/.exec(s);
+    const addWhere = (c, build) => {
+      const ref = colRef(c);
+      const cond = build(ref.sql);
+      if (ref.rel && st.children.has(ref.rel)) st.children.get(ref.rel).push(cond); else st.where.push(cond);
+    };
+    const selectSql = (cols) => cols.split(/,(?![^(]*\))/).map((x) => x.trim()).filter(Boolean).map((x) => {
+      let m = /^(\w+)!inner\(([^)]*)\)$/.exec(x);
       if (m) {
         const rel = m[1];
-        st.joins.push(rel);
-        return `jsonb_build_object(${m[2].split(',').map((x) => x.trim()).map((c) => `'${c}', ${rel}.${c}`).join(', ')}) AS ${rel}`;
+        if (table === 'release_orders' && CHILD_OF_ORDERS.has(rel)) { st.children.set(rel, []); return `'[]'::jsonb AS ${rel}`; }
+        st.parents.push(rel);
+        return `jsonb_build_object(${m[2].split(',').map((c) => c.trim()).map((c) => `'${c}', ${rel}.${c}`).join(', ')}) AS ${rel}`;
       }
-      m = /^(\w+):(\w+)->>(\w+)$/.exec(s);
+      m = /^(\w+):(\w+)->>(\w+)$/.exec(x);
       if (m) return `t.${m[2]}->>'${m[3]}' AS ${m[1]}`;
-      if (!/^\w+$/.test(s)) throw new Error(`desteklenmeyen seçim: ${s}`);
-      return `t.${s}`;
+      m = /^(\w+):(\w+)->(\w+)$/.exec(x);
+      if (m) return `t.${m[2]}->'${m[3]}' AS ${m[1]}`;
+      if (!/^\w+$/.test(x)) throw new Error(`desteklenmeyen seçim: ${x}`);
+      return `t.${x}`;
     }).join(', ');
-    const where = () => (st.where.length ? ` WHERE ${st.where.join(' AND ')}` : '');
-    const joins = () => st.joins.map((rel) => ` JOIN ${rel} ${rel} ON ${rel}.id = t.order_id`).join('');
+    const whereSql = () => {
+      const conds = [...st.where];
+      for (const [rel, cs] of st.children) conds.push(`EXISTS (SELECT 1 FROM ${rel} ${rel} WHERE ${rel}.order_id = t.id${cs.map((c) => ` AND ${c}`).join('')})`);
+      return conds.length ? ` WHERE ${conds.join(' AND ')}` : '';
+    };
+    const joins = () => st.parents.map((rel) => ` JOIN ${rel} ${rel} ON ${rel}.id = t.order_id`).join('');
     const run = async () => {
-      log.push({ table, cols: st.rawCols, head: st.head });
-      if (fails.has(table)) return { data: null, error: { message: 'injected' }, count: null };
+      log.push({ table, cols: st.rawCols, head: st.head, where: whereSql(), params: [...st.params] });
+      // Birleştirilen (embed) tablonun hatası, PostgREST'teki gibi bütün sorguyu düşürür.
+      if ([table, ...st.parents, ...st.children.keys()].some((t) => fails.has(t))) return { data: null, error: { message: 'injected' }, count: null };
       try {
         let count = null;
-        if (st.count) count = (await db.query(`SELECT count(*)::int AS c FROM ${table} t${joins()}${where()}`, st.params)).rows[0].c;
+        if (st.count) count = (await db.query(`SELECT count(*)::int AS c FROM ${table} t${joins()}${whereSql()}`, st.params)).rows[0].c;
         if (st.head) return { data: null, error: null, count };
-        const sql = `SELECT ${st.cols} FROM ${table} t${joins()}${where()}${st.orders.length ? ` ORDER BY ${st.orders.join(', ')}` : ''}` +
+        const sql = `SELECT ${st.cols} FROM ${table} t${joins()}${whereSql()}${st.orders.length ? ` ORDER BY ${st.orders.join(', ')}` : ''}` +
           `${st.limit !== null ? ` LIMIT ${st.limit}` : ''}${st.offset !== null ? ` OFFSET ${st.offset}` : ''}`;
         return { data: asJson((await db.query(sql, st.params)).rows), error: null, count };
       } catch (e) {
         return { data: null, error: { message: e.message }, count: null };
       }
     };
+    const write = (kind) => () => { writes.push({ table, kind }); throw new Error(`okuma testinde yazma denemesi: ${kind} ${table}`); };
     const q = {
       select(cols, opts = {}) { st.rawCols = cols; st.cols = selectSql(cols.replace(/\s+/g, ' ')); st.count = opts.count === 'exact'; st.head = !!opts.head; return q; },
-      eq(c, v) { st.where.push(`${colRef(c)}::text = ${P(String(v))}::text`); return q; },
-      in(c, values) { st.where.push(`${colRef(c)}::text = ANY(${P(values.map(String))}::text[])`); return q; },
+      eq(c, v) { addWhere(c, (col) => `${col}::text = ${P(String(v))}::text`); return q; },
+      gt(c, v) { addWhere(c, (col) => `${col} > ${P(v)}`); return q; },
+      in(c, values) { addWhere(c, (col) => `${col}::text = ANY(${P(values.map(String))}::text[])`); return q; },
       or(expr) {
         st.where.push(`(${expr.split(',').map((term) => {
           const m = /^([\w>-]+)\.(ilike|eq)\.(.*)$/.exec(term);
           if (!m) throw new Error(`desteklenmeyen süzgeç: ${term}`);
-          return m[2] === 'ilike' ? `${colRef(m[1])} ILIKE ${P(m[3])}` : `${colRef(m[1])}::text = ${P(m[3])}`;
+          const { sql } = colRef(m[1]);
+          return m[2] === 'ilike' ? `${sql} ILIKE ${P(m[3])}` : `${sql}::text = ${P(m[3])}`;
         }).join(' OR ')})`);
         return q;
       },
-      order(c, o) { st.orders.push(`${colRef(c)} ${o?.ascending === false ? 'DESC' : 'ASC'}`); return q; },
+      order(c, o) { st.orders.push(`${colRef(c).sql} ${o?.ascending === false ? 'DESC' : 'ASC'}`); return q; },
       range(a, b) { st.offset = a; st.limit = b - a + 1; return q; },
       limit(n) { st.limit = n; return q; },
+      insert: write('insert'), update: write('update'), upsert: write('upsert'), delete: write('delete'),
       async maybeSingle() { const r = await run(); return r.error ? r : { data: r.data[0] ?? null, error: null }; },
       then(resolve, reject) { return run().then(resolve, reject); },
     };
     return q;
   }
-  return { from };
+  const rpc = async (name) => { writes.push({ rpc: name }); throw new Error(`okuma testinde RPC: ${name}`); };
+  return { from, rpc };
 }
 
 /** Okuma modülleri: izin yardımcıları saf (permission-keys), diğerleri gerçek kaynak. */
@@ -156,6 +177,20 @@ export function readModules() {
   const access = load('lib/orders/admin-access.ts', { '@/lib/admin/permissions': permissionKeys });
   const dto = load('lib/orders/admin-dto.ts', { './duplicates': duplicates });
   const read = load('lib/orders/admin-read.ts', { './admin-access': access, './admin-dto': dto, './duplicates': duplicates, './types': types });
-  const detail = load('lib/orders/admin-detail.ts', { './admin-access': access, './admin-dto': dto });
+  const detail = load('lib/orders/admin-detail.ts', { './admin-access': access, './admin-dto': dto, '@/lib/admin/permission-keys': permissionKeys });
   return { duplicates, types, access, dto, read, detail };
+}
+
+/**
+ * Toplu sipariş (hızlı, tek SQL). Sipariş numarası yalnız rakam alfabesinden: `insertOrder`ın harf
+ * numaralarıyla çakışmaz. `from`–`to` aralığı çağrılar arasında çakışmamalı.
+ */
+export async function bulkOrders(db, landId, from, to, meta = { capacityHeld: false }) {
+  await db.query(`INSERT INTO release_orders(order_no, status, is_test, land_id, site_snapshot, season_label, quantity, unit_price_kurus,
+      total_kurus, vat_rate, certificate_name, buyer_type, buyer_first_name, buyer_last_name, buyer_email, buyer_phone, invoice, consents,
+      documents_version, payment_provider, payment_id, paid_at, withdrawal_requested_at, created_at, payment_meta)
+    SELECT 'SG-2026-' || (SELECT string_agg(substr('23456789', ((n / (8 ^ (5 - i))::int) % 8) + 1, 1), '' ORDER BY i) FROM generate_series(0, 5) i),
+      'paid', false, $1, '{"name":"Toplu Saha"}', '2026-2027', 1, 1000, 1000, 20, 'Toplu Kayıt', 'individual', 'Toplu', 'Kayıt',
+      'toplu' || n || '@example.invalid', '0000', '{}', '{}', 'test', 'mock', 'BULK-' || n, now(), now(), now() - make_interval(secs => n), $4::jsonb
+    FROM generate_series($2::int, $3::int) n`, [landId, from, to, JSON.stringify(meta)]);
 }

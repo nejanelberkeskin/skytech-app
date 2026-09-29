@@ -2,7 +2,7 @@ import { after, NextRequest } from "next/server";
 import { z } from "zod";
 import { createServiceRoleClient } from "@/lib/supabase/server";
 import { requireAdmin, getClientIP } from "@/lib/admin-auth";
-import { requirePermission } from "@/lib/admin/permissions";
+import { mfaEnforced, mfaSatisfied, requirePermission } from "@/lib/admin/permissions";
 import { auditLog } from "@/lib/admin/audit";
 import { fail, ok, unavailable } from "@/lib/api/envelope";
 import {
@@ -14,7 +14,7 @@ import {
   reserveCapacityNow,
   type AdminActionResult,
 } from "@/lib/orders/admin-actions";
-import { ACTION_PERMISSION, LEGACY_REFUND_ROLES, isRefundAction, orderReadScope } from "@/lib/orders/admin-access";
+import { ACTION_PERMISSION, LEGACY_REFUND_ROLES, isRefundAction, orderReadScope, readMfaState } from "@/lib/orders/admin-access";
 import { loadOrderDetail } from "@/lib/orders/admin-detail";
 import { sendRefundCompletedEmail, sendSellerCancellationEmail } from "@/lib/orders/admin-mails";
 import { addOrderEvent } from "@/lib/orders/store";
@@ -26,6 +26,8 @@ import type { ReleaseOrderRow } from "@/lib/orders/types";
  * GET  /api/admin/release-orders/[id] → Ok<OrderDetailDto>
  *      İzin: orders.read (all ya da sites). Hassas gruplar (iletişim, vergi, finans, fatura, hukuki kayıt,
  *      özel sertifika) kendi izinleriyle ve bu siparişin sahasını kapsıyorsa eklenir. Kapsam dışı → 404.
+ *      Mevcut MFA kuralı okumada da geçerli: zorlama açıkken oturum tazelenmemişse vergi, hukuki kayıt ve
+ *      özel sertifika grupları sorgulanmaz, dönmez; `mfaRequiredGroups` ve `mfa` arayüze bildirir (27 §4.5).
  * POST /api/admin/release-orders/[id]  { action, … } → Ok<{ status }>
  *      note              { note }                      — orders.note
  *      cancel_by_seller  { reason }                    — orders.cancel (+MFA)
@@ -55,7 +57,8 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   const { id } = await params;
   if (!UUID_RE.test(id)) return invalidId();
 
-  const result = await loadOrderDetail(createServiceRoleClient(), id, guard.access, read, guard.admin.role);
+  const mfa = readMfaState(mfaEnforced(), guard.assurance, (permission) => mfaSatisfied(permission, guard.assurance));
+  const result = await loadOrderDetail(createServiceRoleClient(), id, guard.access, read, guard.admin.role, mfa);
   if (!result.ok) return result.error === "not_found" ? fail(404, "not_found", "Sipariş bulunamadı.") : unavailable();
   return ok(result.detail);
 }

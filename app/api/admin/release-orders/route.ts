@@ -2,10 +2,8 @@ import type { NextRequest } from "next/server";
 import { createServiceRoleClient } from "@/lib/supabase/server";
 import { requirePermission } from "@/lib/admin/permissions";
 import { fail, ok, unavailable } from "@/lib/api/envelope";
-import { confirmDueOrders } from "@/lib/orders/admin-actions";
 import { orderReadScope } from "@/lib/orders/admin-access";
 import { ORDER_FLAGS, flagScope, loadOrderList, sanitizeSearch, type OrderFlag } from "@/lib/orders/admin-read";
-import { expireStaleOrders } from "@/lib/orders/create";
 import { ORDER_STATUSES, type OrderStatus } from "@/lib/orders/types";
 
 /**
@@ -18,9 +16,10 @@ import { ORDER_STATUSES, type OrderStatus } from "@/lib/orders/types";
  * invoice_pending invoices.read ister. E-posta/telefonla arama yalnız iletişim izni okuma kapsamını
  * tamamen kapsıyorsa. Kimlik/vergi no, onay kayıtları ve ödeme ayrıntıları listede yoktur.
  *
- * Tembel işler (süresi dolan ödenmemişleri düşürme, cayma süresi bitenleri kesinleştirme) yalnız tam
- * kapsamlı okuyucunun isteğinde çalışır; dar kapsamlı okuyucu küresel iş tetiklemez. GET'ten tamamen
- * kaldırılması zamanlayıcının canlıda doğrulanmasına bağlı (27 §7).
+ * Okuma veri DEĞİŞTİRMEZ: süresi dolan ödenmemişleri düşürme ve cayma süresi bitenleri kesinleştirme
+ * işleri burada çalışmaz. Bunlar zamanlayıcı (`/api/cron/siparis-isleri`) ve `system.jobs.run` izinli
+ * elle çalıştırma (`POST /api/admin/jobs/{job}/run`) yollarındadır; zamanlayıcının canlıda kurulu ve son
+ * çalışmasının başarılı olması bu paketin yayın önkoşuludur (27 §7).
  */
 export const dynamic = "force-dynamic";
 
@@ -50,10 +49,7 @@ export async function GET(request: NextRequest) {
   const page = Math.max(1, parseInt(sp.get("page") ?? "1", 10) || 1);
   const pageSize = Math.min(100, Math.max(10, parseInt(sp.get("pageSize") ?? "25", 10) || 25));
 
-  const db = createServiceRoleClient();
-  if (read.kind === "all") await Promise.allSettled([expireStaleOrders(db), confirmDueOrders(db)]);
-
-  const list = await loadOrderList(db, guard.access, read, {
+  const list = await loadOrderList(createServiceRoleClient(), guard.access, read, {
     status: (status as OrderStatus | null) ?? null,
     test: test as (typeof TESTS)[number],
     flag: (flag as OrderFlag | null) ?? null,

@@ -109,3 +109,32 @@ export function orderCapabilities(access: EffectiveAccess, legacyRole: string): 
     documents: DOCUMENT_PERMISSIONS.every(full),
   };
 }
+
+/* ── Hassas okuma grupları için yeniden doğrulama (27 §4.5) ───────────────── */
+
+export const SENSITIVE_GROUPS: readonly SensitiveGroup[] = Object.keys(GROUP_PERMISSION) as SensitiveGroup[];
+
+export interface ReadMfa {
+  /** Zorlama açık ve oturum yeterince taze değilse bu gruplar sorgulanmaz ve dönmez. */
+  blocked: ReadonlySet<SensitiveGroup>;
+  enrolled: boolean;
+  reason: "enrollment" | "challenge" | "stale" | null;
+}
+
+/**
+ * Mevcut MFA kuralı aynen: grup izni hassas izin setindeyse (vergi, hukuki kayıt, özel sertifika) ve
+ * zorlama açıkken oturum yeniden doğrulanmamışsa grup kapalıdır. `satisfied` = lib/admin/permissions
+ * mfaSatisfied; kural burada kopyalanmaz. Zorlama kapalıyken davranış değişmez (hiçbir grup kapanmaz).
+ */
+export function readMfaState(
+  enforced: boolean,
+  assurance: { aal: string | null; enrolled: boolean },
+  satisfied: (permission: Permission) => boolean
+): ReadMfa {
+  const blocked = new Set(enforced ? SENSITIVE_GROUPS.filter((g) => !satisfied(GROUP_PERMISSION[g])) : []);
+  return {
+    blocked,
+    enrolled: assurance.enrolled,
+    reason: blocked.size === 0 ? null : !assurance.enrolled ? "enrollment" : assurance.aal !== "aal2" ? "challenge" : "stale",
+  };
+}

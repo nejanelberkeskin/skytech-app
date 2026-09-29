@@ -60,6 +60,8 @@ export const ORDER_LIST_SITE_SCOPED: OrderListDto = {
 
 const baseDetail: OrderDetailDto = {
   groups: ["order"],
+  mfaRequiredGroups: [],
+  mfa: null,
   capabilities: {
     note: true, cancel: false, refund: false, refundDuplicate: false,
     invoiceQueue: false, invoiceIssue: false, reserveCapacity: false, documents: false,
@@ -130,6 +132,23 @@ export const ORDER_DETAIL_OWNER: OrderDetailDto = {
   groups: [...ORDER_DETAIL_FINANCE.groups, "certificate"],
   capabilities: { note: true, cancel: true, refund: true, refundDuplicate: true, invoiceQueue: true, invoiceIssue: true, reserveCapacity: true, documents: true },
   certificate: { code: "SG-ABCD-2345" },
+};
+
+/**
+ * Sahip, MFA zorlaması açık ve oturum tazelenmemiş (aal1 ya da 15 dakikadan eski aal2): vergi, hukuki kayıt ve
+ * özel sertifika sorgulanmadı ve dönmedi; özet ve MFA gerektirmeyen gruplar kullanılabilir. Arayüz "yeniden
+ * doğrulayın" gösterir, doğrulamadan sonra ayrıntıyı yeniden OKUR (eylem tekrarı yok).
+ */
+export const ORDER_DETAIL_MFA_REQUIRED: OrderDetailDto = {
+  ...baseDetail,
+  groups: ["order", "contact", "finance", "invoices"],
+  mfaRequiredGroups: ["tax", "legal", "certificate"],
+  mfa: { enrolled: true, reason: "stale", freshnessMinutes: 15 },
+  capabilities: ORDER_DETAIL_OWNER.capabilities,
+  contact: ORDER_DETAIL_FINANCE.contact,
+  finance: ORDER_DETAIL_FINANCE.finance,
+  invoices: ORDER_DETAIL_FINANCE.invoices,
+  events: ORDER_DETAIL_FINANCE.events,
 };
 
 /** Eylem başarısı: `data` doğrudan yeni durum. */

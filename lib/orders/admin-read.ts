@@ -2,13 +2,14 @@
  * Yönetim panelindeki sipariş listesi — YALNIZ SUNUCU (service role). Sözleşme: web-brifler/27 §4.3.
  *
  * Kapsam filtresi sorguya eklenir (bütün tabloyu okuyup JS'de süzme yok): liste, toplam, durum sayaçları,
- * uyarılar, süzgeç ve arama aynı kapsamla çalışır. Hassas grup kolonları yalnız grup izni varsa seçilir ve
- * satır bazında grup kapsamına göre eklenir. Herhangi bir alt sorgu hatası `unavailable` olur; sahte 0 yok.
- * Bu modül yazma yapmaz; zamanlanmış işlerin tetiklenmesi route'ta ve yalnız tam kapsamlı okuyucuda.
+ * uyarılar, süzgeç ve arama aynı kapsamla çalışır. Süzgeç ve uyarılar veritabanında, sınırsız çalışır
+ * (kimlik listesi kırpması yok). İletişim ve finans alanları ana sorguda seçilmez: sayfadaki kimlikler için,
+ * yalnız ilgili grubun saha kapsamındaki kayıtlarla ayrı sorgulanır. Alt sorgu hatası `unavailable` olur.
+ * Bu modül yazma yapmaz ve hiçbir zamanlanmış işi tetiklemez.
  */
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { EffectiveAccess } from "@/lib/admin/permissions";
-import { groupCoversRead, groupScope, scopeCovers, type OrderGroup, type ReadScope } from "./admin-access";
+import { groupCoversRead, groupScope, type OrderGroup, type ReadScope } from "./admin-access";
 import { listItemOf, type OrderListDto } from "./admin-dto";
 import { duplicateChargesFrom } from "./duplicates";
 import { ORDER_STATUSES, type OrderStatus } from "./types";
@@ -40,8 +41,9 @@ const BASE_COLUMNS = [
   "site_name:site_snapshot->>name", "company_title:invoice->>companyTitle",
 ];
 
-const FLAG_LIMIT = 2000;
-const FILTER_LIMIT = 500;
+/** Çift tahsilat olayları sayfa sayfa okunur (kırpma yok); kimlik parçaları URL sınırı için küçük tutulur. */
+const EVENT_PAGE = 1000;
+const ID_CHUNK = 100;
 
 type Db = SupabaseClient;
 type Row = Record<string, unknown>;
@@ -57,45 +59,14 @@ function exactCount(result: { count?: number | null; error?: unknown }): number 
   return result.count;
 }
 
+const chunks = <T>(items: T[], size: number): T[][] =>
+  Array.from({ length: Math.ceil(items.length / size) }, (_, i) => items.slice(i * size, (i + 1) * size));
+
 /** Arama metnini sorgu süzgecine güvenli hâle getirir (virgül, parantez, joker yok). */
 export function sanitizeSearch(q: string | null): string | null {
   if (!q) return null;
   const clean = q.replace(/[^\p{L}\p{N}@+.\s-]/gu, "").trim().slice(0, 60);
   return clean.length >= 2 ? clean : null;
-}
-
-/**
- * Süzgeç/uyarı için kapsam içindeki sipariş kimlikleri. İlişkili tablolar siparişe iç birleştirmeyle
- * bağlanır; saha kapsamında birleştirilmiş siparişin `land_id`'sine göre süzülür.
- */
-async function flaggedIds(db: Db, flag: OrderFlag, scope: ReadScope): Promise<string[]> {
-  const sites = scope.kind === "sites" ? scope.siteIds : null;
-  if (flag === "capacity") {
-    let q = db.from("release_orders").select("id").eq("payment_meta->>capacityHeld", "false").limit(FLAG_LIMIT);
-    if (sites) q = q.in("land_id", sites);
-    return data<{ id: string }>(await q).map((r) => r.id);
-  }
-  if (flag === "refund_pending" || flag === "invoice_pending") {
-    const table = flag === "refund_pending" ? "order_refunds" : "order_invoices";
-    let q = db.from(table).select("order_id, release_orders!inner(land_id)").limit(FLAG_LIMIT);
-    q = flag === "refund_pending" ? q.in("status", ["pending", "failed"]) : q.eq("status", "pending");
-    if (sites) q = q.in("release_orders.land_id", sites);
-    return [...new Set(data<{ order_id: string }>(await q).map((r) => r.order_id))];
-  }
-  let q = db
-    .from("order_events")
-    .select("order_id, type, data, release_orders!inner(land_id)")
-    .in("type", ["payment_succeeded", "refund_succeeded"])
-    .eq("data->>duplicate", "true")
-    .limit(FLAG_LIMIT);
-  if (sites) q = q.in("release_orders.land_id", sites);
-  const byOrder = new Map<string, { type: string; data: Row | null }[]>();
-  for (const e of data<{ order_id: string; type: string; data: Row | null }>(await q)) {
-    const list = byOrder.get(e.order_id) ?? [];
-    list.push({ type: e.type, data: e.data });
-    byOrder.set(e.order_id, list);
-  }
-  return [...byOrder.entries()].filter(([, events]) => duplicateChargesFrom(events).some((c) => !c.refunded)).map(([id]) => id);
 }
 
 /** Bayrak için görünür kapsam: okuma kapsamı ∩ ilgili grubun kapsamı; izin yoksa null. */
@@ -104,76 +75,174 @@ export function flagScope(access: EffectiveAccess, flag: OrderFlag, read: ReadSc
   return group === "order" ? read : groupScope(access, group, read);
 }
 
+/**
+ * Supabase sorgu kurucusunun kullandığımız alt kümesi. Kurucunun genel tipleri süzgeç yardımcılarında
+ * aşırı derin tip çıkarımına yol açtığından (TS2589) yardımcılar bu dar arayüzle çalışır.
+ */
+interface Filterable {
+  in(column: string, values: readonly string[]): Filterable;
+  eq(column: string, value: unknown): Filterable;
+  or(filters: string): Filterable;
+}
+const narrow = <T>(q: T) => q as unknown as Filterable;
+const widen = <T>(q: Filterable) => q as unknown as T;
+
+/** Bayrağın sipariş tablosu üzerindeki süzgeci; ilişkili tablo `!inner` birleştirmeyle (27 §4.3). */
+const FLAG_EMBED: Partial<Record<OrderFlag, string>> = {
+  refund_pending: "order_refunds!inner(id)",
+  invoice_pending: "order_invoices!inner(id)",
+};
+
+function applyFlag(q: Filterable, flag: OrderFlag, scope: ReadScope): Filterable {
+  let out = scope.kind === "sites" ? q.in("land_id", scope.siteIds) : q;
+  if (flag === "capacity") out = out.eq("payment_meta->>capacityHeld", "false");
+  if (flag === "refund_pending") out = out.in("order_refunds.status", ["pending", "failed"]);
+  if (flag === "invoice_pending") out = out.eq("order_invoices.status", "pending");
+  return out;
+}
+
+/**
+ * Okuma kapsamı, deneme/durum süzgeci ve arama. Arama: sipariş no, ad, soyad, sertifika adı, şirket unvanı
+ * (temel okuma verisi). E-posta ve telefon yalnız iletişim kapsamı okuma kapsamını tamamen kapsıyorsa.
+ */
+function applyFilters(q: Filterable, read: ReadScope, params: OrderListParams, contactSearch: boolean): Filterable {
+  let out = read.kind === "sites" ? q.in("land_id", read.siteIds) : q;
+  if (params.test === "only") out = out.eq("is_test", true);
+  if (params.test === "hide") out = out.eq("is_test", false);
+  if (params.status) out = out.eq("status", params.status);
+  if (params.q) {
+    const like = `%${params.q}%`;
+    const filters = [
+      `order_no.ilike.${like.toUpperCase()}`,
+      `buyer_first_name.ilike.${like}`,
+      `buyer_last_name.ilike.${like}`,
+      `certificate_name.ilike.${like}`,
+      `invoice->>companyTitle.ilike.${like}`,
+    ];
+    if (contactSearch) {
+      filters.push(`buyer_email.ilike.${like}`);
+      const digits = params.q.replace(/[^\d]/g, "").replace(/^0+/, "");
+      if (digits.length >= 3) filters.push(`buyer_phone.ilike.%${digits}%`);
+    }
+    out = out.or(filters.join(","));
+  }
+  return out;
+}
+
+/**
+ * İade edilmemiş çift tahsilatı olan siparişler (kapsam içinde, tamamı). Çift tahsilat olayları küçük bir
+ * kümedir; ödeme kimliğiyle eşleşen iade düşülür (anti-join SQL'de tek sorguyla ifade edilemiyor).
+ */
+async function duplicateOrderIds(db: Db, scope: ReadScope): Promise<string[]> {
+  const byOrder = new Map<string, { type: string; data: Row | null }[]>();
+  let after = 0;
+  for (;;) {
+    let q = db
+      .from("order_events")
+      .select("id, order_id, type, data, release_orders!inner(land_id)")
+      .in("type", ["payment_succeeded", "refund_succeeded"])
+      .eq("data->>duplicate", "true")
+      .gt("id", after)
+      .order("id", { ascending: true })
+      .limit(EVENT_PAGE);
+    if (scope.kind === "sites") q = q.in("release_orders.land_id", scope.siteIds);
+    const rows = data<{ id: number; order_id: string; type: string; data: Row | null }>(await q);
+    for (const e of rows) {
+      const list = byOrder.get(e.order_id) ?? [];
+      list.push({ type: e.type, data: e.data });
+      byOrder.set(e.order_id, list);
+    }
+    if (rows.length < EVENT_PAGE) break;
+    after = Number(rows[rows.length - 1].id);
+  }
+  return [...byOrder.entries()].filter(([, events]) => duplicateChargesFrom(events).some((c) => !c.refunded)).map(([id]) => id);
+}
+
+/** Uyarı sayısı: kapsam içindeki bütün eşleşmeler, veritabanında sayılır (kırpma yok). */
+async function alertCount(db: Db, flag: OrderFlag, scope: ReadScope): Promise<number> {
+  if (flag === "duplicate") return (await duplicateOrderIds(db, scope)).length;
+  const select = ["id", FLAG_EMBED[flag]].filter(Boolean).join(", ");
+  const q = applyFlag(narrow(db.from("release_orders").select(select, { count: "exact", head: true })), flag, scope);
+  return exactCount(await widen<Promise<{ count: number | null; error: unknown }>>(q));
+}
+
+/** Sayfadaki kimlikler için grup alanları; yalnız grubun saha kapsamındaki kayıtlar sorgulanır. */
+async function groupFields(db: Db, columns: string[], ids: string[], scope: ReadScope | null): Promise<Map<string, Row>> {
+  if (!scope || ids.length === 0) return new Map();
+  let q = db.from("release_orders").select(["id", ...columns].join(", ")).in("id", ids);
+  if (scope.kind === "sites") q = q.in("land_id", scope.siteIds);
+  return new Map(data(await q).map((r) => [String(r.id), r]));
+}
+
 export async function loadOrderList(db: Db, access: EffectiveAccess, read: ReadScope, params: OrderListParams): Promise<OrderListDto | null> {
   const contact = groupScope(access, "contact", read);
   const finance = groupScope(access, "finance", read);
   const invoices = groupScope(access, "invoices", read);
   const contactSearch = groupCoversRead(contact, read);
+  const from = (params.page - 1) * params.pageSize;
 
   try {
-    const columns = [...BASE_COLUMNS, ...(contact ? ["buyer_email"] : []), ...(finance ? ["total_kurus", "payment_provider"] : [])];
-    let query = db.from("release_orders").select(columns.join(", "), { count: "exact" })
-      .order("created_at", { ascending: false }).order("id", { ascending: false })
-      .range((params.page - 1) * params.pageSize, params.page * params.pageSize - 1);
-    if (read.kind === "sites") query = query.in("land_id", read.siteIds);
-    if (params.test === "only") query = query.eq("is_test", true);
-    if (params.test === "hide") query = query.eq("is_test", false);
-    if (params.status) query = query.eq("status", params.status);
-    if (params.flag) {
-      const scope = flagScope(access, params.flag, read);
-      if (!scope) throw new Error("flag_forbidden"); // route önceden denetler; buraya gelmemeli
-      const ids = await flaggedIds(db, params.flag, scope);
-      query = ids.length ? query.in("id", ids.slice(0, FILTER_LIMIT)) : query.eq("id", "00000000-0000-0000-0000-000000000000");
-    }
-    if (params.q) {
-      const like = `%${params.q}%`;
-      const filters = [
-        `order_no.ilike.${like.toUpperCase()}`,
-        `buyer_first_name.ilike.${like}`,
-        `buyer_last_name.ilike.${like}`,
-        `certificate_name.ilike.${like}`,
-      ];
-      // İletişim alanlarıyla arama yalnız iletişim kapsamı okuma kapsamının tamamını kapsıyorsa: aksi hâlde
-      // sonuç sayısından kapsam dışı kaydın e-postası/telefonu çıkarılabilir.
-      if (contactSearch) {
-        filters.push(`buyer_email.ilike.${like}`);
-        const digits = params.q.replace(/[^\d]/g, "").replace(/^0+/, "");
-        if (digits.length >= 3) filters.push(`buyer_phone.ilike.%${digits}%`);
+    // ── Sayfa ve toplam ────────────────────────────────────────────────────
+    let rows: Row[];
+    let total: number;
+    const flagSc = params.flag ? flagScope(access, params.flag, read) : null;
+    if (params.flag && !flagSc) throw new Error("flag_forbidden"); // route önceden denetler; buraya gelmemeli
+
+    if (params.flag === "duplicate") {
+      // Aday küme küçüktür; sıralama ve sayfalama BÜTÜN eşleşmeler üzerinden yapılır (kırpma yok).
+      const candidates = await duplicateOrderIds(db, flagSc!);
+      const matched: { id: string; created_at: string }[] = [];
+      for (const chunk of chunks(candidates, ID_CHUNK)) {
+        const q = applyFilters(narrow(db.from("release_orders").select("id, created_at").in("id", chunk)), read, params, contactSearch);
+        matched.push(...data<{ id: string; created_at: string }>(await widen<Promise<{ data: unknown; error: unknown }>>(q)));
       }
-      query = query.or(filters.join(","));
+      matched.sort((a, b) => (a.created_at === b.created_at ? (a.id < b.id ? 1 : -1) : a.created_at < b.created_at ? 1 : -1));
+      total = matched.length;
+      const pageIds = matched.slice(from, from + params.pageSize).map((r) => r.id);
+      const byId = new Map<string, Row>();
+      if (pageIds.length) for (const r of data(await db.from("release_orders").select(BASE_COLUMNS.join(", ")).in("id", pageIds))) byId.set(String(r.id), r);
+      rows = pageIds.map((id) => byId.get(id)).filter((r): r is Row => !!r);
+    } else {
+      const select = [...BASE_COLUMNS, ...(params.flag && FLAG_EMBED[params.flag] ? [FLAG_EMBED[params.flag]!] : [])].join(", ");
+      let q = applyFilters(narrow(
+        db.from("release_orders").select(select, { count: "exact" })
+          .order("created_at", { ascending: false }).order("id", { ascending: false })
+          .range(from, from + params.pageSize - 1)
+      ), read, params, contactSearch);
+      if (params.flag) q = applyFlag(q, params.flag, flagSc!);
+      const result = await widen<Promise<{ data: unknown; error: unknown; count: number | null }>>(q);
+      rows = data(result);
+      total = exactCount(result);
     }
 
-    const countFor = (status: OrderStatus) => {
+    // ── Grup alanları, sayaçlar, uyarılar ─────────────────────────────────
+    const ids = rows.map((r) => String(r.id));
+    const alertFlags: OrderFlag[] = ["capacity", ...(finance ? (["refund_pending", "duplicate"] as const) : []), ...(invoices ? (["invoice_pending"] as const) : [])];
+    const countFor = async (status: OrderStatus) => {
       let q = db.from("release_orders").select("id", { count: "exact", head: true }).eq("status", status);
       if (read.kind === "sites") q = q.in("land_id", read.siteIds);
       if (params.test === "only") q = q.eq("is_test", true);
       if (params.test === "hide") q = q.eq("is_test", false);
-      return q;
+      return exactCount(await q);
     };
-
-    const alertFlags: OrderFlag[] = ["capacity", ...(finance ? (["refund_pending", "duplicate"] as const) : []), ...(invoices ? (["invoice_pending"] as const) : [])];
-    const [listRes, alertIds, ...countRes] = await Promise.all([
-      query,
-      Promise.all(alertFlags.map((flag) => flaggedIds(db, flag, flagScope(access, flag, read)!))),
-      ...ORDER_STATUSES.map((s) => countFor(s)),
+    const [contactRows, financeRows, alertValues, countValues] = await Promise.all([
+      groupFields(db, ["buyer_email"], ids, contact),
+      groupFields(db, ["total_kurus", "payment_provider"], ids, finance),
+      Promise.all(alertFlags.map((flag) => alertCount(db, flag, flagScope(access, flag, read)!))),
+      Promise.all(ORDER_STATUSES.map((s) => countFor(s))),
     ]);
-
-    const items = data(listRes).map((row) =>
-      listItemOf(row, scopeCovers(contact, row.land_id as string), scopeCovers(finance, row.land_id as string)));
-    const total = exactCount(listRes as { count?: number | null; error?: unknown });
-    const counts = Object.fromEntries(ORDER_STATUSES.map((s, i) => [s, exactCount(countRes[i] as { count?: number | null; error?: unknown })])) as Record<OrderStatus, number>;
-    const alertCount = (flag: OrderFlag) => alertIds[alertFlags.indexOf(flag)].length;
+    const alert = (flag: OrderFlag) => alertValues[alertFlags.indexOf(flag)];
 
     return {
-      items,
+      items: rows.map((row) => listItemOf(row, contactRows.get(String(row.id)), financeRows.get(String(row.id)))),
       total,
       page: params.page,
       pageSize: params.pageSize,
-      counts,
+      counts: Object.fromEntries(ORDER_STATUSES.map((s, i) => [s, countValues[i]])) as Record<OrderStatus, number>,
       alerts: {
-        capacity: alertCount("capacity"),
-        ...(finance ? { refundPending: alertCount("refund_pending"), duplicate: alertCount("duplicate") } : {}),
-        ...(invoices ? { invoicePending: alertCount("invoice_pending") } : {}),
+        capacity: alert("capacity"),
+        ...(finance ? { refundPending: alert("refund_pending"), duplicate: alert("duplicate") } : {}),
+        ...(invoices ? { invoicePending: alert("invoice_pending") } : {}),
       },
       groups: ["order", ...(contact ? ["contact" as const] : []), ...(finance ? ["finance" as const] : [])],
       scope: read,

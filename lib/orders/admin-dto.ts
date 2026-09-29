@@ -6,10 +6,10 @@
  * (sıfır ya da boş değil). Arayüz bu dosyadaki tipleri kullanır.
  */
 import { duplicateChargesFrom } from "./duplicates";
-import type { OrderCapabilities, OrderGroup, ReadScope } from "./admin-access";
+import type { OrderCapabilities, OrderGroup, ReadScope, SensitiveGroup } from "./admin-access";
 import type { DocumentKind, OrderEventType, OrderStatus } from "./types";
 
-export type { OrderCapabilities, OrderGroup, ReadScope } from "./admin-access";
+export type { OrderCapabilities, OrderGroup, ReadScope, SensitiveGroup } from "./admin-access";
 
 /* ── Tipler ───────────────────────────────────────────────────────────────── */
 
@@ -64,6 +64,13 @@ export interface OrderEventDto {
 
 export interface OrderDetailDto {
   groups: OrderGroup[];
+  /**
+   * İzni ve saha kapsamı olduğu hâlde yeniden doğrulama gerektiği için DÖNMEYEN gruplar (27 §4.5).
+   * Bunların kaynağı sorgulanmadı; arayüz "doğrulayın" der, "yetkiniz yok" demez.
+   */
+  mfaRequiredGroups: SensitiveGroup[];
+  /** `mfaRequiredGroups` doluysa neden ve tazelik süresi (`mfa_required` hatasıyla aynı alanlar), yoksa null. */
+  mfa: { enrolled: boolean; reason: "enrollment" | "challenge" | "stale"; freshnessMinutes: number } | null;
   capabilities: OrderCapabilities;
   order: {
     id: string;
@@ -143,13 +150,12 @@ const numberOr = (v: unknown, fallback = 0): number => {
 const record = (v: unknown): Row => (v && typeof v === "object" && !Array.isArray(v) ? (v as Row) : {});
 
 export function buyerOf(row: Row): OrderBuyer {
-  const invoice = record(row.invoice);
   return {
     type: row.buyer_type === "corporate" ? "corporate" : "individual",
     firstName: textOr(row.buyer_first_name),
     lastName: textOr(row.buyer_last_name),
-    // Şirket unvanı alıcının kimliğidir (ad gibi); vergi bilgisi değildir.
-    companyTitle: text(invoice.companyTitle) ?? text(row.company_title),
+    // Şirket unvanı alıcının kimliğidir (ad gibi); vergi bilgisi değildir. Yalnız bu JSON yolu seçilir.
+    companyTitle: text(row.company_title),
   };
 }
 
@@ -234,9 +240,12 @@ export function sanitizeEvent(event: Row, groups: ReadonlySet<OrderGroup>): Orde
 
 /* ── Ayrıntı grupları ─────────────────────────────────────────────────────── */
 
+/**
+ * İletişim ve vergi alanları ham `invoice` JSON'undan değil, gruba özel JSON yollarından gelir
+ * (lib/orders/admin-detail.ts GROUP_COLUMNS): vergi grubu kapalıyken vergi alanları sorguya girmez.
+ */
 export function contactOf(row: Row): NonNullable<OrderDetailDto["contact"]> {
-  const invoice = record(row.invoice);
-  const address = record(invoice.address);
+  const address = record(row.invoice_address);
   const hasAddress = Object.keys(address).length > 0;
   return {
     email: textOr(row.buyer_email),
@@ -245,22 +254,21 @@ export function contactOf(row: Row): NonNullable<OrderDetailDto["contact"]> {
     invoiceAddress: hasAddress
       ? { province: textOr(address.province), district: textOr(address.district), line: textOr(address.line), postalCode: text(address.postalCode) }
       : null,
-    authorizedPerson: text(invoice.authorizedPerson),
-    kep: text(invoice.kep),
+    authorizedPerson: text(row.invoice_authorized_person),
+    kep: text(row.invoice_kep),
   };
 }
 
 export function taxOf(row: Row): NonNullable<OrderDetailDto["tax"]> {
-  const invoice = record(row.invoice);
-  const corporate = invoice.type === "corporate";
+  const eInvoice = row.invoice_e_invoice_user;
   return {
-    invoiceType: corporate ? "corporate" : "individual",
-    tckn: text(invoice.tckn),
-    taxId: text(invoice.taxId),
-    taxOffice: text(invoice.taxOffice),
-    mersis: text(invoice.mersis),
-    eInvoiceUser: typeof invoice.eInvoiceUser === "boolean" ? invoice.eInvoiceUser : null,
-    poNumber: text(invoice.poNumber),
+    invoiceType: row.invoice_type === "corporate" ? "corporate" : "individual",
+    tckn: text(row.invoice_tckn),
+    taxId: text(row.invoice_tax_id),
+    taxOffice: text(row.invoice_tax_office),
+    mersis: text(row.invoice_mersis),
+    eInvoiceUser: eInvoice === true || eInvoice === "true" ? true : eInvoice === false || eInvoice === "false" ? false : null,
+    poNumber: text(row.invoice_po_number),
   };
 }
 
@@ -361,7 +369,8 @@ export function orderCore(row: Row, batch: Row | null): OrderDetailDto["order"] 
   };
 }
 
-export function listItemOf(row: Row, withContact: boolean, withFinance: boolean): OrderListItem {
+/** `contact`/`finance`: yalnız ilgili grubun saha kapsamındaki kayıt için ayrı sorgudan gelen değerler. */
+export function listItemOf(row: Row, contact: Row | undefined, finance: Row | undefined): OrderListItem {
   return {
     id: textOr(row.id),
     orderNo: textOr(row.order_no),
@@ -378,7 +387,7 @@ export function listItemOf(row: Row, withContact: boolean, withFinance: boolean)
     certificateName: textOr(row.certificate_name),
     withdrawalDeadline: text(row.withdrawal_deadline),
     performanceDeadline: text(row.performance_deadline),
-    ...(withContact ? { contact: { email: textOr(row.buyer_email) } } : {}),
-    ...(withFinance ? { finance: { totalKurus: numberOr(row.total_kurus), paymentProvider: text(row.payment_provider) } } : {}),
+    ...(contact ? { contact: { email: textOr(contact.buyer_email) } } : {}),
+    ...(finance ? { finance: { totalKurus: numberOr(finance.total_kurus), paymentProvider: text(finance.payment_provider) } } : {}),
   };
 }

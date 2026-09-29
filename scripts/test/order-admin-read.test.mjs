@@ -6,27 +6,28 @@ import assert from 'node:assert/strict';
 import { z } from 'zod';
 import { loadSource as load } from './load-source.mjs';
 import { createDb, IDS } from './pglite-db.mjs';
-import { customRole, envelope, gate, orderAt, orderClient, readModules, request, staffWithRole, USERS } from './order-admin-helpers.mjs';
+import { readFile } from 'node:fs/promises';
+import { AAL1, aal2, bulkOrders, customRole, envelope, gate, orderAt, orderClient, readModules, request, staffWithRole, USERS, withMfaEnforced } from './order-admin-helpers.mjs';
 
 const mods = readModules();
 const OPS = { role: 'OPERATIONS' };
 const FIN = { role: 'FINANCE' };
 const OWNER = { role: 'SUPER_ADMIN' };
 
-function routes(db, who, { role = 'NONE', failTables = [] } = {}) {
+function routes(db, who, { role = 'NONE', failTables = [], assurance = AAL1 } = {}) {
   const log = [];
-  const jobs = [];
-  const client = () => orderClient(db, { failTables, log });
+  const writes = [];
+  const client = () => orderClient(db, { failTables, log, writes });
   const shared = {
     '@/lib/supabase/server': { createServiceRoleClient: client },
-    '@/lib/admin/permissions': gate({ db, userId: who, role }),
+    '@/lib/admin/permissions': gate({ db, userId: who, role, assurance }),
     '@/lib/api/envelope': envelope,
     '@/lib/orders/admin-access': mods.access,
   };
+  // Liste route'u iş fonksiyonlarını (admin-actions, create) İÇE AKTARMAMALI: taklitleri bilerek verilmedi;
+  // içe aktarırsa yükleme "Unmocked dependency" ile başarısız olur (77-2).
   const list = load('app/api/admin/release-orders/route.ts', {
     ...shared,
-    '@/lib/orders/admin-actions': { confirmDueOrders: async () => { jobs.push('confirm'); return 0; } },
-    '@/lib/orders/create': { expireStaleOrders: async () => { jobs.push('expire'); return 0; } },
     '@/lib/orders/admin-read': mods.read,
     '@/lib/orders/types': mods.types,
   });
@@ -42,7 +43,7 @@ function routes(db, who, { role = 'NONE', failTables = [] } = {}) {
     '@/lib/orders/store': {},
   });
   return {
-    log, jobs,
+    log, writes,
     list: async (query = {}) => (await list.GET(request({ query }))),
     detail: async (id) => (await detail.GET(request(), { params: Promise.resolve({ id }) })),
   };
@@ -176,7 +177,6 @@ test('27 §4: saha kapsamı — liste, toplam, sayaç, uyarı, arama ve ayrınt�
     assert.equal(list.alerts.capacity, 1, 'kapasite uyarısı yalnız Antalya');
     assert.equal(list.alerts.refundPending, 0, 'başka sahanın iadesi sayılmaz');
     assert.equal(list.alerts.duplicate, 0, 'başka sahanın çift tahsilatı sayılmaz');
-    assert.deepEqual(api.jobs, [], 'dar kapsamlı okuyucu küresel iş tetiklemez');
 
     assert.deepEqual((await api.list({ q: 'Mugla' })).body.data.items, [], 'başka sahadaki adla arama sonuç vermez');
     assert.deepEqual((await api.list({ q: 'cem@example' })).body.data.items, [], 'başka sahadaki e-postayla arama sonuç vermez');
@@ -190,9 +190,6 @@ test('27 §4: saha kapsamı — liste, toplam, sayaç, uyarı, arama ve ayrınt�
     }
     assert.equal((await api.detail(o3)).status, 200);
 
-    const full = routes(db, IDS.superAdmin, OWNER);
-    await full.list();
-    assert.deepEqual(full.jobs.sort(), ['confirm', 'expire'], 'tam kapsamlı okuyucuda tembel işler bugünkü gibi çalışır');
   } finally { await db.close(); }
 });
 
@@ -265,4 +262,177 @@ test('27 §4.4: olay beyaz listesi — bilinmeyen tür ve anahtar hiçbir izinle
   assert.deepEqual(mods.dto.sanitizeEvent({ id: 1, type: 'uydurma_olay', actor: 'system', data: { a: 1 } }, all).data, {});
   const note = mods.dto.sanitizeEvent({ id: 2, type: 'admin_note', actor: 'system', data: { note: 'y'.repeat(5000) } }, new Set(['order']));
   assert.equal(note.data.note.length, 1000, 'uzun metin kırpılır');
+});
+
+// ── #77 inceleme düzeltmeleri (Astra 77-1 … 77-5) ───────────────────────────
+
+test('77-1: MFA zorlaması açıkken tazelenmemiş oturumda vergi, hukuki kayıt ve özel sertifika sorgulanmaz ve dönmez', async () => {
+  const db = await createDb();
+  try {
+    const { o1 } = await seed(db);
+    const aal1Enrolled = { aal: 'aal1', verifiedAt: null, enrolled: true };
+    await withMfaEnforced(async () => {
+      for (const [assurance, reason] of [[AAL1, 'enrollment'], [aal1Enrolled, 'challenge'], [aal2(20), 'stale']]) {
+        const api = routes(db, IDS.superAdmin, { ...OWNER, assurance });
+        const r = await api.detail(o1);
+        assert.equal(r.status, 200, 'hassas olmayan özet kullanılabilir kalır');
+        const d = r.body.data;
+        assert.deepEqual([...d.mfaRequiredGroups].sort(), ['certificate', 'legal', 'tax']);
+        assert.deepEqual(d.mfa, { enrolled: assurance.enrolled, reason, freshnessMinutes: 15 });
+        for (const g of ['tax', 'legal', 'certificate']) assert.ok(!(g in d), `${g} dönmez`);
+        assert.ok(d.contact && d.finance && d.invoices, 'MFA gerektirmeyen gruplar açık');
+        assert.equal(touched(api.log, 'order_documents'), false, 'hukuki belge tablosu sorgulanmaz');
+        const columns = api.log.filter((e) => e.table === 'release_orders').map((e) => String(e.cols)).join(',');
+        for (const col of ['invoice->>tckn', 'invoice->>taxId', 'consents', 'certificate_code', 'documents_version']) {
+          assert.ok(!columns.includes(col), `${col} sorgulanmaz`);
+        }
+        assert.ok(!/(^|[,\\s])invoice(\\s*,|\\s*$)/.test(columns), 'fatura JSON’u bütün hâlinde okunmaz');
+        assert.deepEqual(d.events.find((e) => e.type === 'certificate_issued').data, {}, 'olayda sertifika kodu yok');
+        assert.deepEqual(d.events.find((e) => e.type === 'consent_recorded').data, {}, 'olayda onaylar yok');
+        const text = JSON.stringify(d);
+        assert.ok(!text.includes('12345678901') && !text.includes('SG-ABCD-2345'), 'vergi no ve sertifika kodu yanıtta yok');
+        noSecrets(d, 'MFA kapalı ayrıntı');
+      }
+      const fresh = (await routes(db, IDS.superAdmin, { ...OWNER, assurance: aal2(1) }).detail(o1)).body.data;
+      assert.deepEqual(fresh.mfaRequiredGroups, []);
+      assert.equal(fresh.mfa, null);
+      assert.equal(fresh.tax.tckn, '12345678901');
+      assert.equal(fresh.certificate.code, 'SG-ABCD-2345');
+      assert.equal(fresh.legal.consents.contract.granted, true);
+      assert.equal((await routes(db, IDS.superAdmin, { ...OWNER, assurance: AAL1 }).list()).status, 200, 'liste MFA grubu taşımaz');
+    });
+    const off = (await routes(db, IDS.superAdmin, { ...OWNER, assurance: AAL1 }).detail(o1)).body.data;
+    assert.deepEqual(off.mfaRequiredGroups, [], 'zorlama kapalıyken politika değişmedi');
+    assert.equal(off.tax.tckn, '12345678901');
+  } finally { await db.close(); }
+});
+
+test('77-1: MFA kapısı saha kapsamı kesişimini korur — izin yoksa "doğrulama gerekli" de denmez', async () => {
+  const db = await createDb();
+  try {
+    const { o1, o3 } = await seed(db);
+    // Okuma bütün kayıtlarda; vergi izni yalnız Antalya'da (ayrı, saha kapsamlı rol).
+    await customRole(db, 'tum_okur', ['orders.read']);
+    await customRole(db, 'antalya_vergi', ['customers.tax.read']);
+    await staffWithRole(db, USERS.scoped, 'tum_okur');
+    const staff = (await db.query(`SELECT id FROM admin_users WHERE user_id=$1`, [USERS.scoped])).rows[0].id;
+    await db.query(`SELECT assign_admin_role($1,$2,'antalya_vergi',$3::jsonb,NULL,'test')`, [IDS.superAdmin, staff, JSON.stringify({ kind: 'sites', siteIds: [IDS.siteA] })]);
+    await withMfaEnforced(async () => {
+      const stale = routes(db, USERS.scoped, { assurance: aal2(30) });
+      assert.deepEqual((await stale.detail(o3)).body.data.mfaRequiredGroups, ['tax'], 'Antalya: izin var, doğrulama gerekli');
+      assert.deepEqual((await stale.detail(o1)).body.data.mfaRequiredGroups, [], 'Ana Saha: izin yok, doğrulama da istenmez');
+      const fresh = routes(db, USERS.scoped, { assurance: aal2(1) });
+      assert.ok('tax' in (await fresh.detail(o3)).body.data);
+      assert.ok(!('tax' in (await fresh.detail(o1)).body.data), 'taze oturum kapsam dışını açmaz');
+    });
+  } finally { await db.close(); }
+});
+
+test('77-2: liste ve ayrıntı GET’i hiçbir iş, RPC ya da yazma çalıştırmaz — tam kapsamlı okuyucu dahil', async () => {
+  const db = await createDb();
+  try {
+    const { o1 } = await seed(db);
+    for (const [who, opts] of [[IDS.superAdmin, OWNER], [IDS.operations, OPS], [IDS.finance, FIN]]) {
+      const api = routes(db, who, opts);
+      for (const query of [{}, { flag: 'capacity' }, { q: 'Ayşe' }, { status: 'paid', test: 'hide' }]) assert.equal((await api.list(query)).status, 200);
+      assert.equal((await api.detail(o1)).status, 200);
+      assert.deepEqual(api.writes, [], `${opts.role}: yazma ya da RPC yok`);
+    }
+    const source = await readFile(new URL('../../app/api/admin/release-orders/route.ts', import.meta.url), 'utf8');
+    assert.doesNotMatch(source, /expireStaleOrders|confirmDueOrders|lib\/orders\/admin-actions|lib\/orders\/create/, 'liste route’u iş fonksiyonlarını içe aktarmaz');
+  } finally { await db.close(); }
+});
+
+test('77-3: iletişim ve finans alanları yalnız grubun saha kapsamındaki kayıtlar için ayrı sorgulanır', async () => {
+  const db = await createDb();
+  try {
+    const { o3 } = await seed(db);
+    await customRole(db, 'genel_okur', ['orders.read']);
+    await customRole(db, 'antalya_iletisim_finans', ['customers.contact.read', 'finance.read']);
+    await staffWithRole(db, USERS.scoped, 'genel_okur');
+    const staff = (await db.query(`SELECT id FROM admin_users WHERE user_id=$1`, [USERS.scoped])).rows[0].id;
+    await db.query(`SELECT assign_admin_role($1,$2,'antalya_iletisim_finans',$3::jsonb,NULL,'test')`, [IDS.superAdmin, staff, JSON.stringify({ kind: 'sites', siteIds: [IDS.siteA] })]);
+    const api = routes(db, USERS.scoped);
+    const list = (await api.list()).body.data;
+    assert.equal(list.total, 4, 'toplam ve sayfalama değişmez');
+    assert.deepEqual(list.items.filter((i) => 'contact' in i).map((i) => i.id), [o3]);
+    assert.deepEqual(list.items.filter((i) => 'finance' in i).map((i) => i.id), [o3]);
+
+    const main = api.log.find((e) => e.table === 'release_orders' && String(e.cols).includes('order_no') && !e.head);
+    assert.ok(!/buyer_email|total_kurus|payment_provider/.test(String(main.cols)), 'ana sorgu iletişim/finans kolonu seçmez');
+    for (const cols of ['id, buyer_email', 'id, total_kurus, payment_provider']) {
+      const q = api.log.find((e) => e.table === 'release_orders' && String(e.cols) === cols);
+      assert.ok(q, `${cols} ayrı sorgusu var`);
+      assert.match(q.where, /t\.land_id::text = ANY/, `${cols}: saha kapsamı sorguda`);
+      assert.ok(q.params.some((p) => Array.isArray(p) && p.length === 1 && p[0] === IDS.siteA), `${cols}: yalnız Antalya`);
+      assert.ok(q.params.some((p) => Array.isArray(p) && p.length === list.items.length), `${cols}: yalnız sayfadaki kimlikler`);
+    }
+  } finally { await db.close(); }
+});
+
+test('77-4: süzgeç ve uyarılar kırpılmaz — 2011 kapasite, 501 iade, 149 çift tahsilat; son sayfalar ve saha kesişimi', async () => {
+  const db = await createDb();
+  try {
+    await bulkOrders(db, IDS.land, 1, 2001);
+    await bulkOrders(db, IDS.siteB, 3001, 3010);
+    await db.query(`INSERT INTO order_refunds(order_id, amount_kurus, reason, status, requested_by)
+      SELECT id, 1000, 'withdrawal', 'pending', 'customer' FROM release_orders WHERE land_id=$1 ORDER BY created_at DESC LIMIT 501`, [IDS.land]);
+    await db.query(`INSERT INTO order_events(order_id, type, actor, data)
+      SELECT id, 'payment_succeeded', 'system', jsonb_build_object('duplicate', true, 'paymentId', 'DUP-' || id, 'paidKurus', 1000, 'provider', 'mock')
+      FROM release_orders WHERE land_id=$1 ORDER BY created_at DESC LIMIT 150`, [IDS.land]);
+    const refunded = (await db.query(`SELECT order_id FROM order_events WHERE type='payment_succeeded' ORDER BY id LIMIT 1`)).rows[0].order_id;
+    await db.query(`INSERT INTO order_events(order_id, type, actor, data) VALUES ($1, 'refund_succeeded', 'system', jsonb_build_object('duplicate', true, 'paymentId', $2::text, 'amountKurus', 1000))`, [refunded, `DUP-${refunded}`]);
+
+    const owner = routes(db, IDS.superAdmin, OWNER);
+    const all = (await owner.list()).body.data;
+    assert.deepEqual({ capacity: all.alerts.capacity, refundPending: all.alerts.refundPending, duplicate: all.alerts.duplicate }, { capacity: 2011, refundPending: 501, duplicate: 149 });
+
+    const cap = (await owner.list({ flag: 'capacity', pageSize: '100', page: '21' })).body.data;
+    assert.equal(cap.total, 2011, '2000 ve 500 sınırı yok');
+    assert.equal(cap.items.length, 11, 'son sayfa erişilebilir');
+    const ref = (await owner.list({ flag: 'refund_pending', pageSize: '100', page: '6' })).body.data;
+    assert.deepEqual([ref.total, ref.items.length], [501, 1]);
+    const dupFirst = (await owner.list({ flag: 'duplicate', pageSize: '100', page: '1' })).body.data;
+    const dupLast = (await owner.list({ flag: 'duplicate', pageSize: '100', page: '2' })).body.data;
+    assert.deepEqual([dupFirst.total, dupFirst.items.length, dupLast.items.length], [149, 100, 49], 'çift tahsilat 100’lük parçaları aşar');
+    const seen = new Set([...dupFirst.items, ...dupLast.items].map((i) => i.id));
+    assert.equal(seen.size, 149, 'sayfalar tekrarsız');
+    assert.ok(!seen.has(refunded), 'iadesi yapılmış çift tahsilat süzgeçte yok');
+    const sorted = [...dupFirst.items, ...dupLast.items].map((i) => i.createdAt);
+    assert.deepEqual(sorted, [...sorted].sort().reverse(), 'yeniden eskiye sıralı');
+    assert.equal((await owner.list({ flag: 'capacity', q: 'Toplu' })).body.data.total, 2011, 'arama ve süzgeç birlikte');
+
+    await customRole(db, 'mugla_finans', ['orders.read', 'finance.read']);
+    await staffWithRole(db, USERS.scoped, 'mugla_finans', { kind: 'sites', siteIds: [IDS.siteB] });
+    const scoped = routes(db, USERS.scoped);
+    const s = (await scoped.list()).body.data;
+    assert.deepEqual({ capacity: s.alerts.capacity, refundPending: s.alerts.refundPending, duplicate: s.alerts.duplicate }, { capacity: 10, refundPending: 0, duplicate: 0 });
+    assert.equal((await scoped.list({ flag: 'capacity' })).body.data.total, 10);
+  } finally { await db.close(); }
+});
+
+test('77-5: şirket unvanıyla arama temel okuma kapsamında çalışır, kapsam dışını bulmaz', async () => {
+  const db = await createDb();
+  try {
+    const { o2, o4 } = await seed(db);
+    const corporate = (title) => JSON.stringify({ type: 'corporate', companyTitle: title, taxId: '1234567890', taxOffice: 'Kavaklıdere',
+      address: { province: '06', district: 'Çankaya', line: 'Deneme sk. 2', postalCode: null }, authorizedPerson: 'Yetkili', mersis: null, kep: null, poNumber: null, eInvoiceUser: false });
+    await db.query(`UPDATE release_orders SET buyer_type='corporate', invoice=$2::jsonb WHERE id=$1`, [o2, corporate('Zirve Benzersiz Teknoloji')]);
+    await db.query(`UPDATE release_orders SET buyer_type='corporate', invoice=$2::jsonb WHERE id=$1`, [o4, corporate('Zirve Başka Ltd')]);
+
+    const owner = routes(db, IDS.superAdmin, OWNER);
+    const exact = (await owner.list({ q: 'Zirve Benzersiz' })).body.data;
+    assert.deepEqual(exact.items.map((i) => i.id), [o2]);
+    assert.equal(exact.items[0].buyer.companyTitle, 'Zirve Benzersiz Teknoloji');
+    assert.equal((await owner.list({ q: 'Zirve' })).body.data.total, 2);
+    assert.deepEqual((await routes(db, IDS.operations, OPS).list({ q: 'Zirve Benzersiz' })).body.data.items.map((i) => i.id), [o2],
+      'yalnız orders.read yeterli; iletişim/vergi izni gerekmez');
+
+    await customRole(db, 'antalya_okur', ['orders.read']);
+    await staffWithRole(db, USERS.scoped, 'antalya_okur', { kind: 'sites', siteIds: [IDS.siteA] });
+    assert.equal((await routes(db, USERS.scoped).list({ q: 'Zirve' })).body.data.total, 0, 'kapsam dışı şirket bulunmaz');
+    const detail = (await owner.detail(o2)).body.data;
+    assert.equal(detail.order.buyer.companyTitle, 'Zirve Benzersiz Teknoloji');
+    assert.equal(detail.tax.taxId, '1234567890');
+  } finally { await db.close(); }
 });

@@ -2,14 +2,17 @@
  * Yönetim panelindeki sipariş ayrıntısı — YALNIZ SUNUCU (service role). Sözleşme: web-brifler/27 §4.
  *
  * Önce temel alanlar okuma kapsamıyla okunur (kapsam dışı kayıt, olmayan kayıtla aynı `not_found`).
- * Hassas grupların kolonları ve ilişkili tabloları yalnız o grup bu kaydın sahasını kapsıyorsa
- * sorgulanır; kapsamayan grubun kaynağına hiç gidilmez. Alt sorgu hatası `unavailable` olur, boş değil.
+ * Hassas grupların kolonları ve ilişkili tabloları yalnız o grup bu kaydın sahasını kapsıyorsa VE (MFA
+ * gerektiren gruplarda) oturum yeniden doğrulanmışsa sorgulanır; kapalı grubun kaynağına hiç gidilmez.
+ * `invoice` JSON'u bütün hâlinde okunmaz: iletişim ve vergi yalnız kendi JSON yollarını seçer.
+ * Alt sorgu hatası `unavailable` olur, boş değil.
  */
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { EffectiveAccess } from "@/lib/admin/permissions";
+import { MFA_FRESHNESS_MINUTES } from "@/lib/admin/permission-keys";
 import {
-  GROUP_PERMISSION, groupScope, orderCapabilities, scopeCovers,
-  type OrderGroup, type ReadScope, type SensitiveGroup,
+  SENSITIVE_GROUPS, groupScope, orderCapabilities, scopeCovers,
+  type OrderGroup, type ReadMfa, type ReadScope, type SensitiveGroup,
 } from "./admin-access";
 import {
   contactOf, financeOf, invoicesOf, legalOf, orderCore, sanitizeEvent, taxOf,
@@ -27,15 +30,20 @@ const BASE_COLUMNS = [
 
 /** Grup başına release_orders kolonları; ilişkili tablolar ayrıca (27 §4.1). */
 const GROUP_COLUMNS: Record<SensitiveGroup, string[]> = {
-  contact: ["buyer_email", "buyer_phone", "marketing_consent", "invoice"],
-  tax: ["invoice"],
+  contact: [
+    "buyer_email", "buyer_phone", "marketing_consent", "invoice_address:invoice->address",
+    "invoice_authorized_person:invoice->>authorizedPerson", "invoice_kep:invoice->>kep",
+  ],
+  tax: [
+    "invoice_type:invoice->>type", "invoice_tckn:invoice->>tckn", "invoice_tax_id:invoice->>taxId",
+    "invoice_tax_office:invoice->>taxOffice", "invoice_mersis:invoice->>mersis",
+    "invoice_e_invoice_user:invoice->>eInvoiceUser", "invoice_po_number:invoice->>poNumber",
+  ],
   finance: ["unit_price_kurus", "total_kurus", "vat_rate", "payment_provider", "payment_id", "payment_started_at"],
   invoices: [],
   legal: ["consents", "documents_version", "source_path"],
   certificate: ["certificate_code"],
 };
-
-const SENSITIVE: SensitiveGroup[] = Object.keys(GROUP_PERMISSION) as SensitiveGroup[];
 
 export type OrderDetailResult = { ok: true; detail: OrderDetailDto } | { ok: false; error: "not_found" | "unavailable" };
 
@@ -47,7 +55,7 @@ const rows = (result: { data: unknown; error: unknown }): Row[] => {
 };
 
 export async function loadOrderDetail(
-  supabase: SupabaseClient, id: string, access: EffectiveAccess, read: ReadScope, legacyRole: string
+  supabase: SupabaseClient, id: string, access: EffectiveAccess, read: ReadScope, legacyRole: string, mfa: ReadMfa
 ): Promise<OrderDetailResult> {
   let base = supabase.from("release_orders").select(BASE_COLUMNS.join(", ")).eq("id", id);
   if (read.kind === "sites") base = base.in("land_id", read.siteIds);
@@ -57,11 +65,17 @@ export async function loadOrderDetail(
   const row = baseRow as unknown as Row;
   const landId = typeof row.land_id === "string" ? row.land_id : null;
 
+  // İzin ∩ saha kapsamı; MFA gerektiren grup oturum tazelenmeden açılmaz (kaynağı da sorgulanmaz).
   const covered = new Set<OrderGroup>(["order"]);
-  for (const group of SENSITIVE) if (scopeCovers(groupScope(access, group, read), landId)) covered.add(group);
+  const mfaRequiredGroups: SensitiveGroup[] = [];
+  for (const group of SENSITIVE_GROUPS) {
+    if (!scopeCovers(groupScope(access, group, read), landId)) continue;
+    if (mfa.blocked.has(group)) mfaRequiredGroups.push(group);
+    else covered.add(group);
+  }
 
   try {
-    const extraColumns = [...new Set(SENSITIVE.filter((g) => covered.has(g)).flatMap((g) => GROUP_COLUMNS[g]))];
+    const extraColumns = [...new Set(SENSITIVE_GROUPS.filter((g) => covered.has(g)).flatMap((g) => GROUP_COLUMNS[g]))];
     const skip = Promise.resolve({ data: [] as Row[], error: null });
     const [extra, batch, events, documents, refunds, invoices] = await Promise.all([
       extraColumns.length
@@ -87,6 +101,10 @@ export async function loadOrderDetail(
 
     const detail: OrderDetailDto = {
       groups: [...covered],
+      mfaRequiredGroups,
+      mfa: mfaRequiredGroups.length && mfa.reason
+        ? { enrolled: mfa.enrolled, reason: mfa.reason, freshnessMinutes: MFA_FRESHNESS_MINUTES }
+        : null,
       capabilities: orderCapabilities(access, legacyRole),
       order: orderCore(full, (batch.data ?? null) as Row | null),
       ...(covered.has("contact") ? { contact: contactOf(full) } : {}),

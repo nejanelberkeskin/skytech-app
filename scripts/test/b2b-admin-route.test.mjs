@@ -6,9 +6,11 @@ const quote={id:'quote-fixture',status:'PENDING',corporate_email:'buyer@example.
 const payload={quoteId:quote.id,action:'approve',approvedPrice:1200,approvedSeedCount:100,adminNote:'Fixture note',adminUserId:'forged-admin'};
 function fixture({auth={admin,error:null},mail={id:'accepted-fixture'},updateError=null,status='PENDING',warnings=[]}={}){
  const calls={clients:0,updates:[],mail:[],audit:[],roles:[]};
+ // Koşullu durum geçişi (33 §2): update → eq(id) → in(status, bekleyen) → select → maybeSingle.
  const db={from(table){assert.equal(table,'corporate_quotes');return{
    select(){return{eq(){return{single:async()=>({data:{...quote,status},error:null})};}};},
-   update(patch){calls.updates.push(patch);return{eq:async(key,value)=>{assert.equal(key,'id');assert.equal(value,quote.id);return{error:updateError};}};},
+   update(patch){calls.updates.push(patch);return{eq(key,value){assert.equal(key,'id');assert.equal(value,quote.id);return{in(k,v){assert.equal(k,'status');assert.deepEqual(v,['PENDING','pending']);
+     return{select(){return{maybeSingle:async()=>({data:updateError?null:{id:quote.id},error:updateError})};}};}};}};},
  };}};
  const route=load('app/api/admin/b2b/route.ts',{
    'next/server':{NextResponse:Response},

@@ -117,6 +117,21 @@ export default function WithdrawalForm({
     } catch {
       result = { ok: false, error: "generic" };
     }
+    // The client adapter casts JSON to the contract. Do not display a receipt
+    // unless this response identifies the submitted order and both dates.
+    if (
+      result.ok &&
+      (result.orderNo !== input.orderNo ||
+        typeof result.receivedAt !== "string" ||
+        !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{1,3})?(Z|[+-]\d{2}:\d{2})$/.test(result.receivedAt) ||
+        !Number.isFinite(Date.parse(result.receivedAt)) ||
+        typeof result.refundDueOn !== "string" ||
+        !/^\d{4}-\d{2}-\d{2}$/.test(result.refundDueOn) ||
+        !Number.isFinite(Date.parse(`${result.refundDueOn}T12:00:00Z`)) ||
+        new Date(`${result.refundDueOn}T12:00:00Z`).toISOString().slice(0, 10) !== result.refundDueOn)
+    ) {
+      result = { ok: false, error: "generic" };
+    }
     locked.current = false;
     setSubmitting(false);
     if (result.ok) {
@@ -143,7 +158,10 @@ export default function WithdrawalForm({
         setFields(result.fields);
         setPhase("form");
         focusOn("field");
-      } else focusOn("error");
+      } else {
+        if (result.error === "not_found") setPhase("form");
+        focusOn("error");
+      }
     }
   }
   const primary =
@@ -343,7 +361,7 @@ export default function WithdrawalForm({
             })}
           </p>
           <p className="text-sm leading-relaxed text-[#526352]">
-            {t("success.email")}
+            {t("success.email", { email: COMPANY.email })}
           </p>
         </section>
       )}

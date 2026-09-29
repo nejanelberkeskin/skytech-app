@@ -47,7 +47,7 @@ export default async function OwnLandPage({ params }: Props) {
             </div>
           </div>
           <div className="relative min-h-64 lg:min-h-full">
-            <Image src="/images/projeler/canakkale-gelibolu.webp" alt="" fill sizes="(min-width: 1024px) 45vw, 100vw" className="object-cover" />
+            <Image src="/images/projeler/canakkale-gelibolu.webp" alt="" loading="eager" fill sizes="(min-width: 1024px) 45vw, 100vw" className="object-cover" />
           </div>
         </div>
       </header>

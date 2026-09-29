@@ -365,7 +365,7 @@ function SahalarContent() {
 
                     {/* İşlemler */}
                     <div className="flex flex-wrap items-center gap-2">
-                      {(l.capabilities.edit || l.capabilities.capacity) && <button disabled={saving || blocked}
+                      {(l.capabilities.edit || l.capabilities.capacity || l.capabilities.publish) && <button disabled={saving || blocked}
 
                         onClick={() => openEdit(l)}
                         className="text-xs text-slate-300 hover:text-white transition-colors px-3 py-2 rounded-lg hover:bg-white/[0.06] border border-white/[0.06]"

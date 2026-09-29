@@ -62,7 +62,7 @@ function B2BContent() {
     }catch{if(alive.current&&current===generation.current){setError("Teklifler yüklenemedi. Listeyi yenileyin.");setListFailed(true);}}
     finally{if(alive.current&&current===generation.current)setLoading(false);}
   },[]);
-  useEffect(()=>{alive.current=true;void fetchQuotes();return()=>{alive.current=false;generation.current++;};},[fetchQuotes]);
+  useEffect(()=>{const requests=generation;alive.current=true;void fetchQuotes();return()=>{alive.current=false;requests.current++;};},[fetchQuotes]);
 
   const filtered = activeFilter === "ALL"
     ? quotes

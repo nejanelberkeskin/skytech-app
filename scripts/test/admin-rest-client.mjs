@@ -1,12 +1,27 @@
 // Yönetim modülleri için genel PostgREST alt kümesi (web-brifler/29 ve sonraki sunucu paketleri).
 // Okuma: select (JSON yolu alias:col->>key / alias:col->key), eq/neq/in/gt/gte/lt/lte/is/or(ilike|eq), order, range,
-// limit, count/head, maybeSingle/single. Yazma: update/insert(+select). Her sorgu koşul ve parametreleriyle `log`a,
+// limit, count/head, maybeSingle/single. Yazma: update/insert/delete(+select, delete count). Dizi (text[]) ve jsonb
+// kolonları gerçek kolon tipine göre yazılır. Her sorgu koşul ve parametreleriyle `log`a,
 // her yazma `writes`a kaydedilir; `failTables` o tabloya giden her sorguyu, `failWhen({table, mode, cols})` true dönen
 // sorguyu hata ile düşürür. rpc isteğe bağlı taklit.
 const asJson = (value) => JSON.parse(JSON.stringify(value, (_k, v) => (typeof v === 'bigint' ? Number(v) : v)));
 
 export function adminClient(db, { failTables = [], failWhen = null, log = [], writes = [], rpc = null, afterQuery = null } = {}) {
   const fails = new Set(failTables);
+  const types = new Map();
+  const columnType = async (table, column) => {
+    const key = `${table}.${column}`;
+    if (!types.has(key)) {
+      const r = await db.query(`SELECT data_type FROM information_schema.columns WHERE table_schema = 'public' AND table_name = $1 AND column_name = $2`, [table, column]);
+      types.set(key, r.rows[0]?.data_type ?? null);
+    }
+    return types.get(key);
+  };
+  const pgArray = (list) => `{${list.map((x) => `"${String(x).replace(/(["\\])/g, '\\$1')}"`).join(',')}}`;
+  const toParam = async (table, column, v) => {
+    if (v === null || typeof v !== 'object') return v;
+    return Array.isArray(v) && (await columnType(table, column)) === 'ARRAY' ? pgArray(v) : JSON.stringify(v);
+  };
   function from(table) {
     const st = { mode: 'select', cols: '*', rawCols: null, count: false, head: false, where: [], params: [], orders: [],
       limit: null, offset: null, values: null };
@@ -41,15 +56,27 @@ export function adminClient(db, { failTables = [], failWhen = null, log = [], wr
       try {
         if (st.mode === 'update') {
           writes.push({ table, mode: 'update', values: st.values });
-          const sets = Object.entries(st.values).map(([k, v]) => `${k} = ${P(v !== null && typeof v === 'object' ? JSON.stringify(v) : v)}`);
-          const r = await db.query(`UPDATE ${table} SET ${sets.join(', ')}${where()} RETURNING ${st.rawCols ? st.cols : 'id'}`, st.params);
+          const whereSql = where();
+          const sets = [];
+          for (const [k, v] of Object.entries(st.values)) sets.push(`${k} = ${P(await toParam(table, k, v))}`);
+          const r = await db.query(`UPDATE ${table} SET ${sets.join(', ')}${whereSql} RETURNING ${st.rawCols ? st.cols : 'id'}`, st.params);
           return { data: asJson(r.rows), error: null, count: null };
+        }
+        if (st.mode === 'delete') {
+          writes.push({ table, mode: 'delete', where: where(), params: [...st.params] });
+          const r = await db.query(`DELETE FROM ${table}${where()} RETURNING ${st.rawCols ? st.cols : 'id'}`, st.params);
+          return { data: st.rawCols ? asJson(r.rows) : null, error: null, count: st.count ? r.rows.length : null };
         }
         if (st.mode === 'insert') {
           const rowsIn = Array.isArray(st.values) ? st.values : [st.values];
           writes.push({ table, mode: 'insert', values: rowsIn });
           const keys = Object.keys(rowsIn[0]);
-          const tuples = rowsIn.map((r) => `(${keys.map((k) => P(r[k] !== null && typeof r[k] === 'object' ? JSON.stringify(r[k]) : r[k])).join(', ')})`);
+          const tuples = [];
+          for (const r of rowsIn) {
+            const cells = [];
+            for (const k of keys) cells.push(P(await toParam(table, k, r[k])));
+            tuples.push(`(${cells.join(', ')})`);
+          }
           const r = await db.query(`INSERT INTO ${table} (${keys.join(', ')}) VALUES ${tuples.join(', ')} RETURNING ${st.rawCols ? st.cols : 'id'}`, st.params);
           return { data: asJson(r.rows), error: null, count: null };
         }
@@ -67,6 +94,7 @@ export function adminClient(db, { failTables = [], failWhen = null, log = [], wr
       select(cols = '*', opts = {}) { st.rawCols = cols; st.cols = selectSql(cols.replace(/\s+/g, ' ')); st.count = opts.count === 'exact'; st.head = !!opts.head; return q; },
       update(values) { st.mode = 'update'; st.values = values; return q; },
       insert(values) { st.mode = 'insert'; st.values = values; return q; },
+      delete(opts = {}) { st.mode = 'delete'; st.count = opts.count === 'exact'; return q; },
       eq: (c, v) => cmp(c, '=', v), neq: (c, v) => cmp(c, '<>', v),
       gt(c, v) { st.where.push(`${col(c)} > ${P(v)}`); return q; },
       gte(c, v) { st.where.push(`${col(c)} >= ${P(v)}`); return q; },

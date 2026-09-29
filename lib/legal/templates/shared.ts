@@ -111,7 +111,7 @@ export const TEXT = {
     "Fatura, işlemin niteliğine ve yürürlükteki vergi mevzuatına uygun zamanda ve yasal süre içinde e-Fatura veya e-Arşiv Fatura olarak düzenlenir ve ALICI’ya iletilir. Peşin tahsilat, belgenin düzenlenme anı ve KDV’nin doğumu bakımından ilgili kurallarla birlikte değerlendirilir. Fatura veya muhasebe işlemleri, cayma ve iade hakkının kullanılmasının ön şartı değildir.",
 
   calendar:
-    "Tohum topu bırakma işlemleri Ekim–Mart döneminde yapılır; Nisan–Eylül döneminde sahalar incelenir, izlenir ve raporlanır. Bırakma işlemi, cayma süresi dolmadan yapılmaz.",
+    "Tohum topu bırakma işlemleri Kasım–Mart döneminde yapılır; Nisan–Eylül döneminde sahalar incelenir, izlenir ve raporlanır. Bırakma işlemi, cayma süresi dolmadan yapılmaz.",
 
   completionNotice:
     "Bırakma tamamlandığında ALICI’ya e-posta ile bilgi verilir. Katılım Sertifikası ve izleme içeriği, sipariş belgelerinde kendileri için ayrı ayrı kararlaştırılan kesin son tarihlere kadar e-posta veya kalıcı veri saklayıcısıyla sunulur. Bırakmanın tamamlanması, henüz teslim edilmemiş bu edimleri sona erdirmez.",

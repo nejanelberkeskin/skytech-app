@@ -31,6 +31,8 @@ function setup({ role = 'FINANCE', permissions = full, assurance = fresh(), acce
     'next/server': { NextResponse: response, after: fn => { assert.equal(typeof fn, 'function'); calls.push('deferred-email'); } }, zod: { z },
     '@/lib/supabase/server': { createServiceRoleClient: () => { calls.push('operational-db'); return db; } },
     '@/lib/admin-auth': auth, '@/lib/admin/permissions': gate,
+    '@/lib/orders/admin-access': load('lib/orders/admin-access.ts', { '@/lib/admin/permissions': gate }),
+    '@/lib/api/envelope': envelope,
     '@/lib/admin/audit': { auditLog: async (_db, record) => { calls.push({ audit: record }); return []; } },
     '@/lib/orders/admin-actions': Object.fromEntries(['executeRefund', 'refundDuplicate', 'queueInvoice', 'cancelBySeller', 'reserveCapacityNow', 'markInvoiceIssued'].map(name => [name, service(name)])),
     '@/lib/orders/admin-detail': { loadOrderDetail: () => { throw new Error('Unexpected detail'); } },
@@ -83,7 +85,8 @@ test('Legacy route retains its old role/session limit even with full refund gran
 test('Authorized legacy refund requests preserve service arguments, money result and notification scheduling', async () => enforced(async () => {
   for (const body of actions) {
     const app = setup(); const result = await app.post(body);
-    assert.equal(result.status, 200); assert.deepEqual(result.body, { ok: true, status: 'refunded', warnings: [] });
+    // 27 §5: bütün yanıtlar standart zarfta.
+    assert.equal(result.status, 200); assert.deepEqual(result.body, { ok: true, data: { status: 'refunded' } });
     const service = app.calls.find(c => c?.service);
     assert.equal(service.service, body.action === 'refund' ? 'executeRefund' : 'refundDuplicate');
     assert.deepEqual(service.args, body.action === 'refund' ? [id, 'actor', '127.0.0.1', app.db] : [id, body.paymentId, 'actor', '127.0.0.1', app.db]);
@@ -93,14 +96,18 @@ test('Authorized legacy refund requests preserve service arguments, money result
   }
 }));
 
-test('Guard uses existing rollout setting; unrelated invoice action is unchanged', async () => {
+test('Guard uses existing rollout setting; invoice action now needs invoices.manage (web-brifler/27 §2)', async () => {
   await enforced(async () => {
     const app = setup({ assurance: { aal: 'aal1', enrolled: false, verifiedAt: null } });
     assert.equal((await app.post(actions[0])).status, 200);
   }, '0');
   await enforced(async () => {
-    const app = setup({ permissions: [] }); assert.equal((await app.post({ action: 'invoice_now' })).status, 200);
-    assert.equal(app.calls.includes('permission'), false);
+    const denied = setup({ permissions: [] }); const result = await denied.post({ action: 'invoice_now' });
+    assert.equal(result.status, 403); assert.equal(result.body.error.code, 'forbidden');
+    assert.equal(denied.calls.some(c => c?.service), false, 'izinsiz fatura isteği iş servisine ulaşmaz');
+    // invoices.manage MFA setinde değil: aal1 ile izin verilir (27 §2, §8 karar notu).
+    const app = setup({ permissions: [{ key: 'invoices.manage', scopes: [{ kind: 'all' }] }], assurance: { aal: 'aal1', enrolled: false, verifiedAt: null } });
+    assert.equal((await app.post({ action: 'invoice_now' })).status, 200);
     assert.equal(app.calls.find(c => c?.service).service, 'queueInvoice');
   });
 });

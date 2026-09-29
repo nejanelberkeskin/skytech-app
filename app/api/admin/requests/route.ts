@@ -1,163 +1,113 @@
-import { NextRequest, NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import { z } from "zod";
 import { createServiceRoleClient } from "@/lib/supabase/server";
-import { requireAdmin, getClientIP } from "@/lib/admin-auth";
+import { getClientIP } from "@/lib/admin-auth";
+import { requirePermission } from "@/lib/admin/permissions";
+import { onlyAssigned, permissionScope } from "@/lib/admin/record-scope";
 import { auditLog } from "@/lib/admin/audit";
+import { fail, ok, unavailable } from "@/lib/api/envelope";
+import { loadRequestList, sanitizeRequestSearch, updateRequest } from "@/lib/requests/admin-read";
+import type { RequestStatus, RequestType } from "@/lib/requests/admin-dto";
 import { REQUEST_STATUSES, REQUEST_TYPES } from "@/lib/requests/schema";
-import type { ServiceRequestStatus } from "@/lib/types";
 
 /**
- * Admin — Talep yönetimi
+ * Admin — Talep yönetimi. Sözleşme: web-brifler/29.
  *
- * GET   /api/admin/requests?status=&type=&q=&page=&pageSize=
- *       → { items, total, page, pageSize, counts }
- * PATCH /api/admin/requests  { id, status?, adminNote? }
- *       → { ok, item }
- *
- * Roller: SUPER_ADMIN, FINANCE, OPERATIONS (lib/rbac.ts "talepler" modülü).
- * Her PATCH admin_audit_logs'a yazılır.
+ * GET   /api/admin/requests?status=&type=&q=&page=&pageSize= → Ok<RequestListDto>
+ *       İzin: requests.read (all ya da sites; sahasız talep yalnız all). İletişim alanları ayrıca
+ *       customers.contact.read ile ve kayıt bazında kapsamla; kapsam dışı iletişim sorgulanmaz.
+ * PATCH /api/admin/requests  { id, status?, adminNote? } → Ok<RequestItem>
+ *       İzin: requests.update; kayıt güncelleme kapsamında olmalı (sorgu içinde denetlenir).
+ *       `handled_by` son işlem yapandır, atama değildir. Her PATCH admin_audit_logs'a yazılır.
  */
+export const dynamic = "force-dynamic";
 
-const ROLES = ["SUPER_ADMIN", "FINANCE", "OPERATIONS"] as const;
-// ip_hash / client_token / user_agent panele taşınmaz — iş için gerekmez.
-const SELECT = [
-  "id", "request_no", "type", "status", "user_id", "contact_name", "email", "phone", "company",
-  "locale", "land_id", "total_seeds", "seed_items", "details", "message", "consent_at",
-  "consent_version", "source_path", "admin_note", "handled_by", "handled_at", "created_at", "updated_at",
-  "land:lands(name, region)",
-].join(", ");
-
-/** PostgREST filtre sözdizimine karışabilecek karakterleri at; boşsa null. */
-function sanitizeSearch(q: string | null): string | null {
-  if (!q) return null;
-  const clean = q.replace(/[^\p{L}\p{N}@+.\s-]/gu, "").trim().slice(0, 60);
-  return clean.length >= 2 ? clean : null;
-}
+const unsupported = (permission: string) =>
+  fail(403, "scope_unsupported", "Talep yetkiniz yalnız kişiye atanmış işleri kapsıyor; talepler için atama modeli henüz yok.", { permission });
 
 export async function GET(request: NextRequest) {
-  const { error: authError } = await requireAdmin(request, [...ROLES]);
-  if (authError) return authError;
+  const guard = await requirePermission(request, "requests.read", { scope: "any" });
+  if (guard.error) return guard.error;
+  const read = permissionScope(guard.access, "requests.read");
+  if (!read) return unsupported("requests.read");
 
   const sp = new URL(request.url).searchParams;
   const status = sp.get("status");
   const type = sp.get("type");
-  const q = sanitizeSearch(sp.get("q"));
+  const invalid = (param: string) => fail(400, "invalid_query", "Geçersiz sorgu parametresi.", { param });
+  if (status && !(REQUEST_STATUSES as readonly string[]).includes(status)) return invalid("status");
+  if (type && !(REQUEST_TYPES as readonly string[]).includes(type)) return invalid("type");
   const page = Math.max(1, parseInt(sp.get("page") ?? "1", 10) || 1);
   const pageSize = Math.min(100, Math.max(10, parseInt(sp.get("pageSize") ?? "25", 10) || 25));
 
-  if (status && !(REQUEST_STATUSES as readonly string[]).includes(status)) {
-    return NextResponse.json({ error: "invalid_status" }, { status: 400 });
-  }
-  if (type && !(REQUEST_TYPES as readonly string[]).includes(type)) {
-    return NextResponse.json({ error: "invalid_type" }, { status: 400 });
-  }
-
-  const supabase = createServiceRoleClient();
-
-  let query = supabase
-    .from("service_requests")
-    .select(SELECT, { count: "exact" })
-    .order("created_at", { ascending: false })
-    .range((page - 1) * pageSize, page * pageSize - 1);
-
-  if (status) query = query.eq("status", status);
-  if (type) query = query.eq("type", type);
-  if (q) {
-    // Talep numarası büyük harfe çevrilir; telefon "0532…" yazılırsa baştaki 0
-    // atılır (kayıtlar +90… biçiminde). Diğer alanlarda ilike.
-    const like = `%${q}%`;
-    const digits = q.replace(/[^\d]/g, "").replace(/^0+/, "");
-    const filters = [
-      `request_no.ilike.${like.toUpperCase()}`,
-      `contact_name.ilike.${like}`,
-      `email.ilike.${like}`,
-      `company.ilike.${like}`,
-    ];
-    if (digits.length >= 3) filters.push(`phone.ilike.%${digits}%`);
-    query = query.or(filters.join(","));
-  }
-
-  const [listRes, ...countRes] = await Promise.all([
-    query,
-    ...REQUEST_STATUSES.map((s) =>
-      supabase.from("service_requests").select("id", { count: "exact", head: true }).eq("status", s)
-    ),
-  ]);
-
-  if (listRes.error) {
-    console.error("[admin/requests] liste hatası:", listRes.error.message);
-    return NextResponse.json({ error: "unavailable" }, { status: 503 });
-  }
-
-  const counts = Object.fromEntries(
-    REQUEST_STATUSES.map((s, i) => [s, countRes[i].count ?? 0])
-  ) as Record<ServiceRequestStatus, number>;
-
-  return NextResponse.json({
-    items: listRes.data ?? [],
-    total: listRes.count ?? 0,
+  const list = await loadRequestList(createServiceRoleClient(), guard.access, read, {
+    status: (status as RequestStatus | null) ?? null,
+    type: (type as RequestType | null) ?? null,
+    q: sanitizeRequestSearch(sp.get("q")),
     page,
     pageSize,
-    counts,
   });
+  if (!list) {
+    console.error("[admin/requests] liste okunamadı");
+    return unavailable();
+  }
+  return ok(list);
 }
 
+const patchSchema = z
+  .object({
+    id: z.string().trim().regex(/^[0-9a-f-]{36}$/i),
+    status: z.enum(REQUEST_STATUSES).optional(),
+    adminNote: z.string().max(4000).optional(),
+  })
+  .strict()
+  .refine((b) => b.status !== undefined || b.adminNote !== undefined, { message: "nothing_to_update", path: ["body"] });
+
 export async function PATCH(request: NextRequest) {
-  const { admin, error: authError } = await requireAdmin(request, [...ROLES]);
-  if (authError || !admin) return authError ?? NextResponse.json({ error: "unauthorized" }, { status: 401 });
-
-  let body: { id?: unknown; status?: unknown; adminNote?: unknown };
-  try {
-    body = await request.json();
-  } catch {
-    return NextResponse.json({ error: "invalid_body" }, { status: 400 });
+  const guard = await requirePermission(request, "requests.update", { scope: "any" });
+  if (guard.error) return guard.error;
+  if (!permissionScope(guard.access, "requests.update")) return unsupported("requests.update");
+  // Güncellenen kaydı okuyabilmek için okuma izni de gerekir (yanıt aynı DTO'dur).
+  const read = permissionScope(guard.access, "requests.read");
+  if (!read) {
+    return onlyAssigned(guard.access, "requests.read")
+      ? unsupported("requests.read")
+      : fail(403, "forbidden", "Talepleri okuma yetkiniz yok.", { permission: "requests.read" });
   }
 
-  const id = typeof body.id === "string" ? body.id.trim() : "";
-  if (!/^[0-9a-f-]{36}$/i.test(id)) {
-    return NextResponse.json({ error: "invalid_id" }, { status: 400 });
+  const raw = await request.json().catch(() => null);
+  const body = patchSchema.safeParse(raw);
+  if (!body.success) {
+    return fail(400, "invalid_body", "Geçersiz istek: kimlik ve en az bir alan (durum ya da not) gerekli.", {
+      fields: [...new Set(body.error.issues.map((i) => i.path.join(".") || "body"))],
+    });
   }
-
-  const patch: Record<string, unknown> = {};
-  if (body.status !== undefined) {
-    if (typeof body.status !== "string" || !(REQUEST_STATUSES as readonly string[]).includes(body.status)) {
-      return NextResponse.json({ error: "invalid_status" }, { status: 400 });
-    }
-    patch.status = body.status;
-  }
-  if (body.adminNote !== undefined) {
-    if (typeof body.adminNote !== "string" || body.adminNote.length > 4000) {
-      return NextResponse.json({ error: "invalid_note" }, { status: 400 });
-    }
-    patch.admin_note = body.adminNote.trim() || null;
-  }
-  if (Object.keys(patch).length === 0) {
-    return NextResponse.json({ error: "nothing_to_update" }, { status: 400 });
-  }
-  patch.handled_by = admin.user_id;
-  patch.handled_at = new Date().toISOString();
+  const patch = {
+    ...(body.data.status !== undefined ? { status: body.data.status } : {}),
+    ...(body.data.adminNote !== undefined ? { admin_note: body.data.adminNote.trim() || null } : {}),
+  };
 
   const supabase = createServiceRoleClient();
-  const { data, error } = await supabase
-    .from("service_requests")
-    .update(patch)
-    .eq("id", id)
-    .select(SELECT)
-    .maybeSingle();
-
-  if (error) {
-    console.error("[admin/requests] güncelleme hatası:", error.message);
-    return NextResponse.json({ error: "unavailable" }, { status: 503 });
+  const result = await updateRequest(supabase, guard.access, read, guard.admin.user_id, body.data.id, patch);
+  if (!result.ok) {
+    if (result.error === "not_found") return fail(404, "not_found", "Talep bulunamadı.");
+    if (result.error === "out_of_scope") {
+      return fail(403, "forbidden", "Bu talep güncelleme yetkinizin saha kapsamı dışında.", { reason: "out_of_scope" });
+    }
+    return unavailable();
   }
-  if (!data) return NextResponse.json({ error: "not_found" }, { status: 404 });
 
+  // Güncelleme uygulandı: audit her durumda yazılır (yeniden okuma başarısız olsa bile).
   const warnings = await auditLog(supabase, {
-    admin,
+    admin: guard.admin,
     action: "UPDATE",
     entity: "service_request",
-    entityId: id,
-    details: { status: patch.status ?? null, adminNoteChanged: body.adminNote !== undefined },
+    entityId: body.data.id,
+    details: { status: body.data.status ?? null, adminNoteChanged: body.data.adminNote !== undefined },
     ip: getClientIP(request),
   });
-
-  return NextResponse.json({ ok: true, item: data, warnings });
+  if (!result.item) {
+    return fail(503, "unavailable", "Güncelleme kaydedildi ancak güncel kayıt okunamadı. Listeyi yenileyin; işlemi tekrarlamayın.", { applied: true });
+  }
+  return ok(result.item, warnings);
 }

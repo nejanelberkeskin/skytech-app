@@ -1,13 +1,24 @@
 // Yönetim modülleri için genel PostgREST alt kümesi (web-brifler/29 ve sonraki sunucu paketleri).
 // Okuma: select (JSON yolu alias:col->>key / alias:col->key), eq/neq/in/gt/gte/lt/lte/is/or(ilike|eq), order, range,
 // limit, count/head, maybeSingle/single. Yazma: update/insert/delete(+select, delete count). Dizi (text[]) ve jsonb
-// kolonları gerçek kolon tipine göre yazılır. Her sorgu koşul ve parametreleriyle `log`a,
+// kolonları gerçek kolon tipine göre yazılır. Dönüşler PostgREST gibi: numeric → sayı, timestamptz → mikro saniyeli
+// ISO metin (UTC); ISO zaman değeriyle eşitlik timestamptz olarak karşılaştırılır (sürüm/CAS). Her sorgu koşul ve parametreleriyle `log`a,
 // her yazma `writes`a kaydedilir; `failTables` o tabloya giden her sorguyu, `failWhen({table, mode, cols})` true dönen
 // sorguyu hata ile düşürür. rpc isteğe bağlı taklit.
 const asJson = (value) => JSON.parse(JSON.stringify(value, (_k, v) => (typeof v === 'bigint' ? Number(v) : v)));
+/** '2026-09-29 19:28:01.577063+00' → '2026-09-29T19:28:01.577063+00:00' (PostgREST biçimi). */
+const pgTimestamp = (v) => String(v).replace(' ', 'T').replace(/([+-]\d{2})$/, '$1:00');
+const PARSERS = { parsers: { 1700: Number, 1184: pgTimestamp } };
+const ISO_TS = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/;
 
 export function adminClient(db, { failTables = [], failWhen = null, log = [], writes = [], rpc = null, afterQuery = null } = {}) {
   const fails = new Set(failTables);
+  let utc = null;
+  const sqlQuery = async (sql, params) => {
+    utc ??= db.exec("SET TIME ZONE 'UTC'");
+    await utc;
+    return db.query(sql, params, PARSERS);
+  };
   const types = new Map();
   const columnType = async (table, column) => {
     const key = `${table}.${column}`;
@@ -43,7 +54,10 @@ export function adminClient(db, { failTables = [], failWhen = null, log = [], wr
       throw new Error(`desteklenmeyen seçim: ${x}`);
     }).join(', ');
     const where = () => (st.where.length ? ` WHERE ${st.where.join(' AND ')}` : '');
-    const cmp = (c, op, v) => { st.where.push(`${col(c)}::text ${op} ${P(String(v))}::text`); return q; };
+    const cmp = (c, op, v) => {
+      st.where.push(typeof v === 'string' && ISO_TS.test(v) ? `${col(c)} ${op} ${P(v)}::timestamptz` : `${col(c)}::text ${op} ${P(String(v))}::text`);
+      return q;
+    };
     const run = async () => {
       const result = await execute();
       // Yarış sınaması: sorgu döndükten sonra test verisi değiştirilebilir (ör. kayıt başka sahaya taşınır).
@@ -59,12 +73,12 @@ export function adminClient(db, { failTables = [], failWhen = null, log = [], wr
           const whereSql = where();
           const sets = [];
           for (const [k, v] of Object.entries(st.values)) sets.push(`${k} = ${P(await toParam(table, k, v))}`);
-          const r = await db.query(`UPDATE ${table} SET ${sets.join(', ')}${whereSql} RETURNING ${st.rawCols ? st.cols : 'id'}`, st.params);
+          const r = await sqlQuery(`UPDATE ${table} SET ${sets.join(', ')}${whereSql} RETURNING ${st.rawCols ? st.cols : 'id'}`, st.params);
           return { data: asJson(r.rows), error: null, count: null };
         }
         if (st.mode === 'delete') {
           writes.push({ table, mode: 'delete', where: where(), params: [...st.params] });
-          const r = await db.query(`DELETE FROM ${table}${where()} RETURNING ${st.rawCols ? st.cols : 'id'}`, st.params);
+          const r = await sqlQuery(`DELETE FROM ${table}${where()} RETURNING ${st.rawCols ? st.cols : 'id'}`, st.params);
           return { data: st.rawCols ? asJson(r.rows) : null, error: null, count: st.count ? r.rows.length : null };
         }
         if (st.mode === 'insert') {
@@ -77,15 +91,15 @@ export function adminClient(db, { failTables = [], failWhen = null, log = [], wr
             for (const k of keys) cells.push(P(await toParam(table, k, r[k])));
             tuples.push(`(${cells.join(', ')})`);
           }
-          const r = await db.query(`INSERT INTO ${table} (${keys.join(', ')}) VALUES ${tuples.join(', ')} RETURNING ${st.rawCols ? st.cols : 'id'}`, st.params);
+          const r = await sqlQuery(`INSERT INTO ${table} (${keys.join(', ')}) VALUES ${tuples.join(', ')} RETURNING ${st.rawCols ? st.cols : 'id'}`, st.params);
           return { data: asJson(r.rows), error: null, count: null };
         }
         let count = null;
-        if (st.count) count = (await db.query(`SELECT count(*)::int AS c FROM ${table}${where()}`, st.params)).rows[0].c;
+        if (st.count) count = (await sqlQuery(`SELECT count(*)::int AS c FROM ${table}${where()}`, st.params)).rows[0].c;
         if (st.head) return { data: null, error: null, count };
         const sql = `SELECT ${st.cols} FROM ${table}${where()}${st.orders.length ? ` ORDER BY ${st.orders.join(', ')}` : ''}` +
           `${st.limit !== null ? ` LIMIT ${st.limit}` : ''}${st.offset !== null ? ` OFFSET ${st.offset}` : ''}`;
-        return { data: asJson((await db.query(sql, st.params)).rows), error: null, count };
+        return { data: asJson((await sqlQuery(sql, st.params)).rows), error: null, count };
       } catch (e) {
         return { data: null, error: { message: e.message, code: e.code, details: e.detail ?? null }, count: null };
       }

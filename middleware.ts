@@ -54,6 +54,7 @@ const PUBLIC_PAGE_PATTERNS: RegExp[] = [
   /^\/sertifika(\/.*)?$/,
   /^\/siparis(\/.*)?$/,
   /^\/cayma$/,
+  /^\/kendi-arazim$/,
   /^\/fatura(\/.*)?$/,
   /^\/tohum-topu(\/.*)?$/,
   /^\/tohumlarimiz(\/.*)?$/,

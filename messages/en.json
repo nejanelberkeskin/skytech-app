@@ -1310,6 +1310,74 @@
       "backToSites": "Back to Project Sites"
     }
   },
+  "ownLandPage": {
+    "breadcrumb": "My land",
+    "breadcrumbLabel": "Breadcrumb",
+    "eyebrow": "For landowners",
+    "title": "Drone seed ball release on your land",
+    "description": "Apply for your fire-affected, degraded or unused land; our team will assess the land and contact you.",
+    "apply": "Go to the application form",
+    "sites": "No land of your own? Take part in a Project Site",
+    "eligible": {
+      "title": "Who can apply?",
+      "note": "Applications must be made by the landowner or a person or organisation authorised to act in relation to the land.",
+      "individuals": "Individuals",
+      "companies": "Companies",
+      "cooperatives": "Cooperatives",
+      "municipalities": "Municipalities",
+      "institutions": "Other organisations"
+    },
+    "process": {
+      "title": "From application to fieldwork",
+      "application": {
+        "title": "Application",
+        "body": "Complete the form with your land and contact details."
+      },
+      "review": {
+        "title": "Initial assessment",
+        "body": "We assess suitability using the location and land details."
+      },
+      "planning": {
+        "title": "Planning",
+        "body": "A site visit is arranged if needed, and locally suitable species and a work plan are determined."
+      },
+      "offer": {
+        "title": "Proposal",
+        "body": "If the land is suitable, you receive a tailored proposal."
+      },
+      "release": {
+        "title": "Release and monitoring",
+        "body": "Seed balls are released by drone from November to March, and the land is monitored from April to September."
+      }
+    },
+    "information": {
+      "title": "What do we ask in the application?",
+      "location": "Location: province, district and a map link if available",
+      "area": "Approximate area",
+      "condition": "Land condition",
+      "ownership": "Ownership or authorisation status",
+      "timing": "Preferred timing",
+      "contact": "Contact details"
+    },
+    "free": "Applying is free and does not commit you to an order.",
+    "formTitle": "Application form",
+    "faq": {
+      "title": "Frequently asked questions",
+      "fee": {
+        "question": "Is there an application fee?",
+        "answer": "No. Applying is free and does not constitute an order."
+      },
+      "species": {
+        "question": "Which species are released?",
+        "answer": "Our team selects locally suitable species according to the climate and soil conditions of the land."
+      },
+      "season": {
+        "question": "When will the work take place?",
+        "answer": "Seed ball release is planned between November and March, subject to land suitability and the necessary permits."
+      }
+    },
+    "contact": "For your questions:"
+  },
   "authPages": {
     "home": "Skytech Green home",
     "linkError": "This link could not be verified in this browser. If your account is confirmed, sign in; otherwise request a new password reset link.",

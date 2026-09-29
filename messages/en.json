@@ -1213,11 +1213,11 @@
       },
       "success": {
         "title": "Request received",
-        "desc": "Our team will contact you within one business day.",
+        "desc": "Our team will review your request and get back to you using the contact details you provided.",
         "numberLabel": "Your request number",
         "copy": "Copy",
         "copied": "Copied",
-        "emailNote": "A confirmation e-mail was sent to {email}.",
+        "emailNote": "Your contact email: {email}. If the confirmation email does not arrive, contact us with your request number.",
         "nextTitle": "What happens next?",
         "next": [
           "We review your request.",
@@ -1400,6 +1400,12 @@
     "report": "Monitoring report (PDF)"
   },
   "orderStatusPage": {
+    "access": {
+      "pending": "Preparing order access in this browser. Please wait before refreshing the page or changing the language.",
+      "failed": "Order access could not be prepared in this browser. You can retry. If you refresh the page or change the language, you may need to reopen the order link in your email.",
+      "unavailable": "Order access could not be verified with this link. Reopen the order link in your email. If the problem persists, contact us with your order number.",
+      "retry": "Retry order access"
+    },
     "title": "Your order",
     "description": "View your order status, seed ball release schedule, documents and refund information.",
     "copy": "Copy order number",

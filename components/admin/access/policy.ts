@@ -25,6 +25,13 @@ const migrated: Record<string, Permission | readonly Permission[] | "self"> = {
 export function visibleModules(me: AdminMe | null): AdminModule[] {
   if (!me?.admin.isActive) return [];
   return ADMIN_MODULES.filter((mod) => {
+    for (const [path, permission] of [["/admin/birakma-siparisleri", "orders.read"], ["/admin/talepler", "requests.read"]]) {
+      if (mod.href === path) return !!me.permissions.find(p => p.key === permission)?.scopes.some(s =>
+        s.kind === "all" || s.kind === "assigned" || (s.kind === "sites" && s.siteIds.length > 0));
+    }
+    if (mod.href === "/admin/araziler") return !!me.permissions.find(p => p.key === "sites.read")?.scopes.some(s => s.kind === "all" || s.kind === "assigned" || (s.kind === "sites" && s.siteIds.length > 0));
+    if(mod.href === "/admin/birakma-partileri")return !!me.permissions.find(p=>p.key==="batches.read")?.scopes.some(s=>s.kind==="all"||s.kind==="assigned"||(s.kind==="sites"&&s.siteIds.length>0));
+    if(mod.href === "/admin/satis-ayarlari")return ["sales.pause","sales.resume","sales.pricing.manage","system.readiness.read"].some(key=>me.permissions.find(p=>p.key===key)?.scopes.some(s=>s.kind==="all"));
     const key = migrated[mod.id];
     if (key === "self") return true;
     if (key)

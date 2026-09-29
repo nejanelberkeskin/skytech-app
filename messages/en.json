@@ -1521,14 +1521,14 @@
       "title": "Confirm your withdrawal notice",
       "description": "This notice withdraws your order. The full amount you paid will be refunded within 14 days to the payment method you used.",
       "submit": "Confirm withdrawal notice",
-      "cancel": "Cancel",
+      "cancel": "Edit details",
       "submitting": "Sending…"
     },
     "success": {
       "title": "Your withdrawal notice has been received.",
       "receivedAt": "Received at",
       "refundDueOn": "The full amount will be refunded by {date}.",
-      "email": "A confirmation email acknowledging receipt of your notice has been sent to your email address."
+      "email": "If you do not receive a confirmation email, contact {email} with your order number."
     },
     "closed": {
       "title": "Online withdrawal form closed",

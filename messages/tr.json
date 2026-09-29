@@ -1559,14 +1559,14 @@
       "title": "Cayma bildiriminizi onaylayın",
       "description": "Bu bildirimle siparişinizden cayarsınız. Ödediğiniz bedelin tamamı 14 gün içinde ödemede kullandığınız araca iade edilir.",
       "submit": "Cayma bildirimini onayla",
-      "cancel": "Vazgeç",
+      "cancel": "Bilgileri düzenle",
       "submitting": "Gönderiliyor…"
     },
     "success": {
       "title": "Cayma bildiriminiz alındı.",
       "receivedAt": "Alınma zamanı",
       "refundDueOn": "Bedelin tamamı en geç {date} tarihine kadar iade edilir.",
-      "email": "Bildiriminizin ulaştığına dair teyit e-postası adresinize gönderildi."
+      "email": "Teyit e-postası ulaşmazsa sipariş numaranızla {email} adresine yazabilirsiniz."
     },
     "closed": {
       "title": "Çevrim içi cayma formu kapalı",

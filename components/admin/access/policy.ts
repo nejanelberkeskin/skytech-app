@@ -25,6 +25,7 @@ const migrated: Record<string, Permission | readonly Permission[] | "self"> = {
 export function visibleModules(me: AdminMe | null): AdminModule[] {
   if (!me?.admin.isActive) return [];
   return ADMIN_MODULES.filter((mod) => {
+    if (mod.href === "/admin/araziler") return !!me.permissions.find(p => p.key === "sites.read")?.scopes.some(s => s.kind === "all" || s.kind === "assigned" || (s.kind === "sites" && s.siteIds.length > 0));
     const key = migrated[mod.id];
     if (key === "self") return true;
     if (key)

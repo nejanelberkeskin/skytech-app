@@ -1,11 +1,18 @@
 "use client";
 
-import { adminFetch } from "@/lib/admin/client";
+import { useAdmin } from "@/lib/admin-context";
+import { Link } from "@/i18n/navigation";
+import { containDialogTab } from "@/lib/hooks/dialog-keyboard";
+import { accessRequest } from "@/components/admin/access/transport";
+import { AdminApiError, errorText } from "@/components/admin/operations/client";
+import type { SiteAdminItem as Land, SiteAdminListDto, SiteMutationDto, SiteSpeciesOption as SpeciesOption } from "@/lib/sites/admin-dto";
+import type { ApiWarning } from "@/lib/api/envelope";
+import { siteAccessKey, statusAllowed } from "@/components/admin/sites/view";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import RoleGuard from "@/components/RoleGuard";
 import { CardStat, Button, Input, Select, Textarea } from "@/components/ui";
-import type { Land } from "@/lib/types";
+
 import { TR_ILLER_ALFABETIK } from "@/lib/tr-iller";
 import { WORK_TYPES, type WorkType } from "@/lib/sites/types";
 import { slugify } from "@/lib/sites/slug";
@@ -29,13 +36,7 @@ import {
    tohum topu sayısı gösterilmez.
    ═══════════════════════════════════════════════════════════════════════ */
 
-interface SpeciesOption {
-  slug: string;
-  name: string;
-  latin_name: string | null;
-}
-
-type ModalMode = "add" | "edit" | "delete" | null;
+type ModalMode = "add" | "edit" | "delete" | "publish" | null;
 
 interface SiteForm {
   name: string;
@@ -91,7 +92,7 @@ const num = (v: string): number | null => {
   return Number.isFinite(n) ? n : NaN;
 };
 const hectares = (l: Land): number | null => {
-  const n = typeof l.area_hectares === "string" ? Number(l.area_hectares) : l.area_hectares;
+  const n = typeof l.areaHectares === "string" ? Number(l.areaHectares) : l.areaHectares;
   return typeof n === "number" && Number.isFinite(n) && n > 0 ? n : null;
 };
 
@@ -103,21 +104,21 @@ function formFromLand(l: Land): SiteForm {
     province: l.province ?? l.region ?? "",
     district: l.district ?? "",
     area_hectares: ha !== null ? String(ha).replace(".", ",") : "",
-    is_fire_affected: l.is_fire_affected ?? false,
-    fire_year: l.fire_year ? String(l.fire_year) : "",
-    work_type: l.work_type ?? "ormanlastirma_genclestirme",
-    species_slugs: l.species_slugs ?? [],
-    name_en: l.name_i18n?.en ?? "",
-    name_ru: l.name_i18n?.ru ?? "",
-    summary_tr: l.summary_i18n?.tr ?? "",
-    summary_en: l.summary_i18n?.en ?? "",
-    summary_ru: l.summary_i18n?.ru ?? "",
-    cover_image: l.cover_image ?? "",
-    video_url: l.video_url ?? "",
-    sort_order: String(l.sort_order ?? 0),
+    is_fire_affected: l.isFireAffected ?? false,
+    fire_year: l.fireYear ? String(l.fireYear) : "",
+    work_type: l.workType ?? "ormanlastirma_genclestirme",
+    species_slugs: l.speciesSlugs ?? [],
+    name_en: l.nameI18n?.en ?? "",
+    name_ru: l.nameI18n?.ru ?? "",
+    summary_tr: l.summaryI18n?.tr ?? "",
+    summary_en: l.summaryI18n?.en ?? "",
+    summary_ru: l.summaryI18n?.ru ?? "",
+    cover_image: l.coverImage ?? "",
+    video_url: l.videoUrl ?? "",
+    sort_order: String(l.sortOrder ?? 0),
     status: l.status,
-    is_public: l.is_public,
-    capacity_seeds: String(l.capacity_seeds),
+    is_public: l.isPublic,
+    capacity_seeds: String(l.capacity.total),
   };
 }
 
@@ -148,7 +149,7 @@ function payloadFromForm(f: SiteForm) {
 }
 
 function StatusBadge({ land }: { land: Land }) {
-  if (!land.is_public) {
+  if (!land.isPublic) {
     return (
       <span className="text-xs font-medium px-2.5 py-1 rounded-full ring-1 ring-orange-500/40 bg-orange-500/10 text-orange-400">
         Yayında değil
@@ -172,139 +173,75 @@ function StatusBadge({ land }: { land: Land }) {
 
 // ── Ana bileşen ───────────────────────────────────────────────────────────────
 function SahalarContent() {
-  const [lands, setLands] = useState<Land[]>([]);
-  const [species, setSpecies] = useState<SpeciesOption[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [loadError, setLoadError] = useState<string | null>(null);
-  const [modalMode, setModalMode] = useState<ModalMode>(null);
-  const [selectedLand, setSelectedLand] = useState<Land | null>(null);
+  const { refresh } = useAdmin();
+  const state = useRef({ alive: false, generation: 0, busy: false });
+  const [data, setData] = useState<SiteAdminListDto | null>(null);
+  const lands = data?.items ?? [], species = data?.species ?? [];
+  const [loading, setLoading] = useState(true), [loadError, setLoadError] = useState<string | null>(null);
+  const [modalMode, setModalMode] = useState<ModalMode>(null), [selectedLand, setSelectedLand] = useState<Land | null>(null);
   const [form, setForm] = useState<SiteForm>(EMPTY_FORM);
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false), [blocked, setBlocked] = useState(false);
+  const [error, setError] = useState<string | null>(null), [success, setSuccess] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
-
+  const [warnings, setWarnings] = useState<ApiWarning[]>([]);
   const load = useCallback(async () => {
-    setLoading(true);
-    setLoadError(null);
+    const generation = ++state.current.generation;
+    setLoading(true); setLoadError(null); setData(null);
     try {
-      const res = await adminFetch("/api/admin/lands?include=species");
-      const data = await res.json();
-      if (!res.ok) throw new Error(data?.error ?? "Sahalar yüklenemedi.");
-      setLands(Array.isArray(data.lands) ? (data.lands as Land[]) : []);
-      setSpecies(Array.isArray(data.species) ? (data.species as SpeciesOption[]) : []);
+      const { data } = await accessRequest<SiteAdminListDto>("/api/admin/lands?include=species");
+      if (!state.current.alive || generation !== state.current.generation) return;
+      if (!Array.isArray(data?.items) || !data.capabilities || !data.scope || !data.mfa) throw new Error("Saha yanıtı okunamadı.");
+      setData(data); setBlocked(false);
     } catch (e) {
-      setLoadError(e instanceof Error ? e.message : "Sahalar yüklenemedi.");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    void load();
-  }, [load]);
-
-  const speciesName = (slug: string) => species.find((s) => s.slug === slug)?.name ?? slug;
-
-  // ── Modal açma/kapama ─────────────────────────────────────────────────────
-  const resetErrors = () => {
-    setError(null);
-    setFieldErrors({});
-  };
-  const openAdd = () => {
-    setSelectedLand(null);
-    setForm({ ...EMPTY_FORM, sort_order: String(lands.length * 10) });
-    resetErrors();
-    setModalMode("add");
-  };
-  const openEdit = (l: Land) => {
-    setSelectedLand(l);
-    setForm(formFromLand(l));
-    resetErrors();
-    setModalMode("edit");
-  };
-  const openDelete = (l: Land) => {
-    setSelectedLand(l);
-    resetErrors();
-    setModalMode("delete");
-  };
-  const closeModal = () => {
-    setModalMode(null);
-    setSelectedLand(null);
-    resetErrors();
-  };
-
-  // ── Kaydet (ekle / düzenle) ───────────────────────────────────────────────
-  const handleSave = async () => {
-    const payload = payloadFromForm(form);
-    // Ön doğrulama — sunucuyla aynı şema; hatalı alanlar hemen işaretlenir.
-    const pre = siteAdminSchema.safeParse(payload);
-    if (!pre.success) {
-      setFieldErrors(siteFieldErrors(pre.error.issues));
-      setError("Lütfen işaretli alanları kontrol edin.");
-      return;
-    }
-    setSaving(true);
-    resetErrors();
+      if (!state.current.alive || generation !== state.current.generation) return;
+      setLoadError(errorText(e));
+      if (e instanceof AdminApiError && [401, 403].includes(e.status)) void refresh();
+    } finally { if (state.current.alive && generation === state.current.generation) setLoading(false); }
+  }, [refresh]);
+  useEffect(() => { const token = state.current; token.alive = true; void load(); return () => { token.alive = false; token.generation++; }; }, [load]);
+  const speciesName = (slug: string) => species.find(s => s.slug === slug)?.name ?? slug;
+  const resetErrors = () => { setError(null); setFieldErrors({}); };
+  const closeModal = () => { if (state.current.busy) return; setModalMode(null); setSelectedLand(null); resetErrors(); };
+  const reload = () => { closeModal(); void load(); };
+  const openAdd = () => { if (!data?.capabilities.create || blocked) return; setSelectedLand(null); setForm({ ...EMPTY_FORM, is_public: false, sort_order: String(lands.length * 10) }); resetErrors(); setModalMode("add"); };
+  const openEdit = (land: Land) => { setSelectedLand(land); setForm(formFromLand(land)); resetErrors(); setModalMode("edit"); };
+  const openDelete = (land: Land) => { setSelectedLand(land); resetErrors(); setModalMode("delete"); };
+  const togglePublished = (land: Land) => { setSelectedLand(land); resetErrors(); setModalMode("publish"); };
+  const mutate = async (method: string, body: object) => {
+    if (state.current.busy || blocked) return;
+    state.current.busy = true; setSaving(true); resetErrors(); setSuccess(null);
     try {
-      const res = await adminFetch("/api/admin/lands", {
-        method: modalMode === "add" ? "POST" : "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(modalMode === "add" ? payload : { id: selectedLand?.id, ...payload }),
-      });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok) {
-        setFieldErrors(data.fields ?? {});
-        setError(data.error ?? "Kaydedilemedi.");
-        return;
-      }
-      await load();
-      closeModal();
-    } catch {
-      setError("Bağlantı hatası; kaydedilemedi.");
-    } finally {
-      setSaving(false);
-    }
+      const result = await accessRequest<SiteMutationDto | { deleted: true; id: string }>("/api/admin/lands", method, body);
+      if (!state.current.alive) return;
+      if (method === "DELETE" ? !("deleted" in result.data && result.data.deleted && result.data.id === selectedLand?.id) : !("site" in result.data && result.data.site?.id && (method === "POST" || result.data.site.id === selectedLand?.id) && Array.isArray(result.data.changed))) throw new Error("İşlem sonucu doğrulanamadı. Tekrar göndermeden önce listeyi yenileyin.");
+      setWarnings(previous => [...previous, ...result.warnings]);
+      setSuccess(method === "DELETE" ? "Saha silindi." : "Saha bilgileri kaydedildi.");
+      setModalMode(null); setSelectedLand(null); await load();
+    } catch (e) {
+      if (!state.current.alive) return;
+      setError(errorText(e));
+      if (e instanceof AdminApiError && e.details?.fields && typeof e.details.fields === "object") setFieldErrors(Object.fromEntries(Object.entries(e.details.fields).filter((pair): pair is [string, string] => typeof pair[1] === "string")));
+      const editable = e instanceof AdminApiError && ["invalid_body", "slug_taken"].includes(e.code);
+      setBlocked(!editable);
+      if (e instanceof AdminApiError && [401,403,404].includes(e.status) && e.code !== "mfa_required") { setModalMode(null); setSelectedLand(null); setData(null); void refresh(); }
+    } finally { state.current.busy = false; if (state.current.alive) setSaving(false); }
   };
-
-  // ── Yayından al / yayına al ───────────────────────────────────────────────
-  const togglePublished = async (l: Land) => {
-    const res = await adminFetch("/api/admin/lands", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id: l.id, maintenance: l.is_public }),
-    });
-    if (res.ok) await load();
+  const handleSave = async () => {
+    const payload = payloadFromForm(form), pre = siteAdminSchema.safeParse(payload);
+    if (!pre.success) { setFieldErrors(siteFieldErrors(pre.error.issues)); setError("Lütfen işaretli alanları kontrol edin."); return; }
+    await mutate(modalMode === "add" ? "POST" : "PUT", modalMode === "add" ? payload : { id: selectedLand?.id, ...payload });
   };
-
-  // ── Sil ───────────────────────────────────────────────────────────────────
-  const handleDelete = async () => {
-    if (!selectedLand) return;
-    setSaving(true);
-    setError(null);
-    const res = await adminFetch("/api/admin/lands", {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id: selectedLand.id }),
-    });
-    const data = await res.json().catch(() => ({}));
-    setSaving(false);
-    if (!res.ok) {
-      setError(data.error ?? "Silinemedi.");
-      return;
-    }
-    await load();
-    closeModal();
-  };
-
+  const handleDelete = () => { if (selectedLand && data?.capabilities.delete) void mutate("DELETE", { id: selectedLand.id }); };
+  const editCaps = modalMode === "add" ? { edit: true, capacity: true, publish: !!data?.capabilities.createPublic } : selectedLand?.capabilities ?? { edit: false, capacity: false, publish: false };
   // ── Metrikler ─────────────────────────────────────────────────────────────
-  const published = lands.filter((l) => l.is_public && l.status !== "closed");
+  const published = lands.filter((l) => l.isPublic && l.status !== "closed");
   const openCount = published.filter((l) => l.status === "open").length;
   const totalHectares = published.reduce((s, l) => s + (hectares(l) ?? 0), 0);
-  const totalFilled = lands.reduce((s, l) => s + l.filled_seeds, 0);
-  const missingInfo = published.filter((l) => hectares(l) === null || !(l.species_slugs ?? []).length).length;
+  const totalFilled = lands.reduce((s, l) => s + l.capacity.filled, 0);
+  const missingInfo = published.filter((l) => hectares(l) === null || !(l.speciesSlugs ?? []).length).length;
 
   return (
-    <div className="p-8 space-y-8">
+    <div className="p-4 md:p-8 space-y-8">
       {/* Başlık */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
@@ -313,21 +250,27 @@ function SahalarContent() {
             Vitrindeki saha kartlarını ve saha sayfalarını buradan yönetirsiniz. Kapasite yalnız bu ekranda görünür.
           </p>
         </div>
-        <Button variant="primary" onClick={openAdd}>
+        {data?.capabilities.create && <Button variant="primary" disabled={blocked || saving || loading} onClick={openAdd}>
           + Yeni Saha Ekle
-        </Button>
+        </Button>}
+        <Button variant="secondary" disabled={saving || loading} onClick={reload}>Listeyi yenile</Button>
       </div>
 
+      {data && <p className="text-sm text-slate-300">{data.scope.kind === "all" ? "Kapsam: tüm sahalar" : `Kapsam: yetkili olduğunuz ${data.scope.siteIds.length} saha`}</p>}
+      {(blocked || (data?.mfa.enforced && !data.mfa.satisfied && (data.capabilities.create || data.items.some(s => s.capabilities.publish || s.capabilities.capacity)))) && <div className="rounded-xl border border-amber-400/30 p-4 text-sm text-amber-100 space-y-3"><p>{blocked ? "İşlem yeniden gönderilmeyecek. Güncel kayıtları yüklemek için listeyi yenileyin." : "Yayın ve kapasite değişiklikleri için yeniden doğrulama gerekir."}</p><Link href="/admin/guvenlik" target="_blank" rel="noopener noreferrer" className="underline">Hesap güvenliğini aç (yeni sekme)</Link><p>Doğrulamadan sonra listeyi yenileyip işlemi yeniden seçin.</p></div>}
+      {success && <p role="status" className="text-emerald-200">{success}</p>}
+      {warnings.map((w,i) => <p role="alert" key={i} className="text-amber-100">{w.message} İşlemi tekrar göndermeyin.</p>)}
+      {error && !modalMode && <p role="alert" className="text-red-200">{error}</p>}
       {/* Özet */}
-      <div className="grid md:grid-cols-4 gap-5">
+      {data && <div className="grid md:grid-cols-4 gap-5">
         <CardStat icon="🗺️" label="Yayındaki Saha" value={fmt(published.length)} sub={`${fmt(openCount)} katılıma açık`} />
         <CardStat icon="📐" label="Toplam Alan" value={totalHectares.toLocaleString("tr-TR", { maximumFractionDigits: 2 })} sub="hektar (yayındaki sahalar)" />
-        <CardStat icon="🌱" label="Bırakılan Tohum Topu" value={fmt(totalFilled)} sub="tüm sahalar" />
+        <CardStat icon="🌱" label="Bırakılan Tohum Topu" value={fmt(totalFilled)} sub="görüntüleme kapsamındaki sahalar" />
         <CardStat icon="⚠️" label="Eksik Bilgi" value={fmt(missingInfo)} sub="hektarı ya da türü girilmemiş" />
-      </div>
+      </div>}
 
       {loadError && (
-        <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-sm text-red-400">{loadError}</div>
+        <div role="alert" className="p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-sm text-red-400">{loadError}</div>
       )}
 
       {/* Saha tablosu */}
@@ -335,7 +278,7 @@ function SahalarContent() {
         <div className="flex justify-center py-16">
           <div className="w-8 h-8 border-2 border-white/[0.08] border-t-emerald-500 rounded-full animate-spin" />
         </div>
-      ) : (
+      ) : data ? (
         <div className="bg-[var(--bg-surface)] border border-white/[0.06] rounded-2xl overflow-hidden">
           <div className="px-5 py-4 border-b border-white/[0.06] flex items-center justify-between">
             <h2 className="font-semibold text-white text-sm">Tüm Sahalar</h2>
@@ -346,16 +289,16 @@ function SahalarContent() {
             <div className="p-12 text-center">
               <span className="text-4xl block mb-3">🌿</span>
               <p className="text-slate-400 mb-4">Henüz saha eklenmemiş.</p>
-              <Button variant="primary" onClick={openAdd}>İlk Sahayı Ekle</Button>
+              {data.capabilities.create && <Button variant="primary" disabled={blocked} onClick={openAdd}>İlk Sahayı Ekle</Button>}
             </div>
           ) : (
             <div className="divide-y divide-white/[0.04]">
               {lands.map((l) => {
-                const used = l.filled_seeds + l.reserved_seeds;
-                const pct = l.capacity_seeds > 0 ? Math.round((used / l.capacity_seeds) * 100) : 0;
+                const used = l.capacity.filled + l.capacity.reserved;
+                const pct = l.capacity.total > 0 ? Math.round((used / l.capacity.total) * 100) : 0;
                 const ha = hectares(l);
                 const place = [l.district, l.province ?? l.region].filter(Boolean).join(", ");
-                const speciesList = (l.species_slugs ?? []).map(speciesName);
+                const speciesList = (l.speciesSlugs ?? []).map(speciesName);
                 return (
                   <div key={l.id} className="px-5 py-4 grid gap-4 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1.3fr)_minmax(0,1fr)_auto] lg:items-center hover:bg-white/[0.02] transition-colors">
                     {/* Saha */}
@@ -386,13 +329,13 @@ function SahalarContent() {
                         ) : (
                           <span className="text-amber-400">girilmemiş</span>
                         )}
-                        {l.is_fire_affected && (
-                          <span className="ml-2 text-orange-300">🔥 Yangın Sahası{l.fire_year ? ` · ${l.fire_year}` : ""}</span>
+                        {l.isFireAffected && (
+                          <span className="ml-2 text-orange-300">🔥 Yangın Sahası{l.fireYear ? ` · ${l.fireYear}` : ""}</span>
                         )}
                       </p>
                       <p>
                         <span className="text-slate-500">Çalışma:</span>{" "}
-                        <span className="text-slate-200">{WORK_TYPE_LABELS[l.work_type ?? "ormanlastirma_genclestirme"]}</span>
+                        <span className="text-slate-200">{WORK_TYPE_LABELS[l.workType ?? "ormanlastirma_genclestirme"]}</span>
                       </p>
                       <p className="break-words">
                         <span className="text-slate-500">Tür:</span>{" "}
@@ -416,34 +359,35 @@ function SahalarContent() {
                         <span className="text-xs text-slate-400 shrink-0">%{pct}</span>
                       </div>
                       <p className="text-xs text-slate-500 mt-1.5">
-                        {fmt(l.filled_seeds)} bırakılan + {fmt(l.reserved_seeds)} ayrılan / {fmt(l.capacity_seeds)}
+                        {fmt(l.capacity.filled)} bırakılan + {fmt(l.capacity.reserved)} ayrılan / {fmt(l.capacity.total)}
                       </p>
                     </div>
 
                     {/* İşlemler */}
-                    <div className="flex items-center gap-2">
-                      <button
+                    <div className="flex flex-wrap items-center gap-2">
+                      {(l.capabilities.edit || l.capabilities.capacity) && <button disabled={saving || blocked}
+
                         onClick={() => openEdit(l)}
                         className="text-xs text-slate-300 hover:text-white transition-colors px-3 py-2 rounded-lg hover:bg-white/[0.06] border border-white/[0.06]"
                       >
                         Düzenle
-                      </button>
-                      <button
+                      </button>}
+                      {l.capabilities.publish && <button disabled={saving || blocked}
                         onClick={() => togglePublished(l)}
                         className={`text-xs transition-colors px-3 py-2 rounded-lg border ${
-                          l.is_public
+                          l.isPublic
                             ? "text-orange-400 border-orange-500/20 hover:bg-orange-500/10"
                             : "text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/10"
                         }`}
                       >
-                        {l.is_public ? "Yayından al" : "Yayına al"}
-                      </button>
-                      <button
+                        {l.isPublic ? "Yayından al" : "Yayına al"}
+                      </button>}
+                      {data.capabilities.delete && <button disabled={saving || blocked}
                         onClick={() => openDelete(l)}
                         className="text-xs text-red-400/70 hover:text-red-400 transition-colors px-3 py-2 rounded-lg hover:bg-red-500/10 border border-red-500/[0.15]"
                       >
                         Sil
-                      </button>
+                      </button>}
                     </div>
                   </div>
                 );
@@ -451,7 +395,7 @@ function SahalarContent() {
             </div>
           )}
         </div>
-      )}
+       ) : null}
 
       {/* ── Modallar ─────────────────────────────────────────────────────── */}
       {(modalMode === "add" || modalMode === "edit") && (
@@ -465,11 +409,13 @@ function SahalarContent() {
           saving={saving}
           error={error}
           fieldErrors={fieldErrors}
+          caps={editCaps} original={selectedLand} blocked={blocked} onReload={reload}
         />
       )}
 
+      {modalMode === "publish" && selectedLand && <SiteDialog title="Yayın durumunu değiştir" busy={saving} onClose={closeModal}><h2 className="font-semibold text-white">{selectedLand.name}</h2><p className="text-slate-300 my-4">{selectedLand.isPublic ? "Saha yayından alınacak ve yeni sipariş kabulü duracak." : "Saha yayına alınacak. Katılıma açık evredeyse yeni sipariş kabul edilecek."}</p>{error && <p role="alert" className="text-red-200">{error}</p>}{blocked && <Recovery onReload={reload} />}<div className="flex gap-3 mt-4"><Button disabled={saving} onClick={closeModal} variant="ghost">Vazgeç</Button><Button disabled={saving || blocked} onClick={() => void mutate("PUT", { id: selectedLand.id, maintenance: selectedLand.isPublic })}>Onayla</Button></div></SiteDialog>}
       {modalMode === "delete" && selectedLand && (
-        <DeleteModal land={selectedLand} onConfirm={handleDelete} onClose={closeModal} saving={saving} error={error} />
+        <DeleteModal land={selectedLand} onConfirm={handleDelete} onClose={closeModal} saving={saving} error={error} blocked={blocked} onReload={reload} />
       )}
     </div>
   );
@@ -485,8 +431,9 @@ function SiteModal({
   onClose,
   saving,
   error,
-  fieldErrors,
+  fieldErrors, caps, original, blocked, onReload,
 }: {
+  caps: Land["capabilities"]; original: Land | null; blocked: boolean; onReload: () => void;
   mode: "add" | "edit";
   form: SiteForm;
   setForm: (f: SiteForm) => void;
@@ -506,14 +453,7 @@ function SiteModal({
   const slugPreview = form.slug.trim() || slugify(form.name) || "saha-adi";
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center p-4 overflow-y-auto">
-      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
-      <div
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="site-modal-title"
-        className="relative my-8 bg-[var(--bg-elevated)] border border-white/[0.08] rounded-2xl p-6 w-full max-w-3xl shadow-2xl animate-scale-in"
-      >
+    <SiteDialog title={mode === "add" ? "Yeni Saha Ekle" : "Sahayı Düzenle"} busy={saving} onClose={onClose}>
         <h2 id="site-modal-title" className="text-lg font-bold text-white mb-1">
           {mode === "add" ? "Yeni Saha Ekle" : "Sahayı Düzenle"}
         </h2>
@@ -521,9 +461,9 @@ function SiteModal({
           Buradaki bilgiler vitrindeki saha kartında ve saha sayfasında görünür. Boş bıraktığınız alan vitrinde gizlenir.
         </p>
 
-        <div className="space-y-7">
+        <fieldset disabled={saving || blocked} className="space-y-7">
           {/* 1 · Temel */}
-          <Section title="Temel bilgiler">
+          <Section disabled={!caps.edit} title="Temel bilgiler">
             <Input
               label="Saha adı"
               required
@@ -568,7 +508,7 @@ function SiteModal({
           </Section>
 
           {/* 2 · Saha bilgisi */}
-          <Section title="Saha bilgisi">
+          <Section disabled={!caps.edit} title="Saha bilgisi">
             <div className="grid sm:grid-cols-2 gap-4">
               <Input
                 label="Alan (hektar)"
@@ -632,7 +572,7 @@ function SiteModal({
                         }`}
                       >
                         {s.name}
-                        {s.latin_name && <span className="ml-1.5 italic text-slate-500">{s.latin_name}</span>}
+                        {s.latinName && <span className="ml-1.5 italic text-slate-500">{s.latinName}</span>}
                       </button>
                     );
                   })}
@@ -652,6 +592,7 @@ function SiteModal({
           <Section title="Yayın ve kapasite">
             <div className="grid sm:grid-cols-3 gap-4">
               <Select
+                disabled={!caps.edit && !caps.publish}
                 label="Evre"
                 value={form.status}
                 onChange={(e) => set("status", e.target.value as LandStatus)}
@@ -659,10 +600,11 @@ function SiteModal({
                 helperText="Yalnız “Katılıma açık” sahalar talep alır."
               >
                 {LAND_STATUSES.map((s) => (
-                  <option key={s} value={s}>{LAND_STATUS_LABELS[s]}</option>
+                  <option key={s} value={s} disabled={!!original && !statusAllowed(original, s)}>{LAND_STATUS_LABELS[s]}</option>
                 ))}
               </Select>
               <Input
+                disabled={!caps.capacity}
                 label="Kapasite (tohum topu)"
                 required
                 inputMode="numeric"
@@ -673,6 +615,7 @@ function SiteModal({
                 helperText="Vitrinde gösterilmez; doluluk denetimi içindir."
               />
               <Input
+                disabled={!caps.edit}
                 label="Sıra"
                 inputMode="numeric"
                 value={form.sort_order}
@@ -682,6 +625,7 @@ function SiteModal({
               />
             </div>
             <Toggle
+              disabled={!caps.publish}
               label="Yayında"
               desc="Kapalıysa saha vitrinde listelenmez ve talep alınmaz."
               checked={form.is_public}
@@ -690,7 +634,7 @@ function SiteModal({
           </Section>
 
           {/* 4 · Tanıtım ve çeviriler */}
-          <Section title="Tanıtım ve çeviriler" hint="Boş bırakılan dilde Türkçe ad gösterilir; tanıtım yoksa o bölüm hiç çıkmaz.">
+          <Section disabled={!caps.edit} title="Tanıtım ve çeviriler" hint="Boş bırakılan dilde Türkçe ad gösterilir; tanıtım yoksa o bölüm hiç çıkmaz.">
             <div className="grid sm:grid-cols-2 gap-4">
               <Input
                 label="İngilizce ad"
@@ -727,7 +671,7 @@ function SiteModal({
           </Section>
 
           {/* 5 · Görsel ve video */}
-          <Section title="Görsel ve video">
+          <Section disabled={!caps.edit} title="Görsel ve video">
             <Input
               label="Kapak görseli"
               placeholder="/images/sahalar/canakkale.webp ya da https://…"
@@ -745,7 +689,7 @@ function SiteModal({
               helperText="Bırakmadan yaklaşık altı ay sonra yayımlanan herkese açık video."
             />
           </Section>
-        </div>
+        </fieldset>
 
         {error && (
           <div role="alert" className="mt-6 p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-sm text-red-400">
@@ -753,26 +697,26 @@ function SiteModal({
           </div>
         )}
 
+        {blocked && <Recovery onReload={onReload} />}
         <div className="flex gap-3 mt-6">
-          <Button variant="ghost" onClick={onClose} className="flex-1">
+          <Button variant="ghost" disabled={saving} onClick={onClose} className="flex-1">
             İptal
           </Button>
-          <Button variant="primary" onClick={onSave} disabled={saving || !form.name.trim() || !form.capacity_seeds} className="flex-1">
+          <Button variant="primary" onClick={onSave} disabled={saving || blocked || !form.name.trim() || !form.capacity_seeds} className="flex-1">
             {saving ? "Kaydediliyor…" : mode === "add" ? "Sahayı Ekle" : "Değişiklikleri Kaydet"}
           </Button>
         </div>
-      </div>
-    </div>
+    </SiteDialog>
   );
 }
 
-function Section({ title, hint, children }: { title: string; hint?: string; children: React.ReactNode }) {
+function Section({ title, hint, children, disabled }: { title: string; hint?: string; children: React.ReactNode; disabled?: boolean }) {
   return (
-    <section>
+    <fieldset disabled={disabled}>
       <h3 className="text-xs font-bold uppercase tracking-[0.16em] text-emerald-400/80 mb-1">{title}</h3>
       {hint && <p className="text-xs text-slate-500 mb-3">{hint}</p>}
       <div className={`space-y-4 ${hint ? "" : "mt-3"}`}>{children}</div>
-    </section>
+    </fieldset>
   );
 }
 
@@ -780,10 +724,11 @@ function Toggle({
   label,
   desc,
   checked,
-  onChange,
+  onChange, disabled,
 }: {
   label: string;
   desc: string;
+  disabled?: boolean;
   checked: boolean;
   onChange: (v: boolean) => void;
 }) {
@@ -795,6 +740,7 @@ function Toggle({
       </div>
       <button
         type="button"
+        disabled={disabled}
         role="switch"
         aria-checked={checked}
         aria-label={label}
@@ -819,24 +765,19 @@ function DeleteModal({
   onConfirm,
   onClose,
   saving,
-  error,
+  error, blocked, onReload,
 }: {
+  blocked: boolean; onReload: () => void;
   land: Land;
   onConfirm: () => void;
   onClose: () => void;
   saving: boolean;
   error: string | null;
 }) {
-  const hasRecords = land.filled_seeds > 0 || land.reserved_seeds > 0;
+  const hasRecords = land.capacity.filled > 0 || land.capacity.reserved > 0;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
-      <div
-        role="dialog"
-        aria-modal="true"
-        className="relative bg-[var(--bg-elevated)] border border-white/[0.08] rounded-2xl p-6 w-full max-w-md shadow-2xl animate-scale-in"
-      >
+    <SiteDialog title="Sahayı Sil" busy={saving} onClose={onClose}>
         <div className="flex items-start gap-4">
           <span className="text-3xl shrink-0">🗑️</span>
           <div>
@@ -848,7 +789,7 @@ function DeleteModal({
 
             {hasRecords && (
               <div className="mt-3 p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-xs text-red-400">
-                ⚠️ Bu sahada {fmt(land.filled_seeds)} bırakılmış ve {fmt(land.reserved_seeds)} ayrılmış tohum topu kaydı var; silinemez.
+                ⚠️ Bu sahada {fmt(land.capacity.filled)} bırakılmış ve {fmt(land.capacity.reserved)} ayrılmış tohum topu kaydı var; silinemez.
                 Bunun yerine “Yayından al” düğmesini kullanın.
               </div>
             )}
@@ -861,24 +802,32 @@ function DeleteModal({
           </div>
         )}
 
+        {blocked && <Recovery onReload={onReload} />}
         <div className="flex gap-3 mt-6">
-          <Button variant="ghost" onClick={onClose} className="flex-1">
+          <Button variant="ghost" disabled={saving} onClick={onClose} className="flex-1">
             Vazgeç
           </Button>
-          <Button variant="danger" onClick={onConfirm} disabled={saving || hasRecords} className="flex-1">
+          <Button variant="danger" onClick={onConfirm} disabled={saving || blocked || hasRecords} className="flex-1">
             {saving ? "Siliniyor…" : "Evet, Sil"}
           </Button>
         </div>
-      </div>
-    </div>
+    </SiteDialog>
   );
 }
 
 // ── Export ────────────────────────────────────────────────────────────────────
 export default function SahalarPage() {
+  const { me } = useAdmin();
   return (
     <RoleGuard path="/admin/araziler">
-      <SahalarContent />
+      <SahalarContent key={siteAccessKey(me)} />
     </RoleGuard>
   );
+}
+
+function Recovery({ onReload }: { onReload: () => void }) { return <div className="space-y-3 border border-amber-400/30 rounded-xl p-3 my-4 text-sm text-amber-100"><p>İşlem otomatik tekrarlanmayacak. Yeniden doğrulama gerekiyorsa hesap güvenliğini açın; ardından güncel kayıtları yükleyip işlemi yeniden seçin.</p><Link href="/admin/guvenlik" target="_blank" rel="noopener noreferrer" className="underline">Hesap güvenliği (yeni sekme)</Link><Button variant="secondary" onClick={onReload}>Güncel kayıtları yükle</Button></div>; }
+function SiteDialog({ title, busy, onClose, children }: { title: string; busy: boolean; onClose: () => void; children: React.ReactNode }) {
+ const ref = useRef<HTMLDialogElement>(null);
+ useEffect(() => { const el=ref.current, previous=document.activeElement instanceof HTMLElement ? document.activeElement : null; el?.showModal(); return () => { el?.close(); if(previous?.isConnected)previous.focus(); }; }, []);
+ return <dialog ref={ref} aria-label={title} aria-busy={busy} onKeyDown={containDialogTab} onCancel={e => { if(busy)e.preventDefault();else onClose(); }} className="m-auto w-[calc(100%-1rem)] max-w-3xl max-h-[92dvh] overflow-y-auto rounded-2xl bg-[#0b1410] border border-white/15 p-4 sm:p-6 text-white backdrop:bg-black/70">{children}</dialog>;
 }

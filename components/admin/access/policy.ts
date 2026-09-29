@@ -25,6 +25,7 @@ const migrated: Record<string, Permission | readonly Permission[] | "self"> = {
 export function visibleModules(me: AdminMe | null): AdminModule[] {
   if (!me?.admin.isActive) return [];
   return ADMIN_MODULES.filter((mod) => {
+    if(mod.href === "/admin/satis-ayarlari")return ["sales.pause","sales.resume","sales.pricing.manage","system.readiness.read"].some(key=>me.permissions.find(p=>p.key===key)?.scopes.some(s=>s.kind==="all"));
     const key = migrated[mod.id];
     if (key === "self") return true;
     if (key)

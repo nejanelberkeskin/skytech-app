@@ -1,8 +1,15 @@
 "use client";
 
-import { adminFetch } from "@/lib/admin/client";
+import { useAdmin } from "@/lib/admin-context";
+import { Link } from "@/i18n/navigation";
+import { accessRequest } from "./access/transport";
+import { AdminApiError, errorText } from "./operations/client";
+import type { SalesSettingsDto as SettingsResponse, SalesSettingsMutationDto } from "@/lib/sales/admin-dto";
+import type { ReadinessItem } from "@/lib/orders/readiness";
+import type { ApiWarning } from "@/lib/api/envelope";
+import { validSalesResult } from "./sales/view";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, useRef } from "react";
 import { Button, Input, Select } from "@/components/ui";
 import { formatCount, formatTry } from "@/lib/pricing";
 import {
@@ -18,39 +25,13 @@ import {
 } from "@/lib/orders/settings-schema";
 
 /* ═══════════════════════════════════════════════════════════════════════
-   Admin — Satış Ayarları formu (sayfa: /admin/satis-ayarlari, yalnız SUPER_ADMIN)
+   Admin — Satış Ayarları formu (sayfa: /admin/satis-ayarlari, izin gruplarına göre)
    ═══════════════════════════════════════════════════════════════════════
    Birim bedel, adet sınırları, hazır seçenekler, KDV, fatura zamanı,
    hazırlık payı ve ödeme süresi. Kaydedilen değerler sihirbazda ve sitede
    hemen geçerli olur; oluşturulmuş siparişler kendi tutarı ve belgeleriyle
    sürer. Başkası aynı anda kaydettiyse üzerine yazılmaz (409).
    ═══════════════════════════════════════════════════════════════════════ */
-
-interface HistoryItem {
-  by: string | null;
-  at: string;
-  changes: { field: string; from: unknown; to: unknown }[];
-}
-
-interface ReadinessItem {
-  key: string;
-  level: "ok" | "warning" | "blocker";
-  label: string;
-  detail: string;
-}
-
-interface SettingsResponse {
-  readiness?: { accepting: boolean; environment: string; items: ReadinessItem[] };
-  settings: SalesSettings | null;
-  rawSettings: Record<string, unknown>;
-  fieldErrors?: Record<string, string>;
-  repairRequired?: boolean;
-  updatedAt: string;
-  defaults: SalesSettings;
-  quoteVersion: string | null;
-  openCheckouts: number;
-  history: HistoryItem[];
-}
 
 type Form = Record<"price" | "vat" | "min" | "max" | "presets" | "prep" | "ttl", string> & {
   timing: InvoiceTiming | "";
@@ -107,14 +88,6 @@ const ERROR_TEXT: Record<string, string> = {
   presetsOrder: "Hazır seçenekleri küçükten büyüğe, her birini bir kez yazın.",
   maxBelowMin: "En çok adet, en az adetten küçük olamaz.",
   vatDecimals: "KDV oranında en fazla iki ondalık basamak olabilir.",
-};
-
-const SERVER_ERRORS: Record<string, string> = {
-  conflict: "Ayarlar siz düzenlerken başka bir yönetici tarafından değiştirildi. Güncel değerler yüklendi; değişikliğinizi yeniden yapın.",
-  unavailable: "Şu anda kaydedilemiyor; yeniden deneyin.",
-  invalid_body: "Eksik ya da hatalı bilgi.",
-  repair_requires_pause: "Önce geçersiz ayarları satış kapalıyken düzeltin. Satışı sonra ayrı bir işlemle açabilirsiniz.",
-  validation: "Bazı alanlar geçersiz; işaretli kutulara bakın.",
 };
 
 /* ── Metin ⇄ sayı ─────────────────────────────────────────────────────────── */
@@ -206,19 +179,19 @@ function valueText(field: string, value: unknown): string {
 }
 
 /** Değişikliğin sonuçları — onay penceresinde gösterilir. */
-function consequences(changes: SettingsChange[], openCheckouts: number): string[] {
+function consequences(changes: SettingsChange[], openCheckouts: number | undefined): string[] {
   const has = (f: keyof SalesSettings) => changes.some((c) => c.field === f);
   const out: string[] = [];
   const pause = changes.find((c) => c.field === "ordersPaused");
   if (pause?.to === true) {
     out.push(
-      `Yeni sipariş ve ödeme alınmaz; sihirbaz talep kipinde açılır ve müşteriye kısa bir açıklama gösterir. Ödeme bekleyen siparişler (şu an ${openCheckouts}) ödenemez, süresi dolunca düşer ve ayrılan kapasite geri verilir. Ödenmiş siparişler, iadeler ve partiler etkilenmez.`,
+      `Yeni sipariş ve ödeme alınmaz; sihirbaz talep kipinde açılır ve müşteriye kısa bir açıklama gösterir. Ödeme bekleyen siparişler (${openCheckouts === undefined ? "sayısını görüntüleme yetkiniz yok" : `şu an ${openCheckouts}`}) ödenemez, süresi dolunca düşer ve ayrılan kapasite geri verilir. Ödenmiş siparişler, iadeler ve partiler etkilenmez.`,
     );
   }
   if (pause?.to === false) out.push("Sipariş ve ödeme yeniden alınır.");
   if (changes.some((c) => QUOTE_FIELDS.includes(c.field))) {
     out.push(
-      `Sihirbazın son adımındaki müşteriler güncel ${has("prepDays") ? "tutarı ve takvimi" : "tutarı"} görüp siparişi yeniden onaylar. Oluşturulmuş siparişler (şu an ${openCheckouts} ödeme bekleyen dâhil) kendi tutarı ve belgeleriyle sürer.`,
+      `Sihirbazın son adımındaki müşteriler güncel ${has("prepDays") ? "tutarı ve takvimi" : "tutarı"} görüp siparişi yeniden onaylar. Oluşturulmuş siparişler (${openCheckouts === undefined ? "sayısını görüntüleme yetkiniz yok" : `şu an ${openCheckouts}`} ödeme bekleyen dâhil) kendi tutarı ve belgeleriyle sürer.`,
     );
   }
   if (has("unitPriceKurus") || has("vatRate")) {
@@ -242,44 +215,38 @@ const LEVEL_STYLE: Record<ReadinessItem["level"], { icon: string; className: str
 };
 const ENVIRONMENT_LABEL: Record<string, string> = { production: "canlı site", preview: "önizleme", development: "yerel geliştirme" };
 
-const when = (iso: string) => new Date(iso).toLocaleString("tr-TR", { dateStyle: "medium", timeStyle: "short" });
+const when = (iso: string) => new Date(iso).toLocaleString("tr-TR", { dateStyle: "medium", timeStyle: "short", timeZone: "Europe/Istanbul" });
 
 export default function SalesSettingsForm() {
   const [data, setData] = useState<SettingsResponse | null>(null);
   const [form, setForm] = useState<Form | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
-  const [confirming, setConfirming] = useState<{ next: SalesSettings; changes: SettingsChange[] } | null>(null);
+  const [confirming, setConfirming] = useState<{ next?: SalesSettings; ordersPaused?: boolean; changes: SettingsChange[] } | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (success) { const t = setTimeout(() => setSuccess(null), 6000); return () => clearTimeout(t); }
-  }, [success]);
-
-  const load = useCallback(async (keepMessage = false) => {
+  const { refresh } = useAdmin();
+  const state = useRef({alive:false,generation:0,busy:false});
+  const reviewPanel=useRef<HTMLDivElement>(null),feedback=useRef<HTMLDivElement>(null);
+  useEffect(()=>{if(confirming){reviewPanel.current?.focus();reviewPanel.current?.scrollIntoView({block:"center"});}},[confirming]);
+  const [blocked,setBlocked]=useState(false),[warnings,setWarnings]=useState<ApiWarning[]>([]);
+  const load = useCallback(async (keepMessage=false) => {
+    const generation=++state.current.generation;setLoading(true);setData(null);setForm(null);setConfirming(null);setBlocked(true);
     try {
-      const res = await adminFetch("/api/admin/sales-settings", { cache: "no-store" });
-      if (!res.ok) throw new Error(String(res.status));
-      const json = (await res.json()) as SettingsResponse;
-      setData(json);
-      setForm(json.settings ? toForm(json.settings) : repairForm(json.rawSettings));
-      setFieldErrors(formErrors(json.fieldErrors ?? {}));
-      setConfirming(null);
-      if (!keepMessage) setError(null);
-    } catch {
-      setError("Ayarlar yüklenemedi.");
-    }
-    setLoading(false);
-  }, []);
-  useEffect(() => { load(); }, [load]);
-
-  const setPaused = (value: boolean) => {
-    setForm((f) => (f ? { ...f, paused: value } : f));
-    setConfirming(null);
+      const {data:json}=await accessRequest<SettingsResponse>("/api/admin/sales-settings");
+      if(!state.current.alive||generation!==state.current.generation)return;
+      if(!Array.isArray(json?.groups)||!json.capabilities||!json.mfa)throw new Error("Ayar yanıtı okunamadı.");
+      setData(json);setForm(json.settings?(json.settings.values?toForm(json.settings.values):repairForm(json.settings.raw)):null);setFieldErrors(formErrors(json.settings?.fieldErrors??{}));setBlocked(false);if(!keepMessage)setError(null);
+    }catch(e){if(!state.current.alive||generation!==state.current.generation)return;setError(errorText(e));if(e instanceof AdminApiError&&[401,403].includes(e.status))void refresh();}
+    finally{if(state.current.alive&&generation===state.current.generation)setLoading(false);}
+  },[refresh]);
+  useEffect(()=>{const token=state.current;token.alive=true;void load();return()=>{token.alive=false;token.generation++;};},[load]);
+  const reviewState = (ordersPaused:boolean) => {
+    if(!data?.state || blocked || saving || data.state.repairRequired || !(ordersPaused?data.capabilities.pause:data.capabilities.resume))return;
+    setConfirming({ordersPaused,changes:[{field:"ordersPaused",from:data.state.ordersPaused,to:ordersPaused}]});
   };
-
   const set = (key: keyof Form, value: string) => {
     setForm((f) => (f ? { ...f, [key]: value } : f));
     setFieldErrors((e) => {
@@ -308,7 +275,7 @@ export default function SalesSettingsForm() {
   };
 
   const review = () => {
-    if (!form || !data) return;
+    if (!form || !data?.settings || !data.state || !data.capabilities.pricing || blocked || saving) return;
     const candidate = fromForm(form);
     const parsed = salesSettingsSchema.safeParse(candidate);
     if (!parsed.success) {
@@ -316,7 +283,7 @@ export default function SalesSettingsForm() {
       setConfirming(null);
       return;
     }
-    const changes = diffSettings(data.settings ?? data.rawSettings, parsed.data);
+    const changes = diffSettings(data.settings.values ?? data.settings.raw, parsed.data);
     if (changes.length === 0) {
       setSuccess("Değişiklik yok.");
       return;
@@ -325,29 +292,22 @@ export default function SalesSettingsForm() {
   };
 
   const save = async () => {
-    if (!confirming || !data) return;
-    setSaving(true);
-    setError(null);
+    if(!confirming||!data?.state||state.current.busy||blocked)return;
+    state.current.busy=true;setSaving(true);setError(null);setSuccess(null);
+    const body={...(confirming.next?{settings:confirming.next}:{ordersPaused:confirming.ordersPaused}),expectedUpdatedAt:data.state.updatedAt};
     try {
-      const res = await adminFetch("/api/admin/sales-settings", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ settings: confirming.next, expectedUpdatedAt: data.updatedAt }),
-      });
-      const json = (await res.json().catch(() => ({}))) as { error?: string; fields?: Record<string, string> };
-      if (res.ok) {
-        setSuccess("Ayarlar kaydedildi; sihirbazda ve sitede geçerli.");
-        await load();
-      } else {
-        setError(SERVER_ERRORS[json.error ?? ""] ?? "Kaydedilemedi.");
-        if (json.fields) setFieldErrors(mapErrors(json.fields));
-        if (json.error === "conflict") await load(true);
-        setConfirming(null);
-      }
-    } catch {
-      setError("Bağlantı kurulamadı.");
-    }
-    setSaving(false);
+      const result=await accessRequest<SalesSettingsMutationDto>("/api/admin/sales-settings","PUT",body);
+      if(!state.current.alive)return;
+      if(!validSalesResult(result.data))throw new Error("Kayıt sonucu doğrulanamadı. Tekrar göndermeden önce güncel ayarları yükleyin.");
+      setWarnings(w=>[...w,...result.warnings]);setSuccess("Değişiklik kaydedildi. Güncel durum sunucudan yükleniyor.");setConfirming(null);await load();
+    }catch(e){
+      if(!state.current.alive)return;
+      setError(errorText(e));setConfirming(null);
+      if(e instanceof AdminApiError&&e.details?.fields&&typeof e.details.fields==="object")setFieldErrors(mapErrors(Object.fromEntries(Object.entries(e.details.fields).filter((pair):pair is [string,string]=>typeof pair[1]==="string"))));
+      const editable=e instanceof AdminApiError&&["validation","invalid_body","repair_requires_pause"].includes(e.code);setBlocked(!editable);
+      if(e instanceof AdminApiError&&e.code==="conflict")await load(true);
+      else if(e instanceof AdminApiError&&[401,403].includes(e.status)&&e.code!=="mfa_required"){setData(null);setForm(null);void refresh();}
+    }finally{state.current.busy=false;if(state.current.alive){setSaving(false);feedback.current?.focus();feedback.current?.scrollIntoView({block:"center"});}}
   };
 
   const preview = useMemo(() => {
@@ -360,7 +320,7 @@ export default function SalesSettingsForm() {
     return { min, total, vat: Math.round((total * vat) / (100 + vat)), rate: vat };
   }, [form]);
 
-  // İletiler kaydet düğmesinin yanında durur (sayfa uzun; üstte kalsa görülmez) ve duyurulur.
+  // Kayıt sonucu odağa alınır; uzun formda geri bildirim kaybolmaz.
   const messages = (
     <>
       {success && <div role="status" className="bg-emerald-500/10 ring-1 ring-emerald-500/30 text-emerald-400 px-4 py-3 rounded-xl text-sm">✅ {success}</div>}
@@ -371,7 +331,7 @@ export default function SalesSettingsForm() {
   const vatUnusual = form ? !KNOWN_VAT_RATES.some((r) => r === parseRate(form.vat)) && Number.isFinite(parseRate(form.vat)) : false;
 
   return (
-    <div className="p-8 space-y-6 max-w-4xl">
+    <div className="p-4 md:p-8 space-y-6 max-w-4xl">
       <div>
         <h1 className="text-2xl font-bold text-white">Satış Ayarları</h1>
         <p className="text-sm text-slate-400 mt-1">
@@ -380,15 +340,19 @@ export default function SalesSettingsForm() {
         </p>
       </div>
 
-      {!data && messages}
+      <Button variant="secondary" disabled={saving||loading} onClick={()=>void load()}>Güncel ayarları yükle</Button>
+      <div ref={feedback} tabIndex={-1} className="outline-none">{messages}</div>
+      {warnings.map((w,i)=><p role="alert" key={i} className="text-amber-100 text-sm">{w.message} İşlemi tekrar göndermeyin.</p>)}
+      {blocked&&!loading&&<p className="text-amber-100 text-sm">Sonuç belirsiz veya yetki değişti. İşlem kapalı; güncel ayarları yükleyin.</p>}
+      {data?.mfa.enforced&&!data.mfa.satisfied&&(data.capabilities.resume||data.capabilities.pricing)&&<div className="text-sm text-amber-100 border border-amber-400/30 rounded-xl p-4"><p>Yeniden açma ve fiyat değişiklikleri yeniden doğrulama gerektirir. Durdurma için doğrulama gerekmez. Doğrulamadan sonra güncel ayarları yükleyip işlemi yeniden seçin.</p><Link href="/admin/guvenlik" target="_blank" rel="noopener noreferrer" className="underline">Hesap güvenliği (yeni sekme)</Link></div>}
 
       {loading && !data ? (
         <div className="flex items-center justify-center py-20">
           <div className="w-8 h-8 border-2 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin" />
         </div>
-      ) : !data || !form ? null : (
+      ) : !data ? null : (
         <>
-          {data.repairRequired && <div role="alert" className="rounded-xl border border-amber-400/40 bg-amber-500/10 p-4 text-sm text-amber-100">
+          {data.state?.repairRequired && <div role="alert" className="rounded-xl border border-amber-400/40 bg-amber-500/10 p-4 text-sm text-amber-100">
             Kayıtlı ayarlarda geçersiz alanlar var; yeni sipariş alımı kapalı. İşaretli alanları düzeltip kaydedin.
             Onarım satış kapalıyken yapılır; yeniden açmak ayrı bir işlemdir.
           </div>}
@@ -408,7 +372,8 @@ export default function SalesSettingsForm() {
                     <span>
                       <span className="sr-only">{LEVEL_STYLE[item.level].sr}: </span>
                       <span className="text-slate-200">{item.label}</span>
-                      <span className="block text-xs text-slate-500">{item.detail}</span>
+                      <span className="block text-xs text-slate-400">{item.detail}</span>
+                      <span className="grid sm:grid-cols-3 gap-2 mt-2 text-xs text-slate-300"><span>Yapılandırma: {item.configured?"Tanımlı":"Eksik"}</span><span>Doğrulama: {item.verification===null?"Bu madde için uygulanmaz":({verified:"Doğrulandı",not_verified:"Henüz doğrulanmadı",failed:"Başarısız",unknown:"Bilinmiyor"}[item.verification])}</span><span>Son sonuç: {item.lastResult?`${when(item.lastResult.at)} · ${item.lastResult.source==="provider"?(item.lastResult.ok?"Sağlayıcı kabul etti; teslim kanıtı değil":"Sağlayıcı hatası"):`${item.lastResult.source==="cron"?"Zamanlayıcı":"Elle çalıştırma"} · ${item.lastResult.ok?"başarılı":"başarısız"}`}`:"Kayıt yok"}</span></span>
                     </span>
                   </li>
                 ))}
@@ -416,43 +381,10 @@ export default function SalesSettingsForm() {
             </section>
           )}
 
-          {data.settings && <div className="bg-white/[0.03] ring-1 ring-white/[0.08] rounded-2xl p-5 text-sm text-slate-300 space-y-1">
-            <p>
-              <span className="text-slate-400">Şu an geçerli:</span>{" "}
-              <span className="text-white font-medium">{formatTry(data.settings.unitPriceKurus, "tr")}</span> / tohum topu (KDV dâhil) ·
-              en az {formatCount(data.settings.minQuantity, "tr")} · KDV %{rateText(data.settings.vatRate)} · hazırlık payı {data.settings.prepDays} gün
-            </p>
-            {data.settings.ordersPaused && (
-              <p className="text-red-300 font-semibold">⏸ Çevrim içi sipariş alımı şu anda DURDURULDU.</p>
-            )}
-            <p className="text-xs text-slate-500">
-              Son kayıt: {when(data.updatedAt)} · Teklif sürümü <code className="text-slate-400">{data.quoteVersion}</code> · Ödeme bekleyen sipariş: {data.openCheckouts}
-            </p>
-          </div>}
-
-          <section
-            className={`rounded-2xl p-5 space-y-3 border ${form.paused ? "bg-red-500/[0.06] border-red-500/30" : "bg-[var(--bg-surface)] border-white/[0.06]"}`}
-          >
-            <h2 className="font-semibold text-white text-sm">Sipariş alımı</h2>
-            <label className="flex items-start gap-3 cursor-pointer">
-              <input
-                type="checkbox"
-                disabled={data.repairRequired}
-                checked={form.paused}
-                onChange={(e) => setPaused(e.target.checked)}
-                className="mt-0.5 h-4 w-4 accent-red-500"
-                aria-describedby="siparis-alimi-aciklama"
-              />
-              <span>
-                <span className="block text-sm text-white font-medium">Çevrim içi sipariş alımını durdur</span>
-                <span id="siparis-alimi-aciklama" className="block text-xs text-slate-400 mt-1">
-                  Durdurulunca yeni sipariş ve ödeme alınmaz; sihirbaz talep kipinde açılır ve müşteriye kısa bir açıklama
-                  gösterir. Ödenmiş siparişler, iadeler ve partiler etkilenmez. Satış bayrağı ve hukuki metin kilidi ayrıca geçerlidir.
-                </span>
-              </span>
-            </label>
-          </section>
-
+          {data.state && <section className="rounded-xl border border-white/10 p-4 space-y-3"><h2 className="font-semibold text-white">Sipariş alımı</h2><p className="text-sm text-slate-200">{data.state.ordersPaused ? "Çevrim içi sipariş alımı durduruldu." : "Panelde sipariş alımı açık."} {data.state.accepting ? "Şu anda yeni sipariş kabul ediliyor." : "Diğer yayın koşulları nedeniyle de sipariş alımı kapalı olabilir."}</p><p className="text-xs text-slate-400">Son kayıt: {when(data.state.updatedAt)}</p>{!data.state.ordersPaused&&data.capabilities.pause&&<Button variant="danger" disabled={saving||blocked||data.state.repairRequired} onClick={()=>reviewState(true)}>Sipariş alımını durdur</Button>}{data.state.ordersPaused&&data.capabilities.resume&&<Button disabled={saving||blocked||data.state.repairRequired} onClick={()=>reviewState(false)}>Sipariş alımını yeniden aç</Button>}</section>}
+          {data.openCheckouts!==undefined&&<p className="text-sm text-slate-300">Ödeme bekleyen sipariş: {data.openCheckouts}</p>}
+          {data.settings?.values && <div className="bg-white/[0.03] ring-1 ring-white/[0.08] rounded-2xl p-5 text-sm text-slate-300 space-y-1"><p>Şu an geçerli: {formatTry(data.settings.values.unitPriceKurus,"tr")} / tohum topu (KDV dahil) · en az {formatCount(data.settings.values.minQuantity,"tr")} · KDV %{rateText(data.settings.values.vatRate)}</p><p className="text-xs text-slate-400">Teklif sürümü: {data.settings.quoteVersion}</p></div>}
+          {form && data.settings && data.capabilities.pricing && <fieldset disabled={saving||blocked} className="space-y-6">
           <section className="bg-[var(--bg-surface)] border border-white/[0.06] rounded-2xl p-5 space-y-4">
             <h2 className="font-semibold text-white text-sm">Fiyat</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -523,10 +455,11 @@ export default function SalesSettingsForm() {
             </div>
           </section>
 
-          {messages}
+          {!confirming && <div className="flex gap-3 flex-wrap"><Button variant="primary" onClick={review}>Değişiklikleri gözden geçir</Button><Button variant="ghost" onClick={()=>{setForm(data.settings?.values?toForm(data.settings.values):repairForm(data.settings?.raw??{}));setFieldErrors(formErrors(data.settings?.fieldErrors??{}));}}>Formu sıfırla</Button><Button variant="ghost" onClick={()=>{if(data.settings)setForm(toForm({...data.settings.defaults,ordersPaused:data.state?.ordersPaused??true}));setFieldErrors({});}}>Varsayılanları yükle</Button></div>}
+          </fieldset>}
 
           {confirming ? (
-            <div className="bg-amber-500/[0.06] ring-1 ring-amber-500/30 rounded-2xl p-5 space-y-4">
+            <div ref={reviewPanel} tabIndex={-1} role="region" aria-label="Değişiklik onayı" className="bg-amber-500/[0.06] ring-1 ring-amber-500/30 rounded-2xl p-5 space-y-4 outline-none">
               <h2 className="text-sm font-semibold text-amber-200">Bu değişiklikler kaydedilecek</h2>
               <ul className="text-sm text-slate-200 space-y-1">
                 {confirming.changes.map((c) => (
@@ -539,19 +472,13 @@ export default function SalesSettingsForm() {
                 {consequences(confirming.changes, data.openCheckouts).map((line) => <li key={line}>{line}</li>)}
               </ul>
               <div className="flex gap-3 flex-wrap">
-                <Button variant="primary" loading={saving} onClick={save}>Kaydet</Button>
+                <Button variant="primary" loading={saving} disabled={blocked} onClick={save}>Kaydet</Button>
                 <Button variant="ghost" disabled={saving} onClick={() => setConfirming(null)}>Vazgeç</Button>
               </div>
             </div>
-          ) : (
-            <div className="flex gap-3 flex-wrap">
-              <Button variant="primary" onClick={review}>Değişiklikleri gözden geçir</Button>
-              <Button variant="ghost" onClick={() => { setForm(data.settings ? toForm(data.settings) : repairForm(data.rawSettings)); setFieldErrors(formErrors(data.fieldErrors ?? {})); }}>Formu sıfırla</Button>
-              <Button variant="ghost" onClick={() => { setForm(toForm({ ...data.defaults, ordersPaused: data.repairRequired || data.defaults.ordersPaused })); setFieldErrors({}); }}>Varsayılanları yükle</Button>
-            </div>
-          )}
+          ) : null}
 
-          <section className="space-y-2">
+          {data.history && <section className="space-y-2">
             <h2 className="font-semibold text-white text-sm">Son değişiklikler</h2>
             {data.history.length === 0 ? (
               <p className="text-sm text-slate-500">Bu ekrandan henüz değişiklik yapılmadı.</p>
@@ -567,7 +494,7 @@ export default function SalesSettingsForm() {
                 ))}
               </ul>
             )}
-          </section>
+          </section>}
         </>
       )}
     </div>

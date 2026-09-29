@@ -30,6 +30,7 @@ export function visibleModules(me: AdminMe | null): AdminModule[] {
         s.kind === "all" || s.kind === "assigned" || (s.kind === "sites" && s.siteIds.length > 0));
     }
     if (mod.href === "/admin/araziler") return !!me.permissions.find(p => p.key === "sites.read")?.scopes.some(s => s.kind === "all" || s.kind === "assigned" || (s.kind === "sites" && s.siteIds.length > 0));
+    if(mod.href === "/admin/birakma-partileri")return !!me.permissions.find(p=>p.key==="batches.read")?.scopes.some(s=>s.kind==="all"||s.kind==="assigned"||(s.kind==="sites"&&s.siteIds.length>0));
     const key = migrated[mod.id];
     if (key === "self") return true;
     if (key)

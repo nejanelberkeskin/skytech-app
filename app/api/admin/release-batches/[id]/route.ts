@@ -1,57 +1,94 @@
-import { after, NextRequest, NextResponse } from "next/server";
+import { after, type NextRequest } from "next/server";
 import { z } from "zod";
 import { createServiceRoleClient } from "@/lib/supabase/server";
-import { requireAdmin, getClientIP } from "@/lib/admin-auth";
+import { getClientIP } from "@/lib/admin-auth";
+import { mfaEnforced, mfaSatisfied, requireAdminAccess, requirePermission, type Permission } from "@/lib/admin/permissions";
+import { onlyAssigned, permissionScope, scopeCovers } from "@/lib/admin/record-scope";
+import { evaluatePermissionSet, permissionSetResponse } from "@/lib/admin/permission-set";
 import { auditLog } from "@/lib/admin/audit";
+import { fail, ok, unavailable } from "@/lib/api/envelope";
 import { publicOrigin } from "@/lib/mail";
+import { loadBatchDetail, loadBatchRow, loadBatchSummary, sourceOrders } from "@/lib/batches/admin-read";
 import { assignOrders, completeRelease, deleteBatch, unassignOrder, updateBatch, type BatchError } from "@/lib/orders/batches";
 import { sendPendingCertificateEmails } from "@/lib/orders/certificates";
 import { publishBatchVideo, sendPendingVideoEmails } from "@/lib/orders/jobs";
 
 /**
- * Admin — Bırakma partisi (ayrıntı + işlemler)
+ * Admin — Bırakma partisi (ayrıntı + işlemler). Sözleşme: web-brifler/31.
  *
- * GET    → { batch, orders, candidates }   candidates: aynı saha + sezon, kesinleşmiş, partisiz
- * PATCH  { title?, plannedOn?, notes?, monitoringReportUrl? }
- * POST   { action:"assign", orderIds[] } | { action:"unassign", orderId } | { action:"release", releasedOn }
- *        | { action:"publish_video", videoUrl }   — yalnız bırakılmış parti; ilk yayımda müşterilere bildirim gider
- * DELETE → yalnız boş ve bırakılmamış parti
+ * GET    → Ok<BatchDetailDto>                                   batches.read
+ * PATCH  { title?, plannedOn?, notes?, monitoringReportUrl? } → Ok<{ batch, changed }>
+ *        Yalnız değişen alanlar: plan alanları batches.plan; izleme raporu herkese açık → monitoring.publish (MFA).
+ * POST   { action:"assign", orderIds[] }   batches.assign — parti ve her kaynak sipariş kapsamda
+ *        { action:"unassign", orderId }    batches.assign — sipariş BU partide olmalı
+ *        { action:"release", releasedOn }  batches.release (MFA) — GERİ ALINAMAZ
+ *        { action:"publish_video", videoUrl } monitoring.publish (MFA) — ilk yayımda müşterilere bildirim
+ * DELETE → yalnız boş parti                                     batches.plan
  *
- * "release" GERİ ALINAMAZ: siparişler `released` olur, kapasite kalıcıya geçer, fatura kuyruğu dolar,
- * Katılım Sertifikaları düzenlenir ve müşterilere bildirilir (yanıtı bekletmeden; kalanı zamanlanmış iş tamamlar).
+ * Her izin partinin sahasını kapsamalı. Ret kararı iş servisi ve e-posta çağrısından önce verilir.
+ * İş kuralları ve atomiklik lib/orders/batches.ts'dedir (değişmedi).
  */
-const VIEW_ROLES = ["SUPER_ADMIN", "OPERATIONS", "FINANCE"] as const;
-const MANAGE_ROLES = ["SUPER_ADMIN", "OPERATIONS"] as const;
-const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+export const dynamic = "force-dynamic";
 
-const ORDER_COLUMNS = "id, order_no, status, is_test, quantity, total_kurus, buyer_first_name, buyer_last_name, certificate_name, paid_at, confirmed_at, withdrawal_deadline, payment_meta";
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const uuid = z.string().regex(UUID);
 
-const STATUS_FOR: Record<BatchError, number> = { not_found: 404, invalid_state: 409, mismatch: 409, capacity_not_held: 409, invalid_date: 400, empty: 400, unavailable: 503 };
+const BATCH_ERROR: Record<BatchError, { status: number; message: string }> = {
+  not_found: { status: 404, message: "Parti ya da sipariş bulunamadı." },
+  invalid_state: { status: 409, message: "Parti ya da sipariş bu işlem için uygun durumda değil." },
+  mismatch: { status: 409, message: "Sipariş bu partinin sahasına ya da sezonuna ait değil." },
+  capacity_not_held: { status: 409, message: "Kapasitesi ayrılamamış sipariş partiye alınamaz." },
+  invalid_date: { status: 400, message: "Tarih geçersiz." },
+  empty: { status: 400, message: "Partide işlenecek sipariş yok." },
+  unavailable: { status: 503, message: "Veri alınamadı. Lütfen yeniden deneyin." },
+};
+const batchFail = (error: BatchError, detail?: string | null) =>
+  fail(BATCH_ERROR[error].status, error, BATCH_ERROR[error].message, detail ? { detail } : undefined);
+
+const unsupported = (permission: Permission) =>
+  fail(403, "scope_unsupported", "Parti yetkiniz yalnız kişiye atanmış işleri kapsıyor; partiler için atama modeli yok.", { permission });
 
 type Ctx = { params: Promise<{ id: string }> };
 
-export async function GET(request: NextRequest, { params }: Ctx) {
-  const { error: authError } = await requireAdmin(request, [...VIEW_ROLES]);
-  if (authError) return authError;
+/** Yazma uçları: oturum + parti okuma kapsamı + kimlik + kapsamdaki parti. */
+async function writableBatch(request: NextRequest, params: Ctx["params"]) {
+  const guard = await requireAdminAccess(request);
+  if (guard.error) return { error: guard.error } as const;
+  const read = permissionScope(guard.access, "batches.read");
+  if (!read) {
+    return {
+      error: onlyAssigned(guard.access, "batches.read")
+        ? unsupported("batches.read")
+        : fail(403, "forbidden", "Partileri okuma yetkiniz yok.", { reason: "missing_permission", permissions: ["batches.read"] }),
+    } as const;
+  }
   const { id } = await params;
-  if (!UUID_RE.test(id)) return NextResponse.json({ error: "invalid_id" }, { status: 400 });
+  if (!UUID.test(id)) return { error: fail(400, "invalid_id", "Geçersiz parti kimliği.") } as const;
+  return { guard, read, id } as const;
+}
 
-  const supabase = createServiceRoleClient();
-  const { data: batch, error } = await supabase.from("release_batches").select("*").eq("id", id).maybeSingle();
-  if (error) return NextResponse.json({ error: "unavailable" }, { status: 503 });
-  if (!batch) return NextResponse.json({ error: "not_found" }, { status: 404 });
+async function batchIn(read: NonNullable<ReturnType<typeof permissionScope>>, id: string) {
+  const db = createServiceRoleClient();
+  const batch = await loadBatchRow(db, read, id);
+  if (batch === null) return { error: unavailable() } as const;
+  if (batch === "not_found") return { error: fail(404, "not_found", "Parti bulunamadı.") } as const;
+  return { db, batch, landId: String(batch.land_id) } as const;
+}
 
-  const [orders, candidates, land] = await Promise.all([
-    supabase.from("release_orders").select(ORDER_COLUMNS).eq("batch_id", id).order("created_at", { ascending: true }),
-    batch.released_on
-      ? Promise.resolve({ data: [] })
-      : supabase.from("release_orders").select(ORDER_COLUMNS).eq("status", "confirmed").is("batch_id", null).eq("land_id", batch.land_id).eq("season_label", batch.season_label).order("confirmed_at", { ascending: true }).limit(500),
-    supabase.from("lands").select("name, capacity_seeds, filled_seeds, reserved_seeds").eq("id", batch.land_id).maybeSingle(),
-  ]);
+export async function GET(request: NextRequest, { params }: Ctx) {
+  const guard = await requirePermission(request, "batches.read", { scope: "any" });
+  if (guard.error) return guard.error;
+  const read = permissionScope(guard.access, "batches.read");
+  if (!read) return unsupported("batches.read");
+  const { id } = await params;
+  if (!UUID.test(id)) return fail(400, "invalid_id", "Geçersiz parti kimliği.");
 
-  const slim = (rows: Record<string, unknown>[] | null) =>
-    (rows ?? []).map(({ payment_meta, ...o }) => ({ ...o, capacity_held: (payment_meta as Record<string, unknown> | null)?.capacityHeld !== false }));
-  return NextResponse.json({ batch, land: land.data ?? null, orders: slim(orders.data as Record<string, unknown>[] | null), candidates: slim(candidates.data as Record<string, unknown>[] | null) });
+  const found = await batchIn(read, id);
+  if ("error" in found) return found.error;
+  const detail = await loadBatchDetail(found.db, {
+    access: guard.access, read, assurance: guard.assurance, enforced: mfaEnforced(), satisfied: (p) => mfaSatisfied(p, guard.assurance),
+  }, found.batch);
+  return detail ? ok(detail) : unavailable();
 }
 
 const patchSchema = z.object({
@@ -60,85 +97,154 @@ const patchSchema = z.object({
   notes: z.string().trim().max(2000).nullable().optional(),
   monitoringReportUrl: z.string().trim().max(500).regex(/^https:\/\/\S+$/).nullable().optional(),
 });
+const PATCH_COLUMN = { title: "title", plannedOn: "planned_on", notes: "notes", monitoringReportUrl: "monitoring_report_url" } as const;
+type PatchField = keyof typeof PATCH_COLUMN;
 
 export async function PATCH(request: NextRequest, { params }: Ctx) {
-  const { admin, error: authError } = await requireAdmin(request, [...MANAGE_ROLES]);
-  if (authError || !admin) return authError ?? NextResponse.json({ error: "unauthorized" }, { status: 401 });
-  const { id } = await params;
-  if (!UUID_RE.test(id)) return NextResponse.json({ error: "invalid_id" }, { status: 400 });
+  const ctx = await writableBatch(request, params);
+  if ("error" in ctx) return ctx.error;
   const parsed = patchSchema.safeParse(await request.json().catch(() => null));
-  if (!parsed.success) return NextResponse.json({ error: "invalid_body" }, { status: 400 });
+  if (!parsed.success) {
+    return fail(400, "invalid_body", "Geçersiz istek.", { fields: [...new Set(parsed.error.issues.map((i) => i.path.join(".") || "body"))] });
+  }
+  const found = await batchIn(ctx.read, ctx.id);
+  if ("error" in found) return found.error;
+  const { db, batch, landId } = found;
+  const { guard, id } = ctx;
 
-  const supabase = createServiceRoleClient();
-  const result = await updateBatch(
-    id,
-    { title: parsed.data.title, plannedOn: parsed.data.plannedOn, notes: parsed.data.notes, monitoringReportUrl: parsed.data.monitoringReportUrl },
-    supabase
-  );
-  if (!result.ok) return NextResponse.json({ error: result.error }, { status: STATUS_FOR[result.error] });
-  const warnings = await auditLog(supabase, { admin, action: "UPDATE", entity: "release_batch", entityId: id, details: parsed.data, ip: getClientIP(request) });
-  return NextResponse.json({ ok: true, batch: result.batch, warnings });
+  // Yalnız gerçekten değişen alanlar (panel formu hepsini gönderir). Boş metin null sayılır.
+  const norm = (v: unknown) => (typeof v === "string" && v !== "" ? v : null);
+  const changes: Partial<Record<PatchField, string | null>> = {};
+  for (const field of Object.keys(PATCH_COLUMN) as PatchField[]) {
+    const value = parsed.data[field];
+    if (value === undefined) continue;
+    if (norm(value) !== norm(batch[PATCH_COLUMN[field]])) changes[field] = norm(value);
+  }
+  const changed = Object.keys(changes) as PatchField[];
+  if (!changed.length) {
+    const caps = { plan: scopeCovers(permissionScope(guard.access, "batches.plan"), landId), publish: scopeCovers(permissionScope(guard.access, "monitoring.publish"), landId) };
+    if (!caps.plan && !caps.publish) return permissionSetResponse({ code: "forbidden", reason: "missing_permission", permissions: ["batches.plan"] });
+    const summary = await loadBatchSummary(db, guard.access, batch);
+    return summary ? ok({ batch: summary, changed: [] }) : unavailable();
+  }
+
+  const required = new Set<Permission>(changed.map((f) => (f === "monitoringReportUrl" ? "monitoring.publish" : "batches.plan")));
+  const denial = evaluatePermissionSet(guard.access, guard.assurance, [...required].map((permission) => ({ permission, target: { siteId: landId } })));
+  if (denial) return permissionSetResponse(denial);
+
+  const result = await updateBatch(id, changes, db);
+  if (!result.ok) return batchFail(result.error, result.detail);
+  const warnings = await auditLog(db, {
+    admin: guard.admin,
+    action: "UPDATE",
+    entity: "release_batch",
+    entityId: id,
+    details: {
+      changed,
+      ...("monitoringReportUrl" in changes ? { monitoringReportUrl: { from: batch.monitoring_report_url ?? null, to: changes.monitoringReportUrl ?? null } } : {}),
+    },
+    ip: getClientIP(request),
+  });
+  const summary = await loadBatchSummary(db, guard.access, result.batch as unknown as Record<string, unknown>);
+  if (!summary) {
+    return fail(503, "unavailable", "Parti güncellendi ancak güncel kayıt okunamadı. Yenileyin; işlemi tekrarlamayın.", { applied: true });
+  }
+  return ok({ batch: summary, changed }, warnings);
 }
 
 const actionSchema = z.discriminatedUnion("action", [
-  z.object({ action: z.literal("assign"), orderIds: z.array(z.uuid()).min(1).max(500) }),
-  z.object({ action: z.literal("unassign"), orderId: z.uuid() }),
+  z.object({ action: z.literal("assign"), orderIds: z.array(uuid).min(1).max(500) }),
+  z.object({ action: z.literal("unassign"), orderId: uuid }),
   z.object({ action: z.literal("release"), releasedOn: z.string().regex(/^\d{4}-\d{2}-\d{2}$/) }),
   z.object({ action: z.literal("publish_video"), videoUrl: z.string().trim().min(10).max(300) }),
 ]);
+const ACTION_PERMISSION: Record<z.infer<typeof actionSchema>["action"], Permission> = {
+  assign: "batches.assign",
+  unassign: "batches.assign",
+  release: "batches.release",
+  publish_video: "monitoring.publish",
+};
 
 export async function POST(request: NextRequest, { params }: Ctx) {
-  const { admin, error: authError } = await requireAdmin(request, [...MANAGE_ROLES]);
-  if (authError || !admin) return authError ?? NextResponse.json({ error: "unauthorized" }, { status: 401 });
-  const { id } = await params;
-  if (!UUID_RE.test(id)) return NextResponse.json({ error: "invalid_id" }, { status: 400 });
+  const ctx = await writableBatch(request, params);
+  if ("error" in ctx) return ctx.error;
   const parsed = actionSchema.safeParse(await request.json().catch(() => null));
-  if (!parsed.success) return NextResponse.json({ error: "invalid_body" }, { status: 400 });
+  if (!parsed.success) {
+    return fail(400, "invalid_body", "Geçersiz istek.", { fields: [...new Set(parsed.error.issues.map((i) => i.path.join(".") || "body"))] });
+  }
   const input = parsed.data;
+  const found = await batchIn(ctx.read, ctx.id);
+  if ("error" in found) return found.error;
+  const { db, landId } = found;
+  const { guard, read, id } = ctx;
 
-  const supabase = createServiceRoleClient();
+  const denial = evaluatePermissionSet(guard.access, guard.assurance, [{ permission: ACTION_PERMISSION[input.action], target: { siteId: landId } }]);
+  if (denial) return permissionSetResponse(denial);
+
+  // Kaynak siparişler: okuma kapsamında olmalı (değilse yok sayılır → 404) ve atama izni sahalarını kapsamalı.
+  if (input.action === "assign" || input.action === "unassign") {
+    const ids = input.action === "assign" ? [...new Set(input.orderIds)] : [input.orderId];
+    const rows = await sourceOrders(db, read, ids);
+    if (!rows) return unavailable();
+    if (rows.length !== ids.length) return fail(404, "not_found", "Sipariş bulunamadı.", { missing: ids.length - rows.length });
+    const assignScope = permissionScope(guard.access, "batches.assign");
+    const outside = rows.filter((o) => !scopeCovers(assignScope, typeof o.land_id === "string" ? o.land_id : null));
+    if (outside.length) {
+      return fail(403, "forbidden", "Siparişlerden biri atama yetkinizin saha kapsamı dışında.", { reason: "out_of_scope", permissions: ["batches.assign"] });
+    }
+    // Yanlış parti adresinden başka partinin siparişi çıkarılamaz.
+    if (input.action === "unassign" && rows[0].batch_id !== id) {
+      return fail(409, "mismatch", "Sipariş bu partide değil.", { reason: "order_not_in_batch" });
+    }
+  }
+
   const origin = publicOrigin(request.nextUrl.origin);
+  const ip = getClientIP(request);
 
   if (input.action === "publish_video") {
-    const published = await publishBatchVideo(id, input.videoUrl, supabase);
-    const warnings = await auditLog(supabase, { admin, action: "UPDATE", entity: "release_batch", entityId: id, details: { action: "publish_video", ...published }, ip: getClientIP(request) });
+    const published = await publishBatchVideo(id, input.videoUrl, db);
+    const warnings = await auditLog(db, { admin: guard.admin, action: "UPDATE", entity: "release_batch", entityId: id, details: { action: "publish_video", ...published }, ip });
     if (!published.ok) {
-      const status = published.error === "not_found" ? 404 : published.error === "unavailable" ? 503 : published.error === "invalid_url" ? 400 : 409;
-      return NextResponse.json({ error: published.error }, { status });
+      if (published.error === "invalid_url") return fail(400, "invalid_url", "Video: YouTube bağlantısı olmalı.");
+      if (published.error === "invalid_state") return fail(409, "invalid_state", "Video yalnız bırakılmış partiye eklenir.");
+      return published.error === "not_found" ? fail(404, "not_found", "Parti bulunamadı.") : unavailable();
     }
     // İlk yayımda müşterilere bildirim gider (kalanını zamanlanmış iş tamamlar).
     if (published.firstPublication) after(() => sendPendingVideoEmails(origin));
-    return NextResponse.json({ ...published, warnings });
+    return ok({ published: true, firstPublication: published.firstPublication }, warnings);
   }
 
   const result =
     input.action === "assign"
-      ? await assignOrders(id, input.orderIds, admin.user_id, supabase)
+      ? await assignOrders(id, [...new Set(input.orderIds)], guard.admin.user_id, db)
       : input.action === "unassign"
-        ? await unassignOrder(input.orderId, admin.user_id, supabase)
-        : await completeRelease(id, input.releasedOn, admin.user_id, supabase);
+        ? await unassignOrder(input.orderId, guard.admin.user_id, db)
+        : await completeRelease(id, input.releasedOn, guard.admin.user_id, db);
   if (input.action === "release" && result.ok) after(() => sendPendingCertificateEmails(origin));
 
-  const warnings = await auditLog(supabase, {
-    admin,
+  const warnings = await auditLog(db, {
+    admin: guard.admin,
     action: "UPDATE",
     entity: "release_batch",
     entityId: id,
     details: { action: input.action, ...(result.ok ? result : { ok: false, error: result.error, detail: result.detail ?? null }) },
-    ip: getClientIP(request),
+    ip,
   });
-  if (!result.ok) return NextResponse.json({ error: result.error, detail: result.detail ?? null }, { status: STATUS_FOR[result.error] });
-  return NextResponse.json({ ...result, warnings });
+  if (!result.ok) return batchFail(result.error, result.detail);
+  const data = Object.fromEntries(Object.entries(result).filter(([key]) => key !== "ok"));
+  return ok(data, warnings);
 }
 
 export async function DELETE(request: NextRequest, { params }: Ctx) {
-  const { admin, error: authError } = await requireAdmin(request, [...MANAGE_ROLES]);
-  if (authError || !admin) return authError ?? NextResponse.json({ error: "unauthorized" }, { status: 401 });
-  const { id } = await params;
-  if (!UUID_RE.test(id)) return NextResponse.json({ error: "invalid_id" }, { status: 400 });
-  const supabase = createServiceRoleClient();
-  const result = await deleteBatch(id, supabase);
-  if (!result.ok) return NextResponse.json({ error: result.error, detail: result.detail ?? null }, { status: STATUS_FOR[result.error] });
-  const warnings = await auditLog(supabase, { admin, action: "DELETE", entity: "release_batch", entityId: id, ip: getClientIP(request) });
-  return NextResponse.json({ ok: true, warnings });
+  const ctx = await writableBatch(request, params);
+  if ("error" in ctx) return ctx.error;
+  const found = await batchIn(ctx.read, ctx.id);
+  if ("error" in found) return found.error;
+  const denial = evaluatePermissionSet(ctx.guard.access, ctx.guard.assurance, [{ permission: "batches.plan", target: { siteId: found.landId } }]);
+  if (denial) return permissionSetResponse(denial);
+
+  const result = await deleteBatch(ctx.id, found.db);
+  if (!result.ok) return batchFail(result.error, result.detail);
+  const warnings = await auditLog(found.db, { admin: ctx.guard.admin, action: "DELETE", entity: "release_batch", entityId: ctx.id, ip: getClientIP(request) });
+  return ok({ deleted: true, id: ctx.id }, warnings);
 }

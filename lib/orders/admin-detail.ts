@@ -1,60 +1,104 @@
 /**
- * Yönetim panelindeki sipariş ayrıntısı — YALNIZ SUNUCU (service role).
- * Kimlik / vergi numarası yalnız para-fatura rollerine açık gider; diğerlerine maskeli.
+ * Yönetim panelindeki sipariş ayrıntısı — YALNIZ SUNUCU (service role). Sözleşme: web-brifler/27 §4.
+ *
+ * Önce temel alanlar okuma kapsamıyla okunur (kapsam dışı kayıt, olmayan kayıtla aynı `not_found`).
+ * Hassas grupların kolonları ve ilişkili tabloları yalnız o grup bu kaydın sahasını kapsıyorsa
+ * sorgulanır; kapsamayan grubun kaynağına hiç gidilmez. Alt sorgu hatası `unavailable` olur, boş değil.
  */
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { duplicateChargesFrom } from "./admin-actions";
+import type { EffectiveAccess } from "@/lib/admin/permissions";
+import {
+  GROUP_PERMISSION, groupScope, orderCapabilities, scopeCovers,
+  type OrderGroup, type ReadScope, type SensitiveGroup,
+} from "./admin-access";
+import {
+  contactOf, financeOf, invoicesOf, legalOf, orderCore, sanitizeEvent, taxOf,
+  type OrderDetailDto,
+} from "./admin-dto";
 
-const ORDER_SELECT = [
-  "id", "order_no", "status", "is_test", "user_id", "locale", "land_id", "site_snapshot", "season_label", "batch_id",
-  "quantity", "unit_price_kurus", "total_kurus", "vat_rate", "certificate_name", "certificate_code",
-  "certificate_issued_at", "certificate_cancelled_at", "buyer_type", "buyer_first_name", "buyer_last_name",
-  "buyer_email", "buyer_phone", "invoice", "consents", "marketing_consent", "documents_version", "source_path",
-  "payment_provider", "payment_id", "payment_meta", "payment_started_at", "payment_expires_at", "paid_at",
-  "withdrawal_deadline", "performance_deadline", "confirmed_at", "scheduled_at", "released_at", "completed_at",
-  "withdrawal_requested_at", "withdrawal_channel", "cancelled_at", "cancel_reason", "refunded_at", "admin_note",
-  "created_at", "updated_at",
-].join(", ");
+const BASE_COLUMNS = [
+  "id", "order_no", "status", "is_test", "locale", "land_id", "site_snapshot", "season_label", "batch_id", "quantity",
+  "certificate_name", "certificate_issued_at", "certificate_cancelled_at", "buyer_type", "buyer_first_name", "buyer_last_name",
+  "company_title:invoice->>companyTitle", "capacity_held:payment_meta->>capacityHeld",
+  "payment_expires_at", "paid_at", "withdrawal_deadline", "performance_deadline", "confirmed_at", "scheduled_at",
+  "released_at", "completed_at", "withdrawal_requested_at", "withdrawal_channel", "cancelled_at", "cancel_reason",
+  "refunded_at", "admin_note", "created_at", "updated_at",
+];
 
-const mask = (v: unknown) => (typeof v === "string" && v.length > 4 ? `${"•".repeat(v.length - 4)}${v.slice(-4)}` : v);
+/** Grup başına release_orders kolonları; ilişkili tablolar ayrıca (27 §4.1). */
+const GROUP_COLUMNS: Record<SensitiveGroup, string[]> = {
+  contact: ["buyer_email", "buyer_phone", "marketing_consent", "invoice"],
+  tax: ["invoice"],
+  finance: ["unit_price_kurus", "total_kurus", "vat_rate", "payment_provider", "payment_id", "payment_started_at"],
+  invoices: [],
+  legal: ["consents", "documents_version", "source_path"],
+  certificate: ["certificate_code"],
+};
 
-export type OrderDetailResult = { ok: true; detail: Record<string, unknown> } | { ok: false; error: "not_found" | "unavailable" };
+const SENSITIVE: SensitiveGroup[] = Object.keys(GROUP_PERMISSION) as SensitiveGroup[];
 
-export async function loadOrderDetail(supabase: SupabaseClient, id: string, canSeeTaxIds: boolean): Promise<OrderDetailResult> {
-  const { data: row, error } = await supabase.from("release_orders").select(ORDER_SELECT).eq("id", id).maybeSingle();
+export type OrderDetailResult = { ok: true; detail: OrderDetailDto } | { ok: false; error: "not_found" | "unavailable" };
+
+type Row = Record<string, unknown>;
+class Unavailable extends Error {}
+const rows = (result: { data: unknown; error: unknown }): Row[] => {
+  if (result.error) throw new Unavailable();
+  return (result.data ?? []) as Row[];
+};
+
+export async function loadOrderDetail(
+  supabase: SupabaseClient, id: string, access: EffectiveAccess, read: ReadScope, legacyRole: string
+): Promise<OrderDetailResult> {
+  let base = supabase.from("release_orders").select(BASE_COLUMNS.join(", ")).eq("id", id);
+  if (read.kind === "sites") base = base.in("land_id", read.siteIds);
+  const { data: baseRow, error } = await base.maybeSingle();
   if (error) return { ok: false, error: "unavailable" };
-  if (!row) return { ok: false, error: "not_found" };
-  const order = row as unknown as Record<string, unknown> & { batch_id: string | null; invoice: Record<string, unknown> };
+  if (!baseRow) return { ok: false, error: "not_found" };
+  const row = baseRow as unknown as Row;
+  const landId = typeof row.land_id === "string" ? row.land_id : null;
 
-  const [documents, events, refunds, invoices, batch] = await Promise.all([
-    supabase.from("order_documents").select("kind, title, sha256, template_version, created_at").eq("order_id", id).order("created_at", { ascending: true }),
-    supabase.from("order_events").select("id, type, actor, data, created_at").eq("order_id", id).order("id", { ascending: true }),
-    supabase.from("order_refunds").select("id, amount_kurus, reason, status, provider, provider_ref, error, requested_by, created_at, completed_at").eq("order_id", id).order("created_at", { ascending: true }),
-    supabase.from("order_invoices").select("id, kind, provider, status, invoice_no, ettn, issued_at, sent_at, error, created_by, created_at").eq("order_id", id).order("created_at", { ascending: true }),
-    order.batch_id ? supabase.from("release_batches").select("id, title, planned_on, released_on, season_label").eq("id", order.batch_id).maybeSingle() : Promise.resolve({ data: null }),
-  ]);
+  const covered = new Set<OrderGroup>(["order"]);
+  for (const group of SENSITIVE) if (scopeCovers(groupScope(access, group, read), landId)) covered.add(group);
 
-  // Belgelerin yapısal kaynağı (yüzlerce blok) panele taşınmaz; yalnız özet.
-  const eventList = ((events.data ?? []) as { id: number; type: string; actor: string; data: Record<string, unknown> | null; created_at: string }[]).map((e) =>
-    e.type === "documents_generated"
-      ? { ...e, data: { version: e.data?.version ?? null, kinds: Array.isArray(e.data?.documents) ? (e.data!.documents as { kind: string }[]).map((d) => d.kind) : [] } }
-      : e
-  );
+  try {
+    const extraColumns = [...new Set(SENSITIVE.filter((g) => covered.has(g)).flatMap((g) => GROUP_COLUMNS[g]))];
+    const skip = Promise.resolve({ data: [] as Row[], error: null });
+    const [extra, batch, events, documents, refunds, invoices] = await Promise.all([
+      extraColumns.length
+        ? supabase.from("release_orders").select(extraColumns.join(", ")).eq("id", id).maybeSingle()
+        : Promise.resolve({ data: {}, error: null }),
+      row.batch_id
+        ? supabase.from("release_batches").select("id, title, planned_on, released_on, season_label").eq("id", row.batch_id as string).maybeSingle()
+        : Promise.resolve({ data: null, error: null }),
+      supabase.from("order_events").select("id, type, actor, data, created_at").eq("order_id", id).order("id", { ascending: true }),
+      covered.has("legal")
+        ? supabase.from("order_documents").select("kind, title, sha256, template_version, created_at").eq("order_id", id).order("created_at", { ascending: true })
+        : skip,
+      covered.has("finance")
+        ? supabase.from("order_refunds").select("id, amount_kurus, reason, status, provider, provider_ref, error, created_at, completed_at").eq("order_id", id).order("created_at", { ascending: true })
+        : skip,
+      covered.has("invoices")
+        ? supabase.from("order_invoices").select("id, kind, provider, status, invoice_no, ettn, issued_at, sent_at, error, created_at").eq("order_id", id).order("created_at", { ascending: true })
+        : skip,
+    ]);
+    if (extra.error || batch.error) throw new Unavailable();
+    const full: Row = { ...row, ...((extra.data ?? {}) as Row) };
+    const eventRows = rows(events);
 
-  const invoice = canSeeTaxIds ? order.invoice : { ...order.invoice, tckn: mask(order.invoice?.tckn), taxId: mask(order.invoice?.taxId) };
-
-  return {
-    ok: true,
-    detail: {
-      order: { ...order, invoice },
-      documents: documents.data ?? [],
-      events: eventList,
-      // Sahiplenme işareti ("claim:…") iç ayrıntıdır; panelde "işleniyor" olarak görünür.
-      refunds: (refunds.data ?? []).map((r) => ({ ...r, provider_ref: typeof r.provider_ref === "string" && r.provider_ref.startsWith("claim:") ? "işleniyor" : r.provider_ref })),
-      invoices: invoices.data ?? [],
-      duplicates: duplicateChargesFrom(eventList),
-      batch: batch.data ?? null,
-      canManageMoney: canSeeTaxIds,
-    },
-  };
+    const detail: OrderDetailDto = {
+      groups: [...covered],
+      capabilities: orderCapabilities(access, legacyRole),
+      order: orderCore(full, (batch.data ?? null) as Row | null),
+      ...(covered.has("contact") ? { contact: contactOf(full) } : {}),
+      ...(covered.has("tax") ? { tax: taxOf(full) } : {}),
+      ...(covered.has("finance") ? { finance: financeOf(full, rows(refunds), eventRows) } : {}),
+      ...(covered.has("invoices") ? { invoices: invoicesOf(rows(invoices)) } : {}),
+      ...(covered.has("legal") ? { legal: legalOf(full, rows(documents)) } : {}),
+      ...(covered.has("certificate") ? { certificate: { code: typeof full.certificate_code === "string" ? full.certificate_code : null } } : {}),
+      events: eventRows.map((e) => sanitizeEvent(e, covered)),
+    };
+    return { ok: true, detail };
+  } catch {
+    return { ok: false, error: "unavailable" };
+  }
 }

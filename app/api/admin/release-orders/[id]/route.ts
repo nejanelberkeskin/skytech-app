@@ -1,10 +1,10 @@
-import { after, NextRequest, NextResponse } from "next/server";
+import { after, NextRequest } from "next/server";
 import { z } from "zod";
 import { createServiceRoleClient } from "@/lib/supabase/server";
 import { requireAdmin, getClientIP } from "@/lib/admin-auth";
 import { requirePermission } from "@/lib/admin/permissions";
-import { ACTION_PERMISSION, LEGACY_REFUND_ROLES, isRefundAction } from "@/lib/orders/admin-access";
 import { auditLog } from "@/lib/admin/audit";
+import { fail, ok, unavailable } from "@/lib/api/envelope";
 import {
   cancelBySeller,
   executeRefund,
@@ -14,47 +14,50 @@ import {
   reserveCapacityNow,
   type AdminActionResult,
 } from "@/lib/orders/admin-actions";
+import { ACTION_PERMISSION, LEGACY_REFUND_ROLES, isRefundAction, orderReadScope } from "@/lib/orders/admin-access";
 import { loadOrderDetail } from "@/lib/orders/admin-detail";
 import { sendRefundCompletedEmail, sendSellerCancellationEmail } from "@/lib/orders/admin-mails";
 import { addOrderEvent } from "@/lib/orders/store";
 import type { ReleaseOrderRow } from "@/lib/orders/types";
 
 /**
- * Admin — Bırakma siparişi (ayrıntı + işlemler)
+ * Admin — Bırakma siparişi (ayrıntı + işlemler). Sözleşme: web-brifler/27.
  *
- * GET  /api/admin/release-orders/[id]
- *      → { order, documents, events, refunds, invoices, duplicates, batch }
- * POST /api/admin/release-orders/[id]  { action, … }
- *      note              { note }                      — yönetici notu (tüm roller)
- *      cancel_by_seller  { reason }                    — ifa edilemeyecek sipariş → iade bekler
- *      refund            {}                            — bekleyen iadeyi sağlayıcıdan yap
- *      refund_duplicate  { paymentId }                 — çift tahsilatı iade et
- *      invoice_now       {}                            — fatura kuyruğuna al
- *      reserve_capacity  {}                            — geç ödemede ayrılamamış kapasiteyi şimdi ayır
- *      invoice_issued    { invoiceId, invoiceNo, ettn?, issuedOn }
- *
- * Görüntüleme: SUPER_ADMIN, FINANCE, OPERATIONS. OPERATIONS rolüne kimlik/vergi numarası maskeli gider.
- * Eylemler: her eylem kendi iznini tam kapsamla ister (web-brifler/27 §2); MFA izin sözlüğünden gelir.
- * İade eylemleri ayrıca eski SUPER_ADMIN/FINANCE rolünü ister (SQL 019 bağımlılığı). Reddedilen istekte
- * iş servisi, sağlayıcı, e-posta ve audit çağrılmaz. Her işlem admin_audit_logs'a yazılır.
+ * GET  /api/admin/release-orders/[id] → Ok<OrderDetailDto>
+ *      İzin: orders.read (all ya da sites). Hassas gruplar (iletişim, vergi, finans, fatura, hukuki kayıt,
+ *      özel sertifika) kendi izinleriyle ve bu siparişin sahasını kapsıyorsa eklenir. Kapsam dışı → 404.
+ * POST /api/admin/release-orders/[id]  { action, … } → Ok<{ status }>
+ *      note              { note }                      — orders.note
+ *      cancel_by_seller  { reason }                    — orders.cancel (+MFA)
+ *      refund            {}                            — refunds.execute (+MFA) + eski SUPER_ADMIN/FINANCE
+ *      refund_duplicate  { paymentId }                 — aynı
+ *      invoice_now       {}                            — invoices.manage
+ *      reserve_capacity  {}                            — sites.capacity.manage (+MFA)
+ *      invoice_issued    { invoiceId, invoiceNo, ettn?, issuedOn } — invoices.manage
+ *      Eylemler yalnız tam kapsam. Reddedilen istekte iş servisi, sağlayıcı, e-posta ve audit çağrılmaz.
  */
-const VIEW_ROLES = ["SUPER_ADMIN", "FINANCE", "OPERATIONS"] as const;
-const MONEY_ROLES = ["SUPER_ADMIN", "FINANCE"] as const;
-const noStore = { headers: { "Cache-Control": "private, no-store" } };
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 // İade eylemleri sağlayıcıyı çağırır (en çok 3 × 15 sn); süre sınırı açık yazılır ki çağrı yarıda kesilmesin.
 export const maxDuration = 60;
 
-export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const { admin, error: authError } = await requireAdmin(request, [...VIEW_ROLES]);
-  if (authError || !admin) return authError ?? NextResponse.json({ error: "unauthorized" }, { status: 401 });
-  const { id } = await params;
-  if (!UUID_RE.test(id)) return NextResponse.json({ error: "invalid_id" }, { status: 400 });
+const invalidId = () => fail(400, "invalid_id", "Geçersiz sipariş kimliği.");
+const readScopeUnsupported = () =>
+  fail(403, "scope_unsupported", "Sipariş okuma yetkiniz yalnız kişiye atanmış işleri kapsıyor; bu ekran henüz atanmış işleri desteklemiyor.", {
+    permission: "orders.read",
+  });
 
-  const result = await loadOrderDetail(createServiceRoleClient(), id, (MONEY_ROLES as readonly string[]).includes(admin.role));
-  if (!result.ok) return NextResponse.json({ error: result.error }, { status: result.error === "not_found" ? 404 : 503 });
-  return NextResponse.json(result.detail);
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const guard = await requirePermission(request, "orders.read", { scope: "any" });
+  if (guard.error) return guard.error;
+  const read = orderReadScope(guard.access);
+  if (!read) return readScopeUnsupported();
+  const { id } = await params;
+  if (!UUID_RE.test(id)) return invalidId();
+
+  const result = await loadOrderDetail(createServiceRoleClient(), id, guard.access, read, guard.admin.role);
+  if (!result.ok) return result.error === "not_found" ? fail(404, "not_found", "Sipariş bulunamadı.") : unavailable();
+  return ok(result.detail);
 }
 
 const actionSchema = z.discriminatedUnion("action", [
@@ -73,30 +76,40 @@ const actionSchema = z.discriminatedUnion("action", [
   }),
 ]);
 
-const STATUS_FOR: Record<string, number> = {
-  not_found: 404,
-  invalid_state: 409,
-  in_progress: 409,
-  already_done: 409,
-  provider_unavailable: 503,
-  provider_error: 502,
-  unavailable: 503,
+/** İş hataları (değişmedi) → HTTP ve kullanıcıya gösterilebilir mesaj. */
+const ACTION_ERRORS: Record<string, [number, string]> = {
+  not_found: [404, "Kayıt bulunamadı."],
+  invalid_state: [409, "Sipariş bu işlem için uygun durumda değil."],
+  in_progress: [409, "Bu iade şu anda işleniyor; birkaç dakika sonra yeniden deneyin."],
+  already_done: [409, "Bu işlem daha önce yapılmış."],
+  provider_unavailable: [503, "Ödemenin alındığı sağlayıcı bu ortamda yapılandırılmamış."],
+  provider_error: [502, "Ödeme sağlayıcısı işlemi reddetti."],
+  unavailable: [503, "Şu anda işlenemiyor; yeniden deneyin."],
 };
 
 export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   // Önce oturum ve aktif personel (izin sorgusu yok); eylemin izni gövde okunduktan sonra (27 §2).
   const session = await requireAdmin(request);
-  if (session.error || !session.admin) return session.error ?? NextResponse.json({ error: "unauthorized" }, { status: 401, ...noStore });
+  if (session.error || !session.admin) {
+    const status = session.error?.status ?? 401;
+    if (status === 401) return fail(401, "unauthenticated", "Oturum bulunamadı. Lütfen giriş yapın.");
+    if (status === 403) return fail(403, "forbidden", "Bu işlem için yetkiniz yok.");
+    return fail(503, "unavailable", "Kimlik doğrulanamadı. Lütfen yeniden deneyin.");
+  }
   const { id } = await params;
-  if (!UUID_RE.test(id)) return NextResponse.json({ error: "invalid_id" }, { status: 400, ...noStore });
+  if (!UUID_RE.test(id)) return invalidId();
 
   const parsed = actionSchema.safeParse(await request.json().catch(() => null));
-  if (!parsed.success) return NextResponse.json({ error: "invalid_body" }, { status: 400, ...noStore });
+  if (!parsed.success) {
+    return fail(400, "invalid_body", "Eksik ya da hatalı bilgi.", {
+      fields: [...new Set(parsed.error.issues.map((i) => i.path.join(".") || "body"))],
+    });
+  }
   const input = parsed.data;
 
   // İade talebi SQL 019'da eski rolü denetler; API aynı sınırı izin sorgusundan önce korur (rol yükseltmesi yok).
   if (isRefundAction(input.action) && !LEGACY_REFUND_ROLES.includes(session.admin.role)) {
-    return NextResponse.json({ error: "forbidden" }, { status: 403, ...noStore });
+    return fail(403, "forbidden", "İade bu yoldan yalnız finans ya da sistem sahibi rolüyle yapılabilir.", { reason: "legacy_role" });
   }
   // Eylemin izni: tam kapsam + (hassas izinde) yeniden doğrulanmış oturum. Eski rol listesi kapı değildir.
   const guard = await requirePermission(request, ACTION_PERMISSION[input.action]);
@@ -111,8 +124,8 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
   if (input.action === "note") {
     const note = input.note.trim() || null;
     const { data, error } = await supabase.from("release_orders").update({ admin_note: note }).eq("id", id).select("*").maybeSingle();
-    if (error) return NextResponse.json({ error: "unavailable" }, { status: 503 });
-    if (!data) return NextResponse.json({ error: "not_found" }, { status: 404 });
+    if (error) return unavailable();
+    if (!data) return fail(404, "not_found", "Kayıt bulunamadı.");
     await addOrderEvent(supabase, id, "admin_note", `admin:${admin.user_id}`, { note });
     result = { ok: true, order: data as ReleaseOrderRow };
     details = { noteChanged: true };
@@ -151,6 +164,9 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     ip,
   });
 
-  if (!result.ok) return NextResponse.json({ error: result.error, detail: result.detail ?? null }, { status: STATUS_FOR[result.error] ?? 400 });
-  return NextResponse.json({ ok: true, status: result.order.status, warnings });
+  if (!result.ok) {
+    const [status, message] = ACTION_ERRORS[result.error] ?? [400, "İşlem tamamlanamadı."];
+    return fail(status, result.error, message, result.detail ? { detail: result.detail } : undefined);
+  }
+  return ok({ status: result.order.status }, warnings);
 }

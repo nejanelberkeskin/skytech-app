@@ -32,6 +32,7 @@ function setup({ role = 'FINANCE', permissions = full, assurance = fresh(), acce
     '@/lib/supabase/server': { createServiceRoleClient: () => { calls.push('operational-db'); return db; } },
     '@/lib/admin-auth': auth, '@/lib/admin/permissions': gate,
     '@/lib/orders/admin-access': load('lib/orders/admin-access.ts', { '@/lib/admin/permissions': gate }),
+    '@/lib/api/envelope': envelope,
     '@/lib/admin/audit': { auditLog: async (_db, record) => { calls.push({ audit: record }); return []; } },
     '@/lib/orders/admin-actions': Object.fromEntries(['executeRefund', 'refundDuplicate', 'queueInvoice', 'cancelBySeller', 'reserveCapacityNow', 'markInvoiceIssued'].map(name => [name, service(name)])),
     '@/lib/orders/admin-detail': { loadOrderDetail: () => { throw new Error('Unexpected detail'); } },
@@ -84,7 +85,8 @@ test('Legacy route retains its old role/session limit even with full refund gran
 test('Authorized legacy refund requests preserve service arguments, money result and notification scheduling', async () => enforced(async () => {
   for (const body of actions) {
     const app = setup(); const result = await app.post(body);
-    assert.equal(result.status, 200); assert.deepEqual(result.body, { ok: true, status: 'refunded', warnings: [] });
+    // 27 §5: bütün yanıtlar standart zarfta.
+    assert.equal(result.status, 200); assert.deepEqual(result.body, { ok: true, data: { status: 'refunded' } });
     const service = app.calls.find(c => c?.service);
     assert.equal(service.service, body.action === 'refund' ? 'executeRefund' : 'refundDuplicate');
     assert.deepEqual(service.args, body.action === 'refund' ? [id, 'actor', '127.0.0.1', app.db] : [id, body.paymentId, 'actor', '127.0.0.1', app.db]);

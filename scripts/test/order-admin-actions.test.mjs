@@ -28,7 +28,7 @@ function orderRoute(db, who, { role = 'NONE', assurance = AAL1, unauthenticated 
     }) },
     '@/lib/admin-auth': {
       requireAdmin: async () => unauthenticated
-        ? { admin: null, error: { body: { error: 'unauthorized' }, status: 401 } }
+        ? { admin: null, error: { status: 401 } }
         : { admin: { user_id: who, role, full_name: 'Deneme', email: 'deneme@example.invalid' }, error: null },
       getClientIP: () => '127.0.0.1',
     },
@@ -54,7 +54,7 @@ async function expectRejected(db, who, action, code, opts = {}) {
   const orderId = await orderAt(db);
   const { post, calls } = orderRoute(db, who, opts);
   const res = await post(orderId, ACTIONS[action]);
-  assert.equal(res.status, code === 'unauthorized' ? 401 : 403, `${action} → ${code} (${JSON.stringify(res.body)})`);
+  assert.equal(res.status, code === 'unauthenticated' ? 401 : 403, `${action} → ${code} (${JSON.stringify(res.body)})`);
   assert.equal(codeOf(res), code, `${action} kodu`);
   assert.deepEqual(calls.service, [], `${action}: reddedilen istekte iş servisi çağrılmaz`);
   assert.equal(calls.audit, 0, `${action}: reddedilen istekte audit yazılmaz`);
@@ -142,7 +142,7 @@ test('27 §2: MFA zorlaması açıkken hassas eylemler aal1 ve bayat aal2 ile re
 test('27 §2: oturum yoksa 401; geçersiz kimlik ve gövde iş servisine ulaşmaz', async () => {
   const db = await createDb();
   try {
-    await expectRejected(db, IDS.superAdmin, 'note', 'unauthorized', { unauthenticated: true });
+    await expectRejected(db, IDS.superAdmin, 'note', 'unauthenticated', { unauthenticated: true });
     const { post, calls } = orderRoute(db, IDS.superAdmin, { role: 'SUPER_ADMIN' });
     assert.equal((await post('gecersiz', ACTIONS.note)).status, 400);
     assert.equal((await post(await orderAt(db), { action: 'uydurma' })).status, 400);

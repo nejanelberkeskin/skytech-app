@@ -1310,6 +1310,74 @@
       "backToSites": "Proje Uygulama Sahalarına dön"
     }
   },
+  "ownLandPage": {
+    "breadcrumb": "Kendi arazim",
+    "breadcrumbLabel": "Sayfa yolu",
+    "eyebrow": "Arazi sahipleri için",
+    "title": "Kendi araziniz için dronla tohum topu bırakma",
+    "description": "Yanmış, bozulmuş ya da atıl araziniz için başvurun; ekibimiz araziyi değerlendirip sizinle iletişime geçsin.",
+    "apply": "Başvuru formuna git",
+    "sites": "Araziniz yoksa: Proje Uygulama Sahalarına katılın",
+    "eligible": {
+      "title": "Kimler başvurabilir?",
+      "note": "Başvuruyu arazi sahibi ya da arazi üzerinde yetkili kişi veya kurum yapmalıdır.",
+      "individuals": "Gerçek kişiler",
+      "companies": "Şirketler",
+      "cooperatives": "Kooperatifler",
+      "municipalities": "Belediyeler",
+      "institutions": "Diğer kurumlar"
+    },
+    "process": {
+      "title": "Başvurudan çalışmaya",
+      "application": {
+        "title": "Başvuru",
+        "body": "Araziniz ve iletişim bilgilerinizle formu doldurursunuz."
+      },
+      "review": {
+        "title": "Ön değerlendirme",
+        "body": "Konum ve arazi bilgileriyle uygunluğu inceleriz."
+      },
+      "planning": {
+        "title": "Planlama",
+        "body": "Gerekirse keşif yapılır; bölgeye uygun türler ve çalışma planı belirlenir."
+      },
+      "offer": {
+        "title": "Teklif",
+        "body": "Arazi uygunsa size özel teklif iletilir."
+      },
+      "release": {
+        "title": "Bırakma ve izleme",
+        "body": "Tohum topları Kasım–Mart döneminde dronla bırakılır; Nisan–Eylül döneminde arazi izlenir."
+      }
+    },
+    "information": {
+      "title": "Başvuruda neler soruyoruz?",
+      "location": "Konum: il, ilçe ve varsa harita bağlantısı",
+      "area": "Yaklaşık alan",
+      "condition": "Arazinin durumu",
+      "ownership": "Mülkiyet veya yetki durumu",
+      "timing": "Zamanlama tercihi",
+      "contact": "İletişim bilgileri"
+    },
+    "free": "Başvuru ücretsizdir ve sizi bir siparişe bağlamaz.",
+    "formTitle": "Başvuru formu",
+    "faq": {
+      "title": "Sık sorulan sorular",
+      "fee": {
+        "question": "Başvuru ücretli mi?",
+        "answer": "Hayır; başvuru ücretsizdir ve bir sipariş değildir."
+      },
+      "species": {
+        "question": "Hangi türler bırakılır?",
+        "answer": "Arazinin iklim ve toprak koşullarına göre ekibimiz bölgeye uygun türleri belirler."
+      },
+      "season": {
+        "question": "Çalışma ne zaman yapılır?",
+        "answer": "Tohum topu bırakma Kasım–Mart döneminde, arazinin uygunluğu ve gerekli izinlere göre planlanır."
+      }
+    },
+    "contact": "Sorularınız için:"
+  },
   "authPages": {
     "home": "Skytech Green ana sayfa",
     "linkError": "Bağlantı bu tarayıcıda doğrulanamadı. Hesabınız onaylandıysa giriş yapabilirsiniz; şifrenizi unuttuysanız yeni bağlantı isteyin.",

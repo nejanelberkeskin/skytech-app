@@ -2,7 +2,7 @@ import type { NextRequest } from "next/server";
 import { z } from "zod";
 import { requirePermission } from "@/lib/admin/permissions";
 import { fail } from "@/lib/api/envelope";
-import { UUID_RE, clientIp, readJson, refundService, respondAction } from "@/lib/refunds/http";
+import { UUID_RE, clientIp, hasLegacyRefundRole, legacyRoleDenied, readJson, refundService, respondAction } from "@/lib/refunds/http";
 
 /**
  * POST /api/admin/refunds/orders/{orderId}/execute — ilk iade denemesi (web-brifler/17 §6.3). İzin: refunds.execute.
@@ -20,6 +20,7 @@ const bodySchema = z.discriminatedUnion("kind", [
 export async function POST(request: NextRequest, { params }: { params: Promise<{ orderId: string }> }) {
   const guard = await requirePermission(request, "refunds.execute");
   if (guard.error) return guard.error;
+  if (!hasLegacyRefundRole(guard.admin.role)) return legacyRoleDenied();
   const { orderId } = await params;
   if (!UUID_RE.test(orderId)) return fail(404, "not_found", "Sipariş bulunamadı.");
   const body = bodySchema.safeParse(await readJson(request));

@@ -3,7 +3,7 @@ import { z } from "zod";
 import { requirePermission } from "@/lib/admin/permissions";
 import { fail } from "@/lib/api/envelope";
 import { EVIDENCE_SOURCES, REFUND_ID_PATTERN } from "@/lib/refunds/model";
-import { UUID_RE, readJson, refundService, respondAction } from "@/lib/refunds/http";
+import { UUID_RE, hasLegacyRefundRole, legacyRoleDenied, readJson, refundService, respondAction } from "@/lib/refunds/http";
 
 /**
  * POST /api/admin/refunds/operations/{operationId}/resolve — mutabakat (web-brifler/17 §6.5). İzin: refunds.execute.
@@ -25,6 +25,7 @@ const bodySchema = z
 export async function POST(request: NextRequest, { params }: { params: Promise<{ operationId: string }> }) {
   const guard = await requirePermission(request, "refunds.execute");
   if (guard.error) return guard.error;
+  if (!hasLegacyRefundRole(guard.admin.role)) return legacyRoleDenied();
   const { operationId } = await params;
   if (!UUID_RE.test(operationId)) return fail(404, "not_found", "İade işlemi bulunamadı.");
   const raw = await readJson(request);

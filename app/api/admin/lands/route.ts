@@ -38,7 +38,7 @@ export const dynamic = "force-dynamic";
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 const unsupported = (permission: Permission) =>
-  fail(403, "scope_unsupported", "Saha yetkiniz yalnız kişiye atanmış işleri kapsıyor; sahalar için atama modeli yok.", { permission });
+  fail(403, "scope_unsupported", "Saha yetkiniz yalnız kişiye atanmış işleri kapsıyor; sahalar için atama modeli yok.", { permission, permissions: [permission] });
 
 function invalidBody(issues: z.core.$ZodIssue[]) {
   const fields = siteFieldErrors(issues);

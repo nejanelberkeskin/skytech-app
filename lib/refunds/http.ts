@@ -5,6 +5,7 @@
 import { after, type NextRequest } from "next/server";
 import { getClientIP } from "@/lib/admin-auth";
 import { fail, ok } from "@/lib/api/envelope";
+import { LEGACY_REFUND_ROLES } from "@/lib/orders/admin-access";
 import { sendRefundCompletedEmail } from "@/lib/orders/admin-mails";
 import { getProviderByName } from "@/lib/payments";
 import { createServiceRoleClient } from "@/lib/supabase/server";
@@ -26,6 +27,15 @@ export const isServiceError = (value: unknown): value is ServiceError =>
   typeof value === "object" && value !== null && (value as { ok?: unknown }).ok === false;
 
 export const failFrom = (e: ServiceError) => fail(e.status, e.code, e.message, e.details);
+
+/**
+ * İade SQL'i (019 talep, 020 yeniden deneme ve mutabakat) etkin SUPER_ADMIN/FINANCE eski rolünü ister; `refunds.execute`
+ * taşıyan özel rol bu sürümde iade yapamaz (27 §7). Uçlar aynı sınırı servisten önce uygular, görünüm de eylemi
+ * yalnız bu rollere sunar. Ret gövdesi eski sipariş yolundakiyle aynı biçimdedir (27 §5, `legacy_role`).
+ */
+export const hasLegacyRefundRole = (role: string) => LEGACY_REFUND_ROLES.includes(role);
+export const legacyRoleDenied = () =>
+  fail(403, "forbidden", "İade işlemleri yalnız finans ya da sistem sahibi rolüyle yapılabilir.", { reason: "legacy_role" });
 
 export function clientIp(request: NextRequest): string | null {
   const ip = getClientIP(request);

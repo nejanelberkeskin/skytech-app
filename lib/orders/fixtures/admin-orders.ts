@@ -156,10 +156,10 @@ export const ORDER_ACTION_OK = { ok: true as const, data: { status: "cancelled_b
 
 /** Örnek hata gövdeleri (27 §5). */
 export const ORDER_ERRORS: Record<string, ApiErrorBody> = {
-  forbidden: { code: "forbidden", message: "Bu işlem için yetkiniz yok." },
-  flagForbidden: { code: "forbidden", message: "Bu süzgeç için yetkiniz yok.", details: { flag: "refund_pending" } },
-  scopeUnsupported: { code: "scope_unsupported", message: "Bu ekran sınırlı kapsamı (saha/atanmış iş) henüz uygulamıyor; yetkiniz bütün kayıtları kapsamıyor.", details: { permission: "orders.cancel", scopes: [{ kind: "sites", siteIds: [SITE_A] }] } },
-  mfaRequired: { code: "mfa_required", message: "Bu işlem iki aşamalı doğrulama ister.", details: { enrolled: true, reason: "stale", freshnessMinutes: 15 } },
+  forbidden: { code: "forbidden", message: "Bu işlem için yetkiniz yok.", details: { reason: "missing_permission", permissions: ["orders.cancel"] } },
+  flagForbidden: { code: "forbidden", message: "Bu süzgeç için yetkiniz yok.", details: { flag: "refund_pending", reason: "missing_permission", permissions: ["finance.read"] } },
+  scopeUnsupported: { code: "scope_unsupported", message: "Bu ekran sınırlı kapsamı (saha/atanmış iş) henüz uygulamıyor; yetkiniz bütün kayıtları kapsamıyor.", details: { permission: "orders.cancel", permissions: ["orders.cancel"], scopes: [{ kind: "sites", siteIds: [SITE_A] }] } },
+  mfaRequired: { code: "mfa_required", message: "Bu işlem iki aşamalı doğrulama ister.", details: { permissions: ["orders.cancel"], enrolled: true, reason: "stale", freshnessMinutes: 15 } },
   legacyRefundRole: { code: "forbidden", message: "İade bu yoldan yalnız finans ya da sistem sahibi rolüyle yapılabilir.", details: { reason: "legacy_role" } },
   invalidState: { code: "invalid_state", message: "Sipariş bu işlem için uygun durumda değil." },
   notFound: { code: "not_found", message: "Sipariş bulunamadı." },

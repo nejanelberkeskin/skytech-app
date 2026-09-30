@@ -93,7 +93,7 @@ export const SITE_ERRORS: Record<string, ApiErrorBody> = {
     code: "forbidden", message: "Bu işlem bütün kayıtlara yetki ister; saha kapsamlı yetki yeni kayıt açamaz.",
     details: { reason: "all_scope_required", permissions: ["sites.edit", "sites.capacity.manage"] },
   },
-  scopeUnsupported: { code: "scope_unsupported", message: "Saha yetkiniz yalnız kişiye atanmış işleri kapsıyor; sahalar için atama modeli yok.", details: { permission: "sites.read" } },
+  scopeUnsupported: { code: "scope_unsupported", message: "Saha yetkiniz yalnız kişiye atanmış işleri kapsıyor; sahalar için atama modeli yok.", details: { permission: "sites.read", permissions: ["sites.read"] } },
   conflict: { code: "conflict", message: "Saha arada değişti (yayın durumu ya da kapasite sayıları). Güncel kaydı yükleyip yeniden deneyin.", details: { reason: "changed_meanwhile" } },
   capacityBelowUsed: {
     code: "invalid_body", message: "Kapasite 1.500'den az olamaz (bırakılan + ayrılan).",

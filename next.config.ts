@@ -131,6 +131,13 @@ const nextConfig: NextConfig = {
   experimental: {
     // Sadece kullanılan motion özelliklerini bundle'la
     optimizePackageImports: ["framer-motion", "lucide-react"],
+    // İyimser rota tahmini KAPALI (Next 16.3'te varsayılan açık). Tahmin, dil parametresinin adreste
+    // olduğunu varsayar; /en, /ru (ya da /tr) adresi görülen belgede öneksiz TR adresini (as-needed:
+    // /hakkimizda → /tr/hakkimizda yeniden yazması) "/[locale=hakkimizda]" sanar. Yalnız baş eksikken
+    // atılan ön yükleme bu sapmayı denetlemediği için görünür her tek parçalı TR bağlantısı sonsuz
+    // döngüye girer (dil değiştiriciyle EN→TR geçişinde, /tr açılışında). Kapalıyken rota ağacı
+    // sunucudan alınır (canlıdaki 16.1 davranışı). Açmadan önce: npm run test:prefetch.
+    optimisticRouting: false,
   },
 };
 

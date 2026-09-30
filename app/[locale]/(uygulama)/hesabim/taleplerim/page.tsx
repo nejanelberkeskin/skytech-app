@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { supabase } from "@/lib/supabase/browser";
 import { REQUEST_ROUTES } from "@/lib/site-config";
 import { REQUEST_STATUS_LABELS, REQUEST_TYPE_LABELS, requestSummaryRows } from "@/lib/requests/labels";

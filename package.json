@@ -11,6 +11,7 @@
     "typecheck": "tsc --noEmit",
     "lint:check": "eslint",
     "i18n:check": "node scripts/i18n-parity.mjs",
+    "test:prefetch": "node scripts/e2e/prefetch-loop.mjs",
     "test": "node --experimental-strip-types --disable-warning=ExperimentalWarning --import ./scripts/test/alias-loader.mjs --test \"scripts/test/*.test.mjs\""
   },
   "dependencies": {
@@ -39,6 +40,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "^16.3.5",
+    "playwright": "1.63.0",
     "tailwindcss": "^4.2.1",
     "typescript": "^5"
   },

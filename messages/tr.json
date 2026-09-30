@@ -1484,6 +1484,7 @@
       "pending": "Bu tarayıcıda sipariş erişimi hazırlanıyor. Lütfen işlem tamamlanana kadar sayfayı yenilemeyin veya dili değiştirmeyin.",
       "failed": "Bu tarayıcıda sipariş erişimi hazırlanamadı. Yeniden deneyebilirsiniz. Sayfayı yeniler veya dili değiştirirseniz e-postanızdaki sipariş bağlantısını yeniden açmanız gerekebilir.",
       "unavailable": "Bu bağlantıyla sipariş erişimi doğrulanamadı. E-postanızdaki sipariş bağlantısını yeniden açın. Sorun sürerse sipariş numaranızla bize ulaşın.",
+      "ready": "Bu tarayıcıda sipariş erişimi hazır.",
       "retry": "Sipariş erişimini yeniden dene"
     },
     "title": "Siparişiniz",

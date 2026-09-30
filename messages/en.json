@@ -1484,6 +1484,7 @@
       "pending": "Preparing order access in this browser. Please wait before refreshing the page or changing the language.",
       "failed": "Order access could not be prepared in this browser. You can retry. If you refresh the page or change the language, you may need to reopen the order link in your email.",
       "unavailable": "Order access could not be verified with this link. Reopen the order link in your email. If the problem persists, contact us with your order number.",
+      "ready": "Order access is ready in this browser.",
       "retry": "Retry order access"
     },
     "title": "Your order",

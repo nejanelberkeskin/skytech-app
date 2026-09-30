@@ -61,7 +61,7 @@ export default async function PaymentResultPage({ params, searchParams }: { para
   return (
     <SectionWrapper variant="light" className="!py-20 lg:!py-28">
       <div className="mx-auto max-w-2xl">
-        <OrderAccessPrivacy orderNo={order.order_no} />
+        <OrderAccessPrivacy orderNo={order.order_no} quiet />
         {order.is_test ? (
           <p className="mb-6 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-900">{t("test")}</p>
         ) : null}

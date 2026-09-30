@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { useTranslations } from "next-intl";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { readConsent, subscribeConsent, writeConsent, type CookieConsent as Consent } from "@/lib/analytics";
 
 const REOPEN_EVENT = "open-cookie-preferences";

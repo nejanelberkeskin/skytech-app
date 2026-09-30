@@ -1071,7 +1071,16 @@
       "error": "Something went wrong. Please try again or reach us directly at info@skytechgreen.com.",
       "uncertain": "We could not confirm the submission; your message may have reached us. Instead of sending it again, contact us at info@skytechgreen.com.",
       "privacyLink": "Personal Data Notice",
-      "rateLimited": "Too many attempts. Please try again in a few minutes."
+      "rateLimited": "Too many attempts. Please try again in a few minutes.",
+      "errors": {
+        "name": "Please enter your full name.",
+        "email": "Please enter your email address.",
+        "emailInvalid": "Please enter a valid email address (e.g. name@domain.com).",
+        "subject": "Please choose a subject.",
+        "message": "Please write your message.",
+        "notice": "Please confirm that you have read the personal data notice before sending.",
+        "tooLong": "This field is longer than allowed."
+      }
     },
     "topics": {
       "individual": "Seed Ball Release on a Project Site",
@@ -1475,6 +1484,7 @@
       "pending": "Preparing order access in this browser. Please wait before refreshing the page or changing the language.",
       "failed": "Order access could not be prepared in this browser. You can retry. If you refresh the page or change the language, you may need to reopen the order link in your email.",
       "unavailable": "Order access could not be verified with this link. Reopen the order link in your email. If the problem persists, contact us with your order number.",
+      "ready": "Order access is ready in this browser.",
       "retry": "Retry order access"
     },
     "title": "Your order",

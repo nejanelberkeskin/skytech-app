@@ -52,3 +52,9 @@ export function missingCompanyFields(): string[] {
 export function tradeRegistryLine(): string | null {
   return COMPANY.tradeRegistryNo ? [COMPANY.tradeRegistryOffice, COMPANY.tradeRegistryNo].filter(Boolean).join(" / ") : null;
 }
+
+/** `tel:` bağlantısı uluslararası biçimde (+90…): yurt dışından ve yabancı hatlardan da aranabilir. */
+export function telHref(phone: string): string {
+  const digits = phone.replace(/[^\d+]/g, "");
+  return `tel:${digits.startsWith("+") ? digits : `+90${digits.replace(/^0/, "")}`}`;
+}

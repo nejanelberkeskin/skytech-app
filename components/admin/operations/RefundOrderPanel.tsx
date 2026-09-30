@@ -20,7 +20,8 @@ const RESULT_LABELS: Record<RefundActionResult["outcome"], string> = {
 const keyOf = (operation: RefundOperationView) => `${operation.kind}:${operation.paymentId}`;
 type Selection = { key: string; action: RefundAction; attempt: number };
 
-export default function RefundOrderPanel({ orderId, onChanged, onBusyChange }: { orderId: string; onChanged?: () => void; onBusyChange?: (busy: boolean) => void }) {
+/** `embedded`: sipariş ayrıntısının içinde. Doğrulamadan sonra ayrıntı yeniden kurulduğu için yönerge siparişi yeniden açmayı söyler. */
+export default function RefundOrderPanel({ orderId, onChanged, onBusyChange, embedded = false }: { orderId: string; onChanged?: () => void; onBusyChange?: (busy: boolean) => void; embedded?: boolean }) {
   const router = useRouter();
   const [view, setView] = useState<RefundOrderView | null>(null);
   const [loading, setLoading] = useState(true);
@@ -101,7 +102,9 @@ export default function RefundOrderPanel({ orderId, onChanged, onBusyChange }: {
     <div ref={feedback} tabIndex={-1} className="space-y-2 outline-none">
       {error && <p role="alert" className="rounded-xl border border-red-400/40 bg-red-500/10 p-4 text-sm text-red-200">{error}</p>}
       {mfaRequired && <div className="rounded-xl border border-amber-400/40 p-4 space-y-2 text-sm text-amber-100">
-        <p>Bu işlem doğrulama gerektiği için başlatılmadı. Hesap güvenliğinde iki aşamalı doğrulamayı tamamlayın; bu ekrana dönüp “Görünümü yenile” düğmesine basın ve güncel işlemi yeniden seçip onaylayın. İşlem otomatik olarak gönderilmez.</p>
+        <p>{embedded
+          ? "Bu işlem doğrulama gerektiği için başlatılmadı. Hesap güvenliğinde iki aşamalı doğrulamayı tamamlayın. Bu sayfaya döndüğünüzde görünüm kendiliğinden yenilenir; siparişi yeniden açıp işlemi yeniden seçin ve onaylayın. İşlem otomatik olarak gönderilmez."
+          : "Bu işlem doğrulama gerektiği için başlatılmadı. Hesap güvenliğinde iki aşamalı doğrulamayı tamamlayın; bu ekrana dönüp “Görünümü yenile” düğmesine basın ve güncel işlemi yeniden seçip onaylayın. İşlem otomatik olarak gönderilmez."}</p>
         <Link href="/admin/guvenlik" target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center underline">Hesap güvenliğini aç (yeni sekme)</Link>
       </div>}
       {result && <p role="status" className="rounded-xl border border-white/15 p-4 text-sm text-white">{result}</p>}

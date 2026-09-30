@@ -8,7 +8,7 @@ import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
 import ApplicationLink from "@/components/vitrin/kendi-arazim/ApplicationLink";
 import { REQUESTS_ENABLED } from "@/lib/site-config";
 import { SITES_HREF } from "@/lib/sites/links";
-import { COMPANY } from "@/lib/company";
+import { COMPANY, telHref } from "@/lib/company";
 import { buildPageMetadata } from "@/lib/seo";
 
 type Props = { params: Promise<{ locale: string }> };
@@ -80,7 +80,7 @@ export default async function OwnLandPage({ params }: Props) {
       </section>
       <footer className="flex flex-wrap items-center gap-x-5 gap-y-3 border-t border-[#1B6B3A]/15 pt-7 text-sm">
         <p>{t("contact")}</p><a className="break-all font-semibold text-[#1B6B3A] underline underline-offset-4" href={`mailto:${COMPANY.email}`}>{COMPANY.email}</a>
-        {COMPANY.phone && <a className="font-semibold text-[#1B6B3A] underline underline-offset-4" href={`tel:${COMPANY.phone.replace(/\s/g, "")}`}>{COMPANY.phone}</a>}
+        {COMPANY.phone && <a className="font-semibold text-[#1B6B3A] underline underline-offset-4" href={telHref(COMPANY.phone)}>{COMPANY.phone}</a>}
       </footer>
     </div>
   );

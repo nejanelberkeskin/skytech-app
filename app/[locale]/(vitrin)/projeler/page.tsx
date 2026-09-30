@@ -46,13 +46,14 @@ export default async function ProjelerPage({ params }: { params: Promise<{ local
 
       {/* Stats */}
       <SectionWrapper variant="light" className="!py-12">
-        <div className="grid grid-cols-3 gap-5 max-w-3xl mx-auto">
+        {/* Dar ekranda (375 px) üç sütun sığsın: uzun RU etiketleri taşmadan kırılır. */}
+        <div className="grid grid-cols-3 gap-2 sm:gap-5 max-w-3xl mx-auto">
           {STATS.map((s) => (
-            <div key={s.label} className="vitrin-card p-6 text-center">
-              <p className="text-3xl lg:text-4xl font-bold bg-gradient-to-br from-[#1B6B3A] to-[#22894a] bg-clip-text text-transparent mb-1 tabular-nums">
+            <div key={s.label} className="vitrin-card min-w-0 p-3 sm:p-6 text-center">
+              <p className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-br from-[#1B6B3A] to-[#22894a] bg-clip-text text-transparent mb-1 tabular-nums">
                 {s.value}
               </p>
-              <p className="text-xs uppercase tracking-wider text-[#6b8f6b] font-semibold">
+              <p className="text-[11px] sm:text-xs uppercase tracking-normal sm:tracking-wider text-[#6b8f6b] font-semibold hyphens-auto wrap-break-word">
                 {s.label}
               </p>
             </div>

@@ -5,6 +5,7 @@ import { COMPANY } from "@/lib/company";
 import { buildPageMetadata } from "@/lib/seo";
 import type { PriceLocale } from "@/lib/pricing";
 import WithdrawalForm from "@/components/vitrin/cayma/WithdrawalForm";
+import { formatReceiptDates } from "@/components/vitrin/cayma/receipt-date";
 import { OrderAccessPrivacy } from "@/components/vitrin/siparis-durumu/OrderControls";
 
 type Props = {
@@ -38,33 +39,10 @@ export default async function WithdrawalPage({ params, searchParams }: Props) {
   // action formats them here; it reads/writes no order and receives no identity data.
   async function formatReceipt(receivedAt: string, refundDueOn: string) {
     "use server";
-    if (
-      typeof receivedAt !== "string" ||
-      !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{1,3})?(Z|[+-]\d{2}:\d{2})$/.test(
-        receivedAt,
-      ) ||
-      typeof refundDueOn !== "string" ||
-      !/^\d{4}-\d{2}-\d{2}$/.test(refundDueOn)
-    )
-      throw new Error("Invalid receipt dates");
-    const options = {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-      timeZone: "Europe/Istanbul",
-    } as const;
-    const language = locale === "en" ? "en-GB" : locale;
-    return {
-      receivedAt: new Intl.DateTimeFormat(language, {
-        ...options,
-        hour: "2-digit",
-        minute: "2-digit",
-        timeZoneName: "short",
-      }).format(new Date(receivedAt)),
-      refundDueOn: new Intl.DateTimeFormat(language, options).format(
-        new Date(`${refundDueOn}T12:00:00Z`),
-      ),
-    };
+    // Same validation as the client (isReceiptTimestamp): database microseconds are accepted, invalid dates are not.
+    const dates = formatReceiptDates(receivedAt, refundDueOn, locale);
+    if (!dates) throw new Error("Invalid receipt dates");
+    return dates;
   }
   const emailLink = (
     <a

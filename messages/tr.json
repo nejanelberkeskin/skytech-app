@@ -1071,7 +1071,16 @@
       "error": "Bir şeyler ters gitti. Lütfen tekrar deneyin veya doğrudan info@skytechgreen.com adresinden bize ulaşın.",
       "uncertain": "Gönderim sonucu doğrulanamadı; mesajınız ulaşmış olabilir. Aynı mesajı yeniden göndermek yerine info@skytechgreen.com üzerinden bizimle iletişime geçin.",
       "privacyLink": "KVKK Aydınlatma Metni",
-      "rateLimited": "Çok fazla deneme yapıldı. Lütfen birkaç dakika sonra tekrar deneyin."
+      "rateLimited": "Çok fazla deneme yapıldı. Lütfen birkaç dakika sonra tekrar deneyin.",
+      "errors": {
+        "name": "Adınızı ve soyadınızı yazın.",
+        "email": "E-posta adresinizi yazın.",
+        "emailInvalid": "Geçerli bir e-posta adresi yazın (ör. ad@alanadi.com).",
+        "subject": "Bir konu seçin.",
+        "message": "Mesajınızı yazın.",
+        "notice": "Göndermeden önce aydınlatma metnini okuduğunuzu onaylayın.",
+        "tooLong": "Bu alan izin verilen uzunluğu aşıyor."
+      }
     },
     "topics": {
       "individual": "Sahaya Tohum Topu Bıraktırma",
@@ -1475,6 +1484,7 @@
       "pending": "Bu tarayıcıda sipariş erişimi hazırlanıyor. Lütfen işlem tamamlanana kadar sayfayı yenilemeyin veya dili değiştirmeyin.",
       "failed": "Bu tarayıcıda sipariş erişimi hazırlanamadı. Yeniden deneyebilirsiniz. Sayfayı yeniler veya dili değiştirirseniz e-postanızdaki sipariş bağlantısını yeniden açmanız gerekebilir.",
       "unavailable": "Bu bağlantıyla sipariş erişimi doğrulanamadı. E-postanızdaki sipariş bağlantısını yeniden açın. Sorun sürerse sipariş numaranızla bize ulaşın.",
+      "ready": "Bu tarayıcıda sipariş erişimi hazır.",
       "retry": "Sipariş erişimini yeniden dene"
     },
     "title": "Siparişiniz",

@@ -8,9 +8,10 @@ import { REQUEST_TYPES, REQUEST_STATUSES } from "@/lib/requests/schema";
 import { REQUEST_STATUS_LABELS, REQUEST_TYPE_LABELS } from "@/lib/requests/labels";
 import { AdminApiError, adminRequest, errorText } from "../operations/client";
 import RequestDialog from "./RequestDialog";
-import { date } from "./view";
+import { REQUESTS_SCOPE, date, requestAccessKey } from "./view";
+import { isAccessDenial } from "../access/AccessDenialNotice";
 export default function Requests() {
-  const { refresh } = useAdmin();
+  const { refresh, reportDenial } = useAdmin();
   const initialNo = useSearchParams().get("no") ?? "";
   const [q, setQ] = useState(initialNo), [search, setSearch] = useState(initialNo);
   const [status, setStatus] = useState(""), [type, setType] = useState(""), [page, setPage] = useState(1), [revision, setRevision] = useState(0);
@@ -36,10 +37,13 @@ export default function Requests() {
     }).catch(e => {
       if (abort.signal.aborted) return;
       setResult(null); setProblem({ key, message: errorText(e) });
-      if (e instanceof AdminApiError && [401, 403].includes(e.status)) { setSelected(null); void refresh(); }
+      if (e instanceof AdminApiError && [401, 403].includes(e.status)) {
+        if (isAccessDenial(e)) reportDenial({ scope: REQUESTS_SCOPE, message: errorText(e), keyOf: requestAccessKey });
+        setSelected(null); void refresh();
+      }
     });
     return () => abort.abort();
-  }, [query, key, refresh, initialNo]);
+  }, [query, key, refresh, initialNo, reportDenial]);
   const pages = data ? Math.max(1, Math.ceil(data.total / data.pageSize)) : 1;
   return <div className="p-4 md:p-8 space-y-6 min-w-0">
     <div className="flex flex-wrap justify-between gap-3"><div><h1 className="text-2xl font-bold text-white">Talepler</h1><p className="text-sm text-slate-400 mt-1">Saha hizmeti ve arazi başvurularını takip edin.</p></div><Button variant="secondary" onClick={reload} disabled={loading}>Listeyi yenile</Button></div>

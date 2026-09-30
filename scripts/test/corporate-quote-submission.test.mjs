@@ -11,7 +11,8 @@ const QUOTE = {
 const EDITED = { ...QUOTE, seed_count: '100.000+', notes: 'Yanıt kaybından sonra değişti' };
 const SIGN_UP = { email: 'yetkili@example.invalid', password: 'gizli-parola-1', metadata: { company_name: 'Örnek A.Ş.' } };
 const RLS = { code: '42501', message: 'new row violates row-level security policy' };
-const content = (row) => { const { id, user_id, status, ...rest } = row; return rest; };
+const SYSTEM_FIELDS = new Set(['id', 'user_id', 'status']);
+const content = (row) => Object.fromEntries(Object.entries(row).filter(([key]) => !SYSTEM_FIELDS.has(key)));
 
 // Sahte arka uç: auth kullanıcıları ve corporate_quotes satırları; birincil anahtar tekrarı 23505 verir.
 function fakeBackend({ signUpErrors = [], insertPlan = [], existingIds = [] } = {}) {

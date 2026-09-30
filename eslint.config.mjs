@@ -6,8 +6,8 @@ const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
   // Bütün sayfalar app/[locale] altında: iç bağlantı dil önekini @/i18n/navigation'dan alır.
-  // Öneksiz next/link EN/RU sayfasından Türkçe sayfaya gider; Next 16.3'ün iyimser rota tahmini
-  // bu adresi /[locale] sanır ve görünür bağlantı sonsuz ön yükleme döngüsüne girer (scripts/e2e/prefetch-loop.mjs).
+  // Öneksiz next/link EN/RU ziyaretçisini Türkçe sayfaya götürür; iyimser rota tahmini açıkken
+  // (next.config.ts) görünür bağlantı sonsuz ön yükleme döngüsüne de girer (scripts/e2e/prefetch-loop.mjs).
   {
     rules: {
       "no-restricted-imports": [
@@ -16,7 +16,7 @@ const eslintConfig = defineConfig([
           paths: [
             {
               name: "next/link",
-              message: "Link'i @/i18n/navigation'dan alın: öneksiz href EN/RU sayfalarında ön yükleme döngüsü yaratır.",
+              message: "Link'i @/i18n/navigation'dan alın: öneksiz href EN/RU ziyaretçisini Türkçe sayfaya götürür.",
             },
           ],
         },

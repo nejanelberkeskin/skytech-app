@@ -4,21 +4,24 @@
  *
  *   BASE=http://localhost:3302 npm run test:prefetch
  *
- * Neyi yakalar: Next 16.3'ün iyimser rota tahmini (experimental.optimisticRouting) /en ve /ru
- * adreslerinden ilk yol parçasının [locale] olduğunu öğrenir. Görünür bir bağlantı dil öneksiz, tek
- * parçalı bir adrese giderse (ör. next/link ile "/cerez-politikasi") istemci onu
- * "/[locale=cerez-politikasi]" ana sayfası sanar; ara katman ise adresi /tr/cerez-politikasi'ye
- * yeniden yazar. Yalnız baş (metadata) eksikken atılan istek bu sapmayı fark etmez: yanıt sunucunun
- * anahtarına yazılır, zamanlayıcı tahmin edilen anahtarı okur, boş bulur ve aynı isteği ara vermeden
- * yineler (yerelde sayfa başına ~200 istek/sn; Vercel'de her biri ara katman + işlev çağrısı).
+ * Neyi yakalar: Next 16.3'ün iyimser rota tahmini (experimental.optimisticRouting) /en, /ru ya da
+ * /tr adresi görülen belgede ilk yol parçasının [locale] olduğunu öğrenir. Görünür bir bağlantı dil
+ * öneksiz, tek parçalı bir adrese giderse (EN/RU'da next/link ile "/cerez-politikasi"; TR'de as-needed
+ * gereği bütün bağlantılar) istemci onu "/[locale=cerez-politikasi]" ana sayfası sanar; ara katman
+ * ise adresi /tr/cerez-politikasi'ye yeniden yazar. Yalnız baş (metadata) eksikken atılan istek bu
+ * sapmayı fark etmez: yanıt sunucunun anahtarına yazılır, zamanlayıcı tahmin edilen anahtarı okur,
+ * boş bulur ve aynı isteği ara vermeden yineler (yerelde sayfa başına 150–260 istek/sn; yanıtlar
+ * no-store, Vercel'de her biri ara katman + işlev çağrısı). Tahmin next.config.ts'te kapalı; bu
+ * denetim hem öneksiz bağlantıları hem tahminin yeniden açılmasını yakalar.
  *
  * Nasıl: her senaryo taze bir tarayıcı bağlamında açılır (çerez tercihi kayıtlı değil → çerez bandı
  * görünür), sayfa sonuna kadar kaydırılır (görünür her bağlantı ön yüklensin), beklenir ve `_rsc`
  * istekleri yola göre sayılır. Bir yola ESIK'ten fazla ya da senaryo başına TAVAN'dan fazla RSC
  * isteği giderse 1 ile çıkar.
- *   - doğrudan: sitemap.xml'deki her adres (üç dil) ilk yükleme olarak açılır.
+ *   - doğrudan: sitemap.xml'deki her adres (üç dil) ve önekli TR adresleri (/tr) ilk yükleme olarak.
  *   - geçiş: /en ve /ru açılır (kalıp öğrenilir), sonra istemci tarafı geçişle uygulama sayfalarına
- *     gidilir; öğrenilen kalıp belge boyunca kalır.
+ *     ve öneksiz bir TR adresine gidilir; öğrenilen kalıp belge boyunca kalır.
+ *   - dil: dil değiştiriciyle EN/RU → TR ve TR → EN (istemci geçişi; varılan sayfa sayılır).
  *
  * Ortam: BASE (zorunlu), ESIK (yol başına, 8), TAVAN (senaryo başına, 250), BEKLE (ms, 2500),
  * ESZAMANLI (3), CEREZ ("ad=değer"; oturum isteyen sayfalar için, ör. sahte Supabase oturumu),
@@ -39,8 +42,18 @@ const BEKLE = Number(process.env.BEKLE ?? 2500);
 const ESZAMANLI = Number(process.env.ESZAMANLI ?? 3);
 const baseHost = new URL(BASE).host;
 
-// Uygulama (üyelik/kurumsal) sayfaları sitemap'te yok; istemci geçişiyle ayrıca denenir.
-const GECIS_HEDEFLERI = ["/auth/login", "/hesabim", "/hesabim/taleplerim", "/hesabim/siparisler", "/kurumsal", "/kurumsal/teklif-al"];
+// Uygulama (üyelik/kurumsal) sayfaları sitemap'te yok; istemci geçişiyle ayrıca denenir. Son satır: koddaki
+// öneksiz router.push("/…") çağrılarının karşılığı (EN belgesinden TR sayfasına istemci geçişi).
+const GECISLER = [
+  ...["/auth/login", "/hesabim", "/hesabim/taleplerim", "/hesabim/siparisler", "/kurumsal", "/kurumsal/teklif-al"].flatMap(
+    (path) => ["/en", "/ru"].map((prefix) => [prefix, prefix + path]),
+  ),
+  ["/en", "/sahalar"],
+];
+// Dil değiştirici istemci geçişi yapar: EN/RU'da öğrenilen kalıp varılan TR sayfasına taşınır.
+const DIL_DEGISIMLERI = [["/en/sahalar", "tr"], ["/ru/hakkimizda", "tr"], ["/en", "tr"], ["/sahalar", "en"]];
+// Sitemap'te yok ama dil değiştirici EN/RU'dan TR'ye bu adreslerle varır; sayfa yenilenince doğrudan açılır.
+const EK_DOGRUDAN = ["/tr", "/tr/sahalar"];
 
 async function sitemapPaths() {
   const res = await fetch(`${BASE}/sitemap.xml`);
@@ -89,17 +102,26 @@ async function runScenario(browser, scenario) {
     if (scenario.kind === "geçiş") {
       await scrollToEnd(page);
       await page.waitForTimeout(1000);
-      const target = scenario.localePrefix + scenario.target;
       // Next'in istemci yönlendiricisi (App Router, window.next.router). Yoksa senaryo koşamaz: sessizce geçme.
       const pushed = await page.evaluate((href) => {
         const router = window.next?.router;
         if (typeof router?.push !== "function") return false;
         router.push(href);
         return true;
-      }, target);
+      }, scenario.target);
       if (!pushed) throw new Error("window.next.router.push yok; istemci geçişi denenemedi");
       counting = true;
       await page.waitForURL((u) => u.pathname !== scenario.start, { timeout: 15000 }).catch(() => {});
+      await page.waitForTimeout(1500);
+    }
+    if (scenario.kind === "dil") {
+      const button = page
+        .locator('div[role="group"] button', { hasText: new RegExp(`^${scenario.locale}$`, "i") })
+        .filter({ visible: true })
+        .first();
+      counting = true;
+      await button.click({ timeout: 10000 });
+      await page.waitForURL((u) => u.pathname !== scenario.start, { timeout: 15000 });
       await page.waitForTimeout(1500);
     }
     await scrollToEnd(page);
@@ -115,12 +137,13 @@ async function runScenario(browser, scenario) {
   }
 }
 
-const directPaths = process.env.YOLLAR ? process.env.YOLLAR.split(",").map((p) => p.trim()).filter(Boolean) : await sitemapPaths();
+const directPaths = process.env.YOLLAR
+  ? process.env.YOLLAR.split(",").map((p) => p.trim()).filter(Boolean)
+  : [...(await sitemapPaths()), ...EK_DOGRUDAN];
 const scenarios = [
   ...directPaths.map((path) => ({ kind: "doğrudan", start: path })),
-  ...GECIS_HEDEFLERI.flatMap((target) =>
-    ["/en", "/ru"].map((localePrefix) => ({ kind: "geçiş", start: localePrefix, localePrefix, target })),
-  ),
+  ...GECISLER.map(([start, target]) => ({ kind: "geçiş", start, target })),
+  ...DIL_DEGISIMLERI.map(([start, locale]) => ({ kind: "dil", start, locale })),
 ].map((scenario, id) => ({ ...scenario, id }));
 
 const browser = await chromium.launch(
@@ -142,7 +165,7 @@ results.sort((a, b) => a.id - b.id);
 console.table(
   results.map((r) => ({
     senaryo: r.kind,
-    adres: r.kind === "geçiş" ? `${r.start} → ${r.localePrefix}${r.target}` : r.start,
+    adres: r.kind === "geçiş" ? `${r.start} → ${r.target}` : r.kind === "dil" ? `${r.start} → [${r.locale}]` : r.start,
     son: r.landed,
     rsc: r.total,
     yol: r.paths,

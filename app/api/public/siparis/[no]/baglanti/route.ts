@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { rateLimit, getClientIP } from "@/lib/admin-auth";
 import { orderCookieName, orderCookieOptions } from "@/lib/orders/access";
 import { ORDER_LINK_HEADERS, ORDER_LINK_TARGET_HEADER, ORDER_LINK_TOKEN_HEADER, orderLinkTarget, orderLinkToken } from "@/lib/orders/link-gate";
+import { ORDER_VIEW_FIXTURES, ORDER_VIEW_FIXTURE_TOKEN } from "@/lib/orders/view";
 import { getAuthorizedOrder } from "@/lib/orders/view-data";
 
 /**
@@ -30,6 +31,14 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ no: 
   // Biçime uymayan belirteç boş sayılır: veritabanına gidilmez, ham değer hiçbir yere yazılmaz.
   const token = orderLinkToken(req.headers.get(ORDER_LINK_TOKEN_HEADER) ?? search.get("t"));
   if (!target.orderNo || !token) return res;
+  // Geliştirme örnekleri (`?t=ornek`): yalnız geliştirmede ve yalnız bilinen örnek numaralarında çerez yazılır;
+  // veritabanına gidilmez (sayfa örneği lib/orders/view.ts'ten okur). Üretimde orderLinkToken bu değeri boşa çevirir.
+  if (token === ORDER_VIEW_FIXTURE_TOKEN) {
+    if (process.env.NODE_ENV !== "production" && ORDER_VIEW_FIXTURES.some((o) => o.orderNo === target.orderNo)) {
+      res.cookies.set(orderCookieName(target.orderNo), token, orderCookieOptions());
+    }
+    return res;
+  }
   if (rateLimit(`siparis-baglanti:${getClientIP(req)}`, 30, 10 * 60_000)) return res;
   try {
     const order = await getAuthorizedOrder(target.orderNo, { token });

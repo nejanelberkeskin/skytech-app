@@ -13,6 +13,8 @@ const { NextRequest } = server;
 const Access = await import('../../lib/orders/access.ts');
 const Gate = await import('../../lib/orders/link-gate.ts');
 const SiteConfig = await import('../../lib/site-config.ts');
+const View = await import('../../lib/orders/view.ts');
+const Types = await import('../../lib/orders/types.ts');
 
 const ORDERS = {
   'SG-2026-ABCDEF': { id: '2f1c1e0a-5b7d-4c55-9a70-3a1f0c9d8e11', order_no: 'SG-2026-ABCDEF', paid_at: '2026-09-01T10:00:00Z' },
@@ -37,6 +39,7 @@ function loadGateRoute({ limited = false, fail = false, calls = [] } = {}) {
     '@/lib/admin-auth': { getClientIP: () => '203.0.113.9', rateLimit: () => (limited ? { status: 429 } : null) },
     '@/lib/orders/access': Access,
     '@/lib/orders/link-gate': Gate,
+    '@/lib/orders/view': View,
     '@/lib/orders/view-data': { getAuthorizedOrder: fail ? async () => { throw new Error('siparis okunamadı: 57014'); } : authorizedOrder(calls) },
   });
 }
@@ -271,6 +274,71 @@ test('P2: kapı bozuk belirteçte (iç başlık ya da doğrudan sorgu) çerezsiz
   }
   assert.deepEqual(calls, [], 'bozuk belirteçle sipariş okunmaz');
   assert.deepEqual(logged, [], 'günlüğe hiçbir şey yazılmaz');
+});
+
+// Astra #104 P3: geliştirme örnekleri (`?t=ornek`, lib/orders/view.ts) kapıdan geçemiyordu. Yalnız geliştirmede ve yalnız
+// bilinen örnek numaralarında erişim korunur; veritabanına gidilmez. Üretimde `ornek` hiçbir siparişi açmaz.
+async function withNodeEnv(value, fn) {
+  const previous = process.env.NODE_ENV;
+  process.env.NODE_ENV = value;
+  try { return await fn(); } finally { process.env.NODE_ENV = previous; }
+}
+/** Gerçek görünüm kaynağı; sipariş deposu yalnız okuma sayacı (örneklerde hiç çağrılmamalı). */
+function viewData(reads) {
+  return loadSource('lib/orders/view-data.ts', {
+    './access': Access, '@/lib/certificates/publication': {}, './schedule': {}, './state': {}, './types': Types, './view': View,
+    './store': { db: () => ({}), getOrderByNo: async (_db, no) => { reads.push(no); return null; } },
+  });
+}
+const FIXTURE_TOKEN = View.ORDER_VIEW_FIXTURE_TOKEN;
+
+test('P3: geliştirmede altı örnek sipariş `?t=ornek` ile açılır (kapı çerezi yazar, sayfa örneği okur); veritabanına gidilmez', async () => {
+  await withNodeEnv('development', async () => {
+    const calls = [];
+    const reads = [];
+    const route = loadGateRoute({ calls });
+    const view = viewData(reads);
+    assert.equal(View.ORDER_VIEW_FIXTURES.length, 6);
+    for (const f of View.ORDER_VIEW_FIXTURES) {
+      const res = await gateGet(route, f.orderNo, { t: FIXTURE_TOKEN, hedef: 'siparis', dil: 'en' });
+      assert.equal(res.status, 303, f.orderNo);
+      assert.equal(res.headers.get('location'), `/en/siparis/${f.orderNo}`);
+      assert.match(res.headers.get('set-cookie'), new RegExp(`^sgo_${f.orderNo}=${FIXTURE_TOKEN};.*HttpOnly`, 'i'));
+      // Sayfa çerezdeki değeri getOrderView'a verir: örnek görünüm döner.
+      assert.equal((await view.getOrderView(f.orderNo, { token: FIXTURE_TOKEN }))?.orderNo, f.orderNo);
+    }
+    const other = await gateGet(route, 'SG-2026-ABCDEF', { t: FIXTURE_TOKEN });
+    assert.equal(other.headers.get('set-cookie'), null, 'örnek olmayan numarada çerez yok');
+    assert.deepEqual(calls, [], 'kapı veritabanına gitmez');
+    assert.deepEqual(reads, [], 'görünüm veritabanına gitmez');
+    const mw = loadMiddleware([]);
+    const r = await mw.middleware(new NextRequest(`http://localhost:3000/siparis/${View.ORDER_VIEW_FIXTURES[0].orderNo}?t=${FIXTURE_TOKEN}`));
+    assert.equal(r.headers.get(`x-middleware-request-${Gate.ORDER_LINK_TOKEN_HEADER}`), FIXTURE_TOKEN, 'middleware geliştirmede örneği taşır');
+  });
+});
+
+test('P3: üretimde `ornek` hiçbir siparişi açmaz: middleware boşa çevirir, kapı çerez yazmaz ve okumaz, görünüm örneği vermez', async () => {
+  await withNodeEnv('production', async () => {
+    assert.equal(Gate.orderLinkToken(FIXTURE_TOKEN), '');
+    const calls = [];
+    const route = loadGateRoute({ calls });
+    const f = View.ORDER_VIEW_FIXTURES[0];
+    const viaQuery = await gateGet(route, f.orderNo, { t: FIXTURE_TOKEN });
+    const viaHeader = await route.GET(new NextRequest(`http://localhost:3000/api/public/siparis/${f.orderNo}/baglanti`, {
+      headers: { [Gate.ORDER_LINK_TOKEN_HEADER]: FIXTURE_TOKEN, [Gate.ORDER_LINK_TARGET_HEADER]: 'siparis:tr' },
+    }), { params: Promise.resolve({ no: f.orderNo }) });
+    for (const res of [viaQuery, viaHeader]) {
+      assert.equal(res.status, 303);
+      assert.equal(res.headers.get('set-cookie'), null);
+    }
+    assert.deepEqual(calls, [], 'kapı veritabanına gitmez');
+    const mw = loadMiddleware([]);
+    const r = await mw.middleware(new NextRequest(`http://localhost:3000/siparis/${f.orderNo}?t=${FIXTURE_TOKEN}`));
+    assert.equal(r.headers.get(`x-middleware-request-${Gate.ORDER_LINK_TOKEN_HEADER}`), '');
+    // Çerez elle `ornek` yapılsa bile sayfa örneği göstermez (mevcut NODE_ENV koruması): gerçek imza denetimine düşer.
+    const reads = [];
+    assert.equal(await viewData(reads).getOrderView(f.orderNo, { token: FIXTURE_TOKEN }), null);
+  });
 });
 
 function loadDocumentRoute() {

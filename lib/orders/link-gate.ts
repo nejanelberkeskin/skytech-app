@@ -8,6 +8,7 @@
  * kaynak Referer başlıklarına hiç girmez; JavaScript kapalıyken de aynı çalışır. Adres temizliği istemciye bırakılmaz.
  */
 import { ORDER_NO_RE } from "./types";
+import { ORDER_VIEW_FIXTURE_TOKEN } from "./view";
 
 export type OrderLinkPage = "siparis" | "sonuc";
 
@@ -46,9 +47,12 @@ const TOKEN_RE = /^[A-Za-z0-9_-]{32}$/;
  * uzunluk, boş) boş dizgiye çevrilir ve kapıda çerezsiz, belirteçsiz aynı 303'ü alır. Ham değer istek başlığına,
  * hata iletisine, günlüğe ya da yanıta HİÇ yazılmaz: `Headers.set` ASCII dışı ve kontrol karakterli değerde
  * değeri iletisine koyarak hata fırlatır.
+ * Geliştirmede örnek sipariş belirteci (`?t=ornek`, lib/orders/view.ts) de geçer; üretimde boşa çevrilir.
  */
 export function orderLinkToken(raw: string | null | undefined): string {
-  return raw && TOKEN_RE.test(raw) ? raw : "";
+  if (!raw) return "";
+  if (TOKEN_RE.test(raw)) return raw;
+  return process.env.NODE_ENV !== "production" && raw === ORDER_VIEW_FIXTURE_TOKEN ? raw : "";
 }
 
 /**

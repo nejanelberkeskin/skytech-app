@@ -985,7 +985,7 @@
         "pre": "Kurumsal Projenizi",
         "highlight": "Tasarlayalım"
       },
-      "subtitle": "Çalışan sayınız, katılmak istediğiniz sahalar, raporlama ihtiyaçlarınız — birlikte planlayalım. Bir iş günü içinde dönüş.",
+      "subtitle": "Çalışan sayınız, katılmak istediğiniz sahalar, raporlama ihtiyaçlarınız — birlikte planlayalım.",
       "primaryEnabled": "Teklif Talep Et",
       "primaryDisabled": "Bilgi Al",
       "secondary": "Bize Ulaşın"
@@ -1025,12 +1025,12 @@
   "infoPage": {
     "meta": {
       "title": "Bilgi Al — Sorularınızı Yanıtlayalım",
-      "description": "Bireysel veya kurumsal Skytech Green soruları için bilgi formu — 24 saat içinde uzman ekibimizden dönüş garantisi."
+      "description": "Bireysel veya kurumsal Skytech Green sorularınızı bilgi formuyla ekibimize iletin."
     },
     "breadcrumb": {
       "label": "Bilgi Al",
       "title": "Merak Ettiğiniz Her Şeyi Sorun",
-      "subtitle": "Formu doldurun — 24 saat içinde uzman ekibimiz dönüş yapsın. Bireysel ya da kurumsal, fark etmez."
+      "subtitle": "Bireysel veya kurumsal sorularınızı form aracılığıyla ekibimize iletin."
     },
     "form": {
       "heading": "İletişim Formu",
@@ -1067,6 +1067,7 @@
         "desc": "En kısa sürede size dönüş yapacağız. Teşekkür ederiz."
       },
       "error": "Bir şeyler ters gitti. Lütfen tekrar deneyin veya doğrudan info@skytechgreen.com adresinden bize ulaşın.",
+      "uncertain": "Gönderim sonucu doğrulanamadı; mesajınız ulaşmış olabilir. Aynı mesajı yeniden göndermek yerine info@skytechgreen.com üzerinden bizimle iletişime geçin.",
       "privacyLink": "KVKK Aydınlatma Metni",
       "rateLimited": "Çok fazla deneme yapıldı. Lütfen birkaç dakika sonra tekrar deneyin."
     },
@@ -1081,11 +1082,11 @@
     },
     "info": {
       "response": {
-        "title": "24 Saat Yanıt",
-        "desc": "İş günlerinde 24 saat, hafta sonu pazartesi sabahı dönüş garantisi."
+        "title": "Talebinizin değerlendirilmesi",
+        "desc": "Ekibimiz talebinizi inceler ve verdiğiniz iletişim bilgileri üzerinden sizinle iletişime geçer."
       },
       "email": {
-        "desc": "Doğrudan e-posta ile de ulaşabilirsiniz — 24 saat aktif."
+        "desc": "Sorularınızı doğrudan e-posta ile de iletebilirsiniz."
       },
       "phone": {
         "desc": "Hafta içi 09:00 - 18:00 arası telefonla erişim."
@@ -1104,7 +1105,7 @@
     },
     "body": {
       "primary": "Çevrim içi ödeme altyapımızda son hazırlıkları yapıyoruz. Bu aşamada talebinizi alıyor, ayrıntıları ve takvimi sizinle birlikte netleştiriyoruz.",
-      "secondary": "Bir Proje Uygulama Sahasına tohum topu bıraktırmak ya da kendi araziniz için başvurmak üzere formu doldurmanız yeterli; ekibimiz bir iş günü içinde dönüş yapar."
+      "secondary": "Bir Proje Uygulama Sahasına tohum topu bıraktırmak ya da kendi araziniz için başvurmak üzere formu doldurabilirsiniz. Ekibimiz başvurunuzu inceleyerek sizinle iletişime geçer."
     },
     "cta": {
       "home": "Ana Sayfaya Dön",
@@ -1213,11 +1214,11 @@
       },
       "success": {
         "title": "Talebiniz alındı",
-        "desc": "Ekibimiz bir iş günü içinde sizinle iletişime geçecek.",
+        "desc": "Ekibimiz talebinizi inceleyip verdiğiniz iletişim bilgileri üzerinden size dönüş yapacak.",
         "numberLabel": "Talep numaranız",
         "copy": "Kopyala",
         "copied": "Kopyalandı",
-        "emailNote": "Onay e-postası {email} adresine gönderildi.",
+        "emailNote": "İletişim e-posta adresiniz: {email}. Teyit e-postası ulaşmazsa talep numaranızla bize yazabilirsiniz.",
         "nextTitle": "Sırada ne var?",
         "next": [
           "Talebinizi inceliyoruz.",
@@ -1310,6 +1311,74 @@
       "backToSites": "Proje Uygulama Sahalarına dön"
     }
   },
+  "ownLandPage": {
+    "breadcrumb": "Kendi arazim",
+    "breadcrumbLabel": "Sayfa yolu",
+    "eyebrow": "Arazi sahipleri için",
+    "title": "Kendi araziniz için dronla tohum topu bırakma",
+    "description": "Yanmış, bozulmuş ya da atıl araziniz için başvurun; ekibimiz araziyi değerlendirip sizinle iletişime geçsin.",
+    "apply": "Başvuru formuna git",
+    "sites": "Araziniz yoksa: Proje Uygulama Sahalarına katılın",
+    "eligible": {
+      "title": "Kimler başvurabilir?",
+      "note": "Başvuruyu arazi sahibi ya da arazi üzerinde yetkili kişi veya kurum yapmalıdır.",
+      "individuals": "Gerçek kişiler",
+      "companies": "Şirketler",
+      "cooperatives": "Kooperatifler",
+      "municipalities": "Belediyeler",
+      "institutions": "Diğer kurumlar"
+    },
+    "process": {
+      "title": "Başvurudan çalışmaya",
+      "application": {
+        "title": "Başvuru",
+        "body": "Araziniz ve iletişim bilgilerinizle formu doldurursunuz."
+      },
+      "review": {
+        "title": "Ön değerlendirme",
+        "body": "Konum ve arazi bilgileriyle uygunluğu inceleriz."
+      },
+      "planning": {
+        "title": "Planlama",
+        "body": "Gerekirse keşif yapılır; bölgeye uygun türler ve çalışma planı belirlenir."
+      },
+      "offer": {
+        "title": "Teklif",
+        "body": "Arazi uygunsa size özel teklif iletilir."
+      },
+      "release": {
+        "title": "Bırakma ve izleme",
+        "body": "Tohum topları Kasım–Mart döneminde dronla bırakılır; Nisan–Eylül döneminde arazi izlenir."
+      }
+    },
+    "information": {
+      "title": "Başvuruda neler soruyoruz?",
+      "location": "Konum: il, ilçe ve varsa harita bağlantısı",
+      "area": "Yaklaşık alan",
+      "condition": "Arazinin durumu",
+      "ownership": "Mülkiyet veya yetki durumu",
+      "timing": "Zamanlama tercihi",
+      "contact": "İletişim bilgileri"
+    },
+    "free": "Başvuru ücretsizdir ve sizi bir siparişe bağlamaz.",
+    "formTitle": "Başvuru formu",
+    "faq": {
+      "title": "Sık sorulan sorular",
+      "fee": {
+        "question": "Başvuru ücretli mi?",
+        "answer": "Hayır; başvuru ücretsizdir ve bir sipariş değildir."
+      },
+      "species": {
+        "question": "Hangi türler bırakılır?",
+        "answer": "Arazinin iklim ve toprak koşullarına göre ekibimiz bölgeye uygun türleri belirler."
+      },
+      "season": {
+        "question": "Çalışma ne zaman yapılır?",
+        "answer": "Tohum topu bırakma Kasım–Mart döneminde, arazinin uygunluğu ve gerekli izinlere göre planlanır."
+      }
+    },
+    "contact": "Sorularınız için:"
+  },
   "authPages": {
     "home": "Skytech Green ana sayfa",
     "linkError": "Bağlantı bu tarayıcıda doğrulanamadı. Hesabınız onaylandıysa giriş yapabilirsiniz; şifrenizi unuttuysanız yeni bağlantı isteyin.",
@@ -1400,6 +1469,12 @@
     "report": "İzleme raporu (PDF)"
   },
   "orderStatusPage": {
+    "access": {
+      "pending": "Bu tarayıcıda sipariş erişimi hazırlanıyor. Lütfen işlem tamamlanana kadar sayfayı yenilemeyin veya dili değiştirmeyin.",
+      "failed": "Bu tarayıcıda sipariş erişimi hazırlanamadı. Yeniden deneyebilirsiniz. Sayfayı yeniler veya dili değiştirirseniz e-postanızdaki sipariş bağlantısını yeniden açmanız gerekebilir.",
+      "unavailable": "Bu bağlantıyla sipariş erişimi doğrulanamadı. E-postanızdaki sipariş bağlantısını yeniden açın. Sorun sürerse sipariş numaranızla bize ulaşın.",
+      "retry": "Sipariş erişimini yeniden dene"
+    },
     "title": "Siparişiniz",
     "description": "Siparişinizin durumunu, bırakma takvimini, belgelerini ve iade bilgilerini görüntüleyin.",
     "copy": "Numarayı kopyala",
@@ -1559,14 +1634,14 @@
       "title": "Cayma bildiriminizi onaylayın",
       "description": "Bu bildirimle siparişinizden cayarsınız. Ödediğiniz bedelin tamamı 14 gün içinde ödemede kullandığınız araca iade edilir.",
       "submit": "Cayma bildirimini onayla",
-      "cancel": "Vazgeç",
+      "cancel": "Bilgileri düzenle",
       "submitting": "Gönderiliyor…"
     },
     "success": {
       "title": "Cayma bildiriminiz alındı.",
       "receivedAt": "Alınma zamanı",
       "refundDueOn": "Bedelin tamamı en geç {date} tarihine kadar iade edilir.",
-      "email": "Bildiriminizin ulaştığına dair teyit e-postası adresinize gönderildi."
+      "email": "Teyit e-postası ulaşmazsa sipariş numaranızla {email} adresine yazabilirsiniz."
     },
     "closed": {
       "title": "Çevrim içi cayma formu kapalı",

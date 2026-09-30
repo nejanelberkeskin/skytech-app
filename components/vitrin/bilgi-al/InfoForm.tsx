@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { trackLead } from "@/lib/analytics";
@@ -8,12 +8,25 @@ import { trackLead } from "@/lib/analytics";
 const inputClass =
   "w-full px-4 py-3 rounded-xl bg-white border border-black/10 text-sm text-[#1a2e1a] placeholder:text-[#94b494] focus:outline-none focus:border-[#1B6B3A]/40 focus:ring-2 focus:ring-[#1B6B3A]/15 transition-all disabled:opacity-60";
 
-type Status = "idle" | "submitting" | "success" | "error";
+type Status = "idle" | "submitting" | "success" | "error" | "uncertain";
 
 export default function InfoForm() {
   const t = useTranslations("infoPage");
   const [status, setStatus] = useState<Status>("idle");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  const busy = useRef(false);
+  const request = useRef<AbortController | null>(null);
+  const feedback = useRef<HTMLParagraphElement | null>(null);
+  const success = useRef<HTMLDivElement | null>(null);
+  const feedbackId = useId();
+  const noticeId = useId();
+
+  useEffect(() => () => { request.current?.abort(); request.current = null; }, []);
+  useEffect(() => {
+    if (status === "success") success.current?.focus();
+    if (status === "error" || status === "uncertain") feedback.current?.focus();
+  }, [status]);
 
   const SUBJECTS = [
     t("topics.individual"),
@@ -27,6 +40,8 @@ export default function InfoForm() {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (busy.current) return;
+    busy.current = true;
     setStatus("submitting");
     setErrorMsg(null);
 
@@ -43,30 +58,50 @@ export default function InfoForm() {
       website: fd.get("website"), // honeypot
     };
 
+    const controller = new AbortController();
+    request.current = controller;
+    const timeout = window.setTimeout(() => controller.abort(), 15_000);
     try {
       const res = await fetch("/api/public/bilgi-al", {
         method: "POST",
+        cache: "no-store",
+        credentials: "same-origin",
+        redirect: "error",
+        signal: controller.signal,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
 
-      if (!res.ok) {
+      if (request.current !== controller) return;
+      if (res.status >= 400 && res.status < 500) {
+        busy.current = false;
         setStatus("error");
         setErrorMsg(res.status === 429 ? t("form.rateLimited") : t("form.error"));
         return;
       }
-
-      trackLead({ subject: String(payload.subject || "") });
+      const receipt: unknown = await res.json().catch(() => null);
+      if (request.current !== controller) return;
+      if (!res.ok || !receipt || typeof receipt !== "object" || Array.isArray(receipt) || !("ok" in receipt) || receipt.ok !== true) {
+        setStatus("uncertain");
+        setErrorMsg(t("form.uncertain"));
+        return;
+      }
       setStatus("success");
+      // Analytics failure must not turn a confirmed submission into a retry prompt.
+      try { trackLead({ subject: String(payload.subject || "") }); } catch { /* optional analytics */ }
     } catch {
-      setStatus("error");
-      setErrorMsg(t("form.error"));
+      if (request.current !== controller) return;
+      setStatus("uncertain");
+      setErrorMsg(t("form.uncertain"));
+    } finally {
+      window.clearTimeout(timeout);
+      if (request.current === controller) request.current = null;
     }
   }
 
   if (status === "success") {
     return (
-      <div className="vitrin-card p-7 lg:p-10 text-center">
+      <div ref={success} role="status" tabIndex={-1} className="vitrin-card p-7 lg:p-10 text-center">
         <div className="w-14 h-14 mx-auto rounded-2xl bg-[#1B6B3A]/10 flex items-center justify-center mb-5">
           <CheckIcon className="w-7 h-7 text-[#1B6B3A]" />
         </div>
@@ -81,22 +116,22 @@ export default function InfoForm() {
       <h2 className="text-2xl font-bold text-[#1a2e1a] mb-2">{t("form.heading")}</h2>
       <p className="text-sm text-[#3d5a3d] mb-7">{t("form.subheading")}</p>
 
-      <form className="space-y-5" onSubmit={handleSubmit}>
+      <form className="space-y-5" onSubmit={handleSubmit} aria-busy={status === "submitting"} aria-describedby={errorMsg ? feedbackId : undefined}>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Field label={t("form.name.label")} required>
-            <input type="text" name="name" required disabled={status === "submitting"} className={inputClass} placeholder={t("form.name.placeholder")} />
+            <input type="text" name="name" autoComplete="name" maxLength={200} required disabled={status === "submitting"} className={inputClass} placeholder={t("form.name.placeholder")} />
           </Field>
           <Field label={t("form.email.label")} required>
-            <input type="email" name="email" required disabled={status === "submitting"} className={inputClass} placeholder={t("form.email.placeholder")} />
+            <input type="email" name="email" autoComplete="email" maxLength={254} required disabled={status === "submitting"} className={inputClass} placeholder={t("form.email.placeholder")} />
           </Field>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Field label={t("form.phone.label")}>
-            <input type="tel" name="phone" disabled={status === "submitting"} className={inputClass} placeholder={t("form.phone.placeholder")} />
+            <input type="tel" name="phone" autoComplete="tel" maxLength={40} disabled={status === "submitting"} className={inputClass} placeholder={t("form.phone.placeholder")} />
           </Field>
           <Field label={t("form.company.label")}>
-            <input type="text" name="company" disabled={status === "submitting"} className={inputClass} placeholder={t("form.company.placeholder")} />
+            <input type="text" name="company" autoComplete="organization" maxLength={200} disabled={status === "submitting"} className={inputClass} placeholder={t("form.company.placeholder")} />
           </Field>
         </div>
 
@@ -110,6 +145,7 @@ export default function InfoForm() {
         <Field label={t("form.message.label")} required>
           <textarea
             name="message"
+            maxLength={5000}
             required
             disabled={status === "submitting"}
             rows={6}
@@ -124,17 +160,17 @@ export default function InfoForm() {
         </div>
 
         <div className="flex items-start gap-3 text-xs text-[#6b8f6b] pt-2">
-          <input id="info-notice" name="noticeRead" type="checkbox" required disabled={status === "submitting"} className="mt-1 accent-[#1B6B3A]" />
-          <div><label htmlFor="info-notice" className="cursor-pointer">{t("form.consent")}</label>{" "}
+          <input id={noticeId} name="noticeRead" type="checkbox" required disabled={status === "submitting"} className="mt-1 accent-[#1B6B3A]" />
+          <div><label htmlFor={noticeId} className="cursor-pointer">{t("form.consent")}</label>{" "}
             <Link href="/kvkk" target="_blank" rel="noopener noreferrer" className="underline underline-offset-4">{t("form.privacyLink")}</Link>
           </div>
         </div>
 
-        {status === "error" && errorMsg && (
-          <p role="alert" className="text-sm text-[#dc2626] bg-[#fef2f2] border border-[#fecaca] rounded-xl px-4 py-3">{errorMsg}</p>
+        {errorMsg && (
+          <p ref={feedback} id={feedbackId} tabIndex={-1} role="alert" className="text-sm text-[#dc2626] bg-[#fef2f2] border border-[#fecaca] rounded-xl px-4 py-3">{errorMsg}</p>
         )}
 
-        <button type="submit" disabled={status === "submitting"} className="vitrin-cta-primary w-full justify-center disabled:opacity-70">
+        <button type="submit" disabled={status === "submitting" || status === "uncertain"} className="vitrin-cta-primary w-full justify-center disabled:opacity-70">
           {status === "submitting" ? t("form.submitting") : t("form.submit")}
           {status !== "submitting" && (
             <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>

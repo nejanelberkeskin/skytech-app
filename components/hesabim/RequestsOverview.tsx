@@ -107,7 +107,7 @@ function RequestsOverviewContent() {
     <div className="p-6 lg:p-8 space-y-8 animate-fade-in-up">
       <div>
         <h1 className="text-2xl font-bold text-white">Hesabım</h1>
-        <p className="text-sm text-emerald-200/40 mt-1">Taleplerinizin özeti — ekibimiz her talebe bir iş günü içinde dönüş yapar.</p>
+        <p className="text-sm text-emerald-200/40 mt-1">Taleplerinizin özetini ve güncel durumlarını buradan takip edebilirsiniz.</p>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">

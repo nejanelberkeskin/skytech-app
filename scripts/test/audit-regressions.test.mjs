@@ -22,7 +22,7 @@ test('post-commit audit failure retries and returns an explicit warning without 
 });
 test('contact form: skipped email is 503; quota stops mail; oversized and missing notice rejected',async()=>{
  let mails=0,quota=0;
- const api=load('app/api/public/bilgi-al/route.ts',{'next/server':{NextResponse:response},'@/lib/mail':{SKIPPED_ID:'skipped-no-api-key',sendContactFormNotification:async()=>{mails++;return {id:'skipped-no-api-key'};}},'@/lib/admin-auth':{getClientIP:()=> 'local'},'@/lib/requests/server':{hashIp:()=> 'hash'},'@/lib/supabase/server':{createServiceRoleClient:()=>({rpc:async()=>({data:quota,error:null})})}});
+ const api=load('app/api/public/bilgi-al/route.ts',{'next/server':{NextResponse:response},'@/lib/contact-form':load('lib/contact-form.ts'),'@/lib/mail':{SKIPPED_ID:'skipped-no-api-key',sendContactFormNotification:async()=>{mails++;return {id:'skipped-no-api-key'};}},'@/lib/admin-auth':{getClientIP:()=> 'local'},'@/lib/requests/server':{hashIp:()=> 'hash'},'@/lib/supabase/server':{createServiceRoleClient:()=>({rpc:async()=>({data:quota,error:null})})}});
  const body={name:'Test',email:'test@example.com',subject:'Test',message:'Message',noticeRead:true};
  const req=(b)=>({text:async()=>JSON.stringify(b)});
  assert.equal((await api.POST(req(body))).status,503);quota=60;const blocked=await api.POST(req(body));assert.equal(blocked.status,429);assert.equal(blocked.headers['Retry-After'],'60');assert.equal(mails,1);

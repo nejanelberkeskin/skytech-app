@@ -18,8 +18,7 @@ import { SKIPPED_ID, sendContactFormNotification } from "@/lib/mail";
 import { getClientIP } from "@/lib/admin-auth";
 import { hashIp } from "@/lib/requests/server";
 import { createServiceRoleClient } from "@/lib/supabase/server";
-
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+import { validateContact, type ContactProblem } from "@/lib/contact-form";
 
 export async function POST(req: NextRequest) {
   let body: Record<string, unknown>;
@@ -41,17 +40,22 @@ export async function POST(req: NextRequest) {
   const message = typeof body.message === "string" ? body.message.trim() : "";
   const honeypot = typeof body.website === "string" ? body.website.trim() : "";
 
-  if (!name || !email || !subject || !message) {
+  // Kurallar istemciyle ortak (lib/contact-form.ts). `fields` + `reason`: form hatalı alanı işaretler.
+  const problems = validateContact({ name, email, phone, company, subject, message, noticeRead: true });
+  const fieldsWith = (reason: ContactProblem) => Object.entries(problems).filter(([, r]) => r === reason).map(([f]) => f);
+  const missing = fieldsWith("required");
+  if (missing.length) {
     return NextResponse.json(
-      { error: "Ad, e-posta, konu ve mesaj alanları zorunludur." },
+      { error: "Ad, e-posta, konu ve mesaj alanları zorunludur.", reason: "required", fields: missing },
       { status: 400 }
     );
   }
-  if (!EMAIL_RE.test(email)) {
-    return NextResponse.json({ error: "Geçerli bir e-posta adresi girin." }, { status: 400 });
+  if (fieldsWith("invalid_email").length) {
+    return NextResponse.json({ error: "Geçerli bir e-posta adresi girin.", reason: "invalid_email", fields: ["email"] }, { status: 400 });
   }
-  if (name.length > 200 || email.length > 254 || (phone?.length ?? 0) > 40 || (company?.length ?? 0) > 200 || subject.length > 200 || message.length > 5000) {
-    return NextResponse.json({ error: "Girilen metin çok uzun." }, { status: 400 });
+  const tooLong = fieldsWith("too_long");
+  if (tooLong.length) {
+    return NextResponse.json({ error: "Girilen metin çok uzun.", reason: "too_long", fields: tooLong }, { status: 400 });
   }
 
   // Honeypot dolu → bot. Sessizce "başarılı" dön, mail gönderme.
@@ -59,7 +63,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true });
   }
 
-  if (body.noticeRead !== true) return NextResponse.json({ error: "notice_required" }, { status: 400 });
+  if (body.noticeRead !== true) return NextResponse.json({ error: "notice_required", reason: "notice_required", fields: ["noticeRead"] }, { status: 400 });
   try {
     const ipKey = hashIp(getClientIP(req)) ?? "unknown";
     const quota = await createServiceRoleClient().rpc("consume_contact_quota", { p_key: ipKey });

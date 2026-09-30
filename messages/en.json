@@ -1071,7 +1071,16 @@
       "error": "Something went wrong. Please try again or reach us directly at info@skytechgreen.com.",
       "uncertain": "We could not confirm the submission; your message may have reached us. Instead of sending it again, contact us at info@skytechgreen.com.",
       "privacyLink": "Personal Data Notice",
-      "rateLimited": "Too many attempts. Please try again in a few minutes."
+      "rateLimited": "Too many attempts. Please try again in a few minutes.",
+      "errors": {
+        "name": "Please enter your full name.",
+        "email": "Please enter your email address.",
+        "emailInvalid": "Please enter a valid email address (e.g. name@domain.com).",
+        "subject": "Please choose a subject.",
+        "message": "Please write your message.",
+        "notice": "Please confirm that you have read the personal data notice before sending.",
+        "tooLong": "This field is longer than allowed."
+      }
     },
     "topics": {
       "individual": "Seed Ball Release on a Project Site",

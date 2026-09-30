@@ -1,9 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Link } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase/browser";
 import { BuildingIcon } from "@/components/ui/Icons";
 

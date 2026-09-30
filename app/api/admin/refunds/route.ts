@@ -1,7 +1,7 @@
 import type { NextRequest } from "next/server";
 import { hasFullScope, requirePermission } from "@/lib/admin/permissions";
 import { ok } from "@/lib/api/envelope";
-import { failFrom, isServiceError, refundService } from "@/lib/refunds/http";
+import { failFrom, hasLegacyRefundRole, isServiceError, refundService } from "@/lib/refunds/http";
 
 /**
  * GET /api/admin/refunds?filter=open|all&includeTest=1&limit=50 — iade iş kuyruğu (web-brifler/17 §6.1).
@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
     filter: params.get("filter") === "all" ? "all" : "open",
     includeTest: params.get("includeTest") === "1",
     limit,
-    canExecute: hasFullScope(guard.access, "refunds.execute"),
+    canExecute: hasFullScope(guard.access, "refunds.execute") && hasLegacyRefundRole(guard.admin.role),
   });
   if (isServiceError(queue)) return failFrom(queue);
   return ok({ items: queue.items, total: queue.total, generatedAt: new Date().toISOString() });

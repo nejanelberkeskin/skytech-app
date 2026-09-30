@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { localeUrl } from "@/lib/seo";
 import { getProjectSites } from "@/lib/sites/data";
-import { SITES_HREF, siteDetailHref } from "@/lib/sites/links";
+import { OWN_LAND_HREF, SITES_HREF, siteDetailHref } from "@/lib/sites/links";
 import { isSuspendedRoute } from "@/lib/site-config";
 import { LEGAL_PAGES_ENABLED, SALES_LEGAL_PAGES } from "@/lib/legal/visibility";
 import { isDraftLegalVersion } from "@/lib/legal/version";
@@ -33,9 +33,10 @@ const VITRIN_PAGES: SitemapEntry[] = [
   { path: "/hakkimizda", changeFrequency: "monthly", priority: 0.7 },
   { path: "/iletisim", changeFrequency: "yearly", priority: 0.6 },
   { path: "/bilgi-al", changeFrequency: "yearly", priority: 0.6 },
-  // Talep toplama akışı. /talep, /talep/tohum ve /talep/acik-arazi kaldırıldı
-  // (sahalara yönleniyor) — yönlendirilen adres sitemap'e konmaz.
-  { path: "/talep/arazime-ekim", changeFrequency: "monthly", priority: 0.8 },
+  // Kendi arazi başvurusu. /talep, /talep/tohum, /talep/acik-arazi (sahalara) ve
+  // /talep/arazime-ekim (buraya) yönleniyor — yönlendirilen adres sitemap'e konmaz.
+  // Talep kapalıyken isSuspendedRoute bu satırı eler.
+  { path: OWN_LAND_HREF, changeFrequency: "monthly", priority: 0.8 },
   { path: "/gizlilik-politikasi", changeFrequency: "yearly", priority: 0.3 },
   { path: "/kullanim-kosullari", changeFrequency: "yearly", priority: 0.3 },
   { path: "/kvkk", changeFrequency: "yearly", priority: 0.3 },

@@ -85,7 +85,7 @@ export const BATCH_ERRORS: Record<string, ApiErrorBody> = {
   orderNotFound: { code: "not_found", message: "Sipariş bulunamadı.", details: { missing: 1 } },
   mismatch: { code: "mismatch", message: "Sipariş bu partinin sahasına ya da sezonuna ait değil.", details: { detail: "SG-2026-ABCDEF" } },
   invalidState: { code: "invalid_state", message: "Parti ya da sipariş bu işlem için uygun durumda değil.", details: { detail: "partide sipariş var" } },
-  scopeUnsupported: { code: "scope_unsupported", message: "Parti yetkiniz yalnız kişiye atanmış işleri kapsıyor; partiler için atama modeli yok.", details: { permission: "batches.read" } },
+  scopeUnsupported: { code: "scope_unsupported", message: "Parti yetkiniz yalnız kişiye atanmış işleri kapsıyor; partiler için atama modeli yok.", details: { permission: "batches.read", permissions: ["batches.read"] } },
   notFound: { code: "not_found", message: "Parti bulunamadı." },
   unavailable: { code: "unavailable", message: "Veri alınamadı. Lütfen yeniden deneyin." },
 };

@@ -155,7 +155,7 @@ test('29: okuma tüm kayıtlarda, güncelleme yalnız Antalya — kapsam dışı
     for (const id of [ids.b, ids.c]) {
       const r = await s.patch({ id, adminNote: 'deneme' });
       assert.equal(r.status, 403);
-      assert.deepEqual(r.body.error.details, { reason: 'out_of_scope' });
+      assert.deepEqual(r.body.error.details, { reason: 'out_of_scope', permissions: ['requests.update'] });
     }
     assert.deepEqual(s.writes, [], 'kapsam dışında UPDATE hiç gönderilmedi');
     assert.deepEqual(s.audits, []);

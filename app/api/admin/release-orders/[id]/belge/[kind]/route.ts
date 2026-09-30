@@ -22,11 +22,14 @@ const notFound = () => new Response(null, { status: 404, headers: HEADERS });
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string; kind: string }> }) {
   const guard = await requirePermission(request, "orders.documents.read");
   if (guard.error) return guard.error;
-  for (const permission of DOCUMENT_PERMISSIONS) {
-    if (hasFullScope(guard.access, permission)) continue;
-    return hasPermission(guard.access, permission)
-      ? fail(403, "scope_unsupported", "Belgeler yalnız bütün kayıtlarda yetkili kişiye açılır.", { permission })
-      : fail(403, "forbidden", "Bu belgeyi görüntüleme yetkiniz yok.", { permission });
+  // Önce eksik izinlerin hepsi, sonra kapsamı dar olanlar (çoklu izin kapısıyla aynı sıra).
+  const missing = DOCUMENT_PERMISSIONS.filter((permission) => !hasPermission(guard.access, permission));
+  if (missing.length) {
+    return fail(403, "forbidden", "Bu belgeyi görüntüleme yetkiniz yok.", { reason: "missing_permission", permissions: missing, permission: missing[0] });
+  }
+  const limited = DOCUMENT_PERMISSIONS.filter((permission) => !hasFullScope(guard.access, permission));
+  if (limited.length) {
+    return fail(403, "scope_unsupported", "Belgeler yalnız bütün kayıtlarda yetkili kişiye açılır.", { permissions: limited, permission: limited[0] });
   }
   const { id, kind } = await params;
   if (!/^[0-9a-f-]{36}$/i.test(id) || !(DOCUMENT_KINDS as readonly string[]).includes(kind)) return notFound();

@@ -75,9 +75,9 @@ export const REQUEST_LIST_SITE_SCOPED: RequestListDto = {
 };
 
 export const REQUEST_ERRORS: Record<string, ApiErrorBody> = {
-  forbidden: { code: "forbidden", message: "Bu işlem için yetkiniz yok." },
-  outOfScope: { code: "forbidden", message: "Bu talep güncelleme yetkinizin saha kapsamı dışında.", details: { reason: "out_of_scope" } },
-  scopeUnsupported: { code: "scope_unsupported", message: "Talep yetkiniz yalnız kişiye atanmış işleri kapsıyor; talepler için atama modeli henüz yok.", details: { permission: "requests.read" } },
+  forbidden: { code: "forbidden", message: "Bu işlem için yetkiniz yok.", details: { reason: "missing_permission", permissions: ["requests.read"] } },
+  outOfScope: { code: "forbidden", message: "Bu talep güncelleme yetkinizin saha kapsamı dışında.", details: { reason: "out_of_scope", permissions: ["requests.update"] } },
+  scopeUnsupported: { code: "scope_unsupported", message: "Talep yetkiniz yalnız kişiye atanmış işleri kapsıyor; talepler için atama modeli henüz yok.", details: { permission: "requests.read", permissions: ["requests.read"] } },
   notFound: { code: "not_found", message: "Talep bulunamadı." },
   invalidBody: { code: "invalid_body", message: "Geçersiz istek: kimlik ve en az bir alan (durum ya da not) gerekli.", details: { fields: ["body"] } },
   unavailable: { code: "unavailable", message: "Veri alınamadı. Lütfen yeniden deneyin." },

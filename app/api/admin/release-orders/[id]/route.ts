@@ -47,6 +47,7 @@ const invalidId = () => fail(400, "invalid_id", "Geçersiz sipariş kimliği.");
 const readScopeUnsupported = () =>
   fail(403, "scope_unsupported", "Sipariş okuma yetkiniz yalnız kişiye atanmış işleri kapsıyor; bu ekran henüz atanmış işleri desteklemiyor.", {
     permission: "orders.read",
+    permissions: ["orders.read"],
   });
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {

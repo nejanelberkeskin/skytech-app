@@ -5,7 +5,7 @@ import { formatCount, formatTry, type PriceLocale } from "@/lib/pricing";
 import type { PublicOrderView } from "@/lib/orders/view";
 import { COMPANY } from "@/lib/company";
 import { SITES_HREF, siteDetailHref } from "@/lib/sites/links";
-import CopyOrderNumber, { OrderAccessPrivacy } from "./OrderControls";
+import CopyOrderNumber from "./OrderControls";
 import CertificatePublicationControl from "./CertificatePublicationControl";
 import OrderTimeline from "./OrderTimeline";
 
@@ -84,7 +84,6 @@ export default async function OrderDetails({
   );
   return (
     <div className="vitrin-container space-y-7 pb-20 pt-32 text-[#0e2519] sm:pt-40 motion-reduce:[&_*]:!transition-none motion-reduce:[&_*]:!animate-none">
-      <OrderAccessPrivacy orderNo={order.orderNo} />
       {order.isTest && (
         <p className="rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-900">
           {t("testOrder")}

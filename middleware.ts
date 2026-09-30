@@ -3,6 +3,7 @@ import type { NextRequest } from "next/server";
 import createIntlMiddleware from "next-intl/middleware";
 import { routing } from "@/i18n/routing";
 import { updateSession } from "@/lib/supabase/middleware";
+import { ORDER_LINK_TARGET_HEADER, ORDER_LINK_TOKEN_HEADER, orderLinkRewrite } from "@/lib/orders/link-gate";
 import {
   RETIRED_REQUEST_REDIRECTS,
   isRetiredApi,
@@ -135,6 +136,18 @@ export async function middleware(request: NextRequest) {
     // /api/admin/* için session refresh + downstream guard
     const { response } = await updateSession(request);
     return response;
+  }
+
+  /* ── 2-0. Sipariş bağlantısı belirteci: `/siparis/<no>?t=` ve `/odeme/sonuc/<no>?t=` sayfa render edilmeden
+     kapı rotasına yeniden yazılır. Kapı belirteci sunucuda doğrulayıp çereze çevirir ve belirteçsiz adrese 303 ile
+     yönlendirir; belirteç HTML'e, RSC yüküne ve Referer'a girmez (lib/orders/link-gate.ts). Dil yönlendirmesinden
+     ÖNCE: next-intl'in yönlendirmesi sorgu dizisini (belirteci) yeni adrese taşırdı. ─────────────────────────── */
+  const orderLink = orderLinkRewrite(pathname, request.nextUrl.searchParams);
+  if (orderLink) {
+    const headers = new Headers(request.headers);
+    headers.set(ORDER_LINK_TOKEN_HEADER, orderLink.token);
+    headers.set(ORDER_LINK_TARGET_HEADER, orderLink.target);
+    return NextResponse.rewrite(new URL(orderLink.path, request.url), { request: { headers } });
   }
 
   /* ── 2. Sayfa rotaları: önce next-intl locale routing ───────────────── */

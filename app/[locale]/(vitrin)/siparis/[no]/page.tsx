@@ -11,7 +11,6 @@ import OrderDetails from "@/components/vitrin/siparis-durumu/OrderDetails";
 
 type Props = {
   params: Promise<{ locale: PriceLocale; no: string }>;
-  searchParams: Promise<{ t?: string | string[] }>;
 };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale, no } = await params;
@@ -29,14 +28,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     referrer: "no-referrer",
   };
 }
-export default async function OrderPage({ params, searchParams }: Props) {
+export default async function OrderPage({ params }: Props) {
   const { locale, no } = await params;
   setRequestLocale(locale);
   if (!ORDER_NO_RE.test(no)) notFound();
-  const { t: queryToken } = await searchParams;
-  // Misafir müşteri e-postadaki belirteçle (ilk açılıştan sonra erişim çereziyle), üye kendi
-  // siparişine oturumuyla erişir.
-  const token = typeof queryToken === "string" ? queryToken : await readOrderCookie(no);
+  // Misafir müşteri erişim çereziyle (e-postadaki bağlantı middleware'deki kapıda doğrulanıp çereze çevrilir; sayfa
+  // adresteki belirteci hiç okumaz), üye kendi siparişine oturumuyla erişir.
+  const token = await readOrderCookie(no);
   let userId: string | null = null;
   if (typeof token !== "string") {
     try {

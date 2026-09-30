@@ -1,8 +1,8 @@
 /**
  * Sipariş görünümü — SUNUCU tarafı veri erişimi.
  *
- * Erişim iki yoldan doğrulanır: e-postadaki imzalı belirteç (`?t=`) ya da oturumdaki
- * üyenin kendi siparişi. Sipariş numarasını bilmek tek başına YETMEZ; yetkisiz istek
+ * Erişim iki yoldan doğrulanır: imzalı belirteç (e-postadaki bağlantının belirteci; sayfalar onu yalnız erişim
+ * çerezinden okur, bkz. lib/orders/link-gate.ts) ya da oturumdaki üyenin kendi siparişi. Sipariş numarasını bilmek tek başına YETMEZ; yetkisiz istek
  * ile "böyle bir sipariş yok" aynı yanıtı alır (null → sayfa 404).
  *
  * Sözleşmesi kurulmamış (ödenmemiş) siparişin sayfası yoktur: o aşamadaki müşteri
@@ -11,7 +11,7 @@
  * Geliştirmede `?t=ornek` ile lib/orders/view.ts içindeki örnek siparişler döner.
  */
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { signOrderToken, verifyOrderToken } from "./access";
+import { verifyOrderToken } from "./access";
 import { publicCertificateName, HIDDEN_CERTIFICATE_NAME } from "@/lib/certificates/publication";
 import { trToday } from "./schedule";
 import { canWithdraw } from "./state";
@@ -20,7 +20,7 @@ import { ORDER_NO_RE, type DocumentKind, type ReleaseOrderRow } from "./types";
 import { ORDER_VIEW_FIXTURES, ORDER_VIEW_FIXTURE_TOKEN, timelineFor, type OrderViewDocument, type PublicOrderView } from "./view";
 
 export interface OrderViewAccess {
-  /** E-postadaki bağlantıdan gelen belirteç (`?t=`) */
+  /** İmzalı belirteç (erişim çerezinden ya da kapı rotasında bağlantıdan) */
   token?: string | null;
   /** Oturumdaki üyenin kimliği (yalnız sunucuda, çerezden okunur) */
   userId?: string | null;
@@ -43,11 +43,9 @@ export async function getAuthorizedOrder(
   return byToken || byOwner ? order : null;
 }
 
-/** Belgenin yetkili indirme adresi (aynı kaynak; belirteç yalnız bu adreste taşınır). */
-export function orderDocumentUrl(order: Pick<ReleaseOrderRow, "id" | "order_no">, kind: DocumentKind, format: "html" | "pdf"): string {
-  const token = signOrderToken(order.id);
-  const query = new URLSearchParams({ ...(token ? { t: token } : {}), bicim: format });
-  return `/api/public/siparis/${order.order_no}/belge/${kind}?${query}`;
+/** Belgenin indirme adresi (aynı kaynak, belirteçsiz): yetki erişim çerezinden ya da üye oturumundan doğrulanır. */
+export function orderDocumentUrl(order: Pick<ReleaseOrderRow, "order_no">, kind: DocumentKind, format: "html" | "pdf"): string {
+  return `/api/public/siparis/${order.order_no}/belge/${kind}?bicim=${format}`;
 }
 
 export async function getOrderView(orderNo: string, access: OrderViewAccess = {}): Promise<PublicOrderView | null> {

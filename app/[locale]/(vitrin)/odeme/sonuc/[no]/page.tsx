@@ -5,24 +5,23 @@ import { Link } from "@/i18n/navigation";
 import SectionWrapper from "@/components/vitrin/SectionWrapper";
 import RetryPaymentButton from "@/components/vitrin/odeme/RetryPaymentButton";
 import { createSupabaseServer } from "@/lib/supabase/server";
-import { OrderAccessPrivacy } from "@/components/vitrin/siparis-durumu/OrderControls";
-import { orderPagePath, signOrderToken } from "@/lib/orders/access";
 import { readOrderCookie } from "@/lib/orders/access-cookie";
 import { formatLongDay, formatTrClock } from "@/lib/orders/dates";
 import { trToday } from "@/lib/orders/schedule";
+import { orderLinkPath } from "@/lib/orders/link-gate";
 import { getAuthorizedOrder } from "@/lib/orders/view-data";
 import { formatCount, formatTry, type PriceLocale } from "@/lib/pricing";
 import { SITES_HREF, siteDetailHref } from "@/lib/sites/links";
 
 /* Ödeme sonucu — sanal POS'tan dönen müşterinin gördüğü sayfa.
    Üç hâl: ödeme onaylandı · ödeme tamamlanamadı (yeniden denenebilir) · süre doldu.
-   Erişim sipariş sayfasıyla aynı: imzalı belirteç (`?t=`) ya da sipariş sahibinin oturumu.
+   Erişim sipariş sayfasıyla aynı: erişim çerezi (ödeme dönüşü yazar; belirteçli bağlantı middleware'deki kapıda
+   çereze çevrilir, sayfa adresteki belirteci hiç okumaz) ya da sipariş sahibinin oturumu.
    Kişisel veri asgari: ad, e-posta ve tutar dışında bir şey gösterilmez; dizine eklenmez. */
 
 export const dynamic = "force-dynamic";
 
 type Params = { locale: string; no: string };
-type Search = { t?: string | string[] };
 
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
   const { locale } = await params;
@@ -30,11 +29,11 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   return { title: t("meta.title"), robots: { index: false, follow: false }, referrer: "no-referrer" };
 }
 
-export default async function PaymentResultPage({ params, searchParams }: { params: Promise<Params>; searchParams: Promise<Search> }) {
-  const [{ locale, no }, search] = await Promise.all([params, searchParams]);
+export default async function PaymentResultPage({ params }: { params: Promise<Params> }) {
+  const { locale, no } = await params;
   setRequestLocale(locale);
   const priceLocale: PriceLocale = locale === "en" || locale === "ru" ? locale : "tr";
-  const token = typeof search.t === "string" ? search.t : await readOrderCookie(no);
+  const token = await readOrderCookie(no);
 
   let userId: string | null = null;
   if (!token) {
@@ -49,10 +48,9 @@ export default async function PaymentResultPage({ params, searchParams }: { para
   if (!order) notFound();
 
   // Sözleşmesi kurulmuş ve yoluna devam etmiş sipariş: asıl yeri sipariş sayfasıdır.
-  if (order.paid_at && order.status !== "paid") redirect(orderPagePath(order.order_no, order.id, locale));
+  if (order.paid_at && order.status !== "paid") redirect(orderLinkPath("siparis", order.order_no, locale));
 
   const t = await getTranslations("paymentResultPage");
-  const orderToken = signOrderToken(order.id);
   const site = order.site_snapshot;
   const expired =
     !order.paid_at && (order.status === "expired" || (order.payment_expires_at ? new Date(order.payment_expires_at).getTime() <= Date.now() : false));
@@ -61,7 +59,6 @@ export default async function PaymentResultPage({ params, searchParams }: { para
   return (
     <SectionWrapper variant="light" className="!py-20 lg:!py-28">
       <div className="mx-auto max-w-2xl">
-        <OrderAccessPrivacy orderNo={order.order_no} quiet />
         {order.is_test ? (
           <p className="mb-6 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-900">{t("test")}</p>
         ) : null}
@@ -94,10 +91,7 @@ export default async function PaymentResultPage({ params, searchParams }: { para
                 ) : null}
               </div>
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                <Link
-                  href={{ pathname: `/siparis/${order.order_no}`, query: orderToken ? { t: orderToken } : {} }}
-                  className="vitrin-cta-primary text-center"
-                >
+                <Link href={`/siparis/${order.order_no}`} className="vitrin-cta-primary text-center">
                   {t("success.cta")}
                 </Link>
                 <Link href={SITES_HREF} className="vitrin-cta-secondary text-center">
@@ -127,7 +121,6 @@ export default async function PaymentResultPage({ params, searchParams }: { para
               </div>
               <RetryPaymentButton
                 orderNo={order.order_no}
-                token={typeof search.t === "string" ? search.t : null}
                 labels={{
                   retry: t("failed.retry"),
                   retrying: t("failed.retrying"),

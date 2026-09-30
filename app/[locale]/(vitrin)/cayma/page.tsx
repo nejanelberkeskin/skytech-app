@@ -6,7 +6,6 @@ import { buildPageMetadata } from "@/lib/seo";
 import type { PriceLocale } from "@/lib/pricing";
 import WithdrawalForm from "@/components/vitrin/cayma/WithdrawalForm";
 import { formatReceiptDates } from "@/components/vitrin/cayma/receipt-date";
-import { OrderAccessPrivacy } from "@/components/vitrin/siparis-durumu/OrderControls";
 
 type Props = {
   params: Promise<{ locale: PriceLocale }>;
@@ -55,7 +54,6 @@ export default async function WithdrawalPage({ params, searchParams }: Props) {
   );
   return (
     <div className="vitrin-container pb-20 pt-32 sm:pt-40">
-      <OrderAccessPrivacy />
       <div className="mx-auto max-w-2xl space-y-7">
         <header>
           <h1 className="display-headline text-3xl font-semibold text-[#0e2519] sm:text-5xl">

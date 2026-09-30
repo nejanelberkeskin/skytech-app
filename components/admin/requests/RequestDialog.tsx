@@ -10,9 +10,10 @@ import { ilAdi } from "@/lib/tr-iller";
 import type { ApiWarning } from "@/lib/api/envelope";
 import { accessRequest } from "../access/transport";
 import { AdminApiError, errorText } from "../operations/client";
-import { date, requestChanges, safeMapLink } from "./view";
+import { REQUESTS_SCOPE, date, requestAccessKey, requestChanges, safeMapLink } from "./view";
+import { isAccessDenial } from "../access/AccessDenialNotice";
 export default function RequestDialog({ id, no, onClose, onChanged }: { id: string; no: string; onClose: () => void; onChanged: () => void }) {
-  const { refresh } = useAdmin();
+  const { refresh, reportDenial } = useAdmin();
   const dialog = useRef<HTMLDialogElement>(null), feedback = useRef<HTMLDivElement>(null);
   const state = useRef({ alive: false, generation: 0, busy: false });
   const [item, setItem] = useState<RequestItem | null>(null), [loading, setLoading] = useState(true), [busy, setBusy] = useState(false), [blocked, setBlocked] = useState(false);
@@ -32,9 +33,12 @@ export default function RequestDialog({ id, no, onClose, onChanged }: { id: stri
     } catch (e) {
       if (!state.current.alive || current !== state.current.generation) return;
       setProblem(errorText(e));
-      if (e instanceof AdminApiError && [401, 403].includes(e.status)) void refresh();
+      if (e instanceof AdminApiError && [401, 403].includes(e.status)) {
+        if (isAccessDenial(e)) reportDenial({ scope: REQUESTS_SCOPE, message: errorText(e), keyOf: requestAccessKey });
+        void refresh();
+      }
     } finally { if (state.current.alive && current === state.current.generation) setLoading(false); }
-  }, [id, no, refresh]);
+  }, [id, no, refresh, reportDenial]);
   useEffect(() => {
     const token = state.current; token.alive = true;
     const el = dialog.current, previous = document.activeElement instanceof HTMLElement ? document.activeElement : null;
@@ -57,7 +61,10 @@ export default function RequestDialog({ id, no, onClose, onChanged }: { id: stri
       const applied = e instanceof AdminApiError && e.details?.applied === true;
       setProblem(applied ? "Değişiklik kaydedildi; güncel görünüm alınamadı. Tekrar kaydetmeyin, talebi yenileyin." : errorText(e));
       setBlocked(code !== "invalid_body");
-      if (e instanceof AdminApiError && [401, 403, 404].includes(e.status)) { setItem(null); setNote(""); void refresh(); }
+      if (e instanceof AdminApiError && [401, 403, 404].includes(e.status)) {
+        if (isAccessDenial(e) && !applied) reportDenial({ scope: REQUESTS_SCOPE, message: errorText(e), keyOf: requestAccessKey });
+        setItem(null); setNote(""); void refresh();
+      }
     } finally { state.current.busy = false; if (state.current.alive) { setBusy(false); feedback.current?.focus(); } }
   };
   const contact = item?.contact;

@@ -10,10 +10,11 @@ import { formatCount, formatTry } from "@/lib/pricing";
 import { AdminApiError, adminRequest, errorText } from "../operations/client";
 import { dt, STATUS_BADGE } from "../ReleaseOrderDetail";
 import OrderDialog from "./OrderDialog";
-import { availableAlerts } from "./view";
+import { ORDERS_SCOPE, availableAlerts, orderAccessKey } from "./view";
+import { isAccessDenial } from "../access/AccessDenialNotice";
 
 export default function OrderManagement() {
-  const { refresh } = useAdmin();
+  const { refresh, reportDenial } = useAdmin();
   const initialNo = useSearchParams().get("no") ?? "";
   const [q, setQ] = useState(initialNo);
   const [search, setSearch] = useState(initialNo);
@@ -48,10 +49,13 @@ export default function OrderManagement() {
     }).catch(e => {
       if (abort.signal.aborted) return;
       setResult(null); setProblem({ query: requestKey, message: errorText(e) });
-      if (e instanceof AdminApiError && [401, 403].includes(e.status)) { setSelected(null); void refresh(); }
+      if (e instanceof AdminApiError && [401, 403].includes(e.status)) {
+        if (isAccessDenial(e)) reportDenial({ scope: ORDERS_SCOPE, message: errorText(e), keyOf: orderAccessKey });
+        setSelected(null); void refresh();
+      }
     });
     return () => abort.abort();
-  }, [query, requestKey, initialNo, refresh]);
+  }, [query, requestKey, initialNo, refresh, reportDenial]);
   const pages = data ? Math.max(1, Math.ceil(data.total / data.pageSize)) : 1;
   return <div className="p-4 md:p-8 space-y-6 min-w-0">
     <div className="flex flex-wrap justify-between items-start gap-4"><div><h1 className="text-2xl font-bold text-white">Siparişler</h1><p className="mt-1 text-sm text-slate-400">Saha hizmeti siparişleri ve işlem takibi</p></div><Button variant="secondary" onClick={reload} disabled={loading}>Listeyi yenile</Button></div>

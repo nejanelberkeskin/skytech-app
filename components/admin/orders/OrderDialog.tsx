@@ -9,10 +9,11 @@ import { Button } from "@/components/ui";
 import ReleaseOrderDetail from "../ReleaseOrderDetail";
 import { AdminApiError, adminRequest, errorText } from "../operations/client";
 import { hasFullPermission } from "../access/policy";
-import { canAct, validActionResult } from "./view";
+import { ORDERS_SCOPE, canAct, orderAccessKey, validActionResult } from "./view";
+import { isAccessDenial } from "../access/AccessDenialNotice";
 
 export default function OrderDialog({ id, onClose, onChanged }: { id: string; onClose: () => void; onChanged: () => void }) {
-  const { me, refresh } = useAdmin();
+  const { me, refresh, reportDenial } = useAdmin();
   const dialog = useRef<HTMLDialogElement>(null);
   const feedback = useRef<HTMLDivElement>(null);
   const alive = useRef(false);
@@ -40,11 +41,14 @@ export default function OrderDialog({ id, onClose, onChanged }: { id: string; on
       if (!alive.current || current !== generation.current.value) return;
       const code = e instanceof AdminApiError ? e.code : "unavailable";
       setProblem({ code, message: errorText(e) }); setDetail(null);
-      if (e instanceof AdminApiError && [401, 403].includes(e.status)) void refresh();
+      if (e instanceof AdminApiError && [401, 403].includes(e.status)) {
+        if (isAccessDenial(e)) reportDenial({ scope: ORDERS_SCOPE, message: errorText(e), keyOf: orderAccessKey });
+        void refresh();
+      }
     } finally {
       if (alive.current && current === generation.current.value) setLoading(false);
     }
-  }, [id, refresh]);
+  }, [id, refresh, reportDenial]);
   useEffect(() => {
     const token = generation.current;
     alive.current = true;
@@ -72,7 +76,10 @@ export default function OrderDialog({ id, onClose, onChanged }: { id: string; on
       // No automatic replay, including malformed 2xx and lost mutation responses.
       setBlocked(code !== "invalid_body");
       if (code === "mfa_required") { setDetail(null); }
-      else if (e instanceof AdminApiError && [401, 403, 404].includes(e.status)) { setDetail(null); void refresh(); }
+      else if (e instanceof AdminApiError && [401, 403, 404].includes(e.status)) {
+        if (isAccessDenial(e)) reportDenial({ scope: ORDERS_SCOPE, message: errorText(e) + extra, keyOf: orderAccessKey });
+        setDetail(null); void refresh();
+      }
       return false;
     } finally {
       mutationLock.current = false;

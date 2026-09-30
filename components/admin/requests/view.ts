@@ -1,5 +1,7 @@
 import type { AdminMe } from "../access/types";
 import type { RequestItem, RequestStatus } from "@/lib/requests/admin-dto";
+/** Ret açıklamasının gösterileceği ekran (AccessDenialNotice). */
+export const REQUESTS_SCOPE = "/admin/talepler";
 export const requestAccessKey = (me: AdminMe | null) => JSON.stringify(me && { user: me.admin.userId, active: me.admin.isActive, permissions: me.permissions });
 export function requestChanges(item: RequestItem, status: RequestStatus, note: string) {
   return { id: item.id, ...(status !== item.status ? { status } : {}), ...(note !== (item.adminNote ?? "") ? { adminNote: note } : {}) };

@@ -2,6 +2,8 @@ import type { AdminMe } from "../access/types";
 import type { OrderCapabilities, OrderDetailDto, OrderListDto } from "@/lib/orders/admin-dto";
 import { ORDER_STATUSES } from "@/lib/orders/types";
 
+/** Ret açıklamasının gösterileceği ekran (AccessDenialNotice). */
+export const ORDERS_SCOPE = "/admin/birakma-siparisleri";
 /** Do not key on checkedAt: unchanged permission refreshes must preserve drafts. */
 export const orderAccessKey = (me: AdminMe | null) => JSON.stringify(me && {
   user: me.admin.userId, active: me.admin.isActive, role: me.admin.legacyRole,

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import type { User } from "@supabase/supabase-js";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { supabase } from "@/lib/supabase/browser";
 import { Button, Card, CardStat } from "@/components/ui";
 import type { CorporateQuote } from "@/lib/types";
@@ -795,7 +795,7 @@ export default function CorporateDashboard() {
   });
   const paidQuotes = quotes.filter((q) => normalizeStatus(q.status) === "PAID");
 
-  const goToPay = (quoteId: string) => router.push(`/kurumsal/panel/odeme?quote_id=${quoteId}`);
+  const goToPay = (quoteId: string) => router.push({ pathname: "/kurumsal/panel/odeme", query: { quote_id: quoteId } });
 
   return (
     <>

@@ -1,7 +1,7 @@
 "use client";
 
 import { Suspense, useEffect, useState } from "react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabase/browser";
 import { claimPendingRequest } from "@/lib/requests/client";

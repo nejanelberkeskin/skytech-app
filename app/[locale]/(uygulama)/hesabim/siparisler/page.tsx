@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { supabase } from "@/lib/supabase/browser";
 import { CUSTOMER_STATUS_HINTS, CUSTOMER_STATUS_LABELS } from "@/lib/orders/labels";
 import type { OrderStatus } from "@/lib/orders/types";

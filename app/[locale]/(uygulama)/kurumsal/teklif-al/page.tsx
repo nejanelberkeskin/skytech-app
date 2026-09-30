@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase/browser";
 import { Button, Input, Textarea, Card } from "@/components/ui";
+import { createQuoteSubmitter, type QuoteFields } from "@/lib/corporate/quote-submission";
 
 type NeedType = "orman" | "sertifika" | "karbon";
 
@@ -87,7 +88,7 @@ function AnimatedCount({ value }: { value: number }) {
   return <>{displayed.toLocaleString("tr-TR")}</>;
 }
 
-function CarbonSimulator({ onApply }: { onApply: (seeds: number, bucket: string) => void }) {
+function CarbonSimulator({ onApply, disabled = false }: { onApply: (seeds: number, bucket: string) => void; disabled?: boolean }) {
   const [employees, setEmployees] = useState(100);
   const [fleet, setFleet] = useState(5);
   const seeds = employees * 50 + fleet * 200;
@@ -206,7 +207,8 @@ function CarbonSimulator({ onApply }: { onApply: (seeds: number, bucket: string)
         {/* CTA Button */}
         <button
           onClick={() => onApply(seeds, bucketFromSeeds(seeds))}
-          className="w-full py-3.5 rounded-xl font-bold text-sm transition-all relative overflow-hidden group"
+          disabled={disabled}
+          className="w-full py-3.5 rounded-xl font-bold text-sm transition-all relative overflow-hidden group disabled:opacity-40 disabled:cursor-not-allowed"
           style={{
             background: "linear-gradient(135deg, #059669, #10b981)",
             boxShadow: "0 0 0 1px rgba(16,185,129,0.4), 0 8px 20px -4px rgba(16,185,129,0.3)",
@@ -274,6 +276,31 @@ export default function CorporateQuoteForm() {
   const [showPass, setShowPass] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  // Hesap bu sayfada oluşturulup teklif kaydedilemediyse: hesabın e-postası. Yeniden denemede hesap
+  // tekrar oluşturulmaz; hesap alanları kilitlenir.
+  const [createdAccountEmail, setCreatedAccountEmail] = useState<string | null>(null);
+  // Teklifin kaydı belirsiz (yanıt gelmedi): içerik sabitlendi, alanlar kilitli; yeniden kayıt aynı içeriği gönderir.
+  const [quoteUncertain, setQuoteUncertain] = useState(false);
+  // Bu teklif numarasında bir kayıt var ama içeriğine kefil olunamıyor: yeniden gönderilmez.
+  const [quoteUnverifiable, setQuoteUnverifiable] = useState(false);
+  // Başarıda gerçekten kaydedilen içerik (düzenlenmiş form değil).
+  const [savedQuote, setSavedQuote] = useState<{ companyName: string; editsDiscarded: boolean } | null>(null);
+  const contentLocked = quoteUncertain || quoteUnverifiable;
+  // Gönderim durumu sayfa ömrü boyunca tek nesnede: oluşturulan hesap, tek teklif kimliği, tek gönderim kilidi.
+  const [submitter] = useState(() =>
+    createQuoteSubmitter({
+      signUp: async ({ email, password, metadata }) => {
+        const { data, error } = await supabase.auth.signUp({ email, password, options: { data: metadata } });
+        return { userId: data.user?.id ?? null, error: error?.message ?? null };
+      },
+      insertQuote: async (row) => {
+        const { error } = await supabase.from("corporate_quotes").insert(row);
+        return { error: error ? { code: error.code, message: error.message } : null };
+      },
+      newId: () => crypto.randomUUID(),
+      sleep: (ms) => new Promise((resolve) => setTimeout(resolve, ms)),
+    }),
+  );
   const [simulatorApplied, setSimulatorApplied] = useState<{ seeds: number; bucket: string } | null>(null);
   const seedCountRef = useRef<HTMLDivElement>(null);
 
@@ -326,6 +353,8 @@ export default function CorporateQuoteForm() {
 
   // ── Simülatörden Aktar ────────────────────────────────────────────────────
   const handleApplySimulator = useCallback((seeds: number, bucket: string) => {
+    // Kaydı belirsiz teklifin içeriği sabit: simülatör de değiştiremez.
+    if (contentLocked) return;
     setSimulatorApplied({ seeds, bucket });
     set("seedCount", bucket);
     // Navigate to last step
@@ -333,84 +362,63 @@ export default function CorporateQuoteForm() {
     setTimeout(() => {
       seedCountRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     }, 100);
-  }, [totalSteps]);
+  }, [totalSteps, contentLocked]);
 
-  /* ── DB'ye teklif kaydet ── */
-  const insertQuote = async (userId: string, retries = 3): Promise<string | null> => {
-    for (let i = 0; i < retries; i++) {
-      const { error: dbError } = await supabase.from("corporate_quotes").insert({
-        user_id: userId,
-        company_name: form.companyName,
-        tax_office: form.taxOffice,
-        tax_no: form.taxNo,
-        contact_person: form.contactPerson,
-        corporate_email: form.corporateEmail || existingUser?.email,
-        phone: form.phone,
-        need_types: form.needTypes,
-        need_details: form.needDetails,
-        seed_count: form.seedCount,
-        budget_range: form.budgetRange,
-        timeline: form.timeline,
-        notes: form.notes,
-        status: "PENDING",
-      });
-      if (!dbError) return null;
-      if (dbError.message.includes("foreign key") && i < retries - 1) {
-        await new Promise((r) => setTimeout(r, 1000 * (i + 1)));
-        continue;
-      }
-      return dbError.message;
-    }
-    return "Teklif kaydedilemedi. Lütfen daha sonra tekrar deneyiniz.";
-  };
-
+  /* ── Hesap + teklif gönderimi: iki ayrı sonuç (lib/corporate/quote-submission.ts) ── */
   const handleSubmit = async () => {
     setSubmitting(true);
     setSubmitError(null);
-    let userId: string;
-
-    if (isLoggedIn) {
-      userId = existingUser!.id;
-    } else {
-      const { data: authData, error: authError } = await supabase.auth.signUp({
+    const quote: QuoteFields = {
+      company_name: form.companyName,
+      tax_office: form.taxOffice,
+      tax_no: form.taxNo,
+      contact_person: form.contactPerson,
+      corporate_email: form.corporateEmail || existingUser?.email || "",
+      phone: form.phone,
+      need_types: form.needTypes,
+      need_details: form.needDetails,
+      seed_count: form.seedCount,
+      budget_range: form.budgetRange,
+      timeline: form.timeline,
+      notes: form.notes,
+    };
+    const outcome = await submitter.submit({
+      existingUserId: existingUser?.id ?? null,
+      signUp: {
         email: form.corporateEmail,
         password: form.password,
-        options: {
-          data: {
-            company_name: form.companyName,
-            contact_person: form.contactPerson,
-            phone: form.phone,
-            account_type: "corporate",
-          },
+        metadata: {
+          company_name: form.companyName,
+          contact_person: form.contactPerson,
+          phone: form.phone,
+          account_type: "corporate",
         },
-      });
-      if (authError) {
-        setSubmitError(authError.message === "User already registered"
-          ? "Bu e-posta adresi zaten kayıtlı. Lütfen giriş yaparak tekrar deneyiniz."
-          : authError.message);
-        setSubmitting(false);
-        return;
-      }
-      if (!authData.user) {
-        setSubmitError("Hesap oluşturulamadı. Lütfen tekrar deneyiniz.");
-        setSubmitting(false);
-        return;
-      }
-      userId = authData.user.id;
-    }
-
-    const dbError = await insertQuote(userId);
-    if (dbError) {
-      if (!isLoggedIn) {
-        console.warn("Hesap oluşturuldu ancak teklif kaydedilemedi:", dbError);
-      } else {
-        setSubmitError("Teklif kaydedilemedi: " + dbError);
-        setSubmitting(false);
-        return;
-      }
-    }
+      },
+      quote,
+    });
+    // Süren gönderim varken gelen ikinci tıklama: hiçbir istek yapılmadı, durum ilk gönderimde.
+    if (outcome.status === "busy") return;
     setSubmitting(false);
-    setSubmitted(true);
+    if (outcome.status === "saved") {
+      setSavedQuote({ companyName: outcome.quote.company_name, editsDiscarded: outcome.editsDiscarded });
+      setSubmitted(true);
+    } else if (outcome.status === "account_created_quote_failed") {
+      setCreatedAccountEmail(outcome.email);
+      setQuoteUncertain(outcome.uncertain);
+      setSubmitError(outcome.error);
+    } else if (outcome.status === "quote_failed") {
+      setQuoteUncertain(outcome.uncertain);
+      setSubmitError(outcome.uncertain ? outcome.error : "Teklif kaydedilemedi: " + outcome.error);
+    } else if (outcome.status === "quote_unverifiable") {
+      setQuoteUnverifiable(true);
+      setSubmitError(null);
+    } else {
+      setSubmitError(outcome.error === "User already registered"
+        ? "Bu e-posta adresi zaten kayıtlı. Lütfen giriş yaparak tekrar deneyiniz."
+        : outcome.error === "account_not_created"
+          ? "Hesap oluşturulamadı. Lütfen tekrar deneyiniz."
+          : outcome.error);
+    }
   };
 
   /* ── Yükleniyor ── */
@@ -431,15 +439,21 @@ export default function CorporateQuoteForm() {
             <span className="text-4xl">✅</span>
           </div>
           <h1 className="text-2xl font-bold text-white">
-            {isLoggedIn ? "Teklifiniz Gönderildi!" : "Hesabınız Oluşturuldu!"}
+            {isLoggedIn ? "Teklifiniz Gönderildi!" : "Hesabınız Oluşturuldu, Teklifiniz Kaydedildi"}
           </h1>
           <p className="text-slate-400">
-            <span className="text-white font-medium">{form.companyName || existingUser?.companyName}</span> adına
+            <span className="text-white font-medium">{savedQuote?.companyName || existingUser?.companyName}</span> adına
             {isLoggedIn
               ? " yeni teklif talebiniz başarıyla oluşturuldu. Talebinizin durumunu panelinizden takip edebilirsiniz."
-              : " kurumsal hesabınız başarıyla oluşturuldu. Teklif detaylarınız ve proje takibiniz için panelinize giriş yapabilirsiniz."
+              : " kurumsal hesabınız oluşturuldu ve teklif talebiniz kaydedildi. Talebinizin durumunu panelinize giriş yaparak takip edebilirsiniz."
             }
           </p>
+          {savedQuote?.editsDiscarded && (
+            <p className="text-sm text-amber-300">
+              Teklifiniz ilk gönderdiğiniz bilgilerle kaydedildi; bağlantı sorunundan sonra yapılan değişiklikler bu teklife
+              eklenmedi. Değişiklik için panelinizden yeni teklif oluşturabilirsiniz.
+            </p>
+          )}
           {simulatorApplied && (
             <Card variant="solid" padding="md" className="text-left space-y-1">
               <p className="text-xs text-emerald-500">🧮 Karbon hesabınızdan aktarıldı</p>
@@ -535,6 +549,9 @@ export default function CorporateQuoteForm() {
             })}
           </div>
 
+          {/* Kaydı belirsiz teklifin içeriği sabit (lib/corporate/quote-submission.ts): bütün adım alanları kilitli. */}
+          <fieldset disabled={contentLocked} aria-describedby={contentLocked ? "teklif-kayit-durumu" : undefined}
+            className="min-w-0 m-0 border-0 p-0">
           {/* ── Adım 1 (yeni kullanıcı): Firma Bilgileri ── */}
           {!isLoggedIn && step === 1 && (
             <div className="space-y-6 animate-fade-in-up">
@@ -564,15 +581,19 @@ export default function CorporateQuoteForm() {
                 <div className="flex items-center gap-2 mb-1">
                   <span className="text-base">🔐</span>
                   <h3 className="text-sm font-semibold text-white">Hesap Bilgileriniz</h3>
-                  <span className="text-xs text-slate-500">— Teklif takibiniz için otomatik oluşturulacaktır</span>
+                  <span className="text-xs text-slate-500">
+                    {createdAccountEmail ? "— Hesabınız bu bilgilerle oluşturuldu; değiştirilemez" : "— Teklif takibiniz için otomatik oluşturulacaktır"}
+                  </span>
                 </div>
                 <Input label="Kurumsal E-posta Adresiniz" required type="email" value={form.corporateEmail}
+                  disabled={!!createdAccountEmail}
                   onChange={(e) => set("corporateEmail", e.target.value)} placeholder="yetkili@sirket.com" />
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-slate-300 mb-1.5">Şifreniz *</label>
                     <div className="relative">
                       <input value={form.password} onChange={(e) => set("password", e.target.value)}
+                        disabled={!!createdAccountEmail}
                         type={showPass ? "text" : "password"} placeholder="En az 8 karakter giriniz"
                         className={`w-full px-4 py-2.5 bg-white/[0.03] border rounded-xl text-white placeholder-slate-600 outline-none transition-colors pr-16 focus:ring-1 ${
                           form.password && !passwordValid
@@ -589,6 +610,7 @@ export default function CorporateQuoteForm() {
                   <div>
                     <label className="block text-sm font-medium text-slate-300 mb-1.5">Şifre Tekrar *</label>
                     <input value={form.passwordConfirm} onChange={(e) => set("passwordConfirm", e.target.value)}
+                      disabled={!!createdAccountEmail}
                       type={showPass ? "text" : "password"} placeholder="Şifrenizi tekrar giriniz"
                       className={`w-full px-4 py-2.5 bg-white/[0.03] border rounded-xl text-white placeholder-slate-600 outline-none transition-colors focus:ring-1 ${
                         form.passwordConfirm && !passwordsMatch
@@ -741,10 +763,54 @@ export default function CorporateQuoteForm() {
             </div>
           )}
 
+          </fieldset>
+
           {/* Navigasyon */}
           <div className="space-y-4 pt-6 border-t border-white/[0.06]">
-            {submitError && (
-              <div className="bg-red-500/10 border border-red-500/20 text-red-400 text-sm px-4 py-3 rounded-xl">
+            {quoteUnverifiable ? (
+              <div id="teklif-kayit-durumu" role="alert" className="bg-amber-500/10 border border-amber-500/25 text-sm px-4 py-3 rounded-xl space-y-2">
+                <p className="font-semibold text-amber-300">Teklif talebinizin kaydı doğrulanamadı</p>
+                <p className="text-slate-300">
+                  Bu teklif numarasıyla bir kayıt görünüyor ama içeriğini doğrulayamadık. Yeniden göndermeyin;{" "}
+                  <Link href="/kurumsal/giris" className="text-emerald-400 underline underline-offset-2">giriş yapıp</Link>{" "}
+                  panelinizden teklifinizi kontrol edin.
+                </p>
+              </div>
+            ) : createdAccountEmail || quoteUncertain ? (
+              <div id="teklif-kayit-durumu" role="alert" className="bg-amber-500/10 border border-amber-500/25 text-sm px-4 py-3 rounded-xl space-y-2">
+                <p className="font-semibold text-amber-300">
+                  {quoteUncertain ? "Teklif talebinizin kaydı doğrulanamadı" : "Teklif talebiniz kaydedilemedi"}
+                </p>
+                <ul className="space-y-1 text-slate-300">
+                  {createdAccountEmail && (
+                    <li>✓ Kurumsal hesabınız oluşturuldu: <span className="text-white">{createdAccountEmail}</span></li>
+                  )}
+                  <li>
+                    {quoteUncertain
+                      ? "? Teklif bağlantı sırasında kaydedilmiş olabilir; sonucu doğrulayamadık."
+                      : "✗ Teklif talebiniz kaydedilmedi."}
+                  </li>
+                </ul>
+                {quoteUncertain ? (
+                  <p className="text-slate-400">
+                    &quot;Teklifi yeniden kaydedin&quot; ilk gönderdiğiniz içeriği aynı teklif numarasıyla yeniden gönderir; teklif
+                    kaydedildiyse ikinci kez oluşmaz. Bu yüzden teklif alanları kilitlendi. Değişiklik isterseniz kayıt
+                    doğrulandıktan sonra panelinizden yeni teklif oluşturabilirsiniz. Sorun sürerse{" "}
+                    <Link href="/kurumsal/giris" className="text-emerald-400 underline underline-offset-2">giriş yapıp</Link>{" "}
+                    panelinizden teklifinizin kaydını kontrol edin.
+                  </p>
+                ) : (
+                  <p className="text-slate-400">
+                    Bilgilerinizi kontrol edip &quot;Teklifi yeniden kaydedin&quot; ile yeniden gönderebilirsiniz; hesabınız yeniden
+                    oluşturulmaz. Sorun sürerse{" "}
+                    <Link href="/kurumsal/giris" className="text-emerald-400 underline underline-offset-2">giriş yapıp</Link>{" "}
+                    panelinizden yeni teklif oluşturabilirsiniz.
+                  </p>
+                )}
+                {submitError && <p className="text-xs text-slate-500">Ayrıntı: {submitError}</p>}
+              </div>
+            ) : submitError && (
+              <div role="alert" className="bg-red-500/10 border border-red-500/20 text-red-400 text-sm px-4 py-3 rounded-xl">
                 {submitError}
               </div>
             )}
@@ -757,10 +823,12 @@ export default function CorporateQuoteForm() {
                 <Button variant="primary" onClick={() => canNext() && setStep(step + 1)} disabled={!canNext()}>
                   Devam Edin →
                 </Button>
-              ) : (
+              ) : quoteUnverifiable ? <div /> : (
                 <Button variant="primary" size="lg" onClick={handleSubmit}
                   disabled={!canNext() || submitting} loading={submitting}>
-                  {isLoggedIn ? "Teklif Talebinizi Gönderin" : "Hesap Oluşturun ve Teklif Gönderin"}
+                  {createdAccountEmail || quoteUncertain
+                    ? "Teklifi Yeniden Kaydedin"
+                    : isLoggedIn ? "Teklif Talebinizi Gönderin" : "Hesap Oluşturun ve Teklif Gönderin"}
                 </Button>
               )}
             </div>
@@ -769,7 +837,7 @@ export default function CorporateQuoteForm() {
 
         {/* ── Sağ: Karbon Simülatörü ── */}
         <div className="lg:col-span-2 mt-10 lg:mt-0">
-          <CarbonSimulator onApply={handleApplySimulator} />
+          <CarbonSimulator onApply={handleApplySimulator} disabled={contentLocked} />
         </div>
       </div>
     </div>

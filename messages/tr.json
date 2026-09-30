@@ -1480,13 +1480,6 @@
     "report": "İzleme raporu (PDF)"
   },
   "orderStatusPage": {
-    "access": {
-      "pending": "Bu tarayıcıda sipariş erişimi hazırlanıyor. Lütfen işlem tamamlanana kadar sayfayı yenilemeyin veya dili değiştirmeyin.",
-      "failed": "Bu tarayıcıda sipariş erişimi hazırlanamadı. Yeniden deneyebilirsiniz. Sayfayı yeniler veya dili değiştirirseniz e-postanızdaki sipariş bağlantısını yeniden açmanız gerekebilir.",
-      "unavailable": "Bu bağlantıyla sipariş erişimi doğrulanamadı. E-postanızdaki sipariş bağlantısını yeniden açın. Sorun sürerse sipariş numaranızla bize ulaşın.",
-      "ready": "Bu tarayıcıda sipariş erişimi hazır.",
-      "retry": "Sipariş erişimini yeniden dene"
-    },
     "title": "Siparişiniz",
     "description": "Siparişinizin durumunu, bırakma takvimini, belgelerini ve iade bilgilerini görüntüleyin.",
     "copy": "Numarayı kopyala",
@@ -1625,7 +1618,7 @@
     },
     "notFound": {
       "title": "Sipariş görüntülenemiyor",
-      "description": "Sipariş teyidi e-postanızdaki bağlantıyı kullanın. Sorun sürerse bizimle iletişime geçin.",
+      "description": "Sipariş teyidi e-postanızdaki bağlantıyı kullanın. Bağlantıyı açtığınız hâlde bu sayfayı görüyorsanız tarayıcınızın bu site için çerezlere izin verdiğinden emin olun ve bağlantıyı yeniden açın. Sorun sürerse bizimle iletişime geçin.",
       "back": "Proje Uygulama Sahalarına dön"
     },
     "testOrder": "Deneme siparişi — gerçek bir ödeme alınmamıştır."
@@ -1964,6 +1957,11 @@
       "closed": "Çevrim içi ödeme şu anda kapalı. Lütfen daha sonra yeniden deneyin.",
       "rateLimited": "Kısa sürede çok fazla deneme yapıldı. Lütfen birkaç dakika sonra yeniden deneyin.",
       "generic": "Ödeme sayfası açılamadı. Lütfen yeniden deneyin."
+    },
+    "notFound": {
+      "title": "Ödeme sonucu görüntülenemiyor",
+      "description": "Bu sayfa ödemenin yapıldığı tarayıcıda açılır; bunun için tarayıcınızın bu site için çerezlere izin vermesi gerekir. Ödemeniz onaylandıysa sipariş teyidi e-postayla gönderilir; siparişinizi o e-postadaki bağlantıdan görebilirsiniz. Sorun sürerse bizimle iletişime geçin.",
+      "back": "Proje Uygulama Sahalarına dön"
     }
   },
   "paymentErrorPage": {

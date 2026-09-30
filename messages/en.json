@@ -1480,13 +1480,6 @@
     "report": "Monitoring report (PDF)"
   },
   "orderStatusPage": {
-    "access": {
-      "pending": "Preparing order access in this browser. Please wait before refreshing the page or changing the language.",
-      "failed": "Order access could not be prepared in this browser. You can retry. If you refresh the page or change the language, you may need to reopen the order link in your email.",
-      "unavailable": "Order access could not be verified with this link. Reopen the order link in your email. If the problem persists, contact us with your order number.",
-      "ready": "Order access is ready in this browser.",
-      "retry": "Retry order access"
-    },
     "title": "Your order",
     "description": "View your order status, seed ball release schedule, documents and refund information.",
     "copy": "Copy order number",
@@ -1625,7 +1618,7 @@
     },
     "notFound": {
       "title": "Order cannot be displayed",
-      "description": "Please use the link in your order confirmation email. Contact us if the problem persists.",
+      "description": "Please use the link in your order confirmation email. If you opened that link and still see this page, make sure your browser allows cookies for this site, then open the link again. Contact us if the problem persists.",
       "back": "Return to Project Sites"
     },
     "testOrder": "Test order — no real payment has been taken."
@@ -1964,6 +1957,11 @@
       "closed": "Online payment is currently closed. Please try again later.",
       "rateLimited": "Too many attempts in a short time. Please try again in a few minutes.",
       "generic": "The payment page could not be opened. Please try again."
+    },
+    "notFound": {
+      "title": "Payment result cannot be displayed",
+      "description": "This page opens in the browser used for the payment, and your browser must allow cookies for this site. If your payment was approved, an order confirmation is sent by email; you can view your order from the link in that email. Contact us if the problem persists.",
+      "back": "Return to Project Sites"
     }
   },
   "paymentErrorPage": {

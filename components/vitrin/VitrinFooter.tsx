@@ -6,7 +6,8 @@ import LanguageSwitcher from "./LanguageSwitcher";
 import CookiePreferencesLink from "./CookiePreferencesLink";
 import KenxBadge from "./KenxBadge";
 import { ORG_LEGAL_NAME, ORG_PARENT_URL, ORG_SOCIAL } from "@/lib/seo";
-import { SITES_HREF } from "@/lib/sites/links";
+import { OWN_LAND_HREF, SITES_HREF } from "@/lib/sites/links";
+import { REQUESTS_ENABLED } from "@/lib/site-config";
 import { LEGAL_PAGES_ENABLED, SALES_LEGAL_PAGES } from "@/lib/legal/visibility";
 
 export default async function VitrinFooter() {
@@ -16,6 +17,8 @@ export default async function VitrinFooter() {
     { label: t("services.seedBall"), href: "/tohum-topu" },
     { label: t("services.droneTech"), href: "/dron-teknolojisi" },
     { label: t("services.carbonProgram"), href: "/karbon-programi" },
+    // Kendi arazi başvurusu: talep akışı kapalıyken sayfa /yakinda'ya gittiği için listede de yok.
+    ...(REQUESTS_ENABLED ? [{ label: t("services.ownLand"), href: OWN_LAND_HREF }] : []),
     { label: t("services.corporate"), href: "/kurumsal-cozumler" },
   ];
 

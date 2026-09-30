@@ -8,7 +8,8 @@ import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 import LanguageSwitcher from "./LanguageSwitcher";
-import { ACCOUNTS_ENABLED, CTA_MODE, orderCtaHref } from "@/lib/site-config";
+import { ACCOUNTS_ENABLED, CTA_MODE, REQUESTS_ENABLED, orderCtaHref } from "@/lib/site-config";
+import { OWN_LAND_HREF } from "@/lib/sites/links";
 
 /**
  * Oturum var mı? Supabase'in auth çerezi ("sb-<ref>-auth-token[.N]")
@@ -50,6 +51,8 @@ function useNavItems() {
         { label: t("ourSeeds"), href: "/tohumlarimiz" },
         { label: t("droneTech"), href: "/dron-teknolojisi" },
         { label: t("carbonProgram"), href: "/karbon-programi" },
+        // Kendi arazi başvurusu: talep akışı kapalıyken sayfa /yakinda'ya gittiği için menüde de yok.
+        ...(REQUESTS_ENABLED ? [{ label: t("ownLand"), href: OWN_LAND_HREF }] : []),
       ],
     },
     { label: t("projects"), href: "/projeler" },
@@ -147,7 +150,7 @@ export default function VitrinNavbar() {
                     onClick={() => setOpenDropdown(openDropdown === item.label ? null : item.label)}
                     onKeyDown={(e) => { if (e.key === "Escape") setOpenDropdown(null); }}
                     className={`px-4 py-2 text-sm font-medium rounded-lg flex items-center gap-1 whitespace-nowrap transition-colors ${
-                      isActive("/tohum-topu") || isActive("/dron-teknolojisi") || isActive("/karbon-programi")
+                      item.children.some((child) => isActive(child.href))
                         ? "text-[#1B6B3A]"
                         : "text-[#1a2e1a] hover:text-[#1B6B3A]"
                     }`}

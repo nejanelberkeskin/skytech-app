@@ -38,6 +38,19 @@ export interface OrderLinkRewrite {
   target: string;
 }
 
+/** İmzalı belirtecin biçimi (lib/orders/access.ts: HMAC-SHA256, base64url, ilk 32 karakter). */
+const TOKEN_RE = /^[A-Za-z0-9_-]{32}$/;
+
+/**
+ * Taşınabilecek belirteç: yalnız imza biçimine uyan değer. Uymayan her değer (Unicode, gömülü satır sonu, aşırı
+ * uzunluk, boş) boş dizgiye çevrilir ve kapıda çerezsiz, belirteçsiz aynı 303'ü alır. Ham değer istek başlığına,
+ * hata iletisine, günlüğe ya da yanıta HİÇ yazılmaz: `Headers.set` ASCII dışı ve kontrol karakterli değerde
+ * değeri iletisine koyarak hata fırlatır.
+ */
+export function orderLinkToken(raw: string | null | undefined): string {
+  return raw && TOKEN_RE.test(raw) ? raw : "";
+}
+
 /**
  * Belirteçli sayfa isteği mi? Öyleyse kapıya yeniden yazma bilgisini döner, değilse null.
  * `t` parametresi değeri ne olursa olsun (boş, bozuk, geçersiz) sayfaya ulaşmaz: her durumda kapıdan geçer.
@@ -48,7 +61,7 @@ export function orderLinkRewrite(pathname: string, search: URLSearchParams): Ord
   if (!m) return null;
   return {
     path: `/api/public/siparis/${m[3]}/baglanti`,
-    token: search.get("t") ?? "",
+    token: orderLinkToken(search.get("t")),
     target: `${m[2] === "siparis" ? "siparis" : "sonuc"}:${m[1] ?? "tr"}`,
   };
 }

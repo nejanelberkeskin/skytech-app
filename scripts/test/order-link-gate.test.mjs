@@ -215,12 +215,71 @@ test('middleware: belirteçli sayfa isteği dil yönlendirmesinden ve sayfa rend
   assert.deepEqual(intlCalls, ['/siparis/SG-2026-ABCDEF'], 'belirteçsiz istek olağan yoldan geçer');
 });
 
+// Astra #104 P2: ham `t` değeri doğrulanmadan başlığa konuyordu; ASCII dışı ve gömülü kontrol karakterli değerde
+// `Headers.set` hata fırlatıyor (303 yerine 500) ve hata iletisi değeri — imzalı belirteç dahil — günlüğe taşıyordu.
+const BOZUK = {
+  unicode: 'ş',
+  emoji: '💚',
+  gomuluSatirSonu: 'a\r\nb',
+  imzaliArtiSatirSonu: `${TOKEN}\nX`,
+  imzaliArtiKontrol: `${TOKEN}\u0000`,
+  uzun: `${TOKEN}${TOKEN}`,
+  kisa: TOKEN.slice(1),
+  bosluklu: ` ${TOKEN}`,
+};
+
+test('P2: orderLinkToken yalnız imza biçimini (32 karakter base64url) geçirir; gerisi boş', () => {
+  assert.equal(Gate.orderLinkToken(TOKEN), TOKEN);
+  for (const [ad, deger] of Object.entries(BOZUK)) assert.equal(Gate.orderLinkToken(deger), '', ad);
+  assert.equal(Gate.orderLinkToken(null), '');
+  assert.equal(Gate.orderLinkToken(undefined), '');
+});
+
+test('P2: middleware bozuk belirteçte hata fırlatmaz; ham değer hiçbir başlığa yazılmaz, istek yine kapıya gider', async () => {
+  const intlCalls = [];
+  const mw = loadMiddleware(intlCalls);
+  for (const [ad, deger] of Object.entries(BOZUK)) {
+    const res = await mw.middleware(new NextRequest(`http://localhost:3000/siparis/SG-2026-ABCDEF?t=${encodeURIComponent(deger)}`));
+    assert.equal(res.headers.get('x-middleware-rewrite'), 'http://localhost:3000/api/public/siparis/SG-2026-ABCDEF/baglanti', ad);
+    assert.equal(res.headers.get(`x-middleware-request-${Gate.ORDER_LINK_TOKEN_HEADER}`), '', `${ad}: iç başlık boş`);
+    for (const [name, value] of res.headers) {
+      assert.ok(!value.includes(TOKEN), `${ad}: imzalı belirteç başlıkta yok (${name})`);
+      assert.ok(!/[\r\n\u0000]/.test(value), `${ad}: kontrol karakteri başlıkta yok (${name})`);
+    }
+  }
+  assert.deepEqual(intlCalls, []);
+});
+
+test('P2: kapı bozuk belirteçte (iç başlık ya da doğrudan sorgu) çerezsiz aynı 303; veritabanına gidilmez, günlük boş', async (t) => {
+  const logged = [];
+  for (const m of ['error', 'warn', 'log']) t.mock.method(console, m, (...a) => logged.push(a.map(String).join(' ')));
+  const calls = [];
+  const route = loadGateRoute({ calls });
+  const valid = await gateGet(route, 'SG-2026-ABCDEF', { t: TOKEN, hedef: 'siparis', dil: 'tr' });
+  calls.length = 0;
+  for (const [ad, deger] of Object.entries(BOZUK)) {
+    for (const res of [
+      await gateGet(route, 'SG-2026-ABCDEF', { t: deger, hedef: 'siparis', dil: 'tr' }),
+      await route.GET(new NextRequest('http://localhost:3000/api/public/siparis/SG-2026-ABCDEF/baglanti', {
+        headers: { [Gate.ORDER_LINK_TOKEN_HEADER]: Gate.orderLinkToken(deger), [Gate.ORDER_LINK_TARGET_HEADER]: 'siparis:tr' },
+      }), { params: Promise.resolve({ no: 'SG-2026-ABCDEF' }) }),
+    ]) {
+      assert.equal(res.status, 303, ad);
+      assert.equal(res.headers.get('set-cookie'), null, ad);
+      assert.deepEqual(headersOf(res), headersOf(valid), `${ad}: yanıt geçerli belirteçle aynı biçimde`);
+    }
+  }
+  assert.deepEqual(calls, [], 'bozuk belirteçle sipariş okunmaz');
+  assert.deepEqual(logged, [], 'günlüğe hiçbir şey yazılmaz');
+});
+
 function loadDocumentRoute() {
   return loadSource('app/api/public/siparis/[no]/belge/[kind]/route.ts', {
     'next/server': server,
     '@/lib/admin-auth': { getClientIP: () => '203.0.113.9', rateLimit: () => null },
     '@/lib/supabase/server': { createSupabaseServer: async () => ({ auth: { getUser: async () => ({ data: { user: null } }) } }) },
     '@/lib/orders/access': Access,
+    '@/lib/orders/link-gate': Gate,
     '@/lib/orders/after-payment': { documentFileName: () => 'belge.html', loadStoredDocuments: async () => null, storedDocumentToPdf: () => new Uint8Array() },
     '@/lib/orders/store': {
       db: () => ({ from: () => ({ select: () => ({ eq: () => ({ eq: () => ({ maybeSingle: async () => ({ data: { html: '<p>belge</p>' }, error: null }) }) }) }) }) }),
@@ -241,7 +300,7 @@ test('belge: eski ?t= bağlantısı çereze çevrilip belirteçsiz belge adresin
   assert.equal(res.headers.get('cache-control'), 'private, no-store');
   assert.match(res.headers.get('set-cookie'), new RegExp(`^sgo_SG-2026-ABCDEF=${TOKEN};.*HttpOnly`, 'i'));
 
-  for (const [no, t] of [['SG-2026-ABCDEF', 'x'.repeat(32)], ['SG-2026-ABCDEF', tokenOf('SG-2026-BCDEFG')], ['SG-2026-CDEFGH', tokenOf('SG-2026-CDEFGH')], ['SG-2026-ABCDEF', '']]) {
+  for (const [no, t] of [['SG-2026-ABCDEF', 'x'.repeat(32)], ['SG-2026-ABCDEF', tokenOf('SG-2026-BCDEFG')], ['SG-2026-CDEFGH', tokenOf('SG-2026-CDEFGH')], ['SG-2026-ABCDEF', ''], ...Object.values(BOZUK).map((b) => ['SG-2026-ABCDEF', b])]) {
     const denied = await docGet(route, no, 'contract', { t });
     assert.equal(denied.status, 404, `${no} ${t.slice(0, 4)}`);
     assert.equal(denied.headers.get('set-cookie'), null);

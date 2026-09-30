@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { rateLimit, getClientIP } from "@/lib/admin-auth";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import { orderCookieName, orderCookieOptions } from "@/lib/orders/access";
+import { orderLinkToken } from "@/lib/orders/link-gate";
 import { documentFileName, loadStoredDocuments, storedDocumentToPdf } from "@/lib/orders/after-payment";
 import { db } from "@/lib/orders/store";
 import { DOCUMENT_KINDS, type DocumentKind } from "@/lib/orders/types";
@@ -41,8 +42,9 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ no: 
 
   const format = req.nextUrl.searchParams.get("bicim") === "pdf" ? "pdf" : "html";
   // Eski biçimli bağlantı: belirteç doğrulanır, çereze yazılır ve belge belirteçsiz adresinden açılır (91-4).
-  const linkToken = req.nextUrl.searchParams.get("t");
-  if (linkToken !== null) {
+  if (req.nextUrl.searchParams.has("t")) {
+    // Biçime uymayan belirteç boş sayılır: veritabanına gidilmez, ham değer çereze ya da başlığa yazılmaz.
+    const linkToken = orderLinkToken(req.nextUrl.searchParams.get("t"));
     const linked = linkToken ? await getAuthorizedOrder(no, { token: linkToken }, db()) : null;
     if (!linked || !linked.paid_at) return notFound();
     const res = new NextResponse(null, {

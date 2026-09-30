@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { rateLimit, getClientIP } from "@/lib/admin-auth";
 import { orderCookieName, orderCookieOptions } from "@/lib/orders/access";
-import { ORDER_LINK_HEADERS, ORDER_LINK_TARGET_HEADER, ORDER_LINK_TOKEN_HEADER, orderLinkTarget } from "@/lib/orders/link-gate";
+import { ORDER_LINK_HEADERS, ORDER_LINK_TARGET_HEADER, ORDER_LINK_TOKEN_HEADER, orderLinkTarget, orderLinkToken } from "@/lib/orders/link-gate";
 import { getAuthorizedOrder } from "@/lib/orders/view-data";
 
 /**
@@ -27,7 +27,8 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ no: 
   // Göreli Location: hedef istek başlıklarından (Host) değil, yalnız izinli parçalardan kurulur.
   const res = new NextResponse(null, { status: 303, headers: { ...ORDER_LINK_HEADERS, Location: target.path } });
 
-  const token = req.headers.get(ORDER_LINK_TOKEN_HEADER) ?? search.get("t");
+  // Biçime uymayan belirteç boş sayılır: veritabanına gidilmez, ham değer hiçbir yere yazılmaz.
+  const token = orderLinkToken(req.headers.get(ORDER_LINK_TOKEN_HEADER) ?? search.get("t"));
   if (!target.orderNo || !token) return res;
   if (rateLimit(`siparis-baglanti:${getClientIP(req)}`, 30, 10 * 60_000)) return res;
   try {

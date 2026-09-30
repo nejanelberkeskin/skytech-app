@@ -5,7 +5,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { z } from 'zod';
 import { loadSource as load } from './load-source.mjs';
-import { createDb, restClient, IDS } from './pglite-db.mjs';
+import { createDb, restClient, sqlError, IDS } from './pglite-db.mjs';
 import { AAL1, customRole, envelope, gate, orderAt, orderClient, permissionKeys, readModules, request, staffWithRole, USERS, withMfaEnforced } from './order-admin-helpers.mjs';
 
 const labels = load('components/admin/access/labels.ts');
@@ -263,11 +263,16 @@ test('29: talep okuma ve güncelleme retleri eksik izni adıyla söyler; iş ser
 const refundModel = load('lib/refunds/model.ts', { '@/lib/orders/duplicates': load('lib/orders/duplicates.ts') });
 function refundRoutes(db, who, { role = 'NONE', assurance = AAL1 } = {}) {
   const calls = [];
-  const service = new Proxy({}, { get: (_t, name) => async () => { calls.push(`servis.${String(name)}`); return { ok: false, status: 503, code: 'unavailable', message: 'taklit' }; } });
+  const args = {};
+  const service = new Proxy({}, { get: (_t, name) => async (...a) => {
+    calls.push(`servis.${String(name)}`); args[name] = a;
+    return { ok: false, status: 503, code: 'unavailable', message: 'taklit' };
+  } });
   const http = load('lib/refunds/http.ts', {
     'next/server': { after: () => calls.push('sonra') },
     '@/lib/admin-auth': { getClientIP: () => '127.0.0.1' },
     '@/lib/api/envelope': envelope,
+    '@/lib/orders/admin-access': mods.access,
     '@/lib/orders/admin-mails': { sendRefundCompletedEmail: () => { throw new Error('gerçek e-posta yasak'); } },
     '@/lib/payments': { getProviderByName: () => { throw new Error('sağlayıcı yasak'); } },
     '@/lib/supabase/server': { createServiceRoleClient: () => { calls.push('db'); return {}; } },
@@ -281,12 +286,12 @@ function refundRoutes(db, who, { role = 'NONE', assurance = AAL1 } = {}) {
   const op = { params: Promise.resolve({ operationId: ORDER_ID }) };
   const ord = { params: Promise.resolve({ orderId: ORDER_ID }) };
   return {
-    calls,
+    calls, args,
     reads: () => Promise.all([queue.GET(req()), view.GET(req(), ord)]),
     actions: () => Promise.all([
       execute.POST(req({ kind: 'order' }), ord),
       retry.POST(req({ expectedAttempt: 1 }), op),
-      resolve.POST(req({ expectedAttempt: 1, outcome: 'failed', source: 'provider_panel', note: 'Sağlayıcı panelinde başarısız görünüyor.' }), op),
+      resolve.POST(req({ expectedAttempt: 1, outcome: 'failed', evidence: { source: 'provider_panel' }, note: 'Sağlayıcı panelinde başarısız görünüyor.' }), op),
       finalize.POST(req({}), op),
     ]),
   };
@@ -326,5 +331,38 @@ test('17: iade retleri gerekli izni adıyla söyler (okuma finance.read, eylem r
       }
       assert.deepEqual(fin.calls, [], 'MFA reddi sağlayıcıya ve servise ulaşmaz');
     });
+  } finally { await db.close(); }
+});
+
+test('17/27 §7: refunds.execute taşıyan özel rol eski rol olmadan iade yapamaz — servis çağrılmadan açıklamalı ret, görünüm eylem sunmaz', async () => {
+  const db = await createDb();
+  try {
+    const REFUNDER = USERS.refunder;
+    await customRole(db, 'iade_ozel', ['finance.read', 'refunds.execute']);
+    await staffWithRole(db, REFUNDER, 'iade_ozel');
+    const custom = refundRoutes(db, REFUNDER);
+    for (const r of await custom.actions()) {
+      assert.equal(r.status, 403);
+      assert.deepEqual(r.body.error, { code: 'forbidden', message: 'İade işlemleri yalnız finans ya da sistem sahibi rolüyle yapılabilir.', details: { reason: 'legacy_role' } });
+      assert.equal(shown(r), 'İade işlemleri yalnız finans ya da sistem sahibi rolüyle yapılabilir.', 'izin eksik değil: izin adı gösterilmez');
+    }
+    assert.deepEqual(custom.calls, [], 'SQL reddine kadar gidilmez: servis, veritabanı ve sağlayıcı çağrısı yok');
+    // Uç, SQL'in zaten uyguladığı sınırı önceden ve açıklamalı uygular: aynı kişi gerçek SQL'de de reddedilir.
+    const orderId = await orderAt(db);
+    assert.match(await sqlError(db.query('SELECT claim_refund_operation($1, $2, $3, $4, false, $5)', [orderId, 'mock', 'PAY-X', 1000, REFUNDER])), /forbidden/);
+    assert.match(await sqlError(db.query('SELECT retry_refund_operation($1, $2, 1)', [ORDER_ID, REFUNDER])), /forbidden/);
+    await custom.reads();
+    assert.equal(custom.args.queue[0].canExecute, false, 'kuyruk eylem sunmaz');
+    assert.equal(custom.args.orderView[1], false, 'sipariş görünümü eylem sunmaz');
+
+    for (const [who, role] of [[IDS.finance, 'FINANCE'], [IDS.superAdmin, 'SUPER_ADMIN']]) {
+      const allowed = refundRoutes(db, who, { role });
+      await allowed.reads();
+      assert.equal(allowed.args.queue[0].canExecute, true, role);
+      assert.equal(allowed.args.orderView[1], true, role);
+      for (const r of await allowed.actions()) assert.equal(r.status, 503, `${role}: kapıdan geçer, taklit servis yanıtı`);
+      assert.deepEqual(allowed.calls.filter((c) => c.startsWith('servis.')).sort(),
+        ['servis.execute', 'servis.finalize', 'servis.orderView', 'servis.queue', 'servis.resolve', 'servis.retry'], role);
+    }
   } finally { await db.close(); }
 });

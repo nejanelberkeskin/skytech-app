@@ -23,7 +23,7 @@ import { REQUEST_STATUSES, REQUEST_TYPES } from "@/lib/requests/schema";
 export const dynamic = "force-dynamic";
 
 const unsupported = (permission: string) =>
-  fail(403, "scope_unsupported", "Talep yetkiniz yalnız kişiye atanmış işleri kapsıyor; talepler için atama modeli henüz yok.", { permission });
+  fail(403, "scope_unsupported", "Talep yetkiniz yalnız kişiye atanmış işleri kapsıyor; talepler için atama modeli henüz yok.", { permission, permissions: [permission] });
 
 export async function GET(request: NextRequest) {
   const guard = await requirePermission(request, "requests.read", { scope: "any" });
@@ -72,7 +72,7 @@ export async function PATCH(request: NextRequest) {
   if (!read) {
     return onlyAssigned(guard.access, "requests.read")
       ? unsupported("requests.read")
-      : fail(403, "forbidden", "Talepleri okuma yetkiniz yok.", { permission: "requests.read" });
+      : fail(403, "forbidden", "Talepleri okuma yetkiniz yok.", { reason: "missing_permission", permissions: ["requests.read"], permission: "requests.read" });
   }
 
   const raw = await request.json().catch(() => null);
@@ -92,7 +92,7 @@ export async function PATCH(request: NextRequest) {
   if (!result.ok) {
     if (result.error === "not_found") return fail(404, "not_found", "Talep bulunamadı.");
     if (result.error === "out_of_scope") {
-      return fail(403, "forbidden", "Bu talep güncelleme yetkinizin saha kapsamı dışında.", { reason: "out_of_scope" });
+      return fail(403, "forbidden", "Bu talep güncelleme yetkinizin saha kapsamı dışında.", { reason: "out_of_scope", permissions: ["requests.update"] });
     }
     return unavailable();
   }

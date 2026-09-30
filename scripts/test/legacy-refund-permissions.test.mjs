@@ -105,8 +105,12 @@ test('Guard uses existing rollout setting; invoice action now needs invoices.man
     const denied = setup({ permissions: [] }); const result = await denied.post({ action: 'invoice_now' });
     assert.equal(result.status, 403); assert.equal(result.body.error.code, 'forbidden');
     assert.equal(denied.calls.some(c => c?.service), false, 'izinsiz fatura isteği iş servisine ulaşmaz');
-    // invoices.manage MFA setinde değil: aal1 ile izin verilir (27 §2, §8 karar notu).
-    const app = setup({ permissions: [{ key: 'invoices.manage', scopes: [{ kind: 'all' }] }], assurance: { aal: 'aal1', enrolled: false, verifiedAt: null } });
+    // 34 B1 kararı (30 Eylül 2026): invoices.manage yeniden doğrulama ister; kesilen fatura geri alınamaz.
+    const aal1 = setup({ permissions: [{ key: 'invoices.manage', scopes: [{ kind: 'all' }] }], assurance: { aal: 'aal1', enrolled: false, verifiedAt: null } });
+    const needsMfa = await aal1.post({ action: 'invoice_now' });
+    assert.equal(needsMfa.body.error.code, 'mfa_required');
+    assert.equal(aal1.calls.some(c => c?.service), false, 'doğrulanmamış fatura isteği iş servisine ulaşmaz');
+    const app = setup({ permissions: [{ key: 'invoices.manage', scopes: [{ kind: 'all' }] }], assurance: { aal: 'aal2', enrolled: true, verifiedAt: new Date().toISOString() } });
     assert.equal((await app.post({ action: 'invoice_now' })).status, 200);
     assert.equal(app.calls.find(c => c?.service).service, 'queueInvoice');
   });

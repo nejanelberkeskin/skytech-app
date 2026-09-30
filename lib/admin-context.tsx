@@ -33,7 +33,8 @@ interface AdminContextType {
   refresh: () => Promise<void>;
   denial: AccessDenial | null;
   reportDenial: (report: DenialReport) => void;
-  clearDenial: (scope?: string) => void;
+  /** Kapsamın açıklamasını ve henüz karara bağlanmamış bildirimini temizler; `keepPending` yalnız görünen açıklamayı kapatır. */
+  clearDenial: (scope?: string, options?: { keepPending?: boolean }) => void;
 }
 export const AdminContext = createContext<AdminContextType>({
   admin: null,
@@ -62,7 +63,10 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     if (!snapshot) return;
     pending.current = { ...report, userId: snapshot.admin.userId, key: report.keyOf(snapshot), after: latest.current.value };
   }, []);
-  const clearDenial = useCallback((scope?: string) => {
+  const clearDenial = useCallback((scope?: string, options: { keepPending?: boolean } = {}) => {
+    // Sayfadan çıkışta aynı kapsamın bekleyen bildirimi de iptal edilir: yetki yanıtı sonradan dönerse eski açıklamayı
+    // yeniden oluşturmasın. Başka kapsamın bildirimine dokunulmaz. "Bildirimi kapat" (keepPending) bu arada gelen yeni reddi korur.
+    if (!options.keepPending && pending.current && (!scope || pending.current.scope === scope)) pending.current = null;
     setDenial((previous) => (!previous || (scope && previous.scope !== scope) ? previous : null));
   }, []);
   const refresh = useCallback(async () => {

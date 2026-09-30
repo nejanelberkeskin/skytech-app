@@ -985,7 +985,7 @@
         "pre": "Let's Design Your",
         "highlight": "Corporate Project"
       },
-      "subtitle": "Your headcount, the sites you want to join, your reporting needs — let's plan together. Reply within one business day.",
+      "subtitle": "Your headcount, the sites you want to join, your reporting needs — let's plan together.",
       "primaryEnabled": "Request a Quote",
       "primaryDisabled": "Get Information",
       "secondary": "Contact Us"
@@ -1025,12 +1025,12 @@
   "infoPage": {
     "meta": {
       "title": "Get Information — Let Us Answer Your Questions",
-      "description": "Information form for individual or corporate Skytech Green questions — guaranteed response from our expert team within 24 hours."
+      "description": "Send our team your individual or corporate questions about Skytech Green using the information form."
     },
     "breadcrumb": {
       "label": "Get Information",
       "title": "Ask Us Anything You're Curious About",
-      "subtitle": "Fill in the form — our expert team will get back to you within 24 hours. Individual or corporate, it makes no difference."
+      "subtitle": "Use the form to send our team your individual or corporate questions."
     },
     "form": {
       "heading": "Contact Form",
@@ -1081,11 +1081,11 @@
     },
     "info": {
       "response": {
-        "title": "24-Hour Response",
-        "desc": "24-hour response on business days; a Monday-morning reply guaranteed for weekends."
+        "title": "Reviewing your request",
+        "desc": "Our team reviews your request and contacts you using the details you provide."
       },
       "email": {
-        "desc": "You can also reach us directly by email — active 24 hours."
+        "desc": "You can also send your questions directly by email."
       },
       "phone": {
         "desc": "Reachable by phone on weekdays between 09:00 and 18:00."
@@ -1104,7 +1104,7 @@
     },
     "body": {
       "primary": "We are finalising our online payment infrastructure. In the meantime we collect your request and settle the details and schedule together with you.",
-      "secondary": "To have seed balls released on a Project Site or to apply for your own land, just fill in the form; our team gets back to you within one business day."
+      "secondary": "To have seed balls released on a Project Site or to apply for your own land, fill in the form. Our team will review your application and contact you."
     },
     "cta": {
       "home": "Back to Home",
@@ -1213,11 +1213,11 @@
       },
       "success": {
         "title": "Request received",
-        "desc": "Our team will contact you within one business day.",
+        "desc": "Our team will review your request and get back to you using the contact details you provided.",
         "numberLabel": "Your request number",
         "copy": "Copy",
         "copied": "Copied",
-        "emailNote": "A confirmation e-mail was sent to {email}.",
+        "emailNote": "Your contact email: {email}. If the confirmation email does not arrive, contact us with your request number.",
         "nextTitle": "What happens next?",
         "next": [
           "We review your request.",
@@ -1310,6 +1310,74 @@
       "backToSites": "Back to Project Sites"
     }
   },
+  "ownLandPage": {
+    "breadcrumb": "My land",
+    "breadcrumbLabel": "Breadcrumb",
+    "eyebrow": "For landowners",
+    "title": "Drone seed ball release on your land",
+    "description": "Apply for your fire-affected, degraded or unused land; our team will assess the land and contact you.",
+    "apply": "Go to the application form",
+    "sites": "No land of your own? Take part in a Project Site",
+    "eligible": {
+      "title": "Who can apply?",
+      "note": "Applications must be made by the landowner or a person or organisation authorised to act in relation to the land.",
+      "individuals": "Individuals",
+      "companies": "Companies",
+      "cooperatives": "Cooperatives",
+      "municipalities": "Municipalities",
+      "institutions": "Other organisations"
+    },
+    "process": {
+      "title": "From application to fieldwork",
+      "application": {
+        "title": "Application",
+        "body": "Complete the form with your land and contact details."
+      },
+      "review": {
+        "title": "Initial assessment",
+        "body": "We assess suitability using the location and land details."
+      },
+      "planning": {
+        "title": "Planning",
+        "body": "A site visit is arranged if needed, and locally suitable species and a work plan are determined."
+      },
+      "offer": {
+        "title": "Proposal",
+        "body": "If the land is suitable, you receive a tailored proposal."
+      },
+      "release": {
+        "title": "Release and monitoring",
+        "body": "Seed balls are released by drone from November to March, and the land is monitored from April to September."
+      }
+    },
+    "information": {
+      "title": "What do we ask in the application?",
+      "location": "Location: province, district and a map link if available",
+      "area": "Approximate area",
+      "condition": "Land condition",
+      "ownership": "Ownership or authorisation status",
+      "timing": "Preferred timing",
+      "contact": "Contact details"
+    },
+    "free": "Applying is free and does not commit you to an order.",
+    "formTitle": "Application form",
+    "faq": {
+      "title": "Frequently asked questions",
+      "fee": {
+        "question": "Is there an application fee?",
+        "answer": "No. Applying is free and does not constitute an order."
+      },
+      "species": {
+        "question": "Which species are released?",
+        "answer": "Our team selects locally suitable species according to the climate and soil conditions of the land."
+      },
+      "season": {
+        "question": "When will the work take place?",
+        "answer": "Seed ball release is planned between November and March, subject to land suitability and the necessary permits."
+      }
+    },
+    "contact": "For your questions:"
+  },
   "authPages": {
     "home": "Skytech Green home",
     "linkError": "This link could not be verified in this browser. If your account is confirmed, sign in; otherwise request a new password reset link.",
@@ -1400,6 +1468,12 @@
     "report": "Monitoring report (PDF)"
   },
   "orderStatusPage": {
+    "access": {
+      "pending": "Preparing order access in this browser. Please wait before refreshing the page or changing the language.",
+      "failed": "Order access could not be prepared in this browser. You can retry. If you refresh the page or change the language, you may need to reopen the order link in your email.",
+      "unavailable": "Order access could not be verified with this link. Reopen the order link in your email. If the problem persists, contact us with your order number.",
+      "retry": "Retry order access"
+    },
     "title": "Your order",
     "description": "View your order status, seed ball release schedule, documents and refund information.",
     "copy": "Copy order number",
@@ -1559,14 +1633,14 @@
       "title": "Confirm your withdrawal notice",
       "description": "This notice withdraws your order. The full amount you paid will be refunded within 14 days to the payment method you used.",
       "submit": "Confirm withdrawal notice",
-      "cancel": "Cancel",
+      "cancel": "Edit details",
       "submitting": "Sending…"
     },
     "success": {
       "title": "Your withdrawal notice has been received.",
       "receivedAt": "Received at",
       "refundDueOn": "The full amount will be refunded by {date}.",
-      "email": "A confirmation email acknowledging receipt of your notice has been sent to your email address."
+      "email": "If you do not receive a confirmation email, contact {email} with your order number."
     },
     "closed": {
       "title": "Online withdrawal form closed",

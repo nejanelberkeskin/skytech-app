@@ -436,7 +436,7 @@ export default function CorporateQuoteForm() {
           <p className="text-slate-400">
             <span className="text-white font-medium">{form.companyName || existingUser?.companyName}</span> adına
             {isLoggedIn
-              ? " yeni teklif talebiniz başarıyla oluşturuldu. Teklifiniz 24 saat içinde hazırlanacaktır."
+              ? " yeni teklif talebiniz başarıyla oluşturuldu. Talebinizin durumunu panelinizden takip edebilirsiniz."
               : " kurumsal hesabınız başarıyla oluşturuldu. Teklif detaylarınız ve proje takibiniz için panelinize giriş yapabilirsiniz."
             }
           </p>
@@ -453,7 +453,7 @@ export default function CorporateQuoteForm() {
               <p className="text-xs text-slate-500">Giriş bilgileriniz</p>
               <p className="text-sm text-white">{form.corporateEmail}</p>
               <p className="text-xs text-emerald-400 mt-1">
-                ✉️ Onay e-postası gönderildi. Teklifiniz 24 saat içinde hazırlanacaktır.
+                Giriş sırasında e-posta doğrulaması istenirse e-posta kutunuzu ve istenmeyen posta klasörünüzü kontrol edin.
               </p>
             </Card>
           )}

@@ -72,6 +72,18 @@ const nextConfig: NextConfig = {
         source: "/(.*)",
         headers: securityHeaders,
       },
+      // Sipariş ve ödeme sonucu sayfaları ile müşteri sipariş uçları (belge, sertifika, bağlantı kapısı):
+      // hiçbir isteğe Referer gönderilmez. Sayfadaki `<meta name="referrer">` önyükleme bağlantılarından
+      // sonra geldiği için tek başına yetmez. Buradaki kurallar rota yanıtının kendi başlığının da ÜSTÜNE
+      // yazılır (yukarıdaki genel kural uçların `no-referrer` başlığını eziyordu); aynı anahtar için son
+      // eşleşen kural kazanır.
+      ...[
+        ...["", "/tr", "/en", "/ru"].flatMap((prefix) => [`${prefix}/siparis/:path*`, `${prefix}/odeme/sonuc/:path*`]),
+        "/api/public/siparis/:path*",
+      ].map((source) => ({
+        source,
+        headers: [{ key: "Referrer-Policy", value: "no-referrer" }],
+      })),
       // Static assets (next/image işlediği görseller) — uzun cache
       {
         source: "/images/(.*)",

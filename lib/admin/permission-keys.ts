@@ -23,7 +23,7 @@ export type Permission = (typeof PERMISSIONS)[number];
  */
 export const MFA_PERMISSIONS: ReadonlySet<Permission> = new Set<Permission>([
   "orders.cancel", "orders.documents.read", "orders.export", "customers.tax.read", "customers.export",
-  "refunds.approve", "refunds.execute",
+  "refunds.approve", "refunds.execute", "invoices.manage",
   "sites.publish", "sites.capacity.manage", "batches.release", "monitoring.publish", "certificates.read_private",
   "messages.send", "content.publish", "legal.edit", "legal.publish",
   "staff.invite", "staff.manage", "roles.manage",

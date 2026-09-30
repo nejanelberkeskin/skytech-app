@@ -124,17 +124,17 @@ test('27 §2: dar kapsamlı izin tam kapsam yerine geçmez (scope_unsupported)',
   } finally { await db.close(); }
 });
 
-test('27 §2: MFA zorlaması açıkken hassas eylemler aal1 ve bayat aal2 ile reddedilir; not ve fatura MFA istemez', async () => {
+test('27 §2 + 34 B1: MFA zorlaması açıkken hassas eylemler ve fatura eylemleri aal1 ve bayat aal2 ile reddedilir; not MFA istemez', async () => {
   const db = await createDb();
   try {
     await withMfaEnforced(async () => {
       for (const assurance of [AAL1, aal2(20)]) {
-        for (const action of ['cancel_by_seller', 'refund', 'refund_duplicate', 'reserve_capacity']) {
+        for (const action of ['cancel_by_seller', 'refund', 'refund_duplicate', 'reserve_capacity', 'invoice_now', 'invoice_issued']) {
           await expectRejected(db, IDS.superAdmin, action, 'mfa_required', { role: 'SUPER_ADMIN', assurance });
         }
       }
-      for (const action of ['note', 'invoice_now', 'invoice_issued']) await expectAllowed(db, IDS.superAdmin, action, { role: 'SUPER_ADMIN', assurance: AAL1 });
-      for (const action of ['cancel_by_seller', 'reserve_capacity', 'refund']) await expectAllowed(db, IDS.superAdmin, action, { role: 'SUPER_ADMIN', assurance: aal2(1) });
+      await expectAllowed(db, IDS.superAdmin, 'note', { role: 'SUPER_ADMIN', assurance: AAL1 });
+      for (const action of ['cancel_by_seller', 'reserve_capacity', 'refund', 'invoice_now', 'invoice_issued']) await expectAllowed(db, IDS.superAdmin, action, { role: 'SUPER_ADMIN', assurance: aal2(1) });
     });
   } finally { await db.close(); }
 });

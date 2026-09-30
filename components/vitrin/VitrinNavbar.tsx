@@ -180,7 +180,9 @@ export default function VitrinNavbar() {
                       transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
                       className="absolute top-full left-0 pt-3 min-w-[240px]"
                     >
-                      <div className="premium-glass rounded-2xl p-2 shadow-2xl">
+                      {/* Opak zemin: animasyonlu kapsayıcı backdrop-filter bulanıklığını geçersiz kıldığı için yarı saydam cam
+                          zemin arkadaki başlık metnini okunur bırakıyordu. */}
+                      <div className="rounded-2xl border border-black/5 bg-white p-2 shadow-2xl">
                         {item.children.map((child, i) => (
                           <motion.div
                             key={child.href}

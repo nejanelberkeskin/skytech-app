@@ -21,7 +21,7 @@ import { createBatch } from "@/lib/orders/batches";
 export const dynamic = "force-dynamic";
 
 const unsupported = (permission: Permission) =>
-  fail(403, "scope_unsupported", "Parti yetkiniz yalnız kişiye atanmış işleri kapsıyor; partiler için atama modeli yok.", { permission });
+  fail(403, "scope_unsupported", "Parti yetkiniz yalnız kişiye atanmış işleri kapsıyor; partiler için atama modeli yok.", { permission, permissions: [permission] });
 
 export async function GET(request: NextRequest) {
   const guard = await requirePermission(request, "batches.read", { scope: "any" });

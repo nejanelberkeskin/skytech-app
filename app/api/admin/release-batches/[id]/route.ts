@@ -46,7 +46,7 @@ const batchFail = (error: BatchError, detail?: string | null) =>
   fail(BATCH_ERROR[error].status, error, BATCH_ERROR[error].message, detail ? { detail } : undefined);
 
 const unsupported = (permission: Permission) =>
-  fail(403, "scope_unsupported", "Parti yetkiniz yalnız kişiye atanmış işleri kapsıyor; partiler için atama modeli yok.", { permission });
+  fail(403, "scope_unsupported", "Parti yetkiniz yalnız kişiye atanmış işleri kapsıyor; partiler için atama modeli yok.", { permission, permissions: [permission] });
 
 type Ctx = { params: Promise<{ id: string }> };
 

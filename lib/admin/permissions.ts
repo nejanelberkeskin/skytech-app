@@ -55,6 +55,12 @@ export interface PermissionGuard {
 type Denied = { admin: null; access: null; assurance: null; error: ReturnType<typeof fail> };
 
 /**
+ * 403 ayrıntısı arayüz sözleşmesiyle aynı: `{ reason, permissions }` (yönetim ekranları eksik iznin Türkçe adını
+ * yalnız kendi sözlüğünden gösterir; bkz. components/admin/operations/client.ts `errorText`).
+ */
+const missingDetails = (permissions: Permission[]) => ({ reason: "missing_permission", permissions });
+
+/**
  * Oturum + aktif personel + izin (+ gerekiyorsa yeniden doğrulanmış oturum).
  * MFA eksikse 403 `mfa_required` döner; arayüz kayıt/doğrulama akışını başlatır.
  */
@@ -69,15 +75,17 @@ export async function requirePermission(
   if (error || !admin) {
     const status = error?.status ?? 401;
     if (status === 401) return denied(fail(401, "unauthenticated", "Oturum bulunamadı. Lütfen giriş yapın."));
+    // Etkin personel değil: tek bir izin vermek yetmez, eksik izin adı yanıltıcı olurdu.
     if (status === 403) return denied(fail(403, "forbidden", "Bu işlem için yetkiniz yok."));
     return denied(fail(503, "unavailable", "Kimlik doğrulanamadı. Lütfen yeniden deneyin."));
   }
   const access = await loadAccess(admin.user_id);
-  if (!hasPermission(access, permission)) return denied(fail(403, "forbidden", "Bu işlem için yetkiniz yok."));
+  if (!hasPermission(access, permission)) return denied(fail(403, "forbidden", "Bu işlem için yetkiniz yok.", missingDetails([permission])));
   if ((options.scope ?? "full") === "full" && !hasFullScope(access, permission)) {
     return denied(
       fail(403, "scope_unsupported", "Bu ekran sınırlı kapsamı (saha/atanmış iş) henüz uygulamıyor; yetkiniz bütün kayıtları kapsamıyor.", {
         permission,
+        permissions: [permission],
         scopes: access.permissions.find((p) => p.key === permission)?.scopes ?? [],
       })
     );
@@ -87,6 +95,7 @@ export async function requirePermission(
   if (!mfaSatisfied(permission, assurance) && mfaEnforced()) {
     return denied(
       fail(403, "mfa_required", "Bu işlem iki aşamalı doğrulama ister.", {
+        permissions: [permission],
         enrolled: assurance.enrolled,
         reason: !assurance.enrolled ? "enrollment" : assurance.aal !== "aal2" ? "challenge" : "stale",
         freshnessMinutes: MFA_FRESHNESS_MINUTES,
@@ -116,10 +125,14 @@ export async function requireAnyPermission(
   const held = permissions.filter((p) => hasPermission(guard.access, p));
   const matched = held.find((p) => !full || hasFullScope(guard.access, p));
   if (!matched) {
-    if (held.length === 0) return denied(fail(403, "forbidden", "Bu işlem için yetkiniz yok."));
+    if (held.length === 0) {
+      const message = permissions.length > 1 ? "Bu işlem için yetkiniz yok; şu yetkilerden biri yeterlidir." : "Bu işlem için yetkiniz yok.";
+      return denied(fail(403, "forbidden", message, missingDetails(permissions)));
+    }
     return denied(
       fail(403, "scope_unsupported", "Bu ekran sınırlı kapsamı (saha/atanmış iş) henüz uygulamıyor; yetkiniz bütün kayıtları kapsamıyor.", {
         permission: held[0],
+        permissions: [held[0]],
         scopes: guard.access.permissions.find((p) => p.key === held[0])?.scopes ?? [],
       })
     );
@@ -127,6 +140,7 @@ export async function requireAnyPermission(
   if (options.mfa !== false && !mfaSatisfied(matched, guard.assurance) && mfaEnforced()) {
     return denied(
       fail(403, "mfa_required", "Bu işlem iki aşamalı doğrulama ister.", {
+        permissions: [matched],
         enrolled: guard.assurance.enrolled,
         reason: !guard.assurance.enrolled ? "enrollment" : guard.assurance.aal !== "aal2" ? "challenge" : "stale",
         freshnessMinutes: MFA_FRESHNESS_MINUTES,

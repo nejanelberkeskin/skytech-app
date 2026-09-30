@@ -1,9 +1,9 @@
 import type { NextRequest } from "next/server";
 import { createServiceRoleClient } from "@/lib/supabase/server";
-import { requirePermission } from "@/lib/admin/permissions";
+import { hasPermission, requirePermission } from "@/lib/admin/permissions";
 import { fail, ok, unavailable } from "@/lib/api/envelope";
-import { orderReadScope } from "@/lib/orders/admin-access";
-import { ORDER_FLAGS, flagScope, loadOrderList, sanitizeSearch, type OrderFlag } from "@/lib/orders/admin-read";
+import { GROUP_PERMISSION, orderReadScope } from "@/lib/orders/admin-access";
+import { FLAG_GROUP, ORDER_FLAGS, flagScope, loadOrderList, sanitizeSearch, type OrderFlag } from "@/lib/orders/admin-read";
 import { ORDER_STATUSES, type OrderStatus } from "@/lib/orders/types";
 
 /**
@@ -32,6 +32,7 @@ export async function GET(request: NextRequest) {
   if (!read) {
     return fail(403, "scope_unsupported", "Sipariş okuma yetkiniz yalnız kişiye atanmış işleri kapsıyor; bu ekran henüz atanmış işleri desteklemiyor.", {
       permission: "orders.read",
+      permissions: ["orders.read"],
     });
   }
 
@@ -44,7 +45,13 @@ export async function GET(request: NextRequest) {
   if (flag && !(ORDER_FLAGS as readonly string[]).includes(flag)) return invalid("flag");
   if (!(TESTS as readonly string[]).includes(test)) return invalid("test");
   if (flag && !flagScope(guard.access, flag as OrderFlag, read)) {
-    return fail(403, "forbidden", "Bu süzgeç için yetkiniz yok.", { flag });
+    const group = FLAG_GROUP[flag as OrderFlag];
+    const permission = group === "order" ? "orders.read" : GROUP_PERMISSION[group];
+    return fail(403, "forbidden", "Bu süzgeç için yetkiniz yok.", {
+      flag,
+      reason: hasPermission(guard.access, permission) ? "out_of_scope" : "missing_permission",
+      permissions: [permission],
+    });
   }
   const page = Math.max(1, parseInt(sp.get("page") ?? "1", 10) || 1);
   const pageSize = Math.min(100, Math.max(10, parseInt(sp.get("pageSize") ?? "25", 10) || 25));

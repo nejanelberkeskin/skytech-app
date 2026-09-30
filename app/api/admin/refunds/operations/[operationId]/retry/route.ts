@@ -2,7 +2,7 @@ import type { NextRequest } from "next/server";
 import { z } from "zod";
 import { requirePermission } from "@/lib/admin/permissions";
 import { fail } from "@/lib/api/envelope";
-import { UUID_RE, clientIp, readJson, refundService, respondAction } from "@/lib/refunds/http";
+import { UUID_RE, clientIp, hasLegacyRefundRole, legacyRoleDenied, readJson, refundService, respondAction } from "@/lib/refunds/http";
 
 /**
  * POST /api/admin/refunds/operations/{operationId}/retry — kesin reddedilmiş iadeyi yeniden dener
@@ -16,6 +16,7 @@ const bodySchema = z.object({ expectedAttempt: z.number().int().min(1).max(1000)
 export async function POST(request: NextRequest, { params }: { params: Promise<{ operationId: string }> }) {
   const guard = await requirePermission(request, "refunds.execute");
   if (guard.error) return guard.error;
+  if (!hasLegacyRefundRole(guard.admin.role)) return legacyRoleDenied();
   const { operationId } = await params;
   if (!UUID_RE.test(operationId)) return fail(404, "not_found", "İade işlemi bulunamadı.");
   const body = bodySchema.safeParse(await readJson(request));

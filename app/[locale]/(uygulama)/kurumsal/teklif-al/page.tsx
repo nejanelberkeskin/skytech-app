@@ -88,7 +88,7 @@ function AnimatedCount({ value }: { value: number }) {
   return <>{displayed.toLocaleString("tr-TR")}</>;
 }
 
-function CarbonSimulator({ onApply }: { onApply: (seeds: number, bucket: string) => void }) {
+function CarbonSimulator({ onApply, disabled = false }: { onApply: (seeds: number, bucket: string) => void; disabled?: boolean }) {
   const [employees, setEmployees] = useState(100);
   const [fleet, setFleet] = useState(5);
   const seeds = employees * 50 + fleet * 200;
@@ -207,7 +207,8 @@ function CarbonSimulator({ onApply }: { onApply: (seeds: number, bucket: string)
         {/* CTA Button */}
         <button
           onClick={() => onApply(seeds, bucketFromSeeds(seeds))}
-          className="w-full py-3.5 rounded-xl font-bold text-sm transition-all relative overflow-hidden group"
+          disabled={disabled}
+          className="w-full py-3.5 rounded-xl font-bold text-sm transition-all relative overflow-hidden group disabled:opacity-40 disabled:cursor-not-allowed"
           style={{
             background: "linear-gradient(135deg, #059669, #10b981)",
             boxShadow: "0 0 0 1px rgba(16,185,129,0.4), 0 8px 20px -4px rgba(16,185,129,0.3)",
@@ -278,6 +279,13 @@ export default function CorporateQuoteForm() {
   // Hesap bu sayfada oluşturulup teklif kaydedilemediyse: hesabın e-postası. Yeniden denemede hesap
   // tekrar oluşturulmaz; hesap alanları kilitlenir.
   const [createdAccountEmail, setCreatedAccountEmail] = useState<string | null>(null);
+  // Teklifin kaydı belirsiz (yanıt gelmedi): içerik sabitlendi, alanlar kilitli; yeniden kayıt aynı içeriği gönderir.
+  const [quoteUncertain, setQuoteUncertain] = useState(false);
+  // Bu teklif numarasında bir kayıt var ama içeriğine kefil olunamıyor: yeniden gönderilmez.
+  const [quoteUnverifiable, setQuoteUnverifiable] = useState(false);
+  // Başarıda gerçekten kaydedilen içerik (düzenlenmiş form değil).
+  const [savedQuote, setSavedQuote] = useState<{ companyName: string; editsDiscarded: boolean } | null>(null);
+  const contentLocked = quoteUncertain || quoteUnverifiable;
   // Gönderim durumu sayfa ömrü boyunca tek nesnede: oluşturulan hesap, tek teklif kimliği, tek gönderim kilidi.
   const [submitter] = useState(() =>
     createQuoteSubmitter({
@@ -345,6 +353,8 @@ export default function CorporateQuoteForm() {
 
   // ── Simülatörden Aktar ────────────────────────────────────────────────────
   const handleApplySimulator = useCallback((seeds: number, bucket: string) => {
+    // Kaydı belirsiz teklifin içeriği sabit: simülatör de değiştiremez.
+    if (contentLocked) return;
     setSimulatorApplied({ seeds, bucket });
     set("seedCount", bucket);
     // Navigate to last step
@@ -352,7 +362,7 @@ export default function CorporateQuoteForm() {
     setTimeout(() => {
       seedCountRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     }, 100);
-  }, [totalSteps]);
+  }, [totalSteps, contentLocked]);
 
   /* ── Hesap + teklif gönderimi: iki ayrı sonuç (lib/corporate/quote-submission.ts) ── */
   const handleSubmit = async () => {
@@ -390,12 +400,18 @@ export default function CorporateQuoteForm() {
     if (outcome.status === "busy") return;
     setSubmitting(false);
     if (outcome.status === "saved") {
+      setSavedQuote({ companyName: outcome.quote.company_name, editsDiscarded: outcome.editsDiscarded });
       setSubmitted(true);
     } else if (outcome.status === "account_created_quote_failed") {
       setCreatedAccountEmail(outcome.email);
+      setQuoteUncertain(outcome.uncertain);
       setSubmitError(outcome.error);
     } else if (outcome.status === "quote_failed") {
-      setSubmitError("Teklif kaydedilemedi: " + outcome.error);
+      setQuoteUncertain(outcome.uncertain);
+      setSubmitError(outcome.uncertain ? outcome.error : "Teklif kaydedilemedi: " + outcome.error);
+    } else if (outcome.status === "quote_unverifiable") {
+      setQuoteUnverifiable(true);
+      setSubmitError(null);
     } else {
       setSubmitError(outcome.error === "User already registered"
         ? "Bu e-posta adresi zaten kayıtlı. Lütfen giriş yaparak tekrar deneyiniz."
@@ -426,12 +442,18 @@ export default function CorporateQuoteForm() {
             {isLoggedIn ? "Teklifiniz Gönderildi!" : "Hesabınız Oluşturuldu, Teklifiniz Kaydedildi"}
           </h1>
           <p className="text-slate-400">
-            <span className="text-white font-medium">{form.companyName || existingUser?.companyName}</span> adına
+            <span className="text-white font-medium">{savedQuote?.companyName || existingUser?.companyName}</span> adına
             {isLoggedIn
               ? " yeni teklif talebiniz başarıyla oluşturuldu. Talebinizin durumunu panelinizden takip edebilirsiniz."
               : " kurumsal hesabınız oluşturuldu ve teklif talebiniz kaydedildi. Talebinizin durumunu panelinize giriş yaparak takip edebilirsiniz."
             }
           </p>
+          {savedQuote?.editsDiscarded && (
+            <p className="text-sm text-amber-300">
+              Teklifiniz ilk gönderdiğiniz bilgilerle kaydedildi; bağlantı sorunundan sonra yapılan değişiklikler bu teklife
+              eklenmedi. Değişiklik için panelinizden yeni teklif oluşturabilirsiniz.
+            </p>
+          )}
           {simulatorApplied && (
             <Card variant="solid" padding="md" className="text-left space-y-1">
               <p className="text-xs text-emerald-500">🧮 Karbon hesabınızdan aktarıldı</p>
@@ -527,6 +549,9 @@ export default function CorporateQuoteForm() {
             })}
           </div>
 
+          {/* Kaydı belirsiz teklifin içeriği sabit (lib/corporate/quote-submission.ts): bütün adım alanları kilitli. */}
+          <fieldset disabled={contentLocked} aria-describedby={contentLocked ? "teklif-kayit-durumu" : undefined}
+            className="min-w-0 m-0 border-0 p-0">
           {/* ── Adım 1 (yeni kullanıcı): Firma Bilgileri ── */}
           {!isLoggedIn && step === 1 && (
             <div className="space-y-6 animate-fade-in-up">
@@ -738,21 +763,50 @@ export default function CorporateQuoteForm() {
             </div>
           )}
 
+          </fieldset>
+
           {/* Navigasyon */}
           <div className="space-y-4 pt-6 border-t border-white/[0.06]">
-            {createdAccountEmail ? (
-              <div role="alert" className="bg-amber-500/10 border border-amber-500/25 text-sm px-4 py-3 rounded-xl space-y-2">
-                <p className="font-semibold text-amber-300">Teklif talebiniz kaydedilemedi</p>
-                <ul className="space-y-1 text-slate-300">
-                  <li>✓ Kurumsal hesabınız oluşturuldu: <span className="text-white">{createdAccountEmail}</span></li>
-                  <li>✗ Teklif talebinizin kaydı doğrulanamadı.</li>
-                </ul>
-                <p className="text-slate-400">
-                  Bilgileriniz bu sayfada duruyor. &quot;Teklifi yeniden kaydedin&quot; yalnız teklifi gönderir; hesabınız yeniden
-                  oluşturulmaz ve teklif daha önce kaydedildiyse ikinci kez kaydedilmez. Sorun sürerse{" "}
+            {quoteUnverifiable ? (
+              <div id="teklif-kayit-durumu" role="alert" className="bg-amber-500/10 border border-amber-500/25 text-sm px-4 py-3 rounded-xl space-y-2">
+                <p className="font-semibold text-amber-300">Teklif talebinizin kaydı doğrulanamadı</p>
+                <p className="text-slate-300">
+                  Bu teklif numarasıyla bir kayıt görünüyor ama içeriğini doğrulayamadık. Yeniden göndermeyin;{" "}
                   <Link href="/kurumsal/giris" className="text-emerald-400 underline underline-offset-2">giriş yapıp</Link>{" "}
-                  panelinizden yeni teklif oluşturabilirsiniz.
+                  panelinizden teklifinizi kontrol edin.
                 </p>
+              </div>
+            ) : createdAccountEmail || quoteUncertain ? (
+              <div id="teklif-kayit-durumu" role="alert" className="bg-amber-500/10 border border-amber-500/25 text-sm px-4 py-3 rounded-xl space-y-2">
+                <p className="font-semibold text-amber-300">
+                  {quoteUncertain ? "Teklif talebinizin kaydı doğrulanamadı" : "Teklif talebiniz kaydedilemedi"}
+                </p>
+                <ul className="space-y-1 text-slate-300">
+                  {createdAccountEmail && (
+                    <li>✓ Kurumsal hesabınız oluşturuldu: <span className="text-white">{createdAccountEmail}</span></li>
+                  )}
+                  <li>
+                    {quoteUncertain
+                      ? "? Teklif bağlantı sırasında kaydedilmiş olabilir; sonucu doğrulayamadık."
+                      : "✗ Teklif talebiniz kaydedilmedi."}
+                  </li>
+                </ul>
+                {quoteUncertain ? (
+                  <p className="text-slate-400">
+                    &quot;Teklifi yeniden kaydedin&quot; ilk gönderdiğiniz içeriği aynı teklif numarasıyla yeniden gönderir; teklif
+                    kaydedildiyse ikinci kez oluşmaz. Bu yüzden teklif alanları kilitlendi. Değişiklik isterseniz kayıt
+                    doğrulandıktan sonra panelinizden yeni teklif oluşturabilirsiniz. Sorun sürerse{" "}
+                    <Link href="/kurumsal/giris" className="text-emerald-400 underline underline-offset-2">giriş yapıp</Link>{" "}
+                    panelinizden teklifinizin kaydını kontrol edin.
+                  </p>
+                ) : (
+                  <p className="text-slate-400">
+                    Bilgilerinizi kontrol edip &quot;Teklifi yeniden kaydedin&quot; ile yeniden gönderebilirsiniz; hesabınız yeniden
+                    oluşturulmaz. Sorun sürerse{" "}
+                    <Link href="/kurumsal/giris" className="text-emerald-400 underline underline-offset-2">giriş yapıp</Link>{" "}
+                    panelinizden yeni teklif oluşturabilirsiniz.
+                  </p>
+                )}
                 {submitError && <p className="text-xs text-slate-500">Ayrıntı: {submitError}</p>}
               </div>
             ) : submitError && (
@@ -769,12 +823,12 @@ export default function CorporateQuoteForm() {
                 <Button variant="primary" onClick={() => canNext() && setStep(step + 1)} disabled={!canNext()}>
                   Devam Edin →
                 </Button>
-              ) : (
+              ) : quoteUnverifiable ? <div /> : (
                 <Button variant="primary" size="lg" onClick={handleSubmit}
                   disabled={!canNext() || submitting} loading={submitting}>
-                  {isLoggedIn
-                    ? "Teklif Talebinizi Gönderin"
-                    : createdAccountEmail ? "Teklifi Yeniden Kaydedin" : "Hesap Oluşturun ve Teklif Gönderin"}
+                  {createdAccountEmail || quoteUncertain
+                    ? "Teklifi Yeniden Kaydedin"
+                    : isLoggedIn ? "Teklif Talebinizi Gönderin" : "Hesap Oluşturun ve Teklif Gönderin"}
                 </Button>
               )}
             </div>
@@ -783,7 +837,7 @@ export default function CorporateQuoteForm() {
 
         {/* ── Sağ: Karbon Simülatörü ── */}
         <div className="lg:col-span-2 mt-10 lg:mt-0">
-          <CarbonSimulator onApply={handleApplySimulator} />
+          <CarbonSimulator onApply={handleApplySimulator} disabled={contentLocked} />
         </div>
       </div>
     </div>

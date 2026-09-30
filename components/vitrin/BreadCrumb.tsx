@@ -1,7 +1,6 @@
 "use client";
 
 import { Link } from "@/i18n/navigation";
-import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
 
 interface BreadCrumbItem {
@@ -54,11 +53,8 @@ export default function BreadCrumb({ title, subtitle, items = [], backgroundImag
 
       <div className="relative vitrin-container py-24 lg:py-32">
         {/* Breadcrumb trail */}
-        <motion.nav
-          initial={{ opacity: 0, y: -8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          className="flex items-center gap-2 text-xs font-medium text-[#a7d4a7] mb-6"
+        <nav
+          className="flex items-center gap-2 text-xs font-medium text-[#a7d4a7] mb-6 motion-safe:animate-fade-in"
         >
           <Link href="/" className="hover:text-white transition-colors">
             {t("home")}
@@ -75,22 +71,20 @@ export default function BreadCrumb({ title, subtitle, items = [], backgroundImag
               )}
             </span>
           ))}
-        </motion.nav>
+        </nav>
 
-        {/* Title — word-by-word reveal */}
+        {/* CSS keeps text readable without hydration and honors reduced motion. */}
         <h1 className="display-headline text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold mb-6 max-w-4xl">
           <WordReveal text={title} className="text-white" />
         </h1>
 
         {subtitle && (
-          <motion.p
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, delay: 0.45, ease: [0.16, 1, 0.3, 1] }}
-            className="text-base lg:text-xl text-[#a7d4a7] max-w-2xl leading-relaxed font-light"
+          <p
+            style={{ animationDuration: "0.9s", animationDelay: "0.45s" }}
+            className="text-base lg:text-xl text-[#a7d4a7] max-w-2xl leading-relaxed font-light motion-safe:animate-fade-in-up"
           >
             {subtitle}
-          </motion.p>
+          </p>
         )}
       </div>
     </div>
@@ -106,18 +100,12 @@ function WordReveal({ text, className = "" }: { text: string; className?: string
           {/* Kırpma kutusu satır kutusundan uzun olmalı; yoksa harflerin üst/alt
               uzantıları kesilir. Padding kutuyu büyütür, negatif margin yerleşimi korur. */}
           <span className="inline-block overflow-hidden align-bottom py-[0.16em] -my-[0.16em]">
-            <motion.span
-              className="inline-block"
-              initial={{ y: "110%", opacity: 0 }}
-              animate={{ y: "0%", opacity: 1 }}
-              transition={{
-                duration: 0.85,
-                delay: 0.15 + i * 0.07,
-                ease: [0.16, 1, 0.3, 1],
-              }}
+            <span
+              className="inline-block motion-safe:animate-fade-in-up"
+              style={{ animationDuration: "0.85s", animationDelay: `${0.15 + i * 0.07}s` }}
             >
               {word}
-            </motion.span>
+            </span>
           </span>
           {i < words.length - 1 && " "}
         </span>

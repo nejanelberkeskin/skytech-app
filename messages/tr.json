@@ -1067,6 +1067,7 @@
         "desc": "En kısa sürede size dönüş yapacağız. Teşekkür ederiz."
       },
       "error": "Bir şeyler ters gitti. Lütfen tekrar deneyin veya doğrudan info@skytechgreen.com adresinden bize ulaşın.",
+      "uncertain": "Gönderim sonucu doğrulanamadı; mesajınız ulaşmış olabilir. Aynı mesajı yeniden göndermek yerine info@skytechgreen.com üzerinden bizimle iletişime geçin.",
       "privacyLink": "KVKK Aydınlatma Metni",
       "rateLimited": "Çok fazla deneme yapıldı. Lütfen birkaç dakika sonra tekrar deneyin."
     },

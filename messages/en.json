@@ -1067,6 +1067,7 @@
         "desc": "We will get back to you as soon as possible. Thank you."
       },
       "error": "Something went wrong. Please try again or reach us directly at info@skytechgreen.com.",
+      "uncertain": "We could not confirm the submission; your message may have reached us. Instead of sending it again, contact us at info@skytechgreen.com.",
       "privacyLink": "Personal Data Notice",
       "rateLimited": "Too many attempts. Please try again in a few minutes."
     },

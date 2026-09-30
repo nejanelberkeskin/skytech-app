@@ -505,7 +505,8 @@ Bu bölüm 11. bölümdeki akış tarifinin yerine geçer.
 
 ### Akış
 - Sitedeki bütün "Talep Oluştur / Satın Al" çağrıları → `/talep/acik-arazi` (saha listesi + form).
-  Üstte küçük bağlantı: "Kendi arazim için işlem yaptırmak istiyorum" → `/talep/arazime-ekim`.
+  Üstte küçük bağlantı: "Kendi arazim için işlem yaptırmak istiyorum" → `/kendi-arazim` (tanıtım + başvuru;
+  eski `/talep/arazime-ekim` middleware'de 308 ile buraya yönlenir).
 - `/talep` (seçim sayfası) ve `/talep/tohum` (tohum talebi) **kaldırıldı**; middleware 307 ile
   sahalara yönlendirir (`RETIRED_REQUEST_REDIRECTS`, dil öneki korunur). `seed_purchase` türü
   API'de artık reddedilir; DB kısıtında eski kayıtlar için durur (`ACTIVE_REQUEST_TYPES` yeni türler).
@@ -931,6 +932,8 @@ dil öneki korunur):
   - Analitik anahtarının ağ kaydıyla kabulü.
 
 ### Sıradaki (plan §Fazlar)
-- `/kendi-arazim` sayfası (Astra, brif 11) teslim edilince: `/talep/arazime-ekim` → `/kendi-arazim` yönlendirmesi,
-  `REQUEST_ROUTES.land`, sahalar sayfasındaki ve Hesabım'daki bağlantılar, site haritası; eski sayfa kaldırılır.
+- `/kendi-arazim` gezinme entegrasyonu hazır (taslak, dal `kendi-arazim-gezinme`, 30 Eylül): `/talep/arazime-ekim` → 308
+  `/kendi-arazim`; tek kaynak `OWN_LAND_HREF` (`REQUEST_ROUTES.land` ona bağlı: sahalar, ana sayfa paketi, Hesabım);
+  menü (Hizmetler) ve alt bilgi, yalnız talep açıkken; site haritası; talep kapalıyken sayfa /yakinda'ya gider ve
+  haritadan çıkar; eski sayfa kaldırıldı. Onay kartı artık kendine kaydırır (form sayfanın ortasında).
 - (Migration 018 ve eski deneme kayıtlarının temizliği 22 Eylül'de yapıldı; birleşik sürümün uçtan uca denemesi geçti.)

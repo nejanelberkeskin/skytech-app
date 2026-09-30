@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { ACCOUNTS_ENABLED, REQUEST_ROUTES } from "@/lib/site-config";
@@ -10,24 +10,39 @@ import type { SubmitSuccess } from "./useRequestForm";
  * Başarı ekranı — talep numarası, sonraki adımlar, hesap bağlantısı.
  * Üye değilse kayıt sayfasına talep kimliğiyle gider (kayıt sonrası
  * /api/auth/claim-request ile hesaba bağlanır); üyeyse "Taleplerim".
+ *
+ * `scroll`: "page-top" (varsayılan) sayfanın başına kaydırır — form sayfanın başındaysa (sipariş
+ * sihirbazı) kart orada görünür. "self" kartın kendisine kaydırır ve odağı başlığa taşır — form
+ * sayfanın ortasındaysa (/kendi-arazim) başa kaydırmak kartı görünür alanın dışında bırakır; kullanıcı
+ * onayı görmeyip formu yeniden gönderebilir.
  */
 export default function SuccessCard({
   result,
   email,
   isLoggedIn,
+  scroll = "page-top",
 }: {
   result: SubmitSuccess;
   email: string;
   isLoggedIn: boolean;
+  scroll?: "page-top" | "self";
 }) {
   const t = useTranslations("requestForms.common.success");
   const [copied, setCopied] = useState(false);
   const steps = t.raw("next") as string[];
+  const cardRef = useRef<HTMLDivElement>(null);
+  const headingRef = useRef<HTMLHeadingElement>(null);
 
   useEffect(() => {
+    if (scroll === "self") {
+      const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      cardRef.current?.scrollIntoView({ block: "start", behavior: reduce ? "auto" : "smooth" });
+      headingRef.current?.focus({ preventScroll: true });
+      return;
+    }
     // Yeni ekran açılınca başa kaydır (mobilde form uzun)
     window.scrollTo({ top: 0, behavior: "smooth" });
-  }, []);
+  }, [scroll]);
 
   const copy = async () => {
     try {
@@ -42,14 +57,20 @@ export default function SuccessCard({
   const registerHref = { pathname: "/auth/register", query: { talep: result.requestId } } as const;
 
   return (
-    <div className="vitrin-card p-7 lg:p-10 max-w-3xl mx-auto">
+    <div ref={cardRef} className="vitrin-card p-7 lg:p-10 max-w-3xl mx-auto scroll-mt-28">
       <div className="text-center">
         <div className="w-16 h-16 mx-auto rounded-2xl bg-[#1B6B3A]/10 flex items-center justify-center mb-5">
           <svg className="w-8 h-8 text-[#1B6B3A]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
             <polyline points="20 6 9 17 4 12" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </div>
-        <h2 className="text-2xl lg:text-3xl font-bold text-[#0e2519] mb-2">{t("title")}</h2>
+        <h2
+          ref={headingRef}
+          tabIndex={scroll === "self" ? -1 : undefined}
+          className="text-2xl lg:text-3xl font-bold text-[#0e2519] mb-2 focus:outline-none"
+        >
+          {t("title")}
+        </h2>
         <p className="text-sm lg:text-base text-[#3d5a3d]">{t("desc")}</p>
       </div>
 

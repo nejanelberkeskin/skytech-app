@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createSupabaseServer, createServiceRoleClient } from "@/lib/supabase/server";
 import Iyzipay from "iyzipay";
 import { rateLimit, getClientIP } from "@/lib/admin-auth";
-import iyzipay from "@/lib/iyzico";
+import { callIyzico } from "@/lib/payments/iyzico";
 import { formatDateForIyzico } from "@/lib/utils/format";
 
 /**
@@ -164,41 +164,32 @@ export async function POST(request: NextRequest) {
       ],
     };
 
-    return new Promise<NextResponse>((resolve) => {
-      iyzipay.checkoutFormInitialize.create(requestData, async (err: unknown, result: { status?: string; checkoutFormContent?: string; token?: string; errorMessage?: string }) => {
-        if (err) {
-          console.error("B2B Iyzico error:", err);
-          resolve(NextResponse.json({ error: "Ödeme başlatılamadı." }, { status: 500 }));
-          return;
-        }
+    const result = await callIyzico("checkoutFormInitialize", "create", requestData);
+    if (result.status === "success" && typeof result.token === "string" && /^[A-Za-z0-9._~-]{8,200}$/.test(result.token) && typeof result.checkoutFormContent === "string" && result.checkoutFormContent.trim()) {
+      // Dönüş ucu ödemeyi bu belirteçle bulur: yazılmadan müşteri ödeme formuna gönderilmez.
+      // (Önceden sorgu `void` ile başlatılıyordu; Supabase sorgusu await edilmeden GÖNDERİLMEZ,
+      // belirteç hiç kaydedilmiyor ve ödenen teklif "PAID" olmuyordu.)
+      const { error: tokenErr } = await supabase
+        .from("payments")
+        .update({
+          metadata: { checkout_type: "b2b", quote_id: quoteId, iyzico_token: result.token as string },
+        })
+        .eq("id", payment.id);
+      if (tokenErr) {
+        console.error("B2B ödeme belirteci kaydedilemedi:", tokenErr.message);
+        return NextResponse.json({ error: "Ödeme başlatılamadı." }, { status: 500 });
+      }
 
-        if (result.status === "success") {
-          // Dönüş ucu ödemeyi bu belirteçle bulur: yazılmadan müşteri ödeme formuna gönderilmez.
-          // (Önceden sorgu `void` ile başlatılıyordu; Supabase sorgusu await edilmeden GÖNDERİLMEZ,
-          // belirteç hiç kaydedilmiyor ve ödenen teklif "PAID" olmuyordu.)
-          const { error: tokenErr } = await supabase
-            .from("payments")
-            .update({
-              metadata: { checkout_type: "b2b", quote_id: quoteId, iyzico_token: result.token as string },
-            })
-            .eq("id", payment.id);
-          if (tokenErr) {
-            console.error("B2B ödeme belirteci kaydedilemedi:", tokenErr.message);
-            resolve(NextResponse.json({ error: "Ödeme başlatılamadı." }, { status: 500 }));
-            return;
-          }
-
-          resolve(NextResponse.json({
-            status: "success",
-            paymentId: payment.id,
-            orderId: order.id,
-            checkoutFormContent: result.checkoutFormContent,
-          }));
-        } else {
-          resolve(NextResponse.json({ error: result.errorMessage || "Ödeme başlatılamadı." }, { status: 500 }));
-        }
+      return NextResponse.json({
+        status: "success",
+        paymentId: payment.id,
+        orderId: order.id,
+        checkoutFormContent: result.checkoutFormContent,
       });
-    });
+    } else {
+      return NextResponse.json({ error: "Ödeme başlatılamadı." }, { status: 503 });
+    }
+
   } catch (error) {
     console.error("B2B checkout error:", error);
     return NextResponse.json({ error: "Sunucu hatası." }, { status: 500 });

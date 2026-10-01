@@ -24,7 +24,7 @@ type IyzicoResult = Record<string, unknown> & { status?: string; errorCode?: str
 type IyzicoCall = (request: Record<string, unknown>, cb: (err: unknown, result: IyzicoResult) => void) => void;
 
 /** SDK geri çağrı tabanlıdır: söze çevir, zaman aşımı ekle, hatayı sonuç biçimine indir. */
-function call(resource: string, method: string, request: Record<string, unknown>): Promise<IyzicoResult> {
+export function callIyzico(resource: string, method: string, request: Record<string, unknown>): Promise<IyzicoResult> {
   return new Promise((resolve) => {
     const timer = setTimeout(() => resolve({ status: "failure", errorCode: "timeout", errorMessage: "iyzico yanıt vermedi" }), TIMEOUT_MS);
     try {
@@ -95,7 +95,7 @@ export const iyzicoProvider: PaymentProvider = {
     const city = ilAdi(input.address.province) ?? input.address.province;
     const today = new Date().toISOString().slice(0, 10) + " 00:00:00";
 
-    const result = await call("checkoutFormInitialize", "create", {
+    const result = await callIyzico("checkoutFormInitialize", "create", {
       locale: input.locale === "tr" ? "tr" : "en",
       conversationId: input.orderId,
       price,
@@ -147,7 +147,7 @@ export const iyzicoProvider: PaymentProvider = {
   },
 
   async retrieve(token: string): Promise<PaymentOutcome> {
-    const result = await call("checkoutForm", "retrieve", { locale: "tr", token });
+    const result = await callIyzico("checkoutForm", "retrieve", { locale: "tr", token });
     if (result.errorCode === "timeout" || result.errorCode === "network" || result.errorCode === "config") {
       return { ok: false, error: errorText(result) };
     }
@@ -211,7 +211,7 @@ type Caller = (resource: string, method: string, request: Record<string, unknown
  */
 export async function refundWithIyzico(
   input: RefundInput,
-  caller: Caller = call,
+  caller: Caller = callIyzico,
   definitive: ReadonlySet<string> = DEFINITIVE_REFUND_ERROR_CODES
 ): Promise<RefundResult> {
   const base = { locale: "tr", conversationId: input.orderNo, ip: input.ip ?? "127.0.0.1" };

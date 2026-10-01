@@ -27,7 +27,8 @@ export default function JobsHealth({ canRun }: { canRun: boolean }) {
   const latest = useRef({ value: 0 });
   const feedback = useRef<HTMLDivElement>(null);
   const confirmHeading = useRef<HTMLHeadingElement>(null);
-  const trigger = useRef<HTMLButtonElement>(null);
+  const triggers = useRef<Record<string, HTMLButtonElement | null>>({});
+  const restoreFocus = useRef<string | null>(null);
   const load = useCallback(async () => {
     const generation = ++latest.current.value;
     try {
@@ -42,7 +43,13 @@ export default function JobsHealth({ canRun }: { canRun: boolean }) {
     } finally { if (generation === latest.current.value) setLoading(false); }
   }, [router]);
   useEffect(() => { const token = latest.current; void load(); return () => { token.value++; }; }, [load]);
-  useEffect(() => { if (selected) confirmHeading.current?.focus(); }, [selected]);
+  useEffect(() => {
+    if (selected) confirmHeading.current?.focus();
+    else if (restoreFocus.current) {
+      triggers.current[restoreFocus.current]?.focus();
+      restoreFocus.current = null;
+    }
+  }, [selected]);
   const run = async () => {
     if (lock.current || !selected || !canRun || denied || stale || selected.running) return;
     lock.current = true; setBusy(true); setError(null); setResult(null);
@@ -81,7 +88,7 @@ export default function JobsHealth({ canRun }: { canRun: boolean }) {
         {job.job !== "b2b-odeme-mutabakati" && <Select label="Elle çalıştırma kapsamı" value={scope} onChange={e => { setScope(e.target.value as JobScope); setSelected(null); }} disabled={busy}>
           <option value="status">Yalnız durum işlemleri — e-posta göndermez</option><option value="all">Tüm işler — müşterilere e-posta gönderebilir</option>
         </Select>}
-        {selected?.job === job.job ? <div className="rounded-xl border border-amber-400/40 p-4 space-y-3"><h4 ref={confirmHeading} tabIndex={-1} className="font-semibold text-white outline-none">{job.label} şimdi çalıştırılsın mı?</h4><p className="text-sm text-slate-200">{job.job === "b2b-odeme-mutabakati" ? "Bekleyen en fazla iki ödeme sağlayıcıdan sorgulanır ve doğrulanan sonuçlar kaydedilir. Yeni tahsilat, iade veya e-posta gönderimi yapılmaz." : <>Sipariş süre dolumu, kesinleşme ve izleme dönemi işlemleri çalışacak. {scope === "all" ? <strong className="text-amber-200">Müşterilere sertifika ve video bildirim e-postaları da gönderilebilir.</strong> : "Bu kapsam e-posta göndermez."}</>}</p><div className="flex flex-wrap gap-2"><Button loading={busy} disabled={stale || job.running} onClick={() => void run()}>Onayla ve çalıştır</Button><Button variant="ghost" disabled={busy} onClick={() => { setSelected(null); trigger.current?.focus(); }}>Vazgeç</Button></div></div> : <Button disabled={busy || loading || stale || job.running} onClick={event => { trigger.current = event.currentTarget; setSelected(job); }}>Şimdi çalıştır</Button>}
+        {selected?.job === job.job ? <div className="rounded-xl border border-amber-400/40 p-4 space-y-3"><h4 ref={confirmHeading} tabIndex={-1} className="font-semibold text-white outline-none">{job.label} şimdi çalıştırılsın mı?</h4><p className="text-sm text-slate-200">{job.job === "b2b-odeme-mutabakati" ? "Bekleyen en fazla iki ödeme sağlayıcıdan sorgulanır ve doğrulanan sonuçlar kaydedilir. Yeni tahsilat, iade veya e-posta gönderimi yapılmaz." : <>Sipariş süre dolumu, kesinleşme ve izleme dönemi işlemleri çalışacak. {scope === "all" ? <strong className="text-amber-200">Müşterilere sertifika ve video bildirim e-postaları da gönderilebilir.</strong> : "Bu kapsam e-posta göndermez."}</>}</p><div className="flex flex-wrap gap-2"><Button loading={busy} disabled={stale || job.running} onClick={() => void run()}>Onayla ve çalıştır</Button><Button variant="ghost" disabled={busy} onClick={() => { restoreFocus.current = job.job; setSelected(null); }}>Vazgeç</Button></div></div> : <Button ref={node => { triggers.current[job.job] = node; }} disabled={busy || loading || stale || job.running} onClick={() => setSelected(job)}>Şimdi çalıştır</Button>}
       </div>}
       <p className="text-xs text-slate-400">Kontrol: {istanbulDate(job.checkedAt)} · Türkiye saati</p>
     </div>)}

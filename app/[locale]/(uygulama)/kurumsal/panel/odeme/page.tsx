@@ -2,6 +2,7 @@
 
 import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
+import { useLocale } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { supabase } from "@/lib/supabase/browser";
 import type { User } from "@supabase/supabase-js";
@@ -22,6 +23,7 @@ export default function PaymentPageWrapper() {
 function PaymentPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const locale = useLocale();
   const paymentStatus = searchParams.get("status");
   const paymentMessage = searchParams.get("message");
   const quoteIdParam = searchParams.get("quote_id");
@@ -84,6 +86,7 @@ function PaymentPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           quoteId: quote.id,
+          locale,
           userId: user.id,
           email: user.email,
           companyName: quote.company_name,

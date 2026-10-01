@@ -115,8 +115,9 @@ export async function completePayment(
   const result = await provider.retrieve(token);
   if (!result.ok) {
     if (result.reviewMeta) {
-      // Onaylanmamış tahsilat varken yeni ödeme oturumu açma. Sonraki doğrulanmış
-      // callback'in payment_meta yazımı bu işareti temizler; kendiliğinden tekrar tahsilat yok.
+      // Onaylanmamış tahsilat varken yeni ödeme oturumu açma. Doğrulanmış sonuç
+      // işareti temizleyebilir; kendiliğinden ikinci callback gelmez. B2C mutabakatı
+      // ve inceleme süresince kapasiteyi koruma ayrı, açık işlerdir.
       await supabase.from("release_orders").update({
         payment_meta: { ...order.payment_meta, ...result.reviewMeta, paymentReviewRequired: true },
       }).eq("id", order.id).is("paid_at", null).in("status", ["awaiting_payment", "payment_failed", "expired"]);

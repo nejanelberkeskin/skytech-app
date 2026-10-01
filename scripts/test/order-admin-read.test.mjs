@@ -134,7 +134,7 @@ test('27 §4: finans şablonu — iletişim, vergi, finans, fatura, hukuki grupl
     const list = (await api.list()).body.data;
     assert.deepEqual(list.groups, ['order', 'contact', 'finance']);
     assert.equal(list.search.contactFields, true);
-    assert.deepEqual(list.alerts, { capacity: 2, refundPending: 2, duplicate: 2, invoicePending: 1 });
+    assert.deepEqual(list.alerts, { capacity: 2, paymentReview: 0, refundPending: 2, duplicate: 2, invoicePending: 1 });
     const ayse = list.items.find((i) => i.id === o1);
     assert.equal(ayse.contact.email, 'ayse@example.invalid');
     assert.equal(ayse.finance.totalKurus, 20000);
@@ -435,4 +435,39 @@ test('77-5: şirket unvanıyla arama temel okuma kapsamında çalışır, kapsam
     assert.equal(detail.order.buyer.companyTitle, 'Zirve Benzersiz Teknoloji');
     assert.equal(detail.tax.taxId, '1234567890');
   } finally { await db.close(); }
+});
+
+
+test('payment review flag is projected only for finance readers; raw metadata remains private', async () => {
+  const db=await createDb();
+  try {
+    const {o1,o3}=await seed(db);
+    await db.query("UPDATE release_orders SET payment_meta=payment_meta || '{\"paymentReviewRequired\":true,\"providerRaw\":\"GIZLI-TOKEN\"}'::jsonb WHERE id=$1",[o1]);
+    const finance=routes(db,IDS.finance,FIN);
+    const yes=await finance.detail(o1);
+    assert.equal(yes.status,200);
+    assert.equal(yes.body.data.finance.payment.reviewRequired,true);
+    noSecrets(yes.body,'finance');
+    const filtered=await finance.list({flag:'payment_review'});
+    assert.equal(filtered.body.data.alerts.paymentReview,1);
+    assert.deepEqual(filtered.body.data.items.map(i=>i.id),[o1]);
+    await db.query("UPDATE release_orders SET payment_meta=payment_meta || '{\"paymentReviewRequired\":true}'::jsonb WHERE id=$1",[o3]);
+    await customRole(db,'review_scoped',['orders.read','finance.read']);
+    await staffWithRole(db,USERS.scoped,'review_scoped',{kind:'sites',siteIds:[IDS.siteA]});
+    const scoped=await routes(db,USERS.scoped).list({flag:'payment_review'});
+    assert.equal(scoped.body.data.alerts.paymentReview,1);
+    assert.deepEqual(scoped.body.data.items.map(i=>i.id),[o3]);
+    const ops=routes(db,IDS.operations,OPS);
+    const hidden=await ops.detail(o1);
+    assert.equal(hidden.status,200);
+    assert.ok(!('finance' in hidden.body.data));
+    assert.equal((await ops.list({flag:'payment_review'})).status,403);
+    assert.ok(!('paymentReview' in (await ops.list()).body.data.alerts));
+    assert.ok(!selected(ops.log,'payment_review_required:payment_meta->>paymentReviewRequired'));
+    assert.ok(!JSON.stringify(hidden.body).includes('reviewRequired'));
+    await db.query("UPDATE release_orders SET payment_meta=payment_meta - 'paymentReviewRequired' WHERE id=$1",[o1]);
+    assert.equal((await finance.detail(o1)).body.data.finance.payment.reviewRequired,false);
+    assert.deepEqual(finance.writes,[]);
+    assert.deepEqual(ops.writes,[]);
+  } finally {await db.close();}
 });

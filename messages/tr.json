@@ -356,7 +356,7 @@
       },
       "integration": {
         "title": "Kurumsal Entegrasyon",
-        "description": "API entegrasyonu ile e-ticaret sepetinden ESG raporuna kadar tam uyum."
+        "description": "Çalışan sertifikaları ve özel hesap yöneticisiyle kurumunuza özel süreç."
       },
       "compliance": {
         "title": "Yasal Uyumluluk",
@@ -456,7 +456,7 @@
       },
       "b2bIntegration": {
         "question": "B2B kurumsal entegrasyon nasıl çalışır?",
-        "answer": "Kurumsal panelimiz; çalışan listesi yükleme, otomatik PDF sertifika üretimi, e-ticaret \"sepete tohum ekle\" entegrasyonu, ESG raporlama API'si gibi modüller içerir. Özel hesap yöneticisi atanır ve kurum ihtiyaçlarına göre özelleştirme yapılır."
+        "answer": "Kurumsal panelimiz; çalışan listesi yükleme ve otomatik PDF sertifika üretimi gibi modüller içerir. Özel hesap yöneticisi atanır ve kurum ihtiyaçlarına göre özelleştirme yapılır."
       },
       "gift": {
         "question": "Hediye olarak gönderebilir miyim?",
@@ -923,7 +923,7 @@
   "corporatePage": {
     "meta": {
       "title": "Kurumsal Çözümler — ESG Ortaklığı",
-      "description": "Şirketinize özel kurumsal ormanlaştırma, çalışan başına otomatik PDF sertifika, GRI/CDP/SASB uyumlu ESG raporlama ve e-ticaret API entegrasyonu."
+      "description": "Şirketinize özel kurumsal ormanlaştırma, çalışan başına otomatik PDF sertifika ve GRI/CDP/SASB uyumlu ESG raporlama."
     },
     "breadcrumb": {
       "label": "Kurumsal Çözümler"
@@ -969,14 +969,6 @@
       "afforestation": {
         "title": "Kurumsal Ormanlaştırma",
         "desc": "Kuruma özel kurumsal alan, dron çekim videoları, koordinatlı haritalama."
-      },
-      "api": {
-        "title": "ESG Yazılım API Entegrasyonu",
-        "desc": "Kurumsal panelimiz ile ESG yazılımınız arasında API entegrasyonu kurarak veri akışını otomatik hale getiriyoruz. GRI, CDP, SASB uyumlu."
-      },
-      "ecommerce": {
-        "title": "E-ticaret Entegrasyonu",
-        "desc": "\"Sepete 1 tohum ekle\" widget'ı — müşterilerinize ekoloji deneyimi sunun."
       },
       "footprint": {
         "title": "Faaliyet Raporu",
@@ -1026,39 +1018,6 @@
         "certDesc": "Örnek Kurum A.Ş. — kurumsal orman sertifikası",
         "certStatus": "Onaylandı",
         "certTime": "2 dakika önce"
-      }
-    },
-    "api": {
-      "badge": "Geliştiriciler & API",
-      "comingSoon": "Yakında",
-      "title": {
-        "pre": "E-ticaretinize",
-        "highlight": "1 Satır",
-        "post": "Tohum Eklentisi"
-      },
-      "intro": "Skytech Green API ile satışlarınızı tohum topu bırakma çalışmalarına bağlayın. Katılım Sertifikası üretimi, webhook'lar ve faturalandırma tek pakette.",
-      "copy": "Kopyala",
-      "copied": "Kopyalandı",
-      "earlyAccess": "Erken erişim listesine katıl",
-      "samples": {
-        "install": {
-          "label": "Kurulum"
-        },
-        "cart": {
-          "label": "Sepete Tohum Ekle",
-          "comment": "Müşterinin sepetine 1 tohum topu eklensin",
-          "giftMessage": "Siparişiniz için bir tohum topu bırakılacak"
-        },
-        "certificate": {
-          "label": "Çalışan Sertifikası",
-          "comment": "Şirket adına çalışana otomatik PDF sertifika",
-          "commentUrl": "cert.pdfUrl → S3'te imzalı URL"
-        },
-        "webhook": {
-          "label": "ESG Webhook",
-          "comment": "Dron uçuşu tamamlandığında webhook tetiklenir",
-          "commentProcess": "ESG raporlama sisteminize işle"
-        }
       }
     }
   },

@@ -1,6 +1,6 @@
 -- Local draft; requires the existing orders/payments schema and 004 or D1-b/032.
 -- No capacity, data cleanup, provider calls or automatic refund. Apply only with the matching code.
-BEGIN;
+-- No transaction control here: apply the entire file in one recorded transaction or psql --single-transaction.
 SET LOCAL lock_timeout = '5s';
 SET LOCAL statement_timeout = '30s';
 
@@ -131,4 +131,3 @@ END;
 $$;
 REVOKE ALL ON FUNCTION public.claim_b2b_checkout(uuid,uuid,numeric,integer,boolean) FROM PUBLIC, anon, authenticated;
 GRANT EXECUTE ON FUNCTION public.claim_b2b_checkout(uuid,uuid,numeric,integer,boolean) TO service_role;
-COMMIT;

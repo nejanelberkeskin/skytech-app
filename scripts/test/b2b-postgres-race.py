@@ -15,7 +15,8 @@ def sql(text):
 assert sql("SELECT count(*) FROM information_schema.tables WHERE table_schema='public'") == '0', 'requires empty database'
 fixture = (root/'scripts/test/fixtures/b2b-payment-schema.sql').read_text()
 upgrade = (root/'supabase/migrations/004_corporate_quotes_upgrade.sql').read_text().split('-- ── Email Log Table')[0]
-sql(fixture+upgrade+(root/'supabase/migrations/034_b2b_payment_result.sql').read_text())
+sql(fixture+upgrade)
+sql('BEGIN;\n'+(root/'supabase/migrations/034_b2b_payment_result.sql').read_text()+'\nCOMMIT;')
 user='00000000-0000-4000-8000-000000000001'; quote='00000000-0000-4000-8000-000000000003'
 sql(f"INSERT INTO corporate_quotes(id,user_id,status,approved_price,approved_seed_count,corporate_email) VALUES('{quote}','{user}','QUOTED',200,20,'local@example.invalid');")
 def racing(a,b):

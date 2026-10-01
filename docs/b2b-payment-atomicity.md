@@ -33,3 +33,7 @@ Bu taslak B2B'yi açmaz. 034, mevcut orders/payments ve 004 ya da D1-b/032 sonra
 - Gerçek iyzico sandbox/cihaz kabulü yapılmadı. Kaynak sözleşme: https://docs.iyzico.com/en/getting-started/preliminaries/api-reference-beta/payment-methods/checkoutform
 
 Birleştirme, üretim yayını ve gerçek parasal işlem yapılmadı.
+
+## #113 ile işlem sınırı uyumu
+
+033 ve 034 gövdelerinde üst düzey BEGIN/COMMIT yoktur. Uygulayan araç tüm dosyayı ve migration tarihçe kaydını aynı işlemde sarmalar; düz psql -f ile gövde uygulanmaz. PGlite ve PostgreSQL prova araçları açık işlemi kendileri kurar. 033'ün iç SQL ifadeleri değişmedi; veri koruma testleri yeniden çalıştırıldı. Bu, #113'ün 019 ve sonrası için getirdiği sözleşmeyle uyumludur; #113 bu dala birleştirilmedi.

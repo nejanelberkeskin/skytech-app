@@ -14,7 +14,7 @@ const result = { status:'success',payment_status:'SUCCESS',payment_id:'provider-
 const one = async (db,sql,params=[]) => (await db.query(sql,params)).rows[0];
 async function setup(t) {
  t.mock.method(globalThis,'fetch',()=>{ throw new Error('external calls forbidden'); });
- const db=new PGlite(); t.after(()=>db.close()); await db.exec(fixture);await db.exec(upgrade);await db.exec(migration);
+ const db=new PGlite(); t.after(()=>db.close()); await db.exec(fixture);await db.exec(upgrade);await db.exec('BEGIN;\n'+migration+'\nCOMMIT;');
  await db.query("INSERT INTO orders(id,user_id,buyer_email,total_seeds,total_price) VALUES($1,$2,'test@example.invalid',20,200)",[order,user]);
  await db.query("INSERT INTO corporate_quotes(id,user_id,status,approved_price,approved_seed_count,order_id) VALUES($1,$2,'QUOTED',200,20,$3)",[quote,user,order]);
  await db.query("INSERT INTO payments(id,order_id,user_id,amount,metadata) VALUES($1,$2,$3,200,$4)",[payment,order,user,JSON.stringify({checkout_type:'b2b',quote_id:quote,is_test:true,iyzico_token:'local-token'})]);

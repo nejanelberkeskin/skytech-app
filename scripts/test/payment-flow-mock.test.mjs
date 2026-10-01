@@ -16,6 +16,7 @@ const server = createRequire(import.meta.url)('next/server');
 const State = load('lib/orders/state.ts');
 const Schedule = load('lib/orders/schedule.ts');
 const Access = await import('../../lib/orders/access.ts');
+const LinkGate = await import('../../lib/orders/link-gate.ts');
 const INVOICE = { type: 'individual', address: { line: 'Deneme Sk. 1', district: 'Çankaya', province: 'Ankara', postalCode: '06000' } };
 const tokenHash = (t) => createHash('sha256').update(t).digest('hex').slice(0, 40);
 
@@ -243,6 +244,7 @@ function donusRoute({ prov = { name: 'iyzico', isTest: true }, complete, afterCa
     'next/server': { ...server, after: (fn) => afterCalls.push(fn) },
     '@/lib/admin-auth': { getClientIP: () => '203.0.113.9', rateLimit: () => null },
     '@/lib/orders/access': Access,
+    '@/lib/orders/link-gate': LinkGate,
     '@/lib/orders/after-payment': { sendPaidOrderEmails: async () => {} },
     '@/lib/orders/payment-flow': { completePayment: async (tok) => { completeCalls.push(tok); return complete(tok); } },
     '@/lib/payments': { getPaymentProvider: () => prov },
@@ -297,6 +299,7 @@ function odemeRoute({ prov = { name: 'mock', isTest: true }, closed = false, acc
     '@/lib/admin-auth': { getClientIP: () => '203.0.113.9', rateLimit: () => null },
     '@/lib/supabase/server': { createSupabaseServer: async () => ({ auth: { getUser: async () => ({ data: { user: null } }) } }) },
     '@/lib/orders/access': Access,
+    '@/lib/orders/link-gate': LinkGate,
     '@/lib/orders/gate': { ordersClosed: () => closed, canAcceptOrders: () => accept },
     '@/lib/orders/settings': { getSalesSettings: async () => ({ ordersPaused: !accept }) },
     '@/lib/orders/payment-flow': { startPayment: async (...a) => { startCalls.push(a); return start(...a); } },
@@ -317,7 +320,7 @@ test('yeniden ödeme: kapalı satış 503; erişimsiz 404; ödenmiş siparişte 
   assert.deepEqual(await body(await odemePost(odemeRoute({ accept: false, found: unpaid() }))), [503, { error: 'closed' }]);
   assert.deepEqual(await body(await odemePost(odemeRoute({ found: unpaid() }), null)), [404, { error: 'not_found' }], 'numara tek başına yetmez');
   const paid = await body(await odemePost(odemeRoute({ found: unpaid({ paid_at: '2026-09-01T00:00:00Z', status: 'paid' }) })));
-  assert.deepEqual(paid, [200, { ok: true, redirectUrl: Access.orderPagePath('SG-2026-ABCDEF', paidOrder.id, 'tr') }]);
+  assert.deepEqual(paid, [200, { ok: true, redirectUrl: LinkGate.orderLinkPath('siparis', 'SG-2026-ABCDEF', 'tr') }]);
   assert.deepEqual(await body(await odemePost(odemeRoute({ found: unpaid({ status: 'expired' }) }))), [409, { error: 'expired' }]);
   assert.deepEqual(await body(await odemePost(odemeRoute({ found: unpaid({ payment_expires_at: new Date(Date.now() - 1000).toISOString() }) }))), [409, { error: 'expired' }]);
   assert.deepEqual(await body(await odemePost(odemeRoute({ found: unpaid({ status: 'cancelled' }) }))), [409, { error: 'not_payable' }]);

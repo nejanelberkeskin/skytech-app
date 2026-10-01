@@ -1,6 +1,7 @@
 import { after, NextRequest, NextResponse } from "next/server";
 import { rateLimit, getClientIP } from "@/lib/admin-auth";
 import { orderCookieName, orderCookieOptions, signOrderToken } from "@/lib/orders/access";
+import { orderLinkPath } from "@/lib/orders/link-gate";
 import { sendPaidOrderEmails } from "@/lib/orders/after-payment";
 import { completePayment } from "@/lib/orders/payment-flow";
 import { getPaymentProvider } from "@/lib/payments";
@@ -55,8 +56,7 @@ export async function POST(req: NextRequest) {
     // Yetki yalnız HttpOnly çerezde taşınır; ilk yönlendirmede bile URL’ye eklenmez.
     const accessToken = signOrderToken(order.id);
     if (!accessToken) return to(req, "/odeme/hata");
-    const prefix = order.locale === "tr" ? "" : `/${order.locale}`;
-    const res = to(req, `${prefix}/odeme/sonuc/${order.order_no}`);
+    const res = to(req, orderLinkPath("sonuc", order.order_no, order.locale));
     res.cookies.set(orderCookieName(order.order_no), accessToken, orderCookieOptions());
     return res;
   } catch (e) {

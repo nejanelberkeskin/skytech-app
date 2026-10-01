@@ -7,8 +7,9 @@ import { orderPayloadSchema } from "@/lib/orders/schema";
 import { createOrder } from "@/lib/orders/create";
 import { canAcceptOrders, ordersClosed } from "@/lib/orders/gate";
 import { startPayment } from "@/lib/orders/payment-flow";
-import { orderPagePath } from "@/lib/orders/access";
+import { orderCookieName, orderCookieOptions, signOrderToken } from "@/lib/orders/access";
 import { getSalesSettings, quoteVersion } from "@/lib/orders/settings";
+import { orderLinkPath, ORDER_LINK_HEADERS } from "@/lib/orders/link-gate";
 import { getPaymentProvider } from "@/lib/payments";
 
 /**
@@ -95,10 +96,14 @@ export async function POST(req: NextRequest) {
 
   // Aynı istek yeniden geldiyse ve sipariş zaten ödendiyse doğrudan sipariş sayfasına gönder.
   if (order.paid_at) {
-    return NextResponse.json(
-      { ok: true, orderNo: order.order_no, redirectUrl: orderPagePath(order.order_no, order.id, order.locale) },
-      { status: 201 }
+    const accessToken = signOrderToken(order.id);
+    if (!accessToken) return NextResponse.json({ error: "unavailable" }, { status: 503, headers: ORDER_LINK_HEADERS });
+    const res = NextResponse.json(
+      { ok: true, orderNo: order.order_no, redirectUrl: orderLinkPath("siparis", order.order_no, order.locale) },
+      { status: 201, headers: ORDER_LINK_HEADERS }
     );
+    res.cookies.set(orderCookieName(order.order_no), accessToken, orderCookieOptions());
+    return res;
   }
 
   const payment = await startPayment(order, provider, { origin: req.nextUrl.origin, ip: ip === "unknown" ? null : ip });

@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { rateLimit, getClientIP } from "@/lib/admin-auth";
 import { createSupabaseServer } from "@/lib/supabase/server";
-import { orderCookieName, orderPagePath } from "@/lib/orders/access";
+import { orderCookieName, orderCookieOptions, signOrderToken } from "@/lib/orders/access";
 import { canAcceptOrders, ordersClosed } from "@/lib/orders/gate";
 import { getSalesSettings } from "@/lib/orders/settings";
 import { startPayment } from "@/lib/orders/payment-flow";
 import { db } from "@/lib/orders/store";
 import { getAuthorizedOrder } from "@/lib/orders/view-data";
+import { orderLinkPath, ORDER_LINK_HEADERS } from "@/lib/orders/link-gate";
 import { getPaymentProvider } from "@/lib/payments";
 
 /**
@@ -46,7 +47,11 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ no:
   if (!order) return NextResponse.json({ error: "not_found" }, { status: 404 });
 
   if (order.paid_at) {
-    return NextResponse.json({ ok: true, redirectUrl: orderPagePath(order.order_no, order.id, order.locale) });
+    const accessToken = signOrderToken(order.id);
+    if (!accessToken) return NextResponse.json({ error: "unavailable" }, { status: 503, headers: ORDER_LINK_HEADERS });
+    const res = NextResponse.json({ ok: true, redirectUrl: orderLinkPath("siparis", order.order_no, order.locale) }, { headers: ORDER_LINK_HEADERS });
+    res.cookies.set(orderCookieName(order.order_no), accessToken, orderCookieOptions());
+    return res;
   }
   if (order.status === "expired" || (order.payment_expires_at && new Date(order.payment_expires_at).getTime() <= Date.now())) {
     return NextResponse.json({ error: "expired" }, { status: 409 });

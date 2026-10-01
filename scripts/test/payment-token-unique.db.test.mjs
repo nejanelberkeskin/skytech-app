@@ -9,7 +9,7 @@ test('ödeme tokenı: farklı sipariş aynı tokenı alamaz; NULL değerler ve m
   try {
     const a = await insertOrder(db), b = await insertOrder(db), c = await insertOrder(db);
     await db.query('UPDATE release_orders SET payment_token=$1 WHERE id=$2', ['local-token-1', a]);
-    await db.exec(migration);
+    await db.exec('BEGIN;\n' + migration + '\nCOMMIT;');
     await assert.rejects(db.query('UPDATE release_orders SET payment_token=$1 WHERE id=$2', ['local-token-1', b]), e => e.code === '23505');
     assert.equal((await one(db, 'SELECT payment_token FROM release_orders WHERE id=$1', [a])).payment_token, 'local-token-1');
     for (const id of [b, c]) assert.equal((await one(db, 'SELECT payment_token FROM release_orders WHERE id=$1', [id])).payment_token, null);
@@ -23,7 +23,7 @@ test('önceden çift token: migration durur, gizli token hata metninde yok; veri
   try {
     const a = await insertOrder(db), b = await insertOrder(db);
     await db.query('UPDATE release_orders SET payment_token=$1 WHERE id IN ($2,$3)', ['DO-NOT-LOG-THIS-TOKEN', a, b]);
-    await assert.rejects(db.exec(migration), e => e.message.includes('payment_token_duplicates_require_reconciliation') && !e.message.includes('DO-NOT-LOG-THIS-TOKEN'));
+    await assert.rejects(db.exec('BEGIN;\n' + migration + '\nCOMMIT;'), e => e.message.includes('payment_token_duplicates_require_reconciliation') && !e.message.includes('DO-NOT-LOG-THIS-TOKEN'));
     await db.exec('ROLLBACK');
     assert.equal((await one(db, 'SELECT count(*)::int AS n FROM release_orders WHERE payment_token IS NOT NULL')).n, 2);
     assert.equal((await one(db, "SELECT count(*)::int AS n FROM pg_indexes WHERE indexname IN ('release_orders_payment_token_key','order_events_payment_token_hash_idx')")).n, 0);
@@ -36,7 +36,7 @@ test('migration veri yazmaz: ödeme durumu/tutarı/olayları korunur, eski oturu
     const id = await insertOrder(db);
     const before = await one(db, 'SELECT * FROM release_orders WHERE id=$1', [id]);
     await db.query("INSERT INTO order_events(order_id,type,actor,data) VALUES ($1,'payment_started','system',$2::jsonb)", [id, JSON.stringify({ tokenHash: 'local-hash' })]);
-    await db.exec(migration);
+    await db.exec('BEGIN;\n' + migration + '\nCOMMIT;');
     assert.deepEqual(await one(db, 'SELECT * FROM release_orders WHERE id=$1', [id]), before);
     assert.equal((await one(db, "SELECT count(*)::int AS n FROM order_events WHERE data->>'tokenHash'='local-hash'")).n, 1);
     assert.ok((await one(db, "SELECT indexdef FROM pg_indexes WHERE indexname='order_events_payment_token_hash_idx'")).indexdef.includes('tokenHash'));

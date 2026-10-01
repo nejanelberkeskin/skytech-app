@@ -9,6 +9,12 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 export const JOBS = {
+  "b2b-odeme-mutabakati": {
+    label: "B2B ödeme mutabakatı",
+    schedule: "*/10 * * * *",
+    scheduleText: "Harici zamanlayıcı kurulumu gerekli: her 10 dakikada bir",
+    staleAfterHours: 1,
+  },
   "siparis-isleri": {
     label: "Sipariş işleri",
     schedule: "0 3 * * *",
@@ -89,7 +95,7 @@ export async function runRecorded<T extends Record<string, unknown>>(
   const start = await db.rpc("start_job_run", { p_job: job, p_trigger: trigger, p_scope: scope, p_actor: actor });
   if (start.error) {
     if (String(start.error.message).trim() === "job_running") return { status: "running" };
-    if (trigger === "admin") return { status: "unavailable" };
+    if (trigger === "admin" || job === "b2b-odeme-mutabakati") return { status: "unavailable" };
     log(`[is] ${job}: çalışma kaydı açılamadı, iş kayıtsız çalışıyor`, start.error.code);
     try {
       return { status: "done", runId: null, recorded: false, report: await fn() };
@@ -102,6 +108,7 @@ export async function runRecorded<T extends Record<string, unknown>>(
     const report = await fn();
     const done = await db.rpc("finish_job_run", { p_id: runId, p_ok: true, p_report: report, p_error: null });
     if (done.error) log(`[is] ${job}: çalışma sonucu kaydedilemedi`, done.error.code);
+    if (done.error && job === "b2b-odeme-mutabakati") return { status: "failed", runId, error: "b2b_job_result_record_failed" };
     return { status: "done", runId, recorded: !done.error, report };
   } catch (e) {
     const done = await db.rpc("finish_job_run", { p_id: runId, p_ok: false, p_report: null, p_error: message(e) });

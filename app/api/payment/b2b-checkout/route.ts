@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { createSupabaseServer, createServiceRoleClient } from "@/lib/supabase/server";
 import Iyzipay from "iyzipay";
 import { rateLimit, getClientIP } from "@/lib/admin-auth";
-import { callIyzico } from "@/lib/payments/iyzico";
+import { iyzicoConfig } from "@/lib/payments/iyzico-config";
+import { callIyzico, priceToKurus } from "@/lib/payments/iyzico";
 import { formatDateForIyzico } from "@/lib/utils/format";
 
 /**
@@ -34,6 +35,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "quoteId zorunludur." }, { status: 400 });
     }
 
+    const config = iyzicoConfig();
+    if (!config) return NextResponse.json({ error: "Ödeme başlatılamadı." }, { status: 503 });
     const supabase = createServiceRoleClient();
 
     // ── 3. Quote ownership + state + amount (DB'den) ─────────────────
@@ -55,7 +58,7 @@ export async function POST(request: NextRequest) {
 
     const amount = Number(quote.approved_price);
     const seedCount = Number(quote.approved_seed_count);
-    if (!amount || amount <= 0 || !seedCount || seedCount <= 0) {
+    if (!Number.isFinite(amount) || (priceToKurus(quote.approved_price) ?? 0) <= 0 || !Number.isSafeInteger(seedCount) || seedCount <= 0) {
       return NextResponse.json({ error: "Teklif tutarı/adedi geçersiz." }, { status: 400 });
     }
 
@@ -63,51 +66,18 @@ export async function POST(request: NextRequest) {
     const contactPerson = quote.contact_person ?? "Kurumsal Musteri";
     const companyName = quote.company_name ?? "Kurumsal Musteri";
 
-    // ── 4. Order oluştur (user_id = auth.user.id) ────────────────────
-    const { data: order, error: orderError } = await supabase
-      .from("orders")
-      .insert({
-        user_id: user.id,
-        buyer_email: buyerEmail,
-        order_type: "reservation",
-        status: "pending",
-        total_seeds: seedCount,
-        total_price: amount,
-        shipping_address: null,
-      })
-      .select()
-      .single();
-
-    if (orderError || !order) {
-      console.error("B2B order error:", orderError?.message);
-      return NextResponse.json({ error: "Sipariş oluşturulamadı." }, { status: 500 });
+    // One transaction owns the quote before opening a provider session. An uncertain prior
+    // session is never replaced automatically, including when its token was not saved.
+    const { data: claim, error: claimError } = await supabase.rpc("claim_b2b_checkout", {
+      p_quote: quoteId, p_user: user.id, p_amount: amount, p_seeds: seedCount, p_is_test: config.isTest,
+    });
+    if (claimError) return NextResponse.json({ error: "Ödeme başlatılamadı." }, { status: 503 });
+    if (claim?.status !== "claimed") {
+      return NextResponse.json({ error: "Teklifin ödeme durumu kontrol edilmelidir.", code: "checkout_unavailable" }, { status: 409 });
     }
-
-    await supabase
-      .from("corporate_quotes")
-      .update({ order_id: order.id })
-      .eq("id", quoteId);
-
+    const order = { id: claim.order_id as string };
+    const payment = { id: claim.payment_id as string };
     const description = `B2B Teklif: ${companyName} — ${seedCount.toLocaleString("tr-TR")} tohum`;
-
-    const { data: payment, error: paymentError } = await supabase
-      .from("payments")
-      .insert({
-        order_id: order.id,
-        user_id: user.id,
-        amount,
-        status: "pending",
-        description,
-        currency: "TRY",
-        metadata: { checkout_type: "b2b", quote_id: quoteId },
-      })
-      .select()
-      .single();
-
-    if (paymentError || !payment) {
-      console.error("B2B payment record error:", paymentError?.message);
-      return NextResponse.json({ error: "Ödeme kaydı oluşturulamadı." }, { status: 500 });
-    }
 
     const priceStr = amount.toFixed(2);
     const nameParts = contactPerson.trim().split(" ");
@@ -172,7 +142,7 @@ export async function POST(request: NextRequest) {
       const { error: tokenErr } = await supabase
         .from("payments")
         .update({
-          metadata: { checkout_type: "b2b", quote_id: quoteId, iyzico_token: result.token as string },
+          metadata: { checkout_type: "b2b", quote_id: quoteId, is_test: config.isTest, iyzico_token: result.token as string },
         })
         .eq("id", payment.id);
       if (tokenErr) {

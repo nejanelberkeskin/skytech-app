@@ -1,6 +1,6 @@
 -- Ödeme belirteci tek bir güncel siparişi gösterebilir. 024–030 kapasite taslaklarına bağımlı değildir.
 -- Canlı uygulama ayrı yayın adımıdır. Eski çift kayıt varsa hiçbir kayıt silinmez/değiştirilmez: DUR.
-BEGIN;
+-- No transaction control here: apply the entire file in one recorded transaction or psql --single-transaction.
 SET LOCAL lock_timeout = '5s';
 SET LOCAL statement_timeout = '30s';
 LOCK TABLE public.release_orders IN SHARE ROW EXCLUSIVE MODE;
@@ -18,4 +18,3 @@ CREATE UNIQUE INDEX release_orders_payment_token_key
   ON public.release_orders (payment_token) WHERE payment_token IS NOT NULL;
 CREATE INDEX order_events_payment_token_hash_idx
   ON public.order_events ((data->>'tokenHash')) WHERE type = 'payment_started';
-COMMIT;

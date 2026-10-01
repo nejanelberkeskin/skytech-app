@@ -4,16 +4,18 @@ import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
 import { loadSource as load } from './load-source.mjs';
 const server = createRequire(import.meta.url)('next/server');
-const payment = { id: 'local-payment', order_id: 'local-order', status: 'pending', metadata: { checkout_type: 'b2b', quote_id: 'local-quote' } };
+const payment = { id: 'local-payment', order_id: 'local-order', status: 'pending', provider: 'iyzico', metadata: { is_test: true, checkout_type: 'b2b', quote_id: 'local-quote' } };
 function setup({ record = payment, result = { status: 'failure', errorMessage: 'DO-NOT-EXPOSE-TOKEN' } } = {}) {
   const writes = [], calls = [], reads = [];
-  const db = { from(table) { return {
+  const db = { rpc: async () => ({ data: { status: 'review' }, error: null }), from(table) { return {
     select() { reads.push(table); return this; }, eq() { return this; }, single: async () => ({ data: record }),
     update(data) { writes.push({ table, data }); return { eq: async () => ({ error: null }) }; },
   }; } };
   const route = load('app/api/payment/callback/route.ts', {
     'next/server': server, '@/lib/supabase/server': { createServiceRoleClient: () => db },
-    '@/lib/payments/iyzico': { callIyzico: async (...args) => { calls.push(args); return result; } },
+    '@/lib/payments/iyzico-config': { iyzicoConfig: () => ({ isTest: true }) },
+    '@/lib/b2b/payment-result': { b2bPaymentResult: r => r },
+    '@/lib/payments/iyzico': { priceToKurus: n => Number(n)*100, callIyzico: async (...args) => { calls.push(args); return result; } },
   });
   const post = token => route.POST(new server.NextRequest('https://local.test/api/payment/callback', { method: 'POST', body: new URLSearchParams({ token }) }));
   return { post, writes, reads, calls };
@@ -63,7 +65,7 @@ test('ortak iyzico çağrısı: 15 saniyelik timeout sonrası gelen SDK başarı
 function checkout(result) {
   const writes = [], calls = [];
   const quote = { id: 'quote', user_id: 'customer', status: 'QUOTED', approved_price: 200, approved_seed_count: 20, contact_person: 'Local Buyer', company_name: 'Local Company', phone: '+905550000000', corporate_email: 'local@example.invalid' };
-  const db = { from(table) { return {
+  const db = { rpc: async () => ({ data: { status: 'claimed', order_id: 'local-order', payment_id: 'local-payment' } }), from(table) { return {
     select() { return this; }, eq() { return this; }, maybeSingle: async () => ({ data: quote }),
     insert(data) { writes.push({ table, data }); return this; },
     single: async () => ({ data: { id: table === 'orders' ? 'local-order' : 'local-payment' } }),
@@ -73,7 +75,9 @@ function checkout(result) {
     'next/server': server, '@/lib/supabase/server': { createServiceRoleClient: () => db, createSupabaseServer: async () => ({ auth: { getUser: async () => ({ data: { user: { id: 'customer', email: 'local@example.invalid' } } }) } }) },
     iyzipay: { default: { LOCALE: { TR: 'tr' }, CURRENCY: { TRY: 'TRY' }, PAYMENT_GROUP: { PRODUCT: 'PRODUCT' }, BASKET_ITEM_TYPE: { VIRTUAL: 'VIRTUAL' } } },
     '@/lib/admin-auth': { rateLimit: () => null, getClientIP: () => '127.0.0.1' },
-    '@/lib/payments/iyzico': { callIyzico: async (...args) => { calls.push(args); return result; } },
+    '@/lib/payments/iyzico-config': { iyzicoConfig: () => ({ isTest: true }) },
+    '@/lib/b2b/payment-result': { b2bPaymentResult: r => r },
+    '@/lib/payments/iyzico': { priceToKurus: n => Number(n)*100, callIyzico: async (...args) => { calls.push(args); return result; } },
     '@/lib/utils/format': { formatDateForIyzico: () => '2026-10-01 12:00:00' },
   });
   return { writes, calls, post: () => route.POST(new server.NextRequest('https://local.test/api/payment/b2b-checkout', { method: 'POST', body: JSON.stringify({ quoteId: 'quote' }) })) };

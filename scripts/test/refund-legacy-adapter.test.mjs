@@ -12,7 +12,7 @@ const service = load('lib/refunds/service.ts', { '@/lib/orders/duplicates': dupl
 
 function setup(db, { providerResult = { ok: true, refundId: 'fake', method: 'refund' }, rpcHook } = {}) {
   let calls = 0;
-  const provider = { name: 'mock', isTest: true, refund: async () => { calls++; await Promise.resolve(); return providerResult; } };
+  const provider = { name: 'mock', isTest: false, refund: async () => { calls++; await Promise.resolve(); return providerResult; } };
   const api = load('lib/orders/admin-actions.ts', {
     '@/lib/payments': { getProviderByName: (name) => (name === 'mock' ? provider : null) },
     '@/lib/refunds/service': service,

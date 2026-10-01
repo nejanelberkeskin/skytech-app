@@ -81,7 +81,7 @@ function iyzico(responses) {
       },
     };
   }
-  const mod = loadSource('lib/payments/iyzico.ts', { '@/lib/iyzico': { default: sdk }, '@/lib/tr-iller': { ilAdi: () => null } });
+  const mod = loadSource('lib/payments/iyzico.ts', { '@/lib/iyzico': { default: sdk }, '@/lib/tr-iller': { ilAdi: () => null }, './iyzico-config': { iyzicoConfig: () => ({ isTest: true }) } });
   return { mod, calls };
 }
 const input = { paymentId: 'P1', amountKurus: 20000, orderNo: 'SG-2026-AAAAAA', meta: { paymentTransactionIds: ['T1'] }, ip: null };

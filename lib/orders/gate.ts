@@ -19,6 +19,8 @@ import type { SalesSettings } from "./settings-schema";
 
 export function ordersClosed(provider: PaymentProvider | null): boolean {
   if (!SALES_ENABLED || !provider) return true;
+  // Hukuki metinler kesinleşse bile canlı sitede deneme siparişi alınmaz.
+  if (process.env.VERCEL_ENV === "production" && provider.isTest) return true;
   if (!isDraftLegalVersion()) return false;
   return process.env.VERCEL_ENV === "production" || !provider.isTest;
 }

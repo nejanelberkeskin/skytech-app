@@ -6,18 +6,19 @@
  * O belirteçle sonucu iyzico'dan BİZ sorgularız (`retrieve`); tarayıcıdan gelen hiçbir
  * "başarılı" bilgisine güvenilmez.
  *
- * Ortam: IYZICO_API_KEY, IYZICO_SECRET_KEY, IYZICO_BASE_URL. Adres "sandbox" içeriyorsa deneme
- * kipidir → oluşan siparişler `is_test=true` olur (gerçek tahsilat yoktur).
+ * Ortam: IYZICO_API_KEY, IYZICO_SECRET_KEY, IYZICO_BASE_URL. Yalnız resmî API kökleri
+ * kabul edilir; sandbox siparişleri `is_test=true` olur. Canlı dağıtımda sandbox seçilmez.
  * Taksit kapalıdır (tek çekim): cayma hâlinde bedel "tek seferde" iade edilir.
  */
 import iyzico from "@/lib/iyzico";
+import { iyzicoConfig } from "./iyzico-config";
 import { ilAdi } from "@/lib/tr-iller";
 import type { PaymentInitInput, PaymentInitResult, PaymentOutcome, PaymentProvider, RefundInput, RefundResult } from "./types";
 
 const TIMEOUT_MS = 15_000;
 
-export const iyzicoConfigured = () => Boolean(process.env.IYZICO_API_KEY && process.env.IYZICO_SECRET_KEY);
-const isSandbox = () => (process.env.IYZICO_BASE_URL || "https://sandbox-api.iyzipay.com").includes("sandbox");
+export const iyzicoConfigured = () => iyzicoConfig() !== null;
+const isSandbox = () => iyzicoConfig()?.isTest ?? true;
 
 type IyzicoResult = Record<string, unknown> & { status?: string; errorCode?: string; errorMessage?: string };
 type IyzicoCall = (request: Record<string, unknown>, cb: (err: unknown, result: IyzicoResult) => void) => void;

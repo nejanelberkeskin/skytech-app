@@ -279,6 +279,7 @@ export function createRefundService(deps: RefundServiceDeps) {
       }
       const provider = deps.getProvider(providerName);
       if (!provider) return err(503, "provider_unavailable", "Ödemenin alındığı sağlayıcı bu ortamda tanımlı değil.");
+      if (provider.name !== providerName || provider.isTest !== order.is_test) return err(409, "provider_environment_mismatch", "Siparişin ödeme ortamı ile iade sağlayıcısının ortamı uyuşmuyor. Sağlayıcı yapılandırmasını kontrol edin.");
 
       const claim = await db.rpc("claim_refund_operation", {
         p_order: order.id, p_provider: provider.name, p_payment: paymentId,
@@ -310,11 +311,12 @@ export function createRefundService(deps: RefundServiceDeps) {
       if (!current) return err(404, "not_found", "İade işlemi bulunamadı.");
       const provider = deps.getProvider(current.provider);
       if (!provider) return err(503, "provider_unavailable", "Ödemenin alındığı sağlayıcı bu ortamda tanımlı değil.");
+      const order = await loadOrderRow(current.order_id);
+      if (!order) return err(404, "not_found", "Sipariş bulunamadı.");
+      if (provider.name !== current.provider || provider.isTest !== order.is_test) return err(409, "provider_environment_mismatch", "Siparişin ödeme ortamı ile iade sağlayıcısının ortamı uyuşmuyor. Sağlayıcı yapılandırmasını kontrol edin.");
       const res = await db.rpc("retry_refund_operation", { p_id: operationId, p_actor: actor.user_id, p_expected_attempt: expectedAttempt });
       if (res.error || !res.data) return res.error ? mapSqlError(res.error) : unavailable();
       const op = res.data as RefundOperationRow;
-      const order = await loadOrderRow(op.order_id);
-      if (!order) return err(404, "not_found", "Sipariş bulunamadı.");
       return runAttempt("retry", op, Number(op.attempt_no), provider, order, ip);
     } catch {
       return unavailable();

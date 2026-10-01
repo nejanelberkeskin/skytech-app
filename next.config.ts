@@ -80,6 +80,8 @@ const nextConfig: NextConfig = {
       ...[
         ...["", "/tr", "/en", "/ru"].flatMap((prefix) => [`${prefix}/siparis/:path*`, `${prefix}/odeme/sonuc/:path*`]),
         "/api/public/siparis/:path*",
+        "/api/payment/:path*",
+        "/api/public/odeme/:path*",
       ].map((source) => ({
         source,
         headers: [{ key: "Referrer-Policy", value: "no-referrer" }],

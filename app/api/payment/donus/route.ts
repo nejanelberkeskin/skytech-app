@@ -1,6 +1,7 @@
 import { after, NextRequest, NextResponse } from "next/server";
 import { rateLimit, getClientIP } from "@/lib/admin-auth";
-import { orderCookieName, orderCookieOptions, paymentResultPath, signOrderToken } from "@/lib/orders/access";
+import { orderCookieName, orderCookieOptions, signOrderToken } from "@/lib/orders/access";
+import { orderLinkPath } from "@/lib/orders/link-gate";
 import { sendPaidOrderEmails } from "@/lib/orders/after-payment";
 import { completePayment } from "@/lib/orders/payment-flow";
 import { getPaymentProvider } from "@/lib/payments";
@@ -15,13 +16,18 @@ import { getPaymentProvider } from "@/lib/payments";
  * Uydurma ya da yinelenen bir istek hiçbir siparişi "ödendi" yapamaz.
  *
  * Yanıt her zaman 303 yönlendirmedir: sonuç sayfası ya da (sipariş bulunamadıysa) genel hata sayfası.
- * Oturum çerezi bu istekte gelmez (SameSite); gerekmez de — sonuç sayfasına imzalı belirteçle gidilir.
+ * Gelen oturum çerezi gerekmez: doğrulama sonrası erişim çerezi yazılır, sonuç URL’si belirteç taşımaz.
  */
 export const runtime = "nodejs";
 
 const TOKEN_RE = /^[A-Za-z0-9._~-]{8,200}$/;
 
-const to = (req: NextRequest, path: string) => NextResponse.redirect(new URL(path, req.nextUrl.origin), 303);
+const to = (req: NextRequest, path: string) => {
+  const res = NextResponse.redirect(new URL(path, req.nextUrl.origin), 303);
+  res.headers.set("Cache-Control", "private, no-store");
+  res.headers.set("Referrer-Policy", "no-referrer");
+  return res;
+};
 
 export async function POST(req: NextRequest) {
   const provider = getPaymentProvider();
@@ -47,10 +53,11 @@ export async function POST(req: NextRequest) {
       const origin = req.nextUrl.origin;
       after(() => sendPaidOrderEmails(order, origin));
     }
-    // Sonuç sayfası yenilendiğinde erişim kaybolmasın: imzalı belirteç HttpOnly çereze de yazılır.
-    const res = to(req, paymentResultPath(order.order_no, order.id, order.locale));
+    // Yetki yalnız HttpOnly çerezde taşınır; ilk yönlendirmede bile URL’ye eklenmez.
     const accessToken = signOrderToken(order.id);
-    if (accessToken) res.cookies.set(orderCookieName(order.order_no), accessToken, orderCookieOptions());
+    if (!accessToken) return to(req, "/odeme/hata");
+    const res = to(req, orderLinkPath("sonuc", order.order_no, order.locale));
+    res.cookies.set(orderCookieName(order.order_no), accessToken, orderCookieOptions());
     return res;
   } catch (e) {
     console.error("[odeme] dönüş hatası:", e instanceof Error ? e.message : e);

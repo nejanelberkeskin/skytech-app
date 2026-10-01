@@ -33,7 +33,9 @@ const UNLINKED_ERROR_PATH = "/odeme/hata";
 export async function POST(request: NextRequest) {
   // Service-role client'ı isteğe gelince oluştur — build sırasında env yokken çökmesin.
   const supabase = createServiceRoleClient();
-  const redirect = (path: string) => NextResponse.redirect(new URL(path, request.url), { status: 303, headers: { "Cache-Control": "private, no-store", "Referrer-Policy": "no-referrer" } });
+  const hint = new URL(request.url).searchParams.get("locale");
+  let locale = hint === "en" || hint === "ru" ? hint : "tr";
+  const redirect = (path: string) => NextResponse.redirect(new URL(`${locale === "tr" ? "" : `/${locale}`}${path}`, request.url), { status: 303, headers: { "Cache-Control": "private, no-store", "Referrer-Policy": "no-referrer" } });
   const unlinked = () => redirect(UNLINKED_ERROR_PATH);
 
   try {
@@ -67,6 +69,10 @@ export async function POST(request: NextRequest) {
       return unlinked();
     }
 
+    // Kayıtlı dil, callback sorgusundan önceliklidir. Yalnız üç sabit dil kabul edilir.
+    if (existingMeta.ui_locale !== undefined) {
+      locale = existingMeta.ui_locale === "en" || existingMeta.ui_locale === "ru" ? existingMeta.ui_locale : "tr";
+    }
     const config = iyzicoConfig();
     if (!config || paymentRecord.provider !== "iyzico" || existingMeta.is_test !== config.isTest) return unlinked();
     // Missing environment snapshots are legacy records for manual reconciliation, never inferred.

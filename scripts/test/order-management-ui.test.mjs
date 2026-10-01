@@ -21,6 +21,9 @@ test('order UI: missing alert groups never become a zero-valued authorized filte
   assert.deepEqual(view.availableAlerts({alerts:{capacity:0}}).map(a=>a.flag),['capacity']);
   assert.deepEqual(view.availableAlerts({alerts:{capacity:0,refundPending:0}}).map(a=>a.flag),['capacity','refund_pending']);
 });
+test('order UI: review filter is shown only when the authorized server projection contains its count', () => {
+  assert.deepEqual(view.availableAlerts({alerts:{paymentReview:2}}).map(a=>a.flag),['payment_review']);
+});
 test('order UI: action capability is enforced independently of other enabled actions', () => {
   const detail={capabilities:{note:true,cancel:false,invoiceQueue:false,reserveCapacity:false}};
   assert.equal(view.canAct(detail,'note'),true);

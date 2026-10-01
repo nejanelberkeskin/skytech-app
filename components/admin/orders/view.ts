@@ -18,6 +18,7 @@ export const canAct = (detail: OrderDetailDto, action: unknown) =>
 export const validActionResult = (value: unknown): boolean =>
   !!value && typeof value === "object" && "status" in value && ORDER_STATUSES.includes(value.status as typeof ORDER_STATUSES[number]);
 export const ALERTS = [
+  { key: "paymentReview", flag: "payment_review", label: "Ödeme incelemesi" },
   { key: "capacity", flag: "capacity", label: "Kapasite ayrılmamış" },
   { key: "refundPending", flag: "refund_pending", label: "İade bekliyor" },
   { key: "invoicePending", flag: "invoice_pending", label: "Fatura bekliyor" },

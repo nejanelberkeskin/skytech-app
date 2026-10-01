@@ -29,8 +29,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Oturum gerekli." }, { status: 401 });
     }
 
-    // ── 2. Body: yalnız quoteId ──────────────────────────────────────
-    const { quoteId } = await request.json();
+    // ── 2. Body: quoteId ve yalnız sunum için locale ──────────────────────────────────────
+    const { quoteId, locale: requestedLocale } = await request.json();
+    const locale = requestedLocale === "en" || requestedLocale === "ru" ? requestedLocale : "tr";
     if (!quoteId || typeof quoteId !== "string") {
       return NextResponse.json({ error: "quoteId zorunludur." }, { status: 400 });
     }
@@ -85,14 +86,14 @@ export async function POST(request: NextRequest) {
     const lastName = nameParts.slice(1).join(" ") || "Musteri";
 
     const requestData = {
-      locale: Iyzipay.LOCALE.TR,
+      locale: locale === "tr" ? Iyzipay.LOCALE.TR : "en",
       conversationId: payment.id,
       price: priceStr,
       paidPrice: priceStr,
       currency: Iyzipay.CURRENCY.TRY,
       basketId: order.id,
       paymentGroup: Iyzipay.PAYMENT_GROUP.PRODUCT,
-      callbackUrl: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/api/payment/callback`,
+      callbackUrl: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/api/payment/callback?locale=${locale}`,
       enabledInstallments: [2, 3, 6, 9, 12],
       buyer: {
         id: user.id,
@@ -142,7 +143,7 @@ export async function POST(request: NextRequest) {
       const { error: tokenErr } = await supabase
         .from("payments")
         .update({
-          metadata: { checkout_type: "b2b", quote_id: quoteId, is_test: config.isTest, iyzico_token: result.token as string },
+          metadata: { checkout_type: "b2b", quote_id: quoteId, is_test: config.isTest, ui_locale: locale, iyzico_token: result.token as string },
         })
         .eq("id", payment.id);
       if (tokenErr) {

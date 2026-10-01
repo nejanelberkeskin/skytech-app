@@ -5,7 +5,7 @@ Taban: `71740c5` / #61. Dal: `denetim-duzeltmeleri`. D01–D19 genel denetim bul
 ## Dağıtım sırası
 
 1. #61 içeriği ile bu PR birlikte değerlendirilmeli. Başka çalışanın dalına rebase/yazma yapılmadı.
-2. İzole veritabanında mevcut migration'lar üzerine `019_audit_hardening.sql` çalıştırılmalı. Migration içinde `BEGIN/COMMIT` var; hata halinde bütün değişiklikler geri alınır. Personel değişiklikleri sırasında kısa tablo kilidi alır.
+2. İzole veritabanında mevcut migration'lar üzerine `019_audit_hardening.sql` çalıştırılmalı. Dosya `BEGIN/COMMIT` taşımaz; tek işlemde uygulanır (kayıtlı uygulama betiği ya da `psql --single-transaction`), hata halinde bütün değişiklikler geri alınır. Personel değişiklikleri sırasında kısa tablo kilidi alır.
 3. Mevcut DB şemasında `admin_users` alanlarını (özellikle `id` varsayılanı, rol tipi), en az bir aktif süper yöneticiyi ve 016/017/018 migration geçmişini salt okunur kontrol edin. Test altyapısı 007/016/017/019'u PGlite üzerinde çalıştırır; canlı şema doğrulandığı anlamına gelmez.
 4. Migration uygulandıktan sonra uygulama dağıtılır. Yeni iade/personel RPC'leri ve iletişim kotası olmadan ilgili işlemler başarı sayılmaz. Migration eski uygulamayla birlikteyken iade akışını açmayın; eski uygulama yeni sahiplenme tablosunu kullanmaz. Finans işlemleri için bakım aralığı kullanın.
 5. Oturumlu dört rol, HTML/PDF belge erişimi, son süper yönetici ve gerçek sağlayıcının **sandbox** iade sonuçları ayrı kabul ortamında doğrulanmalı. Üretimde test ödemesi/iade yapılmadı, satış anahtarı açılmadı.

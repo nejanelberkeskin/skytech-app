@@ -8,7 +8,7 @@
 -- davet oluşturma aynı satırı FOR SHARE ile kilitledikten SONRA yetki denetimi yapar (§7); böylece
 -- ya düzenleme bekler ve parmak izi yeni kaydı görür (usage_changed), ya da atama bekler ve rolün
 -- GÜNCEL izinleriyle denetlenir. Bayat bir önizleme onayı uygulanamaz.
-BEGIN;
+-- BEGIN/COMMIT yok: uygulayan araç dosyayı TEK işlemde çalıştırır (kayıtlı uygulama betiği ya da psql --single-transaction); düz psql -f ile uygulanmaz.
 
 ALTER TABLE public.admin_roles
   ADD COLUMN created_by uuid,
@@ -542,5 +542,3 @@ GRANT EXECUTE ON FUNCTION public.admin_role_detail(uuid, text), public.admin_rol
   public.create_admin_role(uuid, text, text, text, text[], text),
   public.update_admin_role(uuid, text, text, text, text[], timestamptz, text, text),
   public.preview_admin_role_change(uuid, text, text[], text, text) TO service_role;
-
-COMMIT;

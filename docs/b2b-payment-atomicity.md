@@ -1,6 +1,6 @@
 # B2B ödeme doğrulaması ve atomik kayıt
 
-2 Ekim 2026. Dal `b2b-odeme-dogrulamasi`; taban #112 `94bd99c`. Yeni yerel migration: `034_b2b_payment_result.sql`.
+2 Ekim 2026. Dal `b2b-odeme-dogrulamasi`; taban #112 `94bd99c`. Yeni yerel migration’lar: `034_b2b_payment_result.sql` ve `035_b2b_reconciliation.sql`.
 
 ## Değişiklik
 
@@ -27,7 +27,7 @@ Bu taslak B2B'yi açmaz. 034, mevcut orders/payments ve 004 ya da D1-b/032 sonra
 
 - Gerçek fatura adresi, kimlik/vergi numarası politikası ve taksit kararı henüz tamamlanmadı. Checkout'un mevcut örnek adres/kimlik/telefon yedekleri bu PR'ın dışında ve B2B açılış engelidir.
 - Taksit farkını otomatik kabul eden bir politika uydurulmadı: price ve paidPrice beklenen tutara tam eşit olmalıdır; fazla/eksik tahsilat hizmet açmadan incelemeye düşer. Mevcut taksit listesi bu taslakta değiştirilmedi; taksit farkı olan gerçek akış açılıştan önce çözülmelidir.
-- Yanıt vermeyen SDK, kayıp callback veya token yazılamaması sonrası arka plan sağlayıcı mutabakatı yoktur. Claim otomatik bırakılmaz; belirsiz eski oturum yenisiyle değiştirilmez. Bu, çift tahsilatı engeller ama operatör mutabakatı olmadan yeniden ödeme açmaz.
+- Saklı geçerli token/ortamı olan kayıp callback’ler 035 işiyle sorgulanır. SDK initialize yanıtı tamamen kaybolduysa, token yazılamadıysa veya eski ortam etiketi eksikse otomatik eşleştirme yapılamaz; ayrı elle mutabakat gerekir. Claim otomatik bırakılmaz; belirsiz eski oturum yenisiyle değiştirilmez.
 - Eski is_test snapshot'ı olmayan kayıtlar otomatik taşınmaz; ayrı salt okuma envanter/mutabakat gerekir.
 - Gözlem tablosu finans ekibine SQL/service-role üzerinden kanıt sağlar; yeni yönetim inceleme ekranı ve otomatik iade bu kapsamda yoktur.
 - Gerçek iyzico sandbox/cihaz kabulü yapılmadı. Kaynak sözleşme: https://docs.iyzico.com/en/getting-started/preliminaries/api-reference-beta/payment-methods/checkoutform
@@ -37,3 +37,14 @@ Birleştirme, üretim yayını ve gerçek parasal işlem yapılmadı.
 ## #113 ile işlem sınırı uyumu
 
 033 ve 034 gövdelerinde üst düzey BEGIN/COMMIT yoktur. Uygulayan araç tüm dosyayı ve migration tarihçe kaydını aynı işlemde sarmalar; düz psql -f ile gövde uygulanmaz. PGlite ve PostgreSQL prova araçları açık işlemi kendileri kurar. 033'ün iç SQL ifadeleri değişmedi; veri koruma testleri yeniden çalıştırıldı. Bu, #113'ün 019 ve sonrası için getirdiği sözleşmeyle uyumludur; #113 bu dala birleştirilmedi.
+
+## B2B sağlayıcı mutabakatı — 035
+
+- `/api/cron/b2b-odeme-mutabakati` yalnız CRON_SECRET ile açılır. Eksik anahtar 503; yanlış anahtar 401 ve DB/provider çağrısı sıfır. İş kaydı/kilidi açılamazsa sipariş işindeki eski kayıtsız fallback bu iş için **kullanılmaz**. Son çalışma kaydı yazılamazsa başarı açıklanmaz.
+- `claim_b2b_reconciliation` aynı kipteki pending B2B ödemelerini sınırlı sayıda keşfeder; iki kaydı SKIP LOCKED ile 10 dakikalığına sahiplenir. Her SDK retrieve en fazla 15 saniyedir; iş başına iki sorgu. Yeni tahsilat, iade, ödeme formu veya e-posta çağrısı yapılmaz.
+- Sonuç callback ile aynı arındırma ve atomik kayıt RPC'sinden geçer. Başarı son durumdur; bilinmeyen sonuç ödeme başarısızlığına çevrilmez. Sekizinci sorgudan sonra kayıt needs_review olarak kalır; terk edilmiş sekizinci kiralama da sonsuz tekrar yapmaz. Eski denemenin bitişi yeni denemeyi ezemez.
+- Yönetimde iş sağlığı, ödeme doğrulama/inceleme sayıları ve `system.jobs.run` ile elle çalıştırma bulunur. B2B onay metni ödeme sorgusunu açıklar; e-posta kapsam seçicisi bu işe gösterilmez. Çoklu iş kartında vazgeçince odak tıklanan düğmeye döner.
+- **Operasyon:** vercel.json değiştirilmedi. Yetkili harici zamanlayıcıya `GET /api/cron/b2b-odeme-mutabakati` ve `Authorization: Bearer <CRON_SECRET>` ile her 10 dakikada çağrı kurulmalıdır. Bu kurulum, gerçek anahtar doğrulaması ve ilk başarılı canlı job_runs kaydı henüz yapılmadı. Kodun testten geçmesi zamanlayıcının canlıda çalıştığı anlamına gelmez. Trafik büyüdüğünde iki sorguluk işlem bütçesi/kuşak gecikmesi izlenmelidir.
+- 035 için 034 ve job_runs altyapısı (020) gerekir. 035 gövdesi de işlem denetimi taşımaz; uygulayan araç tek işlem/tarihçe kaydı kurar. Yetkiler yalnız service_role; müşteri rollerine tablo/RPC açılmaz. Kapasite akışına dokunulmaz.
+
+Son ana dal testleri 406/406; typecheck/lint/build başarılı. Gerçek PostgreSQL provasına eşzamanlı mutabakat sahiplenmesi eklendi: iki kilit bekleyen bağlantıdan biri tek ödeme alır, öbürü boş döner; attempts=1. Sağlayıcı çağrıları taklit, dış istek sıfır. Yeni panel metinleri kaynak/typecheck/build ile kontrol edildi; bu ek için yeni tarayıcı ekran görüntüsü üretilmedi.

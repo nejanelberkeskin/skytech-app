@@ -19,9 +19,9 @@ sql(fixture+upgrade)
 sql('BEGIN;\n'+(root/'supabase/migrations/034_b2b_payment_result.sql').read_text()+'\nCOMMIT;')
 user='00000000-0000-4000-8000-000000000001'; quote='00000000-0000-4000-8000-000000000003'
 sql(f"INSERT INTO corporate_quotes(id,user_id,status,approved_price,approved_seed_count,corporate_email) VALUES('{quote}','{user}','QUOTED',200,20,'local@example.invalid');")
-def racing(a,b):
+def racing(a,b,lock=None):
     with concurrent.futures.ThreadPoolExecutor(max_workers=3) as pool:
-        holder=pool.submit(sql,f"SET application_name='astra-race-holder'; BEGIN; SELECT id FROM corporate_quotes WHERE id='{quote}' FOR UPDATE; SELECT pg_sleep(2); COMMIT;")
+        holder=pool.submit(sql,"SET application_name='astra-race-holder'; BEGIN; " + (lock or f"SELECT id FROM corporate_quotes WHERE id='{quote}' FOR UPDATE;") + " SELECT pg_sleep(2); COMMIT;")
         deadline=time.monotonic()+5
         while sql("SELECT count(*) FROM pg_stat_activity WHERE application_name='astra-race-holder' AND wait_event='PgSleep'") != '1':
             assert time.monotonic()<deadline, 'holder did not lock'
@@ -47,4 +47,13 @@ assert sql('SELECT count(*) FROM b2b_payment_observations')=='1'
 assert sql("SELECT status FROM payments")=='success'
 assert sql("SELECT status FROM orders")=='confirmed'
 assert sql("SELECT status FROM corporate_quotes")=='PAID'
-print(json.dumps(dict(postgres=sql('SHOW server_version'),network='none',checkout=r,callback=r2,order_count=1,payment_count=1,observation_count=1,real_lock_waiters=2,external_calls=0),indent=2))
+sql('BEGIN;\n'+(root/'supabase/migrations/035_b2b_reconciliation.sql').read_text()+'\nCOMMIT;')
+quote2='00000000-0000-4000-8000-000000000009'
+sql(f"INSERT INTO corporate_quotes(id,user_id,status,approved_price,approved_seed_count,corporate_email) VALUES('{quote2}','{user}','QUOTED',300,30,'queue@example.invalid');")
+second=json.loads(sql(f"SELECT claim_b2b_checkout('{quote2}','{user}',300,30,true);"))
+sql(f"UPDATE payments SET metadata=metadata || '{{\"iyzico_token\":\"local-queue-token\"}}'::jsonb WHERE id='{second['payment_id']}';")
+queue="SELECT coalesce(json_agg(x),'[]'::json) FROM claim_b2b_reconciliation(true) x;"
+r3=racing(queue,queue,"LOCK TABLE b2b_reconciliation_queue IN ACCESS EXCLUSIVE MODE;")
+assert sorted(len(x) for x in r3)==[0,1],r3
+assert sql('SELECT attempts FROM b2b_reconciliation_queue')=='1'
+print(json.dumps(dict(postgres=sql('SHOW server_version'),network='none',checkout=r,callback=r2,reconciliation_claim=r3,real_lock_waiters=2,external_calls=0),indent=2))

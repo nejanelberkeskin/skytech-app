@@ -102,3 +102,45 @@ test('B2B provider payment reference already attached to another local payment i
  assert.equal((await h.call()).status,'review');assert.equal((await h.state()).payment,'pending');
  assert.equal((await one(h.db,'SELECT reason FROM b2b_payment_observations')).reason,'duplicate_provider_payment');
 });
+
+async function reconciliation(h) {
+ const sql=await readFile(new URL('../../supabase/migrations/035_b2b_reconciliation.sql',import.meta.url),'utf8');await h.db.exec('BEGIN;\n'+sql+'\nCOMMIT;');
+ const rpc=async(name,a)=>{
+  try {
+   if(name==='b2b_reconciliation_summary')return {data:(await one(h.db,'SELECT b2b_reconciliation_summary() value')).value};
+   if(name==='claim_b2b_reconciliation')return {data:(await h.db.query('SELECT * FROM claim_b2b_reconciliation($1)',[a.p_is_test])).rows};
+   if(name==='record_b2b_payment_result')return {data:await h.call(a.p_result,a.p_is_test,a.p_payment)};
+   if(name==='finish_b2b_reconciliation')return {data:(await one(h.db,'SELECT finish_b2b_reconciliation($1,$2,$3) value',[a.p_payment,a.p_attempt,a.p_outcome])).value};
+   throw new Error('unexpected RPC');
+  }catch(e){return {error:{message:e.message}};}
+ };
+ return {rpc};
+}
+test('B2B reconciliation: missing browser callback is recovered by provider lookup and the same atomic recorder',async t=>{
+ const h=await setup(t),db=await reconciliation(h);const calls=[];
+ const worker=load('lib/b2b/reconcile.ts',{'@/lib/payments/iyzico-config':{iyzicoConfig:()=>({isTest:true})},'@/lib/payments/iyzico':{callIyzico:async(...a)=>{calls.push(a);return result;}},'./payment-result':{b2bPaymentResult:r=>r}});
+ assert.deepEqual(await worker.reconcileB2bPayments(db),{checked:1,paid:1,review:0,unavailable:0,needsReview:0,unlinked:0});
+ assert.equal((await h.state()).payment,'success');assert.equal(calls[0][1],'retrieve');
+ assert.deepEqual(await worker.reconcileB2bPayments(db),{checked:0,paid:0,review:0,unavailable:0,needsReview:0,unlinked:0});assert.equal(calls.length,1);
+ assert.equal((await one(h.db,'SELECT state FROM b2b_reconciliation_queue')).state,'done');
+});
+test('B2B reconciliation: lease, eight-attempt cap, wrong environment and stale finish are safe',async t=>{
+ const h=await setup(t),db=await reconciliation(h);
+ assert.equal((await db.rpc('claim_b2b_reconciliation',{p_is_test:false})).data.length,0);
+ assert.equal((await db.rpc('claim_b2b_reconciliation',{p_is_test:true})).data[0].attempt,1);
+ assert.equal((await db.rpc('claim_b2b_reconciliation',{p_is_test:true})).data.length,0);
+ for(let attempt=2;attempt<=8;attempt++){
+  await h.db.exec("UPDATE b2b_reconciliation_queue SET next_check_at=now()-interval '1 second'");
+  assert.equal((await db.rpc('claim_b2b_reconciliation',{p_is_test:true})).data[0].attempt,attempt);
+ }
+ assert.equal((await db.rpc('finish_b2b_reconciliation',{p_payment:payment,p_attempt:1,p_outcome:'paid'})).data,false);
+ assert.equal((await one(h.db,'SELECT state FROM b2b_reconciliation_queue')).state,'needs_review');
+ await h.db.exec("UPDATE b2b_reconciliation_queue SET next_check_at=now()-interval '1 second'");assert.equal((await db.rpc('claim_b2b_reconciliation',{p_is_test:true})).data.length,0);
+ assert.equal((await h.state()).payment,'pending');
+});
+test('B2B reconciliation: provider timeout remains pending, records bounded retry and does not leak token',async t=>{
+ const h=await setup(t),db=await reconciliation(h);
+ const worker=load('lib/b2b/reconcile.ts',{'@/lib/payments/iyzico-config':{iyzicoConfig:()=>({isTest:true})},'@/lib/payments/iyzico':{callIyzico:async()=>({errorCode:'timeout',errorMessage:'PRIVATE-TOKEN'})},'./payment-result':{b2bPaymentResult:r=>r}});
+ await assert.rejects(worker.reconcileB2bPayments(db),/^Error: b2b_reconciliation_incomplete$/);
+ assert.equal((await h.state()).payment,'pending');const q=await one(h.db,'SELECT last_outcome,attempts FROM b2b_reconciliation_queue');assert.deepEqual(q,{last_outcome:'provider_unavailable',attempts:1});
+});

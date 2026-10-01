@@ -23,6 +23,8 @@ export async function startPayment(
   provider: PaymentProvider,
   ctx: { origin: string; ip: string | null }
 ): Promise<StartPaymentResult> {
+  // Sağlayıcıya veya veritabanına yazmadan önce ortamı eşleştir.
+  if (order.is_test !== provider.isTest) return { ok: false, error: "unavailable" };
   const supabase = db();
   const address = order.invoice.address;
   const init = await provider.init({
@@ -104,7 +106,7 @@ export async function completePayment(
   supabase: SupabaseClient = db()
 ): Promise<CompletePaymentResult> {
   const order = await getOrderByPaymentToken(supabase, token);
-  if (!order || order.payment_provider !== provider.name) return { ok: false, error: "not_found" };
+  if (!order || order.payment_provider !== provider.name || order.is_test !== provider.isTest) return { ok: false, error: "not_found" };
   if (order.paid_at) {
     await flagDuplicateCharge(supabase, order, token, provider);
     return { ok: true, outcome: "already_paid", order };

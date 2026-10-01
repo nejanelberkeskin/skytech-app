@@ -279,7 +279,7 @@ test('dönüş ucu: ödendi → sonuç sayfasına 303 + HttpOnly erişim çerezi
   const afterCalls = [];
   const ok = await donusPost(donusRoute({ afterCalls, complete: () => ({ ok: true, outcome: 'paid', order: paidOrder }) }), 'belirtec-12345678');
   assert.equal(ok.status, 303);
-  assert.equal(ok.headers.get('location'), `https://skytechgreen.com${Access.paymentResultPath(paidOrder.order_no, paidOrder.id, 'en')}`);
+  assert.equal(ok.headers.get('location'), `https://skytechgreen.com/en/odeme/sonuc/${paidOrder.order_no}`);
   assert.match(ok.headers.get('set-cookie'), /^sgo_SG-2026-ABCDEF=[A-Za-z0-9_-]{32}; Path=\/; .*HttpOnly; SameSite=lax/i);
   assert.equal(afterCalls.length, 1, 'ödeme e-postası yanıttan sonra');
   const fail = await donusPost(donusRoute({ afterCalls, complete: () => ({ ok: true, outcome: 'failed', order: paidOrder }) }), 'belirtec-12345678');
@@ -332,4 +332,57 @@ test('yeniden ödeme: aynı siparişte yeni oturum açılır (yeni sipariş yok)
   assert.equal(startCalls[0][0].id, paidOrder.id, 'aynı sipariş');
   assert.deepEqual(startCalls[0][2], { origin: 'https://skytechgreen.com', ip: '203.0.113.9' });
   assert.deepEqual(await body(await odemePost(odemeRoute({ found: unpaid(), start: async () => ({ ok: false, error: 'unavailable' }) }))), [503, { error: 'unavailable' }]);
+});
+
+// Ortam değişimi: sağlayıcıya tek istek / SQL yazma olmadan reddedilir.
+for (const isTest of [true, false]) {
+  test(`ödeme ortamı: ${isTest ? 'test' : 'canlı'} sipariş başka ortamda başlatılamaz / sonuçlandırılamaz`, async () => {
+    const { db, client, flow } = await setup();
+    try {
+      const o = await openOrder(db, { is_test: isTest });
+      const p = provider({ isTest: !isTest, retrieve: () => success(o) });
+      const before = await one(db, 'SELECT * FROM release_orders WHERE id = $1', [o.id]);
+      assert.deepEqual(await flow.startPayment(before, p, { origin: 'https://skytechgreen.com', ip: null }), { ok: false, error: 'unavailable' });
+      assert.deepEqual(await flow.completePayment(o.token, p, client), { ok: false, error: 'not_found' });
+      assert.deepEqual(p.calls, { init: [], retrieve: [] });
+      assert.deepEqual(await one(db, 'SELECT * FROM release_orders WHERE id = $1', [o.id]), before);
+      assert.deepEqual(await events(db, o.id), []);
+      // Ödenmiş siparişin çift tahsilat yolu da yanlış ortamı sorgulayamaz.
+      await db.query("UPDATE release_orders SET paid_at = now(), status = 'paid' WHERE id = $1", [o.id]);
+      assert.deepEqual(await flow.completePayment(o.token, p, client), { ok: false, error: 'not_found' });
+      assert.deepEqual(p.calls, { init: [], retrieve: [] });
+    } finally { await db.close(); }
+  });
+}
+
+test('dönüş: TR/EN/RU, paid/already_paid/failed yalnız çerezle erişim; URL, cache, Referer güvenliği', async () => {
+  for (const locale of ['tr', 'en', 'ru']) for (const outcome of ['paid', 'already_paid', 'failed']) {
+    const r = await donusPost(donusRoute({ complete: () => ({ ok: true, outcome, order: { ...paidOrder, locale } }) }), 'belirtec-12345678');
+    assert.equal(r.status, 303);
+    assert.equal(r.headers.get('location'), `https://skytechgreen.com${locale === 'tr' ? '' : '/' + locale}/odeme/sonuc/${paidOrder.order_no}`);
+    assert.equal(r.headers.get('cache-control'), 'private, no-store');
+    assert.equal(r.headers.get('referrer-policy'), 'no-referrer');
+    assert.equal(r.cookies.get(Access.orderCookieName(paidOrder.order_no)).value, Access.signOrderToken(paidOrder.id));
+    assert.equal(Access.verifyOrderToken(paidOrder.id, r.cookies.get(Access.orderCookieName(paidOrder.order_no)).value), true);
+    assert.ok(!r.headers.get('location').includes(Access.signOrderToken(paidOrder.id)));
+  }
+  const failed = await donusPost(donusRoute({ complete: () => ({ ok: false, error: 'not_found' }) }), 'belirtec-12345678');
+  assert.equal(failed.headers.get('referrer-policy'), 'no-referrer');
+  assert.equal(failed.headers.get('cache-control'), 'private, no-store');
+  assert.equal(failed.headers.get('set-cookie'), null);
+});
+
+test('dönüş: imza anahtarı yoksa belirteçsiz erişim vermez; genel hata ve çerez yok', async () => {
+  const oldLink = process.env.ORDER_LINK_SECRET;
+  const oldService = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  delete process.env.ORDER_LINK_SECRET;
+  delete process.env.SUPABASE_SERVICE_ROLE_KEY;
+  try {
+    const r = await donusPost(donusRoute({ complete: () => ({ ok: true, outcome: 'already_paid', order: paidOrder }) }), 'belirtec-12345678');
+    assert.equal(r.headers.get('location'), 'https://skytechgreen.com/odeme/hata');
+    assert.equal(r.headers.get('set-cookie'), null);
+  } finally {
+    if (oldLink !== undefined) process.env.ORDER_LINK_SECRET = oldLink;
+    if (oldService !== undefined) process.env.SUPABASE_SERVICE_ROLE_KEY = oldService;
+  }
 });

@@ -1,4 +1,5 @@
 import Iyzipay from "iyzipay";
+import { iyzicoConfig } from "./payments/iyzico-config";
 
 /**
  * Iyzipay client — lazy initialized.
@@ -11,25 +12,16 @@ import Iyzipay from "iyzipay";
  * `iyzico.checkoutFormInitialize.create(...)` aynı şekilde çalışır.
  */
 
-let _iyzico: Iyzipay | null = null;
+let cached: { config: NonNullable<ReturnType<typeof iyzicoConfig>>; client: Iyzipay } | null = null;
 
 function getIyzico(): Iyzipay {
-  if (_iyzico) return _iyzico;
-
-  const apiKey = process.env.IYZICO_API_KEY;
-  const secretKey = process.env.IYZICO_SECRET_KEY;
-  if (!apiKey || !secretKey) {
-    throw new Error(
-      "Iyzico env değişkenleri tanımlı değil (IYZICO_API_KEY / IYZICO_SECRET_KEY)."
-    );
+  const config = iyzicoConfig();
+  if (!config) throw new Error("iyzico anahtarları veya ödeme ortamı yapılandırması geçersiz.");
+  // Uzun yaşayan süreçte ortam değişirse eski SDK ile yeni test/canlı işareti karışmaz.
+  if (!cached || cached.config.apiKey !== config.apiKey || cached.config.secretKey !== config.secretKey || cached.config.uri !== config.uri) {
+    cached = { config, client: new Iyzipay({ apiKey: config.apiKey, secretKey: config.secretKey, uri: config.uri }) };
   }
-
-  _iyzico = new Iyzipay({
-    apiKey,
-    secretKey,
-    uri: process.env.IYZICO_BASE_URL || "https://sandbox-api.iyzipay.com",
-  });
-  return _iyzico;
+  return cached.client;
 }
 
 const iyzicoProxy = new Proxy({} as Iyzipay, {

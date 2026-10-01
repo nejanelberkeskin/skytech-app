@@ -7,13 +7,13 @@ import { createRefundService } from '../../lib/refunds/service.ts';
 
 const FINANCE = { user_id: IDS.finance };
 
-function setup(db, { outcomes = [{ ok: true }], rpcHook, providerName = 'mock', providerAvailable = true } = {}) {
+function setup(db, { outcomes = [{ ok: true }], rpcHook, providerName = 'mock', providerAvailable = true, isTest = false } = {}) {
   const calls = [];
   const logs = [];
   const queue = [...outcomes];
   const provider = {
     name: providerName,
-    isTest: true,
+    isTest,
     async refund(input) {
       calls.push(input);
       await Promise.resolve();
@@ -214,3 +214,41 @@ test('servis: sağlayıcı tanımsızsa işlem açılmaz; yetkisiz kişi reddedi
     assert.equal((await service.finalize('40000000-0000-0000-0000-00000000ffff')).code, 'not_found');
   } finally { await db.close(); }
 });
+
+for (const isTest of [true, false]) {
+  test(`iade ortamı: ${isTest ? 'test' : 'canlı'} siparişin asıl ve mükerrer iadesi yanlış ortamda claim oluşturmaz`, async () => {
+    const db = await createDb();
+    try {
+      const id = await insertOrder(db, { is_test: isTest });
+      await db.query(`INSERT INTO order_events(order_id,type,actor,data) VALUES ($1,'payment_succeeded','system',$2::jsonb)`, [id, JSON.stringify({ duplicate: true, provider: 'mock', paymentId: 'P-DUP-ENV', paidKurus: 5000 })]);
+      const { service, calls } = setup(db, { isTest: !isTest });
+      for (const input of [{ kind: 'order' }, { kind: 'duplicate', paymentId: 'P-DUP-ENV' }]) {
+        const r = await service.execute(id, input, FINANCE, null);
+        assert.equal(r.status, 409);
+        assert.equal(r.code, 'provider_environment_mismatch');
+      }
+      assert.equal(calls.length, 0);
+      assert.equal((await one(db, 'SELECT count(*)::int AS n FROM refund_operations')).n, 0);
+    } finally { await db.close(); }
+  });
+
+  test(`iade yeniden deneme: ${isTest ? 'test' : 'canlı'} ortam eşleşmezse deneme numarası artmaz; eşleşince devam eder`, async () => {
+    const db = await createDb();
+    try {
+      const id = await insertOrder(db, { is_test: isTest });
+      const first = setup(db, { isTest, outcomes: [{ ok: false, outcome: 'not_sent', errorCode: 'config', error: 'gönderilmedi' }] });
+      const r = await first.service.execute(id, { kind: 'order' }, FINANCE, null);
+      assert.equal(r.result.outcome, 'failed');
+      const opId = r.result.operationId;
+      const before = await one(db, 'SELECT * FROM refund_operations WHERE id = $1', [opId]);
+      const wrong = setup(db, { isTest: !isTest });
+      const blocked = await wrong.service.retry(opId, 1, FINANCE, null);
+      assert.equal(blocked.code, 'provider_environment_mismatch');
+      assert.equal(wrong.calls.length, 0);
+      assert.deepEqual(await one(db, 'SELECT * FROM refund_operations WHERE id = $1', [opId]), before);
+      const right = setup(db, { isTest });
+      assert.equal((await right.service.retry(opId, 1, FINANCE, null)).result.outcome, 'completed');
+      assert.equal(right.calls.length, 1);
+    } finally { await db.close(); }
+  });
+}

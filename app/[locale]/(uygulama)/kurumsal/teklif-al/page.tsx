@@ -1,10 +1,12 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
+import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { supabase } from "@/lib/supabase/browser";
 import { Button, Input, Textarea, Card } from "@/components/ui";
 import { createQuoteSubmitter, type QuoteFields } from "@/lib/corporate/quote-submission";
+import { BUDGET_OPTIONS, SEED_OPTIONS, TIMELINE_OPTIONS, seedRangeLabelKey } from "@/lib/corporate/quote-options";
 
 type NeedType = "orman" | "sertifika" | "karbon";
 
@@ -32,18 +34,17 @@ const INITIAL: FormData = {
   seedCount: "", budgetRange: "", timeline: "", notes: "",
 };
 
-const NEED_OPTIONS: { id: NeedType; label: string; icon: string; desc: string }[] = [
-  { id: "orman",     label: "Şirket Ormanı Kurmak",  icon: "🌲", desc: "Markanız adına özel bir orman alanı tahsis edilir." },
-  { id: "sertifika", label: "Hediye Sertifikaları",   icon: "🎖️", desc: "Müşterilerinize ve çalışanlarınıza dijital sertifika dağıtılır." },
-  { id: "karbon",    label: "Karbon Denkleştirme",    icon: "♻️", desc: "Karbon ayak iziniz ağaçlandırma ile nötrleştirilir." },
+// Ad ve açıklama çeviriden (corporatePages.quote.need.<id>); `id` veritabanına yazılır, değişmez.
+const NEED_OPTIONS: { id: NeedType; icon: string }[] = [
+  { id: "orman",     icon: "🌲" },
+  { id: "sertifika", icon: "🎖️" },
+  { id: "karbon",    icon: "♻️" },
 ];
 
-const SEED_OPTIONS   = ["1.000 – 5.000", "5.000 – 10.000", "10.000 – 25.000", "25.000 – 50.000", "50.000+", "Henüz karar vermedim"];
-const BUDGET_OPTIONS = ["₺50.000 altı", "₺50.000 – ₺150.000", "₺150.000 – ₺500.000", "₺500.000+", "Teklif bekliyorum"];
-const TIMELINE_OPTIONS = ["1 ay içinde", "3 ay içinde", "6 ay içinde", "Yıl sonuna kadar", "Esnek"];
+// Seçenek değerleri (veritabanına yazılan Türkçe metin) ve etiket anahtarları: lib/corporate/quote-options.ts.
 
-const STEPS_NEW  = ["Firma Bilgileri", "İhtiyaç Analizi", "Proje Detayları"];
-const STEPS_AUTH = ["İhtiyaç Analizi", "Proje Detayları"];
+const STEPS_NEW  = ["company", "needs", "project"] as const;
+const STEPS_AUTH = ["needs", "project"] as const;
 
 // ── Karbon Ayak İzi Simülatörü ────────────────────────────────────────────────
 function bucketFromSeeds(seeds: number): string {
@@ -270,6 +271,13 @@ function CarbonSimulator({ onApply, disabled = false }: { onApply: (seeds: numbe
 
 // ── Ana Sayfa ──────────────────────────────────────────────────────────────────
 export default function CorporateQuoteForm() {
+  const t = useTranslations("corporatePages.quote");
+  const tc = useTranslations("corporatePages");
+  /** Kayıtlı `seed_count` değerinin gösterilen etiketi (değer değişmez). */
+  const seedLabel = (value: string) => {
+    const key = seedRangeLabelKey(value);
+    return key ? tc(`quoteOptions.seed.${key}`) : value;
+  };
   const [step, setStep] = useState(1);
   const [form, setForm] = useState<FormData>(INITIAL);
   const [submitted, setSubmitted] = useState(false);
@@ -405,19 +413,21 @@ export default function CorporateQuoteForm() {
     } else if (outcome.status === "account_created_quote_failed") {
       setCreatedAccountEmail(outcome.email);
       setQuoteUncertain(outcome.uncertain);
-      setSubmitError(outcome.error);
+      // Ham veritabanı iletisi gösterilmez; durum kutusu ne olduğunu çeviriden anlatır.
+      setSubmitError(null);
     } else if (outcome.status === "quote_failed") {
       setQuoteUncertain(outcome.uncertain);
-      setSubmitError(outcome.uncertain ? outcome.error : "Teklif kaydedilemedi: " + outcome.error);
+      setSubmitError(outcome.uncertain ? null : t("errors.quoteNotSaved"));
     } else if (outcome.status === "quote_unverifiable") {
       setQuoteUnverifiable(true);
       setSubmitError(null);
     } else {
+      // Bilinen durumlar çevrilmiş iletiyle; sağlayıcının diğer iletileri genel iletiyle (ham ayrıntı gösterilmez).
       setSubmitError(outcome.error === "User already registered"
-        ? "Bu e-posta adresi zaten kayıtlı. Lütfen giriş yaparak tekrar deneyiniz."
+        ? t("errors.alreadyRegistered")
         : outcome.error === "account_not_created"
-          ? "Hesap oluşturulamadı. Lütfen tekrar deneyiniz."
-          : outcome.error);
+          ? t("errors.accountNotCreated")
+          : t("errors.generic"));
     }
   };
 
@@ -425,7 +435,7 @@ export default function CorporateQuoteForm() {
   if (!authChecked) {
     return (
       <div className="min-h-screen bg-[var(--bg-base)] flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin" />
+        <div role="status" aria-label={tc("loading")} className="w-8 h-8 border-2 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin" />
       </div>
     );
   }
@@ -439,46 +449,40 @@ export default function CorporateQuoteForm() {
             <span className="text-4xl">✅</span>
           </div>
           <h1 className="text-2xl font-bold text-white">
-            {isLoggedIn ? "Teklifiniz Gönderildi!" : "Hesabınız Oluşturuldu, Teklifiniz Kaydedildi"}
+            {isLoggedIn ? t("success.titleLoggedIn") : t("success.titleNew")}
           </h1>
           <p className="text-slate-400">
-            <span className="text-white font-medium">{savedQuote?.companyName || existingUser?.companyName}</span> adına
-            {isLoggedIn
-              ? " yeni teklif talebiniz başarıyla oluşturuldu. Talebinizin durumunu panelinizden takip edebilirsiniz."
-              : " kurumsal hesabınız oluşturuldu ve teklif talebiniz kaydedildi. Talebinizin durumunu panelinize giriş yaparak takip edebilirsiniz."
-            }
+            {t.rich(isLoggedIn ? "success.textLoggedIn" : "success.textNew", {
+              company: savedQuote?.companyName || existingUser?.companyName || "",
+              b: (chunks) => <span className="text-white font-medium">{chunks}</span>,
+            })}
           </p>
           {savedQuote?.editsDiscarded && (
-            <p className="text-sm text-amber-300">
-              Teklifiniz ilk gönderdiğiniz bilgilerle kaydedildi; bağlantı sorunundan sonra yapılan değişiklikler bu teklife
-              eklenmedi. Değişiklik için panelinizden yeni teklif oluşturabilirsiniz.
-            </p>
+            <p className="text-sm text-amber-300">{t("success.editsDiscarded")}</p>
           )}
           {simulatorApplied && (
             <Card variant="solid" padding="md" className="text-left space-y-1">
-              <p className="text-xs text-emerald-500">🧮 Karbon hesabınızdan aktarıldı</p>
+              <p className="text-xs text-emerald-500">{t("success.fromCalculator")}</p>
               <p className="text-sm text-white font-bold">
-                {simulatorApplied.seeds.toLocaleString("tr-TR")} tohum → {simulatorApplied.bucket}
+                {t("success.calcLine", { seeds: simulatorApplied.seeds, bucket: seedLabel(simulatorApplied.bucket) })}
               </p>
             </Card>
           )}
           {!isLoggedIn && (
             <Card variant="solid" padding="md" className="text-left space-y-1">
-              <p className="text-xs text-slate-500">Giriş bilgileriniz</p>
+              <p className="text-xs text-slate-500">{t("success.loginInfo")}</p>
               <p className="text-sm text-white">{form.corporateEmail}</p>
-              <p className="text-xs text-emerald-400 mt-1">
-                Giriş sırasında e-posta doğrulaması istenirse e-posta kutunuzu ve istenmeyen posta klasörünüzü kontrol edin.
-              </p>
+              <p className="text-xs text-emerald-400 mt-1">{t("success.verifyHint")}</p>
             </Card>
           )}
           <div className="flex flex-col gap-3">
             <Link href={isLoggedIn ? "/kurumsal/panel" : "/kurumsal/giris"}>
               <Button variant="primary" size="lg" fullWidth>
-                {isLoggedIn ? "Panelinize Dönün →" : "Panelinize Giriş Yapın →"}
+                {isLoggedIn ? t("success.toPanel") : t("success.loginToPanel")}
               </Button>
             </Link>
             <Link href="/kurumsal" className="text-sm text-slate-500 hover:text-slate-300 transition-colors">
-              Ana Sayfaya Dönün
+              {t("success.home")}
             </Link>
           </div>
         </div>
@@ -494,15 +498,15 @@ export default function CorporateQuoteForm() {
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Link href="/kurumsal" className="text-slate-500 hover:text-white text-sm transition-colors">
-              ← Kurumsal
+              {t("header.back")}
             </Link>
             <h1 className="text-sm font-semibold text-white">
-              {isLoggedIn ? "Yeni Teklif Talebi" : "Teklif Talebi ve Hesap Oluşturma"}
+              {isLoggedIn ? t("header.titleLoggedIn") : t("header.titleNew")}
             </h1>
           </div>
           {!isLoggedIn && (
             <Link href="/kurumsal/giris" className="text-xs text-slate-500 hover:text-emerald-400 transition-colors">
-              Zaten hesabınız var mı? Giriş yapın
+              {t("header.haveAccount")}
             </Link>
           )}
           {isLoggedIn && (
@@ -521,15 +525,15 @@ export default function CorporateQuoteForm() {
                 <span className="text-lg">🏢</span>
               </div>
               <div className="flex-1">
-                <p className="text-sm text-white font-medium">{existingUser!.companyName || "Kurumsal Hesap"}</p>
-                <p className="text-xs text-slate-400">{existingUser!.email} — Mevcut hesabınız ile yeni teklif oluşturuyorsunuz.</p>
+                <p className="text-sm text-white font-medium">{existingUser!.companyName || t("banner.accountFallback")}</p>
+                <p className="text-xs text-slate-400">{t("banner.existing", { email: existingUser!.email })}</p>
               </div>
             </div>
           )}
 
           {/* Adım göstergesi */}
           <div className="flex items-center gap-2">
-            {STEPS.map((label, idx) => {
+            {STEPS.map((stepKey, idx) => {
               const s = idx + 1;
               return (
                 <div key={s} className="flex items-center gap-2 flex-1">
@@ -541,7 +545,7 @@ export default function CorporateQuoteForm() {
                     {s < step ? "✓" : s}
                   </div>
                   <span className={`text-sm hidden sm:inline ${s === step ? "text-white font-medium" : "text-slate-500"}`}>
-                    {label}
+                    {t(`steps.${stepKey}`)}
                   </span>
                   {s < totalSteps && <div className={`flex-1 h-px ${s < step ? "bg-emerald-600" : "bg-white/[0.08]"}`} />}
                 </div>
@@ -556,23 +560,23 @@ export default function CorporateQuoteForm() {
           {!isLoggedIn && step === 1 && (
             <div className="space-y-6 animate-fade-in-up">
               <div>
-                <h2 className="text-xl font-bold text-white mb-1">Firma Bilgileriniz</h2>
-                <p className="text-sm text-slate-400">Teklif takibiniz için kurumsal hesabınız otomatik oluşturulacaktır.</p>
+                <h2 className="text-xl font-bold text-white mb-1">{t("company.title")}</h2>
+                <p className="text-sm text-slate-400">{t("company.subtitle")}</p>
               </div>
               <Card variant="glass" padding="lg" className="space-y-5">
                 <div className="grid md:grid-cols-2 gap-5">
                   <div className="md:col-span-2">
-                    <Input label="Şirket Adı" required value={form.companyName}
+                    <Input label={t("company.name")} required value={form.companyName}
                       onChange={(e) => set("companyName", e.target.value)}
-                      placeholder="Lütfen şirket adınızı giriniz" />
+                      placeholder={t("company.namePlaceholder")} />
                   </div>
-                  <Input label="Vergi Dairesi" value={form.taxOffice}
-                    onChange={(e) => set("taxOffice", e.target.value)} placeholder="Örn: Kadıköy V.D." />
-                  <Input label="Vergi Numarası" value={form.taxNo}
-                    onChange={(e) => set("taxNo", e.target.value)} placeholder="10 haneli vergi numaranız" />
-                  <Input label="Yetkili Kişi" required value={form.contactPerson}
-                    onChange={(e) => set("contactPerson", e.target.value)} placeholder="Adınızı ve soyadınızı giriniz" />
-                  <Input label="Telefon Numaranız" value={form.phone}
+                  <Input label={t("company.taxOffice")} value={form.taxOffice}
+                    onChange={(e) => set("taxOffice", e.target.value)} placeholder={t("company.taxOfficePlaceholder")} />
+                  <Input label={t("company.taxNo")} value={form.taxNo}
+                    onChange={(e) => set("taxNo", e.target.value)} placeholder={t("company.taxNoPlaceholder")} />
+                  <Input label={t("company.contact")} required value={form.contactPerson}
+                    onChange={(e) => set("contactPerson", e.target.value)} placeholder={t("company.contactPlaceholder")} />
+                  <Input label={t("company.phone")} value={form.phone}
                     onChange={(e) => set("phone", e.target.value)} placeholder="+90 5xx xxx xx xx" />
                 </div>
               </Card>
@@ -580,21 +584,21 @@ export default function CorporateQuoteForm() {
               <Card variant="solid" padding="lg" className="space-y-5">
                 <div className="flex items-center gap-2 mb-1">
                   <span className="text-base">🔐</span>
-                  <h3 className="text-sm font-semibold text-white">Hesap Bilgileriniz</h3>
+                  <h3 className="text-sm font-semibold text-white">{t("account.title")}</h3>
                   <span className="text-xs text-slate-500">
-                    {createdAccountEmail ? "— Hesabınız bu bilgilerle oluşturuldu; değiştirilemez" : "— Teklif takibiniz için otomatik oluşturulacaktır"}
+                    {createdAccountEmail ? t("account.locked") : t("account.auto")}
                   </span>
                 </div>
-                <Input label="Kurumsal E-posta Adresiniz" required type="email" value={form.corporateEmail}
+                <Input label={t("account.email")} required type="email" value={form.corporateEmail}
                   disabled={!!createdAccountEmail}
-                  onChange={(e) => set("corporateEmail", e.target.value)} placeholder="yetkili@sirket.com" />
+                  onChange={(e) => set("corporateEmail", e.target.value)} placeholder={t("account.emailPlaceholder")} />
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-1.5">Şifreniz *</label>
+                    <label htmlFor="teklif-sifre" className="block text-sm font-medium text-slate-300 mb-1.5">{t("account.password")}</label>
                     <div className="relative">
-                      <input value={form.password} onChange={(e) => set("password", e.target.value)}
+                      <input id="teklif-sifre" autoComplete="new-password" value={form.password} onChange={(e) => set("password", e.target.value)}
                         disabled={!!createdAccountEmail}
-                        type={showPass ? "text" : "password"} placeholder="En az 8 karakter giriniz"
+                        type={showPass ? "text" : "password"} placeholder={t("account.passwordPlaceholder")}
                         className={`w-full px-4 py-2.5 bg-white/[0.03] border rounded-xl text-white placeholder-slate-600 outline-none transition-colors pr-16 focus:ring-1 ${
                           form.password && !passwordValid
                             ? "border-red-500/50 focus:border-red-500 focus:ring-red-500/40"
@@ -602,22 +606,22 @@ export default function CorporateQuoteForm() {
                         }`} />
                       <button type="button" onClick={() => setShowPass(!showPass)}
                         className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 text-xs font-medium transition-colors">
-                        {showPass ? "Gizle" : "Göster"}
+                        {showPass ? t("account.hide") : t("account.show")}
                       </button>
                     </div>
-                    {form.password && !passwordValid && <p className="text-xs text-red-400 mt-1">En az 8 karakter girilmelidir.</p>}
+                    {form.password && !passwordValid && <p className="text-xs text-red-400 mt-1">{t("account.passwordShort")}</p>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-1.5">Şifre Tekrar *</label>
-                    <input value={form.passwordConfirm} onChange={(e) => set("passwordConfirm", e.target.value)}
+                    <label htmlFor="teklif-sifre-tekrar" className="block text-sm font-medium text-slate-300 mb-1.5">{t("account.confirm")}</label>
+                    <input id="teklif-sifre-tekrar" autoComplete="new-password" value={form.passwordConfirm} onChange={(e) => set("passwordConfirm", e.target.value)}
                       disabled={!!createdAccountEmail}
-                      type={showPass ? "text" : "password"} placeholder="Şifrenizi tekrar giriniz"
+                      type={showPass ? "text" : "password"} placeholder={t("account.confirmPlaceholder")}
                       className={`w-full px-4 py-2.5 bg-white/[0.03] border rounded-xl text-white placeholder-slate-600 outline-none transition-colors focus:ring-1 ${
                         form.passwordConfirm && !passwordsMatch
                           ? "border-red-500/50 focus:border-red-500 focus:ring-red-500/40"
                           : "border-white/[0.08] focus:border-emerald-500 focus:ring-emerald-500/40"
                       }`} />
-                    {form.passwordConfirm && !passwordsMatch && <p className="text-xs text-red-400 mt-1">Şifreler eşleşmiyor.</p>}
+                    {form.passwordConfirm && !passwordsMatch && <p className="text-xs text-red-400 mt-1">{t("account.mismatch")}</p>}
                   </div>
                 </div>
               </Card>
@@ -628,14 +632,14 @@ export default function CorporateQuoteForm() {
           {((isLoggedIn && step === 1) || (!isLoggedIn && step === 2)) && (
             <div className="space-y-6 animate-fade-in-up">
               <div>
-                <h2 className="text-xl font-bold text-white mb-1">İhtiyaç Analiziniz</h2>
-                <p className="text-sm text-slate-400">Birden fazla seçenek işaretleyebilirsiniz.</p>
+                <h2 className="text-xl font-bold text-white mb-1">{t("needs.title")}</h2>
+                <p className="text-sm text-slate-400">{t("needs.subtitle")}</p>
               </div>
               <div className="grid gap-4">
                 {NEED_OPTIONS.map((opt) => {
                   const selected = form.needTypes.includes(opt.id);
                   return (
-                    <button key={opt.id} onClick={() => toggleNeed(opt.id)}
+                    <button type="button" aria-pressed={selected} key={opt.id} onClick={() => toggleNeed(opt.id)}
                       className={`w-full text-left flex items-start gap-4 p-5 rounded-xl border-2 transition-all ${
                         selected
                           ? "border-emerald-500/50 bg-emerald-500/[0.05] ring-1 ring-emerald-500/20"
@@ -648,8 +652,8 @@ export default function CorporateQuoteForm() {
                       </div>
                       <span className="text-2xl shrink-0">{opt.icon}</span>
                       <div className="flex-1">
-                        <p className={`font-semibold ${selected ? "text-emerald-400" : "text-white"}`}>{opt.label}</p>
-                        <p className="text-sm text-slate-400 mt-0.5">{opt.desc}</p>
+                        <p className={`font-semibold ${selected ? "text-emerald-400" : "text-white"}`}>{t(`need.${opt.id}.label`)}</p>
+                        <p className="text-sm text-slate-400 mt-0.5">{t(`need.${opt.id}.desc`)}</p>
                       </div>
                     </button>
                   );
@@ -657,21 +661,21 @@ export default function CorporateQuoteForm() {
               </div>
               {form.needTypes.length > 0 && (
                 <div className="flex flex-wrap gap-2 pt-1">
-                  <span className="text-xs text-slate-500">Seçilenler:</span>
+                  <span className="text-xs text-slate-500">{t("needs.selected")}</span>
                   {form.needTypes.map((id) => {
                     const opt = NEED_OPTIONS.find((o) => o.id === id)!;
                     return (
                       <span key={id} className="text-xs px-2.5 py-1 bg-emerald-500/10 text-emerald-400 ring-1 ring-emerald-500/20 rounded-full">
-                        {opt.icon} {opt.label}
+                        {opt.icon} {t(`need.${id}.label`)}
                       </span>
                     );
                   })}
                 </div>
               )}
               <Card variant="glass" padding="md">
-                <Textarea label="Detaylar (isteğe bağlı)" value={form.needDetails}
+                <Textarea label={t("needs.details")} value={form.needDetails}
                   onChange={(e) => set("needDetails", e.target.value)}
-                  rows={3} placeholder="Projenizle ilgili eklemek istediğiniz detayları giriniz..." />
+                  rows={3} placeholder={t("needs.detailsPlaceholder")} />
               </Card>
             </div>
           )}
@@ -680,8 +684,8 @@ export default function CorporateQuoteForm() {
           {((isLoggedIn && step === 2) || (!isLoggedIn && step === 3)) && (
             <div className="space-y-6 animate-fade-in-up" ref={seedCountRef}>
               <div>
-                <h2 className="text-xl font-bold text-white mb-1">Proje Detaylarınız</h2>
-                <p className="text-sm text-slate-400">Ölçek ve bütçe beklentinizi belirtiniz.</p>
+                <h2 className="text-xl font-bold text-white mb-1">{t("project.title")}</h2>
+                <p className="text-sm text-slate-400">{t("project.subtitle")}</p>
               </div>
 
               {/* Simulator applied banner */}
@@ -689,13 +693,16 @@ export default function CorporateQuoteForm() {
                 <div className="bg-emerald-500/[0.08] border border-emerald-500/25 rounded-xl px-4 py-3 flex items-center gap-3 animate-fade-in">
                   <span className="text-emerald-400 text-lg">🧮</span>
                   <div>
-                    <p className="text-xs font-semibold text-emerald-400">Karbon hesaplayıcısından otomatik aktarıldı</p>
+                    <p className="text-xs font-semibold text-emerald-400">{t("project.fromCalculator")}</p>
                     <p className="text-xs text-emerald-400/70 mt-0.5">
-                      {simulatorApplied.seeds.toLocaleString("tr-TR")} tohum hesabınıza göre{" "}
-                      <strong className="text-emerald-300">{simulatorApplied.bucket}</strong> seçildi.
+                      {t.rich("project.calcSelected", {
+                        seeds: simulatorApplied.seeds,
+                        bucket: seedLabel(simulatorApplied.bucket),
+                        b: (chunks) => <strong className="text-emerald-300">{chunks}</strong>,
+                      })}
                     </p>
                   </div>
-                  <button onClick={() => setSimulatorApplied(null)}
+                  <button type="button" aria-label={t("project.calcDismiss")} onClick={() => setSimulatorApplied(null)}
                     className="ml-auto text-slate-500 hover:text-white text-xs transition-colors">
                     ✕
                   </button>
@@ -705,19 +712,19 @@ export default function CorporateQuoteForm() {
               <Card variant="glass" padding="lg" className="space-y-6">
                 <div>
                   <label className="block text-sm font-medium text-slate-300 mb-2">
-                    Hedeflenen Tohum / Ağaç Sayısı *
+                    {t("project.seedCount")}
                   </label>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                     {SEED_OPTIONS.map((opt) => (
-                      <button key={opt} onClick={() => set("seedCount", opt)}
+                      <button type="button" aria-pressed={form.seedCount === opt.value} key={opt.value} onClick={() => set("seedCount", opt.value)}
                         className={`px-4 py-3 rounded-xl border text-sm font-medium transition-all ${
-                          form.seedCount === opt
+                          form.seedCount === opt.value
                             ? "border-emerald-500/50 bg-emerald-500/10 text-emerald-400 ring-1 ring-emerald-500/30"
                             : "border-white/[0.08] bg-white/[0.03] text-slate-300 hover:border-white/[0.15] hover:bg-white/[0.05]"
                         }`}>
-                        {opt}
-                        {simulatorApplied?.bucket === opt && (
-                          <span className="block text-xs text-emerald-400/60 mt-0.5">← hesabınız</span>
+                        {tc(`quoteOptions.seed.${opt.key}`)}
+                        {simulatorApplied?.bucket === opt.value && (
+                          <span className="block text-xs text-emerald-400/60 mt-0.5">{t("project.yourCalc")}</span>
                         )}
                       </button>
                     ))}
@@ -725,40 +732,40 @@ export default function CorporateQuoteForm() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">Bütçe Beklentiniz</label>
+                  <label className="block text-sm font-medium text-slate-300 mb-2">{t("project.budget")}</label>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                     {BUDGET_OPTIONS.map((opt) => (
-                      <button key={opt} onClick={() => set("budgetRange", opt)}
+                      <button type="button" aria-pressed={form.budgetRange === opt.value} key={opt.value} onClick={() => set("budgetRange", opt.value)}
                         className={`px-4 py-3 rounded-xl border text-sm font-medium transition-all ${
-                          form.budgetRange === opt
+                          form.budgetRange === opt.value
                             ? "border-emerald-500/50 bg-emerald-500/10 text-emerald-400 ring-1 ring-emerald-500/30"
                             : "border-white/[0.08] bg-white/[0.03] text-slate-300 hover:border-white/[0.15] hover:bg-white/[0.05]"
                         }`}>
-                        {opt}
+                        {tc(`quoteOptions.budget.${opt.key}`)}
                       </button>
                     ))}
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">Zaman Çizelgeniz</label>
+                  <label className="block text-sm font-medium text-slate-300 mb-2">{t("project.timeline")}</label>
                   <div className="flex flex-wrap gap-3">
                     {TIMELINE_OPTIONS.map((opt) => (
-                      <button key={opt} onClick={() => set("timeline", opt)}
+                      <button type="button" aria-pressed={form.timeline === opt.value} key={opt.value} onClick={() => set("timeline", opt.value)}
                         className={`px-4 py-2.5 rounded-xl border text-sm font-medium transition-all ${
-                          form.timeline === opt
+                          form.timeline === opt.value
                             ? "border-emerald-500/50 bg-emerald-500/10 text-emerald-400 ring-1 ring-emerald-500/30"
                             : "border-white/[0.08] bg-white/[0.03] text-slate-300 hover:border-white/[0.15] hover:bg-white/[0.05]"
                         }`}>
-                        {opt}
+                        {tc(`quoteOptions.timeline.${opt.key}`)}
                       </button>
                     ))}
                   </div>
                 </div>
 
-                <Textarea label="Ek Notlarınız" value={form.notes}
+                <Textarea label={t("project.notes")} value={form.notes}
                   onChange={(e) => set("notes", e.target.value)}
-                  rows={3} placeholder="Özel talepleriniz veya sorularınızı yazabilirsiniz..." />
+                  rows={3} placeholder={t("project.notesPlaceholder")} />
               </Card>
             </div>
           )}
@@ -769,45 +776,39 @@ export default function CorporateQuoteForm() {
           <div className="space-y-4 pt-6 border-t border-white/[0.06]">
             {quoteUnverifiable ? (
               <div id="teklif-kayit-durumu" role="alert" className="bg-amber-500/10 border border-amber-500/25 text-sm px-4 py-3 rounded-xl space-y-2">
-                <p className="font-semibold text-amber-300">Teklif talebinizin kaydı doğrulanamadı</p>
+                <p className="font-semibold text-amber-300">{t("status.unverifiableTitle")}</p>
                 <p className="text-slate-300">
-                  Bu teklif numarasıyla bir kayıt görünüyor ama içeriğini doğrulayamadık. Yeniden göndermeyin;{" "}
-                  <Link href="/kurumsal/giris" className="text-emerald-400 underline underline-offset-2">giriş yapıp</Link>{" "}
-                  panelinizden teklifinizi kontrol edin.
+                  {t.rich("status.unverifiableText", {
+                    login: (chunks) => <Link href="/kurumsal/giris" className="text-emerald-400 underline underline-offset-2">{chunks}</Link>,
+                  })}
                 </p>
               </div>
             ) : createdAccountEmail || quoteUncertain ? (
               <div id="teklif-kayit-durumu" role="alert" className="bg-amber-500/10 border border-amber-500/25 text-sm px-4 py-3 rounded-xl space-y-2">
                 <p className="font-semibold text-amber-300">
-                  {quoteUncertain ? "Teklif talebinizin kaydı doğrulanamadı" : "Teklif talebiniz kaydedilemedi"}
+                  {quoteUncertain ? t("status.unverifiableTitle") : t("status.failedTitle")}
                 </p>
                 <ul className="space-y-1 text-slate-300">
                   {createdAccountEmail && (
-                    <li>✓ Kurumsal hesabınız oluşturuldu: <span className="text-white">{createdAccountEmail}</span></li>
+                    <li>{t.rich("status.accountCreated", { email: createdAccountEmail, mail: (chunks) => <span className="text-white">{chunks}</span> })}</li>
                   )}
                   <li>
-                    {quoteUncertain
-                      ? "? Teklif bağlantı sırasında kaydedilmiş olabilir; sonucu doğrulayamadık."
-                      : "✗ Teklif talebiniz kaydedilmedi."}
+                    {quoteUncertain ? t("status.maybeSaved") : t("status.notSaved")}
                   </li>
                 </ul>
                 {quoteUncertain ? (
                   <p className="text-slate-400">
-                    &quot;Teklifi yeniden kaydedin&quot; ilk gönderdiğiniz içeriği aynı teklif numarasıyla yeniden gönderir; teklif
-                    kaydedildiyse ikinci kez oluşmaz. Bu yüzden teklif alanları kilitlendi. Değişiklik isterseniz kayıt
-                    doğrulandıktan sonra panelinizden yeni teklif oluşturabilirsiniz. Sorun sürerse{" "}
-                    <Link href="/kurumsal/giris" className="text-emerald-400 underline underline-offset-2">giriş yapıp</Link>{" "}
-                    panelinizden teklifinizin kaydını kontrol edin.
+                    {t.rich("status.uncertainHelp", {
+                      login: (chunks) => <Link href="/kurumsal/giris" className="text-emerald-400 underline underline-offset-2">{chunks}</Link>,
+                    })}
                   </p>
                 ) : (
                   <p className="text-slate-400">
-                    Bilgilerinizi kontrol edip &quot;Teklifi yeniden kaydedin&quot; ile yeniden gönderebilirsiniz; hesabınız yeniden
-                    oluşturulmaz. Sorun sürerse{" "}
-                    <Link href="/kurumsal/giris" className="text-emerald-400 underline underline-offset-2">giriş yapıp</Link>{" "}
-                    panelinizden yeni teklif oluşturabilirsiniz.
+                    {t.rich("status.failedHelp", {
+                      login: (chunks) => <Link href="/kurumsal/giris" className="text-emerald-400 underline underline-offset-2">{chunks}</Link>,
+                    })}
                   </p>
                 )}
-                {submitError && <p className="text-xs text-slate-500">Ayrıntı: {submitError}</p>}
               </div>
             ) : submitError && (
               <div role="alert" className="bg-red-500/10 border border-red-500/20 text-red-400 text-sm px-4 py-3 rounded-xl">
@@ -816,19 +817,19 @@ export default function CorporateQuoteForm() {
             )}
             <div className="flex items-center justify-between">
               {step > 1 ? (
-                <Button variant="secondary" onClick={() => setStep(step - 1)}>← Geri</Button>
+                <Button variant="secondary" onClick={() => setStep(step - 1)}>{t("nav.back")}</Button>
               ) : <div />}
 
               {step < totalSteps ? (
                 <Button variant="primary" onClick={() => canNext() && setStep(step + 1)} disabled={!canNext()}>
-                  Devam Edin →
+                  {t("nav.next")}
                 </Button>
               ) : quoteUnverifiable ? <div /> : (
                 <Button variant="primary" size="lg" onClick={handleSubmit}
                   disabled={!canNext() || submitting} loading={submitting}>
                   {createdAccountEmail || quoteUncertain
-                    ? "Teklifi Yeniden Kaydedin"
-                    : isLoggedIn ? "Teklif Talebinizi Gönderin" : "Hesap Oluşturun ve Teklif Gönderin"}
+                    ? t("submit.resave")
+                    : isLoggedIn ? t("submit.loggedIn") : t("submit.new")}
                 </Button>
               )}
             </div>

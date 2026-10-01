@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { supabase } from "@/lib/supabase/browser";
+import { intlLocale } from "@/lib/utils/locale";
 
 interface CertRow {
   id: string;
@@ -14,6 +16,7 @@ interface CertRow {
 }
 
 function CopyLinkButton({ certId }: { certId: string }) {
+  const t = useTranslations("accountPages.certificates");
   const [copied, setCopied] = useState(false);
   const url = `${typeof window !== "undefined" ? window.location.origin : ""}/sertifika/${certId}`;
   const copy = async () => {
@@ -22,18 +25,21 @@ function CopyLinkButton({ certId }: { certId: string }) {
     setTimeout(() => setCopied(false), 2000);
   };
   return (
-    <button onClick={copy}
+    <button type="button" onClick={copy}
       className={`px-3 py-2 rounded-xl text-xs font-medium border transition-all duration-300 ${
         copied
           ? "bg-emerald-500/15 border-emerald-500/25 text-emerald-400"
           : "border-white/[0.08] text-emerald-200/40 hover:text-white hover:border-white/[0.15]"
       }`}>
-      {copied ? "✓ Kopyalandı" : "🔗 Linki Kopyala"}
+      {copied ? t("copied") : t("copyLink")}
     </button>
   );
 }
 
 export default function SertifikalarPage() {
+  const t = useTranslations("accountPages.certificates");
+  const tPages = useTranslations("accountPages");
+  const locale = useLocale();
   const [certs, setCerts] = useState<CertRow[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -73,23 +79,19 @@ export default function SertifikalarPage() {
   return (
     <div className="p-6 lg:p-8 space-y-6 animate-fade-in-up">
       <div>
-        <h1 className="text-2xl font-bold text-white">Sertifikalarım</h1>
-        <p className="text-sm text-emerald-200/40 mt-1">
-          Doğaya katkılarınız için oluşturulan dijital sertifikalar
-        </p>
+        <h1 className="text-2xl font-bold text-white">{t("title")}</h1>
+        <p className="text-sm text-emerald-200/40 mt-1">{t("subtitle")}</p>
       </div>
 
       {loading ? (
         <div className="flex justify-center py-16">
-          <div className="w-10 h-10 rounded-full border-2 border-emerald-500/20 border-t-emerald-400 animate-spin" />
+          <div role="status" aria-label={tPages("loading")} className="w-10 h-10 rounded-full border-2 border-emerald-500/20 border-t-emerald-400 animate-spin" />
         </div>
       ) : certs.length === 0 ? (
         <div className="liquid-glass rounded-3xl p-12 text-center">
           <span className="text-5xl block mb-4 animate-float">📜</span>
-          <p className="text-emerald-200/50 mb-2">Henüz sertifikanız bulunmuyor.</p>
-          <p className="text-sm text-emerald-200/30">
-            Tohum satın alıp ektiğinizde dijital sertifikanız otomatik oluşturulacaktır.
-          </p>
+          <p className="text-emerald-200/50 mb-2">{t("empty")}</p>
+          <p className="text-sm text-emerald-200/30">{t("emptyHint")}</p>
         </div>
       ) : (
         <div className="grid md:grid-cols-2 gap-4">
@@ -119,11 +121,11 @@ export default function SertifikalarPage() {
                     <p className="text-xs text-emerald-200/30 mt-0.5">{c.forest_name}</p>
                     <div className="flex items-center gap-3 mt-2">
                       <span className="text-sm font-bold text-emerald-400">
-                        🌱 {c.tree_count.toLocaleString("tr-TR")} Tohum
+                        🌱 {t("seeds", { count: c.tree_count })}
                       </span>
                       <span className="text-xs text-emerald-200/15">|</span>
                       <span className="text-xs text-emerald-200/25">
-                        {new Date(c.created_at).toLocaleDateString("tr-TR")}
+                        {new Date(c.created_at).toLocaleDateString(intlLocale(locale))}
                       </span>
                     </div>
                   </div>
@@ -133,7 +135,7 @@ export default function SertifikalarPage() {
                   {/* View certificate */}
                   <Link href={`/sertifika/${c.id}`} target="_blank"
                     className="flex-1 py-2.5 glass-btn rounded-xl text-sm text-center font-medium text-white min-w-[100px] transition-all">
-                    🌐 Görüntüle
+                    {t("view")}
                   </Link>
 
                   {/* Copy share link */}
@@ -142,7 +144,7 @@ export default function SertifikalarPage() {
                   {/* WhatsApp share */}
                   <a
                     href={`https://wa.me/?text=${encodeURIComponent(
-                      `🌱 ${c.recipient_name} adına ${c.tree_count.toLocaleString("tr-TR")} tohum ekildi! Sertifikayı görmek için: ${typeof window !== "undefined" ? window.location.origin : ""}/sertifika/${c.id}`
+                      t("shareText", { name: c.recipient_name, count: c.tree_count, url: `${typeof window !== "undefined" ? window.location.origin : ""}/sertifika/${c.id}` })
                     )}`}
                     target="_blank" rel="noreferrer"
                     className="px-3 py-2 rounded-xl text-xs font-medium transition-all"

@@ -24,7 +24,7 @@ export async function startPayment(
   ctx: { origin: string; ip: string | null }
 ): Promise<StartPaymentResult> {
   // Sağlayıcıya veya veritabanına yazmadan önce ortamı eşleştir.
-  if (order.is_test !== provider.isTest) return { ok: false, error: "unavailable" };
+  if (order.is_test !== provider.isTest || order.payment_meta?.paymentReviewRequired === true) return { ok: false, error: "unavailable" };
   const supabase = db();
   const address = order.invoice.address;
   const init = await provider.init({
@@ -114,6 +114,13 @@ export async function completePayment(
 
   const result = await provider.retrieve(token);
   if (!result.ok) {
+    if (result.reviewMeta) {
+      // Onaylanmamış tahsilat varken yeni ödeme oturumu açma. Sonraki doğrulanmış
+      // callback'in payment_meta yazımı bu işareti temizler; kendiliğinden tekrar tahsilat yok.
+      await supabase.from("release_orders").update({
+        payment_meta: { ...order.payment_meta, ...result.reviewMeta, paymentReviewRequired: true },
+      }).eq("id", order.id).is("paid_at", null).in("status", ["awaiting_payment", "payment_failed", "expired"]);
+    }
     await addOrderEvent(supabase, order.id, "payment_failed", "system", { stage: "retrieve", error: result.error });
     return { ok: false, error: "provider_error" };
   }

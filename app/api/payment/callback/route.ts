@@ -19,7 +19,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { createServiceRoleClient } from "@/lib/supabase/server";
-import iyzipay from "@/lib/iyzico";
+import { callIyzico } from "@/lib/payments/iyzico";
 
 // Bu route'un build sırasında değil, isteğe gelince çalışmasını garantile.
 export const dynamic = "force-dynamic";
@@ -31,13 +31,14 @@ const UNLINKED_ERROR_PATH = "/odeme/hata";
 export async function POST(request: NextRequest) {
   // Service-role client'ı isteğe gelince oluştur — build sırasında env yokken çökmesin.
   const supabase = createServiceRoleClient();
-  const unlinked = () => NextResponse.redirect(new URL(UNLINKED_ERROR_PATH, request.url));
+  const unlinked = () => NextResponse.redirect(new URL(UNLINKED_ERROR_PATH, request.url), 303);
 
   try {
     /* ── 1. Token ─────────────────────────────────────────────────────── */
     const formData = await request.formData();
-    const token = formData.get("token") as string | null;
-    if (!token) {
+    const rawToken = formData.get("token");
+    const token = typeof rawToken === "string" ? rawToken.trim() : "";
+    if (!/^[A-Za-z0-9._~-]{8,200}$/.test(token)) {
       console.error("[callback] iyzico token eksik");
       return unlinked();
     }
@@ -67,79 +68,69 @@ export async function POST(request: NextRequest) {
     if (paymentRecord.status === "success") {
       const params = new URLSearchParams({ status: "success" });
       if (orderId) params.set("order_id", orderId);
-      return NextResponse.redirect(new URL(`${B2B_RESULT_PATH}?${params.toString()}`, request.url));
+      return NextResponse.redirect(new URL(`${B2B_RESULT_PATH}?${params.toString()}`, request.url), 303);
     }
 
     /* ── 3. Sonucu iyzico'dan sorgula ─────────────────────────────────── */
-    return await new Promise<NextResponse>((resolve) => {
-      iyzipay.checkoutForm.retrieve(
-        { locale: "tr", token },
-        async (err: unknown, result: Record<string, unknown>) => {
-          if (err) {
-            console.error("[callback] iyzico sorgu hatası:", err);
-            resolve(unlinked());
-            return;
-          }
+    const result = await callIyzico("checkoutForm", "retrieve", { locale: "tr", token });
+    // Ağ/SDK belirsizliği bir ödeme reddi değildir. Geç SDK yanıtı artık bu rotada yazma yapamaz.
+    if (["timeout", "network", "config"].includes(String(result.errorCode))) return unlinked();
 
-          const isSuccess = result.status === "success" && result.paymentStatus === "SUCCESS";
+    const isSuccess = result.status === "success" && result.paymentStatus === "SUCCESS";
 
-          /* ── 4. Ödeme kaydı (metadata birleştirilir, ezilmez) ─────────── */
-          const { error: updateErr } = await supabase
-            .from("payments")
-            .update({
-              status: isSuccess ? "success" : "failed",
-              iyzico_payment_id: (result.paymentId as string) || null,
-              payment_method: "credit_card",
-              metadata: {
-                ...existingMeta,
-                cardType: result.cardType,
-                lastFourDigits: result.lastFourDigits,
-                installment: result.installment,
-                iyziCommissionFee: result.iyziCommissionFee,
-                fraudStatus: result.fraudStatus,
-              },
-              updated_at: new Date().toISOString(),
-            })
-            .eq("id", paymentId);
-          if (updateErr) console.error("[callback] payments güncellenemedi:", updateErr.message);
-
-          /* ── 5. Başarılı: sipariş ve kurumsal teklif ─────────────────── */
-          if (isSuccess && orderId) {
-            const { error: orderUpdateErr } = await supabase
-              .from("orders")
-              .update({ payment_status: "paid", status: "confirmed", updated_at: new Date().toISOString() })
-              .eq("id", orderId);
-            if (orderUpdateErr) console.error("[callback] orders güncellenemedi:", orderUpdateErr.message);
-          }
-          if (isSuccess) {
-            const quoteId = existingMeta.quote_id as string | undefined;
-            if (quoteId) {
-              const { error: quoteErr } = await supabase
-                .from("corporate_quotes")
-                .update({ status: "PAID", paid_at: new Date().toISOString(), payment_id: paymentId })
-                .eq("id", quoteId);
-              if (quoteErr) console.error("[callback] kurumsal teklif PAID yapılamadı:", quoteErr.message);
-            }
-          }
-          if (isSuccess && !orderId) {
-            console.error("[callback] Başarılı ödeme ama sipariş kimliği yok — paymentId:", paymentId);
-          }
-
-          /* ── 6. Sonuç sayfası ─────────────────────────────────────────── */
-          const params = new URLSearchParams();
-          if (isSuccess) {
-            params.set("status", "success");
-            if (orderId) params.set("order_id", orderId);
-          } else {
-            params.set("status", "error");
-            params.set("message", String(result.errorMessage || "Odeme basarisiz"));
-          }
-          resolve(NextResponse.redirect(new URL(`${B2B_RESULT_PATH}?${params.toString()}`, request.url)));
+    /* ── 4. Ödeme kaydı (metadata birleştirilir, ezilmez) ─────────── */
+    const { error: updateErr } = await supabase
+      .from("payments")
+      .update({
+        status: isSuccess ? "success" : "failed",
+        iyzico_payment_id: (result.paymentId as string) || null,
+        payment_method: "credit_card",
+        metadata: {
+          ...existingMeta,
+          cardType: result.cardType,
+          lastFourDigits: result.lastFourDigits,
+          installment: result.installment,
+          iyziCommissionFee: result.iyziCommissionFee,
+          fraudStatus: result.fraudStatus,
         },
-      );
-    });
-  } catch (error) {
-    console.error("[callback] Beklenmeyen hata:", error);
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", paymentId);
+    if (updateErr) console.error("[callback] payments güncellenemedi:", updateErr.message);
+
+    /* ── 5. Başarılı: sipariş ve kurumsal teklif ─────────────────── */
+    if (isSuccess && orderId) {
+      const { error: orderUpdateErr } = await supabase
+        .from("orders")
+        .update({ payment_status: "paid", status: "confirmed", updated_at: new Date().toISOString() })
+        .eq("id", orderId);
+      if (orderUpdateErr) console.error("[callback] orders güncellenemedi:", orderUpdateErr.message);
+    }
+    if (isSuccess) {
+      const quoteId = existingMeta.quote_id as string | undefined;
+      if (quoteId) {
+        const { error: quoteErr } = await supabase
+          .from("corporate_quotes")
+          .update({ status: "PAID", paid_at: new Date().toISOString(), payment_id: paymentId })
+          .eq("id", quoteId);
+        if (quoteErr) console.error("[callback] kurumsal teklif PAID yapılamadı:", quoteErr.message);
+      }
+    }
+    if (isSuccess && !orderId) {
+      console.error("[callback] Başarılı ödeme ama sipariş kimliği yok — paymentId:", paymentId);
+    }
+
+    /* ── 6. Sonuç sayfası ─────────────────────────────────────────── */
+    const params = new URLSearchParams();
+    if (isSuccess) {
+      params.set("status", "success");
+      if (orderId) params.set("order_id", orderId);
+    } else {
+      params.set("status", "error");
+    }
+    return NextResponse.redirect(new URL(`${B2B_RESULT_PATH}?${params.toString()}`, request.url), 303);
+  } catch {
+    console.error("[callback] Beklenmeyen dönüş hatası");
     return unlinked();
   }
 }

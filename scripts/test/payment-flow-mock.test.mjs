@@ -389,3 +389,23 @@ test('dönüş: imza anahtarı yoksa belirteçsiz erişim vermez; genel hata ve 
     if (oldService !== undefined) process.env.SUPABASE_SERVICE_ROLE_KEY = oldService;
   }
 });
+
+
+test('sağlayıcı incelemesindeki ödeme: paid olmaz, yeni oturum açılmaz; onaylı sonraki dönüş işareti kaldırır', async (t) => {
+  quiet(t);
+  const { db, client, flow } = await setup();
+  try {
+    const o = await openOrder(db);
+    const p = provider({ retrieve: () => ({ ok: false, error: 'fraud_review_pending', reviewMeta: { fraudStatus: 0 } }) });
+    assert.equal((await flow.completePayment(o.token, p, client)).ok, false);
+    const waiting = await one(db, 'SELECT * FROM release_orders WHERE id=$1', [o.id]);
+    assert.equal(waiting.paid_at, null);
+    assert.equal(waiting.payment_meta.paymentReviewRequired, true);
+    assert.deepEqual(await flow.startPayment(waiting, p, { origin: 'https://local.test', ip: null }), { ok: false, error: 'unavailable' });
+    assert.equal(p.calls.init.length, 0);
+    const approved = provider({ retrieve: () => success(o, { meta: { fraudStatus: 1 } }) });
+    assert.equal((await flow.completePayment(o.token, approved, client)).outcome, 'paid');
+    const paid = await one(db, 'SELECT * FROM release_orders WHERE id=$1', [o.id]);
+    assert.equal(paid.payment_meta.paymentReviewRequired, undefined);
+  } finally { await db.close(); }
+});

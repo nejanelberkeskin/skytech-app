@@ -38,7 +38,7 @@ export type PaymentOutcome =
       meta: Record<string, unknown>;
     }
   | { ok: true; status: "failure"; reason: string; meta: Record<string, unknown> }
-  | { ok: false; error: string };
+  | { ok: false; error: string; /** Sağlayıcı incelemesindeki tahsilat: yeniden ödeme açılmamalı. */ reviewMeta?: Record<string, unknown> };
 
 export interface RefundInput {
   paymentId: string;

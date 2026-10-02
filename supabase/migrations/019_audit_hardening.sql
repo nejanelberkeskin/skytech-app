@@ -1,6 +1,6 @@
 -- Audit fixes. Apply before deploying the corresponding application version.
 -- No customer records are removed and no payment provider is invoked by this migration.
-BEGIN;
+-- No BEGIN/COMMIT: the applying tool runs this file as ONE transaction (recorded apply script or psql --single-transaction); never plain psql -f.
 
 -- A single counter row serializes concurrent owner removals, including direct SQL.
 LOCK TABLE public.admin_users IN SHARE ROW EXCLUSIVE MODE;
@@ -218,4 +218,3 @@ BEGIN
 END $$;
 REVOKE ALL ON FUNCTION public.consume_contact_quota(text) FROM PUBLIC,anon,authenticated;
 GRANT EXECUTE ON FUNCTION public.consume_contact_quota(text) TO service_role;
-COMMIT;

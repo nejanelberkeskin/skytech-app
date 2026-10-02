@@ -10,7 +10,7 @@
 --                 provider_succeeded ─finish (019)→ completed
 --   Sonucu belirsiz (unknown) deneme ASLA kendiliğinden tekrarlanmaz. Geç gelen sonuç durumu değiştirmez;
 --   geçmişe yazılır ve `attention` işaretlenir.
-BEGIN;
+-- BEGIN/COMMIT yok: uygulayan araç dosyayı TEK işlemde çalıştırır (kayıtlı uygulama betiği ya da psql --single-transaction); düz psql -f ile uygulanmaz.
 
 -- ── 1. İade işlemi: deneme numarası, dikkat işareti, mutabakat kaydı ─────────
 ALTER TABLE public.refund_operations
@@ -360,5 +360,3 @@ REVOKE ALL ON FUNCTION public.start_job_run(text, text, text, uuid), public.fini
   FROM PUBLIC, anon, authenticated;
 GRANT EXECUTE ON FUNCTION public.start_job_run(text, text, text, uuid), public.finish_job_run(uuid, boolean, jsonb, text)
   TO service_role;
-
-COMMIT;

@@ -1,7 +1,7 @@
 -- 023 — Davet sahipliği. 021/022 değiştirilmez; mevcut yazma ve MFA kapıları korunur.
 -- Yalnız staff.invite: kendi davetleri. staff.invite + staff.manage (all): bütün davetler.
 -- Aktör auth.users kimliğidir; API oturumundan gelir. Fonksiyonlar yalnız service_role'a açıktır.
-BEGIN;
+-- BEGIN/COMMIT yok: uygulayan araç dosyayı TEK işlemde çalıştırır (kayıtlı uygulama betiği ya da psql --single-transaction); düz psql -f ile uygulanmaz.
 
 CREATE INDEX admin_invitations_creator_page_idx
   ON public.admin_invitations (created_by, created_at DESC, id DESC);
@@ -59,4 +59,3 @@ REVOKE ALL ON FUNCTION public.resend_admin_invitation(uuid, uuid, text, timestam
   public.revoke_admin_invitation(uuid, uuid) FROM PUBLIC, anon, authenticated;
 GRANT EXECUTE ON FUNCTION public.resend_admin_invitation(uuid, uuid, text, timestamptz),
   public.revoke_admin_invitation(uuid, uuid) TO service_role;
-COMMIT;

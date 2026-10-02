@@ -15,13 +15,17 @@ const invite = (db, actor, email, role = 'finance', scope = { kind: 'all' }, has
   one(db, `SELECT create_admin_invitation($1,$2,$3,$4::jsonb,NULL,$5,now() + make_interval(days => $6)) i`,
     [actor, email, role, JSON.stringify(scope), hash, days]).then((r) => r.i);
 
-test('021: izin listesi SQL rol tohumlarıyla birebir', async () => {
+test('021 + subsequent migrations: SQL catalog and owner permissions match the application dictionary', async () => {
   const sql = await readFile(new URL('../../supabase/migrations/021_permission_core.sql', import.meta.url), 'utf8');
-  const seeded = new Set([...sql.matchAll(/'([a-z_]+(?:\.[a-z_]+)+)'/g)].map((m) => m[1]).filter((k) => k.includes('.')));
-  const known = new Set(PERMISSIONS);
-  for (const key of seeded) assert.ok(known.has(key), `SQL'de olup sözlükte olmayan izin: ${key}`);
-  const owner = new Set([...sql.matchAll(/'([a-z_]+\.[a-z_.]+)'/g)].map((m) => m[1]));
-  for (const key of PERMISSIONS) assert.ok(owner.has(key), `Sözlükte olup SQL'de olmayan izin: ${key}`);
+  const seeded = new Set([...sql.matchAll(/'([a-z_]+(?:\.[a-z_]+)+)'/g)].map((m) => m[1]));
+  for (const key of seeded) assert.ok(PERMISSIONS.includes(key), `Unknown original seed: ${key}`);
+  const db = await createDb();
+  try {
+    const catalog = (await one(db, 'SELECT admin_permission_keys() keys')).keys;
+    const owner = (await one(db, "SELECT permissions FROM admin_roles WHERE key='owner'")).permissions;
+    assert.deepEqual([...catalog].sort(), [...PERMISSIONS].sort());
+    assert.deepEqual([...owner].sort(), [...PERMISSIONS].sort());
+  } finally { await db.close(); }
 });
 
 test('021: kapsamlar izin bazında kayıpsız birleşir; all daralmayı yutmaz', async () => {

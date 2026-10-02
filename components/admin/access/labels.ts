@@ -14,6 +14,7 @@ export const permissionLabels: Record<Permission, string> = {
   "refunds.execute": "İade gerçekleştirme ve mutabakat",
   "invoices.read": "Faturaları görme",
   "invoices.manage": "Fatura kaydı yönetme",
+  "finance.b2b_payment.resolve": "Kurumsal ödeme incelemesini sonuçlandırma",
   "finance.read": "Finans özetini görme",
   "sites.read": "Sahaları görme",
   "sites.edit": "Saha bilgilerini düzenleme",

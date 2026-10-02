@@ -48,3 +48,7 @@ Birleştirme, üretim yayını ve gerçek parasal işlem yapılmadı.
 - 035 için 034 ve job_runs altyapısı (020) gerekir. 035 gövdesi de işlem denetimi taşımaz; uygulayan araç tek işlem/tarihçe kaydı kurar. Yetkiler yalnız service_role; müşteri rollerine tablo/RPC açılmaz. Kapasite akışına dokunulmaz.
 
 Son ana dal testleri 406/406; typecheck/lint/build başarılı. Gerçek PostgreSQL provasına eşzamanlı mutabakat sahiplenmesi eklendi: iki kilit bekleyen bağlantıdan biri tek ödeme alır, öbürü boş döner; attempts=1. Sağlayıcı çağrıları taklit, dış istek sıfır. Yeni panel metinleri kaynak/typecheck/build ile kontrol edildi; bu ek için yeni tarayıcı ekran görüntüsü üretilmedi.
+
+## 037/038 ile yerel inceleme ekranı
+
+Sonraki taslak paket bu belgenin terminal callback ve yalnız SQL ile inceleme sınırlarını genişletir: başarısız/iptal edilmiş denemenin callback sonucu artık sağlayıcıdan sorgulanır; ayrı yetki ve taze MFA ile yönetim incelemesi vardır. Doğrulanmış ret sonrası yeniden deneme, geç başarı bekletmesi ve kalan sınırlar için [B2B ödeme inceleme kılavuzu](b2b-payment-resolution.md) esas alınır. Bu ek canlı uygulama anlamına gelmez.

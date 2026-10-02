@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import FinanceSummary from "@/components/admin/operations/FinanceSummary";
 import type { FinanceOverview } from "@/lib/finance/overview";
+import { Link } from "@/i18n/navigation";
 import RoleGuard from "@/components/RoleGuard";
 
 interface Transaction {
@@ -100,6 +101,7 @@ function FinansContent() {
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-white">Finans & Faturalar</h1>
+          <Link href="/admin/finans/b2b" className="inline-flex min-h-11 items-center text-emerald-300 underline">Kurumsal ödeme incelemeleri</Link>
           <p className="text-sm text-slate-400 mt-1">Bırakma siparişleri, tamamlanan iadeler ve ayrı B2B tahsilatları. Deneme siparişleri hariç.</p>
         </div>
         <button

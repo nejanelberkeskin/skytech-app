@@ -30,6 +30,10 @@ export async function POST(request: NextRequest, { params }: {params:Promise<{pa
     const result = typeof job.token==="string" && /^[A-Za-z0-9._~-]{8,200}$/.test(job.token)
       ? await callIyzico("checkoutForm","retrieve",{locale:"tr",token:job.token,conversationId:paymentId})
       : await callIyzico("payment","retrieve",{locale:"tr",paymentConversationId:paymentId});
+    // Local transport/SDK failures are not provider evidence; leave the lease to expire.
+    if (["timeout", "network", "config"].includes(String(result.errorCode))) {
+      return fail(503, "provider_unavailable", "Sağlayıcıdan sonuç alınamadı. Görünümü yenileyip iki dakika sonra yeniden deneyin.");
+    }
     // Permissions and MFA can change during the external read. Recheck before applying.
     const fresh = await requireB2bResolution(request);
     if(fresh.error) return fresh.error;

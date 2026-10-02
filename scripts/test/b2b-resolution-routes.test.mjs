@@ -92,3 +92,19 @@ test('list: global finance guard precedes reads; DTO drops token, email and meta
  assert.equal((await route.GET(request)).status,403);assert.equal(reads,0);
  allow=true;const r=await route.GET(request);assert.equal(r.status,200);const text=await r.text();assert.ok(!text.includes('PRIVATE')&&!text.includes('secret@')&&!text.includes('metadata'));assert.equal(JSON.parse(text).data.items[0].linked,true);
 });
+
+for (const errorCode of ['timeout', 'network', 'config']) {
+ test(`resolution: ${errorCode} is unavailable transport, never a provider observation`, async t => {
+  t.mock.method(globalThis, 'fetch', () => { throw Error('external_forbidden'); });
+  for (const token of ['private-token', null]) {
+   const h = harness({begin:{status:'started',operationId:'op',token},result:{status:'failure',errorCode,errorMessage:'PRIVATE-TRANSPORT-DETAIL'}});
+   const r = await h.post();
+   assert.equal(r.status, 503);
+   const body = await r.json();
+   assert.equal(body.error.code, 'provider_unavailable');
+   assert.ok(!JSON.stringify(body).includes('PRIVATE-TRANSPORT-DETAIL'));
+   assert.deepEqual(h.calls.map(c => c.name), ['begin_b2b_resolution'], 'no finish, provider observation or completed review audit');
+   assert.equal(h.provider.length, 1);
+  }
+ });
+}

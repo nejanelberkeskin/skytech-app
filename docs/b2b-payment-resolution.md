@@ -38,3 +38,9 @@ Testler PGlite gerçek SQL, ağsız PostgreSQL eşzamanlı oturumları, taklit s
 - Yeni webhook veya kapanmış denemelerin periyodik taraması eklenmedi. Geç sonuç bu pakette callback veya yetkili manuel sorgu ulaştığında gözlemlenir. Hiç gelmeyen sonuç için otomatik keşif garantisi yoktur.
 - Çelişkili/çift tahsilat bekletmesini kaldırma ve gerçek iade iş akışı bu paketin dışında. İade talebi, gerçekleşmiş iade olarak kabul edilmez; bu ekran bekletmeyi kaldırmaz.
 - Üretim PostgREST/RLS bağlantısı, sağlayıcı uçtan uca sandbox doğrulaması ve canlı geçiş provası ayrıca yapılmalıdır.
+
+## #122 bağımsız inceleme düzeltmeleri
+
+Checkout sahipliği veritabanındaki teklif kaydıyla doğrulandıktan sonra claim ve ödeme metadata kaydı aynı kanonik `quote.id` kullanır. Büyük harfle yazılmış geçerli UUID, sonuç kaydedicisinin beklediği kimlik biçimini bozamaz. Önceden oluşmuş kanonik olmayan metadata kayıtları otomatik düzeltilmez; bu değişiklik yeni checkout yazımını korur.
+
+Elle sorgulamadaki yerel `timeout` / `network` / `config` yanıtları sağlayıcı kanıtı sayılmaz. `finish` çağrılmaz, ödeme gözlemi ve tamamlanmış inceleme denetimi yazılmaz; HTTP 503 `provider_unavailable` döner. `begin` ile açılmış işlem iki dakikalık süresi dolana kadar kalır; yeni bir inceleme ancak süre dolduğunda eski işlemi bayatlatarak başlatılabilir. Müşterinin ödeme kilidi bu sürede ve süre dolduktan sonra korunur. Callback başka bir yoldan sonuç kaydetmiş olabilir; operatör yeniden denemeden görünümü yenilemelidir.

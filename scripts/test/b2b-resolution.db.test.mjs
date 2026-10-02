@@ -1,6 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
+import { createRequire } from 'node:module';
+import { loadSource } from './load-source.mjs';
 import { createDb, one, IDS } from './pglite-db.mjs';
 const fixture=(await readFile(new URL('./fixtures/b2b-payment-schema.sql',import.meta.url),'utf8')).replace('CREATE ROLE anon; CREATE ROLE authenticated; CREATE ROLE service_role;','');
 const upgrade=(await readFile(new URL('../../supabase/migrations/004_corporate_quotes_upgrade.sql',import.meta.url),'utf8')).split('-- ── Email Log Table')[0];
@@ -131,3 +133,54 @@ test('C1: a positive paid amount or unresolved/approved fraud state cannot autho
   assert.deepEqual(await h.claim(),{status:'checkout_in_progress'});
  }
 });
+
+for (const uppercase of [false, true]) {
+ test(`C1 B1: checkout ${uppercase ? 'uppercase' : 'canonical'} quote ID preserves callback and manual success recording`, async t => {
+  const h = await setup(t);
+  const quoteId = '5a5a5a5a-0000-4000-8000-0000000000ab';
+  await h.db.query("INSERT INTO corporate_quotes(id,user_id,status,approved_price,approved_seed_count,corporate_email) VALUES($1,$2,'QUOTED',200,20,'local@example.invalid')", [quoteId,user]);
+  const server = createRequire(import.meta.url)('next/server');
+  const rpc = [], provider = [];
+  const service = {
+   from(table) {
+    assert.ok(['corporate_quotes','payments'].includes(table));
+    let lookup, update;
+    return {
+     select() { return this; },
+     update(value) { update = value; return this; },
+     eq(column, value) {
+      assert.equal(column,'id');lookup=value;
+      if (update) return h.db.query('UPDATE payments SET metadata=$2::jsonb WHERE id=$1',[value,JSON.stringify(update.metadata)]).then(()=>({error:null}));
+      return this;
+     },
+     async maybeSingle() { return {data:await one(h.db,'SELECT * FROM corporate_quotes WHERE id=$1',[lookup]),error:null}; },
+    };
+   },
+   async rpc(name,args) {
+    assert.equal(name,'claim_b2b_checkout');rpc.push(args);
+    return {data:(await one(h.db,'SELECT claim_b2b_checkout($1,$2,$3,$4,$5) v',[args.p_quote,args.p_user,args.p_amount,args.p_seeds,args.p_is_test])).v,error:null};
+   },
+  };
+  const route = loadSource('app/api/payment/b2b-checkout/route.ts', {
+   'next/server':server,
+   '@/lib/supabase/server':{createServiceRoleClient:()=>service,createSupabaseServer:async()=>({auth:{getUser:async()=>({data:{user:{id:user,email:'local@example.invalid'}},error:null})}})},
+   iyzipay:{default:{LOCALE:{TR:'tr'},CURRENCY:{TRY:'TRY'},PAYMENT_GROUP:{PRODUCT:'PRODUCT'},BASKET_ITEM_TYPE:{VIRTUAL:'VIRTUAL'}}},
+   '@/lib/admin-auth':{rateLimit:()=>null,getClientIP:()=> '127.0.0.1'},
+   '@/lib/payments/iyzico-config':{iyzicoConfig:()=>({isTest:true})},
+   '@/lib/payments/iyzico':{priceToKurus:p=>Math.round(Number(p)*100),callIyzico:async(...args)=>{provider.push(args);return {status:'success',token:'local-test-token',checkoutFormContent:'<div>Mock only</div>'};}},
+   '@/lib/utils/format':{formatDateForIyzico:()=> '2026-10-02 12:00:00'},
+  });
+  const r = await route.POST(new server.NextRequest('https://local.invalid/api/payment/b2b-checkout',{method:'POST',body:JSON.stringify({quoteId:uppercase?quoteId.toUpperCase():quoteId})}));
+  assert.equal(r.status,200);
+  const body = await r.json();
+  assert.equal(provider.length,1);
+  const result = {...h.success,payment_id:'provider-B1',basket_id:body.orderId,conversation_id:body.paymentId};
+  // Exercise the real result recorder, not a handcrafted metadata approximation.
+  assert.deepEqual(await h.record(result,body.paymentId),{status:'paid'});
+  const op = (await one(h.db,"SELECT begin_b2b_resolution($1,$2,now(),'refresh','Local provider case B1',false,true) v",[body.paymentId,IDS.superAdmin])).v;
+  assert.deepEqual(await h.finish(op,result),{status:'already_paid'});
+  assert.equal((await one(h.db,'SELECT status FROM corporate_quotes WHERE id=$1',[quoteId])).status,'PAID');
+  assert.equal((await one(h.db,'SELECT metadata FROM payments WHERE id=$1',[body.paymentId])).metadata.quote_id,quoteId);
+  assert.equal(rpc[0].p_quote,quoteId);
+ });
+}

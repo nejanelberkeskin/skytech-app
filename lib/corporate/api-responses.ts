@@ -19,8 +19,11 @@ export type AllocationOutcome =
 
 export function allocationOutcome(status: number, body: unknown): AllocationOutcome {
   if (status >= 200 && status < 300) {
-    const b = body && typeof body === "object" ? (body as Record<string, unknown>) : null;
-    if (b && b.success === true && b.allocation !== null && typeof b.allocation === "object") {
+    const b = body && typeof body === "object" && !Array.isArray(body) ? (body as Record<string, unknown>) : null;
+    const allocation = b?.allocation;
+    const a = allocation && typeof allocation === "object" && !Array.isArray(allocation)
+      ? allocation as Record<string, unknown> : null;
+    if (b?.success === true && a && typeof a.id === "string" && a.id.trim().length > 0) {
       return { kind: "success", emailSent: typeof b.email_sent === "boolean" ? b.email_sent : null };
     }
     return { kind: "uncertain" };

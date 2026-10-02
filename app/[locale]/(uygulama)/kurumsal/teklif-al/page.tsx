@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { supabase } from "@/lib/supabase/browser";
 import { Button, Input, Textarea, Card } from "@/components/ui";
 import { createQuoteSubmitter, type QuoteFields } from "@/lib/corporate/quote-submission";

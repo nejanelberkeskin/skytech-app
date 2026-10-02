@@ -72,6 +72,18 @@ const nextConfig: NextConfig = {
         source: "/(.*)",
         headers: securityHeaders,
       },
+      // Sipariş ve ödeme sonucu sayfaları ile müşteri sipariş uçları (belge, sertifika, bağlantı kapısı):
+      // hiçbir isteğe Referer gönderilmez. Sayfadaki `<meta name="referrer">` önyükleme bağlantılarından
+      // sonra geldiği için tek başına yetmez. Buradaki kurallar rota yanıtının kendi başlığının da ÜSTÜNE
+      // yazılır (yukarıdaki genel kural uçların `no-referrer` başlığını eziyordu); aynı anahtar için son
+      // eşleşen kural kazanır.
+      ...[
+        ...["", "/tr", "/en", "/ru"].flatMap((prefix) => [`${prefix}/siparis/:path*`, `${prefix}/odeme/sonuc/:path*`]),
+        "/api/public/siparis/:path*",
+      ].map((source) => ({
+        source,
+        headers: [{ key: "Referrer-Policy", value: "no-referrer" }],
+      })),
       // Static assets (next/image işlediği görseller) — uzun cache
       {
         source: "/images/(.*)",
@@ -119,6 +131,13 @@ const nextConfig: NextConfig = {
   experimental: {
     // Sadece kullanılan motion özelliklerini bundle'la
     optimizePackageImports: ["framer-motion", "lucide-react"],
+    // İyimser rota tahmini KAPALI (Next 16.3'te varsayılan açık). Tahmin, dil parametresinin adreste
+    // olduğunu varsayar; /en, /ru (ya da /tr) adresi görülen belgede öneksiz TR adresini (as-needed:
+    // /hakkimizda → /tr/hakkimizda yeniden yazması) "/[locale=hakkimizda]" sanar. Yalnız baş eksikken
+    // atılan ön yükleme bu sapmayı denetlemediği için görünür her tek parçalı TR bağlantısı sonsuz
+    // döngüye girer (dil değiştiriciyle EN→TR geçişinde, /tr açılışında). Kapalıyken rota ağacı
+    // sunucudan alınır (canlıdaki 16.1 davranışı). Açmadan önce: npm run test:prefetch.
+    optimisticRouting: false,
   },
 };
 

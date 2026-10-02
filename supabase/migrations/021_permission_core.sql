@@ -3,7 +3,7 @@
 -- 019 ve 020'ye bağlıdır. Sözleşme: web-brifler/19-YETKI-CEKIRDEGI-API-SOZLESMESI.md.
 -- Mevcut dört rolün erişimi korunur; kimse silinmez, kimseye yeni erişim verilmez.
 -- Bütün yetki kararları sunucuda bu tablolardan hesaplanır; verilmeyen izin kapalıdır.
-BEGIN;
+-- BEGIN/COMMIT yok: uygulayan araç dosyayı TEK işlemde çalıştırır (kayıtlı uygulama betiği ya da psql --single-transaction); düz psql -f ile uygulanmaz.
 
 -- En az bir aktif sahip olmadan yetki modeli taşınmaz.
 DO $$ BEGIN
@@ -598,5 +598,3 @@ GRANT EXECUTE ON FUNCTION public.admin_effective_permissions(uuid), public.admin
   public.create_admin_invitation(uuid, text, text, jsonb, timestamptz, text, timestamptz),
   public.resend_admin_invitation(uuid, uuid, text, timestamptz), public.revoke_admin_invitation(uuid, uuid),
   public.accept_admin_invitation(text, uuid, text, text), public.admin_migration_report() TO service_role;
-
-COMMIT;

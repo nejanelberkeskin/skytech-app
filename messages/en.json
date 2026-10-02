@@ -1322,6 +1322,450 @@
       "backToSites": "Back to Project Sites"
     }
   },
+  "accountPages": {
+    "loading": "Loading…",
+    "layout": {
+      "navLabel": "Account menu",
+      "nav": {
+        "overview": "Overview",
+        "requests": "My Requests",
+        "orders": "My Orders",
+        "certificates": "My Certificates",
+        "profile": "Profile & Settings"
+      },
+      "homeAria": "Skytech Green home page",
+      "menuOpen": "Open menu",
+      "userFallback": "User",
+      "ctaOrder": "Buy Now",
+      "ctaRequest": "Submit a Request",
+      "logout": "Sign out",
+      "emailBanner": {
+        "title": "Confirm your email address.",
+        "sent": "We have sent a verification link to {email}."
+      },
+      "resend": {
+        "send": "Resend",
+        "sending": "Sending…",
+        "sent": "Sent ✓"
+      }
+    },
+    "overview": {
+      "title": "My Account",
+      "subtitle": "Follow a summary of your requests and their current status here.",
+      "stats": {
+        "total": "Total Requests",
+        "waiting": "Awaiting Response",
+        "inProgress": "In Discussion",
+        "done": "Completed"
+      },
+      "recent": "Recent Requests",
+      "seeAll": "View all →",
+      "empty": "There are no requests linked to your account.",
+      "firstRequest": "Submit your first request →",
+      "seedBalls": "{count, plural, one {# seed ball} other {# seed balls}}",
+      "actions": {
+        "openLandTitle": "Have Seed Balls Released on a Site",
+        "openLandDesc": "Choose a Project Site and set the quantity",
+        "ownLandTitle": "For My Own Land",
+        "ownLandDesc": "Application for drone seed ball release on your land"
+      }
+    },
+    "requests": {
+      "title": "My Requests",
+      "subtitle": "All requests linked to your account and their status.",
+      "newRequest": "+ New Request",
+      "empty": "There are no requests linked to your account.",
+      "emptyHint": "If you submitted a request as a guest, you can link it to your account using the link in the confirmation email.",
+      "firstRequest": "Submit your first request →",
+      "seeds": "{count, plural, one {# seed ball} other {# seed balls}}",
+      "contact": "Contact",
+      "yourNote": "Your note",
+      "hints": {
+        "new": "Your request has been received and is awaiting review by our team.",
+        "contacted": "Our team has contacted you; we are clarifying the details together.",
+        "quoted": "A quote has been sent to you.",
+        "converted": "Your request has been completed. Thank you!",
+        "closed": "The request has been closed. You can submit a new request.",
+        "spam": "The request has been closed."
+      }
+    },
+    "orders": {
+      "title": "My Orders",
+      "subtitle": "Your seed ball release orders for Project Sites.",
+      "sitesCta": "Project Sites",
+      "linked": "{count, plural, one {# order you previously placed with this email address has been linked to your account.} other {# orders you previously placed with this email address have been linked to your account.}}",
+      "loadError": "Your orders could not be loaded right now. Please refresh the page.",
+      "empty": "There are no orders linked to your account.",
+      "emptyHint": "If you ordered as a guest, you can view your order using the link in your order confirmation email. For verified accounts opened with the same email address, orders are linked here automatically.",
+      "browseSites": "Explore the sites →",
+      "testBadge": "TEST",
+      "rows": {
+        "quantity": "Seed ball quantity",
+        "total": "Total service fee (VAT included)",
+        "certificateName": "Name on certificate",
+        "releasedOn": "Release date",
+        "deadline": "Release deadline",
+        "withdrawalUntil": "Last day of the right of withdrawal"
+      },
+      "hints": {
+        "paid": "Your order is placed; the 14-day withdrawal period is running.",
+        "confirmed": "The withdrawal period has ended; your order can be added to the release plan.",
+        "scheduled": "Your order has been assigned to a release operation.",
+        "released": "Your seed balls have been released on the site; your Certificate of Participation has been issued.",
+        "monitoring": "The site is being inspected, monitored and reported on.",
+        "completed": "Footage of the work has been shared.",
+        "withdrawal_requested": "Your withdrawal notice has been received; the full amount will be refunded within 14 days.",
+        "cancelled_by_seller": "We have cancelled the order; the full amount will be refunded.",
+        "refunded": "The full amount has been refunded."
+      },
+      "details": "Order details and documents →",
+      "certificate": "Certificate of Participation",
+      "video": "Footage of the work ↗",
+      "withdraw": "Submit a withdrawal notice"
+    },
+    "certificates": {
+      "title": "My Certificates",
+      "subtitle": "Digital certificates issued for your contributions to nature",
+      "empty": "You don't have any certificates yet.",
+      "emptyHint": "Your digital certificates will appear here once they are issued.",
+      "seeds": "{count, plural, one {# seed} other {# seeds}}",
+      "view": "🌐 View",
+      "copyLink": "🔗 Copy link",
+      "copied": "✓ Copied",
+      "shareText": "🌱 Certificate in the name of {name}: {count, plural, one {# seed} other {# seeds}}. View the certificate: {url}"
+    },
+    "profile": {
+      "title": "Profile & Settings",
+      "subtitle": "Manage your personal details and address.",
+      "personal": "Personal Details",
+      "fullName": "Full name",
+      "email": "Email",
+      "phone": "Phone",
+      "city": "City",
+      "cityPlaceholder": "e.g. Istanbul",
+      "address": "Address",
+      "addressPlaceholder": "Delivery address…",
+      "save": "Save changes",
+      "saving": "Saving…",
+      "saved": "Saved!",
+      "saveError": "Your details could not be saved. Please try again.",
+      "passwordTitle": "Change Password",
+      "newPassword": "New password",
+      "confirmPassword": "Repeat new password",
+      "passwordPlaceholder": "At least 8 characters",
+      "repeatPlaceholder": "Repeat",
+      "updatePassword": "Update password",
+      "passwordUpdated": "Your password has been updated.",
+      "passwordMin": "The new password must be at least 8 characters long.",
+      "passwordMismatch": "The passwords do not match.",
+      "passwordSame": "Your new password must differ from your old password.",
+      "passwordWeak": "This password is weak or has appeared in a data breach. Choose a different password.",
+      "passwordError": "Your password could not be updated. Please try again."
+    }
+  },
+  "corporatePages": {
+    "loading": "Loading…",
+    "homeAria": "Skytech Green Corporate",
+    "login": {
+      "noAccount": "Don't have an account yet?",
+      "getQuote": "Get a quote →",
+      "title": "Corporate Sign In",
+      "subtitle": "View your quote and your corporate panel.",
+      "email": "Corporate email",
+      "emailPlaceholder": "name@company.com",
+      "password": "Password",
+      "forgot": "Forgot password?",
+      "show": "Show",
+      "hide": "Hide",
+      "submitting": "Signing in…",
+      "submit": "Sign in",
+      "or": "or",
+      "quoteAndAccount": "Get a Quote & Create an Account",
+      "trouble": "Having trouble with your account?",
+      "errors": {
+        "required": "Email and password are required.",
+        "invalid": "Incorrect email or password.",
+        "unconfirmed": "You need to verify your email address. Please check your inbox.",
+        "generic": "Sign-in failed. Please try again."
+      }
+    },
+    "panel": {
+      "navLabel": "Corporate panel menu",
+      "nav": {
+        "overview": "Overview",
+        "certificates": "Certificate Center",
+        "payment": "Payment & Invoices"
+      },
+      "title": "Corporate Panel",
+      "account": "Corporate Account",
+      "active": "Active",
+      "home": "← Home",
+      "logout": "Sign out",
+      "menuOpen": "Open menu"
+    },
+    "payment": {
+      "title": "Payment & Invoicing",
+      "subtitle": "Approve your quote and make the payment.",
+      "successTitle": "Payment Successful!",
+      "successText": "Your quote has been approved and your payment received.",
+      "errorTitle": "Payment Failed",
+      "errorText": "Please try again.",
+      "tabQuote": "Quote Payment",
+      "tabInvoices": "Invoice History",
+      "alreadyPaid": "Payment for this quote has been completed.",
+      "noActive": "You have no active quote available for payment.",
+      "backToPanel": "Back to Panel",
+      "summary": "Quote Summary",
+      "company": "Company",
+      "seedCount": "Seed Count",
+      "seedUnit": "{count, number} pcs",
+      "unitPrice": "Unit Price",
+      "perSeedUnit": "TRY/seed",
+      "total": "Total Amount",
+      "adminNote": "Admin Note",
+      "cardTitle": "Pay by Credit Card",
+      "formHint": "Click the button below to load the payment form.",
+      "paying": "Loading…",
+      "pay": "Approve Quote & Pay",
+      "secureNote": "All payments are processed securely by iyzico.",
+      "startError": "The payment could not be started. Please try again.",
+      "checkoutUnavailable": "This quote's payment status needs to be checked, so no new payment was started. Please do not try to pay again; see the Invoice History tab or contact us.",
+      "noPayments": "No payments have been made yet.",
+      "colId": "Payment ID",
+      "colDate": "Date",
+      "colAmount": "Amount",
+      "colStatus": "Status",
+      "statusPaid": "Paid",
+      "statusPending": "Pending",
+      "statusFailed": "Failed"
+    },
+    "overview": {
+      "companyFallback": "Corporate",
+      "title": "Overview",
+      "subtitle": "{company} — your corporate panel",
+      "status": {
+        "pending": {
+          "label": "Awaiting Approval",
+          "desc": "Our team is reviewing your quote request."
+        },
+        "quoted": {
+          "label": "Quote Ready",
+          "desc": "Your custom pricing is ready! You can approve it and pay."
+        },
+        "paid": {
+          "label": "Payment Completed",
+          "desc": "Your payment has been received. Your seed ball release process will be started."
+        },
+        "rejected": {
+          "label": "Rejected",
+          "desc": "Your quote request has been rejected."
+        },
+        "expired": {
+          "label": "Expired",
+          "desc": "The quote has expired."
+        },
+        "unknown": {
+          "label": "Unknown"
+        }
+      },
+      "alert": {
+        "readyTitle": "Your Quote Is Ready!",
+        "reviewTitle": "Your Quote Is Under Review",
+        "total": "Total Amount",
+        "seedCount": "Seed Count",
+        "seedUnit": "{count, number} pcs",
+        "adminNote": "Manager's Note",
+        "review": "Review the Quote",
+        "pay": "Approve the Quote and Pay"
+      },
+      "stats": {
+        "active": "Active Quotes",
+        "activeSub": "pending",
+        "paid": "Paid Quotes",
+        "paidSub": "completed",
+        "seeds": "Total Seeds",
+        "seedsSub": "approved",
+        "invested": "Total Investment",
+        "investedSub": "paid"
+      },
+      "history": "Your Quote History",
+      "quoteCount": "{count, plural, one {# quote} other {# quotes}}",
+      "empty": "You have no quote requests yet.",
+      "firstQuote": "Get Your First Quote",
+      "need": {
+        "orman": "Forest",
+        "sertifika": "Certificate",
+        "karbon": "Carbon"
+      },
+      "reviewShort": "🎬 Review",
+      "payShort": "Pay"
+    },
+    "employees": {
+      "title": "👥 Employee Seed Allocation",
+      "subtitle": "Allocate individual certificates to your employees",
+      "poolUsage": "Seed Pool Usage",
+      "remaining": "({count, number} remaining)",
+      "used": "{pct}% used",
+      "full": "Pool is full",
+      "add": "Add Employee",
+      "name": "Full name",
+      "email": "Email",
+      "seeds": "Seeds",
+      "allocate": "Allocate",
+      "allocatedEmailSent": "✓ {count, plural, one {# seed} other {# seeds}} allocated to {name}; email sent.",
+      "allocateError": "The operation could not be completed.",
+      "allocatedEmailNotSent": "✓ {count, plural, one {# seed} other {# seeds}} allocated to {name}. The certificate email could not be sent.",
+      "allocatedNoEmailInfo": "✓ {count, plural, one {# seed} other {# seeds}} allocated to {name}.",
+      "allocateUncertain": "We could not confirm the result. Before submitting again, check whether the allocation appears in the list below.",
+      "distributed": "Distributed Certificates ({count, number})",
+      "emailSent": "✓ Email sent",
+      "emailPending": "Email pending",
+      "certificate": "Certificate →",
+      "empty": "No employee allocations yet."
+    },
+    "quoteOptions": {
+      "seed": {
+        "r1": "1,000 – 5,000",
+        "r2": "5,000 – 10,000",
+        "r3": "10,000 – 25,000",
+        "r4": "25,000 – 50,000",
+        "r5": "50,000+",
+        "undecided": "Not decided yet"
+      },
+      "budget": {
+        "b1": "Under ₺50,000",
+        "b2": "₺50,000 – ₺150,000",
+        "b3": "₺150,000 – ₺500,000",
+        "b4": "₺500,000+",
+        "awaiting": "Awaiting your quote"
+      },
+      "timeline": {
+        "m1": "Within 1 month",
+        "m3": "Within 3 months",
+        "m6": "Within 6 months",
+        "yearEnd": "By the end of the year",
+        "flexible": "Flexible"
+      }
+    },
+    "quote": {
+      "steps": {
+        "company": "Company Details",
+        "needs": "Needs Analysis",
+        "project": "Project Details"
+      },
+      "need": {
+        "orman": {
+          "label": "Establish a Company Forest",
+          "desc": "A forest area dedicated to your brand is allocated."
+        },
+        "sertifika": {
+          "label": "Gift Certificates",
+          "desc": "Digital certificates are distributed to your customers and employees."
+        },
+        "karbon": {
+          "label": "Carbon Offsetting",
+          "desc": "Scope and terms are set out in the quote."
+        }
+      },
+      "success": {
+        "titleLoggedIn": "Your Quote Request Has Been Sent!",
+        "titleNew": "Your Account Has Been Created and Your Quote Request Saved",
+        "textLoggedIn": "<b>{company}</b>: your new quote request has been created. You can track its status in your panel.",
+        "textNew": "<b>{company}</b>: your corporate account has been created and your quote request saved. Sign in to your panel to track its status.",
+        "editsDiscarded": "Your quote request was saved with the details you first submitted; changes made after the connection problem were not added to it. To make changes, create a new quote request from your panel.",
+        "fromCalculator": "🧮 Transferred from your calculation",
+        "calcLine": "{seeds, plural, one {# seed} other {# seeds}} → {bucket}",
+        "loginInfo": "Your sign-in details",
+        "verifyHint": "If email verification is requested when you sign in, check your inbox and your spam folder.",
+        "toPanel": "Back to Your Panel →",
+        "loginToPanel": "Sign In to Your Panel →",
+        "home": "Back to Home"
+      },
+      "header": {
+        "back": "← Corporate",
+        "titleLoggedIn": "New Quote Request",
+        "titleNew": "Quote Request and Account Creation",
+        "haveAccount": "Already have an account? Sign in"
+      },
+      "banner": {
+        "accountFallback": "Corporate Account",
+        "existing": "{email} — You are creating a new quote request with your existing account."
+      },
+      "company": {
+        "title": "Your Company Details",
+        "subtitle": "A corporate account will be created automatically so you can track your quote request.",
+        "name": "Company Name",
+        "namePlaceholder": "Enter your company name",
+        "taxOffice": "Tax Office",
+        "taxOfficePlaceholder": "e.g. Kadıköy Tax Office",
+        "taxNo": "Tax Number",
+        "taxNoPlaceholder": "Your 10-digit tax number",
+        "contact": "Contact Person",
+        "contactPlaceholder": "Enter your full name",
+        "phone": "Your Phone Number"
+      },
+      "account": {
+        "title": "Your Account Details",
+        "locked": "— Your account was created with these details; they cannot be changed",
+        "auto": "— It will be created automatically so you can track your quote request",
+        "email": "Your Corporate Email Address",
+        "emailPlaceholder": "name@company.com",
+        "password": "Password *",
+        "passwordPlaceholder": "Enter at least 8 characters",
+        "show": "Show",
+        "hide": "Hide",
+        "passwordShort": "Enter at least 8 characters.",
+        "confirm": "Repeat Password *",
+        "confirmPlaceholder": "Re-enter your password",
+        "mismatch": "The passwords do not match."
+      },
+      "needs": {
+        "title": "Your Needs",
+        "subtitle": "You can select more than one option.",
+        "selected": "Selected:",
+        "details": "Details (optional)",
+        "detailsPlaceholder": "Add any details about your project…"
+      },
+      "project": {
+        "title": "Your Project Details",
+        "subtitle": "Tell us the scale and your budget expectation.",
+        "fromCalculator": "Automatically transferred from the calculator",
+        "calcSelected": "<b>{bucket}</b> was selected based on your calculation of {seeds, plural, one {# seed} other {# seeds}}.",
+        "calcDismiss": "Remove the transferred value",
+        "seedCount": "Target Seed / Tree Count *",
+        "yourCalc": "← your calculation",
+        "budget": "Your Budget Expectation",
+        "timeline": "Your Timeline",
+        "notes": "Additional Notes",
+        "notesPlaceholder": "Write any special requests or questions…"
+      },
+      "status": {
+        "unverifiableTitle": "Your quote request could not be verified",
+        "unverifiableText": "A record with this quote number exists, but we could not verify its contents. Do not resubmit; <login>sign in</login> and check your quote request in your panel.",
+        "failedTitle": "Your quote request could not be saved",
+        "accountCreated": "✓ Your corporate account has been created: <mail>{email}</mail>",
+        "maybeSaved": "? Your quote request may have been saved during the connection; we could not verify the result.",
+        "notSaved": "✗ Your quote request was not saved.",
+        "uncertainHelp": "\"Save the quote request again\" resends the content you first submitted under the same quote number; if it was already saved, it will not be created twice. That is why the quote fields are locked. If you want changes, you can create a new quote request from your panel once the record is verified. If the problem persists, <login>sign in</login> and check the record of your quote request in your panel.",
+        "failedHelp": "Check your details and resubmit with \"Save the quote request again\"; your account will not be created again. If the problem persists, <login>sign in</login> and create a new quote request from your panel."
+      },
+      "errors": {
+        "alreadyRegistered": "This email address is already registered. Please sign in and try again.",
+        "accountNotCreated": "The account could not be created. Please try again.",
+        "quoteNotSaved": "The quote request could not be saved. Please try again.",
+        "generic": "The request could not be completed. Please try again."
+      },
+      "nav": {
+        "back": "← Back",
+        "next": "Continue →"
+      },
+      "submit": {
+        "resave": "Save the Quote Request Again",
+        "loggedIn": "Send Your Quote Request",
+        "new": "Create an Account and Send the Quote Request"
+      }
+    }
+  },
   "ownLandPage": {
     "breadcrumb": "My land",
     "breadcrumbLabel": "Breadcrumb",

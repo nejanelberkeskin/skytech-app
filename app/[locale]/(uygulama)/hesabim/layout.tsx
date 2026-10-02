@@ -1,6 +1,7 @@
 "use client";
 
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase/browser";
@@ -14,20 +15,23 @@ import { CTA_MODE, SALES_ENABLED, TRANSACTIONS_ENABLED, orderCtaHref } from "@/l
 // kapalıyken bu rotaları /hesabim'a katlar). `sales: true` → yeni satış modeli açıkken.
 // Eski bireysel tohum satışının sayfaları (fiziksel siparişler, arazi ekimleri, davet/ödül) Faz 8'de kaldırıldı.
 const NAV_ITEMS = [
-  { href: "/hesabim", label: "Genel Bakış", Icon: BarChartIcon, exact: true },
-  { href: "/hesabim/taleplerim", label: "Taleplerim", Icon: MailIcon },
+  { href: "/hesabim", key: "overview", Icon: BarChartIcon, exact: true },
+  { href: "/hesabim/taleplerim", key: "requests", Icon: MailIcon },
   // Satış modeli v2: sahaya tohum topu bıraktırma siparişleri (yalnız satış açıkken listelenir)
-  { href: "/hesabim/siparisler", label: "Siparişlerim", Icon: PackageIcon, sales: true },
+  { href: "/hesabim/siparisler", key: "orders", Icon: PackageIcon, sales: true },
   // B2B çalışan sertifikaları (şirket hesabı)
-  { href: "/hesabim/sertifikalar", label: "Sertifikalarım", Icon: CertificateIcon, transactional: true },
-  { href: "/hesabim/profil", label: "Profil & Ayarlar", Icon: SettingsIcon },
+  { href: "/hesabim/sertifikalar", key: "certificates", Icon: CertificateIcon, transactional: true },
+  { href: "/hesabim/profil", key: "profile", Icon: SettingsIcon },
 ].filter((item: { transactional?: boolean; sales?: boolean }) => (TRANSACTIONS_ENABLED || !item.transactional) && (SALES_ENABLED || !item.sales));
 
 export default function HesabimLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
+  const t = useTranslations("accountPages.layout");
+  const tPages = useTranslations("accountPages");
   const [loading, setLoading] = useState(true);
-  const [userName, setUserName] = useState("");
+  // null: henüz okunmadı; "": kullanıcıda ad yok (ekranda çevrilmiş yedek ad gösterilir).
+  const [userName, setUserName] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState("");
   const [emailConfirmed, setEmailConfirmed] = useState(true);
   const [resendSent, setResendSent] = useState(false);
@@ -46,7 +50,7 @@ export default function HesabimLayout({ children }: { children: React.ReactNode 
     supabase.auth.getUser().then(({ data: { user } }) => {
       if (user) {
         const meta = user.user_metadata;
-        setUserName(meta?.full_name ?? meta?.contact_person ?? "Kullanıcı");
+        setUserName(meta?.full_name ?? meta?.contact_person ?? "");
         setUserEmail(user.email ?? "");
         setEmailConfirmed(!!user.email_confirmed_at);
       }
@@ -69,6 +73,8 @@ export default function HesabimLayout({ children }: { children: React.ReactNode 
     router.refresh();
   };
 
+  const displayName = userName === null ? "" : userName || t("userFallback");
+
   if (loading) {
     return (
       <div className="relative min-h-screen">
@@ -77,7 +83,7 @@ export default function HesabimLayout({ children }: { children: React.ReactNode 
           <div className="nature-orb nature-orb-2" />
         </div>
         <div className="relative z-10 min-h-screen flex items-center justify-center">
-          <div className="w-10 h-10 rounded-full border-2 border-emerald-500/20 border-t-emerald-400 animate-spin" />
+          <div role="status" aria-label={tPages("loading")} className="w-10 h-10 rounded-full border-2 border-emerald-500/20 border-t-emerald-400 animate-spin" />
         </div>
       </div>
     );
@@ -110,7 +116,7 @@ export default function HesabimLayout({ children }: { children: React.ReactNode 
       >
         {/* Logo */}
         <div className="px-6 py-5" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-          <Link href="/" className="flex items-center gap-2.5" onClick={() => setSidebarOpen(false)} aria-label="Skytech Green ana sayfa">
+          <Link href="/" className="flex items-center gap-2.5" onClick={() => setSidebarOpen(false)} aria-label={t("homeAria")}>
             <Image
               src="/images/brand/logo-light.webp"
               alt="Skytech Green"
@@ -128,18 +134,18 @@ export default function HesabimLayout({ children }: { children: React.ReactNode 
             <div className="w-10 h-10 rounded-2xl flex items-center justify-center"
               style={{ background: "linear-gradient(135deg, rgba(16,185,129,0.15), rgba(20,184,166,0.1))", border: "1px solid rgba(52,211,153,0.15)" }}>
               <span className="text-emerald-400 font-bold text-sm">
-                {userName.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()}
+                {displayName.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()}
               </span>
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-white truncate">{userName}</p>
+              <p className="text-sm font-medium text-white truncate">{displayName}</p>
               <p className="text-xs text-emerald-200/30 truncate">{userEmail}</p>
             </div>
           </div>
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+        <nav aria-label={t("navLabel")} className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
           {NAV_ITEMS.map((item) => {
             const isActive = item.exact ? pathname === item.href : pathname.startsWith(item.href);
             return (
@@ -154,7 +160,7 @@ export default function HesabimLayout({ children }: { children: React.ReactNode 
                 }`}
               >
                 <item.Icon className="w-4 h-4 shrink-0" />
-                <span>{item.label}</span>
+                <span>{t(`nav.${item.key}`)}</span>
               </Link>
             );
           })}
@@ -168,13 +174,13 @@ export default function HesabimLayout({ children }: { children: React.ReactNode 
             className="flex items-center justify-center gap-2 w-full py-3 rounded-2xl glass-btn text-sm font-medium text-white transition-all"
           >
             <SproutIcon className="w-4 h-4" />
-            {CTA_MODE === "order" ? "Satın Al" : "Talep Oluştur"}
+            {CTA_MODE === "order" ? t("ctaOrder") : t("ctaRequest")}
           </Link>
           <button
             onClick={handleLogout}
             className="w-full text-center text-xs text-emerald-200/25 hover:text-rose-400 transition-colors py-2"
           >
-            Çıkış Yap
+            {t("logout")}
           </button>
         </div>
       </aside>
@@ -189,7 +195,10 @@ export default function HesabimLayout({ children }: { children: React.ReactNode 
             borderBottom: "1px solid rgba(255,255,255,0.06)",
           }}>
           <button
+            type="button"
             onClick={() => setSidebarOpen(true)}
+            aria-label={t("menuOpen")}
+            aria-expanded={sidebarOpen}
             className="w-10 h-10 rounded-2xl flex items-center justify-center text-emerald-200/50 hover:text-white transition-colors"
             style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}
           >
@@ -214,8 +223,8 @@ export default function HesabimLayout({ children }: { children: React.ReactNode 
             <div className="flex items-center gap-2.5 min-w-0">
               <AlertTriangleIcon className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
               <p className="text-sm text-amber-300">
-                <span className="font-semibold">E-postanızı onaylayın.</span>{" "}
-                <span className="text-amber-400/60">{userEmail} adresine bir doğrulama bağlantısı gönderdik.</span>
+                <span className="font-semibold">{t("emailBanner.title")}</span>{" "}
+                <span className="text-amber-400/60">{t("emailBanner.sent", { email: userEmail })}</span>
               </p>
             </div>
             <button
@@ -224,7 +233,7 @@ export default function HesabimLayout({ children }: { children: React.ReactNode 
               className="shrink-0 text-xs font-semibold px-4 py-2 rounded-xl transition-all disabled:opacity-60 disabled:cursor-not-allowed"
               style={{ background: "rgba(245,158,11,0.15)", border: "1px solid rgba(245,158,11,0.3)", color: "rgb(251,191,36)" }}
             >
-              {resendSent ? "Gönderildi ✓" : resendLoading ? "Gönderiliyor…" : "Tekrar Gönder"}
+              {resendSent ? t("resend.sent") : resendLoading ? t("resend.sending") : t("resend.send")}
             </button>
           </div>
         )}

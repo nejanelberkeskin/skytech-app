@@ -21,7 +21,7 @@ import {
 
 // ── Resend REST wrapper ──────────────────────────────────────────────
 
-interface SendEmailParams {
+export interface SendEmailParams {
   to: string;
   subject: string;
   html: string;
@@ -67,10 +67,11 @@ async function sendEmail(params: SendEmailParams): Promise<ResendResponse> {
   const data = await res.json();
 
   if (!res.ok) {
-    console.error("[mail] Resend error:", data);
+    console.error("[mail] Resend request failed:", res.status);
     throw new Error(data.message || "Email send failed");
   }
 
+  if (typeof data?.id !== "string" || !data.id.trim() || data.id === SKIPPED_ID) throw new Error("invalid_provider_response");
   return data as ResendResponse;
 }
 
@@ -600,7 +601,7 @@ const ORDER_TEXT = {
   },
 } as const;
 
-export async function sendOrderConfirmation(input: OrderConfirmationInput) {
+export function prepareOrderConfirmation(input: OrderConfirmationInput) {
   const t = ORDER_TEXT[input.locale === "tr" ? "tr" : "en"];
   const subject = (input.isTest ? "[DENEME] " : "") + t.subject(input.orderNo);
   const rows: [string, string][] = [
@@ -640,18 +641,11 @@ export async function sendOrderConfirmation(input: OrderConfirmationInput) {
     </div>
   `);
 
-  try {
-    const result = await sendEmail({ to: input.email, subject, html, attachments: input.attachments });
-    await logEmail("release_order_confirm", input.email, subject, input.orderId, result.id || null);
-    return result;
-  } catch (e: unknown) {
-    await logEmail("release_order_confirm", input.email, subject, input.orderId, null, errorMessage(e));
-    throw e;
-  }
+  return { to: input.email, subject, html, attachments: input.attachments };
 }
 
 /** Şirkete yeni sipariş bildirimi (kişisel veri asgari: ad, tutar, saha). */
-export async function sendOrderNotification(input: Pick<OrderConfirmationInput, "orderId" | "orderNo" | "siteName" | "quantity" | "totalText" | "isTest"> & { buyerName: string; buyerType: string }) {
+export function prepareOrderNotification(input: Pick<OrderConfirmationInput, "orderId" | "orderNo" | "siteName" | "quantity" | "totalText" | "isTest"> & { buyerName: string; buyerType: string }) {
   const to = requestNotifyEmail();
   const subject = `${input.isTest ? "[DENEME] " : ""}[Sipariş] ${input.orderNo} · ${input.siteName} — ${input.quantity} adet`;
   const html = emailLayout(subject, `
@@ -661,14 +655,7 @@ export async function sendOrderNotification(input: Pick<OrderConfirmationInput, 
       <p style="text-align:center;margin:24px 0;"><a href="${esc(adminOrderUrl(input.orderNo))}" class="btn">Yönetim panelinde aç</a></p>
     </div>
   `);
-  try {
-    const result = await sendEmail({ to, subject, html });
-    await logEmail("release_order_notify", to, subject, input.orderId, result.id || null);
-    return result;
-  } catch (e: unknown) {
-    await logEmail("release_order_notify", to, subject, input.orderId, null, errorMessage(e));
-    throw e;
-  }
+  return { to, subject, html };
 }
 
 // ═════════════════════════════════════════════════════════════════════
@@ -717,7 +704,7 @@ const WITHDRAWAL_TEXT = {
   },
 } as const;
 
-export async function sendWithdrawalReceipt(input: WithdrawalReceiptInput) {
+export function prepareWithdrawalReceipt(input: WithdrawalReceiptInput) {
   const t = WITHDRAWAL_TEXT[input.locale === "tr" ? "tr" : "en"];
   const subject = (input.isTest ? "[DENEME] " : "") + t.subject(input.orderNo);
   const rows: [string, string][] = [
@@ -750,18 +737,11 @@ export async function sendWithdrawalReceipt(input: WithdrawalReceiptInput) {
     </div>
   `);
 
-  try {
-    const result = await sendEmail({ to: input.email, subject, html });
-    await logEmail("release_withdrawal_receipt", input.email, subject, input.orderId, result.id || null);
-    return result;
-  } catch (e: unknown) {
-    await logEmail("release_withdrawal_receipt", input.email, subject, input.orderId, null, errorMessage(e));
-    throw e;
-  }
+  return { to: input.email, subject, html };
 }
 
 /** Şirkete cayma bildirimi: iade 14 gün içinde yapılmalı. */
-export async function sendWithdrawalNotification(input: {
+export function prepareWithdrawalNotification(input: {
   orderId: string;
   orderNo: string;
   buyerName: string;
@@ -777,18 +757,11 @@ export async function sendWithdrawalNotification(input: {
     <div class="body">
       <p><strong>${esc(input.buyerName)}</strong>, ${esc(input.siteName)} sahasındaki siparişinden caydı. İade edilecek tutar: <strong>${esc(input.totalText)}</strong>.</p>
       <p>Bedelin tamamı <strong>en geç ${esc(input.refundDueOnText)}</strong> tarihine kadar, ödemede kullanılan araca tek seferde iade edilmelidir. Sipariş için ayrılan kapasite iade tamamlanınca serbest kalır.</p>
-      <p>Müşteriye teyit e-postası gönderildi. İade, yönetim panelindeki sipariş ekranından yapılır.</p>
+      <p>Müşteriye teyit bildirimi ayrı olarak işlenir. İade, yönetim panelindeki sipariş ekranından yapılır.</p>
       <p style="text-align:center;margin:24px 0;"><a href="${esc(adminOrderUrl(input.orderNo))}" class="btn">Yönetim panelinde aç</a></p>
     </div>
   `);
-  try {
-    const result = await sendEmail({ to, subject, html });
-    await logEmail("release_withdrawal_notify", to, subject, input.orderId, result.id || null);
-    return result;
-  } catch (e: unknown) {
-    await logEmail("release_withdrawal_notify", to, subject, input.orderId, null, errorMessage(e));
-    throw e;
-  }
+  return { to, subject, html };
 }
 
 // ═════════════════════════════════════════════════════════════════════
@@ -964,7 +937,7 @@ const RELEASE_TEXT = {
   },
 } as const;
 
-export async function sendReleaseCertificate(input: ReleaseCertificateInput) {
+export function prepareReleaseCertificate(input: ReleaseCertificateInput) {
   const t = RELEASE_TEXT[input.locale === "tr" ? "tr" : "en"];
   const subject = (input.isTest ? "[DENEME] " : "") + t.subject(input.orderNo);
   const rows: [string, string][] = [
@@ -1001,14 +974,7 @@ export async function sendReleaseCertificate(input: ReleaseCertificateInput) {
       <p style="color:#64748b;font-size:13px;margin-top:20px;">${esc(t.contact)}</p>
     </div>
   `);
-  try {
-    const result = await sendEmail({ to: input.email, subject, html });
-    await logEmail("release_certificate", input.email, subject, input.orderId, result.id || null);
-    return result;
-  } catch (e: unknown) {
-    await logEmail("release_certificate", input.email, subject, input.orderId, null, errorMessage(e));
-    throw e;
-  }
+  return { to: input.email, subject, html };
 }
 
 export interface VideoPublishedInput {
@@ -1055,7 +1021,7 @@ const VIDEO_TEXT = {
   },
 } as const;
 
-export async function sendVideoPublished(input: VideoPublishedInput) {
+export function prepareVideoPublished(input: VideoPublishedInput) {
   const t = VIDEO_TEXT[input.locale === "tr" ? "tr" : "en"];
   const subject = (input.isTest ? "[DENEME] " : "") + t.subject(input.siteName);
   const html = emailLayout(subject, `
@@ -1075,14 +1041,7 @@ export async function sendVideoPublished(input: VideoPublishedInput) {
       <p style="color:#64748b;font-size:13px;margin-top:20px;">${esc(t.contact)}</p>
     </div>
   `);
-  try {
-    const result = await sendEmail({ to: input.email, subject, html });
-    await logEmail("release_video", input.email, subject, input.orderId, result.id || null);
-    return result;
-  } catch (e: unknown) {
-    await logEmail("release_video", input.email, subject, input.orderId, null, errorMessage(e));
-    throw e;
-  }
+  return { to: input.email, subject, html };
 }
 
 /** Müşteriye giden e-postalardaki bağlantıların kökü: canlıda her zaman asıl alan adı. */
@@ -1118,4 +1077,37 @@ export async function sendStaffInvitation(input: StaffInvitationInput) {
     `
   );
   return sendEmail({ to: input.to, subject: "Skytech Green yönetim paneli daveti", html });
+}
+
+/** Freeze this exact string before the first network attempt; includes sender and PDF bytes. */
+export function notificationBody(params: SendEmailParams): string {
+  return JSON.stringify({
+    from: process.env.RESEND_FROM_EMAIL || "Skytech Green <noreply@skytechgreen.com>",
+    to: [params.to], subject: params.subject, html: params.html,
+    ...(params.replyTo ? { reply_to: params.replyTo } : {}),
+    ...(params.attachments?.length ? { attachments: params.attachments } : {}),
+  });
+}
+
+export class NotificationDeliveryError extends Error {
+  constructor(public code: string, public permanent = false) { super(code); }
+}
+
+export function notificationSenderConfigured(): boolean { return Boolean(process.env.RESEND_API_KEY); }
+
+/** Only the outbox calls this transport, after durable begin + frozen payload. */
+export async function sendFrozenNotification(body: string, idempotencyKey: string): Promise<{ id: string }> {
+  const key = process.env.RESEND_API_KEY;
+  if (!key) throw new NotificationDeliveryError("not_configured");
+  const response = await fetch("https://api.resend.com/emails", {
+    method: "POST", signal: AbortSignal.timeout(20_000),
+    headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json", "Idempotency-Key": idempotencyKey }, body,
+  });
+  const data = await response.json().catch(() => null);
+  if (!response.ok) {
+    const concurrent = response.status === 409 && data?.name === "concurrent_idempotent_requests";
+    throw new NotificationDeliveryError(`provider_http_${response.status}`, response.status >= 400 && response.status < 500 && response.status !== 429 && !concurrent);
+  }
+  if (typeof data?.id !== "string" || !data.id.trim() || data.id === SKIPPED_ID) throw new NotificationDeliveryError("invalid_provider_response");
+  return { id: data.id };
 }

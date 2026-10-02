@@ -1,137 +1,66 @@
-/**
- * GET /api/orders/invoice/[orderId]
- *
- * Güvenli Fatura Verisi API — sadece sipariş sahibi veya admin erişebilir.
- *
- * Yanıt Shape:
- * {
- *   order:       { id, buyer_email, order_type, status, total_seeds, total_price,
- *                  shipping_address, created_at }
- *   allocations: Array<{ seeds_allocated, lands: { name, region } | null }>
- *   buyerProfile:{ full_name, phone, address, city } | null
- * }
- *
- * Auth:
- *   - Cookie oturumu zorunlu
- *   - Sipariş sahibi VEYA aktif admin_users kaydı erişebilir
- *   - Başka kullanıcılar 403 alır
- */
-
+/** Owner-facing order summary. Staff access uses the same three permissions as stored documents. */
 import { NextRequest, NextResponse } from "next/server";
-import { createServerClient } from "@supabase/ssr";
-import { cookies } from "next/headers";
-import { createServiceRoleClient } from "@/lib/supabase/server";
+import { createServiceRoleClient, createSupabaseServer } from "@/lib/supabase/server";
+import { hasFullScope, hasPermission, requirePermission } from "@/lib/admin/permissions";
+import { DOCUMENT_PERMISSIONS } from "@/lib/orders/admin-access";
 
-export async function GET(
-  _req: NextRequest,
-  { params }: { params: Promise<{ orderId: string }> }
-) {
-  const { orderId } = await params;
+export const dynamic = "force-dynamic";
+const HEADERS = {
+  "Cache-Control": "private, no-store",
+  "X-Robots-Tag": "noindex, nofollow",
+  "Referrer-Policy": "no-referrer",
+  "X-Content-Type-Options": "nosniff",
+};
+const reply = (body: unknown, status = 200) => NextResponse.json(body, { status, headers: HEADERS });
+const unavailable = () => reply({ error: "Belge bilgileri alınamadı. Daha sonra yeniden deneyin." }, 503);
 
-  if (!orderId?.trim()) {
-    return NextResponse.json({ error: "orderId zorunludur." }, { status: 400 });
-  }
+export async function GET(request: NextRequest, { params }: { params: Promise<{ orderId: string }> }) {
+  try {
+    const { orderId } = await params;
+    if (!orderId?.trim()) return reply({ error: "orderId zorunludur." }, 400);
+    const auth = await createSupabaseServer();
+    // Verify with Auth; an unverified cookie session is not proof of ownership.
+    const { data: { user }, error: authError } = await auth.auth.getUser();
+    if (authError || !user) return reply({ error: "Oturum gerekli. Lütfen giriş yapın." }, 401);
 
-  // ── Oturum kontrolü ──────────────────────────────────────────────────────
-  const cookieStore = await cookies();
-  const authClient = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll: () => cookieStore.getAll(),
-        setAll: (cookiesToSet) => {
-          try {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options)
-            );
-          } catch { /* Server Component context */ }
-        },
-      },
+    const db = createServiceRoleClient();
+    // Only ownership metadata is read before the document permission gate.
+    const { data: owner, error: ownerError } = await db.from("orders").select("id, user_id").eq("id", orderId).maybeSingle();
+    if (ownerError) return unavailable();
+    if (!owner) return reply({ error: "Sipariş bulunamadı." }, 404);
+    if (owner.user_id !== user.id) {
+      const guard = await requirePermission(request, "orders.documents.read");
+      if (guard.error) {
+        // Preserve this legacy page's {error: string} contract; never render an error object.
+        const denied = await guard.error.json().catch(() => null);
+        const mfa = denied?.error?.code === "mfa_required";
+        return reply({
+          error: mfa ? "Bu belgeyi görüntülemek için iki aşamalı doğrulamanızı yenileyin." : "Bu belgeyi görüntüleme yetkiniz yok veya kimliğiniz doğrulanamadı.",
+          code: mfa ? "mfa_required" : "document_access_denied",
+        }, guard.error.status);
+      }
+      if (guard.admin.user_id !== user.id || DOCUMENT_PERMISSIONS.some(permission =>
+        !hasPermission(guard.access, permission) || !hasFullScope(guard.access, permission))) {
+        return reply({ error: "Bu belgeyi görüntüleme yetkiniz yok." }, 403);
+      }
     }
-  );
 
-  const { data: { session } } = await authClient.auth.getSession();
-
-  if (!session) {
-    return NextResponse.json(
-      { error: "Oturum gerekli. Lütfen giriş yapın." },
-      { status: 401 }
-    );
-  }
-
-  const service = createServiceRoleClient();
-
-  // ── Sipariş sorgula ───────────────────────────────────────────────────────
-  const { data: order, error: orderError } = await service
-    .from("orders")
-    .select(
-      "id, user_id, buyer_email, order_type, status, total_seeds, total_price, shipping_address, created_at"
-    )
-    .eq("id", orderId)
-    .single();
-
-  if (orderError || !order) {
-    return NextResponse.json({ error: "Sipariş bulunamadı." }, { status: 404 });
-  }
-
-  // ── Yetki kontrolü: sipariş sahibi VEYA admin ────────────────────────────
-  const isOwner = order.user_id === session.user.id;
-
-  if (!isOwner) {
-    const { data: adminUser } = await service
-      .from("admin_users")
-      .select("id")
-      .eq("user_id", session.user.id)
-      .eq("is_active", true)
-      .single();
-
-    if (!adminUser) {
-      return NextResponse.json(
-        { error: "Bu faturaya erişim yetkiniz yok." },
-        { status: 403 }
-      );
-    }
-  }
-
-  // ── Arazi tahsisleri (fatura kalemleri) ───────────────────────────────────
-  const { data: allocations } = await service
-    .from("order_allocations")
-    .select("seeds_allocated, lands(name, region)")
-    .eq("order_id", orderId);
-
-  // ── Alıcı profil bilgisi ──────────────────────────────────────────────────
-  const { data: profile } = order.user_id
-    ? await service
-        .from("profiles")
-        .select("full_name, phone, address, city")
-        .eq("id", order.user_id)
-        .single()
-    : { data: null };
-
-  // ── Kurumsal teklif — şirket adı ve vergi bilgisi ────────────────────────
-  const { data: quote } = await service
-    .from("corporate_quotes")
-    .select("company_name, tax_office, tax_no, contact_person")
-    .eq("order_id", orderId)
-    .maybeSingle();
-
-  return NextResponse.json({
-    order: {
-      id:               order.id,
-      buyer_email:      order.buyer_email,
-      order_type:       order.order_type,
-      status:           order.status,
-      total_seeds:      order.total_seeds,
-      total_price:      order.total_price,
-      shipping_address: order.shipping_address,
-      created_at:       order.created_at,
-    },
-    allocations: (allocations ?? []) as unknown as Array<{
-      seeds_allocated: number;
-      lands: { name: string; region: string | null } | null;
-    }>,
-    buyerProfile: profile ?? null,
-    corporateQuote: quote ?? null,
-  });
+    let orderQuery = db.from("orders").select("id, user_id, buyer_email, order_type, status, total_seeds, total_price, shipping_address, created_at").eq("id", orderId);
+    // A reassignment between reads must not expose another customer's document to the old owner.
+    orderQuery = owner.user_id === null ? orderQuery.is("user_id", null) : orderQuery.eq("user_id", owner.user_id);
+    const { data: order, error: orderError } = await orderQuery.maybeSingle();
+    if (orderError) return unavailable();
+    if (!order) return reply({ error: "Sipariş bulunamadı." }, 404);
+    const [allocations, profile, quote] = await Promise.all([
+      db.from("order_allocations").select("seeds_allocated, lands(name, region)").eq("order_id", orderId),
+      order.user_id ? db.from("profiles").select("full_name, phone, address, city").eq("id", order.user_id).maybeSingle() : Promise.resolve({ data: null, error: null }),
+      db.from("corporate_quotes").select("company_name, tax_office, tax_no, contact_person").eq("order_id", orderId).maybeSingle(),
+    ]);
+    if (allocations.error || profile.error || quote.error) return unavailable();
+    return reply({
+      order: { id: order.id, buyer_email: order.buyer_email, order_type: order.order_type, status: order.status,
+        total_seeds: order.total_seeds, total_price: order.total_price, shipping_address: order.shipping_address, created_at: order.created_at },
+      allocations: allocations.data ?? [], buyerProfile: profile.data ?? null, corporateQuote: quote.data ?? null,
+    });
+  } catch { return unavailable(); }
 }

@@ -112,9 +112,9 @@ export default function CorporateLogin() {
               <div className="mt-5">
                 <div className="flex items-center justify-between mb-2">
                   <label htmlFor="kurumsal-sifre" className="text-sm font-medium text-emerald-200/50">{t("password")}</label>
-                  <button type="button" className="text-xs text-emerald-400 hover:text-emerald-300 transition-colors">
+                  <Link href="/auth/sifremi-unuttum" className="text-xs text-emerald-400 hover:text-emerald-300 transition-colors">
                     {t("forgot")}
-                  </button>
+                  </Link>
                 </div>
                 <div className="relative">
                   <input

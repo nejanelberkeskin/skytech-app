@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
     // Missing environment snapshots are legacy records for manual reconciliation, never inferred.
 
     /* ── 3. Sonucu iyzico'dan sorgula ─────────────────────────────────── */
-    const result = paymentRecord.status === "pending"
+    const result = ["pending", "failed", "cancelled"].includes(paymentRecord.status)
       ? await callIyzico("checkoutForm", "retrieve", { locale: "tr", token }) : {};
     // Ağ/SDK belirsizliği bir ödeme reddi değildir. Geç SDK yanıtı artık bu rotada yazma yapamaz.
     if (["timeout", "network", "config"].includes(String(result.errorCode))) return unlinked();

@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
     // One transaction owns the quote before opening a provider session. An uncertain prior
     // session is never replaced automatically, including when its token was not saved.
     const { data: claim, error: claimError } = await supabase.rpc("claim_b2b_checkout", {
-      p_quote: quoteId, p_user: user.id, p_amount: amount, p_seeds: seedCount, p_is_test: config.isTest,
+      p_quote: quote.id, p_user: user.id, p_amount: amount, p_seeds: seedCount, p_is_test: config.isTest,
     });
     if (claimError) return NextResponse.json({ error: "Ödeme başlatılamadı." }, { status: 503 });
     if (claim?.status !== "claimed") {
@@ -143,7 +143,7 @@ export async function POST(request: NextRequest) {
       const { error: tokenErr } = await supabase
         .from("payments")
         .update({
-          metadata: { checkout_type: "b2b", quote_id: quoteId, is_test: config.isTest, ui_locale: locale, iyzico_token: result.token as string },
+          metadata: { checkout_type: "b2b", quote_id: quote.id, is_test: config.isTest, ui_locale: locale, iyzico_token: result.token as string },
         })
         .eq("id", payment.id);
       if (tokenErr) {

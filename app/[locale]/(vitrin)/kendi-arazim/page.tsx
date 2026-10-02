@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link, redirect } from "@/i18n/navigation";
 import LandApplicationForm from "@/components/vitrin/talep/LandApplicationForm";
@@ -46,8 +45,19 @@ export default async function OwnLandPage({ params }: Props) {
               <Link href={SITES_HREF} className="max-w-full py-2 text-sm font-semibold text-[#1B6B3A] underline decoration-[#1B6B3A]/30 underline-offset-4">{t("sites")}</Link>
             </div>
           </div>
-          <div className="relative min-h-64 lg:min-h-full">
-            <Image src="/images/projeler/canakkale-gelibolu.webp" alt="" loading="eager" fill sizes="(min-width: 1024px) 45vw, 100vw" className="object-cover" />
+          {/* K15 seçenek A: fotoğrafsız marka paneli. Süs; bilgi taşımaz, faaliyet ya da saha iddiası yok. Gerçek saha fotoğrafı gelince değiştirilir. */}
+          <div aria-hidden="true" className="relative min-h-64 overflow-hidden mesh-dark grain-overlay lg:min-h-full">
+            <svg className="absolute inset-0 h-full w-full text-[#a7d4a7]" viewBox="0 0 480 360" preserveAspectRatio="xMidYMid slice" fill="none" stroke="currentColor">
+              {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+                <path
+                  key={i}
+                  d={`M-40 ${70 + i * 34} C 60 ${40 + i * 34}, 150 ${110 + i * 34}, 250 ${78 + i * 34} S 420 ${36 + i * 34}, 520 ${66 + i * 34}`}
+                  strokeWidth={i % 3 === 0 ? 1.4 : 0.8}
+                  strokeOpacity={0.14 + (i % 3 === 0 ? 0.12 : 0)}
+                />
+              ))}
+            </svg>
+            <div className="absolute inset-0 bg-gradient-to-t from-[#050d08]/60 via-transparent to-transparent" />
           </div>
         </div>
       </header>

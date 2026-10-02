@@ -9,6 +9,7 @@ import type { User } from "@supabase/supabase-js";
 import type { CorporateQuote } from "@/lib/types";
 import { intlLocale, uiLocale } from "@/lib/utils/locale";
 import { moneyTry, plainTl } from "@/lib/utils/money-display";
+import { paymentStartErrorKey } from "@/lib/corporate/api-responses";
 
 function Spinner() {
   const t = useTranslations("corporatePages");
@@ -111,8 +112,8 @@ function PaymentPage() {
           formContainer.appendChild(fragment);
         }
       } else {
-        // Ham sunucu ayrıntısı gösterilmez.
-        alert(t("startError"));
+        // Ham sunucu ayrıntısı gösterilmez. `checkout_unavailable`: ödeme durumu inceleme gerektiriyor; yeniden ödeme önerilmez.
+        alert(t(paymentStartErrorKey(data)));
       }
     } catch {
       alert(t("startError"));

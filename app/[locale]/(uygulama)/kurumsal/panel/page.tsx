@@ -10,6 +10,7 @@ import type { CorporateQuote } from "@/lib/types";
 import { intlLocale, uiLocale } from "@/lib/utils/locale";
 import { moneyTry, plainTl } from "@/lib/utils/money-display";
 import { seedRangeLabelKey } from "@/lib/corporate/quote-options";
+import { allocationOutcome, type AllocationOutcome } from "@/lib/corporate/api-responses";
 
 // Durum adı ve açıklaması çeviriden (corporatePages.overview.status.<key>); DB durum değerleri değişmez.
 const STATUS_META: Record<string, { key: string; badge: string; icon: string }> = {
@@ -523,9 +524,9 @@ function EmployeeDistributionSection({
 
   useEffect(() => { load(); }, [load]);
 
-  const showToast = (type: "success" | "error", msg: string) => {
+  const showToast = (type: "success" | "error", msg: string, ms = 3500) => {
     setToast({ type, msg });
-    setTimeout(() => setToast(null), 3500);
+    setTimeout(() => setToast(null), ms);
   };
 
   const handleAdd = async (e: React.FormEvent) => {
@@ -535,6 +536,7 @@ function EmployeeDistributionSection({
     if (isNaN(seeds) || seeds < 1) return;
 
     setSubmitting(true);
+    let outcome: AllocationOutcome;
     try {
       const res = await fetch("/api/kurumsal/employees", {
         method: "POST",
@@ -547,15 +549,27 @@ function EmployeeDistributionSection({
           send_email: true,
         }),
       });
-      // Ham sunucu iletisi gösterilmez; başarı ve hata metni çeviriden.
-      if (!res.ok) throw new Error("allocate_failed");
-      showToast("success", t("allocated", { name: form.name, count: seeds }));
-      setForm({ name: "", email: "", seeds: "1" });
-      load();
+      // Gövde okunamazsa (kesik/bozuk JSON) sonuç doğrulanmamış sayılır. Ham sunucu iletisi gösterilmez.
+      const body: unknown = await res.json().catch(() => null);
+      outcome = allocationOutcome(res.status, body);
     } catch {
-      showToast("error", t("allocateError"));
+      // İstek sunucuya ulaşmış olabilir: başarı ya da kesin hata denmez.
+      outcome = { kind: "uncertain" };
     } finally {
       setSubmitting(false);
+    }
+    if (outcome.kind === "success") {
+      const key = outcome.emailSent === true ? "allocatedEmailSent" : outcome.emailSent === false ? "allocatedEmailNotSent" : "allocatedNoEmailInfo";
+      showToast("success", t(key, { name: form.name, count: seeds }));
+      setForm({ name: "", email: "", seeds: "1" });
+      load();
+    } else if (outcome.kind === "uncertain") {
+      // Form korunur ve istek kendiliğinden yinelenmez. Liste yalnız okunarak yenilenir; kullanıcı tahsisin
+      // kaydedilip kaydedilmediğini görmeden yeniden göndermesin.
+      showToast("error", t("allocateUncertain"), 10000);
+      load();
+    } else {
+      showToast("error", t("allocateError"));
     }
   };
 
@@ -688,6 +702,7 @@ function EmployeeDistributionSection({
         {/* Toast */}
         {toast && (
           <div
+            role={toast.type === "error" ? "alert" : "status"}
             className="px-4 py-3 rounded-xl text-sm animate-fade-in"
             style={{
               background: toast.type === "success"

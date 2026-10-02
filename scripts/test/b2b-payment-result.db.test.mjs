@@ -144,3 +144,25 @@ test('B2B reconciliation: provider timeout remains pending, records bounded retr
  await assert.rejects(worker.reconcileB2bPayments(db),/^Error: b2b_reconciliation_incomplete$/);
  assert.equal((await h.state()).payment,'pending');const q=await one(h.db,'SELECT last_outcome,attempts FROM b2b_reconciliation_queue');assert.deepEqual(q,{last_outcome:'provider_unavailable',attempts:1});
 });
+
+// Regression for Claude review T1: finish must preserve visibility at the retry cap.
+test('B2B reconciliation: finishing attempt eight keeps unresolved payments visible for manual review', async t => {
+ const h = await setup(t), db = await reconciliation(h);
+ for (let attempt = 1; attempt <= 8; attempt++) {
+  await h.db.exec("UPDATE b2b_reconciliation_queue SET next_check_at=now()-interval '1 second'");
+  const claimed = await db.rpc('claim_b2b_reconciliation', {p_is_test:true});
+  assert.equal(claimed.data.length, 1);
+  assert.equal(claimed.data[0].attempt, attempt);
+  // A normal unresolved response must go through finish; lease-only tests miss this transition.
+  assert.equal((await db.rpc('finish_b2b_reconciliation', {p_payment:payment,p_attempt:attempt,p_outcome:'review'})).data, true);
+  assert.deepEqual(await one(h.db, 'SELECT attempts,state,last_outcome FROM b2b_reconciliation_queue'), {
+   attempts:attempt, state:attempt < 8 ? 'open' : 'needs_review', last_outcome:'review',
+  });
+  assert.deepEqual((await one(h.db, 'SELECT b2b_reconciliation_summary() AS value')).value, {
+   needsReview:attempt < 8 ? 0 : 1, unlinked:0,
+  });
+ }
+ await h.db.exec("UPDATE b2b_reconciliation_queue SET next_check_at=now()-interval '1 second'");
+ assert.deepEqual((await db.rpc('claim_b2b_reconciliation', {p_is_test:true})).data, []);
+ assert.equal((await h.state()).payment, 'pending');
+});

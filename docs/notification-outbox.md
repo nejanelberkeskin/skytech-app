@@ -1,6 +1,6 @@
 # Kalıcı sipariş bildirim kuyruğu — 036
 
-Bu paket #117 tabanında bağımsızdır. Eski, kabul edilmemiş 024–030 kapasite/finans taslağına dayanmaz; o taslaktaki 027 burada **036** olarak ayrılmıştır. İkisi bir arada uygulanmaz. Çalışan sipariş çekirdeğinin ödeme, rezerv, cayma kabulü veya iade davranışı değiştirilmez. 016 sipariş tabloları, 004 email_logs ve 020 job_runs ön koşuldur.
+Bu paket #117 tabanında bağımsızdır. Eski, kabul edilmemiş 024–030 kapasite/finans taslağına dayanmaz; o taslaktaki 027 burada **036** olarak ayrılmıştır. İkisi bir arada uygulanmaz. Çalışan sipariş çekirdeğinin ödeme, rezerv, cayma kabulü veya iade davranışı değiştirilmez. 016 sipariş tabloları, email_logs (repodaki 004; canlı tarihçede 20260915164914) ve 020 job_runs ön koşuldur.
 
 ## Davranış
 
@@ -14,9 +14,18 @@ Altı eski gönderici ağ yapmayan prepare işlevlerine ayrılmıştır; after()
 - Gövde, alıcı, gönderen, HTML ve PDF baytları ilk HTTP öncesi dondurulur; SHA-256 doğrulanır.
 - Ağdan önce first_network_at kaydedilir. Her denemede aynı gövde ve sg-outbox/UUID anahtarı kullanılır.
 - Resend [anahtarları 24 saat saklar](https://resend.com/changelog/idempotency-keys). Yerel otomatik deneme penceresi 23 saattir; pencere bitince yeni anahtar verilmez, needs_review gerekir.
+- Ağ başlamadan önce en fazla 24 sahiplenme denemesi yapılır; 24. başarısız hazırlık veya bu denemede çöken çalışanın süresi dolmuş kiralaması `preparation_attempts_exhausted` ile incelemeye alınır. Bu sayı hukuki teslim süresi değildir. Ağ başladıktan sonra aynı anahtar/gövdeyle mevcut 23 saat kuralı geçerlidir.
 - Zaman aşımı, 429/5xx ve aynı anahtara eşzamanlı 409 gecikmeli denenir. Farklı içerik 409, geçersiz alıcı gibi kesin 4xx kalıcı incelemeye gider. Eksik sağlayıcı kimliği başarı değildir.
 - Sağlayıcı kabulü, outbox sent, email_sent/email_logs ve videonun bildirildi kaydı tek settlement transaction'ındadır. sent gelen kutusuna teslim garantisi değildir.
 - Her ağdan önce sertifika/video uygunluğu yeniden kontrol edilir. Dondurma öncesi düzeltilmiş video kaynağı alınır; dondurma sonrası farklı bağlantıyla aynı anahtar kullanılmaz. Kontrolden sonra, dış HTTP ile eşzamanlı iptal atomik olamaz; bu sınırlama korunur.
+
+## Yayın sırası — zorunlu geçiş penceresi
+
+036 ile bu kod aynı kontrollü pencerede devreye alınır. Önce satış duraklatması (`sales_pause_017`) etkinleştirilir. Satış duraklatması tek başına yeterli değildir: eski sürümün ödeme dönüşleri/after işleri, cayma, sertifika ve video üreticileri ile zamanlayıcıları da durdurulmalı veya tamamlanmaları beklenmelidir. Eski çalışan kalmadığı doğrulanmadan yeni bildirim işçisi açılmaz.
+
+Ardından yedek/ön koşul kontrolü ve kayıtlı tek transaction ile 036 uygulanır, uyumlu uygulama dağıtılır. Kod 036 olmadan açılmaz: bildirimler güvenli yönde durur ve teyit/PDF gönderilmez. 036 eski kodla satışa açık bırakılmaz: eski doğrudan gönderici ile kuyruk birlikte çalışır. `email_logs` gerçek sütunları, 020 `job_runs`, anahtarlar ve yetkili harici scheduler doğrulanır. İlk kuyruk/iş kaydı ve onaylı gerçek ortam kabulü görüldükten sonra satış ve diğer üreticiler açılır. Bu belge canlı uygulama onayı veya uygulanmış işlem kaydı değildir.
+
+Ek savunma olarak claim ve ağ öncesi begin, aynı sipariş/şablonda geçerli sağlayıcı kimliği taşıyan eski `email_sent` kanıtını görünce `existing_delivery_evidence` ile incelemeye geçer; yeni e-posta göndermez. Kanıtı otomatik olarak kesin teslim saymaz, mevcut olayları silmez. begin kontrolünden sonra eski doğrudan göndericinin dış isteğiyle yarış yine mümkündür; bu nedenle geçiş duraklatması zorunludur. Geri dönüş gerekiyorsa önce yeni worker/scheduler durdurulur; üreticiler açıkken eski doğrudan gönderici sürüme kör rollback yapılmaz. Kuyruk/olay kanıtı korunur ve belirsiz kayıtlar operatör incelemesine bırakılır.
 
 ## İşletim ve panel
 
@@ -28,7 +37,7 @@ vercel.json değişmedi. Her 10 dakikada bir yetkili harici scheduler ve ilk ger
 
 ## Gizlilik ve manuel inceleme
 
-Outbox RLS kapalıdır; anon/authenticated tabloyu okuyamaz ve işlevleri çalıştıramaz. Servis rolü sayım/okuma ve sınırlı worker RPC'leri kullanır. Kaynak snapshot'ı fatura adresi, telefon, ödeme token/metadata, IP/user-agent, kullanıcı kimliği veya onay verisi kopyalamaz. Dondurulmuş e-posta gövdesi ise alıcı, özel sipariş bağlantısı ve sözleşme PDF'lerini içerir; istemci/panel veya genel günlüğe aktarılmaz.
+Outbox RLS etkindir; müşteri rollerine erişim politikası verilmez; anon/authenticated tabloyu okuyamaz ve işlevleri çalıştıramaz. Servis rolü sayım/okuma ve sınırlı worker RPC'leri kullanır. Kaynak snapshot'ı fatura adresi, telefon, ödeme token/metadata, IP/user-agent, kullanıcı kimliği veya onay verisi kopyalamaz. Dondurulmuş e-posta gövdesi ise alıcı, özel sipariş bağlantısı ve sözleşme PDF'lerini içerir; istemci/panel veya genel günlüğe aktarılmaz.
 
 review_order_notification yalnız needs_review durumunda, belgeli kanıtla confirm_sent veya dismiss yapar; kör retry/reset yoktur. Servis rolüne açık bu işlem için yeni UI veya herkese açık uç yoktur. İşlem yetkili operatörün sağlayıcı kanıtına dayanır. İki dakikalık lease ve 23 saat penceresi içinde gövde/source silinmez veya değiştirilmez. Şirketin onaylı saklama süreleri verilmediği için otomatik saklama süresi uydurulmadı; kaynak/gövde için silme/maskeleme politikası canlı öncesi kararlaştırılmalıdır.
 

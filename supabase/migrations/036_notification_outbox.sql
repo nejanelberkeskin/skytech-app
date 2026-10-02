@@ -91,13 +91,29 @@ DECLARE r public.order_notification_outbox; at timestamptz := clock_timestamp();
 BEGIN
   UPDATE public.order_notification_outbox SET state='needs_review',last_error='idempotency_window_elapsed',claim_token=NULL,lease_until=NULL
     WHERE state IN ('pending','leased') AND first_network_at <= at-interval '23 hours' AND (state='pending' OR lease_until<=at);
-  SELECT * INTO r FROM public.order_notification_outbox
-    WHERE ((state='pending' AND next_attempt_at<=at) OR (state='leased' AND lease_until<=at))
-      AND (p_templates IS NULL OR template=ANY(p_templates)) AND (p_order IS NULL OR order_id=p_order)
-    ORDER BY next_attempt_at,id LIMIT 1 FOR UPDATE SKIP LOCKED;
-  IF NOT FOUND THEN RETURN NULL; END IF;
-  UPDATE public.order_notification_outbox SET state='leased',claim_token=gen_random_uuid(),lease_until=at+interval '2 minutes',attempt_count=attempt_count+1
-    WHERE id=r.id RETURNING * INTO r;
+  LOOP
+    SELECT * INTO r FROM public.order_notification_outbox
+      WHERE ((state='pending' AND next_attempt_at<=at) OR (state='leased' AND lease_until<=at))
+        AND (p_templates IS NULL OR template=ANY(p_templates)) AND (p_order IS NULL OR order_id=p_order)
+      ORDER BY next_attempt_at,id LIMIT 1 FOR UPDATE SKIP LOCKED;
+    IF NOT FOUND THEN RETURN NULL; END IF;
+    -- A direct sender may have run between installing this migration and deploying
+    -- the worker. Do not replay its receipt under a new idempotency key.
+    IF EXISTS (SELECT 1 FROM public.order_events e WHERE e.order_id=r.order_id
+      AND e.type='email_sent' AND e.data->>'template'=r.template
+      AND length(trim(coalesce(e.data->>'id','')))>0 AND e.data->>'id'<>'skipped-no-api-key') THEN
+      UPDATE public.order_notification_outbox SET state='needs_review',last_error='existing_delivery_evidence',claim_token=NULL,lease_until=NULL WHERE id=r.id;
+      CONTINUE;
+    END IF;
+    -- Also bound crashes before network: retry may never have been reached.
+    IF r.first_network_at IS NULL AND r.attempt_count>=24 THEN
+      UPDATE public.order_notification_outbox SET state='needs_review',last_error='preparation_attempts_exhausted',claim_token=NULL,lease_until=NULL WHERE id=r.id;
+      CONTINUE;
+    END IF;
+    UPDATE public.order_notification_outbox SET state='leased',claim_token=gen_random_uuid(),lease_until=at+interval '2 minutes',attempt_count=attempt_count+1
+      WHERE id=r.id RETURNING * INTO r;
+    EXIT;
+  END LOOP;
   RETURN to_jsonb(r);
 END $$;
 
@@ -149,6 +165,15 @@ BEGIN
     IF r.body IS NOT NULL AND r.body<>p_body THEN RAISE EXCEPTION 'notification_body_frozen'; END IF;
     UPDATE public.order_notification_outbox SET body=p_body,body_sha256=encode(sha256(convert_to(p_body,'UTF8')),'hex') WHERE id=p_id;
   ELSIF p_action='begin' THEN
+    -- Check again if a direct sender's receipt appeared after claim/freeze.
+    -- The deployment pause is still required: external delivery cannot be atomic
+    -- with this database check or an uninstrumented old worker.
+    IF EXISTS (SELECT 1 FROM public.order_events e WHERE e.order_id=r.order_id
+      AND e.type='email_sent' AND e.data->>'template'=r.template
+      AND length(trim(coalesce(e.data->>'id','')))>0 AND e.data->>'id'<>'skipped-no-api-key') THEN
+      UPDATE public.order_notification_outbox SET state='needs_review',last_error='existing_delivery_evidence',claim_token=NULL,lease_until=NULL WHERE id=p_id;
+      RETURN NULL;
+    END IF;
     -- Re-check after payload freeze, including retries. This prevents a cancellation
     -- committed before this check from sending obsolete certificate/video content.
     -- A cancellation after this check cannot be atomic with an external HTTP call.
@@ -176,8 +201,8 @@ BEGIN
     IF r.first_network_at IS NULL THEN RAISE EXCEPTION 'notification_not_started'; END IF;
     PERFORM public.settle_order_notification(p_id,p_provider_id);
   ELSIF p_action IN ('retry','review') THEN
-    UPDATE public.order_notification_outbox SET state=CASE WHEN p_action='review' THEN 'needs_review' ELSE 'pending' END,
-      last_error=left(coalesce(p_error,'delivery_failed'),100),claim_token=NULL,lease_until=NULL,
+    UPDATE public.order_notification_outbox SET state=CASE WHEN p_action='review' OR (r.first_network_at IS NULL AND r.attempt_count>=24) THEN 'needs_review' ELSE 'pending' END,
+      last_error=CASE WHEN p_action='retry' AND r.first_network_at IS NULL AND r.attempt_count>=24 THEN 'preparation_attempts_exhausted' ELSE left(coalesce(p_error,'delivery_failed'),100) END,claim_token=NULL,lease_until=NULL,
       next_attempt_at=at+least(3600,30*power(2,least(r.attempt_count,7))) * interval '1 second' WHERE id=p_id;
     INSERT INTO public.order_events(order_id,type,actor,data) VALUES(r.order_id,'email_failed','system',jsonb_build_object('template',r.template,'outboxId',p_id,'reason',left(coalesce(p_error,'delivery_failed'),100)));
   ELSE RAISE EXCEPTION 'invalid_notification_action'; END IF;

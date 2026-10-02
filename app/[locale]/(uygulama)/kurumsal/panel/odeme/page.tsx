@@ -9,7 +9,7 @@ import type { User } from "@supabase/supabase-js";
 import type { CorporateQuote } from "@/lib/types";
 import { intlLocale, uiLocale } from "@/lib/utils/locale";
 import { moneyTry, plainTl } from "@/lib/utils/money-display";
-import { paymentStartErrorKey } from "@/lib/corporate/api-responses";
+import { paymentReturnStatus, paymentStartErrorKey } from "@/lib/corporate/api-responses";
 
 function Spinner() {
   const t = useTranslations("corporatePages");
@@ -31,7 +31,7 @@ export default function PaymentPageWrapper() {
 function PaymentPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const paymentStatus = searchParams.get("status");
+  const paymentStatus = paymentReturnStatus(searchParams.get("status"));
   // Adresteki `message` (sağlayıcı/sunucu iletisi) ekrana taşınmaz; durum metni çeviriden gelir.
   const quoteIdParam = searchParams.get("quote_id");
   const t = useTranslations("corporatePages.payment");
@@ -144,13 +144,24 @@ function PaymentPage() {
           </div>
         </div>
       )}
-      {paymentStatus === "error" && (
-        <div className="rounded-2xl px-5 py-4 flex items-center gap-3"
+      {(paymentStatus === "error" || paymentStatus === "declined") && (
+        <div role="alert" className="rounded-2xl px-5 py-4 flex items-center gap-3"
           style={{ background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)" }}>
-          <span className="text-2xl">❌</span>
+          <span aria-hidden="true" className="text-2xl">❌</span>
           <div>
-            <p className="font-semibold text-rose-400">{t("errorTitle")}</p>
-            <p className="text-sm text-rose-400/60">{t("errorText")}</p>
+            <p className="font-semibold text-rose-400">{t(paymentStatus === "declined" ? "declinedTitle" : "errorTitle")}</p>
+            <p className="text-sm text-rose-400/60">{t(paymentStatus === "declined" ? "declinedText" : "errorText")}</p>
+          </div>
+        </div>
+      )}
+      {/* C1: sonuç belirsiz (ör. sağlayıcı incelemesi, sorgu zaman aşımı) — yeniden ödeme önerilmez. */}
+      {paymentStatus === "pending" && (
+        <div role="status" className="rounded-2xl px-5 py-4 flex items-center gap-3"
+          style={{ background: "rgba(245,158,11,0.08)", border: "1px solid rgba(245,158,11,0.25)" }}>
+          <span aria-hidden="true" className="text-2xl">⏳</span>
+          <div>
+            <p className="font-semibold text-amber-300">{t("pendingTitle")}</p>
+            <p className="text-sm text-amber-200/70">{t("pendingText")}</p>
           </div>
         </div>
       )}

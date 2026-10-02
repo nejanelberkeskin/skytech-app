@@ -6,6 +6,12 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase/browser";
 
+/** Hesap rozeti: e-postanın yerel kısmından iki harf (ör. "uye@…" → "UY"); yoksa nötr nokta. Kişi/şirket adı uydurulmaz. */
+function initialsOf(email: string | null): string {
+  const local = (email ?? "").split("@")[0].replace(/[^\p{L}\p{N}]/gu, "");
+  return local.slice(0, 2).toUpperCase() || "•";
+}
+
 const NAV_ITEMS = [
   { href: "/kurumsal/panel", key: "overview", icon: "📊" },
   { href: "/kurumsal/panel/sertifikalar", key: "certificates", icon: "🎖️" },
@@ -92,9 +98,9 @@ export default function CorporatePanelLayout({ children }: { children: React.Rea
         {/* Company info */}
         <div className="px-5 py-4" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl flex items-center justify-center"
+            <div aria-hidden="true" className="w-10 h-10 rounded-2xl flex items-center justify-center"
               style={{ background: "linear-gradient(135deg, rgba(16,185,129,0.15), rgba(20,184,166,0.1))", border: "1px solid rgba(52,211,153,0.15)" }}>
-              <span className="text-emerald-400 font-bold text-sm">TB</span>
+              <span className="text-emerald-400 font-bold text-sm">{initialsOf(userEmail)}</span>
             </div>
             <div>
               <p className="text-sm font-medium text-white">{t("account")}</p>

@@ -81,13 +81,11 @@ function SifreYenilePage() {
     const { error: err } = await supabase.auth.updateUser({ password });
     setLoading(false);
     if (err) {
-      setError(
-        /same password/i.test(err.message)
-          ? t("samePassword")
-          : /weak|pwned|compromised/i.test(err.message)
-            ? t("weakPassword")
-            : t("resetError")
-      );
+      // Önce sağlayıcının hata kodu (AuthError.code); ileti deseni yalnız yedek. Ham ileti gösterilmez.
+      const raw = err.message ?? "";
+      const same = err.code === "same_password" || /same password|different from the old/i.test(raw);
+      const weak = err.code === "weak_password" || /weak|pwned|compromised/i.test(raw);
+      setError(same ? t("samePassword") : weak ? t("weakPassword") : t("resetError"));
       return;
     }
     setDone(true);

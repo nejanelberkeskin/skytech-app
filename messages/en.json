@@ -1036,7 +1036,7 @@
     },
     "form": {
       "heading": "Contact Form",
-      "subheading": "Fill in all the fields and we'll get back to you as soon as possible.",
+      "subheading": "Fill in all the fields; we will review your message and reply by email.",
       "name": {
         "label": "Full Name",
         "placeholder": "Full Name"
@@ -1066,7 +1066,7 @@
       "submitting": "Sending...",
       "success": {
         "title": "Message Received!",
-        "desc": "We will get back to you as soon as possible. Thank you."
+        "desc": "Your message has reached us; we will review it and reply by email. Thank you."
       },
       "error": "Something went wrong. Please try again or reach us directly at info@skytechgreen.com.",
       "uncertain": "We could not confirm the submission; your message may have reached us. Instead of sending it again, contact us at info@skytechgreen.com.",

@@ -419,7 +419,7 @@ const CONFIRM_TEXT = {
   tr: {
     subject: (no: string) => `Talebiniz alındı — ${no}`,
     title: "Talebiniz Alındı",
-    sub: "Skytech Green ekibi en kısa sürede sizinle iletişime geçecek",
+    sub: "Talebiniz kayda alındı; ekibimiz inceleyip sizinle iletişime geçecek",
     hello: (name: string) => `Merhaba <strong>${name}</strong>,`,
     intro: (type: string, no: string) =>
       `Talebiniz bize ulaştı: <strong>${type}</strong>. Talep numaranız: <strong style="font-family:monospace;font-size:16px;color:#059669;">${no}</strong>. Yazışmalarınızda bu numarayı belirtmeniz süreci hızlandırır.`,
@@ -432,7 +432,7 @@ const CONFIRM_TEXT = {
   en: {
     subject: (no: string) => `We received your request — ${no}`,
     title: "Request Received",
-    sub: "The Skytech Green team will get back to you shortly",
+    sub: "Your request is recorded; our team will review it and contact you",
     hello: (name: string) => `Hello <strong>${name}</strong>,`,
     intro: (type: string, no: string) =>
       `Your <strong>${type}</strong> has reached us. Your request number is <strong style="font-family:monospace;font-size:16px;color:#059669;">${no}</strong>. Quoting it in your correspondence speeds things up.`,

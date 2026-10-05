@@ -66,7 +66,7 @@ test('B2B HTTP callback uses the real SQL result; database error never redirects
  const db={from(){return{select(){return this;},eq(){return this;},single:async()=>({data:await one(h.db,'SELECT * FROM payments WHERE id=$1',[payment])})};},rpc:async(_n,args)=>fail?{error:{message:'PRIVATE'}}:{data:await h.call(args.p_result,args.p_is_test,args.p_payment)}};
  const route=load('app/api/payment/callback/route.ts',{'next/server':server,'@/lib/supabase/server':{createServiceRoleClient:()=>db},'@/lib/payments/iyzico-config':{iyzicoConfig:()=>({isTest:true})},'@/lib/b2b/payment-result':{b2bPaymentResult:r=>r},'@/lib/payments/iyzico':{callIyzico:async()=>{calls++;return result;}}});
  const post=()=>route.POST(new server.NextRequest('https://test.invalid/api/payment/callback',{method:'POST',body:new URLSearchParams({token:'local-token'})}));
- fail=true;t.mock.method(console,'error',()=>{});let r=await post();assert.equal(new URL(r.headers.get('location')).pathname,'/odeme/hata');assert.equal((await h.state()).payment,'pending');
+ fail=true;t.mock.method(console,'error',()=>{});let r=await post();assert.equal(new URL(r.headers.get('location')).searchParams.get('status'),'pending');assert.equal((await h.state()).payment,'pending');
  fail=false;r=await post();assert.equal(new URL(r.headers.get('location')).searchParams.get('status'),'success');assert.equal(r.headers.get('cache-control'),'private, no-store');assert.equal(r.status,303);
  await post();assert.equal(calls,2,'terminal repeat avoids provider');assert.equal((await h.state()).observations,1);
 });

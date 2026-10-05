@@ -35,7 +35,7 @@ test('B2B dönüşü: ortam ya da sağlayıcı uyuşmazlığında sağlayıcı s
     const h = kur(odeme);
     const r = await h.post();
     assert.equal(r.status, 303);
-    assert.equal(new URL(r.headers.get('location')).pathname, '/en/odeme/hata');
+    assert.equal(new URL(r.headers.get('location')).pathname, '/en/kurumsal/panel/odeme');
     assert.deepEqual(h.saglayici, [], JSON.stringify(odeme.metadata));
     assert.deepEqual(h.rpc, []);
   }

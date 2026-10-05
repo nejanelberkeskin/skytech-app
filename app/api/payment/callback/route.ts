@@ -38,6 +38,8 @@ export async function POST(request: NextRequest) {
   const redirect = (path: string) => NextResponse.redirect(new URL(`${locale === "tr" ? "" : `/${locale}`}${path}`, request.url), { status: 303, headers: { "Cache-Control": "private, no-store", "Referrer-Policy": "no-referrer" } });
   const unlinked = () => redirect(UNLINKED_ERROR_PATH);
 
+  let linked = false;
+  const pending = () => redirect(`${B2B_RESULT_PATH}?status=pending`);
   try {
     /* ── 1. Token ─────────────────────────────────────────────────────── */
     const formData = await request.formData();
@@ -73,15 +75,16 @@ export async function POST(request: NextRequest) {
     if (existingMeta.ui_locale !== undefined) {
       locale = existingMeta.ui_locale === "en" || existingMeta.ui_locale === "ru" ? existingMeta.ui_locale : "tr";
     }
+    linked = true;
     const config = iyzicoConfig();
-    if (!config || paymentRecord.provider !== "iyzico" || existingMeta.is_test !== config.isTest) return unlinked();
+    if (!config || paymentRecord.provider !== "iyzico" || existingMeta.is_test !== config.isTest) return pending();
     // Missing environment snapshots are legacy records for manual reconciliation, never inferred.
 
     /* ── 3. Sonucu iyzico'dan sorgula ─────────────────────────────────── */
     const result = ["pending", "failed", "cancelled"].includes(paymentRecord.status)
-      ? await callIyzico("checkoutForm", "retrieve", { locale: "tr", token }) : {};
+      ? await callIyzico("checkoutForm", "retrieve", { locale: "tr", token, conversationId: paymentId }) : {};
     // Ağ/SDK belirsizliği bir ödeme reddi değildir. Geç SDK yanıtı artık bu rotada yazma yapamaz.
-    if (["timeout", "network", "config"].includes(String(result.errorCode))) return unlinked();
+    if (["timeout", "network", "config"].includes(String(result.errorCode))) return pending();
 
     const { data: recorded, error: recordError } = await supabase.rpc("record_b2b_payment_result", {
       p_payment: paymentId,
@@ -90,7 +93,7 @@ export async function POST(request: NextRequest) {
     });
     if (recordError) {
       console.error("[callback] Ödeme sonucu atomik kaydedilemedi");
-      return unlinked();
+      return pending();
     }
     const isSuccess = recorded?.status === "paid" || recorded?.status === "already_paid";
 
@@ -100,11 +103,11 @@ export async function POST(request: NextRequest) {
       params.set("status", "success");
       if (orderId) params.set("order_id", orderId);
     } else {
-      params.set("status", "error");
+      params.set("status", "pending");
     }
     return redirect(`${B2B_RESULT_PATH}?${params.toString()}`);
   } catch {
     console.error("[callback] Beklenmeyen dönüş hatası");
-    return unlinked();
+    return linked ? pending() : unlinked();
   }
 }

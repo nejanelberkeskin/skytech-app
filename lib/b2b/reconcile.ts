@@ -11,7 +11,9 @@ export async function reconcileB2bPayments(db: SupabaseClient) {
   if (error) throw new Error("b2b_reconciliation_unavailable");
   const report = { checked: 0, paid: 0, review: 0, unavailable: 0 };
   for (const candidate of (candidates ?? []).slice(0, 2)) {
-    const result = await callIyzico("checkoutForm", "retrieve", { locale: "tr", token: candidate.token });
+    const result = candidate.token
+      ? await callIyzico("checkoutForm", "retrieve", { locale: "tr", token: candidate.token, conversationId: candidate.payment_id })
+      : await callIyzico("payment", "retrieve", { locale: "tr", paymentConversationId: candidate.payment_id });
     let outcome: string;
     if (["timeout", "network", "config"].includes(String(result.errorCode))) {
       outcome = "provider_unavailable";

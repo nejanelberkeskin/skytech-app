@@ -82,6 +82,8 @@ const nextConfig: NextConfig = {
         "/api/public/siparis/:path*",
         "/api/payment/:path*",
         "/api/public/odeme/:path*",
+        "/api/orders/invoice/:path*",
+        "/api/admin/release-orders/:id/belge/:kind",
       ].map((source) => ({
         source,
         headers: [{ key: "Referrer-Policy", value: "no-referrer" }],

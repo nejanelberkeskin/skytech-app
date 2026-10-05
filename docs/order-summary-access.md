@@ -10,3 +10,7 @@
 - Bütün yanıtlar `private, no-store`, `noindex, nofollow`, `no-referrer` taşır. Hatalar eski sayfanın beklediği `{error: string}` biçimindedir; ham sağlayıcı/veritabanı ayrıntısı ya da nesne döndürülmez. Alt veri sorgusu başarısızsa eksik verili başarılı belge üretilmez.
 
 Bu değişiklik yalnız yerel kod/test ve taslak PR kapsamındadır. SQL, yetki ataması, canlı veri okuma/yazma, gerçek e-posta/ödeme/iade ve dağıtım yapılmadı. Sahte hesap ve verilerle gerçek rota kodunu çalıştıran testler; sahip/izinsiz kişi/personel, üç ayrı izin, dar kapsam, MFA reddi, kimlik değişimi, sahiplik yarışı, misafir sahiplik ve hata yollarını sınar.
+
+## 5 Ekim — bağımsız inceleme eki
+
+Claude’un B1 bulgusu: genel Next.js başlık kuralı rota üzerindeki `no-referrer` değerini çalışma anında eziyordu. `next.config.ts` özel listesine eski sipariş özeti ve aynı başlığı kullanan yönetim belge ucu eklendi. Rota düzeyi testler tek başına bu önceliği kanıtlamaz; gerçek HTTP doğrulaması gerekir.

@@ -44,3 +44,9 @@ test('ödeme başlatma: checkout_unavailable kendi iletisini seçer ve iletiler 
     assert.ok(p.checkoutUnavailable.includes(p.tabInvoices), `${l}: fatura geçmişi sekmesinin adı iletide geçer`);
   }
 });
+
+test('çalışan tahsisi: boş, dizi veya kimliksiz allocation başarı değildir', () => {
+  for (const allocation of [{}, [], [{id:'fixture'}], {id:''}, {id:'   '}, {id:1}, {id:null}]) {
+    assert.deepEqual(allocationOutcome(200, {success:true,allocation,email_sent:true}), {kind:'uncertain'}, JSON.stringify(allocation));
+  }
+});

@@ -1036,7 +1036,7 @@
     },
     "form": {
       "heading": "İletişim Formu",
-      "subheading": "Tüm alanları doldurun, en kısa sürede dönüş yapalım.",
+      "subheading": "Tüm alanları doldurun; mesajınızı inceleyip e-postayla yanıtlayacağız.",
       "name": {
         "label": "Ad Soyad",
         "placeholder": "Ad Soyad"
@@ -1066,7 +1066,7 @@
       "submitting": "Gönderiliyor...",
       "success": {
         "title": "Mesajınız Alındı!",
-        "desc": "En kısa sürede size dönüş yapacağız. Teşekkür ederiz."
+        "desc": "Mesajınız bize ulaştı; inceleyip e-postayla yanıtlayacağız. Teşekkür ederiz."
       },
       "error": "Bir şeyler ters gitti. Lütfen tekrar deneyin veya doğrudan info@skytechgreen.com adresinden bize ulaşın.",
       "uncertain": "Gönderim sonucu doğrulanamadı; mesajınız ulaşmış olabilir. Aynı mesajı yeniden göndermek yerine info@skytechgreen.com üzerinden bizimle iletişime geçin.",

@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { supabase } from "@/lib/supabase/browser";
-import { CUSTOMER_STATUS_HINTS, CUSTOMER_STATUS_LABELS } from "@/lib/orders/labels";
 import type { OrderStatus } from "@/lib/orders/types";
 import { formatCount, formatTry } from "@/lib/pricing";
+import { intlLocale, uiLocale } from "@/lib/utils/locale";
 
 /* ═══════════════════════════════════════════════════════════════════════
    Hesabım — Siparişlerim (sahaya tohum topu bıraktırma)
@@ -53,10 +54,15 @@ const STATUS_CLASS: Partial<Record<OrderStatus, string>> = {
   refunded: "bg-white/[0.04] text-emerald-200/50 border-white/[0.08]",
 };
 
-const longDay = (iso: string | null | undefined) =>
-  iso ? new Date(iso.length === 10 ? `${iso}T12:00:00Z` : iso).toLocaleDateString("tr-TR", { dateStyle: "long", timeZone: "Europe/Istanbul" }) : null;
+const longDay = (iso: string | null | undefined, locale: string) =>
+  iso ? new Date(iso.length === 10 ? `${iso}T12:00:00Z` : iso).toLocaleDateString(intlLocale(locale), { dateStyle: "long", timeZone: "Europe/Istanbul" }) : null;
 
 export default function SiparislerPage() {
+  const t = useTranslations("accountPages.orders");
+  const tPages = useTranslations("accountPages");
+  // Durum adları sipariş sayfasıyla aynı sözcükler (orderStatusPage.statuses).
+  const tStatus = useTranslations("orderStatusPage.statuses");
+  const lang = uiLocale(useLocale());
   const [rows, setRows] = useState<Row[]>([]);
   const [loading, setLoading] = useState(true);
   const [linked, setLinked] = useState(0);
@@ -92,7 +98,7 @@ export default function SiparislerPage() {
   if (loading) {
     return (
       <div className="p-6 lg:p-8 flex justify-center py-16">
-        <div className="w-10 h-10 rounded-full border-2 border-emerald-500/20 border-t-emerald-400 animate-spin" />
+        <div role="status" aria-label={tPages("loading")} className="w-10 h-10 rounded-full border-2 border-emerald-500/20 border-t-emerald-400 animate-spin" />
       </div>
     );
   }
@@ -101,31 +107,29 @@ export default function SiparislerPage() {
     <div className="p-6 lg:p-8 space-y-6 animate-fade-in-up">
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div>
-          <h1 className="text-2xl font-bold text-white">Siparişlerim</h1>
-          <p className="text-sm text-emerald-200/40 mt-1">Proje Uygulama Sahalarına tohum topu bıraktırma siparişleriniz.</p>
+          <h1 className="text-2xl font-bold text-white">{t("title")}</h1>
+          <p className="text-sm text-emerald-200/40 mt-1">{t("subtitle")}</p>
         </div>
         <Link href="/sahalar" className="glass-btn px-5 py-2.5 rounded-2xl text-sm font-medium text-white transition-all">
-          Proje Uygulama Sahaları
+          {t("sitesCta")}
         </Link>
       </div>
 
       {linked > 0 && (
         <p className="rounded-2xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200">
-          Bu e-posta adresiyle daha önce verdiğiniz {linked} sipariş hesabınıza bağlandı.
+          {t("linked", { count: linked })}
         </p>
       )}
       {failed && (
-        <p className="rounded-2xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-200">Siparişler şu anda yüklenemedi. Lütfen sayfayı yenileyin.</p>
+        <p className="rounded-2xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-200" role="alert">{t("loadError")}</p>
       )}
 
       {rows.length === 0 && !failed ? (
         <div className="liquid-glass rounded-3xl p-10 text-center">
-          <p className="text-emerald-200/50 text-sm mb-2">Hesabınıza bağlı sipariş bulunmuyor.</p>
-          <p className="text-xs text-emerald-200/30 mb-5 max-w-md mx-auto">
-            Misafir olarak sipariş verdiyseniz, sipariş teyidi e-postanızdaki bağlantıyla siparişinizi görüntüleyebilirsiniz. Aynı e-posta adresiyle açılmış ve doğrulanmış hesaplarda siparişler buraya kendiliğinden bağlanır.
-          </p>
+          <p className="text-emerald-200/50 text-sm mb-2">{t("empty")}</p>
+          <p className="text-xs text-emerald-200/30 mb-5 max-w-md mx-auto">{t("emptyHint")}</p>
           <Link href="/sahalar" className="inline-flex glass-btn px-6 py-3 rounded-2xl text-sm font-medium text-white transition-all">
-            Sahaları incele →
+            {t("browseSites")}
           </Link>
         </div>
       ) : (
@@ -142,42 +146,42 @@ export default function SiparislerPage() {
                   <div className="min-w-0">
                     <p className="text-sm text-white">
                       <span className="font-mono text-emerald-300">{r.order_no}</span>
-                      {r.is_test && <span className="ml-2 px-2 py-0.5 rounded-full text-[10px] font-semibold border border-amber-500/30 bg-amber-500/10 text-amber-300">DENEME</span>}
+                      {r.is_test && <span className="ml-2 px-2 py-0.5 rounded-full text-[10px] font-semibold border border-amber-500/30 bg-amber-500/10 text-amber-300">{t("testBadge")}</span>}
                     </p>
                     <p className="text-base font-semibold text-white mt-1 break-words">{r.site_snapshot.name}</p>
                     <p className="text-xs text-emerald-200/30 mt-0.5">
-                      {longDay(r.created_at)}
+                      {longDay(r.created_at, lang)}
                       {place ? ` · ${place}` : ""}
                     </p>
                   </div>
                   <span className={`text-xs font-medium px-3 py-1.5 rounded-full border shrink-0 ${STATUS_CLASS[r.status] ?? "bg-white/[0.04] text-emerald-200/50 border-white/[0.08]"}`}>
-                    {CUSTOMER_STATUS_LABELS[r.status] ?? r.status}
+                    {tStatus.has(r.status) ? tStatus(r.status) : r.status}
                   </span>
                 </div>
 
-                <p className="text-sm text-emerald-200/50">{CUSTOMER_STATUS_HINTS[r.status]}</p>
+                {t.has(`hints.${r.status}`) && <p className="text-sm text-emerald-200/50">{t(`hints.${r.status}`)}</p>}
 
                 <div className="rounded-2xl bg-white/[0.03] border border-white/[0.06] divide-y divide-white/[0.06] text-sm">
-                  <Line label="Tohum topu adedi" value={formatCount(r.quantity, "tr")} />
-                  <Line label="Toplam hizmet bedeli (KDV dâhil)" value={formatTry(r.total_kurus, "tr")} />
-                  <Line label="Sertifikadaki ad" value={r.certificate_name} />
+                  <Line label={t("rows.quantity")} value={formatCount(r.quantity, lang)} />
+                  <Line label={t("rows.total")} value={formatTry(r.total_kurus, lang)} />
+                  <Line label={t("rows.certificateName")} value={r.certificate_name} />
                   {releasedOn ? (
-                    <Line label="Bırakma tarihi" value={longDay(releasedOn) ?? "—"} />
+                    <Line label={t("rows.releasedOn")} value={longDay(releasedOn, lang) ?? "—"} />
                   ) : !interrupted && r.performance_deadline ? (
-                    <Line label="En geç bırakılacağı tarih" value={longDay(r.performance_deadline) ?? "—"} />
+                    <Line label={t("rows.deadline")} value={longDay(r.performance_deadline, lang) ?? "—"} />
                   ) : null}
-                  {canWithdraw && <Line label="Cayma hakkının son günü" value={longDay(r.withdrawal_deadline) ?? "—"} />}
+                  {canWithdraw && <Line label={t("rows.withdrawalUntil")} value={longDay(r.withdrawal_deadline, lang) ?? "—"} />}
                 </div>
 
                 <div className="flex flex-wrap gap-x-5 gap-y-2 text-sm">
-                  <Link href={`/siparis/${r.order_no}`} className="text-emerald-300 hover:underline font-medium">Sipariş ayrıntıları ve belgeler →</Link>
+                  <Link href={`/siparis/${r.order_no}`} className="text-emerald-300 hover:underline font-medium">{t("details")}</Link>
                   {r.certificate_code && !r.certificate_cancelled_at && (
-                    <Link href={`/sertifika/${r.certificate_code}`} className="text-emerald-300 hover:underline">Katılım Sertifikası</Link>
+                    <Link href={`/sertifika/${r.certificate_code}`} className="text-emerald-300 hover:underline">{t("certificate")}</Link>
                   )}
                   {video && /^https:\/\//.test(video) && (
-                    <a href={video} target="_blank" rel="noopener noreferrer" className="text-emerald-300 hover:underline">Çalışmanın görüntüleri ↗</a>
+                    <a href={video} target="_blank" rel="noopener noreferrer" className="text-emerald-300 hover:underline">{t("video")}</a>
                   )}
-                  {canWithdraw && <Link href={`/cayma?no=${r.order_no}`} className="text-emerald-200/50 hover:text-white hover:underline">Cayma bildiriminde bulun</Link>}
+                  {canWithdraw && <Link href={`/cayma?no=${r.order_no}`} className="text-emerald-200/50 hover:text-white hover:underline">{t("withdraw")}</Link>}
                 </div>
               </div>
             );

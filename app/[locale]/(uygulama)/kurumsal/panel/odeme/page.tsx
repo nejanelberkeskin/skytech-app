@@ -2,18 +2,27 @@
 
 import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
+import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { supabase } from "@/lib/supabase/browser";
 import type { User } from "@supabase/supabase-js";
 import type { CorporateQuote } from "@/lib/types";
+import { intlLocale, uiLocale } from "@/lib/utils/locale";
+import { moneyTry, plainTl } from "@/lib/utils/money-display";
+import { paymentReturnStatus, paymentStartErrorKey } from "@/lib/corporate/api-responses";
+
+function Spinner() {
+  const t = useTranslations("corporatePages");
+  return (
+    <div className="p-6 lg:p-8 flex justify-center py-16">
+      <div role="status" aria-label={t("loading")} className="w-10 h-10 rounded-full border-2 border-emerald-500/20 border-t-emerald-400 animate-spin" />
+    </div>
+  );
+}
 
 export default function PaymentPageWrapper() {
   return (
-    <Suspense fallback={
-      <div className="p-6 lg:p-8 flex justify-center py-16">
-        <div className="w-10 h-10 rounded-full border-2 border-emerald-500/20 border-t-emerald-400 animate-spin" />
-      </div>
-    }>
+    <Suspense fallback={<Spinner />}>
       <PaymentPage />
     </Suspense>
   );
@@ -22,9 +31,11 @@ export default function PaymentPageWrapper() {
 function PaymentPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const paymentStatus = searchParams.get("status");
-  const paymentMessage = searchParams.get("message");
+  const paymentStatus = paymentReturnStatus(searchParams.get("status"));
+  // Adresteki `message` (sağlayıcı/sunucu iletisi) ekrana taşınmaz; durum metni çeviriden gelir.
   const quoteIdParam = searchParams.get("quote_id");
+  const t = useTranslations("corporatePages.payment");
+  const lang = uiLocale(useLocale());
 
   const [tab, setTab] = useState<"quote" | "invoices">("quote");
   const [loading, setLoading] = useState(true);
@@ -101,28 +112,25 @@ function PaymentPage() {
           formContainer.appendChild(fragment);
         }
       } else {
-        alert("Ödeme başlatılamadı: " + (data.error || "Bilinmeyen hata"));
+        // Ham sunucu ayrıntısı gösterilmez. `checkout_unavailable`: ödeme durumu inceleme gerektiriyor; yeniden ödeme önerilmez.
+        alert(t(paymentStartErrorKey(data)));
       }
-    } catch (error: unknown) {
-      alert("Ödeme hatası: " + (error instanceof Error ? error.message : "Bir hata oluştu"));
+    } catch {
+      alert(t("startError"));
     } finally {
       setPaymentLoading(false);
     }
   };
 
   if (!user || loading) {
-    return (
-      <div className="p-6 lg:p-8 flex justify-center py-16">
-        <div className="w-10 h-10 rounded-full border-2 border-emerald-500/20 border-t-emerald-400 animate-spin" />
-      </div>
-    );
+    return <Spinner />;
   }
 
   return (
     <div className="p-6 lg:p-8 space-y-8 animate-fade-in-up">
       <div>
-        <h1 className="text-2xl font-bold text-white">Ödeme & Faturalandırma</h1>
-        <p className="text-sm text-emerald-200/40 mt-1">Teklifinizi onaylayın ve ödeme yapın.</p>
+        <h1 className="text-2xl font-bold text-white">{t("title")}</h1>
+        <p className="text-sm text-emerald-200/40 mt-1">{t("subtitle")}</p>
       </div>
 
       {/* Ödeme sonucu */}
@@ -131,35 +139,46 @@ function PaymentPage() {
           style={{ background: "rgba(16,185,129,0.08)", border: "1px solid rgba(52,211,153,0.2)" }}>
           <span className="text-2xl">✅</span>
           <div>
-            <p className="font-semibold text-emerald-400">Ödeme Başarılı!</p>
-            <p className="text-sm text-emerald-400/60">{paymentMessage || "Teklifiniz onaylandı ve ödemeniz alındı."}</p>
+            <p className="font-semibold text-emerald-400">{t("successTitle")}</p>
+            <p className="text-sm text-emerald-400/60">{t("successText")}</p>
           </div>
         </div>
       )}
-      {paymentStatus === "error" && (
-        <div className="rounded-2xl px-5 py-4 flex items-center gap-3"
+      {(paymentStatus === "error" || paymentStatus === "declined") && (
+        <div role="alert" className="rounded-2xl px-5 py-4 flex items-center gap-3"
           style={{ background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)" }}>
-          <span className="text-2xl">❌</span>
+          <span aria-hidden="true" className="text-2xl">❌</span>
           <div>
-            <p className="font-semibold text-rose-400">Ödeme Başarısız</p>
-            <p className="text-sm text-rose-400/60">{paymentMessage || "Lütfen tekrar deneyin."}</p>
+            <p className="font-semibold text-rose-400">{t(paymentStatus === "declined" ? "declinedTitle" : "errorTitle")}</p>
+            <p className="text-sm text-rose-400/60">{t(paymentStatus === "declined" ? "declinedText" : "errorText")}</p>
+          </div>
+        </div>
+      )}
+      {/* C1: sonuç belirsiz (ör. sağlayıcı incelemesi, sorgu zaman aşımı) — yeniden ödeme önerilmez. */}
+      {paymentStatus === "pending" && (
+        <div role="status" className="rounded-2xl px-5 py-4 flex items-center gap-3"
+          style={{ background: "rgba(245,158,11,0.08)", border: "1px solid rgba(245,158,11,0.25)" }}>
+          <span aria-hidden="true" className="text-2xl">⏳</span>
+          <div>
+            <p className="font-semibold text-amber-300">{t("pendingTitle")}</p>
+            <p className="text-sm text-amber-200/70">{t("pendingText")}</p>
           </div>
         </div>
       )}
 
       {/* Tabs */}
       <div className="flex gap-2">
-        <button onClick={() => setTab("quote")}
+        <button type="button" aria-pressed={tab === "quote"} onClick={() => setTab("quote")}
           className={`px-5 py-2.5 rounded-2xl text-sm font-medium transition-all ${
             tab === "quote" ? "glass-glow text-emerald-300" : "glass-subtle text-emerald-200/40 hover:text-white"
           }`}>
-          Teklif Ödemesi
+          {t("tabQuote")}
         </button>
-        <button onClick={() => setTab("invoices")}
+        <button type="button" aria-pressed={tab === "invoices"} onClick={() => setTab("invoices")}
           className={`px-5 py-2.5 rounded-2xl text-sm font-medium transition-all ${
             tab === "invoices" ? "glass-glow text-emerald-300" : "glass-subtle text-emerald-200/40 hover:text-white"
           }`}>
-          Fatura Geçmişi
+          {t("tabInvoices")}
         </button>
       </div>
 
@@ -170,13 +189,11 @@ function PaymentPage() {
             <div className="liquid-glass rounded-3xl p-10 text-center">
               <span className="text-4xl block mb-3">📋</span>
               <p className="text-emerald-200/40 mb-2">
-                {quote?.status === "PAID"
-                  ? "Bu teklifin ödemesi tamamlanmış."
-                  : "Ödeme yapılabilecek aktif bir teklifiniz bulunmuyor."}
+                {quote?.status === "PAID" ? t("alreadyPaid") : t("noActive")}
               </p>
-              <button onClick={() => router.push("/kurumsal/panel")}
+              <button type="button" onClick={() => router.push("/kurumsal/panel")}
                 className="text-sm text-emerald-400 hover:text-emerald-300 transition-colors">
-                Panele Dön
+                {t("backToPanel")}
               </button>
             </div>
           ) : (
@@ -184,19 +201,19 @@ function PaymentPage() {
               {/* Quote summary */}
               <div className="liquid-glass rounded-3xl overflow-hidden">
                 <div className="px-6 py-4" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)", background: "rgba(16,185,129,0.04)" }}>
-                  <h3 className="font-semibold text-white">Teklif Özeti</h3>
+                  <h3 className="font-semibold text-white">{t("summary")}</h3>
                   <p className="text-xs text-emerald-200/25 mt-0.5">#{quote.id.slice(0, 8).toUpperCase()}</p>
                 </div>
                 <div className="p-6 space-y-4">
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div><p className="text-xs text-emerald-200/30">Firma</p><p className="text-sm text-white font-medium">{quote.company_name}</p></div>
-                    <div><p className="text-xs text-emerald-200/30">Tohum Sayısı</p><p className="text-sm text-white font-medium">{quote.approved_seed_count?.toLocaleString("tr-TR")} adet</p></div>
-                    <div><p className="text-xs text-emerald-200/30">Birim Fiyat</p><p className="text-sm text-white font-medium">{quote.approved_seed_count ? (Number(quote.approved_price) / quote.approved_seed_count).toFixed(2) : "—"} TL/tohum</p></div>
-                    <div><p className="text-xs text-emerald-200/30">Toplam Tutar</p><p className="text-xl font-bold text-emerald-400">{Number(quote.approved_price).toLocaleString("tr-TR", { style: "currency", currency: "TRY" })}</p></div>
+                    <div><p className="text-xs text-emerald-200/30">{t("company")}</p><p className="text-sm text-white font-medium">{quote.company_name}</p></div>
+                    <div><p className="text-xs text-emerald-200/30">{t("seedCount")}</p><p className="text-sm text-white font-medium">{quote.approved_seed_count != null ? t("seedUnit", { count: quote.approved_seed_count }) : null}</p></div>
+                    <div><p className="text-xs text-emerald-200/30">{t("unitPrice")}</p><p className="text-sm text-white font-medium">{quote.approved_seed_count ? (Number(quote.approved_price) / quote.approved_seed_count).toFixed(2) : "—"} {t("perSeedUnit")}</p></div>
+                    <div><p className="text-xs text-emerald-200/30">{t("total")}</p><p className="text-xl font-bold text-emerald-400">{moneyTry(Number(quote.approved_price), lang)}</p></div>
                   </div>
                   {quote.admin_note && (
                     <div className="rounded-2xl px-4 py-3" style={{ background: "rgba(56,189,248,0.05)", border: "1px solid rgba(56,189,248,0.15)" }}>
-                      <p className="text-xs text-sky-400 font-medium mb-1">Admin Notu</p>
+                      <p className="text-xs text-sky-400 font-medium mb-1">{t("adminNote")}</p>
                       <p className="text-sm text-sky-300">{quote.admin_note}</p>
                     </div>
                   )}
@@ -206,22 +223,22 @@ function PaymentPage() {
               {/* Payment: Iyzico */}
               <div className="liquid-glass rounded-3xl p-6 space-y-4 overflow-hidden relative">
                 <div className="relative z-10">
-                  <h3 className="font-semibold text-white">Kredi Kartı ile Ödeme</h3>
+                  <h3 className="font-semibold text-white">{t("cardTitle")}</h3>
                   <div id="iyzico-checkout" className="min-h-64 glass-subtle rounded-2xl p-4 mt-4">
-                    <p className="text-center text-emerald-200/30 text-sm py-8">Ödeme formunu yüklemek için aşağıdaki butona tıklayın.</p>
+                    <p className="text-center text-emerald-200/30 text-sm py-8">{t("formHint")}</p>
                   </div>
                   <div className="flex items-center justify-between pt-4 mt-4" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
                     <div>
-                      <p className="text-sm text-emerald-200/40">Toplam Tutar</p>
-                      <p className="text-xl font-bold text-white">{Number(quote.approved_price).toLocaleString("tr-TR", { style: "currency", currency: "TRY" })}</p>
+                      <p className="text-sm text-emerald-200/40">{t("total")}</p>
+                      <p className="text-xl font-bold text-white">{moneyTry(Number(quote.approved_price), lang)}</p>
                     </div>
-                    <button onClick={handleQuotePayment} disabled={paymentLoading}
+                    <button type="button" onClick={handleQuotePayment} disabled={paymentLoading}
                       className="glass-btn px-8 py-3 rounded-2xl text-white font-medium transition-all disabled:opacity-50">
-                      {paymentLoading ? "Yükleniyor..." : "Teklifi Onayla & Öde"}
+                      {paymentLoading ? t("paying") : t("pay")}
                     </button>
                   </div>
                   <div className="mt-4 rounded-2xl px-4 py-3" style={{ background: "rgba(56,189,248,0.04)", border: "1px solid rgba(56,189,248,0.1)" }}>
-                    <p className="text-xs text-sky-400/60">Tüm ödemeler Iyzico tarafından güvenli şekilde işlenir. Faturanız otomatik olarak oluşturulacaktır.</p>
+                    <p className="text-xs text-sky-400/60">{t("secureNote")}</p>
                   </div>
                 </div>
               </div>
@@ -234,30 +251,30 @@ function PaymentPage() {
       {tab === "invoices" && (
         <div className="liquid-glass rounded-3xl overflow-hidden">
           {invoices.length === 0 ? (
-            <div className="p-10 text-center"><p className="text-emerald-200/40">Henüz ödeme yapılmamış.</p></div>
+            <div className="p-10 text-center"><p className="text-emerald-200/40">{t("noPayments")}</p></div>
           ) : (
             <table className="w-full text-sm">
               <thead>
                 <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }} className="text-left">
-                  <th className="px-5 py-3 text-xs font-medium text-emerald-200/30 uppercase">Ödeme ID</th>
-                  <th className="px-5 py-3 text-xs font-medium text-emerald-200/30 uppercase">Tarih</th>
-                  <th className="px-5 py-3 text-xs font-medium text-emerald-200/30 uppercase">Tutar</th>
-                  <th className="px-5 py-3 text-xs font-medium text-emerald-200/30 uppercase">Durum</th>
+                  <th className="px-5 py-3 text-xs font-medium text-emerald-200/30 uppercase">{t("colId")}</th>
+                  <th className="px-5 py-3 text-xs font-medium text-emerald-200/30 uppercase">{t("colDate")}</th>
+                  <th className="px-5 py-3 text-xs font-medium text-emerald-200/30 uppercase">{t("colAmount")}</th>
+                  <th className="px-5 py-3 text-xs font-medium text-emerald-200/30 uppercase">{t("colStatus")}</th>
                 </tr>
               </thead>
               <tbody>
                 {invoices.map((inv) => (
                   <tr key={inv.id} className="hover:bg-white/[0.02] transition-colors" style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
                     <td className="px-5 py-3 text-emerald-200/30 font-mono text-xs">{inv.id.slice(0, 8)}</td>
-                    <td className="px-5 py-3 text-emerald-200/25 text-xs">{new Date(inv.created_at).toLocaleDateString("tr-TR")}</td>
-                    <td className="px-5 py-3 text-white font-medium">{Number(inv.amount).toLocaleString("tr-TR")} TL</td>
+                    <td className="px-5 py-3 text-emerald-200/25 text-xs">{new Date(inv.created_at).toLocaleDateString(intlLocale(lang))}</td>
+                    <td className="px-5 py-3 text-white font-medium">{plainTl(Number(inv.amount), lang)}</td>
                     <td className="px-5 py-3">
                       <span className={`inline-flex px-2.5 py-1 text-xs font-medium rounded-full border ${
                         inv.status === "success" ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/20"
                         : inv.status === "pending" ? "bg-amber-500/15 text-amber-400 border-amber-500/20"
                         : "bg-rose-500/15 text-rose-400 border-rose-500/20"
                       }`}>
-                        {inv.status === "success" ? "Ödendi" : inv.status === "pending" ? "Bekleniyor" : "Başarısız"}
+                        {inv.status === "success" ? t("statusPaid") : inv.status === "pending" ? t("statusPending") : t("statusFailed")}
                       </span>
                     </td>
                   </tr>

@@ -1,19 +1,28 @@
 "use client";
 
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase/browser";
 
+/** Hesap rozeti: e-postanın yerel kısmından iki harf (ör. "uye@…" → "UY"); yoksa nötr nokta. Kişi/şirket adı uydurulmaz. */
+function initialsOf(email: string | null): string {
+  const local = (email ?? "").split("@")[0].replace(/[^\p{L}\p{N}]/gu, "");
+  return local.slice(0, 2).toUpperCase() || "•";
+}
+
 const NAV_ITEMS = [
-  { href: "/kurumsal/panel", label: "Genel Bakış", icon: "📊" },
-  { href: "/kurumsal/panel/sertifikalar", label: "Sertifika Merkezi", icon: "🎖️" },
-  { href: "/kurumsal/panel/odeme", label: "Ödeme & Fatura", icon: "💳" },
+  { href: "/kurumsal/panel", key: "overview", icon: "📊" },
+  { href: "/kurumsal/panel/sertifikalar", key: "certificates", icon: "🎖️" },
+  { href: "/kurumsal/panel/odeme", key: "payment", icon: "💳" },
 ];
 
 export default function CorporatePanelLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
+  const t = useTranslations("corporatePages.panel");
+  const tc = useTranslations("corporatePages");
   const [checking, setChecking] = useState(true);
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -42,7 +51,7 @@ export default function CorporatePanelLayout({ children }: { children: React.Rea
           <div className="nature-orb nature-orb-2" />
         </div>
         <div className="relative z-10 min-h-screen flex items-center justify-center">
-          <div className="w-10 h-10 rounded-full border-2 border-emerald-500/20 border-t-emerald-400 animate-spin" />
+          <div role="status" aria-label={tc("loading")} className="w-10 h-10 rounded-full border-2 border-emerald-500/20 border-t-emerald-400 animate-spin" />
         </div>
       </div>
     );
@@ -73,7 +82,7 @@ export default function CorporatePanelLayout({ children }: { children: React.Rea
       >
         {/* Logo */}
         <div className="px-6 py-5" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-          <Link href="/kurumsal" className="flex items-center gap-2.5" onClick={() => setSidebarOpen(false)} aria-label="Skytech Green Kurumsal">
+          <Link href="/kurumsal" className="flex items-center gap-2.5" onClick={() => setSidebarOpen(false)} aria-label={tc("homeAria")}>
             <Image
               src="/images/brand/logo-light.webp"
               alt="Skytech Green"
@@ -83,24 +92,24 @@ export default function CorporatePanelLayout({ children }: { children: React.Rea
               className="h-8 w-auto"
             />
           </Link>
-          <p className="text-xs text-emerald-200/25 mt-1.5">Kurumsal Panel</p>
+          <p className="text-xs text-emerald-200/25 mt-1.5">{t("title")}</p>
         </div>
 
         {/* Company info */}
         <div className="px-5 py-4" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl flex items-center justify-center"
+            <div aria-hidden="true" className="w-10 h-10 rounded-2xl flex items-center justify-center"
               style={{ background: "linear-gradient(135deg, rgba(16,185,129,0.15), rgba(20,184,166,0.1))", border: "1px solid rgba(52,211,153,0.15)" }}>
-              <span className="text-emerald-400 font-bold text-sm">TB</span>
+              <span className="text-emerald-400 font-bold text-sm">{initialsOf(userEmail)}</span>
             </div>
             <div>
-              <p className="text-sm font-medium text-white">Kurumsal Hesap</p>
-              <p className="text-xs text-emerald-200/25">Aktif</p>
+              <p className="text-sm font-medium text-white">{t("account")}</p>
+              <p className="text-xs text-emerald-200/25">{t("active")}</p>
             </div>
           </div>
         </div>
 
-        <nav className="flex-1 px-3 py-4 space-y-1">
+        <nav aria-label={t("navLabel")} className="flex-1 px-3 py-4 space-y-1">
           {NAV_ITEMS.map((item) => {
             const isActive = pathname === item.href;
             return (
@@ -112,7 +121,7 @@ export default function CorporatePanelLayout({ children }: { children: React.Rea
                     : "text-emerald-200/40 hover:text-white hover:bg-white/[0.04]"
                 }`}>
                 <span className="text-base">{item.icon}</span>
-                <span>{item.label}</span>
+                <span>{t(`nav.${item.key}`)}</span>
               </Link>
             );
           })}
@@ -125,11 +134,11 @@ export default function CorporatePanelLayout({ children }: { children: React.Rea
           <div className="flex items-center justify-between">
             <Link href="/kurumsal" className="text-xs text-emerald-200/30 hover:text-white transition-colors"
               onClick={() => setSidebarOpen(false)}>
-              ← Ana Sayfa
+              {t("home")}
             </Link>
-            <button onClick={handleLogout}
+            <button type="button" onClick={handleLogout}
               className="text-xs text-emerald-200/25 hover:text-rose-400 transition-colors">
-              Çıkış Yap
+              {t("logout")}
             </button>
           </div>
         </div>
@@ -144,14 +153,14 @@ export default function CorporatePanelLayout({ children }: { children: React.Rea
             backdropFilter: "blur(20px) saturate(1.4)",
             borderBottom: "1px solid rgba(255,255,255,0.06)",
           }}>
-          <button onClick={() => setSidebarOpen(true)}
+          <button type="button" onClick={() => setSidebarOpen(true)} aria-label={t("menuOpen")} aria-expanded={sidebarOpen}
             className="w-10 h-10 rounded-2xl flex items-center justify-center text-emerald-200/50 hover:text-white transition-colors"
             style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}>
             <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
-          <span className="text-sm font-bold text-white">Kurumsal Panel</span>
+          <span className="text-sm font-bold text-white">{t("title")}</span>
           <div className="w-10" />
         </div>
         {children}

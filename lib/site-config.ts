@@ -107,7 +107,7 @@ const TRANSACTION_ROUTE_PATTERNS: RegExp[] = [
   /^\/kurumsal\/giris(\/.*)?$/,     // kurumsal giriş
   /^\/kurumsal\/panel(\/.*)?$/,     // kurumsal panel (ödeme gerektirir)
   /^\/kurumsal\/teklif-al(\/.*)?$/, // hesap yaratan B2B teklif formu
-  /^\/fatura(\/.*)?$/,              // sipariş belgesi (yer tutucu satıcı bilgisi içeriyor)
+  /^\/fatura(\/.*)?$/,              // sipariş belgesi (B2B; resmî e-Arşiv faturası değil)
   /^\/orman(\/.*)?$/,               // şirket ormanı sayfası
 ];
 

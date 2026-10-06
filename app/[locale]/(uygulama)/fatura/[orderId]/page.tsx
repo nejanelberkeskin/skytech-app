@@ -1,7 +1,8 @@
 "use client";
 
 /**
- * /fatura/[orderId] — E-Arşiv Fatura / Dekont
+ * /fatura/[orderId] — sipariş özeti (B2B). Resmî fatura DEĞİLDİR: fatura elle e-Arşiv'den kesilir (K14).
+ * Belgenin adı ve dipnotu mali müşavir kararına kadar bu nötr hâlde kalır (K21).
  *
  * Tasarım felsefesi:
  *   - Ekranda: Karanlık sayfa üzerinde beyaz "kağıt" gölge efektiyle
@@ -12,23 +13,23 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useParams } from "next/navigation";
+import { COMPANY, companyAddressLine } from "@/lib/company";
 
 /* ═══════════════════════════════════════════════════════════
    Şirket sabit bilgileri
    ═══════════════════════════════════════════════════════════ */
 /**
- * Şirket bilgileri — .env.local üzerinden yapılandırılabilir.
- * NEXT_PUBLIC_ prefix'i kullanılıyor çünkü bu değerler
- * client-side render edilen fatura sayfasında görünür.
+ * Satıcı künyesi — tek kaynak `lib/company.ts` (kullanıcı teyitli, 22 Eylül 2026). Ortam değişkeniyle ezilmez;
+ * uydurma yedek değer yoktur. Bu sayfa resmî e-Arşiv faturası değildir (fatura elle e-Arşiv; K14).
  */
 const SELLER = {
-  name:       process.env.NEXT_PUBLIC_COMPANY_NAME      || "Skytech Havacılık A.Ş.",
-  taxOffice:  process.env.NEXT_PUBLIC_COMPANY_TAX_OFFICE || "Ankara Vergi Dairesi",
-  taxNo:      process.env.NEXT_PUBLIC_COMPANY_TAX_NO     || "123 456 7890",
-  address:    process.env.NEXT_PUBLIC_COMPANY_ADDRESS    || "Çankaya Mah. Yeşil Vadi Sok. No:12, Çankaya / Ankara",
-  email:      process.env.NEXT_PUBLIC_COMPANY_EMAIL      || "info@skytech.green",
-  phone:      process.env.NEXT_PUBLIC_COMPANY_PHONE      || "+90 (312) 000 00 00",
-  website:    process.env.NEXT_PUBLIC_COMPANY_WEBSITE    || "skytech.green",
+  name:      COMPANY.legalName,
+  taxOffice: `${COMPANY.taxOffice} Vergi Dairesi`,
+  taxNo:     COMPANY.taxId,
+  address:   companyAddressLine(),
+  email:     COMPANY.email,
+  phone:     COMPANY.phone ?? "—",
+  website:   COMPANY.website.replace(/^https?:\/\//, ""),
 };
 
 const KDV_RATE = 0.20; // %20 KDV
@@ -150,34 +151,6 @@ function buildLineItems(data: InvoiceData): LineItem[] {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   QR Kod (doğrulama)
-   ═══════════════════════════════════════════════════════════ */
-function QrCode({ orderId }: { orderId: string }) {
-  const url = `https://skytech.green/fatura/${orderId}`;
-  const qrSrc = `https://api.qrserver.com/v1/create-qr-code/?size=88x88&format=svg&color=000000&bgcolor=ffffff&data=${encodeURIComponent(url)}`;
-
-  return (
-    <div className="flex flex-col items-center gap-1.5">
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={qrSrc}
-        alt="Doğrulama QR Kodu"
-        width={88}
-        height={88}
-        className="rounded border border-gray-200"
-        onError={(e) => {
-          // QR servisi erişilemezse basit placeholder göster
-          (e.currentTarget as HTMLImageElement).style.display = "none";
-        }}
-      />
-      <span className="text-[9px] text-gray-400 text-center leading-tight">
-        Doğrulama QR Kodu
-      </span>
-    </div>
-  );
-}
-
-/* ═══════════════════════════════════════════════════════════
    Ana bileşen
    ═══════════════════════════════════════════════════════════ */
 export default function FaturaPage() {
@@ -192,7 +165,7 @@ export default function FaturaPage() {
     try {
       const res  = await fetch(`/api/orders/invoice/${orderId}`, { cache: "no-store" });
       const json = await res.json();
-      if (!res.ok) { setError(json.error ?? "Fatura yüklenemedi."); return; }
+      if (!res.ok) { setError(json.error ?? "Belge yüklenemedi."); return; }
       setData(json as InvoiceData);
     } catch {
       setError("Sunucuya ulaşılamadı.");
@@ -212,7 +185,7 @@ export default function FaturaPage() {
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/>
           </svg>
-          <p className="text-sm text-gray-500">Fatura yükleniyor…</p>
+          <p className="text-sm text-gray-500">Belge yükleniyor…</p>
         </div>
       </div>
     );
@@ -224,7 +197,7 @@ export default function FaturaPage() {
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
         <div className="bg-white rounded-2xl shadow-lg p-10 text-center max-w-sm">
           <span className="text-4xl block mb-4">⚠️</span>
-          <p className="text-base font-semibold text-gray-800 mb-2">Fatura Yüklenemedi</p>
+          <p className="text-base font-semibold text-gray-800 mb-2">Belge Yüklenemedi</p>
           <p className="text-sm text-gray-500">{error}</p>
         </div>
       </div>
@@ -243,8 +216,8 @@ export default function FaturaPage() {
     ? `${corporateQuote.tax_office ?? ""} / ${corporateQuote.tax_no ?? ""}`.replace(/^\/|\/$/g, "").trim()
     : null;
 
-  /* ── Duruma göre etiket ─────────────────────────────────── */
-  const INVOICE_TITLE = corporateQuote ? "E-ARŞİV FATURA" : "DEKONT / ALIM BELGESİ";
+  /* ── Belge adı: resmî fatura değil (K14/K21) ──────────────── */
+  const INVOICE_TITLE = "SİPARİŞ ÖZETİ";
 
   return (
     <>
@@ -287,7 +260,7 @@ export default function FaturaPage() {
             <span className="text-xl">🌱</span>
             <div>
               <p className="text-sm font-semibold text-white leading-tight">Skytech Green</p>
-              <p className="text-xs text-gray-400">E-Arşiv Fatura</p>
+              <p className="text-xs text-gray-400">Sipariş Özeti</p>
             </div>
           </div>
 
@@ -338,11 +311,11 @@ export default function FaturaPage() {
               </div>
               <div>
                 <p className="text-lg font-bold text-gray-900 leading-tight">Skytech Green</p>
-                <p className="text-xs text-gray-400 tracking-wide">Teknoloji A.Ş.</p>
+                <p className="text-xs text-gray-400 tracking-wide">{SELLER.website}</p>
               </div>
             </div>
 
-            {/* Fatura başlık bilgileri */}
+            {/* Belge başlık bilgileri */}
             <div className="text-right">
               <p
                 className="text-xl font-black tracking-widest uppercase"
@@ -352,7 +325,7 @@ export default function FaturaPage() {
               </p>
               <div className="mt-2 space-y-0.5">
                 <p className="text-xs text-gray-500">
-                  Fatura No:{" "}
+                  Belge No:{" "}
                   <span className="font-bold text-gray-800 font-mono">{invoiceNo(order.id)}</span>
                 </p>
                 <p className="text-xs text-gray-500">
@@ -526,13 +499,11 @@ export default function FaturaPage() {
                 className="text-[10px] font-bold uppercase tracking-wider"
                 style={{ color: "#9ca3af" }}
               >
-                Yasal Bilgilendirme
+                Bilgilendirme
               </p>
               <p className="text-[10px] text-gray-400 leading-relaxed max-w-lg">
-                Bu belge 5070 sayılı Elektronik İmza Kanunu ve 213 sayılı Vergi Usul Kanunu
-                kapsamında düzenlenmiş elektronik arşiv faturası niteliğindedir.
-                Geçerlilik için yetkili imza aranmaz. Tüm hakları Skytech Havacılık A.Ş.{" "}
-                tarafından saklıdır.
+                Bu belge sipariş ve ödeme bilgilerinizin özetidir; resmî fatura yerine geçmez.
+                Resmî faturanız {SELLER.name} tarafından ayrıca düzenlenir.
               </p>
               <div className="flex items-center gap-4 pt-1">
                 <div className="flex items-center gap-1.5">
@@ -540,24 +511,23 @@ export default function FaturaPage() {
                     className="w-2 h-2 rounded-full"
                     style={{ background: "#10b981" }}
                   />
-                  <span className="text-[10px] text-gray-400">skytech.green</span>
+                  <span className="text-[10px] text-gray-400">{SELLER.website}</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <div
                     className="w-2 h-2 rounded-full"
                     style={{ background: "#10b981" }}
                   />
-                  <span className="text-[10px] text-gray-400">info@skytech.green</span>
+                  <span className="text-[10px] text-gray-400">{SELLER.email}</span>
                 </div>
               </div>
             </div>
 
-            {/* Sağ: QR + doğrulama */}
+            {/* Sağ: belge numarası (QR kaldırıldı: bağlantıyı üçüncü taraf servise gönderiyordu) */}
             <div className="flex flex-col items-center gap-2 shrink-0">
-              <QrCode orderId={order.id} />
               <div className="text-center space-y-0.5">
                 <p className="text-[9px] font-bold text-gray-500 uppercase tracking-wider">
-                  Belge Doğrulama
+                  Belge No
                 </p>
                 <p className="font-mono text-[9px] text-gray-400">
                   {invoiceNo(order.id)}

@@ -33,10 +33,27 @@ export function allocationOutcome(status: number, body: unknown): AllocationOutc
 }
 
 /**
- * Kurumsal ödeme başlatma (POST /api/payment/b2b-checkout) hata yanıtı → ileti anahtarı. `checkout_unavailable`:
- * teklifin ödeme durumu inceleme gerektiriyor; yeniden ödeme önerilmez. Diğer her durum genel başlatma hatasıdır.
+ * Kurumsal ödeme başlatma (POST /api/payment/b2b-checkout) hata yanıtı → ileti anahtarı (C1 istemci sözleşmesi,
+ * outputs/claude-c1-tasarim/C1-TASARIM.md §10):
+ * - `checkout_unavailable`: ödeme durumu inceleme/bekletme gerektiriyor; yeniden ödeme önerilmez.
+ * - `checkout_pending`: önceki denemenin sonucu kesinleşmedi (geçici kilit); açık ödeme sayfası varsa orada tamamlanır,
+ *   yoksa daha sonra yeniden denenir. Süre vaadi verilmez.
+ * - `checkout_limit`: kısa sürede çok deneme; daha sonra ya da iletişim.
+ * Tanınmayan her kod genel başlatma hatasıdır. Ham sunucu iletisi kullanılmaz.
  */
-export function paymentStartErrorKey(body: unknown): "checkoutUnavailable" | "startError" {
+export type PaymentStartErrorKey = "checkoutUnavailable" | "checkoutPending" | "checkoutLimit" | "startError";
+const PAYMENT_START_CODES: Record<string, PaymentStartErrorKey> = {
+  checkout_unavailable: "checkoutUnavailable",
+  checkout_pending: "checkoutPending",
+  checkout_limit: "checkoutLimit",
+};
+export function paymentStartErrorKey(body: unknown): PaymentStartErrorKey {
   const code = body && typeof body === "object" ? (body as Record<string, unknown>).code : undefined;
-  return code === "checkout_unavailable" ? "checkoutUnavailable" : "startError";
+  return typeof code === "string" && Object.hasOwn(PAYMENT_START_CODES, code) ? PAYMENT_START_CODES[code] : "startError";
+}
+
+/** Ödeme dönüşünün sonuç sayfası durumu (`?status=`). Tanınmayan değer gösterilmez. */
+export type PaymentReturnStatus = "success" | "error" | "declined" | "pending";
+export function paymentReturnStatus(value: string | null): PaymentReturnStatus | null {
+  return value === "success" || value === "error" || value === "declined" || value === "pending" ? value : null;
 }

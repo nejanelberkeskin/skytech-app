@@ -8,12 +8,11 @@ type ErrorKey = "expired" | "closed" | "rate_limited" | "generic";
 
 interface Props {
   orderNo: string;
-  /** Sayfaya gelinen imzalı belirteç; üye oturumuyla gelindiyse null */
-  token: string | null;
   labels: { retry: string; retrying: string; errors: Record<ErrorKey, string> };
 }
 
-export default function RetryPaymentButton({ orderNo, token, labels }: Props) {
+/** Erişim, sayfanın açıldığı erişim çereziyle ya da üye oturumuyla doğrulanır; belirteç istemciye verilmez. */
+export default function RetryPaymentButton({ orderNo, labels }: Props) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -25,7 +24,7 @@ export default function RetryPaymentButton({ orderNo, token, labels }: Props) {
       const res = await fetch(`/api/public/siparis/${encodeURIComponent(orderNo)}/odeme`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(token ? { t: token } : {}),
+        body: "{}",
       });
       const data = (await res.json().catch(() => null)) as { ok?: boolean; redirectUrl?: string; error?: string } | null;
       if (res.ok && data?.ok && data.redirectUrl) {

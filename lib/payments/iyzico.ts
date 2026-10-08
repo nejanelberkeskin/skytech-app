@@ -173,30 +173,60 @@ export const iyzicoProvider: PaymentProvider = {
     };
   },
 
-  /**
-   * Bedelin TAMAMI iade edilir. Önce ödeme kimliğiyle iade (v2); olmazsa kalem kimliğiyle iade;
-   * o da olmazsa aynı gün içindeki ödemeler için iptal (provizyonun geri alınması) denenir.
-   */
-  async refund(input: RefundInput): Promise<RefundResult> {
-    const base = { locale: "tr", conversationId: input.orderNo, ip: input.ip ?? "127.0.0.1" };
-    const price = kurusToPrice(input.amountKurus);
-    const errors: string[] = [];
-
-    const v2 = await call("refundV2", "create", { ...base, paymentId: input.paymentId, price, currency: "TRY" });
-    if (v2.status === "success") return { ok: true, refundId: String(v2.paymentId ?? input.paymentId), method: "refund" };
-    errors.push(`v2 ${errorText(v2)}`);
-
-    const ids = Array.isArray(input.meta?.paymentTransactionIds) ? (input.meta.paymentTransactionIds as unknown[]) : [];
-    if (ids.length === 1) {
-      const classic = await call("refund", "create", { ...base, paymentTransactionId: String(ids[0]), price, currency: "TRY" });
-      if (classic.status === "success") return { ok: true, refundId: String(classic.paymentTransactionId ?? ids[0]), method: "refund" };
-      errors.push(`kalem ${errorText(classic)}`);
-    }
-
-    const cancel = await call("cancel", "create", { ...base, paymentId: input.paymentId });
-    if (cancel.status === "success") return { ok: true, refundId: String(cancel.paymentId ?? input.paymentId), method: "cancel" };
-    errors.push(`iptal ${errorText(cancel)}`);
-
-    return { ok: false, error: errors.join(" | ").slice(0, 500) };
+  refund(input: RefundInput): Promise<RefundResult> {
+    return refundWithIyzico(input);
   },
 };
+
+/**
+ * Doğrulanmış kesin ret kodları: iyzico bu kodlarla döndüğünde iade KESİN olarak yapılmamıştır ve
+ * yeniden denenebilir. Liste iyzico sandbox kabulünde gözlenen kodlarla doldurulur; o zamana kadar boştur,
+ * yani iyzico'nun açık hata yanıtları da "belirsiz" sayılır ve mutabakata gider (web-brifler/17 §3).
+ */
+export const DEFINITIVE_REFUND_ERROR_CODES: ReadonlySet<string> = new Set<string>();
+
+/** İsteğin iyzico'ya ulaşıp ulaşmadığı bilinmez: bu hatalardan sonra başka yöntem DENENMEZ. */
+const UNCERTAIN_CODES = new Set(["timeout", "network"]);
+/** İstek hiç gönderilemedi (SDK çağrılamadı). */
+const NOT_SENT_CODES = new Set(["config"]);
+
+type Caller = (resource: string, method: string, request: Record<string, unknown>) => Promise<IyzicoResult>;
+
+/**
+ * Bedelin TAMAMI iade edilir. Önce ödeme kimliğiyle iade (v2); iyzico AÇIKÇA reddederse kalem kimliğiyle
+ * iade; o da açıkça reddedilirse aynı gün içindeki ödemeler için iptal (provizyonun geri alınması).
+ * Zaman aşımı ya da bağlantı hatasında şelale DURUR ve sonuç "belirsiz" döner: ilk istek iyzico'da
+ * gerçekleşmiş olabilir, ikinci bir para işlemi başlatılmaz.
+ */
+export async function refundWithIyzico(
+  input: RefundInput,
+  caller: Caller = call,
+  definitive: ReadonlySet<string> = DEFINITIVE_REFUND_ERROR_CODES
+): Promise<RefundResult> {
+  const base = { locale: "tr", conversationId: input.orderNo, ip: input.ip ?? "127.0.0.1" };
+  const price = kurusToPrice(input.amountKurus);
+  const ids = Array.isArray(input.meta?.paymentTransactionIds) ? (input.meta.paymentTransactionIds as unknown[]) : [];
+  const steps: { label: string; resource: string; request: Record<string, unknown>; method: "refund" | "cancel"; refundId: (r: IyzicoResult) => string }[] = [
+    { label: "v2", resource: "refundV2", request: { ...base, paymentId: input.paymentId, price, currency: "TRY" }, method: "refund", refundId: (r) => String(r.paymentId ?? input.paymentId) },
+  ];
+  if (ids.length === 1) {
+    steps.push({ label: "kalem", resource: "refund", request: { ...base, paymentTransactionId: String(ids[0]), price, currency: "TRY" }, method: "refund", refundId: (r) => String(r.paymentTransactionId ?? ids[0]) });
+  }
+  steps.push({ label: "iptal", resource: "cancel", request: { ...base, paymentId: input.paymentId }, method: "cancel", refundId: (r) => String(r.paymentId ?? input.paymentId) });
+
+  const errors: string[] = [];
+  const codes: string[] = [];
+  for (const step of steps) {
+    const result = await caller(step.resource, "create", step.request);
+    if (result.status === "success") return { ok: true, refundId: step.refundId(result), method: step.method };
+    errors.push(`${step.label} ${errorText(result)}`);
+    const code = typeof result.errorCode === "string" || typeof result.errorCode === "number" ? String(result.errorCode) : "";
+    if (UNCERTAIN_CODES.has(code)) return { ok: false, outcome: "unknown", errorCode: code, error: errors.join(" | ").slice(0, 500) };
+    codes.push(code);
+  }
+  const error = errors.join(" | ").slice(0, 500);
+  const errorCode = codes[codes.length - 1] || undefined;
+  if (codes.every((c) => NOT_SENT_CODES.has(c))) return { ok: false, outcome: "not_sent", errorCode, error };
+  const explicit = codes.filter((c) => !NOT_SENT_CODES.has(c));
+  return { ok: false, outcome: explicit.every((c) => c !== "" && definitive.has(c)) ? "rejected" : "unknown", errorCode, error };
+}

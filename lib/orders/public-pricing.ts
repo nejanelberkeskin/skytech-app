@@ -22,7 +22,7 @@ export async function getPublicSalesSettings(): Promise<SalesSettings> {
   try {
     return await cachedSettings();
   } catch {
-    return DEFAULT_SALES_SETTINGS;
+    return { ...DEFAULT_SALES_SETTINGS, ordersPaused: true };
   }
 }
 

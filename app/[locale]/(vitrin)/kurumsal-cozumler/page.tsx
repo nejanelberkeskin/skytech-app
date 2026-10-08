@@ -6,7 +6,6 @@ import BreadCrumb from "@/components/vitrin/BreadCrumb";
 import SectionWrapper from "@/components/vitrin/SectionWrapper";
 import SectionHeading from "@/components/vitrin/SectionHeading";
 import DashboardParallax from "@/components/vitrin/kurumsal/DashboardParallax";
-import DeveloperApi from "@/components/vitrin/kurumsal/DeveloperApi";
 import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
 import ServiceSchema from "@/components/seo/ServiceSchema";
 import { buildPageMetadata } from "@/lib/seo";
@@ -38,8 +37,6 @@ export default async function KurumsalCozumlerPage({ params }: { params: Promise
   const FEATURES = [
     { title: t("features.certificate.title"), desc: t("features.certificate.desc"), Icon: PeopleIcon },
     { title: t("features.afforestation.title"), desc: t("features.afforestation.desc"), Icon: TreesIcon },
-    { title: t("features.api.title"), desc: t("features.api.desc"), Icon: ApiIcon },
-    { title: t("features.ecommerce.title"), desc: t("features.ecommerce.desc"), Icon: CartIcon },
     { title: t("features.footprint.title"), desc: t("features.footprint.desc"), Icon: CalcIcon },
     { title: t("features.accountManager.title"), desc: t("features.accountManager.desc"), Icon: BadgeIcon },
   ];
@@ -113,7 +110,7 @@ export default async function KurumsalCozumlerPage({ params }: { params: Promise
           title={<>{t("features.title.pre")} <span className="text-gradient-forest">{t("features.title.highlight")}</span></>}
           subtitle={t("features.subtitle")}
         />
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 max-w-6xl mx-auto stagger-children">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 max-w-4xl mx-auto stagger-children">
           {FEATURES.map((f) => (
             <div key={f.title} className="vitrin-card p-7">
               <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#1B6B3A] to-[#22894a] flex items-center justify-center shadow-md shadow-[#1B6B3A]/15 mb-5">
@@ -128,9 +125,6 @@ export default async function KurumsalCozumlerPage({ params }: { params: Promise
 
       {/* Dashboard teaser — Scroll-parallax 3D mockup */}
       <DashboardParallax />
-
-      {/* Developer API */}
-      <DeveloperApi />
 
       {/* Lead form CTA */}
       <SectionWrapper variant="tinted">
@@ -167,22 +161,6 @@ function TreesIcon({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
       <path d="M8 21l-2-7H4l4-9 4 9h-2l-2 7zM16 21l-1-5h-1l3-7 3 7h-1l-1 5z" strokeLinejoin="round" />
-    </svg>
-  );
-}
-function ApiIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-      <path d="M16 18l6-6-6-6M8 6l-6 6 6 6M14 4l-4 16" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-function CartIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-      <circle cx="9" cy="21" r="1" />
-      <circle cx="20" cy="21" r="1" />
-      <path d="M1 1h4l2.5 14h13l3-9H6" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }

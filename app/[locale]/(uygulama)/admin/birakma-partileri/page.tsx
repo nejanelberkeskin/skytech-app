@@ -1,6 +1,15 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useAdmin } from "@/lib/admin-context";
+import { Link } from "@/i18n/navigation";
+import { containDialogTab } from "@/lib/hooks/dialog-keyboard";
+import { accessRequest } from "@/components/admin/access/transport";
+import { AdminApiError, errorText } from "@/components/admin/operations/client";
+import type { BatchListDto as ListResponse, BatchDetailDto as DetailResponse, BatchOrderRow as OrderRow, BatchSummary } from "@/lib/batches/admin-dto";
+import type { ApiWarning } from "@/lib/api/envelope";
+import { batchAccessKey, batchPatch, validBatchResult } from "@/components/admin/batches/view";
+
+import { useCallback, useEffect, useMemo, useState, useRef } from "react";
 import RoleGuard from "@/components/RoleGuard";
 import { Button, Input, Select, Textarea } from "@/components/ui";
 import { formatCount, formatTry } from "@/lib/pricing";
@@ -12,71 +21,17 @@ import { formatCount, formatTry } from "@/lib/pricing";
    Kesinleşmiş (cayma süresi dolmuş) siparişler partiye alınır; bırakma
    yapılınca parti "bırakıldı" işaretlenir → siparişler "Bırakıldı" olur,
    kapasite kalıcıya geçer, fatura kuyruğu dolar. Bu adım geri alınamaz.
-   Yönetim: SUPER_ADMIN + OPERATIONS; FINANCE yalnız görüntüler.
+   İşlemler sunucunun parti ve saha kapsamındaki yeteneklerine bağlıdır.
    ═══════════════════════════════════════════════════════════════════════ */
-
-interface Batch {
-  id: string;
-  land_id: string;
-  land_name: string;
-  season_label: string;
-  title: string | null;
-  planned_on: string | null;
-  released_on: string | null;
-  notes: string | null;
-  orders: number;
-  quantity: number;
-  created_at: string;
-}
-
-interface ListResponse {
-  batches: Batch[];
-  lands: { id: string; name: string; status: string; is_public: boolean }[];
-  seasons: string[];
-  waiting: { landId: string; landName: string; seasonLabel: string; orders: number; quantity: number }[];
-  canManage: boolean;
-}
-
-interface OrderRow {
-  id: string;
-  order_no: string;
-  status: string;
-  is_test: boolean;
-  quantity: number;
-  total_kurus: number;
-  buyer_first_name: string;
-  buyer_last_name: string;
-  certificate_name: string;
-  confirmed_at: string | null;
-  capacity_held: boolean;
-}
-
-interface DetailResponse {
-  batch: Batch & { video_url: string | null; video_published_at: string | null; monitoring_report_url: string | null };
-  land: { name: string; capacity_seeds: number; filled_seeds: number; reserved_seeds: number } | null;
-  orders: OrderRow[];
-  candidates: OrderRow[];
-}
-
-const ERRORS: Record<string, string> = {
-  not_found: "Kayıt bulunamadı.",
-  invalid_state: "Bu işlem için uygun durumda değil.",
-  mismatch: "Sipariş başka bir sahaya ya da sezona ait.",
-  capacity_not_held: "Bu siparişin kapasitesi ayrılamamış; önce sipariş ekranından çözülmeli.",
-  invalid_date: "Tarih geçersiz: bırakma tarihi bugünden ileri olamaz ve cayma süresi dolmuş olmalıdır.",
-  empty: "Partide bırakılacak sipariş yok.",
-  invalid_body: "Eksik ya da hatalı bilgi.",
-  invalid_url: "Bağlantı tanınmadı: herkese açık bir YouTube video bağlantısı olmalı (https://youtu.be/… ya da https://www.youtube.com/watch?v=…).",
-  unavailable: "Şu anda işlenemiyor; yeniden deneyin.",
-};
 
 const day = (d: string | null | undefined) => (d ? new Date(`${d}T12:00:00Z`).toLocaleDateString("tr-TR", { dateStyle: "long" }) : "—");
 const todayTr = () => new Date(Date.now() + 3 * 3600_000).toISOString().slice(0, 10);
 
 export default function PartilerPage() {
+  const { me } = useAdmin();
   return (
     <RoleGuard path="/admin/birakma-partileri">
-      <Content />
+      <Content key={batchAccessKey(me)} />
     </RoleGuard>
   );
 }
@@ -91,65 +46,56 @@ function Content() {
   const [form, setForm] = useState({ landId: "", seasonLabel: "", title: "", plannedOn: "", notes: "" });
   const [saving, setSaving] = useState(false);
 
-  useEffect(() => {
-    if (success) { const t = setTimeout(() => setSuccess(null), 5000); return () => clearTimeout(t); }
-  }, [success]);
-  useEffect(() => {
-    if (error) { const t = setTimeout(() => setError(null), 8000); return () => clearTimeout(t); }
-  }, [error]);
-
+  const { refresh } = useAdmin();
+  const state = useRef({ alive: false, generation: 0, busy: false });
+  const [blocked, setBlocked] = useState(false), [warnings, setWarnings] = useState<ApiWarning[]>([]);
+  const close = useCallback(() => setSelectedId(null), []);
+  const deleted = useCallback((messages: ApiWarning[]) => { setSuccess("Parti silindi."); setWarnings(w=>[...w,...messages]);setSelectedId(null); }, []);
   const load = useCallback(async () => {
+    const generation = ++state.current.generation; setLoading(true); setData(null);
     try {
-      const res = await fetch("/api/admin/release-batches");
-      if (!res.ok) throw new Error(String(res.status));
-      const json = (await res.json()) as ListResponse;
-      setData(json);
-      setForm((f) => ({ ...f, seasonLabel: f.seasonLabel || json.seasons[0] || "" }));
-    } catch {
-      setError("Partiler yüklenemedi.");
-    }
-    setLoading(false);
-  }, []);
-  useEffect(() => { load(); }, [load]);
-
+      const { data: json } = await accessRequest<ListResponse>("/api/admin/release-batches");
+      if (!state.current.alive || generation !== state.current.generation) return;
+      if (!Array.isArray(json?.batches) || !Array.isArray(json.lands) || !json.capabilities) throw new Error("Parti listesi okunamadı.");
+      setData(json); setBlocked(false); setError(null);
+      setForm(f => ({ ...f, seasonLabel: f.seasonLabel || json.seasons[0] || "" }));
+    } catch(e) {
+      if (!state.current.alive || generation !== state.current.generation) return;
+      setError(errorText(e));
+      if (e instanceof AdminApiError && [401,403].includes(e.status)) { setSelectedId(null); setCreating(false); void refresh(); }
+    } finally { if (state.current.alive && generation === state.current.generation) setLoading(false); }
+  }, [refresh]);
+  useEffect(() => { const token=state.current; token.alive=true; void load(); return () => { token.alive=false;token.generation++; }; }, [load]);
   const create = async () => {
-    setSaving(true);
-    setError(null);
+    if(state.current.busy || blocked || !data?.capabilities.create || !data.lands.some(l => l.id === form.landId && l.canPlan))return;
+    state.current.busy=true;setSaving(true);setError(null);
     try {
-      const res = await fetch("/api/admin/release-batches", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ landId: form.landId, seasonLabel: form.seasonLabel, title: form.title.trim() || null, plannedOn: form.plannedOn || null, notes: form.notes.trim() || null }),
-      });
-      const json = (await res.json().catch(() => ({}))) as { error?: string; batch?: { id: string } };
-      if (!res.ok) setError(ERRORS[json.error ?? ""] ?? "Parti oluşturulamadı.");
-      else {
-        setSuccess("Parti oluşturuldu.");
-        setCreating(false);
-        setForm((f) => ({ ...f, title: "", plannedOn: "", notes: "" }));
-        await load();
-        if (json.batch?.id) setSelectedId(json.batch.id);
-      }
-    } catch {
-      setError("Bağlantı kurulamadı.");
-    }
-    setSaving(false);
+      const result=await accessRequest<{batch:BatchSummary}>("/api/admin/release-batches","POST",{landId:form.landId,seasonLabel:form.seasonLabel,title:form.title.trim()||null,plannedOn:form.plannedOn||null,notes:form.notes.trim()||null});
+      if(!state.current.alive)return;
+      if(!result.data?.batch?.id)throw new Error("Oluşturma sonucu doğrulanamadı. Yeniden göndermeden önce listeyi yenileyin.");
+      setWarnings(w=>[...w,...result.warnings]);setSuccess("Parti oluşturuldu.");setCreating(false);setForm(f=>({...f,title:"",plannedOn:"",notes:""}));await load();
+      if(state.current.alive)setSelectedId(result.data.batch.id);
+    } catch(e) { if(!state.current.alive)return;setError(errorText(e));setBlocked(!(e instanceof AdminApiError && e.code === "invalid_body"));if(e instanceof AdminApiError && [401,403,404].includes(e.status)){setCreating(false);setData(null);void refresh();} }
+    finally { state.current.busy=false;if(state.current.alive)setSaving(false); }
   };
-
-  const canManage = data?.canManage ?? false;
-
+  const canCreate = data?.capabilities.create ?? false;
   return (
-    <div className="p-8 space-y-6">
+    <div className="p-4 md:p-8 space-y-6">
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div>
           <h1 className="text-2xl font-bold text-white">Bırakma Partileri</h1>
           <p className="text-sm text-slate-400 mt-1">Kesinleşmiş siparişleri bırakma çalışmalarına atayın; bırakma yapılınca partiyi işaretleyin.</p>
         </div>
-        {canManage && <Button variant="primary" onClick={() => setCreating((v) => !v)}>{creating ? "Vazgeç" : "+ Yeni parti"}</Button>}
+        {canCreate && <Button disabled={saving || blocked} variant="primary" onClick={() => setCreating((v) => !v)}>{creating ? "Vazgeç" : "+ Yeni parti"}</Button>}
       </div>
 
-      {success && <div className="bg-emerald-500/10 ring-1 ring-emerald-500/30 text-emerald-400 px-4 py-3 rounded-xl text-sm">✅ {success}</div>}
-      {error && <div className="bg-red-500/10 ring-1 ring-red-500/30 text-red-400 px-4 py-3 rounded-xl text-sm">❌ {error}</div>}
+      <Button variant="secondary" disabled={saving || loading} onClick={() => { setCreating(false); void load(); }}>Listeyi yenile</Button>
+      {blocked && <p className="text-amber-100 text-sm">Sonuç belirsiz veya kayıt değişti. Yeniden göndermeden önce listeyi yenileyin.</p>}
+      {warnings.map((w,i)=><p role="alert" key={i} className="text-amber-100">{w.message} İşlemi tekrar göndermeyin.</p>)}
+      {data && <p className="text-sm text-slate-300">{data.scope.kind === "all" ? "Kapsam: tüm sahalar" : `Kapsam: yetkili olduğunuz ${data.scope.siteIds.length} saha`}</p>}
+      {data && data.dueForConfirmation > 0 && <p role="alert" className="text-sm border border-amber-400/40 p-4 rounded-xl text-amber-100">{data.dueForConfirmation} siparişin cayma süresi dolmuş ancak kesinleştirme işi henüz tamamlanmamış. Bekleyen sipariş listesi eksik olabilir. Yetkili kişi zamanlanmış işleri kontrol etmeli.</p>}
+      {success && <div role="status" className="bg-emerald-500/10 ring-1 ring-emerald-500/30 text-emerald-400 px-4 py-3 rounded-xl text-sm">✅ {success}</div>}
+      {error && <div role="alert" className="bg-red-500/10 ring-1 ring-red-500/30 text-red-400 px-4 py-3 rounded-xl text-sm">❌ {error}</div>}
 
       {data && data.waiting.length > 0 && (
         <div className="bg-white/[0.03] ring-1 ring-sky-500/30 rounded-2xl p-5">
@@ -167,11 +113,11 @@ function Content() {
       {creating && data && (
         <div className="bg-[var(--bg-surface)] border border-white/[0.06] rounded-2xl p-5 space-y-4">
           <h2 className="font-semibold text-white text-sm">Yeni parti</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <fieldset disabled={saving || blocked} className="space-y-4"><div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Select label="Proje Uygulama Sahası" value={form.landId} onChange={(e) => setForm({ ...form, landId: e.target.value })}>
               <option value="">Saha seçin</option>
-              {data.lands.map((l) => (
-                <option key={l.id} value={l.id}>{l.name}{l.is_public ? "" : " (yayında değil)"}</option>
+              {data.lands.filter(l => l.canPlan).map((l) => (
+                <option key={l.id} value={l.id}>{l.name}{l.isPublic ? "" : " (yayında değil)"}</option>
               ))}
             </Select>
             <Select label="Sezon" value={form.seasonLabel} onChange={(e) => setForm({ ...form, seasonLabel: e.target.value })}>
@@ -181,7 +127,7 @@ function Content() {
             <Input label="Planlanan tarih (isteğe bağlı)" type="date" value={form.plannedOn} onChange={(e) => setForm({ ...form, plannedOn: e.target.value })} />
           </div>
           <Textarea label="Not" value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} rows={2} maxLength={2000} />
-          <Button variant="primary" loading={saving} disabled={!form.landId || !form.seasonLabel} onClick={create}>Partiyi oluştur</Button>
+          <Button variant="primary" loading={saving} disabled={!form.landId || !form.seasonLabel} onClick={create}>Partiyi oluştur</Button></fieldset>
         </div>
       )}
 
@@ -189,7 +135,7 @@ function Content() {
         <div className="flex items-center justify-center py-20">
           <div className="w-8 h-8 border-2 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin" />
         </div>
-      ) : !data || data.batches.length === 0 ? (
+      ) : !data ? null : data.batches.length === 0 ? (
         <div className="text-center py-16">
           <span className="text-4xl block mb-3">🚁</span>
           <p className="text-slate-400">Henüz parti yok.</p>
@@ -202,13 +148,13 @@ function Content() {
               onClick={() => setSelectedId(b.id)}
               className="w-full text-left bg-[var(--bg-surface)] border border-white/[0.06] hover:border-white/[0.1] rounded-2xl p-5 transition-all hover:bg-white/[0.03]"
             >
-              <div className="flex items-start justify-between gap-4">
+              <div className="flex flex-wrap items-start justify-between gap-4">
                 <div className="min-w-0">
-                  <p className="font-semibold text-white truncate">{b.land_name} <span className="text-slate-400 font-normal">· {b.season_label}{b.title ? ` · ${b.title}` : ""}</span></p>
-                  <p className="text-xs text-slate-500 mt-1">{b.orders} sipariş · {formatCount(b.quantity, "tr")} tohum topu · plan {day(b.planned_on)}</p>
+                  <p className="font-semibold text-white break-words">{b.landName} <span className="text-slate-400 font-normal">· {b.seasonLabel}{b.title ? ` · ${b.title}` : ""}</span></p>
+                  <p className="text-xs text-slate-500 mt-1">{b.orders} sipariş · {formatCount(b.quantity, "tr")} tohum topu · plan {day(b.plannedOn)}</p>
                 </div>
-                <span className={`shrink-0 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${b.released_on ? "ring-1 ring-green-500/50 bg-green-500/10 text-green-300" : "ring-1 ring-teal-500/50 bg-teal-500/10 text-teal-300"}`}>
-                  {b.released_on ? `Bırakıldı · ${day(b.released_on)}` : "Planlandı"}
+                <span className={`shrink-0 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${b.releasedOn ? "ring-1 ring-green-500/50 bg-green-500/10 text-green-300" : "ring-1 ring-teal-500/50 bg-teal-500/10 text-teal-300"}`}>
+                  {b.releasedOn ? `Bırakıldı · ${day(b.releasedOn)}` : "Planlandı"}
                 </span>
               </div>
             </button>
@@ -219,111 +165,98 @@ function Content() {
       {selectedId && (
         <BatchDetail
           id={selectedId}
-          canManage={canManage}
-          onClose={() => setSelectedId(null)}
+          onClose={close} onDeleted={deleted}
           onChanged={load}
-          notify={(ok, message) => (ok ? setSuccess(message) : setError(message))}
         />
       )}
     </div>
   );
 }
 
-function BatchDetail({ id, canManage, onClose, onChanged, notify }: { id: string; canManage: boolean; onClose: () => void; onChanged: () => Promise<void>; notify: (ok: boolean, message: string) => void }) {
-  const [detail, setDetail] = useState<DetailResponse | null>(null);
-  const [picked, setPicked] = useState<Set<string>>(new Set());
-  const [busy, setBusy] = useState(false);
-  const [releasedOn, setReleasedOn] = useState(todayTr);
-  const [confirmRelease, setConfirmRelease] = useState(false);
-  const [edit, setEdit] = useState({ title: "", plannedOn: "", notes: "", reportUrl: "" });
-  const [videoUrl, setVideoUrl] = useState("");
-  const [confirmVideo, setConfirmVideo] = useState(false);
-
-  const load = useCallback(async () => {
+function BatchDetail({ id, onClose, onChanged, onDeleted }: { id: string; onClose: () => void; onChanged: () => Promise<void>; onDeleted: (warnings: ApiWarning[]) => void }) {
+  const { refresh } = useAdmin();
+  const state=useRef({alive:false,generation:0,busy:false}); const dialog=useRef<HTMLDialogElement>(null);
+  const [detail,setDetail]=useState<DetailResponse|null>(null),[picked,setPicked]=useState<Set<string>>(new Set());
+  const [busy,setBusy]=useState(false),[blocked,setBlocked]=useState(false),[loading,setLoading]=useState(true);
+  // Doğrulama kutusu yalnız sunucu gerçekten yeniden doğrulama isteyince (mfa_required) açılır; diğer kilitler (ör. kapsam dışı) açmaz.
+  const [verificationRequired,setVerificationRequired]=useState(false);
+  const [error,setError]=useState<string|null>(null),[success,setSuccess]=useState<string|null>(null),[warnings,setWarnings]=useState<ApiWarning[]>([]);
+  const [releasedOn,setReleasedOn]=useState(todayTr),[confirmRelease,setConfirmRelease]=useState(false),[confirmVideo,setConfirmVideo]=useState(false),[confirmDelete,setConfirmDelete]=useState(false);
+  const [edit,setEdit]=useState({title:"",plannedOn:"",notes:"",reportUrl:""}),[videoUrl,setVideoUrl]=useState("");
+  const load=useCallback(async()=>{
+    const generation=++state.current.generation;setLoading(true);setDetail(null);setError(null);setBlocked(true);setVerificationRequired(false);setPicked(new Set());setConfirmRelease(false);setConfirmVideo(false);setConfirmDelete(false);
     try {
-      const res = await fetch(`/api/admin/release-batches/${id}`);
-      if (!res.ok) throw new Error(String(res.status));
-      const json = (await res.json()) as DetailResponse;
-      setDetail(json);
-      setEdit({ title: json.batch.title ?? "", plannedOn: json.batch.planned_on ?? "", notes: json.batch.notes ?? "", reportUrl: json.batch.monitoring_report_url ?? "" });
-      setVideoUrl(json.batch.video_url ?? "");
-      setConfirmVideo(false);
-      setPicked(new Set());
-    } catch {
-      notify(false, "Parti yüklenemedi.");
-      onClose();
-    }
-  }, [id, notify, onClose]);
-  useEffect(() => { load(); }, [load]);
-
-  const send = async (method: "POST" | "PATCH" | "DELETE", body: Record<string, unknown> | null, okMessage: string) => {
-    setBusy(true);
+      const {data}=await accessRequest<DetailResponse>(`/api/admin/release-batches/${id}`);
+      if(!state.current.alive||generation!==state.current.generation)return;
+      if(data?.batch?.id!==id||!Array.isArray(data.orders)||!Array.isArray(data.candidates))throw new Error("Parti ayrıntısı okunamadı.");
+      setDetail(data);setEdit({title:data.batch.title??"",plannedOn:data.batch.plannedOn??"",notes:data.batch.notes??"",reportUrl:data.batch.monitoringReportUrl??""});setVideoUrl(data.batch.videoUrl??"");setBlocked(false);
+    }catch(e){if(!state.current.alive||generation!==state.current.generation)return;setError(errorText(e));setVerificationRequired(e instanceof AdminApiError&&e.code==="mfa_required");if(e instanceof AdminApiError&&[401,403].includes(e.status))void refresh();}
+    finally{if(state.current.alive&&generation===state.current.generation)setLoading(false);}
+  },[id,refresh]);
+  useEffect(()=>{const token=state.current;token.alive=true;const el=dialog.current,previous=document.activeElement instanceof HTMLElement?document.activeElement:null;el?.showModal();void load();return()=>{token.alive=false;token.generation++;el?.close();if(previous?.isConnected)previous.focus();};},[load]);
+  const send=async(method:"POST"|"PATCH"|"DELETE",body:Record<string,unknown>|null,okMessage:string)=>{
+    if(state.current.busy||blocked||loading)return false;
+    state.current.busy=true;setBusy(true);setError(null);setSuccess(null);
     try {
-      const res = await fetch(`/api/admin/release-batches/${id}`, { method, headers: { "Content-Type": "application/json" }, body: body ? JSON.stringify(body) : undefined });
-      const json = (await res.json().catch(() => ({}))) as { error?: string; detail?: string | null; skipped?: string[] };
-      if (!res.ok) {
-        notify(false, `${ERRORS[json.error ?? ""] ?? "İşlem başarısız oldu."}${json.detail ? ` (${json.detail})` : ""}`);
-        await load();
-      } else {
-        notify(true, json.skipped?.length ? `${okMessage} İşlenemeyen siparişler: ${json.skipped.join(", ")}` : okMessage);
-        await onChanged();
-        if (method === "DELETE") onClose();
-        else await load();
-      }
-      setBusy(false);
-      return res.ok;
-    } catch {
-      notify(false, "Bağlantı kurulamadı.");
-      setBusy(false);
-      return false;
-    }
+      const result=await accessRequest<Record<string,unknown>>(`/api/admin/release-batches/${id}`,method,body??undefined);
+      if(!state.current.alive)return false;
+      if(!validBatchResult(method,body?.action,result.data,id))throw new Error("İşlem sonucu doğrulanamadı. Yeniden göndermeden önce partiyi yenileyin.");
+      setWarnings(w=>[...w,...result.warnings]);
+      if(body?.action === "assign")okMessage=`${result.data.assigned} sipariş partiye alındı. Güncel liste yüklendiğinde atanmayanları kontrol edin.`;
+      setSuccess(Array.isArray(result.data.skipped)&&result.data.skipped.length?`${okMessage} İşlenemeyen siparişler: ${result.data.skipped.join(", ")}`:okMessage);
+      await onChanged();if(!state.current.alive)return false;
+      if(method==="DELETE")onDeleted(result.warnings);else await load();return true;
+    }catch(e){if(!state.current.alive)return false;setError(e instanceof AdminApiError&&e.details?.applied===true?"İşlem uygulandı ancak güncel kayıt okunamadı. Tekrar göndermeyin; partiyi yenileyin.":errorText(e));setBlocked(!(e instanceof AdminApiError&&["invalid_body","invalid_url","invalid_date"].includes(e.code)));setVerificationRequired(e instanceof AdminApiError&&e.code==="mfa_required");setConfirmRelease(false);setConfirmVideo(false);setConfirmDelete(false);if(e instanceof AdminApiError&&[401,403,404].includes(e.status)&&e.code!=="mfa_required"){setDetail(null);setEdit({title:"",plannedOn:"",notes:"",reportUrl:""});setPicked(new Set());void refresh();}return false;}
+    finally{state.current.busy=false;if(state.current.alive)setBusy(false);}
   };
-
+  const caps=detail?.batch.capabilities;
   const totals = useMemo(() => ({ orders: detail?.orders.length ?? 0, quantity: detail?.orders.reduce((s, o) => s + o.quantity, 0) ?? 0 }), [detail]);
-  const selectable = detail?.candidates.filter((c) => c.capacity_held) ?? [];
-  const released = Boolean(detail?.batch.released_on);
+  const selectable = detail?.candidates.filter((c) => c.capacityHeld) ?? [];
+  const released = Boolean(detail?.batch.releasedOn);
   const dirty = detail
     ? edit.title !== (detail.batch.title ?? "") ||
-      edit.plannedOn !== (detail.batch.planned_on ?? "") ||
+      edit.plannedOn !== (detail.batch.plannedOn ?? "") ||
       edit.notes !== (detail.batch.notes ?? "") ||
-      edit.reportUrl !== (detail.batch.monitoring_report_url ?? "")
+      edit.reportUrl !== (detail.batch.monitoringReportUrl ?? "")
     : false;
-  const videoPublished = Boolean(detail?.batch.video_published_at);
+  const videoPublished = Boolean(detail?.batch.videoPublishedAt);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm" onClick={onClose}>
-      <div className="glass border border-white/[0.08] rounded-2xl w-full max-w-3xl max-h-[92vh] overflow-y-auto shadow-2xl animate-scale-in" onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true" aria-labelledby="parti-baslik">
-        {!detail ? (
+    <dialog ref={dialog} aria-label="Parti ayrıntısı" aria-busy={busy||loading} onKeyDown={containDialogTab} onCancel={e=>{if(state.current.busy)e.preventDefault();else onClose();}} className="m-auto w-[calc(100%-1rem)] max-w-3xl max-h-[92dvh] overflow-y-auto rounded-2xl bg-[#0b1410] border border-white/15 text-white p-0 backdrop:bg-black/70">
+      <header className="sticky top-0 z-10 bg-[#0b1410] p-4 flex flex-wrap gap-3 justify-between border-b border-white/10"><Button variant="secondary" disabled={busy||loading} onClick={()=>void load()}>Partiyi yenile</Button><Button variant="ghost" disabled={busy} onClick={onClose}>Kapat</Button></header>
+      <div className="px-4 space-y-3">{error&&<p role="alert" className="text-red-200 py-3">{error}</p>}{success&&<p role="status" className="text-emerald-200 py-3">{success}</p>}{warnings.map((w,i)=><p role="alert" key={i} className="text-amber-100">{w.message} İşlemi tekrar göndermeyin.</p>)}{blocked&&!loading&&<p className="text-sm text-amber-100">Güncel kayıt yüklenene kadar işlem kapalı. Partiyi yenileyin.</p>}{(verificationRequired || !!detail?.mfaRequiredGroups.length || (!blocked&&detail?.mfa.enforced&&!detail.mfa.satisfied&&(caps?.release||caps?.publish)))&&!loading&&<div className="my-3 text-sm text-amber-100"><p>{detail?.mfaRequiredGroups.length?"Bazı özel sipariş alanları yeniden doğrulama bekliyor.":verificationRequired?"Bu işlem yeniden doğrulama gerektirdiği için yapılmadı.":"Bırakma ve yayın işlemlerinde yeniden doğrulama gerekebilir."} Doğrulamadan sonra bu sayfaya döndüğünüzde görünüm kendiliğinden yenilenir. Partiyi yeniden açıp yapmak istediğiniz işlemi seçin; hiçbir işlem otomatik tekrarlanmaz.</p><Link href="/admin/guvenlik" target="_blank" rel="noopener noreferrer" className="underline">Hesap güvenliği (yeni sekme)</Link></div>}</div>
+        {loading ? (
           <div className="flex items-center justify-center py-24">
             <div className="w-8 h-8 border-2 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin" />
           </div>
-        ) : (
+        ) : detail ? (
           <>
             <div className="px-6 py-4 border-b border-white/[0.06] flex items-center justify-between gap-4">
               <div>
-                <h2 id="parti-baslik" className="font-bold text-white text-lg">{detail.land?.name ?? "Saha"} · {detail.batch.season_label}</h2>
-                <p className="text-xs text-slate-400">{released ? `Bırakıldı · ${day(detail.batch.released_on)}` : `Planlandı · ${day(detail.batch.planned_on)}`} · {totals.orders} sipariş · {formatCount(totals.quantity, "tr")} tohum topu</p>
+                <h2 id="parti-baslik" className="font-bold text-white text-lg">{detail.land?.name ?? "Saha"} · {detail.batch.seasonLabel}</h2>
+                <p className="text-xs text-slate-400">{released ? `Bırakıldı · ${day(detail.batch.releasedOn)}` : `Planlandı · ${day(detail.batch.plannedOn)}`} · {totals.orders} sipariş · {formatCount(totals.quantity, "tr")} tohum topu</p>
               </div>
-              <button onClick={onClose} className="text-slate-500 hover:text-white text-xl transition-colors" aria-label="Kapat">&times;</button>
+
             </div>
 
-            <div className="p-6 space-y-6">
-              {detail.land && (
+            <fieldset disabled={busy||blocked} className="p-4 sm:p-6 space-y-6">
+              {detail.land?.capacity && (
                 <p className="text-xs text-slate-500">
-                  Saha kapasitesi: {formatCount(detail.land.capacity_seeds, "tr")} · bırakılan {formatCount(detail.land.filled_seeds, "tr")} · siparişler için ayrılan {formatCount(detail.land.reserved_seeds, "tr")}
+                  Saha kapasitesi: {formatCount(detail.land.capacity.total, "tr")} · bırakılan {formatCount(detail.land.capacity.filled, "tr")} · siparişler için ayrılan {formatCount(detail.land.capacity.reserved, "tr")}
                 </p>
               )}
 
-              {canManage && (
+              {(caps?.plan || (caps?.publish && released)) && (
                 <section className="space-y-3">
                   <h3 className="text-xs text-slate-500 font-medium uppercase tracking-wider">Parti bilgisi</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <Input label="Başlık" value={edit.title} onChange={(e) => setEdit({ ...edit, title: e.target.value })} maxLength={120} />
-                    <Input label="Planlanan tarih" type="date" value={edit.plannedOn} disabled={released} onChange={(e) => setEdit({ ...edit, plannedOn: e.target.value })} />
+                    <Input disabled={!caps?.plan} label="Başlık" value={edit.title} onChange={(e) => setEdit({ ...edit, title: e.target.value })} maxLength={120} />
+                    <Input label="Planlanan tarih" type="date" value={edit.plannedOn} disabled={released || !caps?.plan} onChange={(e) => setEdit({ ...edit, plannedOn: e.target.value })} />
                   </div>
-                  <Textarea label="Not" value={edit.notes} onChange={(e) => setEdit({ ...edit, notes: e.target.value })} rows={2} maxLength={2000} />
+                  <Textarea disabled={!caps?.plan} label="Not" value={edit.notes} onChange={(e) => setEdit({ ...edit, notes: e.target.value })} rows={2} maxLength={2000} />
                   {released && (
                     <Input
+                      disabled={!caps?.publish}
                       label="İzleme raporu bağlantısı (https, PDF) — saha sayfasında herkese açık görünür"
                       type="url"
                       value={edit.reportUrl}
@@ -340,7 +273,7 @@ function BatchDetail({ id, canManage, onClose, onChanged, notify }: { id: string
                     onClick={() =>
                       send(
                         "PATCH",
-                        { title: edit.title.trim() || null, plannedOn: edit.plannedOn || null, notes: edit.notes.trim() || null, ...(released ? { monitoringReportUrl: edit.reportUrl.trim() || null } : {}) },
+                        batchPatch(detail.batch, edit),
                         "Parti güncellendi."
                       )
                     }
@@ -350,6 +283,7 @@ function BatchDetail({ id, canManage, onClose, onChanged, notify }: { id: string
                 </section>
               )}
 
+              {!caps?.plan && detail.batch.notes && <p className="text-sm whitespace-pre-wrap break-words">Not: {detail.batch.notes}</p>}
               <section className="space-y-3">
                 <h3 className="text-xs text-slate-500 font-medium uppercase tracking-wider">Partideki siparişler</h3>
                 {detail.orders.length === 0 ? (
@@ -359,7 +293,7 @@ function BatchDetail({ id, canManage, onClose, onChanged, notify }: { id: string
                     {detail.orders.map((o) => (
                       <div key={o.id} className="flex items-center justify-between gap-4 px-4 py-2.5 text-sm">
                         <OrderLine o={o} />
-                        {canManage && !released && o.status === "scheduled" && (
+                        {caps?.assign && !released && o.status === "scheduled" && (
                           <button disabled={busy} onClick={() => send("POST", { action: "unassign", orderId: o.id }, "Sipariş partiden çıkarıldı.")} className="shrink-0 text-xs text-slate-400 hover:text-red-300 disabled:opacity-50">Partiden çıkar</button>
                         )}
                       </div>
@@ -372,23 +306,24 @@ function BatchDetail({ id, canManage, onClose, onChanged, notify }: { id: string
                 <section className="space-y-3">
                   <div className="flex items-center justify-between gap-4">
                     <h3 className="text-xs text-slate-500 font-medium uppercase tracking-wider">Partiye alınabilecek siparişler (kesinleşmiş, aynı saha ve sezon)</h3>
-                    {canManage && selectable.length > 0 && (
+                    {caps?.assign && selectable.length > 0 && (
                       <button className="text-xs text-emerald-300 hover:underline" onClick={() => setPicked(picked.size === selectable.length ? new Set() : new Set(selectable.map((c) => c.id)))}>
                         {picked.size === selectable.length ? "Seçimi kaldır" : "Tümünü seç"}
                       </button>
                     )}
                   </div>
+                  {detail.candidatesTruncated && <p role="status" className="text-sm text-amber-100">İlk 500 uygun sipariş gösteriliyor. Atamadan sonra partiyi yenileyerek kalanları görebilirsiniz.</p>}
                   {detail.candidates.length === 0 ? (
-                    <p className="text-sm text-slate-500">Bekleyen sipariş yok. Siparişler, cayma süresi (14 gün) dolunca burada görünür.</p>
+                    <p className="text-sm text-slate-500">Bu partiye uygun kesinleşmiş sipariş bulunamadı. Cayma süresi dolan siparişler kesinleştirme işi tamamlanınca burada görünür.</p>
                   ) : (
                     <div className="bg-white/[0.03] border border-white/[0.06] rounded-xl divide-y divide-white/[0.06]">
                       {detail.candidates.map((o) => (
-                        <label key={o.id} className={`flex items-center gap-3 px-4 py-2.5 text-sm ${o.capacity_held ? "cursor-pointer" : "opacity-60"}`}>
-                          {canManage && (
+                        <label key={o.id} className={`flex items-center gap-3 px-4 py-2.5 text-sm ${o.capacityHeld ? "cursor-pointer" : "opacity-60"}`}>
+                          {caps?.assign && (
                             <input
                               type="checkbox"
                               className="accent-emerald-500"
-                              disabled={!o.capacity_held}
+                              disabled={!o.capacityHeld}
                               checked={picked.has(o.id)}
                               onChange={(e) => {
                                 const next = new Set(picked);
@@ -399,12 +334,12 @@ function BatchDetail({ id, canManage, onClose, onChanged, notify }: { id: string
                             />
                           )}
                           <OrderLine o={o} />
-                          {!o.capacity_held && <span className="shrink-0 text-xs text-amber-300">kapasitesi ayrılamamış</span>}
+                          {!o.capacityHeld && <span className="shrink-0 text-xs text-amber-300">kapasitesi ayrılamamış</span>}
                         </label>
                       ))}
                     </div>
                   )}
-                  {canManage && detail.candidates.length > 0 && (
+                  {caps?.assign && detail.candidates.length > 0 && (
                     <Button variant="primary" size="sm" loading={busy} disabled={picked.size === 0} onClick={() => send("POST", { action: "assign", orderIds: [...picked] }, "Siparişler partiye alındı.")}>
                       Seçilenleri partiye al ({picked.size})
                     </Button>
@@ -412,7 +347,7 @@ function BatchDetail({ id, canManage, onClose, onChanged, notify }: { id: string
                 </section>
               )}
 
-              {canManage && !released && (
+              {caps?.release && !released && (
                 <section className="bg-[var(--bg-surface)] border border-white/[0.06] rounded-2xl p-5 space-y-3">
                   <h3 className="font-semibold text-white text-sm">Bırakma tamamlandı</h3>
                   <p className="text-xs text-slate-500">
@@ -434,21 +369,21 @@ function BatchDetail({ id, canManage, onClose, onChanged, notify }: { id: string
                 </section>
               )}
 
-              {canManage && released && (
+              {caps?.publish && released && (
                 <section className="bg-[var(--bg-surface)] border border-white/[0.06] rounded-2xl p-5 space-y-3">
                   <h3 className="font-semibold text-white text-sm">Çalışma videosu</h3>
                   <p className="text-xs text-slate-500">
-                    Çalışmanın görüntüleri YouTube&apos;a <strong className="text-slate-300">herkese açık</strong> yüklendikten sonra bağlantıyı buraya girin. İlk yayımda partideki tüm müşterilere e-posta gider,
+                    Çalışmanın görüntüleri YouTube&apos;a <strong className="text-slate-300">herkese açık</strong> yüklendikten sonra bağlantıyı buraya girin. İlk yayımda partideki müşteriler için e-posta bildirimi başlatılır; teslim durumu ayrıca izlenir,
                     siparişleri &quot;Tamamlandı&quot; olur ve video saha sayfasında görünür. Sonradan yalnız bağlantı düzeltilebilir; yeniden e-posta gitmez.
                   </p>
                   <Input label="YouTube bağlantısı" type="url" value={videoUrl} onChange={(e) => { setVideoUrl(e.target.value); setConfirmVideo(false); }} maxLength={300} placeholder="https://youtu.be/…" />
                   {videoPublished ? (
-                    <Button variant="secondary" size="sm" loading={busy} disabled={!videoUrl.trim() || videoUrl.trim() === (detail.batch.video_url ?? "")} onClick={() => send("POST", { action: "publish_video", videoUrl: videoUrl.trim() }, "Video bağlantısı güncellendi.")}>
+                    <Button variant="secondary" size="sm" loading={busy} disabled={!videoUrl.trim() || videoUrl.trim() === (detail.batch.videoUrl ?? "")} onClick={() => send("POST", { action: "publish_video", videoUrl: videoUrl.trim() }, "Video bağlantısı güncellendi.")}>
                       Bağlantıyı güncelle
                     </Button>
                   ) : confirmVideo ? (
                     <div className="flex gap-3 flex-wrap">
-                      <Button variant="primary" loading={busy} onClick={() => send("POST", { action: "publish_video", videoUrl: videoUrl.trim() }, "Video yayımlandı; müşterilere bildirim gönderiliyor.")}>
+                      <Button variant="primary" loading={busy} onClick={() => send("POST", { action: "publish_video", videoUrl: videoUrl.trim() }, "Video yayımlandı. Bildirimlerin teslim durumu ayrıca izlenmelidir.")}>
                         Evet: yayımla ve {totals.orders} müşteriye bildir
                       </Button>
                       <Button variant="secondary" disabled={busy} onClick={() => setConfirmVideo(false)}>Vazgeç</Button>
@@ -459,24 +394,23 @@ function BatchDetail({ id, canManage, onClose, onChanged, notify }: { id: string
                 </section>
               )}
 
-              {canManage && detail.orders.length === 0 && (
-                <button disabled={busy} onClick={() => send("DELETE", null, "Parti silindi.")} className="text-xs text-slate-500 hover:text-red-300 disabled:opacity-50">Bu boş partiyi sil</button>
+              {caps?.plan && detail.orders.length === 0 && (
+                <div>{confirmDelete ? <div className="space-y-3"><p className="text-sm text-red-200">Boş parti kalıcı olarak silinecek.</p><Button variant="danger" onClick={()=>void send("DELETE",null,"Parti silindi.")}>Onayla: boş partiyi sil</Button><Button variant="ghost" onClick={()=>setConfirmDelete(false)}>Vazgeç</Button></div> : <Button variant="ghost" onClick={()=>setConfirmDelete(true)}>Bu boş partiyi sil</Button>}</div>
               )}
-            </div>
+            </fieldset>
           </>
-        )}
-      </div>
-    </div>
+        ) : null}
+    </dialog>
   );
 }
 
 function OrderLine({ o }: { o: OrderRow }) {
   return (
     <span className="flex-1 min-w-0 flex items-center gap-3 flex-wrap">
-      <a href={`/admin/birakma-siparisleri?no=${o.order_no}`} target="_blank" rel="noopener noreferrer" className="font-mono text-emerald-300 hover:underline">{o.order_no}</a>
-      {o.is_test && <span className="px-1.5 py-0.5 rounded-full text-[10px] font-semibold ring-1 ring-amber-500/50 bg-amber-500/10 text-amber-300">DENEME</span>}
-      <span className="text-white truncate">{o.buyer_first_name} {o.buyer_last_name}</span>
-      <span className="text-xs text-slate-500">{formatCount(o.quantity, "tr")} tohum topu · {formatTry(o.total_kurus, "tr")} · sertifika: {o.certificate_name}</span>
+      <a href={`/admin/birakma-siparisleri?no=${o.orderNo}`} target="_blank" rel="noopener noreferrer" className="font-mono text-emerald-300 hover:underline">{o.orderNo}</a>
+      {o.isTest && <span className="px-1.5 py-0.5 rounded-full text-[10px] font-semibold ring-1 ring-amber-500/50 bg-amber-500/10 text-amber-300">DENEME</span>}
+      {o.buyer && <span className="text-white break-words">{o.buyer.firstName} {o.buyer.lastName}</span>}
+      <span className="text-xs text-slate-500">{formatCount(o.quantity, "tr")} tohum topu{o.finance && ` · ${formatTry(o.finance.totalKurus, "tr")}`}{o.certificateName !== undefined && ` · sertifika: ${o.certificateName}`}</span>
     </span>
   );
 }

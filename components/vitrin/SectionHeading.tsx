@@ -59,7 +59,7 @@ export default function SectionHeading({
 
       <motion.h2
         variants={itemVariants}
-        className={`display-headline text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold mb-6 ${
+        className={`display-headline text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold mb-6 hyphens-auto wrap-break-word ${
           invert ? "text-white" : "text-[#0e2519]"
         }`}
       >

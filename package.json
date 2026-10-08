@@ -11,6 +11,8 @@
     "typecheck": "tsc --noEmit",
     "lint:check": "eslint",
     "i18n:check": "node scripts/i18n-parity.mjs",
+    "test:prefetch": "node scripts/e2e/prefetch-loop.mjs",
+    "test:prefetch:self": "node scripts/e2e/prefetch-loop-self-test.mjs",
     "test": "node --experimental-strip-types --disable-warning=ExperimentalWarning --import ./scripts/test/alias-loader.mjs --test \"scripts/test/*.test.mjs\""
   },
   "dependencies": {
@@ -21,24 +23,32 @@
     "autoprefixer": "^10.4.27",
     "framer-motion": "^12.38.0",
     "html2canvas-pro": "^2.0.2",
-    "iyzipay": "^2.0.65",
-    "jspdf": "^4.2.0",
-    "next": "16.1.6",
+    "iyzipay": "^2.0.69",
+    "jspdf": "^4.2.1",
+    "next": "^16.3.5",
     "next-intl": "^4.13.0",
     "postcss": "^8.5.8",
-    "react": "19.2.3",
-    "react-dom": "19.2.3",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
     "zod": "^4.6.5"
   },
   "devDependencies": {
-    "@next/bundle-analyzer": "^16.2.9",
+    "@electric-sql/pglite": "^0.5.8",
+    "@next/bundle-analyzer": "^16.3.5",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "16.1.6",
+    "eslint-config-next": "^16.3.5",
+    "playwright": "1.63.0",
     "tailwindcss": "^4.2.1",
     "typescript": "^5"
+  },
+  "overrides": {
+    "postman-request": {
+      "uuid": "11.1.1",
+      "qs": "6.16.0"
+    }
   }
 }

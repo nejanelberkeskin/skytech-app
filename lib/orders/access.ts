@@ -45,10 +45,12 @@ export function paymentResultPath(orderNo: string, orderId: string, locale: stri
 }
 
 /* ── Erişim çerezi ────────────────────────────────────────────────────────────
-   E-postadaki bağlantı (`?t=`) ilk açılışta doğrulanır, belirteç adres çubuğundan silinir.
-   Sayfa yenilendiğinde ya da dil değiştirildiğinde erişim kaybolmasın diye aynı belirteç
-   yalnız sunucunun okuyabildiği (HttpOnly) bir çerezde tutulur. Çerez yeni bir yetki
-   VERMEZ: değeri yine imza doğrulamasından geçer; çalınması bağlantının çalınmasıyla aynıdır. */
+   E-postadaki bağlantı (`?t=`) sayfa render edilmeden kapıda doğrulanır (lib/orders/link-gate.ts): belirteç
+   yalnız sunucunun okuyabildiği (HttpOnly) bu çereze yazılır ve istek belirteçsiz adrese yönlendirilir. Sayfalar,
+   yenileme, dil değişimi ve belgeler çerezi okur; adresteki belirteci okumaz. Çerez yeni bir yetki VERMEZ: değeri
+   yine imza doğrulamasından geçer; çalınması bağlantının çalınmasıyla aynıdır. Sipariş başına ayrı çerezdir (birden
+   çok sipariş aynı tarayıcıda açılabilir). SameSite=Lax: e-postadan ve ödeme sağlayıcısından gelen üst düzey GET
+   gezinmesinde gönderilir, başka sitenin alt isteğinde gönderilmez. */
 export const orderCookieName = (orderNo: string) => `sgo_${orderNo}`;
 
 export function orderCookieOptions() {

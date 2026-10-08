@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase/browser";
 import Navbar from "@/components/Navbar";
@@ -220,7 +220,7 @@ export default function CorporateLanding() {
             <div className="relative z-10">
               <h2 className="text-3xl font-bold text-white mb-4">Kurumsal Ormanınızı Bugün Başlatın</h2>
               <p className="text-emerald-100/40 mb-10">
-                Size özel bir teklif hazırlamamız sadece 24 saat sürer. Hiçbir taahhüt yok.
+                İhtiyaçlarınızı paylaşın, size özel teklifimizi birlikte şekillendirelim. Teklif talebi satın alma yükümlülüğü doğurmaz.
               </p>
               <Link
                 href="/kurumsal/teklif-al"

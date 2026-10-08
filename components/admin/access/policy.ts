@@ -1,0 +1,62 @@
+import { ADMIN_MODULES, type AdminModule, type UserRole } from "@/lib/rbac";
+import type { Permission } from "@/lib/admin/permission-keys";
+import type { AdminMe } from "./types";
+export function hasFullPermission(
+  me: AdminMe | null,
+  key: Permission,
+): boolean {
+  return (
+    !!me?.admin.isActive &&
+    !!me.permissions
+      .find((p) => p.key === key)
+      ?.scopes.some((s) => s.kind === "all")
+  );
+}
+const migrated: Record<string, Permission | readonly Permission[] | "self"> = {
+  dashboard: "self",
+  kullanicilar: ["staff.manage", "roles.manage"],
+  davetler: ["staff.manage", "staff.invite"],
+  roller: "roles.manage",
+  "islem-kaydi": "audit.read",
+  guvenlik: "self",
+  finans: "finance.read",
+  iadeler: "finance.read",
+};
+export function visibleModules(me: AdminMe | null): AdminModule[] {
+  if (!me?.admin.isActive) return [];
+  return ADMIN_MODULES.filter((mod) => {
+    for (const [path, permission] of [["/admin/birakma-siparisleri", "orders.read"], ["/admin/talepler", "requests.read"]]) {
+      if (mod.href === path) return !!me.permissions.find(p => p.key === permission)?.scopes.some(s =>
+        s.kind === "all" || s.kind === "assigned" || (s.kind === "sites" && s.siteIds.length > 0));
+    }
+    if (mod.href === "/admin/araziler") return !!me.permissions.find(p => p.key === "sites.read")?.scopes.some(s => s.kind === "all" || s.kind === "assigned" || (s.kind === "sites" && s.siteIds.length > 0));
+    if(mod.href === "/admin/birakma-partileri")return !!me.permissions.find(p=>p.key==="batches.read")?.scopes.some(s=>s.kind==="all"||s.kind==="assigned"||(s.kind==="sites"&&s.siteIds.length>0));
+    if(mod.href === "/admin/satis-ayarlari")return ["sales.pause","sales.resume","sales.pricing.manage","system.readiness.read"].some(key=>me.permissions.find(p=>p.key===key)?.scopes.some(s=>s.kind==="all"));
+    const key = migrated[mod.id];
+    if (key === "self") return true;
+    if (key)
+      return typeof key === "string"
+        ? hasFullPermission(me, key)
+        : key.some((p) => hasFullPermission(me, p));
+    // Henüz izin/kapsam geçişi bitmeyen ekranları eski uçlardan daha geniş açma.
+    return mod.allowedRoles.includes(me.admin.legacyRole as UserRole);
+  });
+}
+export function canVisit(me: AdminMe | null, path: string): boolean {
+  return visibleModules(me).some((m) =>
+    m.href === "/admin"
+      ? path === m.href
+      : path === m.href || path.startsWith(`${m.href}/`),
+  );
+}
+export const activeAssignment = (
+  a: {
+    startsAt: string;
+    endsAt: string | null;
+    revokedAt?: string | null;
+  },
+  now = Date.now(),
+) =>
+  !a.revokedAt &&
+  Date.parse(a.startsAt) <= now &&
+  (!a.endsAt || Date.parse(a.endsAt) > now);

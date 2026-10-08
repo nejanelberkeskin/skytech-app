@@ -1,119 +1,107 @@
-/**
- * GET /api/admin/finance
- *
- * Finans dashboard verileri:
- *   - Bu ay ciro (paid orders)
- *   - Bekleyen ödeme (pending orders)
- *   - Aktif kurumsal teklif sayısı
- *   - Son işlemler (son 20 ödeme)
- */
-
 import { NextRequest, NextResponse } from "next/server";
-import { requireAdmin } from "@/lib/admin-auth";
+import { requirePermission } from "@/lib/admin/permissions";
 import { createServiceRoleClient } from "@/lib/supabase/server";
+import type { B2bPayment } from "@/lib/admin/finance";
+import { readPages } from "@/lib/admin/read-pages";
+import { FINANCE_DEFINITIONS_VERSION, istanbulMonthKey, loadFinanceOverview } from "@/lib/finance/overview";
+
+/**
+ * GET /api/admin/finance — Finans ekranı. İzin: finance.read (bugün SUPER_ADMIN, FINANCE).
+ *
+ * Bırakma siparişi tutarları tek finans hesabından gelir (lib/finance/overview.ts, SQL 020; tanımlar
+ * web-brifler/18). B2B ayrı kaynaktır (payments, checkout_type=b2b) ve bırakma toplamlarına karışmaz.
+ * Üst düzey eski alanlar mevcut ekran için korunur; yeni ekran `overview` alanını kullanır.
+ */
+interface RecentOrderRow {
+  order_no: string;
+  buyer_email: string;
+  quantity: number;
+  total_kurus: number | string;
+  status: string;
+  paid_at: string | null;
+  created_at: string;
+}
 
 export async function GET(request: NextRequest) {
-  const { error } = await requireAdmin(request, ["SUPER_ADMIN", "FINANCE"]);
-  if (error) return error;
+  const guard = await requirePermission(request, "finance.read");
+  if (guard.error) return guard.error;
 
-  const supabase = createServiceRoleClient();
+  try {
+    const db = createServiceRoleClient();
+    const [overview, b2b, quotes, invoices, recent] = await Promise.all([
+      loadFinanceOverview(db),
+      readPages<B2bPayment>((a, b) =>
+        db
+          .from("payments")
+          .select("id, amount, status, updated_at, created_at, orders(buyer_email,total_seeds)")
+          .eq("metadata->>checkout_type", "b2b")
+          .order("id")
+          .range(a, b) as unknown as PromiseLike<{ data: B2bPayment[] | null; error: unknown }>
+      ),
+      db.from("corporate_quotes").select("id", { count: "exact", head: true }).in("status", ["PENDING", "QUOTED", "pending", "quoted"]),
+      db
+        .from("order_invoices")
+        .select("id, release_orders!inner(is_test)", { count: "exact", head: true })
+        .eq("status", "pending")
+        .eq("release_orders.is_test", false),
+      db
+        .from("release_orders")
+        .select("order_no, buyer_email, quantity, total_kurus, status, paid_at, created_at")
+        .eq("is_test", false)
+        .order("created_at", { ascending: false })
+        .limit(20),
+    ]);
+    if (quotes.error || invoices.error || recent.error) throw new Error("report_unavailable");
 
-  // Bu ayın başlangıcı
-  const now = new Date();
-  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+    const month = overview.currentMonth;
+    const liabilities = overview.liabilities;
+    const b2bMonthlyKurus = b2b
+      .filter((p) => p.status === "success" && istanbulMonthKey(p.updated_at) === month.key)
+      .reduce((s, p) => s + Math.round(Number(p.amount) * 100), 0);
 
-  // Paralel sorgular
-  const [
-    paidOrdersRes,
-    pendingOrdersRes,
-    activeQuotesRes,
-    recentPaymentsRes,
-  ] = await Promise.all([
-    // Bu ay ödenen siparişler — toplam ciro
-    supabase
-      .from("orders")
-      .select("total_amount")
-      .eq("payment_status", "paid")
-      .gte("updated_at", monthStart),
+    const recentTransactions = [
+      ...((recent.data ?? []) as RecentOrderRow[]).map((o) => ({
+        id: o.order_no,
+        date: o.paid_at ?? o.created_at,
+        customer: o.buyer_email,
+        seeds: o.quantity,
+        amount: Number(o.total_kurus) / 100,
+        type: "Bırakma hizmeti",
+        status: o.status === "refunded" ? "refunded" : o.paid_at ? "success" : o.status === "expired" ? "expired" : "pending",
+      })),
+      ...b2b.map((p) => ({
+        id: p.id,
+        date: p.updated_at ?? p.created_at,
+        customer: p.orders?.buyer_email ?? "—",
+        seeds: p.orders?.total_seeds ?? 0,
+        amount: Number(p.amount),
+        type: "B2B — ayrı kaynak",
+        status: p.status,
+      })),
+    ]
+      .sort((a, b) => b.date.localeCompare(a.date))
+      .slice(0, 20);
 
-    // Bekleyen ödemeler
-    supabase
-      .from("orders")
-      .select("total_amount")
-      .eq("payment_status", "pending")
-      .neq("status", "expired")
-      .neq("status", "released"),
-
-    // Aktif kurumsal teklifler (PENDING + QUOTED)
-    supabase
-      .from("corporate_quotes")
-      .select("id", { count: "exact", head: true })
-      .in("status", ["PENDING", "QUOTED"]),
-
-    // Son 20 ödeme
-    supabase
-      .from("payments")
-      .select(`
-        id,
-        order_id,
-        amount,
-        currency,
-        status,
-        payment_method,
-        metadata,
-        created_at,
-        orders!inner(
-          buyer_email,
-          total_seeds,
-          order_type,
-          metadata
-        )
-      `)
-      .order("created_at", { ascending: false })
-      .limit(20),
-  ]);
-
-  // Ciro hesapla
-  const monthlyRevenue = (paidOrdersRes.data ?? []).reduce(
-    (sum, o) => sum + (parseFloat(o.total_amount) || 0),
-    0
-  );
-
-  const pendingAmount = (pendingOrdersRes.data ?? []).reduce(
-    (sum, o) => sum + (parseFloat(o.total_amount) || 0),
-    0
-  );
-
-  // Son işlemleri formatlı döndür
-  const recentTransactions = (recentPaymentsRes.data ?? []).map((p) => {
-    const order = p.orders as unknown as {
-      buyer_email: string;
-      total_seeds: number;
-      order_type: string;
-      metadata: Record<string, unknown> | null;
-    };
-    const meta = p.metadata as Record<string, unknown> | null;
-    const orderMeta = order?.metadata as Record<string, unknown> | null;
-
-    return {
-      id: orderMeta?.siparis_no ?? p.order_id?.slice(0, 8) ?? p.id.slice(0, 8),
-      date: p.created_at,
-      customer: (meta?.buyer_name as string) ?? order?.buyer_email ?? "—",
-      seeds: order?.total_seeds ?? 0,
-      amount: p.amount,
-      type: order?.order_type === "gift"
-        ? "Hediye"
-        : order?.order_type === "reservation"
-        ? "Arazi Ekim"
-        : "Fiziksel",
-      status: p.status, // "success" | "pending" | "failed"
-    };
-  });
-
-  return NextResponse.json({
-    monthlyRevenue,
-    pendingAmount,
-    activeQuotes: activeQuotesRes.count ?? 0,
-    recentTransactions,
-  });
+    return NextResponse.json(
+      {
+        definitionsVersion: FINANCE_DEFINITIONS_VERSION,
+        // Mevcut ekranın alanları (TL). Tanımlar web-brifler/18 §3.
+        monthlyRevenue: month.netCashKurus / 100,
+        monthlyGross: (month.orderCollectionsKurus + month.duplicateChargesKurus) / 100,
+        monthlyRefunds: (month.orderRefundsKurus + month.duplicateRefundsKurus) / 100,
+        pendingRefundAmount: (liabilities.orderRefundLiabilityKurus + liabilities.duplicateLiabilityKurus) / 100,
+        pendingAmount: overview.pending.payableKurus / 100,
+        b2bMonthlyRevenue: b2bMonthlyKurus / 100,
+        activeQuotes: quotes.count ?? 0,
+        pendingInvoices: invoices.count ?? 0,
+        recentTransactions,
+        // Yeni ekranın kaynağı (kuruş)
+        overview,
+        b2b: { monthlyKurus: b2bMonthlyKurus, monthBasis: "payments.updated_at" },
+      },
+      { headers: { "Cache-Control": "private, no-store" } }
+    );
+  } catch {
+    return NextResponse.json({ error: "Finans verileri alınamadı. Lütfen yeniden deneyin." }, { status: 503 });
+  }
 }

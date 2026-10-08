@@ -1,12 +1,15 @@
 "use client";
 
+import { containDialogTab } from "@/lib/hooks/dialog-keyboard";
+
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 import LanguageSwitcher from "./LanguageSwitcher";
-import { ACCOUNTS_ENABLED, CTA_MODE, orderCtaHref } from "@/lib/site-config";
+import { ACCOUNTS_ENABLED, CTA_MODE, REQUESTS_ENABLED, orderCtaHref } from "@/lib/site-config";
+import { OWN_LAND_HREF } from "@/lib/sites/links";
 
 /**
  * Oturum var mı? Supabase'in auth çerezi ("sb-<ref>-auth-token[.N]")
@@ -48,6 +51,8 @@ function useNavItems() {
         { label: t("ourSeeds"), href: "/tohumlarimiz" },
         { label: t("droneTech"), href: "/dron-teknolojisi" },
         { label: t("carbonProgram"), href: "/karbon-programi" },
+        // Kendi arazi başvurusu: talep akışı kapalıyken sayfa /yakinda'ya gittiği için menüde de yok.
+        ...(REQUESTS_ENABLED ? [{ label: t("ownLand"), href: OWN_LAND_HREF }] : []),
       ],
     },
     { label: t("projects"), href: "/projeler" },
@@ -72,6 +77,17 @@ export default function VitrinNavbar() {
   const openDropdown = dropdown?.path === pathname ? dropdown.label : null;
   const setOpenDropdown = (label: string | null) => setDropdown(label ? { label, path: pathname } : null);
   const signedIn = useHasSessionCookie();
+  const menuRef = useRef<HTMLDialogElement>(null);
+  useEffect(() => {
+    const dialog = menuRef.current;
+    if (mobileOpen) dialog?.showModal(); else dialog?.close();
+    const previous = document.body.style.overflow;
+    if (mobileOpen) document.body.style.overflow = "hidden";
+    const wide = window.matchMedia("(min-width: 1280px)");
+    const close = () => { if (wide.matches) setMobileOpenPath(null); };
+    wide.addEventListener("change", close);
+    return () => { dialog?.close(); document.body.style.overflow = previous; wide.removeEventListener("change", close); };
+  }, [mobileOpen]);
 
   const ctaHref = orderCtaHref("hub");
   const ctaLabel =
@@ -130,8 +146,11 @@ export default function VitrinNavbar() {
               >
                 {item.children ? (
                   <button
+                    aria-expanded={openDropdown === item.label}
+                    onClick={() => setOpenDropdown(openDropdown === item.label ? null : item.label)}
+                    onKeyDown={(e) => { if (e.key === "Escape") setOpenDropdown(null); }}
                     className={`px-4 py-2 text-sm font-medium rounded-lg flex items-center gap-1 whitespace-nowrap transition-colors ${
-                      isActive("/tohum-topu") || isActive("/dron-teknolojisi") || isActive("/karbon-programi")
+                      item.children.some((child) => isActive(child.href))
                         ? "text-[#1B6B3A]"
                         : "text-[#1a2e1a] hover:text-[#1B6B3A]"
                     }`}
@@ -161,7 +180,9 @@ export default function VitrinNavbar() {
                       transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
                       className="absolute top-full left-0 pt-3 min-w-[240px]"
                     >
-                      <div className="premium-glass rounded-2xl p-2 shadow-2xl">
+                      {/* Opak zemin: animasyonlu kapsayıcı backdrop-filter bulanıklığını geçersiz kıldığı için yarı saydam cam
+                          zemin arkadaki başlık metnini okunur bırakıyordu. */}
+                      <div className="rounded-2xl border border-black/5 bg-white p-2 shadow-2xl">
                         {item.children.map((child, i) => (
                           <motion.div
                             key={child.href}
@@ -206,6 +227,8 @@ export default function VitrinNavbar() {
             onClick={() => setMobileOpen(!mobileOpen)}
             className="xl:hidden shrink-0 w-10 h-10 rounded-xl flex items-center justify-center text-[#1a2e1a] hover:bg-[#1B6B3A]/8 transition-colors"
             aria-label={tNav("menu")}
+            aria-expanded={mobileOpen}
+            aria-controls="vitrin-mobile-menu"
           >
             {mobileOpen ? <CloseIcon className="w-5 h-5" /> : <MenuIcon className="w-5 h-5" />}
           </button>
@@ -215,7 +238,7 @@ export default function VitrinNavbar() {
       {/* Mobile Drawer — Premium glass + stagger */}
       <AnimatePresence>
         {mobileOpen && (
-          <div className="xl:hidden fixed inset-0 z-40">
+          <dialog onKeyDown={containDialogTab} ref={menuRef} id="vitrin-mobile-menu" aria-label={tNav("menu")} onCancel={() => setMobileOpenPath(null)} className="fixed inset-0 z-[60] m-0 h-dvh max-h-none w-screen max-w-none border-0 bg-transparent p-0 backdrop:bg-transparent">
             {/* Backdrop */}
             <motion.div
               initial={{ opacity: 0 }}
@@ -253,7 +276,7 @@ export default function VitrinNavbar() {
                 <button
                   onClick={() => setMobileOpen(false)}
                   className="w-10 h-10 rounded-xl premium-glass-dark flex items-center justify-center"
-                  aria-label={tCommon("back")}
+                  aria-label={tCommon("close")}
                 >
                   <CloseIcon className="w-4 h-4 text-white" />
                 </button>
@@ -341,7 +364,7 @@ export default function VitrinNavbar() {
                 </Link>
               </motion.div>
             </motion.div>
-          </div>
+          </dialog>
         )}
       </AnimatePresence>
 

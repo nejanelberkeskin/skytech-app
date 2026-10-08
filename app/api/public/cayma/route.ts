@@ -1,6 +1,5 @@
 import { after, NextRequest, NextResponse } from "next/server";
 import { rateLimit, getClientIP } from "@/lib/admin-auth";
-import { SALES_ENABLED } from "@/lib/site-config";
 import { issuesToFieldErrors, MIN_FILL_MS } from "@/lib/requests/schema";
 import { hashIp, sanitizeUserAgent } from "@/lib/requests/server";
 import { withdrawalRequestSchema } from "@/lib/orders/schema";
@@ -25,7 +24,7 @@ import { recordWithdrawal, refundDueDay, sendWithdrawalEmails } from "@/lib/orde
 const FIXTURE_EMAIL = "ayse@example.com";
 
 export async function POST(req: NextRequest) {
-  if (!SALES_ENABLED) return NextResponse.json({ error: "closed" }, { status: 503 });
+  // Existing customers retain withdrawal access when new sales are disabled.
 
   const ip = getClientIP(req);
   const limited = rateLimit(`cayma:${ip}`, 8, 10 * 60_000);

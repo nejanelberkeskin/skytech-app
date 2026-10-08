@@ -52,6 +52,7 @@ import {
 import BuyerInvoiceFields from "./BuyerInvoiceFields";
 import OrderReview, { ReviewRows } from "./OrderReview";
 import DocumentDialog from "./DocumentDialog";
+import { readPreviewResponse } from "./preview-response";
 import {
   EMPTY_INVOICE,
   EMPTY_CONSENTS,
@@ -289,8 +290,11 @@ export default function OrderWizard({
     const result = await previewOrder(parsed.data);
     if (sequence !== previewSequence.current) return;
     setLoading(false);
-    if (result.ok) setPreview(result);
-    else if (
+    if (result.ok) {
+      const verified = readPreviewResponse(result, parsed.data.quantity);
+      if (verified) setPreview(verified);
+      else setFailure("generic");
+    } else if (
       result.error === "validation" &&
       result.fields &&
       Object.keys(result.fields).length

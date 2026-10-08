@@ -1,12 +1,18 @@
 import { NextRequest } from "next/server";
 import { createServiceRoleClient } from "@/lib/supabase/server";
-import { requireAdmin } from "@/lib/admin-auth";
+import { hasFullScope, hasPermission, requirePermission } from "@/lib/admin/permissions";
+import { fail } from "@/lib/api/envelope";
+import { DOCUMENT_PERMISSIONS } from "@/lib/orders/admin-access";
 import { documentFileName, loadStoredDocuments, storedDocumentToPdf } from "@/lib/orders/after-payment";
 import { DOCUMENT_KINDS } from "@/lib/orders/types";
 
 /**
  * GET /api/admin/release-orders/[id]/belge/[kind]?bicim=html|pdf — siparişe özel belgenin
- * yönetim kopyası (müşteriye giden ile AYNI saklanan içerik). Roller: SUPER_ADMIN, FINANCE, OPERATIONS.
+ * yönetim kopyası (müşteriye giden ile AYNI saklanan içerik).
+ *
+ * İzin (web-brifler/27 §3): `orders.documents.read` + `customers.contact.read` + `customers.tax.read`, üçü de
+ * tam kapsam; belge izni hassas olduğundan yeniden doğrulanmış oturum. Belgeler iletişim ve vergi bilgisini
+ * maskesiz taşır: belge izni bu verileri dolaylı açmaz.
  */
 export const runtime = "nodejs";
 
@@ -14,8 +20,17 @@ const HEADERS = { "Cache-Control": "private, no-store", "X-Robots-Tag": "noindex
 const notFound = () => new Response(null, { status: 404, headers: HEADERS });
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string; kind: string }> }) {
-  const { error: authError } = await requireAdmin(request, ["SUPER_ADMIN", "FINANCE", "OPERATIONS"]);
-  if (authError) return authError;
+  const guard = await requirePermission(request, "orders.documents.read");
+  if (guard.error) return guard.error;
+  // Önce eksik izinlerin hepsi, sonra kapsamı dar olanlar (çoklu izin kapısıyla aynı sıra).
+  const missing = DOCUMENT_PERMISSIONS.filter((permission) => !hasPermission(guard.access, permission));
+  if (missing.length) {
+    return fail(403, "forbidden", "Bu belgeyi görüntüleme yetkiniz yok.", { reason: "missing_permission", permissions: missing, permission: missing[0] });
+  }
+  const limited = DOCUMENT_PERMISSIONS.filter((permission) => !hasFullScope(guard.access, permission));
+  if (limited.length) {
+    return fail(403, "scope_unsupported", "Belgeler yalnız bütün kayıtlarda yetkili kişiye açılır.", { permissions: limited, permission: limited[0] });
+  }
   const { id, kind } = await params;
   if (!/^[0-9a-f-]{36}$/i.test(id) || !(DOCUMENT_KINDS as readonly string[]).includes(kind)) return notFound();
 

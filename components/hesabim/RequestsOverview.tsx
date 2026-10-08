@@ -1,13 +1,15 @@
 "use client";
 
 import { Suspense, useEffect, useState } from "react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { useSearchParams } from "next/navigation";
+import { useLocale, useTranslations } from "next-intl";
 import { supabase } from "@/lib/supabase/browser";
 import { claimPendingRequest } from "@/lib/requests/client";
 import { REQUEST_ROUTES } from "@/lib/site-config";
 import { REQUEST_STATUS_LABELS, REQUEST_TYPE_LABELS } from "@/lib/requests/labels";
 import type { ServiceRequestStatus, ServiceRequestType } from "@/lib/types";
+import { intlLocale, uiLocale } from "@/lib/utils/locale";
 
 /* ═══════════════════════════════════════════════════════════════════════
    Hesabım — talep özeti (ödeme öncesi dönem)
@@ -55,9 +57,10 @@ export default function RequestsOverview() {
 }
 
 function Loading() {
+  const t = useTranslations("accountPages");
   return (
     <div className="p-6 lg:p-8 flex justify-center py-16">
-      <div className="w-10 h-10 rounded-full border-2 border-emerald-500/20 border-t-emerald-400 animate-spin" />
+      <div role="status" aria-label={t("loading")} className="w-10 h-10 rounded-full border-2 border-emerald-500/20 border-t-emerald-400 animate-spin" />
     </div>
   );
 }
@@ -65,6 +68,8 @@ function Loading() {
 function RequestsOverviewContent() {
   const searchParams = useSearchParams();
   const talepParam = searchParams.get("talep");
+  const t = useTranslations("accountPages.overview");
+  const lang = uiLocale(useLocale());
   const [rows, setRows] = useState<MyRequestRow[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -95,10 +100,10 @@ function RequestsOverviewContent() {
   const done = rows.filter((r) => r.status === "converted").length;
 
   const STATS = [
-    { label: "Toplam Talebim", value: total, icon: "📥", accent: "text-emerald-400" },
-    { label: "Dönüş Bekleyen", value: waiting, icon: "⏳", accent: "text-amber-400" },
-    { label: "Görüşme Sürüyor", value: inProgress, icon: "📞", accent: "text-sky-400" },
-    { label: "Sonuçlanan", value: done, icon: "✅", accent: "text-teal-400" },
+    { label: t("stats.total"), value: total, icon: "📥", accent: "text-emerald-400" },
+    { label: t("stats.waiting"), value: waiting, icon: "⏳", accent: "text-amber-400" },
+    { label: t("stats.inProgress"), value: inProgress, icon: "📞", accent: "text-sky-400" },
+    { label: t("stats.done"), value: done, icon: "✅", accent: "text-teal-400" },
   ];
 
   if (loading) return <Loading />;
@@ -106,8 +111,8 @@ function RequestsOverviewContent() {
   return (
     <div className="p-6 lg:p-8 space-y-8 animate-fade-in-up">
       <div>
-        <h1 className="text-2xl font-bold text-white">Hesabım</h1>
-        <p className="text-sm text-emerald-200/40 mt-1">Taleplerinizin özeti — ekibimiz her talebe bir iş günü içinde dönüş yapar.</p>
+        <h1 className="text-2xl font-bold text-white">{t("title")}</h1>
+        <p className="text-sm text-emerald-200/40 mt-1">{t("subtitle")}</p>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -124,19 +129,19 @@ function RequestsOverviewContent() {
 
       <div className="liquid-glass rounded-3xl overflow-hidden">
         <div className="px-6 py-4 flex items-center justify-between" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-          <h2 className="font-semibold text-white">Son Talepler</h2>
+          <h2 className="font-semibold text-white">{t("recent")}</h2>
           {rows.length > 0 && (
             <Link href="/hesabim/taleplerim" className="text-xs text-emerald-400 hover:text-emerald-300 font-medium transition-colors">
-              Tümünü Gör →
+              {t("seeAll")}
             </Link>
           )}
         </div>
         {rows.length === 0 ? (
           <div className="p-10 text-center">
             <span className="text-5xl block mb-4 animate-float">🌿</span>
-            <p className="text-emerald-200/40 text-sm mb-4">Hesabınıza bağlı talep bulunmuyor.</p>
+            <p className="text-emerald-200/40 text-sm mb-4">{t("empty")}</p>
             <Link href={REQUEST_ROUTES.hub} className="inline-flex glass-btn px-6 py-3 rounded-2xl text-sm font-medium text-white transition-all">
-              İlk Talebi Oluştur →
+              {t("firstRequest")}
             </Link>
           </div>
         ) : (
@@ -153,14 +158,14 @@ function RequestsOverviewContent() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm text-white">
-                    <span className="font-mono text-emerald-300">{r.request_no}</span> — {REQUEST_TYPE_LABELS.tr[r.type]}
-                    {r.total_seeds ? ` · ${r.total_seeds.toLocaleString("tr-TR")} tohum topu` : ""}
+                    <span className="font-mono text-emerald-300">{r.request_no}</span> — {REQUEST_TYPE_LABELS[lang][r.type]}
+                    {r.total_seeds ? ` · ${t("seedBalls", { count: r.total_seeds })}` : ""}
                     {r.land?.name ? ` · ${r.land.name}` : ""}
                   </p>
-                  <p className="text-xs text-emerald-200/25 mt-0.5">{new Date(r.created_at).toLocaleDateString("tr-TR")}</p>
+                  <p className="text-xs text-emerald-200/25 mt-0.5">{new Date(r.created_at).toLocaleDateString(intlLocale(lang))}</p>
                 </div>
                 <span className={`text-xs font-medium px-3 py-1.5 rounded-full border ${STATUS_CLASS[r.status]}`}>
-                  {REQUEST_STATUS_LABELS.tr[r.status]}
+                  {REQUEST_STATUS_LABELS[lang][r.status]}
                 </span>
               </Link>
             ))}
@@ -170,8 +175,8 @@ function RequestsOverviewContent() {
 
       <div className="grid md:grid-cols-2 gap-4">
         {[
-          { href: REQUEST_ROUTES.openLand, icon: "🚁", title: "Sahaya Tohum Topu Bıraktırın", desc: "Bir Proje Uygulama Sahası seçin, adedi belirleyin" },
-          { href: REQUEST_ROUTES.land, icon: "🗺️", title: "Kendi Arazim İçin", desc: "Araziniz için dronla tohum topu bırakma başvurusu" },
+          { href: REQUEST_ROUTES.openLand, icon: "🚁", title: t("actions.openLandTitle"), desc: t("actions.openLandDesc") },
+          { href: REQUEST_ROUTES.land, icon: "🗺️", title: t("actions.ownLandTitle"), desc: t("actions.ownLandDesc") },
         ].map((a) => (
           <Link key={a.href} href={a.href} className="liquid-glass liquid-glass-hover relative rounded-3xl p-5 flex items-center gap-4 group overflow-hidden">
             <div className="w-12 h-12 rounded-2xl flex items-center justify-center glass-subtle group-hover:scale-110 transition-transform duration-300">

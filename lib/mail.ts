@@ -419,12 +419,12 @@ const CONFIRM_TEXT = {
   tr: {
     subject: (no: string) => `Talebiniz alındı — ${no}`,
     title: "Talebiniz Alındı",
-    sub: "Skytech Green ekibi en kısa sürede sizinle iletişime geçecek",
+    sub: "Talebiniz kayda alındı; ekibimiz inceleyip sizinle iletişime geçecek",
     hello: (name: string) => `Merhaba <strong>${name}</strong>,`,
     intro: (type: string, no: string) =>
       `Talebiniz bize ulaştı: <strong>${type}</strong>. Talep numaranız: <strong style="font-family:monospace;font-size:16px;color:#059669;">${no}</strong>. Yazışmalarınızda bu numarayı belirtmeniz süreci hızlandırır.`,
     summaryTitle: "Talep özeti",
-    next: "Ekibimiz talebinizi inceleyip bir iş günü içinde bıraktığınız iletişim bilgisi üzerinden size dönüş yapacak. Ayrıntılar ve takvim bu görüşmede netleştirilir; şu an sizden herhangi bir ödeme istenmemektedir.",
+    next: "Ekibimiz talebinizi inceleyip verdiğiniz iletişim bilgileri üzerinden size dönüş yapacak. Ayrıntılar ve takvim bu görüşmede netleştirilir; şu an sizden herhangi bir ödeme istenmemektedir.",
     account: (url: string) =>
       `Talebinizin durumunu takip etmek için <a href="${url}" class="btn">ücretsiz hesap oluşturabilirsiniz</a>.`,
     contact: "Sorularınız için bu e-postayı yanıtlayabilir veya info@skytechgreen.com adresine yazabilirsiniz.",
@@ -432,12 +432,12 @@ const CONFIRM_TEXT = {
   en: {
     subject: (no: string) => `We received your request — ${no}`,
     title: "Request Received",
-    sub: "The Skytech Green team will get back to you shortly",
+    sub: "Your request is recorded; our team will review it and contact you",
     hello: (name: string) => `Hello <strong>${name}</strong>,`,
     intro: (type: string, no: string) =>
       `Your <strong>${type}</strong> has reached us. Your request number is <strong style="font-family:monospace;font-size:16px;color:#059669;">${no}</strong>. Quoting it in your correspondence speeds things up.`,
     summaryTitle: "Request summary",
-    next: "Our team will review your request and contact you within one business day using the details you provided. Details and scheduling are clarified in that conversation; no payment is requested at this stage.",
+    next: "Our team will review your request and get back to you using the contact details you provided. Details and scheduling are clarified in that conversation; no payment is requested at this stage.",
     account: (url: string) =>
       `To track the status of your request you can <a href="${url}" class="btn">create a free account</a>.`,
     contact: "For questions, reply to this e-mail or write to info@skytechgreen.com.",
@@ -1089,4 +1089,33 @@ export async function sendVideoPublished(input: VideoPublishedInput) {
 export function publicOrigin(requestOrigin?: string | null): string {
   if (process.env.VERCEL_ENV === "production" || !requestOrigin) return appUrl();
   return requestOrigin;
+}
+
+/* ── Personel daveti ──────────────────────────────────────────────────────── */
+
+export interface StaffInvitationInput {
+  to: string;
+  roleLabel: string;
+  inviterName: string;
+  acceptUrl: string;
+  expiresAt: Date;
+}
+
+/**
+ * Personel daveti — tek kullanımlık bağlantı. Şifre içermez, oluşturmaz ve göndermez;
+ * kişi kendi hesabını kurar. Bağlantı yalnız bu e-postada bulunur.
+ */
+export async function sendStaffInvitation(input: StaffInvitationInput) {
+  const day = new Intl.DateTimeFormat("tr-TR", { dateStyle: "long", timeStyle: "short", timeZone: "Europe/Istanbul" }).format(input.expiresAt);
+  const html = emailLayout(
+    "Skytech Green yönetim daveti",
+    `
+      <p style="margin:0 0 12px;">Merhaba,</p>
+      <p style="margin:0 0 12px;">${esc(input.inviterName)}, Skytech Green yönetim paneline <strong>${esc(input.roleLabel)}</strong> yetkisiyle katılmanız için sizi davet etti.</p>
+      <p style="margin:0 0 20px;">Aşağıdaki bağlantıyla kendi hesabınızı kurabilirsiniz. Bağlantı tek kullanımlıktır ve <strong>${esc(day)}</strong> tarihine kadar geçerlidir.</p>
+      <p style="margin:0 0 20px;"><a href="${esc(input.acceptUrl)}" style="background:#2f6b3a;color:#ffffff;padding:12px 20px;border-radius:8px;text-decoration:none;display:inline-block;">Daveti kabul et</a></p>
+      <p style="margin:0;color:#6b8f6b;font-size:13px;">Bu daveti beklemiyorsanız bağlantıyı kullanmayın; davet kendiliğinden geçersiz olur. Bu e-posta şifre içermez.</p>
+    `
+  );
+  return sendEmail({ to: input.to, subject: "Skytech Green yönetim paneli daveti", html });
 }

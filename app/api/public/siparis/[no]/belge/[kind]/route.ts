@@ -1,17 +1,19 @@
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { rateLimit, getClientIP } from "@/lib/admin-auth";
 import { createSupabaseServer } from "@/lib/supabase/server";
-import { orderCookieName } from "@/lib/orders/access";
+import { orderCookieName, orderCookieOptions } from "@/lib/orders/access";
+import { orderLinkToken } from "@/lib/orders/link-gate";
 import { documentFileName, loadStoredDocuments, storedDocumentToPdf } from "@/lib/orders/after-payment";
 import { db } from "@/lib/orders/store";
 import { DOCUMENT_KINDS, type DocumentKind } from "@/lib/orders/types";
 import { getAuthorizedOrder } from "@/lib/orders/view-data";
 
 /**
- * GET /api/public/siparis/[no]/belge/[kind]?t=<belirteç>&bicim=html|pdf
+ * GET /api/public/siparis/[no]/belge/[kind]?bicim=html|pdf
  *
- * Siparişe özel hukuki belgenin müşteri kopyası. Yetki: e-postadaki imzalı belirteç ya da
- * oturumdaki sipariş sahibi; yetkisiz istek ile "yok" aynı yanıtı alır (404).
+ * Siparişe özel hukuki belgenin müşteri kopyası. Yetki: erişim çerezindeki imzalı belirteç ya da
+ * oturumdaki sipariş sahibi; yetkisiz istek ile "yok" aynı yanıtı alır (404). Sipariş sayfası bağlantıları
+ * belirteç taşımaz. Eski biçimli bağlantı (`?t=`) belirteci çereze çevirip belirteçsiz adrese 303 ile yönlendirir.
  *
  *  • html → sipariş anında saklanan DEĞİŞMEZ kopya, olduğu gibi (SHA-256 özeti bu metne aittir).
  *  • pdf  → aynı anda saklanan yapısal kaynaktan üretilir; şablonlar sonradan değişse de
@@ -38,7 +40,22 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ no: 
   const limited = rateLimit(`siparis-belge:${getClientIP(req)}`, 60, 10 * 60_000);
   if (limited) return limited;
 
-  const token = req.nextUrl.searchParams.get("t") ?? req.cookies.get(orderCookieName(no.trim().toUpperCase()))?.value ?? null;
+  const format = req.nextUrl.searchParams.get("bicim") === "pdf" ? "pdf" : "html";
+  // Eski biçimli bağlantı: belirteç doğrulanır, çereze yazılır ve belge belirteçsiz adresinden açılır (91-4).
+  if (req.nextUrl.searchParams.has("t")) {
+    // Biçime uymayan belirteç boş sayılır: veritabanına gidilmez, ham değer çereze ya da başlığa yazılmaz.
+    const linkToken = orderLinkToken(req.nextUrl.searchParams.get("t"));
+    const linked = linkToken ? await getAuthorizedOrder(no, { token: linkToken }, db()) : null;
+    if (!linked || !linked.paid_at) return notFound();
+    const res = new NextResponse(null, {
+      status: 303,
+      headers: { ...PRIVATE_HEADERS, Location: `/api/public/siparis/${linked.order_no}/belge/${kind}?bicim=${format}` },
+    });
+    res.cookies.set(orderCookieName(linked.order_no), linkToken, orderCookieOptions());
+    return res;
+  }
+
+  const token = req.cookies.get(orderCookieName(no.trim().toUpperCase()))?.value ?? null;
   let userId: string | null = null;
   if (!token) {
     try {
@@ -54,7 +71,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ no: 
   // Sözleşmesi kurulmamış (ödenmemiş) siparişin belgesi verilmez.
   if (!order || !order.paid_at) return notFound();
 
-  if (req.nextUrl.searchParams.get("bicim") === "pdf") {
+  if (format === "pdf") {
     const stored = await loadStoredDocuments(supabase, order.id);
     const doc = stored?.documents.find((d) => d.kind === kind);
     if (!stored || !doc) return notFound();

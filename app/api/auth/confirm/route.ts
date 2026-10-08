@@ -24,9 +24,10 @@ export async function GET(req: NextRequest) {
   const tokenHash = searchParams.get("token_hash");
   const type = searchParams.get("type");
   const next = safeNext(searchParams.get("next"), "/hesabim");
+  const prefix = next.match(/^\/(en|ru)(?:\/|$)/)?.[0].replace(/\/$/, "") ?? "";
   const isRecovery = type === "recovery";
 
-  const failTarget = isRecovery ? "/auth/sifre-yenile?error=invalid" : "/auth/login?error=confirm";
+  const failTarget = prefix + (isRecovery ? "/auth/sifre-yenile?error=invalid" : "/auth/login?error=confirm");
 
   if (!tokenHash || !type || !ALLOWED_TYPES.has(type)) {
     return NextResponse.redirect(new URL(failTarget, origin));
@@ -42,5 +43,5 @@ export async function GET(req: NextRequest) {
     return NextResponse.redirect(new URL(failTarget, origin));
   }
 
-  return NextResponse.redirect(new URL(isRecovery ? "/auth/sifre-yenile" : next, origin));
+  return NextResponse.redirect(new URL(isRecovery ? `${prefix}/auth/sifre-yenile` : next, origin));
 }

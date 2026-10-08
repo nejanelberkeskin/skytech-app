@@ -21,7 +21,9 @@ export const ANALYTICS_TRANSFER_READY = process.env.NEXT_PUBLIC_ANALYTICS_TRANSF
 let memoryConsent: CookieConsent | null = null;
 export function analyticsAllowedPath(path: string): boolean {
   const clean = path.replace(/^\/(en|ru)(?=\/|$)/, "");
-  return !/^\/(siparis|odeme|cayma|sertifika|hesabim|admin|giris|kayit|davet|auth|sifre)(\/|$)/.test(clean)
+  // `personel-daveti` ayrı yazılır: adresin içinde tek kullanımlık davet belirteci taşır ve
+  // `davet` kalıbıyla eşleşmez. Bu liste GA, Vercel Analytics ve Speed Insights için ortaktır.
+  return !/^\/(siparis|odeme|cayma|sertifika|hesabim|admin|giris|kayit|davet|personel-daveti|auth|sifre)(\/|$)/.test(clean)
     && !/\/katil(?:\/|$)/.test(clean);
 }
 export type CookieConsent = "granted" | "denied";

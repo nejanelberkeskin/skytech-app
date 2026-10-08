@@ -1,14 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link, useRouter } from "@/i18n/navigation";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase/browser";
 import { BuildingIcon } from "@/components/ui/Icons";
 
 export default function CorporateLogin() {
   const router = useRouter();
+  const t = useTranslations("corporatePages.login");
+  const tc = useTranslations("corporatePages");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPass, setShowPass] = useState(false);
@@ -20,7 +22,7 @@ export default function CorporateLogin() {
     setError(null);
 
     if (!email || !password) {
-      setError("E-posta ve şifre zorunludur.");
+      setError(t("errors.required"));
       return;
     }
 
@@ -32,12 +34,13 @@ export default function CorporateLogin() {
     });
 
     if (authError) {
-      if (authError.message === "Invalid login credentials") {
-        setError("E-posta veya şifre hatalı.");
-      } else if (authError.message === "Email not confirmed") {
-        setError("E-posta adresinizi doğrulamanız gerekiyor. Gelen kutunuzu kontrol edin.");
+      if (authError.code === "invalid_credentials" || authError.message === "Invalid login credentials") {
+        setError(t("errors.invalid"));
+      } else if (authError.code === "email_not_confirmed" || authError.message === "Email not confirmed") {
+        setError(t("errors.unconfirmed"));
       } else {
-        setError(authError.message);
+        // Ham sağlayıcı iletisi gösterilmez.
+        setError(t("errors.generic"));
       }
       setLoading(false);
       return;
@@ -63,7 +66,7 @@ export default function CorporateLogin() {
         style={{ backdropFilter: "blur(20px) saturate(1.4)", WebkitBackdropFilter: "blur(20px) saturate(1.4)" }}
       >
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between gap-3">
-          <Link href="/kurumsal" className="flex items-center gap-2.5 shrink-0" aria-label="Skytech Green Kurumsal">
+          <Link href="/kurumsal" className="flex items-center gap-2.5 shrink-0" aria-label={tc("homeAria")}>
             <Image
               src="/images/brand/logo.webp"
               alt="Skytech Green"
@@ -74,7 +77,7 @@ export default function CorporateLogin() {
             />
           </Link>
           <Link href="/kurumsal/teklif-al" className="text-xs sm:text-sm font-semibold text-[#1a2e1a] hover:text-[#1B6B3A] transition-colors text-right">
-            <span className="hidden sm:inline">Henüz hesabınız yok mu? </span>Teklif alın →
+            <span className="hidden sm:inline">{t("noAccount")} </span>{t("getQuote")}
           </Link>
         </div>
       </nav>
@@ -87,23 +90,20 @@ export default function CorporateLogin() {
               style={{ background: "linear-gradient(135deg, rgba(16,185,129,0.15), rgba(20,184,166,0.1))", border: "1px solid rgba(52,211,153,0.2)" }}>
               <BuildingIcon className="w-8 h-8 text-emerald-300" strokeWidth={1.6} />
             </div>
-            <h1 className="text-2xl font-bold text-white">Kurumsal Giriş</h1>
-            <p className="text-emerald-200/40 text-sm mt-2">
-              Teklifinizi ve orman panelinizi görüntüleyin.
-            </p>
+            <h1 className="text-2xl font-bold text-white">{t("title")}</h1>
+            <p className="text-emerald-200/40 text-sm mt-2">{t("subtitle")}</p>
           </div>
 
           <form onSubmit={handleLogin} className="liquid-glass rounded-3xl p-8 space-y-5 overflow-hidden relative">
             <div className="relative z-10">
               <div>
-                <label className="block text-sm font-medium text-emerald-200/50 mb-2">
-                  Kurumsal E-posta
-                </label>
+                <label htmlFor="kurumsal-eposta" className="block text-sm font-medium text-emerald-200/50 mb-2">{t("email")}</label>
                 <input
+                  id="kurumsal-eposta"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="yetkili@sirket.com"
+                  placeholder={t("emailPlaceholder")}
                   autoComplete="email"
                   className={inputClasses}
                 />
@@ -111,13 +111,14 @@ export default function CorporateLogin() {
 
               <div className="mt-5">
                 <div className="flex items-center justify-between mb-2">
-                  <label className="text-sm font-medium text-emerald-200/50">Şifre</label>
-                  <button type="button" className="text-xs text-emerald-400 hover:text-emerald-300 transition-colors">
-                    Şifremi unuttum
-                  </button>
+                  <label htmlFor="kurumsal-sifre" className="text-sm font-medium text-emerald-200/50">{t("password")}</label>
+                  <Link href="/auth/sifremi-unuttum" className="text-xs text-emerald-400 hover:text-emerald-300 transition-colors">
+                    {t("forgot")}
+                  </Link>
                 </div>
                 <div className="relative">
                   <input
+                    id="kurumsal-sifre"
                     type={showPass ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
@@ -130,13 +131,13 @@ export default function CorporateLogin() {
                     onClick={() => setShowPass(!showPass)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-emerald-200/30 hover:text-white transition-colors"
                   >
-                    {showPass ? "Gizle" : "Göster"}
+                    {showPass ? t("hide") : t("show")}
                   </button>
                 </div>
               </div>
 
               {error && (
-                <div className="mt-5 bg-rose-500/10 border border-rose-500/20 text-rose-400 text-sm px-4 py-3 rounded-2xl">
+                <div role="alert" className="mt-5 bg-rose-500/10 border border-rose-500/20 text-rose-400 text-sm px-4 py-3 rounded-2xl">
                   {error}
                 </div>
               )}
@@ -149,16 +150,16 @@ export default function CorporateLogin() {
                 {loading ? (
                   <span className="flex items-center justify-center gap-2">
                     <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    Giriş yapılıyor...
+                    {t("submitting")}
                   </span>
                 ) : (
-                  "Giriş Yap"
+                  t("submit")
                 )}
               </button>
 
               <div className="flex items-center gap-3 pt-4 mt-4" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
                 <div className="flex-1 h-px" style={{ background: "rgba(255,255,255,0.06)" }} />
-                <span className="text-xs text-emerald-200/20">veya</span>
+                <span className="text-xs text-emerald-200/20">{t("or")}</span>
                 <div className="flex-1 h-px" style={{ background: "rgba(255,255,255,0.06)" }} />
               </div>
 
@@ -166,13 +167,13 @@ export default function CorporateLogin() {
                 href="/kurumsal/teklif-al"
                 className="block w-full mt-4 py-3.5 border border-white/[0.08] hover:border-white/[0.15] text-emerald-200/50 hover:text-white font-medium rounded-2xl text-center text-sm transition-all"
               >
-                Teklif Al & Hesap Oluştur
+                {t("quoteAndAccount")}
               </Link>
             </div>
           </form>
 
           <p className="text-center text-xs text-emerald-200/20">
-            Hesabınızda sorun mu var?{" "}
+            {t("trouble")}{" "}
             <a href="mailto:info@skytechgreen.com" className="text-emerald-400 hover:underline">
               info@skytechgreen.com
             </a>

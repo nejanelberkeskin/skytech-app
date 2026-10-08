@@ -1,3 +1,5 @@
+import { OWN_LAND_HREF } from "@/lib/sites/links";
+
 /**
  * Site genel yapılandırması — özellik bayrakları ve rota yardımcıları.
  *
@@ -9,9 +11,9 @@
  *                        listesi tamamlanmalı. (Eski bireysel tohum satışı Faz 8'de
  *                        kaldırıldı; bu bayrak artık yalnız B2B'yi açar.)
  *
- *  REQUESTS_ENABLED      Ödeme almadan talep toplama (/talep/*): Proje Uygulama
- *                        Sahasına tohum topu bıraktırma talebi ve kendi arazi
- *                        başvurusu. Varsayılan AÇIK;
+ *  REQUESTS_ENABLED      Ödeme almadan talep toplama: Proje Uygulama Sahasına tohum
+ *                        topu bıraktırma talebi ve kendi arazi başvurusu
+ *                        (/kendi-arazim). Varsayılan AÇIK;
  *                        NEXT_PUBLIC_REQUESTS_ENABLED=false ile kapatılır.
  *                        (Doğrudan tohum satışı/talebi 2026-09 itibarıyla yok.)
  *
@@ -50,14 +52,15 @@ export const GOOGLE_AUTH_ENABLED =
  * Talep akışı rotaları — tek yerden yönetilir.
  *
  * "Satın Al / Talep Oluştur" çağrıları doğrudan Proje Uygulama Sahalarına gider
- * (`hub` = `openLand`); kendi arazi başvurusu o sayfanın üstündeki küçük
- * bağlantıdan açılır. Ayrı bir seçim sayfası (eski /talep) ve tohum talebi
- * (eski /talep/tohum) kaldırıldı; ikisi de `RETIRED_REQUEST_REDIRECTS` ile
- * sahalara yönlenir.
+ * (`hub` = `openLand`); kendi arazi başvurusu `/kendi-arazim` sayfasındadır (tek kaynak:
+ * `OWN_LAND_HREF`). Ayrı bir seçim sayfası (eski /talep) ve tohum talebi (eski
+ * /talep/tohum) kaldırıldı; ikisi de `RETIRED_REQUEST_REDIRECTS` ile sahalara yönlenir.
+ * Eski başvuru adresi /talep/arazime-ekim `RETIRED_PAGE_REDIRECTS` ile kalıcı olarak
+ * /kendi-arazim'e yönlenir.
  */
 export const REQUEST_ROUTES = {
   hub: "/sahalar",
-  land: "/talep/arazime-ekim",
+  land: OWN_LAND_HREF,
   openLand: "/sahalar",
 } as const;
 
@@ -104,15 +107,18 @@ const TRANSACTION_ROUTE_PATTERNS: RegExp[] = [
   /^\/kurumsal\/giris(\/.*)?$/,     // kurumsal giriş
   /^\/kurumsal\/panel(\/.*)?$/,     // kurumsal panel (ödeme gerektirir)
   /^\/kurumsal\/teklif-al(\/.*)?$/, // hesap yaratan B2B teklif formu
-  /^\/fatura(\/.*)?$/,              // sipariş belgesi (yer tutucu satıcı bilgisi içeriyor)
+  /^\/fatura(\/.*)?$/,              // sipariş belgesi (B2B; resmî e-Arşiv faturası değil)
   /^\/orman(\/.*)?$/,               // şirket ormanı sayfası
 ];
 
 /**
- * Eski bireysel tohum satışının KALDIRILAN sayfaları → yeni karşılıkları (Faz 8). Middleware kalıcı
- * (308) yönlendirir, dil öneki korunur: eski yer imleri ve arama sonuçları 404'e düşmesin.
+ * KALDIRILAN ya da TAŞINAN sayfalar → yeni karşılıkları: eski bireysel tohum satışı (Faz 8) ve
+ * eski kendi arazi başvuru adresi. Middleware kalıcı (308) yönlendirir, dil öneki korunur: eski
+ * yer imleri ve arama sonuçları 404'e düşmesin. Bayrak denetiminden ÖNCE uygulanır; talep kapalıysa
+ * yeni adres ayrıca /yakinda'ya gider.
  */
 const RETIRED_PAGE_REDIRECTS: [RegExp, string][] = [
+  [/^\/talep\/arazime-ekim\/?$/, OWN_LAND_HREF],
   [/^\/bireysel(\/.*)?$/, "/sahalar"],
   [/^\/lands(\/.*)?$/, "/sahalar"],
   [/^\/checkout(\/.*)?$/, "/"],
@@ -139,8 +145,8 @@ const ACCOUNT_ROUTE_PATTERNS: RegExp[] = [
  */
 const TRANSACTION_ONLY_ACCOUNT_PATTERNS: RegExp[] = [/^\/hesabim\/sertifikalar(\/.*)?$/];
 
-/** Talep akışı rotaları — REQUESTS_ENABLED kapalıyken /yakinda'ya gider. */
-const REQUEST_ROUTE_PATTERNS: RegExp[] = [/^\/talep(\/.*)?$/];
+/** Talep akışı rotaları — REQUESTS_ENABLED kapalıyken /yakinda'ya gider ve sitemap'e girmez. */
+const REQUEST_ROUTE_PATTERNS: RegExp[] = [/^\/talep(\/.*)?$/, /^\/kendi-arazim$/];
 
 
 /** Bayraklara göre bu yol şu an /yakinda'ya yönlenmeli mi? */

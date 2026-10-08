@@ -1,265 +1,279 @@
-import { NextRequest, NextResponse } from "next/server";
-import type { SupabaseClient } from "@supabase/supabase-js";
+import type { NextRequest } from "next/server";
+import type { z } from "zod";
 import { createServiceRoleClient } from "@/lib/supabase/server";
-import { requireAdmin, getClientIP } from "@/lib/admin-auth";
+import { getClientIP } from "@/lib/admin-auth";
+import {
+  hasFullScope, mfaEnforced, mfaSatisfied, requireAdminAccess, requirePermission, type Permission,
+} from "@/lib/admin/permissions";
+import { onlyAssigned, permissionScope } from "@/lib/admin/record-scope";
+import { evaluatePermissionSet, permissionSetResponse } from "@/lib/admin/permission-set";
 import { auditLog } from "@/lib/admin/audit";
+import { fail, ok, unavailable } from "@/lib/api/envelope";
 import { siteAdminSchema, siteFieldErrors, toLandRow } from "@/lib/sites/admin";
+import {
+  SITE_COLUMNS, diffSite, requiredCreatePermissions, requiredSitePermissions, type SiteChanges, type SiteColumn,
+} from "@/lib/sites/admin-access";
+import { siteItemOf, type SiteAdminListDto, type SiteMutationDto } from "@/lib/sites/admin-dto";
+import {
+  applySiteUpdate, deleteEmptySite, generateSlug, insertSite, isSlugFree, loadSiteRow, loadSiteRows,
+  loadSpeciesOptions, siteCapabilities, unknownSpecies,
+} from "@/lib/sites/admin-service";
 import { slugify } from "@/lib/sites/slug";
 
 /**
- * /api/admin/lands — Proje Uygulama Sahaları yönetimi (SUPER_ADMIN, ENGINEER).
+ * /api/admin/lands — Proje Uygulama Sahaları yönetimi. Sözleşme: web-brifler/30.
  *
- * GET              → saha listesi; `?include=species` ile tür seçenekleri de döner
- * POST             → yeni saha (şema: lib/sites/admin.ts — panel formuyla ortak)
- * PUT              → { id, maintenance } hızlı yayından alma/açma  YA DA  { id, ...tam form }
- * DELETE           → yalnız boş saha (SUPER_ADMIN)
+ * GET    ?include=species → Ok<SiteAdminListDto>          sites.read (all / sites)
+ * POST   tam form         → Ok<SiteMutationDto> 201       sites.read + sites.edit + sites.capacity.manage (+ sites.publish
+ *                                                          yayında açılıyorsa), hepsi `all`
+ * PUT    { id, maintenance } ya da { id, ...tam form } → Ok<SiteMutationDto>
+ *        Yalnız gerçekten değişen alanlar izin ister ve yazılır: metin/plan sites.edit; yayın ve vitrin görünürlüğünü
+ *        değiştiren durum geçişi sites.publish; kapasite sites.capacity.manage. Biri eksikse istek bütünüyle reddedilir.
+ * DELETE { id }            → yalnız boş saha; sınır değişmedi (eski SUPER_ADMIN rolü, 30 §6)
  *
  * Kapasite sayıları yalnız bu uçta ve panelde görünür; vitrine hiçbir yoldan çıkmaz.
  */
+export const dynamic = "force-dynamic";
 
-const ROLES = ["SUPER_ADMIN", "ENGINEER"] as const;
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-// GET — Tüm sahaları listele
+const unsupported = (permission: Permission) =>
+  fail(403, "scope_unsupported", "Saha yetkiniz yalnız kişiye atanmış işleri kapsıyor; sahalar için atama modeli yok.", { permission, permissions: [permission] });
+
+function invalidBody(issues: z.core.$ZodIssue[]) {
+  const fields = siteFieldErrors(issues);
+  return fail(400, "invalid_body", Object.values(fields)[0] ?? "Geçersiz veri.", { fields });
+}
+const unknownSpeciesError = (missing: string[]) =>
+  fail(400, "invalid_body", `Katalogda olmayan tür: ${missing.join(", ")}`, {
+    fields: { species_slugs: "Katalogda olmayan tür seçildi." }, unknown: missing,
+  });
+const slugTaken = () =>
+  fail(409, "slug_taken", "Bu adres başka bir sahada kullanılıyor.", { fields: { slug: "Bu adres kullanılıyor." } });
+
+/** Yayın ve kapasite alanlarının önceki/sonraki değeri; diğer alanların yalnız adı. */
+function auditDetails(before: Record<string, unknown>, changes: SiteChanges) {
+  const details: Record<string, unknown> = { changed: Object.keys(changes) };
+  for (const column of ["is_public", "status", "capacity_seeds"] as const) {
+    if (column in changes) details[column] = { from: before[column] ?? null, to: changes[column] ?? null };
+  }
+  return details;
+}
+
 export async function GET(request: NextRequest) {
-  const { error: authError } = await requireAdmin(request, [...ROLES]);
-  if (authError) return authError;
-  const supabase = createServiceRoleClient();
-  const { data, error } = await supabase
-    .from("lands")
-    .select("*")
-    .order("sort_order", { ascending: true })
-    .order("name", { ascending: true });
+  const guard = await requirePermission(request, "sites.read", { scope: "any" });
+  if (guard.error) return guard.error;
+  const read = permissionScope(guard.access, "sites.read");
+  if (!read) return unsupported("sites.read");
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  const db = createServiceRoleClient();
+  const includeSpecies = request.nextUrl.searchParams.get("include") === "species";
+  const [rows, species] = await Promise.all([loadSiteRows(db, read), includeSpecies ? loadSpeciesOptions(db) : undefined]);
+  if (!rows || species === null) {
+    console.error("[admin/lands] sahalar okunamadı");
+    return unavailable();
   }
 
-  if (request.nextUrl.searchParams.get("include") !== "species") {
-    return NextResponse.json(data);
-  }
-
-  // Tür seçenekleri: katalogdaki tüm türler (pasif olan da seçilebilir; satış değil, bilgi alanı).
-  const { data: species } = await supabase
-    .from("seed_catalog")
-    .select("slug, name, latin_name")
-    .order("sort_order", { ascending: true });
-  return NextResponse.json({ lands: data, species: species ?? [] });
+  const { access, assurance } = guard;
+  const createDraft = (["sites.read", "sites.edit", "sites.capacity.manage"] as const).every((p) => hasFullScope(access, p));
+  const dto: SiteAdminListDto = {
+    items: rows.map((r) => siteItemOf(r, siteCapabilities(access, String(r.id)))),
+    ...(species ? { species } : {}),
+    scope: read,
+    capabilities: {
+      create: createDraft,
+      createPublic: createDraft && hasFullScope(access, "sites.publish"),
+      delete: guard.admin.role === "SUPER_ADMIN",
+    },
+    mfa: { enforced: mfaEnforced(), satisfied: mfaSatisfied("sites.publish", assurance), enrolled: assurance.enrolled },
+  };
+  return ok(dto);
 }
 
-/** Seçilen türlerin katalogda var olduğunu doğrular; olmayanları döner. */
-async function unknownSpecies(supabase: SupabaseClient, slugs: string[]): Promise<string[]> {
-  if (slugs.length === 0) return [];
-  const { data } = await supabase.from("seed_catalog").select("slug").in("slug", slugs);
-  const known = new Set((data ?? []).map((r) => r.slug as string));
-  return slugs.filter((s) => !known.has(s));
-}
+export async function POST(request: NextRequest) {
+  const guard = await requireAdminAccess(request);
+  if (guard.error) return guard.error;
 
-/** Boşta bir adres bulur: `ad`, `ad-2`, `ad-3`… (`exceptId`: düzenlenen kaydın kendisi). */
-async function freeSlug(supabase: SupabaseClient, base: string, exceptId?: string): Promise<string | null> {
-  const root = base || "saha";
-  for (let i = 1; i <= 50; i++) {
-    const candidate = i === 1 ? root : `${root}-${i}`;
-    let query = supabase.from("lands").select("id").eq("slug", candidate).limit(1);
-    if (exceptId) query = query.neq("id", exceptId);
-    const { data, error } = await query;
-    if (error) return null;
-    if (!data || data.length === 0) return candidate;
-  }
-  return null;
-}
-
-// POST — Yeni saha ekle
-export async function POST(req: NextRequest) {
-  const { admin, error: authError } = await requireAdmin(req, [...ROLES]);
-  if (authError) return authError;
-  const supabase = createServiceRoleClient();
-
-  const parsed = siteAdminSchema.safeParse(await req.json().catch(() => null));
-  if (!parsed.success) {
-    const fields = siteFieldErrors(parsed.error.issues);
-    return NextResponse.json({ error: Object.values(fields)[0] ?? "Geçersiz veri.", fields }, { status: 400 });
-  }
+  const parsed = siteAdminSchema.safeParse(await request.json().catch(() => null));
+  if (!parsed.success) return invalidBody(parsed.error.issues);
   const data = parsed.data;
 
-  const missing = await unknownSpecies(supabase, data.species_slugs);
-  if (missing.length) {
-    return NextResponse.json(
-      { error: `Katalogda olmayan tür: ${missing.join(", ")}`, fields: { species_slugs: "Katalogda olmayan tür seçildi." } },
-      { status: 400 }
-    );
-  }
+  // Yeni kayıt dar kapsamla sahiplenilemez: gereken her izin `all` olmalı.
+  const denial = evaluatePermissionSet(guard.access, guard.assurance,
+    requiredCreatePermissions(data.is_public).map((permission) => ({ permission, target: "all" as const })));
+  if (denial) return permissionSetResponse(denial);
 
-  // Adres verilmişse aynen kullanılmak istenir → doluysa hata; verilmemişse addan üretilir.
-  let slug: string | null;
+  const db = createServiceRoleClient();
+  const missing = await unknownSpecies(db, data.species_slugs);
+  if (missing === null) return unavailable();
+  if (missing.length) return unknownSpeciesError(missing);
+
+  let slug: string;
   if (data.slug) {
-    slug = (await freeSlug(supabase, data.slug)) === data.slug ? data.slug : null;
-    if (!slug) {
-      return NextResponse.json(
-        { error: "Bu adres başka bir sahada kullanılıyor.", fields: { slug: "Bu adres kullanılıyor." } },
-        { status: 409 }
-      );
-    }
+    const free = await isSlugFree(db, data.slug);
+    if (free === null) return unavailable();
+    if (!free) return slugTaken();
+    slug = data.slug;
   } else {
-    slug = await freeSlug(supabase, slugify(data.name));
-    if (!slug) return NextResponse.json({ error: "Adres üretilemedi." }, { status: 500 });
+    const generated = await generateSlug(db, slugify(data.name));
+    if (generated === "unavailable") return unavailable();
+    if (!generated) return slugTaken();
+    slug = generated;
   }
 
-  const { data: row, error } = await supabase
-    .from("lands")
-    .insert({ ...toLandRow(data), slug, filled_seeds: 0, reserved_seeds: 0 })
-    .select()
-    .single();
+  const created = await insertSite(db, { ...toLandRow(data), slug, filled_seeds: 0, reserved_seeds: 0 });
+  if (!created.ok) return created.error === "slug_taken" ? slugTaken() : unavailable();
+  const id = String(created.row.id);
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  }
-
-  await auditLog(supabase, {
-    admin: admin!,
+  const warnings = await auditLog(db, {
+    admin: guard.admin,
     action: "CREATE",
     entity: "land",
-    entityId: row.id,
-    details: { name: data.name, slug, province: data.province, status: data.status, is_public: data.is_public },
-    ip: getClientIP(req),
+    entityId: id,
+    details: { name: data.name, slug, province: data.province, status: data.status, is_public: data.is_public, capacity_seeds: data.capacity_seeds },
+    ip: getClientIP(request),
   });
-
-  return NextResponse.json(row, { status: 201 });
+  const body: SiteMutationDto = { site: siteItemOf(created.row, siteCapabilities(guard.access, id)), changed: [...SITE_COLUMNS] };
+  return ok(body, warnings, 201);
 }
 
-// PUT — Saha güncelle (tam form) ya da hızlı yayından alma/açma
-export async function PUT(req: NextRequest) {
-  const { admin, error: authError } = await requireAdmin(req, [...ROLES]);
-  if (authError) return authError;
-  const supabase = createServiceRoleClient();
-  const body = (await req.json().catch(() => null)) as Record<string, unknown> | null;
-  const id = typeof body?.id === "string" ? body.id : "";
-
-  if (!id) {
-    return NextResponse.json({ error: "id zorunludur." }, { status: 400 });
+export async function PUT(request: NextRequest) {
+  const guard = await requireAdminAccess(request);
+  if (guard.error) return guard.error;
+  const { access } = guard;
+  const read = permissionScope(access, "sites.read");
+  if (!read) {
+    return onlyAssigned(access, "sites.read")
+      ? unsupported("sites.read")
+      : fail(403, "forbidden", "Sahaları okuma yetkiniz yok.", { reason: "missing_permission", permissions: ["sites.read"] });
   }
 
-  const { data: existing, error: fetchErr } = await supabase
-    .from("lands")
-    .select("filled_seeds, reserved_seeds, slug")
-    .eq("id", id)
-    .single();
-
-  if (fetchErr || !existing) {
-    return NextResponse.json({ error: "Saha bulunamadı." }, { status: 404 });
-  }
-
-  let updates: Record<string, unknown>;
-
-  if (typeof body?.maintenance === "boolean") {
-    // Hızlı düğme: yayından al (listelenmez, talep alınmaz) / yeniden yayına al.
-    // Durum (evre) değişmez; "full" artık vitrinde "Kontenjan doldu" anlamına geliyor.
-    updates = { is_public: !body.maintenance };
-  } else {
+  const body = (await request.json().catch(() => null)) as Record<string, unknown> | null;
+  const id = typeof body?.id === "string" ? body.id.trim() : "";
+  if (!UUID.test(id)) return fail(400, "invalid_id", "Geçersiz saha kimliği.");
+  const quick = typeof body?.maintenance === "boolean";
+  let form: z.output<typeof siteAdminSchema> | null = null;
+  if (!quick) {
     const parsed = siteAdminSchema.safeParse(body);
-    if (!parsed.success) {
-      const fields = siteFieldErrors(parsed.error.issues);
-      return NextResponse.json({ error: Object.values(fields)[0] ?? "Geçersiz veri.", fields }, { status: 400 });
-    }
-    const data = parsed.data;
-
-    const minRequired = (existing.filled_seeds ?? 0) + (existing.reserved_seeds ?? 0);
-    if (data.capacity_seeds < minRequired) {
-      const message = `Kapasite ${minRequired.toLocaleString("tr-TR")}'den az olamaz (bırakılan + ayrılan).`;
-      return NextResponse.json({ error: message, fields: { capacity_seeds: message } }, { status: 400 });
-    }
-
-    const missing = await unknownSpecies(supabase, data.species_slugs);
-    if (missing.length) {
-      return NextResponse.json(
-        { error: `Katalogda olmayan tür: ${missing.join(", ")}`, fields: { species_slugs: "Katalogda olmayan tür seçildi." } },
-        { status: 400 }
-      );
-    }
-
-    // Adres: boşsa mevcut korunur (yoksa addan üretilir); değiştiyse boşta olmalı.
-    let slug = (existing.slug as string | null) ?? null;
-    if (data.slug && data.slug !== slug) {
-      if ((await freeSlug(supabase, data.slug, id)) !== data.slug) {
-        return NextResponse.json(
-          { error: "Bu adres başka bir sahada kullanılıyor.", fields: { slug: "Bu adres kullanılıyor." } },
-          { status: 409 }
-        );
-      }
-      slug = data.slug;
-    } else if (!slug) {
-      slug = await freeSlug(supabase, slugify(data.name), id);
-    }
-
-    updates = { ...toLandRow(data), slug };
+    if (!parsed.success) return invalidBody(parsed.error.issues);
+    form = parsed.data;
   }
 
-  const { data: row, error } = await supabase.from("lands").update(updates).eq("id", id).select().single();
+  const db = createServiceRoleClient();
+  const before = await loadSiteRow(db, read, id);
+  if (before === null) return unavailable();
+  if (before === "not_found") return fail(404, "not_found", "Saha bulunamadı.");
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  // Yalnız gerçekten değişen kolonlar. Adres boşsa mevcut korunur; hiç yoksa addan üretilir (izin kararından sonra).
+  let changes: SiteChanges;
+  let slugBase: string | null = null;
+  if (!form) {
+    changes = diffSite(before, { is_public: body?.maintenance !== true });
+  } else {
+    changes = diffSite(before, toLandRow(form));
+    const current = typeof before.slug === "string" && before.slug ? before.slug : null;
+    if (form.slug && form.slug !== current) changes.slug = form.slug;
+    else if (!form.slug && !current) slugBase = slugify(form.name);
   }
 
-  await auditLog(supabase, {
-    admin: admin!,
+  if (!Object.keys(changes).length && slugBase === null) {
+    // Değişiklik yok: yazma ve audit yok. Salt okuyucuya yine de "kaydedildi" dönmez.
+    const caps = siteCapabilities(access, id);
+    if (!caps.edit && !caps.publish && !caps.capacity) {
+      return permissionSetResponse({ code: "forbidden", reason: "missing_permission", permissions: ["sites.edit"] });
+    }
+    const unchanged: SiteMutationDto = { site: siteItemOf(before, caps), changed: [] };
+    return ok(unchanged);
+  }
+
+  const required = requiredSitePermissions(before, slugBase !== null ? { ...changes, slug: slugBase } : changes);
+  const denial = evaluatePermissionSet(access, guard.assurance, required.map((permission) => ({ permission, target: { siteId: id } })));
+  if (denial) return permissionSetResponse(denial);
+
+  // Veri kuralları (izin kararından sonra): kapasite alt sınırı, tür kataloğu, adres.
+  if ("capacity_seeds" in changes) {
+    const used = Number(before.filled_seeds ?? 0) + Number(before.reserved_seeds ?? 0);
+    if (Number(changes.capacity_seeds) < used) {
+      const message = `Kapasite ${used.toLocaleString("tr-TR")}'den az olamaz (bırakılan + ayrılan).`;
+      return fail(400, "invalid_body", message, { fields: { capacity_seeds: message } });
+    }
+  }
+  if ("species_slugs" in changes) {
+    const missing = await unknownSpecies(db, (changes.species_slugs as string[]) ?? []);
+    if (missing === null) return unavailable();
+    if (missing.length) return unknownSpeciesError(missing);
+  }
+  if (typeof changes.slug === "string") {
+    const free = await isSlugFree(db, changes.slug, id);
+    if (free === null) return unavailable();
+    if (!free) return slugTaken();
+  }
+  if (slugBase !== null) {
+    const generated = await generateSlug(db, slugBase, id);
+    if (generated === "unavailable") return unavailable();
+    if (generated) changes.slug = generated;
+  }
+
+  const result = await applySiteUpdate(db, before, changes);
+  if (!result.ok) {
+    if (result.error === "conflict") {
+      return fail(409, "conflict", "Saha arada değişti (yayın durumu ya da kapasite sayıları). Güncel kaydı yükleyip yeniden deneyin.", {
+        reason: "changed_meanwhile",
+      });
+    }
+    return result.error === "slug_taken" ? slugTaken() : unavailable();
+  }
+
+  const warnings = await auditLog(db, {
+    admin: guard.admin,
     action: "UPDATE",
     entity: "land",
     entityId: id,
-    details: updates,
-    ip: getClientIP(req),
+    details: auditDetails(before, changes),
+    ip: getClientIP(request),
   });
-
-  return NextResponse.json(row);
+  const updated: SiteMutationDto = { site: siteItemOf(result.row, siteCapabilities(access, id)), changed: Object.keys(changes) as SiteColumn[] };
+  return ok(updated, warnings);
 }
 
-// DELETE — Saha sil (yalnız boş sahalar)
-export async function DELETE(req: NextRequest) {
-  const { admin, error: authError } = await requireAdmin(req, ["SUPER_ADMIN"]);
-  if (authError) return authError;
-  const supabase = createServiceRoleClient();
-  const { id } = await req.json();
-
-  if (!id) {
-    return NextResponse.json({ error: "id zorunludur." }, { status: 400 });
+export async function DELETE(request: NextRequest) {
+  const guard = await requireAdminAccess(request);
+  if (guard.error) return guard.error;
+  // Silme sınırı genişletilmedi: yalnız eski SUPER_ADMIN rolü (yeni izin/MFA kararı 30 §6'da).
+  if (guard.admin.role !== "SUPER_ADMIN") {
+    return fail(403, "forbidden", "Saha silme yalnız sahip rolüne açık.", { reason: "legacy_role_required", role: "SUPER_ADMIN" });
   }
 
-  const { data: land, error: fetchErr } = await supabase
-    .from("lands")
-    .select("filled_seeds, reserved_seeds, name")
-    .eq("id", id)
-    .single();
+  const body = (await request.json().catch(() => null)) as Record<string, unknown> | null;
+  const id = typeof body?.id === "string" ? body.id.trim() : "";
+  if (!UUID.test(id)) return fail(400, "invalid_id", "Geçersiz saha kimliği.");
 
-  if (fetchErr || !land) {
-    return NextResponse.json({ error: "Saha bulunamadı." }, { status: 404 });
+  const db = createServiceRoleClient();
+  const result = await deleteEmptySite(db, id);
+  if (!result.ok) {
+    switch (result.error) {
+      case "not_found":
+        return fail(404, "not_found", "Saha bulunamadı.");
+      case "not_empty":
+        return fail(409, "not_empty",
+          `"${result.name}" sahasında ${result.filled} bırakılmış ve ${result.reserved} ayrılmış tohum topu kaydı var; silinemez. Yayından almak için "Yayından al" düğmesini kullanın.`,
+          { filled: result.filled, reserved: result.reserved });
+      case "in_use":
+        return fail(409, "in_use", "Sahaya bağlı talep ya da sipariş kaydı var; silinemez. Yayından almak için \"Yayından al\" düğmesini kullanın.");
+      case "conflict":
+        return fail(409, "conflict", "Saha arada değişti; yeniden deneyin.", { reason: "changed_meanwhile" });
+      default:
+        return unavailable();
+    }
   }
 
-  if (land.filled_seeds > 0 || land.reserved_seeds > 0) {
-    return NextResponse.json(
-      {
-        error: `"${land.name}" sahasında ${land.filled_seeds} bırakılmış ve ${land.reserved_seeds} ayrılmış tohum topu kaydı var; silinemez. Yayından almak için "Yayından al" düğmesini kullanın.`,
-      },
-      { status: 409 }
-    );
-  }
-
-  const { error } = await supabase.from("lands").delete().eq("id", id);
-
-  if (error) {
-    // Talep ya da sipariş kaydı bu sahaya bağlıysa (FK) silinemez.
-    const message =
-      error.code === "23503"
-        ? `"${land.name}" sahasına bağlı talep ya da sipariş kaydı var; silinemez. Yayından almak için "Yayından al" düğmesini kullanın.`
-        : error.message;
-    return NextResponse.json({ error: message }, { status: error.code === "23503" ? 409 : 500 });
-  }
-
-  await auditLog(supabase, {
-    admin: admin!,
+  const warnings = await auditLog(db, {
+    admin: guard.admin,
     action: "DELETE",
     entity: "land",
     entityId: id,
-    details: { name: land.name },
-    ip: getClientIP(req),
+    details: { name: result.name },
+    ip: getClientIP(request),
   });
-
-  return NextResponse.json({ success: true });
+  return ok({ deleted: true, id }, warnings);
 }

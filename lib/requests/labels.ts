@@ -6,6 +6,7 @@
 import type { ServiceRequest, ServiceRequestStatus, ServiceRequestType } from "@/lib/types";
 import { ilAdi } from "@/lib/tr-iller";
 import { formatCount, formatTry } from "@/lib/pricing";
+import { intlLocale } from "@/lib/utils/locale";
 
 export type LabelLocale = "tr" | "en" | "ru";
 
@@ -115,7 +116,7 @@ export function requestSummaryRows(
     const area = num("areaValue");
     const unit = str("areaUnit") as keyof typeof AREA_UNIT_LABELS.tr | null;
     if (area !== null && unit && AREA_UNIT_LABELS[locale][unit]) {
-      rows.push({ label: f.area, value: `${area.toLocaleString(locale === "tr" ? "tr-TR" : "en-GB")} ${AREA_UNIT_LABELS[locale][unit]}` });
+      rows.push({ label: f.area, value: `${area.toLocaleString(intlLocale(locale))} ${AREA_UNIT_LABELS[locale][unit]}` });
     }
     const conds = Array.isArray(d.conditions) ? (d.conditions as string[]) : [];
     const condLabels = conds

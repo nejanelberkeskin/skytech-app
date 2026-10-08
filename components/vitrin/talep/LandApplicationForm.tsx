@@ -89,7 +89,8 @@ export default function LandApplicationForm() {
   };
 
   if (form.success) {
-    return <SuccessCard result={form.success} email={contact.email.trim().toLowerCase()} isLoggedIn={isLoggedIn} />;
+    // Form /kendi-arazim'de sayfanın ortasında: onay kartı kendine kaydırır ve odağı alır.
+    return <SuccessCard result={form.success} email={contact.email.trim().toLowerCase()} isLoggedIn={isLoggedIn} scroll="self" />;
   }
 
   return (

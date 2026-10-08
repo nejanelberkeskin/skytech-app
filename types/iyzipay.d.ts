@@ -9,11 +9,11 @@ declare module "iyzipay" {
     constructor(config: IyzipayConfig);
 
     checkoutFormInitialize: {
-      create(request: any, callback: (err: any, result: any) => void): void;
+      create(request: Record<string, unknown>, callback: (err: unknown, result: Record<string, unknown>) => void): void;
     };
 
     checkoutForm: {
-      retrieve(request: any, callback: (err: any, result: any) => void): void;
+      retrieve(request: Record<string, unknown>, callback: (err: unknown, result: Record<string, unknown>) => void): void;
     };
 
     static LOCALE: { TR: string; EN: string };

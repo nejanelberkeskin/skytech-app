@@ -1,6 +1,10 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { adminFetch } from "@/lib/admin/client";
+
+import { useEffect, useState, useCallback, useRef } from "react";
+import { containDialogTab } from "@/lib/hooks/dialog-keyboard";
+import { useAdmin } from "@/lib/admin-context";
 import RoleGuard from "@/components/RoleGuard";
 import { Button, Input, Textarea, Card } from "@/components/ui";
 import type { CorporateQuote, QuoteStatus } from "@/lib/types";
@@ -24,14 +28,17 @@ const NEED_LABELS: Record<string, string> = {
 };
 
 export default function B2BPage() {
+  const { me } = useAdmin();
   return (
     <RoleGuard path="/admin/b2b">
-      <B2BContent />
+      <B2BContent key={JSON.stringify([me?.admin.userId,me?.admin.isActive,me?.admin.legacyRole])} />
     </RoleGuard>
   );
 }
 
 function B2BContent() {
+  const lock=useRef(false),generation=useRef(0),alive=useRef(false);
+  const [blocked,setBlocked]=useState(false),[listFailed,setListFailed]=useState(false);
   const [quotes, setQuotes] = useState<CorporateQuote[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState<QuoteStatus | "ALL">("ALL");
@@ -39,31 +46,23 @@ function B2BContent() {
   const [actionLoading, setActionLoading] = useState(false);
   const [success, setSuccess] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [notificationWarning, setNotificationWarning] = useState<{ quoteId: string; companyName: string; message: string } | null>(null);
 
   const [approvedPrice, setApprovedPrice] = useState("");
   const [approvedSeedCount, setApprovedSeedCount] = useState("");
   const [adminNote, setAdminNote] = useState("");
 
   const fetchQuotes = useCallback(async () => {
-    setLoading(true);
+    const current=++generation.current;setLoading(true);setQuotes([]);setListFailed(false);setBlocked(true);
     try {
-      const res = await fetch("/api/admin/b2b");
-      const data = await res.json();
-      if (Array.isArray(data)) setQuotes(data);
-    } catch {
-      setError("Teklifler yüklenemedi.");
-    }
-    setLoading(false);
-  }, []);
-
-  useEffect(() => { fetchQuotes(); }, [fetchQuotes]);
-
-  useEffect(() => {
-    if (success) { const t = setTimeout(() => setSuccess(null), 4000); return () => clearTimeout(t); }
-  }, [success]);
-  useEffect(() => {
-    if (error) { const t = setTimeout(() => setError(null), 4000); return () => clearTimeout(t); }
-  }, [error]);
+      const res=await adminFetch("/api/admin/b2b",{cache:"no-store"});const rows=await res.json();
+      if(!alive.current||current!==generation.current)return;
+      if(!res.ok||!Array.isArray(rows))throw new Error("Teklifler yüklenemedi.");
+      setQuotes(rows);setBlocked(false);
+    }catch{if(alive.current&&current===generation.current){setError("Teklifler yüklenemedi. Listeyi yenileyin.");setListFailed(true);}}
+    finally{if(alive.current&&current===generation.current)setLoading(false);}
+  },[]);
+  useEffect(()=>{const requests=generation;alive.current=true;void fetchQuotes();return()=>{alive.current=false;requests.current++;};},[fetchQuotes]);
 
   const filtered = activeFilter === "ALL"
     ? quotes
@@ -86,7 +85,8 @@ function B2BContent() {
   };
 
   const handleAction = async (action: "approve" | "reject") => {
-    if (!selectedQuote) return;
+    if (!selectedQuote || lock.current || blocked) return;
+    lock.current=true;
     setActionLoading(true);
     setError(null);
 
@@ -98,34 +98,47 @@ function B2BContent() {
       };
 
       if (action === "approve") {
-        if (!approvedPrice || !approvedSeedCount) {
-          setError("Fiyat ve tohum sayısı zorunludur.");
-          setActionLoading(false);
+        if (!Number.isFinite(Number(approvedPrice)) || Number(approvedPrice)<=0 || !Number.isInteger(Number(approvedSeedCount)) || Number(approvedSeedCount)<=0) {
+          setError("Pozitif bir fiyat ve pozitif tam sayı tohum adedi girin.");
           return;
         }
-        body.approvedPrice = parseFloat(approvedPrice);
-        body.approvedSeedCount = parseInt(approvedSeedCount);
+        body.approvedPrice = Number(approvedPrice);
+        body.approvedSeedCount = Number(approvedSeedCount);
       }
 
-      const res = await fetch("/api/admin/b2b", {
+      const res = await adminFetch("/api/admin/b2b", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
 
-      const data = await res.json();
+      const data = await res.json().catch(()=>null);
+      if(!alive.current)return;
 
       if (!res.ok) {
-        setError(data.error || "İşlem başarısız oldu.");
+        if(res.status===409 && data?.code==="already_processed") {
+          setError("Teklif başka bir yönetici tarafından işlendi. Yeniden onaylamayın; listeden güncel durumu kontrol edin.");
+          setSelectedQuote(null);setApprovedPrice("");setApprovedSeedCount("");setAdminNote("");await fetchQuotes();
+        } else {setError(typeof data?.error === "string" ? data.error : "İşlem sonucu doğrulanamadı. Listeyi yenileyin.");setBlocked(res.status!==400);}
+
       } else {
-        setSuccess(data.message || "İşlem başarıyla kaydedildi.");
+        if(data?.success!==true)throw new Error("unconfirmed");
+        if (action === "approve" && data.notification?.status !== "accepted") {
+          setSuccess(null);
+          setNotificationWarning({
+            quoteId: selectedQuote.id,
+            companyName: selectedQuote.company_name,
+            message: data.message || "Teklif kaydedildi; müşteri e-postasının gönderimi doğrulanamadı. Teklifi yeniden onaylamayın; bildirim kaydını kontrol edin.",
+          });
+        } else {
+          setSuccess(data.message || "İşlem başarıyla kaydedildi.");
+        }
         setSelectedQuote(null);
-        fetchQuotes();
+        await fetchQuotes();
       }
     } catch {
-      setError("Bir hata oluştu.");
-    }
-    setActionLoading(false);
+      if(alive.current){setBlocked(true);setError("Yanıt doğrulanamadı; işlem yapılmış olabilir. Yeniden göndermeyin, listeyi yenileyin.");}
+    } finally {lock.current=false;if(alive.current)setActionLoading(false);}
   };
 
   const pricePerSeed = approvedPrice && approvedSeedCount
@@ -133,9 +146,9 @@ function B2BContent() {
     : null;
 
   return (
-    <div className="p-8 space-y-6">
+    <div className="p-4 md:p-8 space-y-6">
       {/* Başlık */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold text-white">Kurumsal Teklifler</h1>
           <p className="text-sm text-slate-400 mt-1">Teklif yönetimi ve fiyatlandırma merkezi</p>
@@ -149,14 +162,25 @@ function B2BContent() {
         </div>
       </div>
 
+      <Button variant="secondary" disabled={loading||actionLoading} onClick={()=>{setSelectedQuote(null);setError(null);void fetchQuotes();}}>Listeyi yenile</Button>
       {/* Bildirimler */}
+      {notificationWarning && (
+        <div role="alert" className="bg-amber-500/10 ring-1 ring-amber-500/30 text-amber-200 px-4 py-3 rounded-xl text-sm flex items-start gap-3">
+          <div className="flex-1 min-w-0 break-words">
+            <p className="font-semibold">{notificationWarning.companyName}</p>
+            <p className="text-xs mb-1">Teklif: {notificationWarning.quoteId}</p>
+            <p>{notificationWarning.message}</p>
+          </div>
+          <button type="button" onClick={() => setNotificationWarning(null)} className="shrink-0 underline underline-offset-2">Bildirimi kapat</button>
+        </div>
+      )}
       {success && (
         <div className="bg-emerald-500/10 ring-1 ring-emerald-500/30 text-emerald-400 px-4 py-3 rounded-xl text-sm flex items-center gap-2 animate-fade-in">
           <span>✅</span> {success}
         </div>
       )}
       {error && (
-        <div className="bg-red-500/10 ring-1 ring-red-500/30 text-red-400 px-4 py-3 rounded-xl text-sm flex items-center gap-2 animate-fade-in">
+        <div role="alert" className="bg-red-500/10 ring-1 ring-red-500/30 text-red-400 px-4 py-3 rounded-xl text-sm flex items-center gap-2 animate-fade-in">
           <span>❌</span> {error}
         </div>
       )}
@@ -183,7 +207,7 @@ function B2BContent() {
         <div className="flex items-center justify-center py-20">
           <div className="w-8 h-8 border-2 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin" />
         </div>
-      ) : filtered.length === 0 ? (
+      ) : listFailed ? null : filtered.length === 0 ? (
         <div className="text-center py-16">
           <span className="text-4xl block mb-3">📭</span>
           <p className="text-slate-400">Bu filtrede teklif bulunamadı.</p>
@@ -202,7 +226,7 @@ function B2BContent() {
                     : "border-white/[0.06] hover:border-white/[0.1]"
                 }`}
               >
-                <div className="flex items-start justify-between gap-4">
+                <div className="flex flex-wrap items-start justify-between gap-4">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-3 mb-2">
                       <h3 className="font-semibold text-white truncate">{q.company_name}</h3>
@@ -247,8 +271,7 @@ function B2BContent() {
 
       {/* Detay / Onay Modalı */}
       {selectedQuote && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
-          <div className="glass border border-white/[0.08] rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl animate-scale-in">
+        <QuoteDialog busy={actionLoading} onClose={()=>setSelectedQuote(null)}>
             {/* Modal başlık */}
             <div className="px-6 py-4 border-b border-white/[0.06] flex items-center justify-between">
               <div>
@@ -257,14 +280,16 @@ function B2BContent() {
                   Teklif #{selectedQuote.id.slice(0, 8)} — {new Date(selectedQuote.created_at).toLocaleDateString("tr-TR")}
                 </p>
               </div>
-              <button onClick={() => setSelectedQuote(null)} className="text-slate-500 hover:text-white text-xl transition-colors">
+              <button disabled={actionLoading} aria-label="Kapat" onClick={() => setSelectedQuote(null)} className="text-slate-500 hover:text-white text-xl transition-colors">
                 &times;
               </button>
             </div>
 
             <div className="p-6 space-y-6">
+              {error&&<p role="alert" className="text-red-200 text-sm">{error}</p>}
+              {blocked&&<Button variant="secondary" disabled={actionLoading} onClick={()=>{setSelectedQuote(null);void fetchQuotes();}}>Güncel teklifleri yükle</Button>}
               {/* Firma bilgileri */}
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <InfoField label="Firma" value={selectedQuote.company_name} />
                 <InfoField label="Yetkili" value={selectedQuote.contact_person} />
                 <InfoField label="E-posta" value={selectedQuote.corporate_email} />
@@ -289,7 +314,7 @@ function B2BContent() {
               </div>
 
               {/* Proje detayları */}
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <InfoField label="Tohum Sayısı" value={selectedQuote.seed_count} />
                 <InfoField label="Bütçe" value={selectedQuote.budget_range || "—"} />
                 <InfoField label="Zaman" value={selectedQuote.timeline || "—"} />
@@ -325,7 +350,7 @@ function B2BContent() {
                 <Card variant="solid" padding="md" className="space-y-4">
                   <h3 className="font-semibold text-white text-sm">Teklif Fiyatlandırma</h3>
 
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <Input
                       label="Tohum Sayısı"
                       required
@@ -359,11 +384,12 @@ function B2BContent() {
                     placeholder="Müşteriye görünecek bir not ekleyebilirsiniz..."
                   />
 
-                  <div className="flex gap-3 pt-2">
+                  <div className="flex flex-wrap gap-3 pt-2">
                     <Button
                       variant="primary"
                       fullWidth
                       onClick={() => handleAction("approve")}
+                      disabled={blocked}
                       loading={actionLoading}
                     >
                       Teklifi Onaylayın ve E-posta Gönderin
@@ -371,7 +397,7 @@ function B2BContent() {
                     <Button
                       variant="danger"
                       onClick={() => handleAction("reject")}
-                      disabled={actionLoading}
+                      disabled={actionLoading||blocked}
                     >
                       Reddedin
                     </Button>
@@ -379,8 +405,7 @@ function B2BContent() {
                 </Card>
               )}
             </div>
-          </div>
-        </div>
+        </QuoteDialog>
       )}
     </div>
   );
@@ -393,4 +418,10 @@ function InfoField({ label, value }: { label: string; value: string }) {
       <p className="text-sm text-white font-medium">{value}</p>
     </div>
   );
+}
+
+function QuoteDialog({busy,onClose,children}:{busy:boolean;onClose:()=>void;children:React.ReactNode}) {
+ const ref=useRef<HTMLDialogElement>(null);
+ useEffect(()=>{const el=ref.current,previous=document.activeElement instanceof HTMLElement?document.activeElement:null;el?.showModal();return()=>{el?.close();if(previous?.isConnected)previous.focus();};},[]);
+ return <dialog ref={ref} aria-label="Kurumsal teklif" aria-busy={busy} onKeyDown={containDialogTab} onCancel={e=>{if(busy)e.preventDefault();else onClose();}} className="m-auto w-[calc(100%-1rem)] max-w-2xl max-h-[90dvh] overflow-y-auto rounded-2xl border border-white/15 bg-[#0b1410] text-white p-0 backdrop:bg-black/70">{children}</dialog>;
 }

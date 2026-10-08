@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useMotionValue, useSpring } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 
 /**
  * CustomCursor — fareyi takip eden iki katmanlı premium imleç.
@@ -11,8 +11,14 @@ import { useEffect, useState } from "react";
  *  - mix-blend-mode: difference ile arka plan rengine göre kontrast değişir
  *  - Touch / coarse pointer cihazlarda render edilmez
  */
+const cursorQuery = "(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)";
+const subscribeCursor = (notify: () => void) => {
+  const mq = window.matchMedia(cursorQuery);
+  mq.addEventListener("change", notify);
+  return () => mq.removeEventListener("change", notify);
+};
 export default function CustomCursor() {
-  const [enabled, setEnabled] = useState(false);
+  const enabled = useSyncExternalStore(subscribeCursor, () => window.matchMedia(cursorQuery).matches, () => false);
   const [hovering, setHovering] = useState(false);
   const [mode, setMode] = useState<"default" | "magnetic" | "text">("default");
   const [hidden, setHidden] = useState(false);
@@ -27,16 +33,6 @@ export default function CustomCursor() {
   const haloY = useSpring(y, { damping: 22, stiffness: 220, mass: 0.4 });
   const dotXS = useSpring(dotX, { damping: 30, stiffness: 600, mass: 0.2 });
   const dotYS = useSpring(dotY, { damping: 30, stiffness: 600, mass: 0.2 });
-
-  useEffect(() => {
-    // Touch device check — pointer: coarse veya hover: none ise gösterme
-    if (typeof window === "undefined") return;
-    const mq = window.matchMedia("(hover: hover) and (pointer: fine)");
-    setEnabled(mq.matches);
-    const onChange = () => setEnabled(mq.matches);
-    mq.addEventListener?.("change", onChange);
-    return () => mq.removeEventListener?.("change", onChange);
-  }, []);
 
   useEffect(() => {
     if (!enabled) return;

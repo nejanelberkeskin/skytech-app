@@ -1,47 +1,14 @@
 "use client";
-
-import { useState } from "react";
+import { useRef, useState, type ReactNode } from "react";
 import { Button, Input, Textarea } from "@/components/ui";
-import {
-  CONSENT_LABELS,
-  DOCUMENT_LABELS,
-  INVOICE_STATUS_LABELS,
-  ORDER_EVENT_LABELS,
-  ORDER_STATUS_LABELS,
-  REFUND_REASON_LABELS,
-  REFUND_STATUS_LABELS,
-} from "@/lib/orders/labels";
+import type { OrderDetailDto } from "@/lib/orders/admin-dto";
 import type { OrderEventType, OrderStatus } from "@/lib/orders/types";
+import { CONSENT_LABELS, DOCUMENT_LABELS, INVOICE_STATUS_LABELS, ORDER_EVENT_LABELS, ORDER_STATUS_LABELS, REFUND_REASON_LABELS, REFUND_STATUS_LABELS } from "@/lib/orders/labels";
 import { formatCount, formatTry } from "@/lib/pricing";
 import { ilAdi } from "@/lib/tr-iller";
-
-/* Admin — sipariş ayrıntısı: alıcı/fatura, takvim, ödeme, uyarılar, iade, fatura, belgeler,
-   onay kayıtları, olay geçmişi ve işlemler. Veri /api/admin/release-orders/[id] ucundan gelir;
-   işlemler `act` ile aynı uca POST edilir (sayfa listeyi ve ayrıntıyı tazeler). */
-
-export interface Detail {
-  order: Record<string, unknown> & {
-    id: string;
-    order_no: string;
-    status: OrderStatus;
-    is_test: boolean;
-    quantity: number;
-    unit_price_kurus: number;
-    total_kurus: number;
-    vat_rate: number;
-    invoice: Record<string, unknown> & { type: "individual" | "corporate"; address?: Record<string, string | null> };
-    consents: Record<string, { granted: boolean; at: string; version: string }>;
-    payment_meta: Record<string, unknown> | null;
-    site_snapshot: { name: string; province: string | null; district: string | null };
-  };
-  documents: { kind: string; title: string; sha256: string; template_version: string; created_at: string }[];
-  events: { id: number; type: OrderEventType; actor: string; data: Record<string, unknown> | null; created_at: string }[];
-  refunds: { id: string; amount_kurus: number; reason: string; status: string; provider: string | null; provider_ref: string | null; error: string | null; requested_by: string; created_at: string; completed_at: string | null }[];
-  invoices: { id: string; kind: string; status: string; invoice_no: string | null; ettn: string | null; issued_at: string | null; created_at: string }[];
-  duplicates: { paymentId: string; paidKurus: number; provider: string; refunded: boolean }[];
-  batch: { id: string; title: string | null; planned_on: string | null; released_on: string | null } | null;
-  canManageMoney: boolean;
-}
+import RefundOrderPanel from "./operations/RefundOrderPanel";
+import VerifyNotice from "./orders/VerifyNotice";
+import { GROUP_LABELS } from "./orders/view";
 
 export const STATUS_BADGE: Record<OrderStatus, string> = {
   draft: "ring-1 ring-slate-500/50 bg-slate-500/10 text-slate-300",
@@ -63,302 +30,73 @@ export const dt = (iso: string | null | undefined, withTime = true) =>
   iso ? new Date(iso).toLocaleString("tr-TR", withTime ? { dateStyle: "short", timeStyle: "short", timeZone: "Europe/Istanbul" } : { dateStyle: "long", timeZone: "Europe/Istanbul" }) : "—";
 export const day = (d: string | null | undefined) => (d ? new Date(`${d}T12:00:00Z`).toLocaleDateString("tr-TR", { dateStyle: "long" }) : "—");
 
-export type ReleaseOrderAct = (body: Record<string, unknown>, okMessage: string) => Promise<boolean>;
 
-
-export default function ReleaseOrderDetail({ detail, act, onClose }: { detail: Detail; act: ReleaseOrderAct; onClose: () => void }) {
+export type ReleaseOrderAct = (body: Record<string, unknown>, message: string) => Promise<boolean>;
+export default function ReleaseOrderDetail({ detail, act, disabled, canUseRefundPanel, onRefundBusy, onRefundChanged }: {
+  detail: OrderDetailDto; act: ReleaseOrderAct; disabled: boolean; canUseRefundPanel: boolean;
+  onRefundBusy: (busy: boolean) => void; onRefundChanged: () => void;
+}) {
   const o = detail.order;
-  const inv = o.invoice;
-  const addr = inv.address ?? {};
-  const s = (k: string) => (typeof o[k] === "string" ? (o[k] as string) : null);
-
-  const [note, setNote] = useState(s("admin_note") ?? "");
+  const c = detail.capabilities;
+  const contact = detail.groups.includes("contact") ? detail.contact : undefined;
+  const tax = detail.groups.includes("tax") ? detail.tax : undefined;
+  const finance = detail.groups.includes("finance") ? detail.finance : undefined;
+  const invoices = detail.groups.includes("invoices") ? detail.invoices : undefined;
+  const legal = detail.groups.includes("legal") ? detail.legal : undefined;
+  const certificate = detail.groups.includes("certificate") ? detail.certificate : undefined;
+  const [note, setNote] = useState(o.adminNote ?? "");
   const [reason, setReason] = useState("");
-  const [confirming, setConfirming] = useState<"refund" | "cancel" | string | null>(null);
-  const [busy, setBusy] = useState(false);
   const [invoiceNo, setInvoiceNo] = useState("");
   const [ettn, setEttn] = useState("");
   const [issuedOn, setIssuedOn] = useState(() => new Date(Date.now() + 3 * 3600_000).toISOString().slice(0, 10));
-
-  const run = async (body: Record<string, unknown>, ok: string) => {
-    setBusy(true);
-    const done = await act(body, ok);
-    setBusy(false);
-    if (done) setConfirming(null);
-    return done;
+  const [confirming, setConfirming] = useState<string | null>(null);
+  const lock = useRef(false);
+  const [localBusy, setLocalBusy] = useState(false);
+  const busy = disabled || localBusy;
+  const run = async (body: Record<string, unknown>, message: string) => {
+    if (lock.current || disabled) return;
+    lock.current = true; setLocalBusy(true);
+    try { await act(body, message); } finally { lock.current = false; setLocalBusy(false); setConfirming(null); }
   };
-
-  const money = detail.canManageMoney;
-  const refundable = o.status === "withdrawal_requested" || o.status === "cancelled_by_seller";
-  const cancellable = o.status === "paid" || o.status === "confirmed" || o.status === "scheduled";
   const invoiceable = ["paid", "confirmed", "scheduled", "released", "monitoring", "completed"].includes(o.status);
-  const hasOpenInvoice = detail.invoices.some((i) => i.kind === "sale" && (i.status === "pending" || i.status === "issued"));
-  const pendingInvoice = detail.invoices.find((i) => i.status === "pending");
-  const openDuplicates = detail.duplicates.filter((d) => !d.refunded);
-  const capacityNotHeld = o.payment_meta?.capacityHeld === false;
-  const total = formatTry(o.total_kurus, "tr");
-
-  return (
-    <>
-      <div className="px-6 py-4 border-b border-white/[0.06] flex items-center justify-between gap-4 sticky top-0 bg-[#0b1410]/95 backdrop-blur z-10">
-        <div>
-          <h2 id="siparis-detay-baslik" className="font-bold text-white text-lg font-mono flex items-center gap-3 flex-wrap">
-            {o.order_no}
-            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium font-sans ${STATUS_BADGE[o.status]}`}>{ORDER_STATUS_LABELS[o.status]}</span>
-            {o.is_test && <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold font-sans ring-1 ring-amber-500/50 bg-amber-500/10 text-amber-300">DENEME</span>}
-          </h2>
-          <p className="text-xs text-slate-400">{dt(s("created_at"))} · {(s("locale") ?? "tr").toUpperCase()} · {o.user_id ? "üye" : "misafir"}</p>
-        </div>
-        <button onClick={onClose} className="text-slate-500 hover:text-white text-xl transition-colors" aria-label="Kapat">&times;</button>
-      </div>
-
-      <div className="p-6 space-y-6">
-        {(openDuplicates.length > 0 || capacityNotHeld) && (
-          <div className="bg-amber-500/10 ring-1 ring-amber-500/40 rounded-2xl p-5 space-y-3">
-            <h3 className="font-semibold text-amber-200 text-sm">⚠️ Dikkat gerektiren durum</h3>
-            {capacityNotHeld && (
-              <p className="text-sm text-amber-100/90">
-                Bu sipariş ödeme süresi dolduktan SONRA ödendi ve o sırada sahada yer kalmamıştı: sipariş için kapasite ayrılamadı. Sahanın kapasitesini artırın ya da
-                siparişi satıcı kaynaklı iptal edip bedelini iade edin.{" "}
-                <button type="button" disabled={busy} onClick={() => run({ action: "reserve_capacity" }, "Kapasite ayrıldı.")} className="underline font-semibold text-amber-200 hover:text-white disabled:opacity-60">
-                  Kapasiteyi şimdi ayırmayı dene
-                </button>
-              </p>
-            )}
-            {openDuplicates.map((d) => (
-              <div key={d.paymentId} className="flex items-center justify-between gap-4 flex-wrap text-sm text-amber-100/90">
-                <span>
-                  Aynı siparişe <strong>ikinci bir tahsilat</strong> yapılmış: {formatTry(d.paidKurus, "tr")} · ödeme kimliği <span className="font-mono">{d.paymentId}</span>
-                </span>
-                {money &&
-                  (confirming === `dup:${d.paymentId}` ? (
-                    <span className="flex gap-2">
-                      <Button size="sm" variant="primary" loading={busy} onClick={() => run({ action: "refund_duplicate", paymentId: d.paymentId }, "Çift tahsilat iade edildi.")}>
-                        {formatTry(d.paidKurus, "tr")} iade et
-                      </Button>
-                      <Button size="sm" variant="secondary" disabled={busy} onClick={() => setConfirming(null)}>Vazgeç</Button>
-                    </span>
-                  ) : (
-                    <Button size="sm" variant="secondary" onClick={() => setConfirming(`dup:${d.paymentId}`)}>Bu tahsilatı iade et</Button>
-                  ))}
-              </div>
-            ))}
-          </div>
-        )}
-
-        <Section title="Sipariş">
-          <Grid>
-            <Info label="Proje Uygulama Sahası" value={o.site_snapshot.name} />
-            <Info label="Konum" value={[o.site_snapshot.district, o.site_snapshot.province].filter(Boolean).join(", ") || "—"} />
-            <Info label="Tohum topu adedi" value={formatCount(o.quantity, "tr")} />
-            <Info label="Birim bedel" value={formatTry(o.unit_price_kurus, "tr")} />
-            <Info label={`Toplam (KDV %${Number(o.vat_rate)} dâhil)`} value={total} />
-            <Info label="Sertifikadaki ad" value={s("certificate_name") ?? "—"} />
-            <Info label="Sezon" value={s("season_label") ?? "—"} />
-            <Info label="Bırakma partisi" value={detail.batch ? `${detail.batch.title ?? "Parti"} · plan ${day(detail.batch.planned_on)}` : "—"} />
-          </Grid>
-        </Section>
-
-        <Section title="Alıcı ve fatura">
-          <Grid>
-            <Info label="Ad soyad" value={`${s("buyer_first_name")} ${s("buyer_last_name")}`} />
-            <Info label="Fatura türü" value={inv.type === "corporate" ? "Kurumsal" : "Bireysel"} />
-            <Info label="E-posta" value={<a href={`mailto:${s("buyer_email")}`} className="text-emerald-300 hover:underline break-all">{s("buyer_email")}</a>} />
-            <Info label="Telefon" value={<a href={`tel:${s("buyer_phone")}`} className="text-emerald-300 hover:underline">{s("buyer_phone")}</a>} />
-            {inv.type === "corporate" ? (
-              <>
-                <Info label="Unvan" value={String(inv.companyTitle ?? "—")} />
-                <Info label="Vergi dairesi / no" value={`${inv.taxOffice ?? "—"} / ${inv.taxId ?? "—"}`} />
-                <Info label="Yetkili" value={String(inv.authorizedPerson ?? "—")} />
-                <Info label="e-Fatura mükellefi" value={inv.eInvoiceUser ? "Evet" : "Hayır"} />
-                {inv.mersis ? <Info label="MERSİS" value={String(inv.mersis)} /> : null}
-                {inv.kep ? <Info label="KEP" value={String(inv.kep)} /> : null}
-                {inv.poNumber ? <Info label="Satın alma no" value={String(inv.poNumber)} /> : null}
-              </>
-            ) : (
-              <Info label="T.C. kimlik no" value={inv.tckn ? String(inv.tckn) : "verilmedi (faturada 11111111111)"} />
-            )}
-            <div className="col-span-2">
-              <Info label="Fatura adresi" value={[addr.line, addr.district, ilAdi(addr.province ?? null) ?? addr.province, addr.postalCode].filter(Boolean).join(", ")} />
-            </div>
-          </Grid>
-        </Section>
-
-        <Section title="Takvim ve ödeme">
-          <Grid>
-            <Info label="Ödeme" value={o.paid_at ? dt(s("paid_at")) : `ödenmedi · son ${dt(s("payment_expires_at"))}`} />
-            <Info label="Sağlayıcı / ödeme kimliği" value={`${s("payment_provider") ?? "—"} / ${s("payment_id") ?? "—"}`} />
-            <Info label="Cayma hakkının son anı" value={dt(s("withdrawal_deadline"))} />
-            <Info label="Sözleşmedeki son tarih" value={day(s("performance_deadline"))} />
-            <Info label="Kesinleşme" value={dt(s("confirmed_at"))} />
-            <Info label="Bırakma" value={dt(s("released_at"))} />
-            {o.withdrawal_requested_at ? <Info label="Cayma bildirimi" value={`${dt(s("withdrawal_requested_at"))} · ${s("withdrawal_channel") ?? ""}`} /> : null}
-            {o.cancelled_at ? <Info label="Satıcı iptali" value={`${dt(s("cancelled_at"))}${s("cancel_reason") ? ` · ${s("cancel_reason")}` : ""}`} /> : null}
-            {o.refunded_at ? <Info label="İade" value={dt(s("refunded_at"))} /> : null}
-            {o.payment_meta?.lastFourDigits ? <Info label="Kart" value={`${o.payment_meta.cardAssociation ?? ""} •••• ${o.payment_meta.lastFourDigits}`} /> : null}
-          </Grid>
-        </Section>
-
-        {(detail.refunds.length > 0 || refundable) && (
-          <Section title="İade">
-            {detail.refunds.map((r) => (
-              <div key={r.id} className="flex items-start justify-between gap-4 text-sm bg-white/[0.03] border border-white/[0.06] rounded-xl px-4 py-3">
-                <div>
-                  <p className="text-white font-medium">{formatTry(r.amount_kurus, "tr")} · {REFUND_REASON_LABELS[r.reason] ?? r.reason}</p>
-                  <p className="text-xs text-slate-500">açıldı {dt(r.created_at)}{r.completed_at ? ` · yapıldı ${dt(r.completed_at)}` : ""}{r.provider_ref ? ` · ref ${r.provider_ref}` : ""}</p>
-                  {r.error ? <p className="text-xs text-red-300 mt-1 break-words">Son hata: {r.error}</p> : null}
-                </div>
-                <span className={`shrink-0 text-xs font-semibold ${r.status === "succeeded" ? "text-emerald-300" : r.status === "failed" ? "text-red-300" : "text-amber-300"}`}>{REFUND_STATUS_LABELS[r.status] ?? r.status}</span>
-              </div>
-            ))}
-            {refundable && money && (
-              <div className="pt-1">
-                {confirming === "refund" ? (
-                  <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-4 space-y-3">
-                    <p className="text-sm text-slate-200">
-                      <strong>{total}</strong> tutarın tamamı, ödemenin alındığı araca ({s("payment_provider")}) iade edilecek. Müşteriye bildirim e-postası gider; sahada ayrılan kapasite serbest kalır. Bu işlem geri alınamaz.
-                    </p>
-                    <div className="flex gap-3">
-                      <Button variant="primary" loading={busy} onClick={() => run({ action: "refund" }, "İade yapıldı; müşteriye bildirildi.")}>{total} iade et</Button>
-                      <Button variant="secondary" disabled={busy} onClick={() => setConfirming(null)}>Vazgeç</Button>
-                    </div>
-                  </div>
-                ) : (
-                  <Button variant="primary" onClick={() => setConfirming("refund")}>İadeyi yap</Button>
-                )}
-              </div>
-            )}
-            {refundable && !money && <p className="text-xs text-slate-500">İade işlemini Muhasebe &amp; Finans ya da Super Admin yapabilir.</p>}
-          </Section>
-        )}
-
-        {(detail.invoices.length > 0 || (invoiceable && money)) && (
-          <Section title="Fatura">
-            {detail.invoices.map((i) => (
-              <div key={i.id} className="flex items-center justify-between gap-4 text-sm bg-white/[0.03] border border-white/[0.06] rounded-xl px-4 py-3">
-                <div>
-                  <p className="text-white font-medium">
-                    {i.kind === "refund" ? <span className="text-amber-300">İade faturası · </span> : null}
-                    {i.invoice_no ?? "Numara bekliyor"}{i.ettn ? <span className="text-slate-500 font-normal"> · ETTN {i.ettn}</span> : null}
-                  </p>
-                  <p className="text-xs text-slate-500">kuyruğa alındı {dt(i.created_at)}{i.issued_at ? ` · fatura tarihi ${dt(i.issued_at, false)}` : ""}</p>
-                </div>
-                <span className={`shrink-0 text-xs font-semibold ${i.status === "issued" ? "text-emerald-300" : "text-amber-300"}`}>{INVOICE_STATUS_LABELS[i.status] ?? i.status}</span>
-              </div>
-            ))}
-            {money && invoiceable && !hasOpenInvoice && (
-              <div className="flex items-center justify-between gap-4 flex-wrap">
-                <p className="text-xs text-slate-500">Fatura olağan durumda bırakma tamamlanınca kuyruğa girer. Alıcı önceden isterse şimdi kuyruğa alabilirsiniz.</p>
-                <Button variant="secondary" size="sm" loading={busy} onClick={() => run({ action: "invoice_now" }, "Sipariş fatura kuyruğuna alındı.")}>Şimdi fatura kes</Button>
-              </div>
-            )}
-            {money && pendingInvoice && (
-              <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-4 space-y-3">
-                <p className="text-xs text-slate-400">
-                  {pendingInvoice.kind === "refund"
-                    ? "Bu siparişin satış faturası kesilmişti ve bedeli iade edildi: iade faturasını (ya da fatura iptalini) muhasebe programında işleyip numarasını buraya yazın."
-                    : "Faturayı muhasebe programında / e-Arşiv portalında kestikten sonra numarasını buraya işleyin."}
-                </p>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                  <Input label="Fatura no" value={invoiceNo} onChange={(e) => setInvoiceNo(e.target.value)} placeholder="SKY2026000000001" maxLength={40} />
-                  <Input label="ETTN (isteğe bağlı)" value={ettn} onChange={(e) => setEttn(e.target.value)} maxLength={60} />
-                  <Input label="Fatura tarihi" type="date" value={issuedOn} onChange={(e) => setIssuedOn(e.target.value)} />
-                </div>
-                <Button
-                  variant="primary"
-                  size="sm"
-                  loading={busy}
-                  disabled={invoiceNo.trim().length < 3}
-                  onClick={async () => {
-                    const ok = await run({ action: "invoice_issued", invoiceId: pendingInvoice.id, invoiceNo: invoiceNo.trim(), ettn: ettn.trim() || null, issuedOn }, "Fatura işlendi.");
-                    if (ok) { setInvoiceNo(""); setEttn(""); }
-                  }}
-                >
-                  Faturayı işle
-                </Button>
-              </div>
-            )}
-          </Section>
-        )}
-
-        <Section title="Belgeler (müşteriye giden kopyalar)">
-          <div className="bg-white/[0.03] border border-white/[0.06] rounded-xl divide-y divide-white/[0.06]">
-            {detail.documents.map((d) => (
-              <div key={d.kind} className="flex items-center justify-between gap-4 px-4 py-2.5 text-sm">
-                <div className="min-w-0">
-                  <p className="text-white">{DOCUMENT_LABELS[d.kind] ?? d.title}</p>
-                  <p className="text-[11px] text-slate-500 font-mono truncate">sürüm {d.template_version} · sha256 {d.sha256.slice(0, 16)}…</p>
-                </div>
-                <div className="flex gap-3 shrink-0">
-                  <a href={`/api/admin/release-orders/${o.id}/belge/${d.kind}?bicim=html`} target="_blank" rel="noopener noreferrer" className="text-emerald-300 hover:underline">Görüntüle</a>
-                  <a href={`/api/admin/release-orders/${o.id}/belge/${d.kind}?bicim=pdf`} target="_blank" rel="noopener noreferrer" className="text-emerald-300 hover:underline">PDF</a>
-                </div>
-              </div>
-            ))}
-            {detail.documents.length === 0 && <p className="px-4 py-3 text-sm text-slate-500">Belge yok.</p>}
-          </div>
-        </Section>
-
-        <Section title="Onay kayıtları">
-          <div className="bg-white/[0.03] border border-white/[0.06] rounded-xl divide-y divide-white/[0.06]">
-            {Object.entries(o.consents ?? {}).map(([k, c]) => (
-              <div key={k} className="flex items-center justify-between gap-4 px-4 py-2.5 text-sm">
-                <span className="text-slate-300">{CONSENT_LABELS[k] ?? k}</span>
-                <span className="text-xs text-slate-500 text-right">
-                  <span className={c.granted ? "text-emerald-300 font-semibold" : "text-slate-400"}>{c.granted ? "işaretlendi" : "işaretlenmedi"}</span> · {dt(c.at)} · sürüm {c.version}
-                </span>
-              </div>
-            ))}
-          </div>
-        </Section>
-
-        <Section title="Olay geçmişi">
-          <ol className="space-y-2">
-            {detail.events.map((e) => (
-              <li key={e.id} className="flex items-start gap-3 text-sm">
-                <span className="text-[11px] text-slate-500 w-28 shrink-0 pt-0.5">{dt(e.created_at)}</span>
-                <div className="min-w-0">
-                  <p className="text-slate-200">
-                    {ORDER_EVENT_LABELS[e.type] ?? e.type}
-                    <span className="text-xs text-slate-500"> · {e.actor === "customer" ? "müşteri" : e.actor === "system" ? "sistem" : "yönetici"}</span>
-                  </p>
-                  <EventData type={e.type} data={e.data} />
-                </div>
-              </li>
-            ))}
-          </ol>
-        </Section>
-
-        <Section title="Yönetici notu (müşteriye gösterilmez)">
-          <Textarea value={note} onChange={(e) => setNote(e.target.value)} rows={3} maxLength={4000} placeholder="Görüşme özeti, sonraki adım…" />
-          <Button variant="secondary" size="sm" loading={busy} disabled={note === (s("admin_note") ?? "")} onClick={() => run({ action: "note", note }, "Not kaydedildi.")}>Notu kaydet</Button>
-        </Section>
-
-        {cancellable && money && (
-          <Section title="Satıcı kaynaklı iptal">
-            <p className="text-xs text-slate-500">
-              Hizmet ifa edilemeyecekse (saha kapandı, izin alınamadı vb.) sipariş iptal edilir, müşteriye bildirim gider ve bedelin tamamı en geç 14 gün içinde iade edilmelidir.
-              İptalden sonra yukarıda &quot;İadeyi yap&quot; düğmesi açılır.
-            </p>
-            <Textarea label="İptal gerekçesi (iç kayıt)" value={reason} onChange={(e) => setReason(e.target.value)} rows={2} maxLength={1000} />
-            {confirming === "cancel" ? (
-              <div className="flex gap-3">
-                <Button variant="primary" loading={busy} onClick={async () => { const ok = await run({ action: "cancel_by_seller", reason: reason.trim() }, "Sipariş iptal edildi; müşteriye bildirildi."); if (ok) setReason(""); }}>
-                  Evet, siparişi iptal et
-                </Button>
-                <Button variant="secondary" disabled={busy} onClick={() => setConfirming(null)}>Vazgeç</Button>
-              </div>
-            ) : (
-              <Button variant="secondary" size="sm" disabled={reason.trim().length < 5} onClick={() => setConfirming("cancel")}>Siparişi iptal et…</Button>
-            )}
-          </Section>
-        )}
-
-        <p className="text-[11px] text-slate-600 break-all">Kayıt kimliği: {o.id} · belge sürümü {s("documents_version")} · kaynak {s("source_path") ?? "—"}</p>
-      </div>
-    </>
-  );
+  const hasOpenInvoice = invoices?.some(i => i.kind === "sale" && ["pending", "issued"].includes(i.status));
+  const pending = invoices?.find(i => i.status === "pending");
+  const missing = Object.keys(GROUP_LABELS).filter(g => !detail.groups.includes(g as keyof typeof GROUP_LABELS) && !detail.mfaRequiredGroups.includes(g as keyof typeof GROUP_LABELS));
+  return <div className="space-y-6 min-w-0">
+    <div className="flex flex-wrap gap-2 items-center"><span className={`rounded-full px-3 py-1 text-sm ${STATUS_BADGE[o.status]}`}>{ORDER_STATUS_LABELS[o.status]}</span>{o.isTest && <span className="text-amber-200 text-xs">DENEME</span>}<span className="text-sm text-slate-400">{dt(o.dates.createdAt)} · {o.locale.toUpperCase()}</span></div>
+    {!!detail.mfaRequiredGroups.length && <section className="space-y-3" aria-label="Doğrulama gereken bilgiler"><p className="text-sm text-amber-100">Yeniden doğrulama gerekiyor: {detail.mfaRequiredGroups.map(g => GROUP_LABELS[g]).join(", ")}.</p><VerifyNotice /></section>}
+    {!!missing.length && <p className="text-sm text-slate-400">Bu kayıtta görüntüleme yetkiniz olmayan bölümler: {missing.map(g => GROUP_LABELS[g as keyof typeof GROUP_LABELS]).join(", ")}.</p>}
+    {o.capacity.held === false && <section className="border border-amber-400/40 rounded-xl p-4 space-y-3"><h3 className="text-amber-200 font-medium">Kapasite ayrılmamış</h3><p className="text-sm text-slate-300">Sipariş için ayrılmış saha kapasitesi kaydı bulunmuyor. İşlem yapmadan önce saha ve sipariş durumunu kontrol edin.</p>{c.reserveCapacity && <Confirm action="reserve" label="Kapasite ayırmayı dene" confirming={confirming} setConfirming={setConfirming} disabled={busy} onConfirm={() => run({ action: "reserve_capacity" }, "Kapasite ayırma işlemi tamamlandı.")} />}</section>}
+    <Section title="Sipariş"><Grid><Info label="Saha" value={o.site.name ?? o.site.snapshot.name} /><Info label="Konum" value={[o.site.snapshot.district, o.site.snapshot.province].filter(Boolean).join(", ")} /><Info label="Tohum topu adedi" value={formatCount(o.quantity, "tr")} /><Info label="Sezon" value={o.seasonLabel} /><Info label="Sertifikadaki ad" value={o.certificateName} /><Info label="Bırakma partisi" value={o.batch ? `${o.batch.title} · ${day(o.batch.plannedOn)}` : null} /></Grid></Section>
+    <Section title="Alıcı"><Grid><Info label="Ad soyad" value={`${o.buyer.firstName} ${o.buyer.lastName}`} /><Info label="Alıcı türü" value={o.buyer.type === "corporate" ? "Kurumsal" : "Bireysel"} />{o.buyer.companyTitle && <Info label="Şirket unvanı" value={o.buyer.companyTitle} />}</Grid></Section>
+    {contact && <Section title="İletişim"><Grid><Info label="E-posta" value={<a className="break-all underline text-emerald-300" href={`mailto:${contact.email}`}>{contact.email}</a>} /><Info label="Telefon" value={<a className="underline text-emerald-300" href={`tel:${contact.phone}`}>{contact.phone}</a>} /><Info label="Fatura adresi" value={contact.invoiceAddress ? [contact.invoiceAddress.line, contact.invoiceAddress.district, ilAdi(contact.invoiceAddress.province) ?? contact.invoiceAddress.province, contact.invoiceAddress.postalCode].filter(Boolean).join(", ") : null} /><Info label="Ticari ileti izni" value={contact.marketingConsent ? "Var" : "Yok"} /><Info label="Yetkili kişi" value={contact.authorizedPerson} /><Info label="KEP" value={contact.kep} /></Grid></Section>}
+    {tax && <Section title="Vergi bilgileri"><Grid>{tax.invoiceType === "individual" ? <Info label="T.C. kimlik no" value={tax.tckn} /> : <><Info label="Vergi no" value={tax.taxId} /><Info label="Vergi dairesi" value={tax.taxOffice} /><Info label="MERSİS" value={tax.mersis} /><Info label="e-Fatura mükellefi" value={tax.eInvoiceUser === null ? null : tax.eInvoiceUser ? "Evet" : "Hayır"} /><Info label="Satın alma no" value={tax.poNumber} /></>}</Grid></Section>}
+    <Section title="Takvim"><Grid><Info label="Ödeme tarihi" value={dt(o.dates.paidAt)} /><Info label="Ödeme süresinin sonu" value={dt(o.dates.paymentExpiresAt)} /><Info label="Cayma hakkının son anı" value={dt(o.dates.withdrawalDeadline)} /><Info label="Sözleşmedeki son tarih" value={dt(o.dates.performanceDeadline, false)} /><Info label="Kesinleşme" value={dt(o.dates.confirmedAt)} /><Info label="Bırakma" value={dt(o.dates.releasedAt)} />{o.dates.withdrawalRequestedAt && <Info label="Cayma bildirimi" value={`${dt(o.dates.withdrawalRequestedAt)} · ${o.withdrawalChannel ?? ""}`} />}{o.dates.cancelledAt && <Info label="Satıcı iptali" value={`${dt(o.dates.cancelledAt)} · ${o.cancelReason ?? ""}`} />}{o.dates.refundedAt && <Info label="İade tarihi" value={dt(o.dates.refundedAt)} />}</Grid></Section>
+    {finance && <Section title="Finans"><Grid><Info label="Birim bedel" value={formatTry(finance.unitPriceKurus, "tr")} /><Info label={`Toplam (KDV %${finance.vatRate} dâhil)`} value={formatTry(finance.totalKurus, "tr")} /><Info label="Sağlayıcı" value={finance.payment.provider} /><Info label="Ödeme kimliği" value={finance.payment.paymentId} /></Grid>
+      {finance.duplicates.filter(d => !d.refunded).map(d => <p className="text-sm text-amber-200 break-all" key={d.paymentId}>Çift tahsilat: {formatTry(d.paidKurus, "tr")} · {d.paymentId}</p>)}
+      {finance.refunds.map(r => <article key={r.id} className="border border-white/10 rounded-xl p-3 text-sm space-y-1"><p>{formatTry(r.amountKurus, "tr")} · {REFUND_REASON_LABELS[r.reason] ?? r.reason} · {REFUND_STATUS_LABELS[r.status] ?? r.status}</p><p className="text-slate-400">{dt(r.createdAt)}{r.completedAt && ` · tamamlandı ${dt(r.completedAt)}`}</p>{r.providerRef && <p className="break-all">Referans: {r.providerRef}</p>}{r.error && <p className="text-red-200 break-words">{r.error}</p>}</article>)}
+    </Section>}
+    {finance && canUseRefundPanel && (c.refund || c.refundDuplicate) && <fieldset disabled={busy} className="min-w-0"><legend className="sr-only">İade işlemleri</legend><RefundOrderPanel embedded orderId={o.id} onBusyChange={onRefundBusy} onChanged={onRefundChanged} /></fieldset>}
+    {invoices && <Section title="Faturalar">
+      {!invoices.length && <p className="text-sm text-slate-400">Fatura kaydı yok.</p>}
+      {invoices.map(i => <article key={i.id} className="border border-white/10 rounded-xl p-3 space-y-1 text-sm break-words"><p>{i.kind === "refund" ? "İade faturası" : "Satış faturası"} · {i.invoiceNo ?? "Numara bekliyor"} · {INVOICE_STATUS_LABELS[i.status] ?? i.status}</p><p className="text-slate-400">{dt(i.createdAt)}{i.issuedAt && ` · kesildi ${dt(i.issuedAt)}`}</p>{i.ettn && <p className="break-all">ETTN: {i.ettn}</p>}{i.error && <p className="text-red-200">{i.error}</p>}</article>)}
+      {c.invoiceIssue && pending && <form className="space-y-3 border border-white/10 rounded-xl p-4" onSubmit={e => { e.preventDefault(); void run({ action: "invoice_issued", invoiceId: pending.id, invoiceNo: invoiceNo.trim(), ettn: ettn.trim() || null, issuedOn }, "Fatura bilgileri kaydedildi."); }}><p className="text-sm text-slate-300">Faturayı muhasebe sisteminde kestikten sonra bilgilerini kaydedin.</p><Input label="Fatura no" minLength={3} maxLength={40} required value={invoiceNo} disabled={busy} onChange={e => setInvoiceNo(e.target.value)} /><Input label="ETTN (isteğe bağlı)" maxLength={60} value={ettn} disabled={busy} onChange={e => setEttn(e.target.value)} /><Input label="Fatura tarihi" type="date" required value={issuedOn} disabled={busy} onChange={e => setIssuedOn(e.target.value)} /><Button type="submit" disabled={busy || invoiceNo.trim().length < 3 || !issuedOn}>Fatura bilgilerini kaydet</Button></form>}
+    </Section>}
+    {c.invoiceQueue && invoices && invoiceable && !hasOpenInvoice && <Section title="Fatura işlemi"><p className="text-sm text-slate-300">Siparişi fatura hazırlanması için kuyruğa alın. Bu düğme faturanın kesildiğini doğrulamaz.</p><Confirm action="invoice" label="Fatura kuyruğuna al" confirming={confirming} setConfirming={setConfirming} disabled={busy} onConfirm={() => run({ action: "invoice_now" }, "Sipariş fatura kuyruğuna alındı.")} /></Section>}
+    {legal && <><Section title="Belgeler"><p className="text-xs text-slate-400">Belge sürümü: {legal.documentsVersion}</p>{legal.documents.map(d => <article key={d.kind} className="rounded-xl border border-white/10 p-3 space-y-1"><p className="text-sm">{DOCUMENT_LABELS[d.kind] ?? d.title}</p><p className="text-xs text-slate-400 break-all">{d.templateVersion} · SHA256 {d.sha256}</p>{c.documents && <div className="flex gap-4 text-sm text-emerald-300">{["html", "pdf"].map(format => <a className="min-h-11 inline-flex items-center underline" key={format} target="_blank" rel="noopener noreferrer" referrerPolicy="no-referrer" href={`/api/admin/release-orders/${encodeURIComponent(o.id)}/belge/${d.kind}?bicim=${format}`}>{format === "html" ? "Görüntüle" : "PDF"}</a>)}</div>}</article>)}{!legal.documents.length && <p className="text-sm text-slate-400">Belge kaydı yok.</p>}</Section><Section title="Onay kayıtları">{Object.entries(legal.consents).map(([key, consent]) => <div key={key} className="border-b border-white/10 py-2 text-sm"><p>{CONSENT_LABELS[key] ?? key}: {consent.granted ? "Verildi" : "Verilmedi"}</p><p className="text-xs text-slate-400">{dt(consent.at)} · {consent.version ?? "—"}{consent.revokedAt && ` · geri alındı ${dt(consent.revokedAt)}`}</p></div>)}</Section></>}
+    {certificate && <Section title="Özel sertifika"><Info label="Doğrulama kodu" value={certificate.code} /></Section>}
+    <Section title="Olay geçmişi"><ol className="space-y-3">{detail.events.map(e => <li key={e.id} className="border-l-2 border-white/15 pl-3 space-y-1"><p className="text-sm">{ORDER_EVENT_LABELS[e.type as OrderEventType] ?? e.type}</p><p className="text-xs text-slate-400">{dt(e.at)} · {e.actor.kind === "customer" ? "Müşteri" : e.actor.kind === "system" ? "Sistem" : "Yönetici"}</p><EventData type={e.type as OrderEventType} data={e.data} /></li>)}</ol>{!detail.events.length && <p className="text-sm text-slate-400">Olay kaydı yok.</p>}</Section>
+    <Section title="Yönetici notu">{c.note ? <form className="space-y-3" onSubmit={e => { e.preventDefault(); void run({ action: "note", note }, "Not kaydedildi."); }}><Textarea label="İç not (müşteriye gösterilmez)" maxLength={4000} rows={3} value={note} disabled={busy} onChange={e => setNote(e.target.value)} /><Button type="submit" variant="secondary" disabled={busy || note === (o.adminNote ?? "")}>Notu kaydet</Button></form> : <p className="text-sm whitespace-pre-wrap break-words text-slate-300">{o.adminNote || "Not yok."}</p>}</Section>
+    {c.cancel && ["paid", "confirmed", "scheduled"].includes(o.status) && <Section title="Satıcı kaynaklı iptal"><p className="text-sm text-slate-300">Siparişi iptal etmeden önce hizmet ve iade durumunu kontrol edin. İptal, iadenin tamamlandığı anlamına gelmez.</p><Textarea label="İptal gerekçesi" maxLength={1000} value={reason} disabled={busy || confirming === "cancel"} onChange={e => setReason(e.target.value)} /><Confirm action="cancel" label="Siparişi iptal et" confirming={confirming} setConfirming={setConfirming} disabled={busy || reason.trim().length < 5} onConfirm={() => run({ action: "cancel_by_seller", reason: reason.trim() }, "Sipariş iptal edildi.")} /></Section>}
+    <p className="text-xs text-slate-500 break-all">Kayıt kimliği: {o.id}</p>
+  </div>;
 }
+function Confirm({ action, label, confirming, setConfirming, disabled, onConfirm }: { action: string; label: string; confirming: string | null; setConfirming: (value: string | null) => void; disabled: boolean; onConfirm: () => void }) {
+  return confirming === action ? <div className="space-y-3 rounded-xl border border-amber-400/40 p-3"><p className="text-sm text-amber-100">“{label}” işlemini onaylıyor musunuz?</p><div className="flex flex-wrap gap-2"><Button disabled={disabled} onClick={onConfirm}>Onayla: {label}</Button><Button variant="ghost" disabled={disabled} onClick={() => setConfirming(null)}>Vazgeç</Button></div></div> : <Button variant="secondary" disabled={disabled} onClick={() => setConfirming(action)}>{label}</Button>;
+}
+function Section({ title, children }: { title: string; children: ReactNode }) { return <section className="space-y-3 min-w-0"><h3 className="text-base font-semibold text-slate-200">{title}</h3>{children}</section>; }
+function Grid({ children }: { children: ReactNode }) { return <dl className="grid grid-cols-1 sm:grid-cols-2 gap-4">{children}</dl>; }
+function Info({ label, value }: { label: string; value: ReactNode }) { return <div className="min-w-0"><dt className="text-xs text-slate-400">{label}</dt><dd className="text-sm mt-1 text-white break-words [overflow-wrap:anywhere]">{value || "—"}</dd></div>; }
 
 /** Olay verisinin okunur özeti (ham JSON yerine). */
 function EventData({ type, data }: { type: OrderEventType; data: Record<string, unknown> | null }) {
@@ -383,26 +121,4 @@ function EventData({ type, data }: { type: OrderEventType; data: Record<string, 
   if (type === "documents_generated" && Array.isArray(data.kinds)) add("belgeler", (data.kinds as string[]).map((k) => DOCUMENT_LABELS[k] ?? k).join(", "));
   const text = parts.map((p) => p.replace(/^: /, "")).join(" · ");
   return text ? <p className="text-xs text-slate-500 break-words">{text}</p> : null;
-}
-
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <section className="space-y-3">
-      <h3 className="text-xs text-slate-500 font-medium uppercase tracking-wider">{title}</h3>
-      {children}
-    </section>
-  );
-}
-
-function Grid({ children }: { children: React.ReactNode }) {
-  return <div className="grid grid-cols-2 gap-4">{children}</div>;
-}
-
-function Info({ label, value }: { label: string; value: React.ReactNode }) {
-  return (
-    <div>
-      <p className="text-xs text-slate-500 mb-0.5">{label}</p>
-      <p className="text-sm text-white font-medium break-words">{value}</p>
-    </div>
-  );
 }

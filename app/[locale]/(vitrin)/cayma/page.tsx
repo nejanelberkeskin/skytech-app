@@ -2,11 +2,10 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { COMPANY } from "@/lib/company";
-import { SALES_ENABLED } from "@/lib/site-config";
 import { buildPageMetadata } from "@/lib/seo";
 import type { PriceLocale } from "@/lib/pricing";
 import WithdrawalForm from "@/components/vitrin/cayma/WithdrawalForm";
-import { OrderAccessPrivacy } from "@/components/vitrin/siparis-durumu/OrderControls";
+import { formatReceiptDates } from "@/components/vitrin/cayma/receipt-date";
 
 type Props = {
   params: Promise<{ locale: PriceLocale }>;
@@ -39,33 +38,10 @@ export default async function WithdrawalPage({ params, searchParams }: Props) {
   // action formats them here; it reads/writes no order and receives no identity data.
   async function formatReceipt(receivedAt: string, refundDueOn: string) {
     "use server";
-    if (
-      typeof receivedAt !== "string" ||
-      !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{1,3})?(Z|[+-]\d{2}:\d{2})$/.test(
-        receivedAt,
-      ) ||
-      typeof refundDueOn !== "string" ||
-      !/^\d{4}-\d{2}-\d{2}$/.test(refundDueOn)
-    )
-      throw new Error("Invalid receipt dates");
-    const options = {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-      timeZone: "Europe/Istanbul",
-    } as const;
-    const language = locale === "en" ? "en-GB" : locale;
-    return {
-      receivedAt: new Intl.DateTimeFormat(language, {
-        ...options,
-        hour: "2-digit",
-        minute: "2-digit",
-        timeZoneName: "short",
-      }).format(new Date(receivedAt)),
-      refundDueOn: new Intl.DateTimeFormat(language, options).format(
-        new Date(`${refundDueOn}T12:00:00Z`),
-      ),
-    };
+    // Same validation as the client (isReceiptTimestamp): database microseconds are accepted, invalid dates are not.
+    const dates = formatReceiptDates(receivedAt, refundDueOn, locale);
+    if (!dates) throw new Error("Invalid receipt dates");
+    return dates;
   }
   const emailLink = (
     <a
@@ -78,7 +54,6 @@ export default async function WithdrawalPage({ params, searchParams }: Props) {
   );
   return (
     <div className="vitrin-container pb-20 pt-32 sm:pt-40">
-      <OrderAccessPrivacy />
       <div className="mx-auto max-w-2xl space-y-7">
         <header>
           <h1 className="display-headline text-3xl font-semibold text-[#0e2519] sm:text-5xl">
@@ -88,25 +63,11 @@ export default async function WithdrawalPage({ params, searchParams }: Props) {
             {t("description")}
           </p>
         </header>
-        {SALES_ENABLED ? (
-          <WithdrawalForm
-            locale={locale}
-            initialOrderNo={initialOrderNo}
-            formatReceipt={formatReceipt}
-          />
-        ) : (
-          <section
-            aria-labelledby="withdrawal-closed"
-            className="rounded-3xl border border-[#1B6B3A]/15 bg-[#f1f5ed] p-6 sm:p-8"
-          >
-            <h2 id="withdrawal-closed" className="text-xl font-semibold">
-              {t("closed.title")}
-            </h2>
-            <p className="mt-4 text-sm leading-relaxed text-[#526352]">
-              {t.rich("closed.description", { email: () => emailLink })}
-            </p>
-          </section>
-        )}
+        <WithdrawalForm
+          locale={locale}
+          initialOrderNo={initialOrderNo}
+          formatReceipt={formatReceipt}
+        />
         <section
           aria-labelledby="written-notice-title"
           className="border-t border-[#1B6B3A]/15 pt-6"

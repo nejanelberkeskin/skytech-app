@@ -5,7 +5,8 @@
     "soon": "Çok Yakında",
     "loading": "Yükleniyor...",
     "error": "Bir hata oluştu",
-    "scrollTop": "Yukarı çık"
+    "scrollTop": "Yukarı çık",
+    "close": "Kapat"
   },
   "nav": {
     "home": "Ana Sayfa",
@@ -14,6 +15,7 @@
     "ourSeeds": "Tohumlarımız",
     "droneTech": "Dron Teknolojisi",
     "carbonProgram": "Karbon ve Raporlama",
+    "ownLand": "Kendi Arazim İçin",
     "projects": "Projeler",
     "corporate": "Kurumsal",
     "about": "Hakkımızda",
@@ -235,6 +237,7 @@
       "seedBall": "Tohum Topu Teknolojisi",
       "droneTech": "Dron Teknolojisi",
       "carbonProgram": "Karbon ve Raporlama",
+      "ownLand": "Kendi Arazim İçin",
       "corporate": "Kurumsal Çözümler"
     },
     "quickLinks": {
@@ -356,7 +359,7 @@
       },
       "integration": {
         "title": "Kurumsal Entegrasyon",
-        "description": "API entegrasyonu ile e-ticaret sepetinden ESG raporuna kadar tam uyum."
+        "description": "Çalışan sertifikaları ve özel hesap yöneticisiyle kurumunuza özel süreç."
       },
       "compliance": {
         "title": "Yasal Uyumluluk",
@@ -456,7 +459,7 @@
       },
       "b2bIntegration": {
         "question": "B2B kurumsal entegrasyon nasıl çalışır?",
-        "answer": "Kurumsal panelimiz; çalışan listesi yükleme, otomatik PDF sertifika üretimi, e-ticaret \"sepete tohum ekle\" entegrasyonu, ESG raporlama API'si gibi modüller içerir. Özel hesap yöneticisi atanır ve kurum ihtiyaçlarına göre özelleştirme yapılır."
+        "answer": "Kurumsal panelimiz; çalışan listesi yükleme ve otomatik PDF sertifika üretimi gibi modüller içerir. Özel hesap yöneticisi atanır ve kurum ihtiyaçlarına göre özelleştirme yapılır."
       },
       "gift": {
         "question": "Hediye olarak gönderebilir miyim?",
@@ -592,8 +595,8 @@
     "titleAccent": "Doğanın Geri Dönüşü",
     "labelBefore": "Yangın Öncesi",
     "labelAfter": "Yangın Sonrası",
-    "altBefore": "Yangın öncesi çorak arazi",
-    "altAfter": "Yangın sonrası yeşeren orman"
+    "altBefore": "Yeşil orman görünümü",
+    "altAfter": "Yangından etkilenmiş arazi görünümü"
   },
   "aboutPage": {
     "meta": {
@@ -923,7 +926,7 @@
   "corporatePage": {
     "meta": {
       "title": "Kurumsal Çözümler — ESG Ortaklığı",
-      "description": "Şirketinize özel kurumsal ormanlaştırma, çalışan başına otomatik PDF sertifika, GRI/CDP/SASB uyumlu ESG raporlama ve e-ticaret API entegrasyonu."
+      "description": "Şirketinize özel kurumsal ormanlaştırma, çalışan başına otomatik PDF sertifika ve GRI/CDP/SASB uyumlu ESG raporlama."
     },
     "breadcrumb": {
       "label": "Kurumsal Çözümler"
@@ -961,7 +964,7 @@
         "pre": "Kurumsal Ormanlaştırma",
         "highlight": "Sistem Modülleri"
       },
-      "subtitle": "Her büyüklükteki şirket için altı temel kurumsal çözüm.",
+      "subtitle": "Her büyüklükteki şirket için dört temel kurumsal çözüm.",
       "certificate": {
         "title": "Çalışan Bazlı Sertifika",
         "desc": "Her çalışana özel PDF sertifika otomatik üretilir, e-posta ile iletilir."
@@ -969,14 +972,6 @@
       "afforestation": {
         "title": "Kurumsal Ormanlaştırma",
         "desc": "Kuruma özel kurumsal alan, dron çekim videoları, koordinatlı haritalama."
-      },
-      "api": {
-        "title": "ESG Yazılım API Entegrasyonu",
-        "desc": "Kurumsal panelimiz ile ESG yazılımınız arasında API entegrasyonu kurarak veri akışını otomatik hale getiriyoruz. GRI, CDP, SASB uyumlu."
-      },
-      "ecommerce": {
-        "title": "E-ticaret Entegrasyonu",
-        "desc": "\"Sepete 1 tohum ekle\" widget'ı — müşterilerinize ekoloji deneyimi sunun."
       },
       "footprint": {
         "title": "Faaliyet Raporu",
@@ -992,7 +987,7 @@
         "pre": "Kurumsal Projenizi",
         "highlight": "Tasarlayalım"
       },
-      "subtitle": "Çalışan sayınız, katılmak istediğiniz sahalar, raporlama ihtiyaçlarınız — birlikte planlayalım. Bir iş günü içinde dönüş.",
+      "subtitle": "Çalışan sayınız, katılmak istediğiniz sahalar, raporlama ihtiyaçlarınız — birlikte planlayalım.",
       "primaryEnabled": "Teklif Talep Et",
       "primaryDisabled": "Bilgi Al",
       "secondary": "Bize Ulaşın"
@@ -1027,54 +1022,21 @@
         "certStatus": "Onaylandı",
         "certTime": "2 dakika önce"
       }
-    },
-    "api": {
-      "badge": "Geliştiriciler & API",
-      "comingSoon": "Yakında",
-      "title": {
-        "pre": "E-ticaretinize",
-        "highlight": "1 Satır",
-        "post": "Tohum Eklentisi"
-      },
-      "intro": "Skytech Green API ile satışlarınızı tohum topu bırakma çalışmalarına bağlayın. Katılım Sertifikası üretimi, webhook'lar ve faturalandırma tek pakette.",
-      "copy": "Kopyala",
-      "copied": "Kopyalandı",
-      "earlyAccess": "Erken erişim listesine katıl",
-      "samples": {
-        "install": {
-          "label": "Kurulum"
-        },
-        "cart": {
-          "label": "Sepete Tohum Ekle",
-          "comment": "Müşterinin sepetine 1 tohum topu eklensin",
-          "giftMessage": "Siparişiniz için bir tohum topu bırakılacak"
-        },
-        "certificate": {
-          "label": "Çalışan Sertifikası",
-          "comment": "Şirket adına çalışana otomatik PDF sertifika",
-          "commentUrl": "cert.pdfUrl → S3'te imzalı URL"
-        },
-        "webhook": {
-          "label": "ESG Webhook",
-          "comment": "Dron uçuşu tamamlandığında webhook tetiklenir",
-          "commentProcess": "ESG raporlama sisteminize işle"
-        }
-      }
     }
   },
   "infoPage": {
     "meta": {
       "title": "Bilgi Al — Sorularınızı Yanıtlayalım",
-      "description": "Bireysel veya kurumsal Skytech Green soruları için bilgi formu — 24 saat içinde uzman ekibimizden dönüş garantisi."
+      "description": "Bireysel veya kurumsal Skytech Green sorularınızı bilgi formuyla ekibimize iletin."
     },
     "breadcrumb": {
       "label": "Bilgi Al",
       "title": "Merak Ettiğiniz Her Şeyi Sorun",
-      "subtitle": "Formu doldurun — 24 saat içinde uzman ekibimiz dönüş yapsın. Bireysel ya da kurumsal, fark etmez."
+      "subtitle": "Bireysel veya kurumsal sorularınızı form aracılığıyla ekibimize iletin."
     },
     "form": {
       "heading": "İletişim Formu",
-      "subheading": "Tüm alanları doldurun, en kısa sürede dönüş yapalım.",
+      "subheading": "Tüm alanları doldurun; mesajınızı inceleyip e-postayla yanıtlayacağız.",
       "name": {
         "label": "Ad Soyad",
         "placeholder": "Ad Soyad"
@@ -1099,14 +1061,26 @@
         "label": "Mesajınız",
         "placeholder": "Sorunuzu, ihtiyacınızı veya talebinizi detaylıca yazın..."
       },
-      "consent": "KVKK Aydınlatma Metni'ni okudum ve verilerimin işlenmesine onay veriyorum.",
+      "consent": "Kişisel verilerime ilişkin aydınlatma metnini okudum.",
       "submit": "Mesajı Gönder",
       "submitting": "Gönderiliyor...",
       "success": {
         "title": "Mesajınız Alındı!",
-        "desc": "En kısa sürede size dönüş yapacağız. Teşekkür ederiz."
+        "desc": "Mesajınız bize ulaştı; inceleyip e-postayla yanıtlayacağız. Teşekkür ederiz."
       },
-      "error": "Bir şeyler ters gitti. Lütfen tekrar deneyin veya doğrudan info@skytechgreen.com adresinden bize ulaşın."
+      "error": "Bir şeyler ters gitti. Lütfen tekrar deneyin veya doğrudan info@skytechgreen.com adresinden bize ulaşın.",
+      "uncertain": "Gönderim sonucu doğrulanamadı; mesajınız ulaşmış olabilir. Aynı mesajı yeniden göndermek yerine info@skytechgreen.com üzerinden bizimle iletişime geçin.",
+      "privacyLink": "KVKK Aydınlatma Metni",
+      "rateLimited": "Çok fazla deneme yapıldı. Lütfen birkaç dakika sonra tekrar deneyin.",
+      "errors": {
+        "name": "Adınızı ve soyadınızı yazın.",
+        "email": "E-posta adresinizi yazın.",
+        "emailInvalid": "Geçerli bir e-posta adresi yazın (ör. ad@alanadi.com).",
+        "subject": "Bir konu seçin.",
+        "message": "Mesajınızı yazın.",
+        "notice": "Göndermeden önce aydınlatma metnini okuduğunuzu onaylayın.",
+        "tooLong": "Bu alan izin verilen uzunluğu aşıyor."
+      }
     },
     "topics": {
       "individual": "Sahaya Tohum Topu Bıraktırma",
@@ -1119,11 +1093,11 @@
     },
     "info": {
       "response": {
-        "title": "24 Saat Yanıt",
-        "desc": "İş günlerinde 24 saat, hafta sonu pazartesi sabahı dönüş garantisi."
+        "title": "Talebinizin değerlendirilmesi",
+        "desc": "Ekibimiz talebinizi inceler ve verdiğiniz iletişim bilgileri üzerinden sizinle iletişime geçer."
       },
       "email": {
-        "desc": "Doğrudan e-posta ile de ulaşabilirsiniz — 24 saat aktif."
+        "desc": "Sorularınızı doğrudan e-posta ile de iletebilirsiniz."
       },
       "phone": {
         "desc": "Hafta içi 09:00 - 18:00 arası telefonla erişim."
@@ -1142,7 +1116,7 @@
     },
     "body": {
       "primary": "Çevrim içi ödeme altyapımızda son hazırlıkları yapıyoruz. Bu aşamada talebinizi alıyor, ayrıntıları ve takvimi sizinle birlikte netleştiriyoruz.",
-      "secondary": "Bir Proje Uygulama Sahasına tohum topu bıraktırmak ya da kendi araziniz için başvurmak üzere formu doldurmanız yeterli; ekibimiz bir iş günü içinde dönüş yapar."
+      "secondary": "Bir Proje Uygulama Sahasına tohum topu bıraktırmak ya da kendi araziniz için başvurmak üzere formu doldurabilirsiniz. Ekibimiz başvurunuzu inceleyerek sizinle iletişime geçer."
     },
     "cta": {
       "home": "Ana Sayfaya Dön",
@@ -1251,11 +1225,11 @@
       },
       "success": {
         "title": "Talebiniz alındı",
-        "desc": "Ekibimiz bir iş günü içinde sizinle iletişime geçecek.",
+        "desc": "Ekibimiz talebinizi inceleyip verdiğiniz iletişim bilgileri üzerinden size dönüş yapacak.",
         "numberLabel": "Talep numaranız",
         "copy": "Kopyala",
         "copied": "Kopyalandı",
-        "emailNote": "Onay e-postası {email} adresine gönderildi.",
+        "emailNote": "İletişim e-posta adresiniz: {email}. Teyit e-postası ulaşmazsa talep numaranızla bize yazabilirsiniz.",
         "nextTitle": "Sırada ne var?",
         "next": [
           "Talebinizi inceliyoruz.",
@@ -1347,6 +1321,600 @@
       },
       "backToSites": "Proje Uygulama Sahalarına dön"
     }
+  },
+  "accountPages": {
+    "loading": "Yükleniyor…",
+    "layout": {
+      "navLabel": "Hesabım menüsü",
+      "nav": {
+        "overview": "Genel Bakış",
+        "requests": "Taleplerim",
+        "orders": "Siparişlerim",
+        "certificates": "Sertifikalarım",
+        "profile": "Profil & Ayarlar"
+      },
+      "homeAria": "Skytech Green ana sayfa",
+      "menuOpen": "Menüyü aç",
+      "userFallback": "Kullanıcı",
+      "ctaOrder": "Satın Al",
+      "ctaRequest": "Talep Oluştur",
+      "logout": "Çıkış Yap",
+      "emailBanner": {
+        "title": "E-postanızı onaylayın.",
+        "sent": "{email} adresine bir doğrulama bağlantısı gönderdik."
+      },
+      "resend": {
+        "send": "Tekrar Gönder",
+        "sending": "Gönderiliyor…",
+        "sent": "Gönderildi ✓"
+      }
+    },
+    "overview": {
+      "title": "Hesabım",
+      "subtitle": "Taleplerinizin özetini ve güncel durumlarını buradan takip edebilirsiniz.",
+      "stats": {
+        "total": "Toplam Talebim",
+        "waiting": "Dönüş Bekleyen",
+        "inProgress": "Görüşme Sürüyor",
+        "done": "Sonuçlanan"
+      },
+      "recent": "Son Talepler",
+      "seeAll": "Tümünü Gör →",
+      "empty": "Hesabınıza bağlı talep bulunmuyor.",
+      "firstRequest": "İlk Talebi Oluştur →",
+      "seedBalls": "{count, number} tohum topu",
+      "actions": {
+        "openLandTitle": "Sahaya Tohum Topu Bıraktırın",
+        "openLandDesc": "Bir Proje Uygulama Sahası seçin, adedi belirleyin",
+        "ownLandTitle": "Kendi Arazim İçin",
+        "ownLandDesc": "Araziniz için dronla tohum topu bırakma başvurusu"
+      }
+    },
+    "requests": {
+      "title": "Taleplerim",
+      "subtitle": "Hesabınıza bağlı tüm talepler ve durumları.",
+      "newRequest": "+ Yeni Talep",
+      "empty": "Hesabınıza bağlı talep bulunmuyor.",
+      "emptyHint": "Misafir olarak talep bıraktıysanız, onay e-postasındaki bağlantı ile hesabınıza bağlayabilirsiniz.",
+      "firstRequest": "İlk Talebi Oluştur →",
+      "seeds": "{count, number} tohum",
+      "contact": "İletişim",
+      "yourNote": "Notunuz",
+      "hints": {
+        "new": "Talebiniz alındı ve ekibimizin değerlendirmesini bekliyor.",
+        "contacted": "Ekibimiz sizinle iletişime geçti; ayrıntıları birlikte netleştiriyoruz.",
+        "quoted": "Teklif tarafınıza iletildi.",
+        "converted": "Talebiniz sonuçlandı. Teşekkür ederiz!",
+        "closed": "Talep kapatıldı. Yeni bir talep oluşturabilirsiniz.",
+        "spam": "Talep kapatıldı."
+      }
+    },
+    "orders": {
+      "title": "Siparişlerim",
+      "subtitle": "Proje Uygulama Sahalarına tohum topu bıraktırma siparişleriniz.",
+      "sitesCta": "Proje Uygulama Sahaları",
+      "linked": "Bu e-posta adresiyle daha önce verdiğiniz {count, number} sipariş hesabınıza bağlandı.",
+      "loadError": "Siparişler şu anda yüklenemedi. Lütfen sayfayı yenileyin.",
+      "empty": "Hesabınıza bağlı sipariş bulunmuyor.",
+      "emptyHint": "Misafir olarak sipariş verdiyseniz, sipariş teyidi e-postanızdaki bağlantıyla siparişinizi görüntüleyebilirsiniz. Aynı e-posta adresiyle açılmış ve doğrulanmış hesaplarda siparişler buraya kendiliğinden bağlanır.",
+      "browseSites": "Sahaları incele →",
+      "testBadge": "DENEME",
+      "rows": {
+        "quantity": "Tohum topu adedi",
+        "total": "Toplam hizmet bedeli (KDV dâhil)",
+        "certificateName": "Sertifikadaki ad",
+        "releasedOn": "Bırakma tarihi",
+        "deadline": "En geç bırakılacağı tarih",
+        "withdrawalUntil": "Cayma hakkının son günü"
+      },
+      "hints": {
+        "paid": "Siparişiniz kesinleşti; 14 günlük cayma süresi işliyor.",
+        "confirmed": "Cayma süresi tamamlandı; siparişiniz bırakma planına alınabilir.",
+        "scheduled": "Siparişiniz bir bırakma çalışmasına atandı.",
+        "released": "Tohum toplarınız sahaya bırakıldı; Katılım Sertifikanız düzenlendi.",
+        "monitoring": "Saha inceleniyor, izleniyor ve raporlanıyor.",
+        "completed": "Çalışmanın görüntüleri paylaşıldı.",
+        "withdrawal_requested": "Cayma bildiriminiz alındı; bedelin tamamı 14 gün içinde iade edilir.",
+        "cancelled_by_seller": "Sipariş tarafımızca iptal edildi; bedelin tamamı iade edilir.",
+        "refunded": "Bedelin tamamı iade edildi."
+      },
+      "details": "Sipariş ayrıntıları ve belgeler →",
+      "certificate": "Katılım Sertifikası",
+      "video": "Çalışmanın görüntüleri ↗",
+      "withdraw": "Cayma bildiriminde bulun"
+    },
+    "certificates": {
+      "title": "Sertifikalarım",
+      "subtitle": "Doğaya katkılarınız için oluşturulan dijital sertifikalar",
+      "empty": "Henüz sertifikanız bulunmuyor.",
+      "emptyHint": "Tohum satın alıp ektiğinizde dijital sertifikanız otomatik oluşturulacaktır.",
+      "seeds": "{count, number} Tohum",
+      "view": "🌐 Görüntüle",
+      "copyLink": "🔗 Linki Kopyala",
+      "copied": "✓ Kopyalandı",
+      "shareText": "🌱 {name} adına {count, number} tohum ekildi! Sertifikayı görmek için: {url}"
+    },
+    "profile": {
+      "title": "Profil & Ayarlar",
+      "subtitle": "Kişisel bilgilerinizi ve adres bilgilerinizi yönetin.",
+      "personal": "Kişisel Bilgiler",
+      "fullName": "Ad Soyad",
+      "email": "E-posta",
+      "phone": "Telefon",
+      "city": "Şehir",
+      "cityPlaceholder": "Örn: İstanbul",
+      "address": "Adres",
+      "addressPlaceholder": "Adresiniz…",
+      "save": "Değişiklikleri Kaydet",
+      "saving": "Kaydediliyor...",
+      "saved": "Kaydedildi!",
+      "saveError": "Bilgileriniz kaydedilemedi. Lütfen tekrar deneyin.",
+      "passwordTitle": "Şifre Değiştir",
+      "newPassword": "Yeni Şifre",
+      "confirmPassword": "Yeni Şifre Tekrar",
+      "passwordPlaceholder": "En az 8 karakter",
+      "repeatPlaceholder": "Tekrarlayın",
+      "updatePassword": "Şifreyi Güncelle",
+      "passwordUpdated": "Şifreniz başarıyla güncellendi.",
+      "passwordMin": "Yeni şifre en az 8 karakter olmalı.",
+      "passwordMismatch": "Şifreler eşleşmiyor.",
+      "passwordSame": "Yeni şifre eskisiyle aynı olamaz.",
+      "passwordWeak": "Bu şifre yeterince güçlü değil ya da sızmış şifre listelerinde yer alıyor. Farklı bir şifre seçin.",
+      "passwordError": "Şifre güncellenemedi. Lütfen tekrar deneyin."
+    }
+  },
+  "corporatePages": {
+    "loading": "Yükleniyor…",
+    "homeAria": "Skytech Green Kurumsal",
+    "login": {
+      "noAccount": "Henüz hesabınız yok mu?",
+      "getQuote": "Teklif alın →",
+      "title": "Kurumsal Giriş",
+      "subtitle": "Teklifinizi ve orman panelinizi görüntüleyin.",
+      "email": "Kurumsal E-posta",
+      "emailPlaceholder": "yetkili@sirket.com",
+      "password": "Şifre",
+      "forgot": "Şifremi unuttum",
+      "show": "Göster",
+      "hide": "Gizle",
+      "submitting": "Giriş yapılıyor...",
+      "submit": "Giriş Yap",
+      "or": "veya",
+      "quoteAndAccount": "Teklif Al & Hesap Oluştur",
+      "trouble": "Hesabınızda sorun mu var?",
+      "errors": {
+        "required": "E-posta ve şifre zorunludur.",
+        "invalid": "E-posta veya şifre hatalı.",
+        "unconfirmed": "E-posta adresinizi doğrulamanız gerekiyor. Gelen kutunuzu kontrol edin.",
+        "generic": "Giriş yapılamadı. Lütfen tekrar deneyin."
+      }
+    },
+    "panel": {
+      "navLabel": "Kurumsal panel menüsü",
+      "nav": {
+        "overview": "Genel Bakış",
+        "certificates": "Sertifika Merkezi",
+        "payment": "Ödeme & Fatura"
+      },
+      "title": "Kurumsal Panel",
+      "account": "Kurumsal Hesap",
+      "active": "Aktif",
+      "home": "← Ana Sayfa",
+      "logout": "Çıkış Yap",
+      "menuOpen": "Menüyü aç"
+    },
+    "payment": {
+      "title": "Ödeme & Faturalandırma",
+      "subtitle": "Teklifinizi onaylayın ve ödeme yapın.",
+      "successTitle": "Ödeme Başarılı!",
+      "successText": "Teklifiniz onaylandı ve ödemeniz alındı.",
+      "errorTitle": "Ödeme Başarısız",
+      "errorText": "Lütfen tekrar deneyin.",
+      "declinedTitle": "Ödeme reddedildi",
+      "declinedText": "Ödeme sağlayıcı tarafından reddedildi. Başka bir kartla tekrar deneyebilirsiniz.",
+      "pendingTitle": "Ödemeniz kontrol ediliyor",
+      "pendingText": "Sonuç netleşene kadar lütfen yeniden ödeme yapmayın. Durum Fatura Geçmişi sekmesinde güncellenir.",
+      "tabQuote": "Teklif Ödemesi",
+      "tabInvoices": "Fatura Geçmişi",
+      "alreadyPaid": "Bu teklifin ödemesi tamamlanmış.",
+      "noActive": "Ödeme yapılabilecek aktif bir teklifiniz bulunmuyor.",
+      "backToPanel": "Panele Dön",
+      "summary": "Teklif Özeti",
+      "company": "Firma",
+      "seedCount": "Tohum Sayısı",
+      "seedUnit": "{count, number} adet",
+      "unitPrice": "Birim Fiyat",
+      "perSeedUnit": "TL/tohum",
+      "total": "Toplam Tutar",
+      "adminNote": "Admin Notu",
+      "cardTitle": "Kredi Kartı ile Ödeme",
+      "formHint": "Ödeme formunu yüklemek için aşağıdaki butona tıklayın.",
+      "paying": "Yükleniyor...",
+      "pay": "Teklifi Onayla & Öde",
+      "secureNote": "Tüm ödemeler Iyzico tarafından güvenli şekilde işlenir. Faturanız otomatik olarak oluşturulacaktır.",
+      "startError": "Ödeme başlatılamadı. Lütfen tekrar deneyin.",
+      "checkoutUnavailable": "Bu teklifin ödeme durumunun kontrol edilmesi gerekiyor; yeni ödeme başlatılmadı. Lütfen yeniden ödemeyi denemeyin; Fatura Geçmişi sekmesine bakın ya da bizimle iletişime geçin.",
+      "checkoutPending": "Bu teklif için başlatılmış bir ödemenin sonucu henüz kesinleşmedi; yeni ödeme başlatılmadı. Açık bir ödeme sayfanız varsa işlemi orada tamamlayın; yoksa bir süre sonra tekrar deneyin.",
+      "checkoutLimit": "Bu teklif için kısa sürede çok sayıda ödeme denemesi yapıldı; yeni ödeme başlatılmadı. Lütfen daha sonra tekrar deneyin ya da bizimle iletişime geçin.",
+      "noPayments": "Henüz ödeme yapılmamış.",
+      "colId": "Ödeme ID",
+      "colDate": "Tarih",
+      "colAmount": "Tutar",
+      "colStatus": "Durum",
+      "statusPaid": "Ödendi",
+      "statusPending": "Bekleniyor",
+      "statusFailed": "Başarısız"
+    },
+    "overview": {
+      "companyFallback": "Kurumsal",
+      "title": "Genel Bakış",
+      "subtitle": "{company} — kurumsal orman ve sürdürülebilirlik paneliniz",
+      "status": {
+        "pending": {
+          "label": "Onay Bekliyor",
+          "desc": "Ekibimiz teklifinizi değerlendirmektedir."
+        },
+        "quoted": {
+          "label": "Teklif Hazır",
+          "desc": "Özel fiyatlandırmanız hazır! Onaylayıp ödeme yapabilirsiniz."
+        },
+        "paid": {
+          "label": "Ödeme Tamamlandı",
+          "desc": "Ödemeniz alınmıştır. Ekim süreciniz başlatılacaktır."
+        },
+        "rejected": {
+          "label": "Reddedildi",
+          "desc": "Teklif talebiniz reddedilmiştir."
+        },
+        "expired": {
+          "label": "Süresi Doldu",
+          "desc": "Teklif süresi dolmuştur."
+        },
+        "unknown": {
+          "label": "Bilinmiyor"
+        }
+      },
+      "alert": {
+        "readyTitle": "Teklifiniz Hazır!",
+        "reviewTitle": "Teklifiniz Değerlendiriliyor",
+        "total": "Toplam Tutar",
+        "seedCount": "Tohum Sayısı",
+        "seedUnit": "{count, number} adet",
+        "adminNote": "Yönetici Notu",
+        "review": "Teklifi İncele",
+        "pay": "Teklifi Onaylayın ve Ödeme Yapın"
+      },
+      "stats": {
+        "active": "Aktif Teklifler",
+        "activeSub": "bekleyen",
+        "paid": "Ödenen Teklifler",
+        "paidSub": "tamamlanan",
+        "seeds": "Toplam Tohum",
+        "seedsSub": "onaylanmış",
+        "invested": "Toplam Yatırım",
+        "investedSub": "ödenen"
+      },
+      "history": "Teklif Geçmişiniz",
+      "quoteCount": "{count, number} teklif",
+      "empty": "Henüz bir teklif talebiniz bulunmamaktadır.",
+      "firstQuote": "İlk Teklifinizi Alın",
+      "need": {
+        "orman": "Orman",
+        "sertifika": "Sertifika",
+        "karbon": "Karbon"
+      },
+      "reviewShort": "🎬 İncele",
+      "payShort": "Ödeyin"
+    },
+    "employees": {
+      "title": "👥 Çalışan Ekim Dağıtımı",
+      "subtitle": "Çalışanlarınıza bireysel ekim sertifikası tahsis edin",
+      "poolUsage": "Tohum Havuzu Kullanımı",
+      "remaining": "({count, number} kalan)",
+      "used": "%{pct} kullanıldı",
+      "full": "Havuz dolu",
+      "add": "Çalışan Ekle",
+      "name": "Ad Soyad",
+      "email": "E-posta",
+      "seeds": "Tohum",
+      "allocate": "Tahsis Et",
+      "allocatedEmailSent": "✓ {name} adına {count} tohum tahsis edildi, e-posta gönderildi.",
+      "allocateError": "İşlem tamamlanamadı.",
+      "allocatedEmailNotSent": "✓ {name} adına {count} tohum tahsis edildi. Sertifika e-postası gönderilemedi.",
+      "allocatedNoEmailInfo": "✓ {name} adına {count} tohum tahsis edildi.",
+      "allocateUncertain": "İşlemin sonucu doğrulanamadı. Yeniden göndermeden önce aşağıdaki listede tahsisin görünüp görünmediğini kontrol edin.",
+      "distributed": "Dağıtılan Sertifikalar ({count, number})",
+      "emailSent": "✓ E-posta gönderildi",
+      "emailPending": "E-posta bekliyor",
+      "certificate": "Sertifika →",
+      "empty": "Henüz çalışan tahsisi yapılmadı."
+    },
+    "quoteOptions": {
+      "seed": {
+        "r1": "1.000 – 5.000",
+        "r2": "5.000 – 10.000",
+        "r3": "10.000 – 25.000",
+        "r4": "25.000 – 50.000",
+        "r5": "50.000+",
+        "undecided": "Henüz karar vermedim"
+      },
+      "budget": {
+        "b1": "₺50.000 altı",
+        "b2": "₺50.000 – ₺150.000",
+        "b3": "₺150.000 – ₺500.000",
+        "b4": "₺500.000+",
+        "awaiting": "Teklif bekliyorum"
+      },
+      "timeline": {
+        "m1": "1 ay içinde",
+        "m3": "3 ay içinde",
+        "m6": "6 ay içinde",
+        "yearEnd": "Yıl sonuna kadar",
+        "flexible": "Esnek"
+      }
+    },
+    "quote": {
+      "steps": {
+        "company": "Firma Bilgileri",
+        "needs": "İhtiyaç Analizi",
+        "project": "Proje Detayları"
+      },
+      "need": {
+        "orman": {
+          "label": "Şirket Ormanı Kurmak",
+          "desc": "Markanız adına özel bir orman alanı tahsis edilir."
+        },
+        "sertifika": {
+          "label": "Hediye Sertifikaları",
+          "desc": "Müşterilerinize ve çalışanlarınıza dijital sertifika dağıtılır."
+        },
+        "karbon": {
+          "label": "Karbon Denkleştirme",
+          "desc": "Karbon ayak iziniz ağaçlandırma ile nötrleştirilir."
+        }
+      },
+      "success": {
+        "titleLoggedIn": "Teklifiniz Gönderildi!",
+        "titleNew": "Hesabınız Oluşturuldu, Teklifiniz Kaydedildi",
+        "textLoggedIn": "<b>{company}</b> adına yeni teklif talebiniz başarıyla oluşturuldu. Talebinizin durumunu panelinizden takip edebilirsiniz.",
+        "textNew": "<b>{company}</b> adına kurumsal hesabınız oluşturuldu ve teklif talebiniz kaydedildi. Talebinizin durumunu panelinize giriş yaparak takip edebilirsiniz.",
+        "editsDiscarded": "Teklifiniz ilk gönderdiğiniz bilgilerle kaydedildi; bağlantı sorunundan sonra yapılan değişiklikler bu teklife eklenmedi. Değişiklik için panelinizden yeni teklif oluşturabilirsiniz.",
+        "fromCalculator": "🧮 Karbon hesabınızdan aktarıldı",
+        "calcLine": "{seeds, number} tohum → {bucket}",
+        "loginInfo": "Giriş bilgileriniz",
+        "verifyHint": "Giriş sırasında e-posta doğrulaması istenirse e-posta kutunuzu ve istenmeyen posta klasörünüzü kontrol edin.",
+        "toPanel": "Panelinize Dönün →",
+        "loginToPanel": "Panelinize Giriş Yapın →",
+        "home": "Ana Sayfaya Dönün"
+      },
+      "header": {
+        "back": "← Kurumsal",
+        "titleLoggedIn": "Yeni Teklif Talebi",
+        "titleNew": "Teklif Talebi ve Hesap Oluşturma",
+        "haveAccount": "Zaten hesabınız var mı? Giriş yapın"
+      },
+      "banner": {
+        "accountFallback": "Kurumsal Hesap",
+        "existing": "{email} — Mevcut hesabınız ile yeni teklif oluşturuyorsunuz."
+      },
+      "company": {
+        "title": "Firma Bilgileriniz",
+        "subtitle": "Teklif takibiniz için kurumsal hesabınız otomatik oluşturulacaktır.",
+        "name": "Şirket Adı",
+        "namePlaceholder": "Lütfen şirket adınızı giriniz",
+        "taxOffice": "Vergi Dairesi",
+        "taxOfficePlaceholder": "Örn: Kadıköy V.D.",
+        "taxNo": "Vergi Numarası",
+        "taxNoPlaceholder": "10 haneli vergi numaranız",
+        "contact": "Yetkili Kişi",
+        "contactPlaceholder": "Adınızı ve soyadınızı giriniz",
+        "phone": "Telefon Numaranız"
+      },
+      "account": {
+        "title": "Hesap Bilgileriniz",
+        "locked": "— Hesabınız bu bilgilerle oluşturuldu; değiştirilemez",
+        "auto": "— Teklif takibiniz için otomatik oluşturulacaktır",
+        "email": "Kurumsal E-posta Adresiniz",
+        "emailPlaceholder": "yetkili@sirket.com",
+        "password": "Şifreniz *",
+        "passwordPlaceholder": "En az 8 karakter giriniz",
+        "show": "Göster",
+        "hide": "Gizle",
+        "passwordShort": "En az 8 karakter girilmelidir.",
+        "confirm": "Şifre Tekrar *",
+        "confirmPlaceholder": "Şifrenizi tekrar giriniz",
+        "mismatch": "Şifreler eşleşmiyor."
+      },
+      "needs": {
+        "title": "İhtiyaç Analiziniz",
+        "subtitle": "Birden fazla seçenek işaretleyebilirsiniz.",
+        "selected": "Seçilenler:",
+        "details": "Detaylar (isteğe bağlı)",
+        "detailsPlaceholder": "Projenizle ilgili eklemek istediğiniz detayları giriniz..."
+      },
+      "project": {
+        "title": "Proje Detaylarınız",
+        "subtitle": "Ölçek ve bütçe beklentinizi belirtiniz.",
+        "fromCalculator": "Karbon hesaplayıcısından otomatik aktarıldı",
+        "calcSelected": "{seeds, number} tohum hesabınıza göre <b>{bucket}</b> seçildi.",
+        "calcDismiss": "Aktarılan değeri kaldır",
+        "seedCount": "Hedeflenen Tohum / Ağaç Sayısı *",
+        "yourCalc": "← hesabınız",
+        "budget": "Bütçe Beklentiniz",
+        "timeline": "Zaman Çizelgeniz",
+        "notes": "Ek Notlarınız",
+        "notesPlaceholder": "Özel talepleriniz veya sorularınızı yazabilirsiniz..."
+      },
+      "status": {
+        "unverifiableTitle": "Teklif talebinizin kaydı doğrulanamadı",
+        "unverifiableText": "Bu teklif numarasıyla bir kayıt görünüyor ama içeriğini doğrulayamadık. Yeniden göndermeyin; <login>giriş yapıp</login> panelinizden teklifinizi kontrol edin.",
+        "failedTitle": "Teklif talebiniz kaydedilemedi",
+        "accountCreated": "✓ Kurumsal hesabınız oluşturuldu: <mail>{email}</mail>",
+        "maybeSaved": "? Teklif bağlantı sırasında kaydedilmiş olabilir; sonucu doğrulayamadık.",
+        "notSaved": "✗ Teklif talebiniz kaydedilmedi.",
+        "uncertainHelp": "\"Teklifi yeniden kaydedin\" ilk gönderdiğiniz içeriği aynı teklif numarasıyla yeniden gönderir; teklif kaydedildiyse ikinci kez oluşmaz. Bu yüzden teklif alanları kilitlendi. Değişiklik isterseniz kayıt doğrulandıktan sonra panelinizden yeni teklif oluşturabilirsiniz. Sorun sürerse <login>giriş yapıp</login> panelinizden teklifinizin kaydını kontrol edin.",
+        "failedHelp": "Bilgilerinizi kontrol edip \"Teklifi yeniden kaydedin\" ile yeniden gönderebilirsiniz; hesabınız yeniden oluşturulmaz. Sorun sürerse <login>giriş yapıp</login> panelinizden yeni teklif oluşturabilirsiniz."
+      },
+      "errors": {
+        "alreadyRegistered": "Bu e-posta adresi zaten kayıtlı. Lütfen giriş yaparak tekrar deneyiniz.",
+        "accountNotCreated": "Hesap oluşturulamadı. Lütfen tekrar deneyiniz.",
+        "quoteNotSaved": "Teklif kaydedilemedi. Lütfen tekrar deneyiniz.",
+        "generic": "İşlem tamamlanamadı. Lütfen tekrar deneyiniz."
+      },
+      "nav": {
+        "back": "← Geri",
+        "next": "Devam Edin →"
+      },
+      "submit": {
+        "resave": "Teklifi Yeniden Kaydedin",
+        "loggedIn": "Teklif Talebinizi Gönderin",
+        "new": "Hesap Oluşturun ve Teklif Gönderin"
+      }
+    }
+  },
+  "ownLandPage": {
+    "breadcrumb": "Kendi arazim",
+    "breadcrumbLabel": "Sayfa yolu",
+    "eyebrow": "Arazi sahipleri için",
+    "title": "Kendi araziniz için dronla tohum topu bırakma",
+    "description": "Yanmış, bozulmuş ya da atıl araziniz için başvurun; ekibimiz araziyi değerlendirip sizinle iletişime geçsin.",
+    "apply": "Başvuru formuna git",
+    "sites": "Araziniz yoksa: Proje Uygulama Sahalarına katılın",
+    "eligible": {
+      "title": "Kimler başvurabilir?",
+      "note": "Başvuruyu arazi sahibi ya da arazi üzerinde yetkili kişi veya kurum yapmalıdır.",
+      "individuals": "Gerçek kişiler",
+      "companies": "Şirketler",
+      "cooperatives": "Kooperatifler",
+      "municipalities": "Belediyeler",
+      "institutions": "Diğer kurumlar"
+    },
+    "process": {
+      "title": "Başvurudan çalışmaya",
+      "application": {
+        "title": "Başvuru",
+        "body": "Araziniz ve iletişim bilgilerinizle formu doldurursunuz."
+      },
+      "review": {
+        "title": "Ön değerlendirme",
+        "body": "Konum ve arazi bilgileriyle uygunluğu inceleriz."
+      },
+      "planning": {
+        "title": "Planlama",
+        "body": "Gerekirse keşif yapılır; bölgeye uygun türler ve çalışma planı belirlenir."
+      },
+      "offer": {
+        "title": "Teklif",
+        "body": "Arazi uygunsa size özel teklif iletilir."
+      },
+      "release": {
+        "title": "Bırakma ve izleme",
+        "body": "Tohum topları Kasım–Mart döneminde dronla bırakılır; Nisan–Eylül döneminde arazi izlenir."
+      }
+    },
+    "information": {
+      "title": "Başvuruda neler soruyoruz?",
+      "location": "Konum: il, ilçe ve varsa harita bağlantısı",
+      "area": "Yaklaşık alan",
+      "condition": "Arazinin durumu",
+      "ownership": "Mülkiyet veya yetki durumu",
+      "timing": "Zamanlama tercihi",
+      "contact": "İletişim bilgileri"
+    },
+    "free": "Başvuru ücretsizdir ve sizi bir siparişe bağlamaz.",
+    "formTitle": "Başvuru formu",
+    "faq": {
+      "title": "Sık sorulan sorular",
+      "fee": {
+        "question": "Başvuru ücretli mi?",
+        "answer": "Hayır; başvuru ücretsizdir ve bir sipariş değildir."
+      },
+      "species": {
+        "question": "Hangi türler bırakılır?",
+        "answer": "Arazinin iklim ve toprak koşullarına göre ekibimiz bölgeye uygun türleri belirler."
+      },
+      "season": {
+        "question": "Çalışma ne zaman yapılır?",
+        "answer": "Tohum topu bırakma Kasım–Mart döneminde, arazinin uygunluğu ve gerekli izinlere göre planlanır."
+      }
+    },
+    "contact": "Sorularınız için:"
+  },
+  "authPages": {
+    "home": "Skytech Green ana sayfa",
+    "linkError": "Bağlantı bu tarayıcıda doğrulanamadı. Hesabınız onaylandıysa giriş yapabilirsiniz; şifrenizi unuttuysanız yeni bağlantı isteyin.",
+    "confirmError": "Doğrulama bağlantısı geçersiz ya da süresi dolmuş. Giriş yapmayı deneyin; gerekiyorsa yeni bağlantı isteyin.",
+    "oauthError": "Google ile giriş tamamlanamadı. Lütfen tekrar deneyin.",
+    "required": "E-posta ve şifre zorunludur.",
+    "credentials": "E-posta veya şifre hatalı.",
+    "verifyRequired": "E-posta adresinizi doğrulamanız gerekiyor. Gelen kutunuzdaki bağlantıya tıklayın.",
+    "rateLimited": "Kısa sürede çok fazla deneme yapıldı. Lütfen birkaç dakika sonra tekrar deneyin.",
+    "loginError": "Giriş yapılamadı. Lütfen tekrar deneyin.",
+    "welcome": "Tekrar Hoş Geldiniz",
+    "loginSubtitle": "Hesabınıza giriş yaparak taleplerinizi takip edin.",
+    "noAccount": "Hesabınız yok mu?",
+    "register": "Üye Ol",
+    "email": "E-posta",
+    "password": "Şifre",
+    "forgotLink": "Şifremi unuttum",
+    "show": "Göster",
+    "hide": "Gizle",
+    "loggingIn": "Giriş yapılıyor…",
+    "login": "Giriş Yap",
+    "or": "veya",
+    "googleLogin": "Google ile Giriş Yap",
+    "allFields": "Tüm alanları doldurun.",
+    "validEmail": "Geçerli bir e-posta adresi girin.",
+    "minPassword": "Şifre en az 8 karakter olmalı.",
+    "mismatch": "Şifreler eşleşmiyor.",
+    "termsRequired": "Devam etmek için kullanım koşullarını kabul edip aydınlatma metinlerini okuyun.",
+    "registered": "Bu e-posta zaten kayıtlı. Giriş yapmayı ya da şifrenizi sıfırlamayı deneyin.",
+    "weakPassword": "Bu şifre yeterince güçlü değil ya da sızmış şifre listelerinde yer alıyor. Farklı bir şifre seçin.",
+    "registerError": "Hesap oluşturulamadı. Lütfen tekrar deneyin.",
+    "verifyTitle": "E-postanızı Doğrulayın",
+    "verifySubtitle": "Hesabınızı etkinleştirmek için son bir adım kaldı.",
+    "verifyMessage": "adresine bir doğrulama bağlantısı gönderdik. Bağlantıya tıkladığınızda hesabınız açılır. E-posta birkaç dakika içinde gelmezse spam klasörünü kontrol edin.",
+    "resent": "Tekrar gönderildi ✓",
+    "resend": "Bağlantıyı tekrar gönder",
+    "join": "Aramıza Katılın",
+    "joinSubtitle": "Taleplerinizi tek yerden takip edin.",
+    "haveAccount": "Zaten hesabınız var mı?",
+    "claimMessage": "Hesabınız oluşturulunca talebiniz otomatik olarak hesabınıza bağlanır.",
+    "fullName": "Ad Soyad",
+    "namePlaceholder": "Adınız Soyadınız",
+    "minPlaceholder": "En az 8 karakter",
+    "confirmPassword": "Şifre Tekrar",
+    "repeatPlaceholder": "Tekrarlayın",
+    "hidePasswords": "Şifreleri Gizle",
+    "showPasswords": "Şifreleri Göster",
+    "terms": "Kullanım Koşulları",
+    "privacy": "Gizlilik Politikası",
+    "and": "ve",
+    "notice": "KVKK Aydınlatma Metni",
+    "creating": "Hesap oluşturuluyor…",
+    "googleRegister": "Google ile Üye Ol",
+    "forgotTitle": "Şifremi Unuttum",
+    "forgotSubtitle": "E-posta adresinizi girin; şifre yenileme bağlantısı gönderelim.",
+    "backLogin": "← Giriş sayfasına dön",
+    "sentTitle": "Bağlantı gönderildi",
+    "sentMessage": "Bu e-posta adresi kayıtlıysa şifre yenileme bağlantısı birkaç dakika içinde gelir. Gelen kutunuzu ve spam klasörünü kontrol edin; bağlantı tek kullanımlıktır.",
+    "sending": "Gönderiliyor…",
+    "sendLink": "Bağlantı Gönder",
+    "samePassword": "Yeni şifre eskisiyle aynı olamaz.",
+    "resetError": "Şifre güncellenemedi. Bağlantının süresi dolmuş olabilir; yeni bir bağlantı isteyin.",
+    "invalidTitle": "Bağlantı Geçersiz",
+    "invalidSubtitle": "Şifre yenileme bağlantısı geçersiz ya da süresi dolmuş.",
+    "invalidMessage": "Bağlantılar tek kullanımlıktır ve kısa süre geçerlidir. Bağlantıyı, talebi yaptığınız tarayıcıda açtığınızdan emin olun ya da yeni bir bağlantı isteyin.",
+    "newLink": "Yeni Bağlantı İste",
+    "resetTitle": "Yeni Şifre Belirleyin",
+    "resetSubtitle": "Hesabınız için yeni bir şifre seçin.",
+    "updated": "Şifreniz güncellendi",
+    "redirecting": "Hesabınıza yönlendiriliyorsunuz…",
+    "newPassword": "Yeni Şifre",
+    "confirmNew": "Yeni Şifre Tekrar",
+    "updatePassword": "Şifreyi Güncelle",
+    "saving": "Kaydediliyor…",
+    "termsNotice": "<terms>Kullanım Koşulları</terms>’nı kabul ediyorum; <privacy>Gizlilik Politikası</privacy> ve <notice>KVKK Aydınlatma Metni</notice>’ni okudum."
   },
   "siteReleases": {
     "title": "Bu sahadaki çalışmalar",
@@ -1500,7 +2068,7 @@
     },
     "notFound": {
       "title": "Sipariş görüntülenemiyor",
-      "description": "Sipariş teyidi e-postanızdaki bağlantıyı kullanın. Sorun sürerse bizimle iletişime geçin.",
+      "description": "Sipariş teyidi e-postanızdaki bağlantıyı kullanın. Bağlantıyı açtığınız hâlde bu sayfayı görüyorsanız tarayıcınızın bu site için çerezlere izin verdiğinden emin olun ve bağlantıyı yeniden açın. Sorun sürerse bizimle iletişime geçin.",
       "back": "Proje Uygulama Sahalarına dön"
     },
     "testOrder": "Deneme siparişi — gerçek bir ödeme alınmamıştır."
@@ -1741,7 +2309,7 @@
     "monitoring": "İzleme ve raporlama",
     "offSeason": "Bırakma sezonu dışında",
     "current": "İçinde bulunduğumuz ay",
-    "video": "Bırakmadan izleme takviminde: çalışmanın görüntüleri."
+    "video": "Bırakma ve izleme sürecinden çalışma görüntüleri."
   },
   "certificatePage": {
     "title": "Katılım Sertifikası",
@@ -1839,6 +2407,11 @@
       "closed": "Çevrim içi ödeme şu anda kapalı. Lütfen daha sonra yeniden deneyin.",
       "rateLimited": "Kısa sürede çok fazla deneme yapıldı. Lütfen birkaç dakika sonra yeniden deneyin.",
       "generic": "Ödeme sayfası açılamadı. Lütfen yeniden deneyin."
+    },
+    "notFound": {
+      "title": "Ödeme sonucu görüntülenemiyor",
+      "description": "Bu sayfa ödemenin yapıldığı tarayıcıda açılır; bunun için tarayıcınızın bu site için çerezlere izin vermesi gerekir. Ödemeniz onaylandıysa sipariş teyidi e-postayla gönderilir; siparişinizi o e-postadaki bağlantıdan görebilirsiniz. Sorun sürerse bizimle iletişime geçin.",
+      "back": "Proje Uygulama Sahalarına dön"
     }
   },
   "paymentErrorPage": {

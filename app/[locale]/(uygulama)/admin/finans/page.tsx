@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import FinanceSummary from "@/components/admin/operations/FinanceSummary";
+import type { FinanceOverview } from "@/lib/finance/overview";
 import RoleGuard from "@/components/RoleGuard";
 
 interface Transaction {
@@ -14,14 +16,20 @@ interface Transaction {
 }
 
 interface FinanceData {
+  overview: FinanceOverview;
   monthlyRevenue: number;
+  monthlyGross: number;
+  monthlyRefunds: number;
+  pendingRefundAmount: number;
+  b2bMonthlyRevenue: number;
+  pendingInvoices: number;
   pendingAmount: number;
   activeQuotes: number;
   recentTransactions: Transaction[];
 }
 
 function formatCurrency(n: number): string {
-  return n.toLocaleString("tr-TR", { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+  return n.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
 function formatDate(iso: string): string {
@@ -42,8 +50,9 @@ function FinansContent() {
     setError(null);
     try {
       const res = await fetch("/api/admin/finance");
-      if (!res.ok) throw new Error("Veri yüklenemedi");
+      if (!res.ok) throw new Error(res.status === 403 ? "Bu ekran için yetkiniz yok." : "Finans verisi alınamadı. Yeniden deneyin.");
       const json = await res.json();
+      if (!json.overview) throw new Error("Güncel finans hesabı alınamadı.");
       setData(json);
     } catch (err) {
       setError((err as Error).message);
@@ -67,7 +76,7 @@ function FinansContent() {
   if (error) {
     return (
       <div className="p-8">
-        <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 text-red-400 text-sm">
+        <div role="alert" className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 text-red-400 text-sm">
           {error}
           <button onClick={loadData} className="ml-3 underline">Tekrar dene</button>
         </div>
@@ -77,22 +86,21 @@ function FinansContent() {
 
   if (!data) return null;
 
-  const successCount = data.recentTransactions.filter((t) => t.status === "success").length;
+
 
   const cards = [
-    { label: "Bu Ay Ciro", value: `₺${formatCurrency(data.monthlyRevenue)}`, icon: "💰" },
-    { label: "Bekleyen Ödeme", value: `₺${formatCurrency(data.pendingAmount)}`, icon: "⏳" },
-    { label: "Aktif Teklifler", value: `${data.activeQuotes} teklif`, icon: "🏢" },
-    { label: "Başarılı Ödeme", value: `${successCount}/${data.recentTransactions.length}`, icon: "✅" },
+    { label: "B2B — bu ay tahsilat", value: `₺${formatCurrency(data.b2bMonthlyRevenue)}`, icon: "🏢" },
+    { label: "Aktif teklifler", value: `${data.activeQuotes} teklif`, icon: "🏢" },
+    { label: "Bekleyen faturalar", value: String(data.pendingInvoices), icon: "📄" },
   ];
 
   return (
-    <div className="p-8 space-y-8">
+    <div className="p-4 md:p-8 space-y-8">
       {/* Başlık */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-white">Finans & Faturalar</h1>
-          <p className="text-sm text-slate-400 mt-1">Ciro raporları, ödemeler ve kurumsal teklif onayları</p>
+          <p className="text-sm text-slate-400 mt-1">Bırakma siparişleri, tamamlanan iadeler ve ayrı B2B tahsilatları. Deneme siparişleri hariç.</p>
         </div>
         <button
           onClick={loadData}
@@ -105,8 +113,10 @@ function FinansContent() {
         </button>
       </div>
 
-      {/* Gelir Kartları */}
-      <div className="grid md:grid-cols-4 gap-5">
+      <FinanceSummary overview={data.overview} />
+
+      {/* B2B ve fatura kuyruğu */}
+      <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-5">
         {cards.map((c) => (
           <div key={c.label} className="bg-slate-900 border border-slate-800 rounded-2xl p-5">
             <span className="text-2xl block mb-2">{c.icon}</span>
@@ -116,6 +126,7 @@ function FinansContent() {
         ))}
       </div>
 
+      <p className="text-sm text-slate-400">B2B ayrı kaynaktır; bu ay hesabı ödeme kaydının son güncelleme tarihine dayanır.</p>
       {/* Son İşlemler Tablosu */}
       <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
         <div className="px-5 py-4 border-b border-slate-800 flex items-center justify-between">
@@ -158,7 +169,7 @@ function FinansContent() {
                         t.status === "pending" ? "bg-amber-500/10 text-amber-400" :
                         "bg-red-500/10 text-red-400"
                       }`}>
-                        {t.status === "success" ? "Ödendi" : t.status === "pending" ? "Bekliyor" : "Başarısız"}
+                        {t.status === "success" ? "Ödendi" : t.status === "pending" ? "Bekliyor" : t.status === "refunded" ? "İade edildi" : t.status === "expired" ? "Süresi doldu" : "Başarısız"}
                       </span>
                     </td>
                   </tr>

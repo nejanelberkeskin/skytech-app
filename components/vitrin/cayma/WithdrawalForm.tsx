@@ -19,6 +19,8 @@ import {
   ErrorBanner,
 } from "@/components/vitrin/talep/FormPrimitives";
 
+import { isCalendarDay, isReceiptTimestamp } from "./receipt-date";
+
 type Receipt = Extract<WithdrawalResult, { ok: true }>;
 type ReceiptLabels = { receivedAt: string; refundDueOn: string };
 type Props = {
@@ -122,13 +124,8 @@ export default function WithdrawalForm({
     if (
       result.ok &&
       (result.orderNo !== input.orderNo ||
-        typeof result.receivedAt !== "string" ||
-        !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{1,3})?(Z|[+-]\d{2}:\d{2})$/.test(result.receivedAt) ||
-        !Number.isFinite(Date.parse(result.receivedAt)) ||
-        typeof result.refundDueOn !== "string" ||
-        !/^\d{4}-\d{2}-\d{2}$/.test(result.refundDueOn) ||
-        !Number.isFinite(Date.parse(`${result.refundDueOn}T12:00:00Z`)) ||
-        new Date(`${result.refundDueOn}T12:00:00Z`).toISOString().slice(0, 10) !== result.refundDueOn)
+        !isReceiptTimestamp(result.receivedAt) ||
+        !isCalendarDay(result.refundDueOn))
     ) {
       result = { ok: false, error: "generic" };
     }
@@ -136,7 +133,9 @@ export default function WithdrawalForm({
     setSubmitting(false);
     if (result.ok) {
       // Receipt is final as soon as the endpoint accepts. A date-formatting failure
-      // must never invite a duplicate withdrawal submission.
+      // must never invite a duplicate withdrawal submission. The validated instant is
+      // normalized to millisecond ISO for <time dateTime> (HTML allows 1–3 fraction digits).
+      result = { ...result, receivedAt: new Date(result.receivedAt).toISOString() };
       setReceipt(result);
       setPhase("success");
       focusOn("heading");

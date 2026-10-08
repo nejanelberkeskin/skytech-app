@@ -1,7 +1,8 @@
 "use client";
 
 import { Suspense, useEffect, useState } from "react";
-import Link from "next/link";
+import { Link, getPathname } from "@/i18n/navigation";
+import { useLocale, useTranslations } from "next-intl";
 import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabase/browser";
 import { GOOGLE_AUTH_ENABLED } from "@/lib/site-config";
@@ -23,16 +24,20 @@ export default function LoginPageWrapper() {
   );
 }
 
-const LINK_MESSAGES: Record<string, string> = {
-  link: "Bağlantı bu tarayıcıda doğrulanamadı. Hesabınız onaylandıysa giriş yapabilirsiniz; şifrenizi unuttuysanız yeni bağlantı isteyin.",
-  confirm: "Doğrulama bağlantısı geçersiz ya da süresi dolmuş. Giriş yapmayı deneyin; gerekiyorsa yeni bağlantı isteyin.",
-  oauth: "Google ile giriş tamamlanamadı. Lütfen tekrar deneyin.",
-};
+
 
 function LoginPage() {
+  const t = useTranslations("authPages");
+  const locale = useLocale();
+  const localPath = (href: string) => getPathname({ locale, href });
+  const LINK_MESSAGES: Record<string, string> = {
+  link: t("linkError"),
+  confirm: t("confirmError"),
+  oauth: t("oauthError"),
+};
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirect = safeNext(searchParams.get("redirect"), "/hesabim");
+  const redirect = safeNext(searchParams.get("redirect"), localPath("/hesabim"));
   const talepId = searchParams.get("talep");
   const linkNotice = LINK_MESSAGES[searchParams.get("error") ?? ""] ?? null;
 
@@ -49,7 +54,7 @@ function LoginPage() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-    if (!email.trim() || !password) return setError("E-posta ve şifre zorunludur.");
+    if (!email.trim() || !password) return setError(t("required"));
 
     setLoading(true);
     const { error: authError } = await supabase.auth.signInWithPassword({ email: email.trim().toLowerCase(), password });
@@ -58,12 +63,12 @@ function LoginPage() {
       setLoading(false);
       setError(
         /invalid login credentials/i.test(authError.message)
-          ? "E-posta veya şifre hatalı."
+          ? t("credentials")
           : /email not confirmed/i.test(authError.message)
-            ? "E-posta adresinizi doğrulamanız gerekiyor. Gelen kutunuzdaki bağlantıya tıklayın."
+            ? t("verifyRequired")
             : /rate limit|too many/i.test(authError.message)
-              ? "Kısa sürede çok fazla deneme yapıldı. Lütfen birkaç dakika sonra tekrar deneyin."
-              : "Giriş yapılamadı. Lütfen tekrar deneyin."
+              ? t("rateLimited")
+              : t("loginError")
       );
       return;
     }
@@ -75,14 +80,13 @@ function LoginPage() {
 
   return (
     <AuthShell
-      title="Tekrar Hoş Geldiniz"
-      subtitle="Hesabınıza giriş yaparak taleplerinizi takip edin."
+      title={t("welcome")}
+      subtitle={t("loginSubtitle")}
       footer={
         <>
-          Hesabınız yok mu?{" "}
+          {t("noAccount")}{" "}
           <Link href={talepId ? `/auth/register?talep=${encodeURIComponent(talepId)}` : "/auth/register"} className="text-emerald-400 hover:text-emerald-300 font-medium transition-colors">
-            Üye Ol
-          </Link>
+            {t("register")}</Link>
         </>
       }
     >
@@ -93,7 +97,7 @@ function LoginPage() {
           )}
 
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-emerald-200/50 mb-2">E-posta</label>
+            <label htmlFor="email" className="block text-sm font-medium text-emerald-200/50 mb-2">{t("email")}</label>
             <input
               id="email"
               type="email"
@@ -107,10 +111,9 @@ function LoginPage() {
 
           <div>
             <div className="flex items-center justify-between mb-2">
-              <label htmlFor="password" className="text-sm font-medium text-emerald-200/50">Şifre</label>
+              <label htmlFor="password" className="text-sm font-medium text-emerald-200/50">{t("password")}</label>
               <Link href="/auth/sifremi-unuttum" className="text-xs text-emerald-400/60 hover:text-emerald-300 transition-colors">
-                Şifremi unuttum
-              </Link>
+                {t("forgotLink")}</Link>
             </div>
             <div className="relative">
               <input
@@ -127,7 +130,7 @@ function LoginPage() {
                 onClick={() => setShowPass(!showPass)}
                 className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-emerald-200/30 hover:text-emerald-200/60 transition-colors"
               >
-                {showPass ? "Gizle" : "Göster"}
+                {showPass ? t("hide") : t("show")}
               </button>
             </div>
           </div>
@@ -144,16 +147,15 @@ function LoginPage() {
             {loading ? (
               <span className="flex items-center justify-center gap-2">
                 <span className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
-                Giriş yapılıyor…
-              </span>
-            ) : "Giriş Yap"}
+                {t("loggingIn")}</span>
+            ) : t("login")}
           </button>
 
           {GOOGLE_AUTH_ENABLED && (
             <>
               <div className="flex items-center gap-4">
                 <div className="flex-1 h-px bg-white/[0.06]" />
-                <span className="text-xs text-emerald-200/20">veya</span>
+                <span className="text-xs text-emerald-200/20">{t("or")}</span>
                 <div className="flex-1 h-px bg-white/[0.06]" />
               </div>
               <button
@@ -167,8 +169,7 @@ function LoginPage() {
                 className="w-full py-3.5 glass-subtle rounded-2xl text-emerald-100/60 hover:text-white hover:bg-white/[0.06] font-medium text-sm transition-all duration-300 flex items-center justify-center gap-3"
               >
                 <GoogleIcon />
-                Google ile Giriş Yap
-              </button>
+                {t("googleLogin")}</button>
             </>
           )}
         </div>

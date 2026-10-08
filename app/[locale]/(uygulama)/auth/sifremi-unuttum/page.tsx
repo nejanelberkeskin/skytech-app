@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
+import { Link, getPathname } from "@/i18n/navigation";
+import { useLocale, useTranslations } from "next-intl";
 import { supabase } from "@/lib/supabase/browser";
 import AuthShell, { authInputClass } from "@/components/auth/AuthShell";
 
@@ -14,6 +15,9 @@ import AuthShell, { authInputClass } from "@/components/auth/AuthShell";
  * üzerinden /auth/sifre-yenile'ye düşer.
  */
 export default function SifremiUnuttumPage() {
+  const t = useTranslations("authPages");
+  const locale = useLocale();
+  const localPath = (href: string) => getPathname({ locale, href });
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
@@ -24,17 +28,17 @@ export default function SifremiUnuttumPage() {
     setError(null);
     const value = email.trim().toLowerCase();
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-      setError("Geçerli bir e-posta adresi girin.");
+      setError(t("validEmail"));
       return;
     }
     setLoading(true);
     const { error: err } = await supabase.auth.resetPasswordForEmail(value, {
-      redirectTo: `${window.location.origin}/api/auth/callback?next=/auth/sifre-yenile`,
+      redirectTo: `${window.location.origin}/api/auth/callback?next=${encodeURIComponent(localPath("/auth/sifre-yenile"))}`,
     });
     setLoading(false);
     // Hız sınırı dışındaki hatalarda da "gönderildi" gösterilir (enumeration önlemi)
     if (err && /rate limit|too many/i.test(err.message)) {
-      setError("Kısa sürede çok fazla deneme yapıldı. Lütfen birkaç dakika sonra tekrar deneyin.");
+      setError(t("rateLimited"));
       return;
     }
     setSent(true);
@@ -42,13 +46,12 @@ export default function SifremiUnuttumPage() {
 
   return (
     <AuthShell
-      title="Şifremi Unuttum"
-      subtitle="E-posta adresinizi girin; şifre yenileme bağlantısı gönderelim."
+      title={t("forgotTitle")}
+      subtitle={t("forgotSubtitle")}
       footer={
         <>
           <Link href="/auth/login" className="text-emerald-400 hover:text-emerald-300 font-medium transition-colors">
-            ← Giriş sayfasına dön
-          </Link>
+            {t("backLogin")}</Link>
         </>
       }
     >
@@ -61,18 +64,16 @@ export default function SifremiUnuttumPage() {
                 <polyline points="3 7 12 13 21 7" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </div>
-            <h2 className="text-lg font-bold text-white">Bağlantı gönderildi</h2>
+            <h2 className="text-lg font-bold text-white">{t("sentTitle")}</h2>
             <p className="text-sm text-emerald-200/50 mt-2 leading-relaxed">
-              Bu e-posta adresi kayıtlıysa şifre yenileme bağlantısı birkaç dakika içinde gelir. Gelen kutunuzu ve
-              spam klasörünü kontrol edin; bağlantı tek kullanımlıktır.
-            </p>
+              {t("sentMessage")}</p>
           </div>
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="liquid-glass relative rounded-3xl p-8 overflow-hidden" noValidate>
           <div className="relative z-10 space-y-5">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-emerald-200/50 mb-2">E-posta</label>
+              <label htmlFor="email" className="block text-sm font-medium text-emerald-200/50 mb-2">{t("email")}</label>
               <input
                 id="email"
                 type="email"
@@ -92,7 +93,7 @@ export default function SifremiUnuttumPage() {
               disabled={loading}
               className="w-full py-3.5 glass-btn rounded-2xl text-white font-medium transition-all disabled:opacity-40 disabled:cursor-not-allowed"
             >
-              {loading ? "Gönderiliyor…" : "Bağlantı Gönder"}
+              {loading ? t("sending") : t("sendLink")}
             </button>
           </div>
         </form>

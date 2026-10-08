@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  await auditLog(supabase, {
+  const warnings = await auditLog(supabase, {
     admin: admin!,
     action: "CREATE",
     entity: "catalog",
@@ -63,7 +63,7 @@ export async function POST(req: NextRequest) {
     ip: getClientIP(req),
   });
 
-  return NextResponse.json(data, { status: 201 });
+  return NextResponse.json({ ...data, warnings }, { status: 201 });
 }
 
 // PUT — Ürün güncelle (mass-assignment whitelist)
@@ -103,7 +103,7 @@ export async function PUT(req: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  await auditLog(supabase, {
+  const warnings = await auditLog(supabase, {
     admin: admin!,
     action: "UPDATE",
     entity: "catalog",
@@ -112,7 +112,7 @@ export async function PUT(req: NextRequest) {
     ip: getClientIP(req),
   });
 
-  return NextResponse.json(data);
+  return NextResponse.json({ ...data, warnings });
 }
 
 // DELETE — Ürün sil
@@ -135,7 +135,7 @@ export async function DELETE(req: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  await auditLog(supabase, {
+  const warnings = await auditLog(supabase, {
     admin: admin!,
     action: "DELETE",
     entity: "catalog",
@@ -144,5 +144,5 @@ export async function DELETE(req: NextRequest) {
     ip: getClientIP(req),
   });
 
-  return NextResponse.json({ success: true });
+  return NextResponse.json({ success: true, warnings });
 }

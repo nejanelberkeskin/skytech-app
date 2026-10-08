@@ -1,4 +1,7 @@
-import Link from "next/link";
+"use client";
+
+import { Link } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 import Image from "next/image";
 import type { ReactNode } from "react";
 
@@ -14,6 +17,7 @@ export default function AuthShell({
   children: ReactNode;
   footer?: ReactNode;
 }) {
+  const t = useTranslations("authPages");
   return (
     <div className="relative min-h-screen flex flex-col overflow-hidden">
       <div className="nature-bg">
@@ -25,7 +29,7 @@ export default function AuthShell({
         className="relative z-10 vitrin-navbar-top px-6 py-4"
         style={{ backdropFilter: "blur(16px) saturate(1.25)", WebkitBackdropFilter: "blur(16px) saturate(1.25)" }}
       >
-        <Link href="/" className="flex items-center gap-2.5 w-fit group" aria-label="Skytech Green ana sayfa">
+        <Link href="/" className="flex items-center gap-2.5 w-fit group" aria-label={t("home")}>
           <Image
             src="/images/brand/logo.webp"
             alt="Skytech Green"

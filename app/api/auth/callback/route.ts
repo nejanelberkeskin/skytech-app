@@ -15,9 +15,11 @@ export async function GET(req: NextRequest) {
   const code = searchParams.get("code");
   const next = safeNext(searchParams.get("next"), "/hesabim");
 
+  const prefix = next.match(/^\/(en|ru)(?:\/|$)/)?.[0].replace(/\/$/, "") ?? "";
+
   // Kod yok ya da değişim başarısız (ör. bağlantı başka cihazda açıldı):
   // hesap Supabase tarafında doğrulanmış olabilir → giriş sayfasına yönlendir.
-  const fail = new URL("/auth/login?error=link", origin);
+  const fail = new URL(`${prefix}/auth/login?error=link`, origin);
   if (!code) return NextResponse.redirect(fail);
 
   try {

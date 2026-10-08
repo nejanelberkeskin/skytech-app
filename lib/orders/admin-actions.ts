@@ -13,7 +13,7 @@
  */
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { getProviderByName } from "@/lib/payments";
-import { duplicateChargesFrom } from "./duplicates";
+import { createRefundService, type ActionOutcome as RefundActionOutcome, type ServiceError as RefundServiceError } from "@/lib/refunds/service";
 import { addOrderEvent, db, transitionOrder } from "./store";
 import type { OrderActor, OrderStatus, ReleaseOrderRow } from "./types";
 
@@ -69,161 +69,60 @@ export async function cancelBySeller(orderId: string, reason: string, adminUserI
 
 /* ── İade ─────────────────────────────────────────────────────────────────── */
 
-const CLAIM_TTL_MS = 10 * 60_000;
-const claimValue = () => `claim:${Date.now()}:${Math.random().toString(36).slice(2, 10)}`;
-const claimAge = (ref: string | null) => {
-  const m = ref ? /^claim:(\d+):/.exec(ref) : null;
-  return m ? Date.now() - Number(m[1]) : null;
+/*
+ * Tek iade uygulaması lib/refunds/service.ts'tedir (sözleşme: web-brifler/17): claim (019) → sağlayıcı
+ * (yalnız ilk sahiplenmede) → sonuç kaydı (020) → atomik tamamlama (019). Sonucu belirsiz deneme kendiliğinden
+ * tekrarlanmaz; sonuç kaydedilemezse sağlayıcı tekrar çağrılmaz. Buradaki iki işlev, sipariş ayrıntısındaki
+ * eski `refund` / `refund_duplicate` eylemleri için aynı servisi eski sonuç biçimine çevirir.
+ */
+function refundService(supabase: SupabaseClient) {
+  return createRefundService({
+    db: supabase,
+    getProvider: getProviderByName,
+    now: () => new Date(),
+    log: (message, data) => console.error(message, JSON.stringify(data)),
+    pause: (ms) => new Promise((resolve) => setTimeout(resolve, ms)),
+  });
+}
+
+const LEGACY_REFUND_ERRORS: Record<string, AdminActionError> = {
+  not_found: "not_found",
+  in_progress: "in_progress",
+  already_done: "already_done",
+  provider_unavailable: "provider_unavailable",
+  unavailable: "unavailable",
 };
 
-/**
- * Bekleyen (ya da önceki denemesi başarısız) iadeyi sağlayıcıdan yapar. Çift iadeyi önlemek için
- * iade satırı önce "sahiplenilir" (provider_ref üzerinde karşılaştır-ve-yaz); aynı anda gelen
- * ikinci istek `in_progress` alır. Yarıda kalmış sahiplenme 10 dakika sonra devralınabilir.
- */
+async function legacyRefundResult(outcome: RefundActionOutcome | RefundServiceError, orderId: string, supabase: SupabaseClient): Promise<AdminActionResult> {
+  if (!outcome.ok) return { ok: false, error: LEGACY_REFUND_ERRORS[outcome.code] ?? "invalid_state", detail: outcome.message };
+  const pending = outcome.warnings.find((w) => w.code === "result_not_recorded" || w.code === "finalize_pending");
+  switch (outcome.result.outcome) {
+    case "completed":
+    case "noop": {
+      const order = outcome.notify ?? (await getOrder(supabase, orderId));
+      return order ? { ok: true, order } : { ok: false, error: "unavailable" };
+    }
+    case "failed":
+      return { ok: false, error: "provider_error", detail: "Sağlayıcı iadeyi yapmadı. İade ekranından yeniden deneyin ya da mutabakat yapın." };
+    case "provider_succeeded":
+      return { ok: false, error: "unavailable", detail: pending?.message ?? "Sağlayıcı iadesi tamam; yerel kayıt tamamlanmalı." };
+    default:
+      return pending
+        ? { ok: false, error: "unavailable", detail: pending.message }
+        : { ok: false, error: "provider_error", detail: "Sağlayıcı sonucu belirsiz; tekrar iade gönderilmedi. Mutabakat gerekli." };
+  }
+}
+
 export async function executeRefund(orderId: string, adminUserId: string, ip: string | null, supabase: SupabaseClient = db()): Promise<AdminActionResult> {
-  const order = await getOrder(supabase, orderId);
-  if (!order) return { ok: false, error: "not_found" };
-  if (order.status === "refunded") return { ok: false, error: "already_done" };
-  if (order.status !== "withdrawal_requested" && order.status !== "cancelled_by_seller") return { ok: false, error: "invalid_state" };
-  if (!order.payment_id) return { ok: false, error: "invalid_state", detail: "ödeme kimliği yok" };
-
-  const provider = getProviderByName(order.payment_provider);
-  if (!provider) return { ok: false, error: "provider_unavailable", detail: order.payment_provider ?? "-" };
-
-  // İade satırı: bekleyen ya da başarısız son kayıt; yoksa aç.
-  let { data: refund } = await supabase
-    .from("order_refunds")
-    .select("id, status, provider_ref")
-    .eq("order_id", order.id)
-    .in("status", ["pending", "failed"])
-    .order("created_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
-  if (!refund) {
-    const created = await supabase
-      .from("order_refunds")
-      .insert({
-        order_id: order.id,
-        amount_kurus: order.total_kurus,
-        reason: order.status === "withdrawal_requested" ? "withdrawal" : "seller_cancellation",
-        status: "pending",
-        provider: order.payment_provider,
-        requested_by: actorOf(adminUserId),
-      })
-      .select("id, status, provider_ref")
-      .single();
-    if (created.error || !created.data) return { ok: false, error: "unavailable" };
-    refund = created.data;
-  }
-
-  // Sahiplen (karşılaştır-ve-yaz)
-  const previousRef = (refund.provider_ref as string | null) ?? null;
-  const age = claimAge(previousRef);
-  if (age !== null && age < CLAIM_TTL_MS) return { ok: false, error: "in_progress" };
-  const claim = claimValue();
-  let claimQuery = supabase.from("order_refunds").update({ provider_ref: claim, status: "pending", error: null }).eq("id", refund.id).in("status", ["pending", "failed"]);
-  claimQuery = previousRef === null ? claimQuery.is("provider_ref", null) : claimQuery.eq("provider_ref", previousRef);
-  const claimed = await claimQuery.select("id").maybeSingle();
-  if (claimed.error) return { ok: false, error: "unavailable" };
-  if (!claimed.data) return { ok: false, error: "in_progress" };
-
-  await addOrderEvent(supabase, order.id, "refund_started", actorOf(adminUserId), { provider: provider.name, amountKurus: order.total_kurus });
-
-  const result = await provider.refund({
-    paymentId: order.payment_id,
-    amountKurus: order.total_kurus,
-    orderNo: order.order_no,
-    meta: order.payment_meta,
-    ip,
-  });
-
-  if (!result.ok) {
-    await supabase.from("order_refunds").update({ status: "failed", error: result.error.slice(0, 500), provider_ref: null }).eq("id", refund.id).eq("provider_ref", claim);
-    await addOrderEvent(supabase, order.id, "refund_failed", actorOf(adminUserId), { provider: provider.name, error: result.error.slice(0, 300) });
-    return { ok: false, error: "provider_error", detail: result.error.slice(0, 300) };
-  }
-
-  const at = new Date().toISOString();
-  await supabase.from("order_refunds").update({ status: "succeeded", provider_ref: result.refundId, completed_at: at, error: null }).eq("id", refund.id);
-
-  const refunded = await transitionOrder(supabase, order.id, [order.status], "refunded", {
-    refunded_at: at,
-    ...(order.certificate_code && !order.certificate_cancelled_at ? { certificate_cancelled_at: at } : {}),
-  });
-
-  // Ayrılmış kapasite serbest kalır (geç ödemede hiç ayrılamamışsa geri verilecek bir şey yoktur).
-  if (order.payment_meta?.capacityHeld !== false) {
-    await supabase.rpc("release_reserved_capacity", { p_land_id: order.land_id, p_quantity: order.quantity });
-  }
-  await addOrderEvent(supabase, order.id, "refund_succeeded", actorOf(adminUserId), {
-    provider: provider.name,
-    refundId: result.refundId,
-    method: result.method,
-    amountKurus: order.total_kurus,
-  });
-  if (order.certificate_code && !order.certificate_cancelled_at) {
-    await addOrderEvent(supabase, order.id, "certificate_cancelled", "system", { code: order.certificate_code, reason: "refund" });
-  }
-  await settleInvoicesAfterRefund(supabase, order.id);
-  return { ok: true, order: refunded ?? { ...order, status: "refunded", refunded_at: at } };
+  const outcome = await refundService(supabase).execute(orderId, { kind: "order" }, { user_id: adminUserId }, ip);
+  return legacyRefundResult(outcome, orderId, supabase);
 }
-
-/**
- * İade sonrası fatura kuyruğu: henüz kesilmemiş satış faturası iptal edilir (kesilmesine gerek
- * kalmadı); kesilmiş satış faturası varsa muhasebe için "iade faturası" kuyruğa alınır.
- */
-async function settleInvoicesAfterRefund(supabase: SupabaseClient, orderId: string): Promise<void> {
-  const { data } = await supabase.from("order_invoices").select("id, kind, status").eq("order_id", orderId);
-  const rows = data ?? [];
-  const pendingSale = rows.filter((r) => r.kind === "sale" && r.status === "pending");
-  if (pendingSale.length) await supabase.from("order_invoices").update({ status: "cancelled" }).in("id", pendingSale.map((r) => r.id as string));
-  const issuedSale = rows.some((r) => r.kind === "sale" && r.status === "issued");
-  const hasRefundInvoice = rows.some((r) => r.kind === "refund" && (r.status === "pending" || r.status === "issued"));
-  if (issuedSale && !hasRefundInvoice) {
-    await supabase.from("order_invoices").insert({ order_id: orderId, kind: "refund", provider: "manual", status: "pending", created_by: "system" });
-  }
-}
-
-/* ── Çift tahsilatın iadesi ───────────────────────────────────────────────── */
 
 export { duplicateChargesFrom, type DuplicateCharge } from "./duplicates";
 
 export async function refundDuplicate(orderId: string, paymentId: string, adminUserId: string, ip: string | null, supabase: SupabaseClient = db()): Promise<AdminActionResult> {
-  const order = await getOrder(supabase, orderId);
-  if (!order) return { ok: false, error: "not_found" };
-  const { data: events, error } = await supabase.from("order_events").select("type, data").eq("order_id", order.id).in("type", ["payment_succeeded", "refund_succeeded", "refund_started"]);
-  if (error) return { ok: false, error: "unavailable" };
-
-  const list = (events ?? []) as { type: string; data: Record<string, unknown> | null }[];
-  const charge = duplicateChargesFrom(list).find((c) => c.paymentId === paymentId);
-  if (!charge) return { ok: false, error: "not_found" };
-  if (charge.refunded) return { ok: false, error: "already_done" };
-  // Asıl ödeme bu uçtan iade edilemez (o, sipariş iadesidir).
-  if (paymentId === order.payment_id) return { ok: false, error: "invalid_state" };
-  // Son 10 dakikada başlamış ve sonuçlanmamış bir deneme varsa bekle (çift iade koruması).
-  const recentStart = list.some(
-    (e) => e.type === "refund_started" && e.data?.duplicate === true && e.data?.paymentId === paymentId && Date.now() - Number(e.data?.at ?? 0) < CLAIM_TTL_MS
-  );
-  if (recentStart) return { ok: false, error: "in_progress" };
-
-  const provider = getProviderByName(charge.provider || order.payment_provider);
-  if (!provider) return { ok: false, error: "provider_unavailable", detail: charge.provider };
-
-  await addOrderEvent(supabase, order.id, "refund_started", actorOf(adminUserId), { duplicate: true, paymentId, amountKurus: charge.paidKurus, at: Date.now() });
-  const result = await provider.refund({ paymentId, amountKurus: charge.paidKurus, orderNo: order.order_no, meta: null, ip });
-  if (!result.ok) {
-    await addOrderEvent(supabase, order.id, "refund_failed", actorOf(adminUserId), { duplicate: true, paymentId, error: result.error.slice(0, 300) });
-    return { ok: false, error: "provider_error", detail: result.error.slice(0, 300) };
-  }
-  await addOrderEvent(supabase, order.id, "refund_succeeded", actorOf(adminUserId), {
-    duplicate: true,
-    paymentId,
-    refundId: result.refundId,
-    method: result.method,
-    amountKurus: charge.paidKurus,
-  });
-  return { ok: true, order };
+  const outcome = await refundService(supabase).execute(orderId, { kind: "duplicate", paymentId }, { user_id: adminUserId }, ip);
+  return legacyRefundResult(outcome, orderId, supabase);
 }
 
 /* ── Fatura kuyruğu ───────────────────────────────────────────────────────── */

@@ -2585,14 +2585,15 @@
     },
     "pausedNotice": "Çevrim içi sipariş alımına geçici olarak ara verildi. Bu sayfadan katılım talebinizi iletebilirsiniz; ödeme alınmaz, ekibimiz sizinle iletişime geçer.",
     "preorder": {
-      "pay": "Ödemeye geç ({total})",
-      "payPlain": "Ödemeye geç",
-      "buttonNote": "Çevrim içi ödeme çok yakında açılıyor. Bu adımda kart bilgisi istenmez, sipariş oluşturulmaz ve ödeme alınmaz.",
-      "reviewNote": "Tutar, bugünkü hizmet bedeline göre hesaplanmıştır. Sözleşme ve ön bilgilendirme metinleri, çevrim içi ödeme açıldığında sipariş adımında sunulur.",
-      "sideNote": "Çevrim içi ödeme çok yakında. Şu an sipariş oluşturulmaz, ödeme alınmaz.",
-      "soonTitle": "Çevrim içi ödeme çok yakında",
-      "soonBody": "Siparişiniz oluşturulmadı ve sizden ödeme alınmadı. Ödeme açıldığında size haber vermemizi isterseniz bilgilerinizi bırakın; ekibimiz seçtiğiniz saha ve adet için sizinle iletişime geçsin.",
-      "soonShared": "Bırakırsanız kaydedilecekler: ad soyad, e-posta, telefon, saha, adet ve sertifikadaki ad (kurumsal ise unvan). Fatura adresiniz ve kimlik/vergi numaranız kaydedilmez.",
+      "notice": "Şu anda sipariş ve ödeme alınmıyor; çevrim içi ödeme henüz açık değil. Bu formla tahmini bedeli görebilir, isterseniz talep bırakabilirsiniz.",
+      "contactNotice": "Bu bilgileri yalnız talebinizle ilgili sizinle iletişime geçmek için kullanırız. Ayrıntılar: <kvkk>KVKK Aydınlatma Metni</kvkk>.",
+      "reviewNote": "Tutar, bugünkü hizmet bedeline göre bilgi amaçlıdır. Bu adımda sipariş oluşturulmaz ve ödeme alınmaz.",
+      "sideNote": "Şu anda sipariş ve ödeme alınmıyor. Tutar bilgi amaçlıdır.",
+      "buttonNote": "Şu anda sipariş ve ödeme alınmıyor. Sonraki ekranda isterseniz bilgilerinizi bırakabilirsiniz.",
+      "viewOptions": "Bilgilendirme seçeneklerini gör",
+      "soonTitle": "Çevrim içi ödeme henüz açık değil",
+      "soonBody": "Sipariş oluşturulmadı ve sizden ödeme alınmadı. İsterseniz bilgilerinizi talep olarak bırakın; ekibimiz seçtiğiniz saha ve adet için sizinle iletişime geçsin.",
+      "soonShared": "Talebinizle paylaşacağınız form bilgileri: ad soyad, e-posta, telefon, saha, adet, sertifikadaki ad ve girdiyseniz şirket adı ile notunuz. Fatura adresi ve kimlik/vergi numarası istenmez. Talep kaydıyla birlikte tutulan teknik bilgiler (onayın zamanı ve sürümü, IP özeti, tarayıcı bilgisi gibi) için <kvkk>KVKK Aydınlatma Metni</kvkk>'ne bakın.",
       "notify": "Bilgilerimi bırak",
       "backToReview": "Özete dön"
     }

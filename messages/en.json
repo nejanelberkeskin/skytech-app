@@ -2585,14 +2585,15 @@
     },
     "pausedNotice": "Online orders are temporarily paused. You can still send a participation request on this page; no payment is taken and our team will contact you.",
     "preorder": {
-      "pay": "Proceed to payment ({total})",
-      "payPlain": "Proceed to payment",
-      "buttonNote": "Online payment is coming very soon. At this step no card details are requested, no order is created and no payment is taken.",
-      "reviewNote": "The amount is calculated from today's service fee. The contract and pre-information documents will be presented at the order step once online payment opens.",
-      "sideNote": "Online payment is coming very soon. No order is created and no payment is taken for now.",
-      "soonTitle": "Online payment is coming very soon",
-      "soonBody": "Your order has not been created and no payment has been taken. If you would like us to let you know when payment opens, leave your details and our team will contact you about the site and quantity you chose.",
-      "soonShared": "If you leave your details, we will store: name, email, phone, site, quantity and the name on the certificate (company name for corporate buyers). Your billing address and ID/tax number are not stored.",
+      "notice": "Orders and payments are not being accepted at the moment; online payment is not available yet. You can see the estimated fee with this form and leave a request if you wish.",
+      "contactNotice": "We use these details only to contact you about your request. Details: <kvkk>Privacy Notice (KVKK)</kvkk>.",
+      "reviewNote": "The amount is for information, based on today's service fee. No order is created and no payment is taken at this step.",
+      "sideNote": "Orders and payments are not being accepted at the moment. The amount is for information.",
+      "buttonNote": "Orders and payments are not being accepted at the moment. On the next screen you can leave your details if you wish.",
+      "viewOptions": "View notification options",
+      "soonTitle": "Online payment is not available yet",
+      "soonBody": "No order has been created and no payment has been taken. If you wish, leave your details as a request and our team will contact you about the site and quantity you chose.",
+      "soonShared": "Form details you share with your request: name, email, phone, site, quantity, the name on the certificate and, if provided, company name and your note. No billing address or ID/tax number is requested. For technical data kept with the request record (time and version of your confirmation, IP hash, browser information, etc.) see the <kvkk>Privacy Notice (KVKK)</kvkk>.",
       "notify": "Leave my details",
       "backToReview": "Back to summary"
     }

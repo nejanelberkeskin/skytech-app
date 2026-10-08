@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 import { SITES_HREF } from "@/lib/sites/links";
@@ -63,6 +63,16 @@ import {
   type WizardProps,
 } from "./types";
 
+/**
+ * Hatanın gösterileceği adım. Ödemede dur kipinde KVKK onayı son ekranda alındığı için yalnız onay hatası varsa
+ * 4. adımda kalınır (görünmeyen bir kutu için 3. adıma atılmaz).
+ */
+function stepFor(mode: WizardProps["mode"], fields: Record<string, string>): number {
+  const keys = Object.keys(fields);
+  if (mode === "preorder" && keys.length > 0 && keys.every((k) => k === "contact.consent")) return 4;
+  return errorStep(fields);
+}
+
 export default function OrderWizard({
   site,
   locale,
@@ -75,8 +85,18 @@ export default function OrderWizard({
   const t = useTranslations("orderWizard");
   const common = useTranslations("requestForms.common");
   const requestErrors = useTranslations("requestForms.common.errors");
-  // Sipariş görünümü: alıcı + fatura adımı, alıcıdan türeyen sertifika adı. "preorder" ödeme adımında durur.
-  const orderLike = mode !== "request";
+  // "request" ve "preorder" iletişim formunu ve talep şemasını kullanır; alıcı + fatura bilgisi yalnız gerçek siparişte
+  // ("order") alınır. "preorder" ödeme olmadan sipariş özetini gösterir, isteğe bağlı talep bırakır.
+  const usesContact = mode !== "order";
+  const kvkkLink = (chunks: ReactNode) => (
+    <Link
+      href="/kvkk"
+      target="_blank"
+      className="font-semibold text-[#1B6B3A] underline underline-offset-2"
+    >
+      {chunks}
+    </Link>
+  );
   const pathname = usePathname();
   const [step, setStep] = useState(1);
   const [quantity, setQuantity] = useState<number | null>(() =>
@@ -138,7 +158,7 @@ export default function OrderWizard({
         ([key, value]) => requestFields[key] !== value,
       )
     ) {
-      setStep(errorStep(request.fieldErrors));
+      setStep(stepFor(mode, request.fieldErrors));
       setFocus((v) => ({ revision: v.revision + 1, error: true }));
     }
   }
@@ -244,8 +264,13 @@ export default function OrderWizard({
             value,
           ]),
         );
-      if (mode === "request") {
-        const result = contactSchema.safeParse({ ...contact, locale });
+      if (mode !== "order") {
+        // Ödemede dur: KVKK onayı 4. adımda alınır; 3. adımda yalnız iletişim alanları talep şemasıyla doğrulanır.
+        const result = contactSchema.safeParse({
+          ...contact,
+          ...(mode === "preorder" ? { consent: true } : {}),
+          locale,
+        });
         const fields = result.success
           ? {}
           : prefix(issuesToFieldErrors(result.error.issues), "contact");
@@ -271,9 +296,9 @@ export default function OrderWizard({
     setErrors(fields);
     setNotice(null);
     setFailure("validation");
-    setStep(errorStep(fields));
+    setStep(stepFor(mode, fields));
     setFocus((v) => ({ revision: v.revision + 1, error: true }));
-  }, []);
+  }, [mode]);
 
   const loadPreview = useCallback(async () => {
     const parsed = orderPreviewSchema.safeParse({
@@ -386,9 +411,9 @@ export default function OrderWizard({
       return;
     }
     if (mode === "preorder") {
-      // Ödemede dur: sipariş oluşturulmaz, ödeme başlatılmaz, sipariş ucuna istek gitmez. İlk basış
-      // "yakında" ekranını açar; müşteri isterse açık onayla bilgilerini talep olarak bırakır.
-      // Talebe yalnız iletişim için gerekenler gider; fatura adresi ve kimlik/vergi no gönderilmez.
+      // Ödemede dur: sipariş oluşturulmaz, ödeme başlatılmaz, sipariş ucuna istek gitmez. İlk basış bilgilendirme
+      // ekranını açar; müşteri isterse KVKK aydınlatma onayıyla bilgilerini talep olarak bırakır. Fatura adresi ve
+      // kimlik/vergi no hiç istenmez.
       if (!soon) {
         setSoon(true);
         setErrors({});
@@ -403,14 +428,7 @@ export default function OrderWizard({
         return;
       }
       await request.submit(
-        {
-          ...contact,
-          contactName: `${buyer.firstName} ${buyer.lastName}`.trim(),
-          email: buyer.email,
-          phone: buyer.phone,
-          company: invoice.type === "corporate" ? invoice.companyTitle : "",
-          message: "",
-        },
+        contact,
         {
           type: "open_land_seeding",
           landId: site.id,
@@ -480,14 +498,14 @@ export default function OrderWizard({
   const showPrice = inOrderReview || PRICING_VISIBLE;
   const finalName =
     certificateName.trim() ||
-    (orderLike
+    (mode === "order"
       ? resolveCertificateName({ certificateName: undefined, buyer })
       : contact.contactName.trim().slice(0, CERTIFICATE_NAME.max)) ||
     t("certificate.placeholder");
   const steps = [
     t("steps.quantity"),
     t("steps.certificate"),
-    t(orderLike ? "steps.buyer" : "steps.contact"),
+    t(mode === "order" ? "steps.buyer" : "steps.contact"),
     t("steps.review"),
   ];
   const buttonLabel = busy
@@ -499,11 +517,7 @@ export default function OrderWizard({
         : mode === "request"
           ? t("request.submit")
           : mode === "preorder"
-            ? soon
-              ? t("preorder.notify")
-              : PRICING_VISIBLE && price !== null
-                ? t("preorder.pay", { total: formatTry(price, locale) })
-                : t("preorder.payPlain")
+            ? t(soon ? "preorder.notify" : "preorder.viewOptions")
           : preview
             ? t("review.pay", {
                 total: formatTry(preview.totals.totalKurus, locale),
@@ -514,6 +528,11 @@ export default function OrderWizard({
       {inOrderReview && preview && (
         <p className="mb-3 text-sm leading-relaxed text-[#0e2519]">
           {t("review.obligation")}
+        </p>
+      )}
+      {mode === "preorder" && step === 4 && !soon && (
+        <p className="mb-3 text-sm leading-relaxed text-[#0e2519]">
+          {t("preorder.buttonNote")}
         </p>
       )}
       <button
@@ -527,11 +546,6 @@ export default function OrderWizard({
       {inOrderReview && preview && (
         <p className="mt-3 text-xs leading-relaxed text-[#3d5a3d]">
           {t("review.secure")}
-        </p>
-      )}
-      {mode === "preorder" && step === 4 && !soon && (
-        <p className="mt-3 text-xs leading-relaxed text-[#3d5a3d]">
-          {t("preorder.buttonNote")}
         </p>
       )}
     </div>
@@ -557,7 +571,7 @@ export default function OrderWizard({
       >
         <SuccessCard
           result={request.success}
-          email={mode === "preorder" ? buyer.email : contact.email}
+          email={contact.email}
           isLoggedIn={isLoggedIn}
         />
       </div>
@@ -794,7 +808,7 @@ export default function OrderWizard({
               </p>
             </SectionCard>
           )}
-          {step === 3 && orderLike && (
+          {step === 3 && mode === "order" && (
             <BuyerInvoiceFields
               buyer={buyer}
               invoice={invoice}
@@ -818,7 +832,7 @@ export default function OrderWizard({
               disabled={busy}
             />
           )}
-          {step === 3 && mode === "request" && (
+          {step === 3 && usesContact && (
             <div
               className="[&_label:has(input[type=checkbox])]:min-h-11"
               ref={(node) =>
@@ -839,6 +853,11 @@ export default function OrderWizard({
                 prefilled={isLoggedIn}
                 honeypot={honeypot}
                 onHoneypot={setHoneypot}
+                consentNotice={
+                  mode === "preorder"
+                    ? t.rich("preorder.contactNotice", { kvkk: kvkkLink })
+                    : undefined
+                }
               />
               <span id="ow-contact-consent-error" className="sr-only">
                 {errorFor("contact.consent")}
@@ -957,24 +976,19 @@ export default function OrderWizard({
                     : []),
                   { label: t("certificate.label"), value: finalName },
                   {
-                    label: t("buyer.title"),
+                    label: t("steps.contact"),
                     value: [
-                      `${buyer.firstName} ${buyer.lastName}`.trim(),
-                      buyer.email,
-                      buyer.phone,
+                      contact.contactName,
+                      contact.email,
+                      contact.phone,
+                      contact.company,
                     ]
                       .filter(Boolean)
                       .join(" · "),
                   },
-                  {
-                    label: t("invoice.type"),
-                    value:
-                      invoice.type === "corporate"
-                        ? [t("invoice.corporate"), invoice.companyTitle]
-                            .filter(Boolean)
-                            .join(" · ")
-                        : t("invoice.individual"),
-                  },
+                  ...(contact.message
+                    ? [{ label: t("request.message"), value: contact.message }]
+                    : []),
                 ]}
               />
               <p className="mt-6 rounded-2xl bg-[#f8faf5] p-4 text-sm leading-relaxed text-[#3d5a3d]">
@@ -992,7 +1006,7 @@ export default function OrderWizard({
                 {t("preorder.soonBody")}
               </p>
               <p className="text-sm leading-relaxed text-[#3d5a3d]">
-                {t("preorder.soonShared")}
+                {t.rich("preorder.soonShared", { kvkk: kvkkLink })}
               </p>
               <label
                 className={`flex min-h-11 cursor-pointer items-start gap-3 pt-1 text-xs leading-relaxed ${errorFor("contact.consent") ? "text-[#dc2626]" : "text-[#3d5a3d]"}`}
@@ -1012,17 +1026,7 @@ export default function OrderWizard({
                   className="mt-0.5 h-4 w-4 shrink-0 accent-[#1B6B3A]"
                 />
                 <span>
-                  {common.rich("consent", {
-                    kvkk: (chunks) => (
-                      <Link
-                        href="/kvkk"
-                        target="_blank"
-                        className="font-semibold text-[#1B6B3A] underline underline-offset-2"
-                      >
-                        {chunks}
-                      </Link>
-                    ),
-                  })}
+                  {common.rich("consent", { kvkk: kvkkLink })}
                 </span>
               </label>
               <p
@@ -1047,7 +1051,7 @@ export default function OrderWizard({
               </button>
             </section>
           )}
-          {orderLike && (
+          {mode === "order" && (
             <div
               aria-hidden="true"
               className="absolute -left-[9999px] h-px w-px overflow-hidden"

@@ -68,7 +68,7 @@ export default async function ParticipatePage({ params }: Props) {
     <div className="vitrin-container pb-12 pt-32 sm:pt-40">
       <header className="mb-8 max-w-3xl">
         <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-[#1B6B3A]">
-          {t(mode === "request" ? "requestMode" : "orderMode")}
+          {t(mode === "order" ? "orderMode" : "requestMode")}
         </p>
         <h1 className="display-headline text-3xl font-semibold text-[#0e2519] sm:text-5xl">
           {t("title")}
@@ -76,6 +76,15 @@ export default async function ParticipatePage({ params }: Props) {
         <p className="mt-4 leading-relaxed text-[#3d5a3d]">
           {t("description")}
         </p>
+        {mode === "preorder" && (
+          // Ödemede dur: ilk adımdan (mobilde de) görünür; süre vaadi yok.
+          <p
+            role="status"
+            className="mt-5 rounded-2xl border border-[#1B6B3A]/20 bg-[#f0f7ec] px-5 py-4 text-sm leading-relaxed text-[#0e2519]"
+          >
+            {t("preorder.notice")}
+          </p>
+        )}
         {paused && (
           <p
             role="status"

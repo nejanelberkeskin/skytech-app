@@ -44,7 +44,12 @@ export default function ProfilPage() {
     setSaved(false);
     setSaveError(false);
     const { data: session } = await supabase.auth.getSession();
-    if (!session.session) return;
+    if (!session.session) {
+      // Oturum düşmüşse düğme "kaydediliyor"da kalmaz; kaydedilemedi bildirimi gösterilir.
+      setSaving(false);
+      setSaveError(true);
+      return;
+    }
 
     // Aynı iki yazım, aynı sırayla; yalnız sonuç ekrana doğru yansıtılır (önceden hata da "Kaydedildi" gösteriyordu).
     const { error: profileError } = await supabase.from("profiles").upsert({

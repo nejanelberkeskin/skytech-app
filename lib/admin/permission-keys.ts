@@ -5,7 +5,7 @@
 export const PERMISSIONS = [
   "orders.read", "orders.note", "orders.assign", "orders.cancel", "orders.documents.read", "orders.export",
   "customers.contact.read", "customers.tax.read", "customers.export",
-  "refunds.request", "refunds.approve", "refunds.execute", "invoices.read", "invoices.manage", "finance.read",
+  "refunds.request", "refunds.approve", "refunds.execute", "invoices.read", "invoices.manage", "finance.read", "finance.b2b_payment.resolve",
   "sites.read", "sites.edit", "sites.publish", "sites.capacity.manage",
   "batches.read", "batches.plan", "batches.assign", "batches.release",
   "monitoring.edit", "monitoring.review", "monitoring.publish", "certificates.read_private", "certificates.resend",
@@ -23,7 +23,7 @@ export type Permission = (typeof PERMISSIONS)[number];
  */
 export const MFA_PERMISSIONS: ReadonlySet<Permission> = new Set<Permission>([
   "orders.cancel", "orders.documents.read", "orders.export", "customers.tax.read", "customers.export",
-  "refunds.approve", "refunds.execute", "invoices.manage",
+  "refunds.approve", "refunds.execute", "invoices.manage", "finance.b2b_payment.resolve",
   "sites.publish", "sites.capacity.manage", "batches.release", "monitoring.publish", "certificates.read_private",
   "messages.send", "content.publish", "legal.edit", "legal.publish",
   "staff.invite", "staff.manage", "roles.manage",

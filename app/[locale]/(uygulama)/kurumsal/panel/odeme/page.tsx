@@ -95,6 +95,7 @@ function PaymentPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           quoteId: quote.id,
+          locale: lang,
           userId: user.id,
           email: user.email,
           companyName: quote.company_name,

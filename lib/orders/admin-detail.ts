@@ -39,7 +39,7 @@ const GROUP_COLUMNS: Record<SensitiveGroup, string[]> = {
     "invoice_tax_office:invoice->>taxOffice", "invoice_mersis:invoice->>mersis",
     "invoice_e_invoice_user:invoice->>eInvoiceUser", "invoice_po_number:invoice->>poNumber",
   ],
-  finance: ["unit_price_kurus", "total_kurus", "vat_rate", "payment_provider", "payment_id", "payment_started_at"],
+  finance: ["payment_review_required:payment_meta->>paymentReviewRequired", "unit_price_kurus", "total_kurus", "vat_rate", "payment_provider", "payment_id", "payment_started_at"],
   invoices: [],
   legal: ["consents", "documents_version", "source_path"],
   certificate: ["certificate_code"],

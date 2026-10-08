@@ -10,11 +10,8 @@
  * Sipariş no ile e-posta eşleşmezse hangisinin yanlış olduğu söylenmez ("not_found").
  */
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { sendWithdrawalNotification, sendWithdrawalReceipt } from "@/lib/mail";
-import { formatTry } from "@/lib/pricing";
-import { recordEmailResults } from "./after-payment";
-import { formatLongDay } from "./dates";
-import { trToday } from "./schedule";
+import { publicOrigin } from "@/lib/mail";
+import { runNotificationOutbox } from "./notification-outbox";
 import { canWithdraw } from "./state";
 import { addOrderEvent, db, getOrderByNo, transitionOrder } from "./store";
 import type { ReleaseOrderRow } from "./types";
@@ -83,35 +80,8 @@ export async function recordWithdrawal(
   return { ok: true, order: moved, receivedAt, refundDueOn };
 }
 
-/** Müşteriye teyit + şirkete bildirim. Hata siparişi etkilemez; olay olarak kaydedilir. */
-export async function sendWithdrawalEmails(order: ReleaseOrderRow, receivedAt: string, refundDueOn: string): Promise<void> {
-  const supabase = db();
-  const totalText = formatTry(order.total_kurus, order.locale);
-  const mailLocale = order.locale === "tr" ? "tr" : "en";
-  const results = await Promise.allSettled([
-    sendWithdrawalReceipt({
-      orderId: order.id,
-      orderNo: order.order_no,
-      locale: order.locale,
-      email: order.buyer_email,
-      firstName: order.buyer_first_name,
-      totalText,
-      receivedOnText: formatLongDay(trToday(new Date(receivedAt)), mailLocale),
-      refundDueOnText: formatLongDay(refundDueOn, mailLocale),
-      isTest: order.is_test,
-    }),
-    sendWithdrawalNotification({
-      orderId: order.id,
-      orderNo: order.order_no,
-      buyerName: `${order.buyer_first_name} ${order.buyer_last_name}`,
-      siteName: order.site_snapshot.name,
-      totalText: formatTry(order.total_kurus, "tr"),
-      refundDueOnText: formatLongDay(refundDueOn, "tr"),
-      isTest: order.is_test,
-    }),
-  ]);
-  await recordEmailResults(supabase, order.id, results, [
-    { template: "release_withdrawal_receipt" },
-    { template: "release_withdrawal_notify" },
-  ]);
+/** The status transaction enqueues both recipients; after() only wakes the durable worker. */
+export async function sendWithdrawalEmails(order: ReleaseOrderRow, _receivedAt: string, _refundDueOn: string): Promise<void> {
+  void _receivedAt; void _refundDueOn;
+  await runNotificationOutbox(publicOrigin(), db(), { orderId: order.id, templates: ["release_withdrawal_receipt", "release_withdrawal_notify"], limit: 2 });
 }

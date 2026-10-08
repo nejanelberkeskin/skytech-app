@@ -2,7 +2,8 @@ import { after, NextRequest, NextResponse } from "next/server";
 import { rateLimit, getClientIP } from "@/lib/admin-auth";
 import { completePayment } from "@/lib/orders/payment-flow";
 import { sendPaidOrderEmails } from "@/lib/orders/after-payment";
-import { orderCookieName, orderCookieOptions, paymentResultPath, signOrderToken } from "@/lib/orders/access";
+import { orderCookieName, orderCookieOptions, signOrderToken } from "@/lib/orders/access";
+import { orderLinkPath, ORDER_LINK_HEADERS } from "@/lib/orders/link-gate";
 import { getPaymentProvider } from "@/lib/payments";
 import { recordMockOutcome, verifyMockOutcome } from "@/lib/payments/mock";
 
@@ -36,13 +37,14 @@ export async function POST(req: NextRequest) {
     const origin = req.nextUrl.origin;
     after(() => sendPaidOrderEmails(order, origin));
   }
+  const accessToken = signOrderToken(order.id);
+  if (!accessToken) return NextResponse.json({ error: "unavailable" }, { status: 503, headers: ORDER_LINK_HEADERS });
   const res = NextResponse.json({
     ok: true,
     outcome: result.outcome,
     orderNo: order.order_no,
-    redirectUrl: paymentResultPath(order.order_no, order.id, order.locale),
-  });
-  const accessToken = signOrderToken(order.id);
-  if (accessToken) res.cookies.set(orderCookieName(order.order_no), accessToken, orderCookieOptions());
+    redirectUrl: orderLinkPath("sonuc", order.order_no, order.locale),
+  }, { headers: ORDER_LINK_HEADERS });
+  res.cookies.set(orderCookieName(order.order_no), accessToken, orderCookieOptions());
   return res;
 }

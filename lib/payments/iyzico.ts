@@ -6,24 +6,25 @@
  * O belirteçle sonucu iyzico'dan BİZ sorgularız (`retrieve`); tarayıcıdan gelen hiçbir
  * "başarılı" bilgisine güvenilmez.
  *
- * Ortam: IYZICO_API_KEY, IYZICO_SECRET_KEY, IYZICO_BASE_URL. Adres "sandbox" içeriyorsa deneme
- * kipidir → oluşan siparişler `is_test=true` olur (gerçek tahsilat yoktur).
+ * Ortam: IYZICO_API_KEY, IYZICO_SECRET_KEY, IYZICO_BASE_URL. Yalnız resmî API kökleri
+ * kabul edilir; sandbox siparişleri `is_test=true` olur. Canlı dağıtımda sandbox seçilmez.
  * Taksit kapalıdır (tek çekim): cayma hâlinde bedel "tek seferde" iade edilir.
  */
 import iyzico from "@/lib/iyzico";
+import { iyzicoConfig } from "./iyzico-config";
 import { ilAdi } from "@/lib/tr-iller";
 import type { PaymentInitInput, PaymentInitResult, PaymentOutcome, PaymentProvider, RefundInput, RefundResult } from "./types";
 
 const TIMEOUT_MS = 15_000;
 
-export const iyzicoConfigured = () => Boolean(process.env.IYZICO_API_KEY && process.env.IYZICO_SECRET_KEY);
-const isSandbox = () => (process.env.IYZICO_BASE_URL || "https://sandbox-api.iyzipay.com").includes("sandbox");
+export const iyzicoConfigured = () => iyzicoConfig() !== null;
+const isSandbox = () => iyzicoConfig()?.isTest ?? true;
 
 type IyzicoResult = Record<string, unknown> & { status?: string; errorCode?: string; errorMessage?: string };
 type IyzicoCall = (request: Record<string, unknown>, cb: (err: unknown, result: IyzicoResult) => void) => void;
 
 /** SDK geri çağrı tabanlıdır: söze çevir, zaman aşımı ekle, hatayı sonuç biçimine indir. */
-function call(resource: string, method: string, request: Record<string, unknown>): Promise<IyzicoResult> {
+export function callIyzico(resource: string, method: string, request: Record<string, unknown>): Promise<IyzicoResult> {
   return new Promise((resolve) => {
     const timer = setTimeout(() => resolve({ status: "failure", errorCode: "timeout", errorMessage: "iyzico yanıt vermedi" }), TIMEOUT_MS);
     try {
@@ -54,7 +55,8 @@ export function priceToKurus(price: unknown): number | null {
   const fraction = (m[2] ?? "").padEnd(2, "0");
   // İki haneden fazlası (ör. "500.005") kuruşa sığmaz: eşleşme sayılmasın.
   if (fraction.length > 2 && /[1-9]/.test(fraction.slice(2))) return null;
-  return Number(m[1]) * 100 + Number(fraction.slice(0, 2));
+  const kurus = Number(m[1]) * 100 + Number(fraction.slice(0, 2));
+  return Number.isSafeInteger(kurus) ? kurus : null;
 }
 
 const errorText = (r: IyzicoResult) => [r.errorCode, r.errorMessage].filter(Boolean).join(": ") || "bilinmeyen hata";
@@ -93,7 +95,7 @@ export const iyzicoProvider: PaymentProvider = {
     const city = ilAdi(input.address.province) ?? input.address.province;
     const today = new Date().toISOString().slice(0, 10) + " 00:00:00";
 
-    const result = await call("checkoutFormInitialize", "create", {
+    const result = await callIyzico("checkoutFormInitialize", "create", {
       locale: input.locale === "tr" ? "tr" : "en",
       conversationId: input.orderId,
       price,
@@ -145,22 +147,31 @@ export const iyzicoProvider: PaymentProvider = {
   },
 
   async retrieve(token: string): Promise<PaymentOutcome> {
-    const result = await call("checkoutForm", "retrieve", { locale: "tr", token });
+    const result = await callIyzico("checkoutForm", "retrieve", { locale: "tr", token });
     if (result.errorCode === "timeout" || result.errorCode === "network" || result.errorCode === "config") {
       return { ok: false, error: errorText(result) };
     }
 
     const meta = paymentMeta(result);
     const approved = result.status === "success" && result.paymentStatus === "SUCCESS";
-    // fraudStatus: 1 onaylı · 0 iyzico incelemesinde · -1 reddedildi. İncelemedeki ödeme tahsil edilmiştir;
-    // hizmet en erken 14 gün sonra ifa edildiği için sipariş alınır, durum denetim izinde görünür.
-    if (!approved || result.fraudStatus === -1) {
-      return { ok: true, status: "failure", reason: result.fraudStatus === -1 ? "fraud_rejected" : errorText(result), meta };
+    // Yalnız açıkça doğrulanmış sonuç işlenir. SDK'nın sayı/metin biçimleri aynı karara gider.
+    // iyzico CF-Retrieve: 0 incelemede, 1 onaylı, -1 ret; 0 için bildirim beklenir.
+    const fraud = result.fraudStatus === 1 || result.fraudStatus === "1" ? 1
+      : result.fraudStatus === 0 || result.fraudStatus === "0" ? 0
+      : result.fraudStatus === -1 || result.fraudStatus === "-1" ? -1 : null;
+    if (fraud === -1) return { ok: true, status: "failure", reason: "fraud_rejected", meta };
+    if (!approved) {
+      // Eksik/bilinmeyen cevap ya da sorgu hatası bir kart reddi değildir.
+      if (result.status === "success" && result.paymentStatus === "FAILURE") {
+        return { ok: true, status: "failure", reason: "payment_failed", meta };
+      }
+      return { ok: false, error: "payment_result_unverified" };
     }
+    if (fraud !== 1) return { ok: false, error: fraud === 0 ? "fraud_review_pending" : "fraud_status_unverified", reviewMeta: meta };
 
     const paidKurus = priceToKurus(result.paidPrice);
     const paymentId = typeof result.paymentId === "string" || typeof result.paymentId === "number" ? String(result.paymentId) : "";
-    if (paidKurus === null || !paymentId || result.currency !== "TRY") {
+    if (paidKurus === null || paidKurus <= 0 || !paymentId.trim() || result.currency !== "TRY" || typeof result.basketId !== "string" || !result.basketId.trim()) {
       return { ok: false, error: "iyzico yanıtı beklenen biçimde değil" };
     }
     return {
@@ -168,7 +179,7 @@ export const iyzicoProvider: PaymentProvider = {
       status: "success",
       paymentId,
       paidKurus,
-      reference: typeof result.basketId === "string" ? result.basketId : undefined,
+      reference: result.basketId,
       meta,
     };
   },
@@ -200,7 +211,7 @@ type Caller = (resource: string, method: string, request: Record<string, unknown
  */
 export async function refundWithIyzico(
   input: RefundInput,
-  caller: Caller = call,
+  caller: Caller = callIyzico,
   definitive: ReadonlySet<string> = DEFINITIVE_REFUND_ERROR_CODES
 ): Promise<RefundResult> {
   const base = { locale: "tr", conversationId: input.orderNo, ip: input.ip ?? "127.0.0.1" };
@@ -222,6 +233,11 @@ export async function refundWithIyzico(
     errors.push(`${step.label} ${errorText(result)}`);
     const code = typeof result.errorCode === "string" || typeof result.errorCode === "number" ? String(result.errorCode) : "";
     if (UNCERTAIN_CODES.has(code)) return { ok: false, outcome: "unknown", errorCode: code, error: errors.join(" | ").slice(0, 500) };
+    // Doğrulanmamış ret başka bir iade yöntemini denemek için kanıt değildir.
+    // İlk istek gerçekleşmiş olabilir; bu noktada ikinci parasal çağrı YAPILMAZ.
+    if (!NOT_SENT_CODES.has(code) && !definitive.has(code)) {
+      return { ok: false, outcome: "unknown", errorCode: code || undefined, error: errors.join(" | ").slice(0, 500) };
+    }
     codes.push(code);
   }
   const error = errors.join(" | ").slice(0, 500);

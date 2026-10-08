@@ -111,7 +111,7 @@ export const ORDER_DETAIL_FINANCE: OrderDetailDto = {
   tax: { invoiceType: "individual", tckn: null, taxId: null, taxOffice: null, mersis: null, eInvoiceUser: null, poNumber: null },
   finance: {
     unitPriceKurus: 1000, totalKurus: 20000, vatRate: 20,
-    payment: { provider: "iyzico", paymentId: "PAY-EXAMPLE", startedAt: "2026-09-28T09:01:00.000Z", expiresAt: null },
+    payment: { reviewRequired: false, provider: "iyzico", paymentId: "PAY-EXAMPLE", startedAt: "2026-09-28T09:01:00.000Z", expiresAt: null },
     refunds: [], duplicates: [],
   },
   invoices: [{ id: "50000000-0000-4000-8000-000000000001", kind: "sale", provider: "manual", status: "pending", invoiceNo: null, ettn: null, issuedAt: null, sentAt: null, error: null, createdAt: "2026-09-28T09:05:00.000Z" }],

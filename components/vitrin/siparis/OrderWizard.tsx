@@ -73,7 +73,10 @@ export default function OrderWizard({
   pricing,
 }: WizardProps) {
   const t = useTranslations("orderWizard");
+  const common = useTranslations("requestForms.common");
   const requestErrors = useTranslations("requestForms.common.errors");
+  // Sipariş görünümü: alıcı + fatura adımı, alıcıdan türeyen sertifika adı. "preorder" ödeme adımında durur.
+  const orderLike = mode !== "request";
   const pathname = usePathname();
   const [step, setStep] = useState(1);
   const [quantity, setQuantity] = useState<number | null>(() =>
@@ -96,6 +99,8 @@ export default function OrderWizard({
   const [preview, setPreview] = useState<OrderPreview | null>(null);
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  // Ödemede dur: "Ödemeye geç"e basıldı, "çevrim içi ödeme çok yakında" ekranı açık (sipariş/ödeme yok).
+  const [soon, setSoon] = useState(false);
   const [document, setDocument] = useState<OrderDocumentPreview | null>(null);
   const [focus, setFocus] = useState({ revision: 0, error: false });
   const [requestFields, setRequestFields] = useState<Record<string, string>>(
@@ -188,6 +193,7 @@ export default function OrderWizard({
     setLoading(false);
     setFailure(null);
     setNotice(null);
+    setSoon(false);
     setConsents((v) => ({ ...EMPTY_CONSENTS, marketing: v.marketing }));
   };
   const clear = (path: string) => {
@@ -319,6 +325,7 @@ export default function OrderWizard({
       setErrors({});
       setFailure(null);
       setNotice(null);
+      setSoon(false);
       setConsents((v) => ({ ...EMPTY_CONSENTS, marketing: v.marketing }));
       if (push) {
         const url = new URL(window.location.href);
@@ -368,6 +375,42 @@ export default function OrderWizard({
     if (mode === "request") {
       await request.submit(
         contact,
+        {
+          type: "open_land_seeding",
+          landId: site.id,
+          quantity: quantity ?? 0,
+          certificateName,
+        },
+        honeypot,
+      );
+      return;
+    }
+    if (mode === "preorder") {
+      // Ödemede dur: sipariş oluşturulmaz, ödeme başlatılmaz, sipariş ucuna istek gitmez. İlk basış
+      // "yakında" ekranını açar; müşteri isterse açık onayla bilgilerini talep olarak bırakır.
+      // Talebe yalnız iletişim için gerekenler gider; fatura adresi ve kimlik/vergi no gönderilmez.
+      if (!soon) {
+        setSoon(true);
+        setErrors({});
+        setFailure(null);
+        setFocus((v) => ({ revision: v.revision + 1, error: false }));
+        return;
+      }
+      if (!contact.consent) {
+        setErrors({ "contact.consent": "consentRequired" });
+        setFailure("validation");
+        setFocus((v) => ({ revision: v.revision + 1, error: true }));
+        return;
+      }
+      await request.submit(
+        {
+          ...contact,
+          contactName: `${buyer.firstName} ${buyer.lastName}`.trim(),
+          email: buyer.email,
+          phone: buyer.phone,
+          company: invoice.type === "corporate" ? invoice.companyTitle : "",
+          message: "",
+        },
         {
           type: "open_land_seeding",
           landId: site.id,
@@ -437,14 +480,14 @@ export default function OrderWizard({
   const showPrice = inOrderReview || PRICING_VISIBLE;
   const finalName =
     certificateName.trim() ||
-    (mode === "order"
+    (orderLike
       ? resolveCertificateName({ certificateName: undefined, buyer })
       : contact.contactName.trim().slice(0, CERTIFICATE_NAME.max)) ||
     t("certificate.placeholder");
   const steps = [
     t("steps.quantity"),
     t("steps.certificate"),
-    t(mode === "order" ? "steps.buyer" : "steps.contact"),
+    t(orderLike ? "steps.buyer" : "steps.contact"),
     t("steps.review"),
   ];
   const buttonLabel = busy
@@ -455,6 +498,12 @@ export default function OrderWizard({
         ? t("next")
         : mode === "request"
           ? t("request.submit")
+          : mode === "preorder"
+            ? soon
+              ? t("preorder.notify")
+              : PRICING_VISIBLE && price !== null
+                ? t("preorder.pay", { total: formatTry(price, locale) })
+                : t("preorder.payPlain")
           : preview
             ? t("review.pay", {
                 total: formatTry(preview.totals.totalKurus, locale),
@@ -480,6 +529,11 @@ export default function OrderWizard({
           {t("review.secure")}
         </p>
       )}
+      {mode === "preorder" && step === 4 && !soon && (
+        <p className="mt-3 text-xs leading-relaxed text-[#3d5a3d]">
+          {t("preorder.buttonNote")}
+        </p>
+      )}
     </div>
   );
 
@@ -503,7 +557,7 @@ export default function OrderWizard({
       >
         <SuccessCard
           result={request.success}
-          email={contact.email}
+          email={mode === "preorder" ? buyer.email : contact.email}
           isLoggedIn={isLoggedIn}
         />
       </div>
@@ -589,7 +643,7 @@ export default function OrderWizard({
             tabIndex={-1}
             className="scroll-mt-32 text-2xl font-semibold text-[#0e2519] outline-none"
           >
-            {steps[step - 1]}
+            {step === 4 && soon ? t("preorder.soonTitle") : steps[step - 1]}
           </h2>
           <div
             data-wizard-feedback
@@ -740,7 +794,7 @@ export default function OrderWizard({
               </p>
             </SectionCard>
           )}
-          {step === 3 && mode === "order" && (
+          {step === 3 && orderLike && (
             <BuyerInvoiceFields
               buyer={buyer}
               invoice={invoice}
@@ -875,7 +929,125 @@ export default function OrderWizard({
               <div className="mt-6">{timeline}</div>
             </section>
           )}
-          {mode === "order" && (
+          {step === 4 && mode === "preorder" && !soon && (
+            <section className="vitrin-card p-6 lg:p-8">
+              <h3 className="mb-3 text-lg font-bold">{t("review.title")}</h3>
+              <ReviewRows
+                rows={[
+                  { label: t("review.site"), value: site.name },
+                  {
+                    label: t("review.species"),
+                    value: site.species.join(" · "),
+                  },
+                  {
+                    label: t("quantity.label"),
+                    value: formatCount(quantity ?? 0, locale),
+                  },
+                  ...(PRICING_VISIBLE && price !== null
+                    ? [
+                        {
+                          label: t("quantity.unit"),
+                          value: formatTry(pricing.unitPriceKurus, locale),
+                        },
+                        {
+                          label: t("request.estimated"),
+                          value: formatTry(price, locale),
+                        },
+                      ]
+                    : []),
+                  { label: t("certificate.label"), value: finalName },
+                  {
+                    label: t("buyer.title"),
+                    value: [
+                      `${buyer.firstName} ${buyer.lastName}`.trim(),
+                      buyer.email,
+                      buyer.phone,
+                    ]
+                      .filter(Boolean)
+                      .join(" · "),
+                  },
+                  {
+                    label: t("invoice.type"),
+                    value:
+                      invoice.type === "corporate"
+                        ? [t("invoice.corporate"), invoice.companyTitle]
+                            .filter(Boolean)
+                            .join(" · ")
+                        : t("invoice.individual"),
+                  },
+                ]}
+              />
+              <p className="mt-6 rounded-2xl bg-[#f8faf5] p-4 text-sm leading-relaxed text-[#3d5a3d]">
+                {t("preorder.reviewNote")}
+              </p>
+              <div className="mt-6">{timeline}</div>
+            </section>
+          )}
+          {step === 4 && mode === "preorder" && soon && (
+            <section
+              role="status"
+              className="vitrin-card space-y-5 p-6 lg:p-8"
+            >
+              <p className="leading-relaxed text-[#0e2519]">
+                {t("preorder.soonBody")}
+              </p>
+              <p className="text-sm leading-relaxed text-[#3d5a3d]">
+                {t("preorder.soonShared")}
+              </p>
+              <label
+                className={`flex min-h-11 cursor-pointer items-start gap-3 pt-1 text-xs leading-relaxed ${errorFor("contact.consent") ? "text-[#dc2626]" : "text-[#3d5a3d]"}`}
+              >
+                <input
+                  type="checkbox"
+                  name="consent"
+                  disabled={busy}
+                  checked={contact.consent}
+                  onChange={(e) => {
+                    setContact((v) => ({ ...v, consent: e.target.checked }));
+                    clear("contact.consent");
+                    setFailure(null);
+                  }}
+                  aria-invalid={!!errorFor("contact.consent")}
+                  aria-describedby="ow-preorder-consent-error"
+                  className="mt-0.5 h-4 w-4 shrink-0 accent-[#1B6B3A]"
+                />
+                <span>
+                  {common.rich("consent", {
+                    kvkk: (chunks) => (
+                      <Link
+                        href="/kvkk"
+                        target="_blank"
+                        className="font-semibold text-[#1B6B3A] underline underline-offset-2"
+                      >
+                        {chunks}
+                      </Link>
+                    ),
+                  })}
+                </span>
+              </label>
+              <p
+                id="ow-preorder-consent-error"
+                role={errorFor("contact.consent") ? "alert" : undefined}
+                className="-mt-3 text-xs font-medium text-[#dc2626]"
+              >
+                {errorFor("contact.consent")}
+              </p>
+              <button
+                type="button"
+                disabled={busy}
+                onClick={() => {
+                  setSoon(false);
+                  setErrors({});
+                  setFailure(null);
+                  setFocus((v) => ({ revision: v.revision + 1, error: false }));
+                }}
+                className="min-h-11 px-1 text-sm font-semibold text-[#1B6B3A] underline underline-offset-4 disabled:opacity-50"
+              >
+                {t("preorder.backToReview")}
+              </button>
+            </section>
+          )}
+          {orderLike && (
             <div
               aria-hidden="true"
               className="absolute -left-[9999px] h-px w-px overflow-hidden"
@@ -943,9 +1115,9 @@ export default function OrderWizard({
                 ] ?? (preview?.schedule ?? schedule).performanceDeadline,
             })}
           </p>
-          {mode === "request" && (
+          {mode !== "order" && (
             <p className="text-xs leading-relaxed text-[#3d5a3d]">
-              {t("request.note")}
+              {t(mode === "preorder" ? "preorder.sideNote" : "request.note")}
             </p>
           )}
         </aside>

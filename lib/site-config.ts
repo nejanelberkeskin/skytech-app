@@ -24,6 +24,13 @@ import { OWN_LAND_HREF } from "@/lib/sites/links";
  *                        ödeme almadan TALEP toplar (REQUESTS_ENABLED).
  *                        (TRANSACTIONS_ENABLED yalnız B2B'yi açar.)
  *
+ *  PAYMENT_SOON          "Ödemede dur" kipi: satış kapalıyken (sipariş kapısı kapalı) sihirbaz sipariş
+ *                        görünümüyle (alıcı, fatura, özet, toplam) sonuna kadar ilerler; "Ödemeye geç"
+ *                        düğmesinde sipariş OLUŞTURULMAZ, ödeme alınmaz, "çevrim içi ödeme çok yakında"
+ *                        ekranı açılır. Müşteri isterse bilgilerini talep olarak bırakır, bu yüzden
+ *                        REQUESTS_ENABLED de açık olmalı. Varsayılan KAPALI;
+ *                        NEXT_PUBLIC_PAYMENT_SOON=true ile açılır. Çağrı metinleri "Satın Al" olur.
+ *
  *  ACCOUNTS_ENABLED      Üyelik (kayıt / giriş / hesabım). Varsayılan AÇIK;
  *                        NEXT_PUBLIC_ACCOUNTS_ENABLED=false ile kapatılır.
  *                        B2B'ye bağlı hesap sayfası (sertifikalar)
@@ -36,6 +43,9 @@ export const REQUESTS_ENABLED =
   process.env.NEXT_PUBLIC_REQUESTS_ENABLED !== "false";
 
 export const SALES_ENABLED = process.env.NEXT_PUBLIC_SALES_ENABLED === "true";
+
+export const PAYMENT_SOON =
+  process.env.NEXT_PUBLIC_PAYMENT_SOON === "true" && REQUESTS_ENABLED;
 
 export const ACCOUNTS_ENABLED =
   process.env.NEXT_PUBLIC_ACCOUNTS_ENABLED !== "false";
@@ -90,10 +100,11 @@ export function orderCtaHref(kind: RequestRouteKey = "hub"): string {
  * CTA'lar "satın al" mı "talep oluştur" mu "yakında" mı diyecek — metin seçimi için.
  * "order" yeni satış modelinin bayrağına (SALES_ENABLED) bağlıdır; eski tohum satışı bayrağı
  * (TRANSACTIONS_ENABLED) çağrı metnini etkilemez. Çağrıların hedefi her kipte aynıdır: /sahalar
- * (sahanın sihirbazı, sipariş alınamıyorsa talep kipinde açılır).
+ * (sahanın sihirbazı, sipariş alınamıyorsa talep kipinde açılır). PAYMENT_SOON açıkken de "order":
+ * sihirbaz sipariş görünümüyle açılır, ödeme adımında durur.
  */
 export type CtaMode = "order" | "request" | "soon";
-export const CTA_MODE: CtaMode = SALES_ENABLED
+export const CTA_MODE: CtaMode = SALES_ENABLED || PAYMENT_SOON
   ? "order"
   : REQUESTS_ENABLED
     ? "request"

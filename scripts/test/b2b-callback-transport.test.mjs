@@ -35,7 +35,7 @@ test('B2B dönüşü: timeout/network/config ödemeyi failed yapmaz ve hiçbir t
     const h = setup({ result: { status: 'failure', errorCode } });
     const r = await h.post('local-valid-token');
     assert.equal(r.status, 303);
-    assert.equal(r.headers.get('location'), 'https://local.test/odeme/hata');
+    assert.equal(r.headers.get('location'), 'https://local.test/kurumsal/panel/odeme?status=pending');
     assert.deepEqual(h.writes, []);
   }
 });
@@ -65,7 +65,12 @@ test('ortak iyzico çağrısı: 15 saniyelik timeout sonrası gelen SDK başarı
 function checkout(result) {
   const writes = [], calls = [];
   const quote = { id: 'quote', user_id: 'customer', status: 'QUOTED', approved_price: 200, approved_seed_count: 20, contact_person: 'Local Buyer', company_name: 'Local Company', phone: '+905550000000', corporate_email: 'local@example.invalid' };
-  const db = { rpc: async () => ({ data: { status: 'claimed', order_id: 'local-order', payment_id: 'local-payment' } }), from(table) { return {
+  const db = { rpc: async (name,args) => {
+    if(name==='claim_b2b_checkout') return {data:{status:'claimed',order_id:'local-order',payment_id:'local-payment'}};
+    if(name==='begin_b2b_checkout_start') {writes.push({table:'payments',data:{metadata:{ui_locale:args.p_locale}}});return {data:{status:'dispatch'}};}
+    if(name==='finish_b2b_checkout_start') {if(args.p_token)writes.push({table:'payments',data:{metadata:{iyzico_token:args.p_token}}});return {data:{status:args.p_form_ready?'ready':'unknown'}};}
+    throw Error(name);
+  }, from(table) { return {
     select() { return this; }, eq() { return this; }, maybeSingle: async () => ({ data: quote }),
     insert(data) { writes.push({ table, data }); return this; },
     single: async () => ({ data: { id: table === 'orders' ? 'local-order' : 'local-payment' } }),
@@ -77,7 +82,7 @@ function checkout(result) {
     '@/lib/admin-auth': { rateLimit: () => null, getClientIP: () => '127.0.0.1' },
     '@/lib/payments/iyzico-config': { iyzicoConfig: () => ({ isTest: true }) },
     '@/lib/b2b/payment-result': { b2bPaymentResult: r => r },
-    '@/lib/payments/iyzico': { priceToKurus: n => Number(n)*100, callIyzico: async (...args) => { calls.push(args); return result; } },
+    '@/lib/payments/iyzico': { priceToKurus: n => Number(n)*100, callIyzicoObserved: async (...args) => { calls.push(args); return {origin:result.errorCode==='timeout'?'unknown':'provider_response',result}; } },
     '@/lib/utils/format': { formatDateForIyzico: () => '2026-10-01 12:00:00' },
   });
   return { writes, calls, post: (locale) => route.POST(new server.NextRequest('https://local.test/api/payment/b2b-checkout', { method: 'POST', body: JSON.stringify({ quoteId: 'quote', locale }) })) };
@@ -86,7 +91,7 @@ test('B2B checkout: timeout/açık hata/eksik başarı yanıtı genel 503; sağl
   for (const result of [{ status: 'failure', errorCode: 'timeout' }, { status: 'failure', errorMessage: 'PRIVATE-PROVIDER-DATA' }, { status: 'success' }, { status: 'success', token: '<script>', checkoutFormContent: 'html' }]) {
     const h = checkout(result), r = await h.post();
     assert.equal(r.status, 503);
-    assert.deepEqual(await r.json(), { error: 'Ödeme başlatılamadı.' });
+    assert.deepEqual(await r.json(), { error: 'Ödeme sonucu kontrol ediliyor.', code: 'checkout_pending' });
     assert.equal(h.calls.length, 1);
     assert.ok(!h.writes.some(w => w.data.metadata?.iyzico_token));
   }
@@ -114,7 +119,7 @@ test('B2B return keeps the stored language on paid/review/transport-error paths;
       assert.ok(!url.searchParams.has('token') && !url.searchParams.has('t'));
     }
     const r = await setup({record,result:{errorCode:'timeout'}}).post('local-valid-token');
-    assert.equal(new URL(r.headers.get('location')).pathname,prefix+'/odeme/hata');
+    assert.equal(new URL(r.headers.get('location')).pathname,prefix+'/kurumsal/panel/odeme');
   }
 });
 test('B2B unlinked return accepts only safe locale hints; legacy payment defaults to Turkish', async t => {

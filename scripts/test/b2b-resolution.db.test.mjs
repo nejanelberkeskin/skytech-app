@@ -137,6 +137,7 @@ test('C1: a positive paid amount or unresolved/approved fraud state cannot autho
 for (const uppercase of [false, true]) {
  test(`C1 B1: checkout ${uppercase ? 'uppercase' : 'canonical'} quote ID preserves callback and manual success recording`, async t => {
   const h = await setup(t);
+  await h.db.exec('BEGIN;\n'+await readFile(new URL('../../supabase/migrations/039_b2b_checkout_start.sql',import.meta.url),'utf8')+'\nCOMMIT;');
   const quoteId = '5a5a5a5a-0000-4000-8000-0000000000ab';
   await h.db.query("INSERT INTO corporate_quotes(id,user_id,status,approved_price,approved_seed_count,corporate_email) VALUES($1,$2,'QUOTED',200,20,'local@example.invalid')", [quoteId,user]);
   const server = createRequire(import.meta.url)('next/server');
@@ -157,6 +158,8 @@ for (const uppercase of [false, true]) {
     };
    },
    async rpc(name,args) {
+    if(name==='begin_b2b_checkout_start')return {data:(await one(h.db,'SELECT begin_b2b_checkout_start($1,$2,$3,$4) v',[args.p_payment,args.p_user,args.p_is_test,args.p_locale])).v};
+    if(name==='finish_b2b_checkout_start')return {data:(await one(h.db,'SELECT finish_b2b_checkout_start($1,$2,$3,$4,$5,$6) v',[args.p_payment,args.p_user,args.p_is_test,args.p_origin,args.p_token,args.p_form_ready])).v};
     assert.equal(name,'claim_b2b_checkout');rpc.push(args);
     return {data:(await one(h.db,'SELECT claim_b2b_checkout($1,$2,$3,$4,$5) v',[args.p_quote,args.p_user,args.p_amount,args.p_seeds,args.p_is_test])).v,error:null};
    },
@@ -167,7 +170,7 @@ for (const uppercase of [false, true]) {
    iyzipay:{default:{LOCALE:{TR:'tr'},CURRENCY:{TRY:'TRY'},PAYMENT_GROUP:{PRODUCT:'PRODUCT'},BASKET_ITEM_TYPE:{VIRTUAL:'VIRTUAL'}}},
    '@/lib/admin-auth':{rateLimit:()=>null,getClientIP:()=> '127.0.0.1'},
    '@/lib/payments/iyzico-config':{iyzicoConfig:()=>({isTest:true})},
-   '@/lib/payments/iyzico':{priceToKurus:p=>Math.round(Number(p)*100),callIyzico:async(...args)=>{provider.push(args);return {status:'success',token:'local-test-token',checkoutFormContent:'<div>Mock only</div>'};}},
+   '@/lib/payments/iyzico':{priceToKurus:p=>Math.round(Number(p)*100),callIyzicoObserved:async(...args)=>{provider.push(args);return {origin:'provider_response',result:{status:'success',token:'local-test-token',checkoutFormContent:'<div>Mock only</div>'}};}},
    '@/lib/utils/format':{formatDateForIyzico:()=> '2026-10-02 12:00:00'},
   });
   const r = await route.POST(new server.NextRequest('https://local.invalid/api/payment/b2b-checkout',{method:'POST',body:JSON.stringify({quoteId:uppercase?quoteId.toUpperCase():quoteId})}));

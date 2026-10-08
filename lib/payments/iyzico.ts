@@ -23,22 +23,30 @@ const isSandbox = () => iyzicoConfig()?.isTest ?? true;
 type IyzicoResult = Record<string, unknown> & { status?: string; errorCode?: string; errorMessage?: string };
 type IyzicoCall = (request: Record<string, unknown>, cb: (err: unknown, result: IyzicoResult) => void) => void;
 
-/** SDK geri çağrı tabanlıdır: söze çevir, zaman aşımı ekle, hatayı sonuç biçimine indir. */
-export function callIyzico(resource: string, method: string, request: Record<string, unknown>): Promise<IyzicoResult> {
+/** Transport provenance is kept separately from provider-controlled fields. */
+export type IyzicoObservation = { origin: "provider_response" | "unknown"; result: IyzicoResult };
+export function callIyzicoObserved(resource: string, method: string, request: Record<string, unknown>): Promise<IyzicoObservation> {
   return new Promise((resolve) => {
-    const timer = setTimeout(() => resolve({ status: "failure", errorCode: "timeout", errorMessage: "iyzico yanıt vermedi" }), TIMEOUT_MS);
+    const unknown = (errorCode: string) => resolve({ origin: "unknown", result: { status: "failure", errorCode } });
+    const timer = setTimeout(() => unknown("timeout"), TIMEOUT_MS);
     try {
       const target = (iyzico as unknown as Record<string, Record<string, IyzicoCall>>)[resource];
       target[method](request, (err, result) => {
         clearTimeout(timer);
-        if (err || !result) resolve({ status: "failure", errorCode: "network", errorMessage: err instanceof Error ? err.message : "bağlantı hatası" });
-        else resolve(result);
+        if (err || !result || typeof result !== "object" || Array.isArray(result)) unknown("network");
+        else resolve({ origin: "provider_response", result });
       });
-    } catch (e) {
+    } catch {
       clearTimeout(timer);
-      resolve({ status: "failure", errorCode: "config", errorMessage: e instanceof Error ? e.message : "yapılandırma hatası" });
+      // The SDK may throw AFTER sending. This is never proof that nothing was sent.
+      unknown("config");
     }
   });
+}
+
+/** Existing callers retain the same result contract. */
+export async function callIyzico(resource: string, method: string, request: Record<string, unknown>): Promise<IyzicoResult> {
+  return (await callIyzicoObserved(resource, method, request)).result;
 }
 
 /** Kuruş → iyzico'nun beklediği ondalık metin ("500.00"). Kayan nokta aritmetiği yok. */

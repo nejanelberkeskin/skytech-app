@@ -3,7 +3,7 @@ import { createSupabaseServer, createServiceRoleClient } from "@/lib/supabase/se
 import Iyzipay from "iyzipay";
 import { rateLimit, getClientIP } from "@/lib/admin-auth";
 import { iyzicoConfig } from "@/lib/payments/iyzico-config";
-import { callIyzico, priceToKurus } from "@/lib/payments/iyzico";
+import { callIyzicoObserved, priceToKurus } from "@/lib/payments/iyzico";
 import { formatDateForIyzico } from "@/lib/utils/format";
 
 /**
@@ -21,6 +21,8 @@ export async function POST(request: NextRequest) {
   const rateLimitError = rateLimit(`b2b-checkout:${getClientIP(request)}`, 5, 60_000);
   if (rateLimitError) return rateLimitError;
 
+  let claimed = false;
+  const pending = () => NextResponse.json({ error: "Ödeme sonucu kontrol ediliyor.", code: "checkout_pending" }, { status: 503, headers: { "Cache-Control": "private, no-store" } });
   try {
     // ── 1. Auth ──────────────────────────────────────────────────────
     const authClient = await createSupabaseServer();
@@ -67,17 +69,6 @@ export async function POST(request: NextRequest) {
     const contactPerson = quote.contact_person ?? "Kurumsal Musteri";
     const companyName = quote.company_name ?? "Kurumsal Musteri";
 
-    // One transaction owns the quote before opening a provider session. An uncertain prior
-    // session is never replaced automatically, including when its token was not saved.
-    const { data: claim, error: claimError } = await supabase.rpc("claim_b2b_checkout", {
-      p_quote: quote.id, p_user: user.id, p_amount: amount, p_seeds: seedCount, p_is_test: config.isTest,
-    });
-    if (claimError) return NextResponse.json({ error: "Ödeme başlatılamadı." }, { status: 503 });
-    if (claim?.status !== "claimed") {
-      return NextResponse.json({ error: "Teklifin ödeme durumu kontrol edilmelidir.", code: "checkout_unavailable" }, { status: 409 });
-    }
-    const order = { id: claim.order_id as string };
-    const payment = { id: claim.payment_id as string };
     const description = `B2B Teklif: ${companyName} — ${seedCount.toLocaleString("tr-TR")} tohum`;
 
     const priceStr = amount.toFixed(2);
@@ -87,11 +78,11 @@ export async function POST(request: NextRequest) {
 
     const requestData = {
       locale: locale === "tr" ? Iyzipay.LOCALE.TR : "en",
-      conversationId: payment.id,
+      conversationId: "",
       price: priceStr,
       paidPrice: priceStr,
       currency: Iyzipay.CURRENCY.TRY,
-      basketId: order.id,
+      basketId: "",
       paymentGroup: Iyzipay.PAYMENT_GROUP.PRODUCT,
       callbackUrl: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/api/payment/callback?locale=${locale}`,
       enabledInstallments: [2, 3, 6, 9, 12],
@@ -126,7 +117,7 @@ export async function POST(request: NextRequest) {
       },
       basketItems: [
         {
-          id: "B2B-" + quoteId.slice(0, 6),
+          id: "B2B-" + quote.id.slice(0, 6),
           name: description.slice(0, 100),
           category1: "Kurumsal Tohum",
           itemType: Iyzipay.BASKET_ITEM_TYPE.VIRTUAL,
@@ -135,34 +126,39 @@ export async function POST(request: NextRequest) {
       ],
     };
 
-    const result = await callIyzico("checkoutFormInitialize", "create", requestData);
-    if (result.status === "success" && typeof result.token === "string" && /^[A-Za-z0-9._~-]{8,200}$/.test(result.token) && typeof result.checkoutFormContent === "string" && result.checkoutFormContent.trim()) {
-      // Dönüş ucu ödemeyi bu belirteçle bulur: yazılmadan müşteri ödeme formuna gönderilmez.
-      // (Önceden sorgu `void` ile başlatılıyordu; Supabase sorgusu await edilmeden GÖNDERİLMEZ,
-      // belirteç hiç kaydedilmiyor ve ödenen teklif "PAID" olmuyordu.)
-      const { error: tokenErr } = await supabase
-        .from("payments")
-        .update({
-          metadata: { checkout_type: "b2b", quote_id: quote.id, is_test: config.isTest, ui_locale: locale, iyzico_token: result.token as string },
-        })
-        .eq("id", payment.id);
-      if (tokenErr) {
-        console.error("B2B ödeme belirteci kaydedilemedi:", tokenErr.message);
-        return NextResponse.json({ error: "Ödeme başlatılamadı." }, { status: 500 });
-      }
-
-      return NextResponse.json({
-        status: "success",
-        paymentId: payment.id,
-        orderId: order.id,
-        checkoutFormContent: result.checkoutFormContent,
-      });
-    } else {
-      return NextResponse.json({ error: "Ödeme başlatılamadı." }, { status: 503 });
+    // One transaction owns the quote before opening a provider session. An uncertain prior
+    // session is never replaced automatically, including when its token was not saved.
+    const { data: claim, error: claimError } = await supabase.rpc("claim_b2b_checkout", {
+      p_quote: quote.id, p_user: user.id, p_amount: amount, p_seeds: seedCount, p_is_test: config.isTest,
+    });
+    if (claimError) return pending();
+    if (claim?.status !== "claimed") {
+      return NextResponse.json({ error: "Teklifin ödeme durumu kontrol edilmelidir.", code: claim?.status === "checkout_pending" ? "checkout_pending" : "checkout_unavailable" }, { status: 409 });
     }
+    const order = { id: claim.order_id as string };
+    const payment = { id: claim.payment_id as string };
+    claimed = true;
+    const { data: permit, error: permitError } = await supabase.rpc("begin_b2b_checkout_start", {
+      p_payment: payment.id, p_user: user.id, p_is_test: config.isTest, p_locale: locale,
+    });
+    // A lost RPC response or expired permit never authorizes an SDK call.
+    if (permitError || permit?.status !== "dispatch") return pending();
+    requestData.conversationId = payment.id;
+    requestData.basketId = order.id;
 
-  } catch (error) {
-    console.error("B2B checkout error:", error);
-    return NextResponse.json({ error: "Sunucu hatası." }, { status: 500 });
+    const observed = await callIyzicoObserved("checkoutFormInitialize", "create", requestData);
+    const result = observed.result;
+    const token = observed.origin === "provider_response" && typeof result.token === "string" && /^[A-Za-z0-9._~-]{8,200}$/.test(result.token) ? result.token : null;
+    const formReady = result.status === "success" && token !== null && typeof result.checkoutFormContent === "string" && Boolean(result.checkoutFormContent.trim());
+    // Keep a usable token even if the HTML is missing; reconciliation can still find the payment.
+    const { data: saved, error: saveError } = await supabase.rpc("finish_b2b_checkout_start", {
+      p_payment: payment.id, p_user: user.id, p_is_test: config.isTest,
+      p_origin: observed.origin, p_token: token, p_form_ready: formReady,
+    });
+    if (saveError || saved?.status !== "ready" || !formReady) return pending();
+    return NextResponse.json({ status: "success", paymentId: payment.id, orderId: order.id, checkoutFormContent: result.checkoutFormContent }, { headers: { "Cache-Control": "private, no-store" } });
+  } catch {
+    console.error("B2B checkout failed");
+    return claimed ? pending() : NextResponse.json({ error: "Ödeme başlatılamadı." }, { status: 503 });
   }
 }

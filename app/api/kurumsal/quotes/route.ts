@@ -3,22 +3,24 @@ import { createSupabaseServer, createServiceRoleClient } from "@/lib/supabase/se
 
 /**
  * Kurumsal kullanıcının kendi tekliflerini getiren API.
- * Auth: Cookie-based session — user can only see their OWN quotes.
+ * Auth: çerezdeki oturum kimlik sunucusunda doğrulanır (`getUser`); kullanıcı yalnız KENDİ tekliflerini görür.
+ * `getSession()` sunucuda belirteci doğrulamaz: sahte çerezle başka kullanıcının kimliği verilebilirdi.
  */
 export async function GET() {
   try {
     // ── Auth Guard ──────────────────────────────────────────────────────
     const supabaseAuth = await createSupabaseServer();
     const {
-      data: { session },
-    } = await supabaseAuth.auth.getSession();
+      data: { user },
+      error: authError,
+    } = await supabaseAuth.auth.getUser();
 
-    if (!session) {
+    if (authError || !user) {
       return NextResponse.json({ error: "Oturum bulunamadı." }, { status: 401 });
     }
 
-    // Use session user ID — ignore any user_id query param to prevent IDOR
-    const userId = session.user.id;
+    // Doğrulanmış kullanıcı kimliği — sorgudaki user_id yok sayılır (IDOR'a karşı)
+    const userId = user.id;
 
     const supabase = createServiceRoleClient();
     const { data, error } = await supabase

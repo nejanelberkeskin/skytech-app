@@ -4,7 +4,8 @@
  * GET  — List allocations for the authenticated company (by quote_id)
  * POST — Create a new employee allocation and optionally send certificate email
  *
- * Auth: Cookie-based Supabase session (must be signed in as the company user)
+ * Auth: çerezdeki Supabase oturumu kimlik sunucusunda doğrulanır (`getUser`); şirket kullanıcısı olarak giriş gerekir.
+ * `getSession()` sunucuda belirteci doğrulamaz (sahte çerezle başka şirketin teklifine erişilebilirdi).
  */
 
 import { NextRequest, NextResponse } from "next/server";
@@ -16,10 +17,11 @@ import { sendEmployeeCertificateEmail } from "@/lib/mail";
 export async function GET(req: NextRequest) {
   const supabase = await createSupabaseServer();
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
 
-  if (!session) {
+  if (authError || !user) {
     return NextResponse.json({ error: "Yetkisiz." }, { status: 401 });
   }
 
@@ -37,7 +39,7 @@ export async function GET(req: NextRequest) {
     .from("corporate_quotes")
     .select("id, user_id, approved_seed_count, company_name")
     .eq("id", quoteId)
-    .eq("user_id", session.user.id)
+    .eq("user_id", user.id)
     .single();
 
   if (!quote) {
@@ -87,10 +89,11 @@ interface CreateAllocationBody {
 export async function POST(req: NextRequest) {
   const supabase = await createSupabaseServer();
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
 
-  if (!session) {
+  if (authError || !user) {
     return NextResponse.json({ error: "Yetkisiz." }, { status: 401 });
   }
 
@@ -121,7 +124,7 @@ export async function POST(req: NextRequest) {
     .from("corporate_quotes")
     .select("id, user_id, company_name, approved_seed_count, status")
     .eq("id", quote_id)
-    .eq("user_id", session.user.id)
+    .eq("user_id", user.id)
     .single();
 
   if (!quote) {
@@ -161,7 +164,7 @@ export async function POST(req: NextRequest) {
     .from("employee_allocations")
     .insert({
       quote_id,
-      company_id: session.user.id,
+      company_id: user.id,
       recipient_name,
       recipient_email,
       seeds_allocated,
@@ -181,7 +184,7 @@ export async function POST(req: NextRequest) {
   const { data: certificate } = await service
     .from("certificates")
     .insert({
-      user_id: session.user.id,
+      user_id: user.id,
       order_id: null,
       recipient_name,
       tree_count: seeds_allocated,

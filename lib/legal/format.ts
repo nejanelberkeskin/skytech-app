@@ -7,7 +7,7 @@ import { formatCount, formatTry } from "@/lib/pricing";
 
 const NBSP = String.fromCharCode(0xa0);
 
-const MONTHS_TR = [
+export const MONTHS_TR = [
   "Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran",
   "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık",
 ] as const;
@@ -17,6 +17,11 @@ export function trLongDate(day: string): string {
   const [y, m, d] = day.split("-").map(Number);
   // Bölünmez boşluk: tarih satır sonunda ikiye ayrılmasın.
   return `${d}${NBSP}${MONTHS_TR[m - 1]}${NBSP}${y}`;
+}
+
+/** (2027, 6) → "Haziran 2027" */
+export function trMonthYear(year: number, month: number): string {
+  return `${MONTHS_TR[month - 1]}${NBSP}${year}`;
 }
 
 /** ISO an → İstanbul takvim günü ("2026-10-05T20:59:59.999Z" → "2026-10-05"). */

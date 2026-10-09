@@ -135,6 +135,9 @@ export interface SiteSnapshot {
   fireYear: number | null;
   workType: "ormanlastirma" | "genclestirme" | "ormanlastirma_genclestirme";
   species: { slug: string; name: string; latinName: string }[];
+  /** Sertifika ve izleme içeriğinin teslim ayı (1–12; migration 040). Eski kopyalarda yoktur. */
+  certificateMonth?: number | null;
+  monitoringMonth?: number | null;
 }
 
 /* ── Belgeler ─────────────────────────────────────────────────────────────── */

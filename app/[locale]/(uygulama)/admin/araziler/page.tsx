@@ -59,7 +59,12 @@ interface SiteForm {
   status: LandStatus;
   is_public: boolean;
   capacity_seeds: string;
+  certificate_month: string;
+  monitoring_month: string;
 }
+
+/** Teslim ayı seçenekleri; sözleşmede bırakma son tarihinden sonraki ilk bu ayın son günü yazılır. */
+const DELIVERY_MONTHS = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
 
 const EMPTY_FORM: SiteForm = {
   name: "",
@@ -82,6 +87,8 @@ const EMPTY_FORM: SiteForm = {
   status: "open",
   is_public: true,
   capacity_seeds: "",
+  certificate_month: "",
+  monitoring_month: "",
 };
 
 const fmt = (n: number) => n.toLocaleString("tr-TR");
@@ -119,6 +126,8 @@ function formFromLand(l: Land): SiteForm {
     status: l.status,
     is_public: l.isPublic,
     capacity_seeds: String(l.capacity.total),
+    certificate_month: l.certificateMonth ? String(l.certificateMonth) : "",
+    monitoring_month: l.monitoringMonth ? String(l.monitoringMonth) : "",
   };
 }
 
@@ -145,6 +154,8 @@ function payloadFromForm(f: SiteForm) {
     status: f.status,
     is_public: f.is_public,
     capacity_seeds: num(f.capacity_seeds) ?? NaN,
+    certificate_month: f.certificate_month ? Number(f.certificate_month) : null,
+    monitoring_month: f.monitoring_month ? Number(f.monitoring_month) : null,
   };
 }
 
@@ -592,6 +603,29 @@ function SiteModal({
                 </p>
               )}
             </div>
+          </Section>
+
+          <Section title="Teslim ayları">
+            <div className="grid sm:grid-cols-2 gap-4">
+              {(["certificate_month", "monitoring_month"] as const).map((key) => (
+                <Select
+                  key={key}
+                  label={key === "certificate_month" ? "Katılım Sertifikası teslim ayı" : "İzleme içeriği teslim ayı"}
+                  value={form[key]}
+                  onChange={(e) => set(key, e.target.value)}
+                  error={fieldErrors[key]}
+                >
+                  <option value="">Seçilmedi</option>
+                  {DELIVERY_MONTHS.map((m, i) => (
+                    <option key={m} value={String(i + 1)}>{m}</option>
+                  ))}
+                </Select>
+              ))}
+            </div>
+            <p className="text-xs text-slate-500 mt-1.5">
+              Sözleşmede kesin son tarih, bırakma son tarihinden (31 Mart) sonraki ilk seçilen ayın son günü olarak yazılır; örn. Haziran → 30 Haziran.
+              İki ay da seçilmeden bu sahada sipariş açılmaz. Değişiklik yalnız yeni siparişleri etkiler.
+            </p>
           </Section>
 
           {/* 3 · Yayın ve kapasite */}

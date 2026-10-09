@@ -53,7 +53,7 @@ export default async function IfaKosullariPage({ params }: { params: Promise<{ l
             <>
               <strong>Kesin son tarih:</strong> Her siparişte tohum topu bırakmanın son tarihi, siparişi onaylamadan önce
               ekranda gösterilir; Ön Bilgilendirme Formu&apos;na ve sözleşmeye tarih olarak yazılır. Bu tarih, siparişin
-              yazıldığı bırakma sezonunun son günüdür (31 Mart). Sertifika ve izleme içeriği için ayrı son tarihler kararlaştırılır; bırakma tarihi bu edimlerin son tarihi sayılmaz.
+              yazıldığı bırakma sezonunun son günüdür (31 Mart). Katılım Sertifikası ve izleme içeriği için her sahaya göre ayrı bir teslim ayı belirlenir ve sipariş belgesine yazılır; kesin son tarih o ayın son günüdür. Bırakma tarihi bu edimlerin son tarihi sayılmaz.
             </>,
             <>
               <strong>Sezona yetişmeyen siparişler:</strong> Sipariş tarihi ile sezon sonu arasında cayma süresi ve hazırlık

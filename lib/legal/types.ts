@@ -10,7 +10,7 @@
  * `new Date()` ya da ortam okuması yoktur; böylece siparişe özel kopyanın
  * SHA-256 özeti yeniden üretilebilir.
  */
-import type { OrderSchedule } from "@/lib/orders/schedule";
+import type { MonthDeadline, OrderSchedule } from "@/lib/orders/schedule";
 import type { BuyerType, DocumentKind } from "@/lib/orders/types";
 
 export type LegalBlock =
@@ -72,4 +72,6 @@ export interface LegalContext {
   vatKurus: number;
   certificateName: string;
   schedule: OrderSchedule;
+  /** Sahaya göre belirlenen teslim ayları; örnek metinde null (yer tutucu gösterilir). */
+  deliveries: { certificate: MonthDeadline | null; monitoring: MonthDeadline | null };
 }

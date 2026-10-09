@@ -51,6 +51,17 @@ const optionalText = (max: number, message: string) =>
     .optional()
     .transform((v) => v ?? null);
 
+/** Teslim ayı 1–12; boş bırakılabilir ama boş sahada sipariş açılmaz. */
+const deliveryMonth = (label: string) =>
+  z
+    .number(`${label} seçin.`)
+    .int(`${label} geçersiz.`)
+    .min(1, `${label} geçersiz.`)
+    .max(12, `${label} geçersiz.`)
+    .nullable()
+    .optional()
+    .transform((v) => v ?? null);
+
 /** Kapak: site içi görsel yolu ya da https adresi. */
 const COVER_RE = /^(\/images\/[\w\-./]+\.(?:webp|jpe?g|png)|https:\/\/[^\s]+)$/i;
 /** Video: yalnız YouTube (müşteri çalışmayı YouTube'a herkese açık yüklüyor). */
@@ -98,6 +109,8 @@ export const siteAdminSchema = z
       .optional()
       .transform((v) => v ?? null),
     work_type: z.enum(WORK_TYPES, "Çalışma türü seçin."),
+    certificate_month: deliveryMonth("Sertifika teslim ayı"),
+    monitoring_month: deliveryMonth("İzleme teslim ayı"),
     species_slugs: z
       .array(z.string().regex(/^[a-z0-9-]{2,40}$/, "Geçersiz tür."))
       .max(SITE_LIMITS.species, `En çok ${SITE_LIMITS.species} tür seçilebilir.`)
@@ -168,6 +181,8 @@ export function toLandRow(data: SiteAdminData) {
     is_fire_affected: data.is_fire_affected,
     fire_year: data.is_fire_affected ? data.fire_year : null,
     work_type: data.work_type,
+    certificate_month: data.certificate_month,
+    monitoring_month: data.monitoring_month,
     species_slugs: data.species_slugs,
     name_i18n: i18n([["en", data.name_en], ["ru", data.name_ru]]),
     summary_i18n: i18n([["tr", data.summary_tr], ["en", data.summary_en], ["ru", data.summary_ru]]),

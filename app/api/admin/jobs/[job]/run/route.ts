@@ -3,6 +3,8 @@ import { z } from "zod";
 import { requirePermission } from "@/lib/admin/permissions";
 import { fail, ok } from "@/lib/api/envelope";
 import { isJobName, jobHealth, runRecorded } from "@/lib/jobs/runs";
+import { reconcileB2bPayments } from "@/lib/b2b/reconcile";
+import { runConfiguredNotifications } from "@/lib/orders/notification-outbox";
 import { publicOrigin } from "@/lib/mail";
 import { confirmDueOrders } from "@/lib/orders/admin-actions";
 import { expireStaleOrders } from "@/lib/orders/create";
@@ -35,10 +37,11 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
   const body = bodySchema.safeParse(raw);
   if (!body.success) return fail(400, "invalid_body", "Geçersiz istek: scope \"status\" ya da \"all\" olmalı.");
 
+  if (job === "bildirimler" && body.data.scope !== "all") return fail(400, "invalid_body", "Bildirim işi e-posta gönderir; kapsam all olmalı.");
   const db = createServiceRoleClient();
   const scope = body.data.scope;
   const run = await runRecorded(db, job, "admin", scope, guard.admin.user_id, async () =>
-    scope === "status"
+    job === "bildirimler" ? { ...(await runConfiguredNotifications(publicOrigin(request.nextUrl.origin), db)) } : job === "b2b-odeme-mutabakati" ? { ...(await reconcileB2bPayments(db)) } : scope === "status"
       ? { expired: await expireStaleOrders(db), confirmed: await confirmDueOrders(db), monitoring: await startMonitoringDue(db) }
       : { ...(await runScheduledJobs(publicOrigin(request.nextUrl.origin), db)) }
   );

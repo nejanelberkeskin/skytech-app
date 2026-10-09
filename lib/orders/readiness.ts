@@ -131,10 +131,10 @@ export function salesReadiness(
   );
   add(
     "provider",
-    !provider ? "blocker" : provider.isTest ? "warning" : "ok",
+    !provider || (environment === "production" && provider.isTest) ? "blocker" : provider.isTest ? "warning" : "ok",
     !provider ? "Ödeme sağlayıcısı yok" : provider.isTest ? `Deneme ödemesi (${providerLabel(provider)})` : `Ödeme: ${providerLabel(provider)}, canlı`,
     !provider
-      ? "PAYMENT_PROVIDER tanımlı değil ya da anahtarları eksik."
+      ? "PAYMENT_PROVIDER, anahtarlar veya izinli API adresi geçersiz; canlı ortamda deneme sağlayıcısı kullanılamaz."
       : provider.isTest
         ? "Siparişler deneme sayılır, gerçek para alınmaz. Canlı için iyzico canlı anahtarları ve IYZICO_BASE_URL gerekir."
         : "Gerçek ödeme alınır.",

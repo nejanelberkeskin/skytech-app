@@ -14,13 +14,14 @@ import { listItemOf, type OrderListDto } from "./admin-dto";
 import { duplicateChargesFrom } from "./duplicates";
 import { ORDER_STATUSES, type OrderStatus } from "./types";
 
-export const ORDER_FLAGS = ["refund_pending", "invoice_pending", "duplicate", "capacity"] as const;
+export const ORDER_FLAGS = ["refund_pending", "invoice_pending", "duplicate", "capacity", "payment_review"] as const;
 export type OrderFlag = (typeof ORDER_FLAGS)[number];
 
 /** Süzgeç ve uyarı hangi grubun iznini ister (27 §4.3). `order`: her okuyucu. */
 export const FLAG_GROUP: Record<OrderFlag, OrderGroup> = {
   capacity: "order",
   refund_pending: "finance",
+  payment_review: "finance",
   duplicate: "finance",
   invoice_pending: "invoices",
 };
@@ -95,6 +96,7 @@ const FLAG_EMBED: Partial<Record<OrderFlag, string>> = {
 
 function applyFlag(q: Filterable, flag: OrderFlag, scope: ReadScope): Filterable {
   let out = scope.kind === "sites" ? q.in("land_id", scope.siteIds) : q;
+  if (flag === "payment_review") out = out.eq("payment_meta->>paymentReviewRequired", "true");
   if (flag === "capacity") out = out.eq("payment_meta->>capacityHeld", "false");
   if (flag === "refund_pending") out = out.in("order_refunds.status", ["pending", "failed"]);
   if (flag === "invoice_pending") out = out.eq("order_invoices.status", "pending");
@@ -217,7 +219,7 @@ export async function loadOrderList(db: Db, access: EffectiveAccess, read: ReadS
 
     // ── Grup alanları, sayaçlar, uyarılar ─────────────────────────────────
     const ids = rows.map((r) => String(r.id));
-    const alertFlags: OrderFlag[] = ["capacity", ...(finance ? (["refund_pending", "duplicate"] as const) : []), ...(invoices ? (["invoice_pending"] as const) : [])];
+    const alertFlags: OrderFlag[] = ["capacity", ...(finance ? (["refund_pending", "duplicate", "payment_review"] as const) : []), ...(invoices ? (["invoice_pending"] as const) : [])];
     const countFor = async (status: OrderStatus) => {
       let q = db.from("release_orders").select("id", { count: "exact", head: true }).eq("status", status);
       if (read.kind === "sites") q = q.in("land_id", read.siteIds);
@@ -241,7 +243,7 @@ export async function loadOrderList(db: Db, access: EffectiveAccess, read: ReadS
       counts: Object.fromEntries(ORDER_STATUSES.map((s, i) => [s, countValues[i]])) as Record<OrderStatus, number>,
       alerts: {
         capacity: alert("capacity"),
-        ...(finance ? { refundPending: alert("refund_pending"), duplicate: alert("duplicate") } : {}),
+        ...(finance ? { paymentReview: alert("payment_review"), refundPending: alert("refund_pending"), duplicate: alert("duplicate") } : {}),
         ...(invoices ? { invoicePending: alert("invoice_pending") } : {}),
       },
       groups: ["order", ...(contact ? ["contact" as const] : []), ...(finance ? ["finance" as const] : [])],

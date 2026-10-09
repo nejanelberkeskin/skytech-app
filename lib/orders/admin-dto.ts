@@ -46,7 +46,7 @@ export interface OrderListDto {
   page: number;
   pageSize: number;
   counts: Record<OrderStatus, number>;
-  alerts: { capacity: number; refundPending?: number; duplicate?: number; invoicePending?: number };
+  alerts: { paymentReview?: number; capacity: number; refundPending?: number; duplicate?: number; invoicePending?: number };
   groups: OrderGroup[];
   scope: ReadScope;
   search: { contactFields: boolean };
@@ -117,7 +117,7 @@ export interface OrderDetailDto {
     unitPriceKurus: number;
     totalKurus: number;
     vatRate: number;
-    payment: { provider: string | null; paymentId: string | null; startedAt: string | null; expiresAt: string | null };
+    payment: { reviewRequired: boolean; provider: string | null; paymentId: string | null; startedAt: string | null; expiresAt: string | null };
     refunds: {
       id: string; amountKurus: number; reason: string; status: string; provider: string | null;
       providerRef: string | null; error: string | null; createdAt: string; completedAt: string | null;
@@ -278,6 +278,7 @@ export function financeOf(row: Row, refunds: Row[], events: Row[]): NonNullable<
     totalKurus: numberOr(row.total_kurus),
     vatRate: numberOr(row.vat_rate),
     payment: {
+      reviewRequired: row.payment_review_required === true || row.payment_review_required === "true",
       provider: text(row.payment_provider),
       paymentId: text(row.payment_id),
       startedAt: text(row.payment_started_at),

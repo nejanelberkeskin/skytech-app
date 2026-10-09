@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { createSupabaseServer, createServiceRoleClient } from "@/lib/supabase/server";
 import Iyzipay from "iyzipay";
 import { rateLimit, getClientIP } from "@/lib/admin-auth";
-import iyzipay from "@/lib/iyzico";
+import { iyzicoConfig } from "@/lib/payments/iyzico-config";
+import { callIyzicoObserved, priceToKurus } from "@/lib/payments/iyzico";
 import { formatDateForIyzico } from "@/lib/utils/format";
 
 /**
@@ -20,6 +21,8 @@ export async function POST(request: NextRequest) {
   const rateLimitError = rateLimit(`b2b-checkout:${getClientIP(request)}`, 5, 60_000);
   if (rateLimitError) return rateLimitError;
 
+  let claimed = false;
+  const pending = () => NextResponse.json({ error: "Ödeme sonucu kontrol ediliyor.", code: "checkout_pending" }, { status: 503, headers: { "Cache-Control": "private, no-store" } });
   try {
     // ── 1. Auth ──────────────────────────────────────────────────────
     const authClient = await createSupabaseServer();
@@ -28,12 +31,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Oturum gerekli." }, { status: 401 });
     }
 
-    // ── 2. Body: yalnız quoteId ──────────────────────────────────────
-    const { quoteId } = await request.json();
+    // ── 2. Body: quoteId ve yalnız sunum için locale ──────────────────────────────────────
+    const { quoteId, locale: requestedLocale } = await request.json();
+    const locale = requestedLocale === "en" || requestedLocale === "ru" ? requestedLocale : "tr";
     if (!quoteId || typeof quoteId !== "string") {
       return NextResponse.json({ error: "quoteId zorunludur." }, { status: 400 });
     }
 
+    const config = iyzicoConfig();
+    if (!config) return NextResponse.json({ error: "Ödeme başlatılamadı." }, { status: 503 });
     const supabase = createServiceRoleClient();
 
     // ── 3. Quote ownership + state + amount (DB'den) ─────────────────
@@ -55,7 +61,7 @@ export async function POST(request: NextRequest) {
 
     const amount = Number(quote.approved_price);
     const seedCount = Number(quote.approved_seed_count);
-    if (!amount || amount <= 0 || !seedCount || seedCount <= 0) {
+    if (!Number.isFinite(amount) || (priceToKurus(quote.approved_price) ?? 0) <= 0 || !Number.isSafeInteger(seedCount) || seedCount <= 0) {
       return NextResponse.json({ error: "Teklif tutarı/adedi geçersiz." }, { status: 400 });
     }
 
@@ -63,51 +69,7 @@ export async function POST(request: NextRequest) {
     const contactPerson = quote.contact_person ?? "Kurumsal Musteri";
     const companyName = quote.company_name ?? "Kurumsal Musteri";
 
-    // ── 4. Order oluştur (user_id = auth.user.id) ────────────────────
-    const { data: order, error: orderError } = await supabase
-      .from("orders")
-      .insert({
-        user_id: user.id,
-        buyer_email: buyerEmail,
-        order_type: "reservation",
-        status: "pending",
-        total_seeds: seedCount,
-        total_price: amount,
-        shipping_address: null,
-      })
-      .select()
-      .single();
-
-    if (orderError || !order) {
-      console.error("B2B order error:", orderError?.message);
-      return NextResponse.json({ error: "Sipariş oluşturulamadı." }, { status: 500 });
-    }
-
-    await supabase
-      .from("corporate_quotes")
-      .update({ order_id: order.id })
-      .eq("id", quoteId);
-
     const description = `B2B Teklif: ${companyName} — ${seedCount.toLocaleString("tr-TR")} tohum`;
-
-    const { data: payment, error: paymentError } = await supabase
-      .from("payments")
-      .insert({
-        order_id: order.id,
-        user_id: user.id,
-        amount,
-        status: "pending",
-        description,
-        currency: "TRY",
-        metadata: { checkout_type: "b2b", quote_id: quoteId },
-      })
-      .select()
-      .single();
-
-    if (paymentError || !payment) {
-      console.error("B2B payment record error:", paymentError?.message);
-      return NextResponse.json({ error: "Ödeme kaydı oluşturulamadı." }, { status: 500 });
-    }
 
     const priceStr = amount.toFixed(2);
     const nameParts = contactPerson.trim().split(" ");
@@ -115,14 +77,14 @@ export async function POST(request: NextRequest) {
     const lastName = nameParts.slice(1).join(" ") || "Musteri";
 
     const requestData = {
-      locale: Iyzipay.LOCALE.TR,
-      conversationId: payment.id,
+      locale: locale === "tr" ? Iyzipay.LOCALE.TR : "en",
+      conversationId: "",
       price: priceStr,
       paidPrice: priceStr,
       currency: Iyzipay.CURRENCY.TRY,
-      basketId: order.id,
+      basketId: "",
       paymentGroup: Iyzipay.PAYMENT_GROUP.PRODUCT,
-      callbackUrl: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/api/payment/callback`,
+      callbackUrl: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/api/payment/callback?locale=${locale}`,
       enabledInstallments: [2, 3, 6, 9, 12],
       buyer: {
         id: user.id,
@@ -155,7 +117,7 @@ export async function POST(request: NextRequest) {
       },
       basketItems: [
         {
-          id: "B2B-" + quoteId.slice(0, 6),
+          id: "B2B-" + quote.id.slice(0, 6),
           name: description.slice(0, 100),
           category1: "Kurumsal Tohum",
           itemType: Iyzipay.BASKET_ITEM_TYPE.VIRTUAL,
@@ -164,43 +126,39 @@ export async function POST(request: NextRequest) {
       ],
     };
 
-    return new Promise<NextResponse>((resolve) => {
-      iyzipay.checkoutFormInitialize.create(requestData, async (err: unknown, result: { status?: string; checkoutFormContent?: string; token?: string; errorMessage?: string }) => {
-        if (err) {
-          console.error("B2B Iyzico error:", err);
-          resolve(NextResponse.json({ error: "Ödeme başlatılamadı." }, { status: 500 }));
-          return;
-        }
-
-        if (result.status === "success") {
-          // Dönüş ucu ödemeyi bu belirteçle bulur: yazılmadan müşteri ödeme formuna gönderilmez.
-          // (Önceden sorgu `void` ile başlatılıyordu; Supabase sorgusu await edilmeden GÖNDERİLMEZ,
-          // belirteç hiç kaydedilmiyor ve ödenen teklif "PAID" olmuyordu.)
-          const { error: tokenErr } = await supabase
-            .from("payments")
-            .update({
-              metadata: { checkout_type: "b2b", quote_id: quoteId, iyzico_token: result.token as string },
-            })
-            .eq("id", payment.id);
-          if (tokenErr) {
-            console.error("B2B ödeme belirteci kaydedilemedi:", tokenErr.message);
-            resolve(NextResponse.json({ error: "Ödeme başlatılamadı." }, { status: 500 }));
-            return;
-          }
-
-          resolve(NextResponse.json({
-            status: "success",
-            paymentId: payment.id,
-            orderId: order.id,
-            checkoutFormContent: result.checkoutFormContent,
-          }));
-        } else {
-          resolve(NextResponse.json({ error: result.errorMessage || "Ödeme başlatılamadı." }, { status: 500 }));
-        }
-      });
+    // One transaction owns the quote before opening a provider session. An uncertain prior
+    // session is never replaced automatically, including when its token was not saved.
+    const { data: claim, error: claimError } = await supabase.rpc("claim_b2b_checkout", {
+      p_quote: quote.id, p_user: user.id, p_amount: amount, p_seeds: seedCount, p_is_test: config.isTest,
     });
-  } catch (error) {
-    console.error("B2B checkout error:", error);
-    return NextResponse.json({ error: "Sunucu hatası." }, { status: 500 });
+    if (claimError) return pending();
+    if (claim?.status !== "claimed") {
+      return NextResponse.json({ error: "Teklifin ödeme durumu kontrol edilmelidir.", code: claim?.status === "checkout_pending" ? "checkout_pending" : "checkout_unavailable" }, { status: 409 });
+    }
+    const order = { id: claim.order_id as string };
+    const payment = { id: claim.payment_id as string };
+    claimed = true;
+    const { data: permit, error: permitError } = await supabase.rpc("begin_b2b_checkout_start", {
+      p_payment: payment.id, p_user: user.id, p_is_test: config.isTest, p_locale: locale,
+    });
+    // A lost RPC response or expired permit never authorizes an SDK call.
+    if (permitError || permit?.status !== "dispatch") return pending();
+    requestData.conversationId = payment.id;
+    requestData.basketId = order.id;
+
+    const observed = await callIyzicoObserved("checkoutFormInitialize", "create", requestData);
+    const result = observed.result;
+    const token = observed.origin === "provider_response" && typeof result.token === "string" && /^[A-Za-z0-9._~-]{8,200}$/.test(result.token) ? result.token : null;
+    const formReady = result.status === "success" && token !== null && typeof result.checkoutFormContent === "string" && Boolean(result.checkoutFormContent.trim());
+    // Keep a usable token even if the HTML is missing; reconciliation can still find the payment.
+    const { data: saved, error: saveError } = await supabase.rpc("finish_b2b_checkout_start", {
+      p_payment: payment.id, p_user: user.id, p_is_test: config.isTest,
+      p_origin: observed.origin, p_token: token, p_form_ready: formReady,
+    });
+    if (saveError || saved?.status !== "ready" || !formReady) return pending();
+    return NextResponse.json({ status: "success", paymentId: payment.id, orderId: order.id, checkoutFormContent: result.checkoutFormContent }, { headers: { "Cache-Control": "private, no-store" } });
+  } catch {
+    console.error("B2B checkout failed");
+    return claimed ? pending() : NextResponse.json({ error: "Ödeme başlatılamadı." }, { status: 503 });
   }
 }

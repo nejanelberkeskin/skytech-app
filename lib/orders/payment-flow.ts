@@ -23,6 +23,8 @@ export async function startPayment(
   provider: PaymentProvider,
   ctx: { origin: string; ip: string | null }
 ): Promise<StartPaymentResult> {
+  // Sağlayıcıya veya veritabanına yazmadan önce ortamı eşleştir.
+  if (order.is_test !== provider.isTest || order.payment_meta?.paymentReviewRequired === true) return { ok: false, error: "unavailable" };
   const supabase = db();
   const address = order.invoice.address;
   const init = await provider.init({
@@ -104,7 +106,7 @@ export async function completePayment(
   supabase: SupabaseClient = db()
 ): Promise<CompletePaymentResult> {
   const order = await getOrderByPaymentToken(supabase, token);
-  if (!order || order.payment_provider !== provider.name) return { ok: false, error: "not_found" };
+  if (!order || order.payment_provider !== provider.name || order.is_test !== provider.isTest) return { ok: false, error: "not_found" };
   if (order.paid_at) {
     await flagDuplicateCharge(supabase, order, token, provider);
     return { ok: true, outcome: "already_paid", order };
@@ -112,6 +114,14 @@ export async function completePayment(
 
   const result = await provider.retrieve(token);
   if (!result.ok) {
+    if (result.reviewMeta) {
+      // Onaylanmamış tahsilat varken yeni ödeme oturumu açma. Doğrulanmış sonuç
+      // işareti temizleyebilir; kendiliğinden ikinci callback gelmez. B2C mutabakatı
+      // ve inceleme süresince kapasiteyi koruma ayrı, açık işlerdir.
+      await supabase.from("release_orders").update({
+        payment_meta: { ...order.payment_meta, ...result.reviewMeta, paymentReviewRequired: true },
+      }).eq("id", order.id).is("paid_at", null).in("status", ["awaiting_payment", "payment_failed", "expired"]);
+    }
     await addOrderEvent(supabase, order.id, "payment_failed", "system", { stage: "retrieve", error: result.error });
     return { ok: false, error: "provider_error" };
   }

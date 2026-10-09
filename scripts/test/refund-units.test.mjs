@@ -81,7 +81,7 @@ function iyzico(responses) {
       },
     };
   }
-  const mod = loadSource('lib/payments/iyzico.ts', { '@/lib/iyzico': { default: sdk }, '@/lib/tr-iller': { ilAdi: () => null } });
+  const mod = loadSource('lib/payments/iyzico.ts', { '@/lib/iyzico': { default: sdk }, '@/lib/tr-iller': { ilAdi: () => null }, './iyzico-config': { iyzicoConfig: () => ({ isTest: true }) } });
   return { mod, calls };
 }
 const input = { paymentId: 'P1', amountKurus: 20000, orderNo: 'SG-2026-AAAAAA', meta: { paymentTransactionIds: ['T1'] }, ip: null };
@@ -91,7 +91,7 @@ test('iyzico: başarı, iptal yöntemi ve kimlik', async () => {
   assert.deepEqual(await ok.mod.refundWithIyzico(input), { ok: true, refundId: 'P1', method: 'refund' });
   assert.deepEqual(ok.calls, ['refundV2']);
   const cancel = iyzico({ refundV2: { status: 'failure', errorCode: '5001' }, refund: { status: 'failure', errorCode: '5002' }, cancel: { status: 'success', paymentId: 'P1' } });
-  assert.deepEqual(await cancel.mod.refundWithIyzico(input), { ok: true, refundId: 'P1', method: 'cancel' });
+  assert.deepEqual(await cancel.mod.refundWithIyzico(input, undefined, new Set(['5001', '5002'])), { ok: true, refundId: 'P1', method: 'cancel' });
   assert.deepEqual(cancel.calls, ['refundV2', 'refund', 'cancel']);
 });
 
@@ -109,7 +109,8 @@ test('iyzico: açık hatalar doğrulanmış listede değilse belirsiz, listedeys
   const a = iyzico(explicit);
   const unknown = await a.mod.refundWithIyzico(input);
   assert.equal(unknown.outcome, 'unknown');
-  assert.equal(unknown.errorCode, '5003');
+  assert.equal(unknown.errorCode, '5001');
+  assert.deepEqual(a.calls, ['refundV2'], 'doğrulanmamış ret sonrası ikinci iade/iptal çağrısı yok');
   assert.equal(a.mod.DEFINITIVE_REFUND_ERROR_CODES.size, 0, 'liste sandbox kabulüne kadar boş');
   const b = iyzico(explicit);
   const rejected = await b.mod.refundWithIyzico(input, undefined, new Set(['5001', '5002', '5003']));

@@ -18,6 +18,8 @@ const antalya: SiteAdminItem = {
   areaHectares: 42.5,
   isFireAffected: true,
   fireYear: 2021,
+  certificateMonth: 4,
+  monitoringMonth: 9,
   workType: "ormanlastirma_genclestirme",
   speciesSlugs: ["kizilcam"],
   nameI18n: { en: "Antalya Project Site" },

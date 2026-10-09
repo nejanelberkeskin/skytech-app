@@ -24,6 +24,8 @@ async function sitesDb() {
     UPDATE lands SET status = 'scheduled' WHERE status NOT IN ('open','full','scheduled','seeded','monitoring','closed');`);
   const sql = await readFile(new URL('../../supabase/migrations/015_project_sites.sql', import.meta.url), 'utf8');
   await db.exec(sql.slice(sql.indexOf('-- ── 1. Sütunlar'), sql.indexOf('-- ── 4. Yetkiler')));
+  // 040: teslim ayları (tek işlemde uygulanır; SET LOCAL için BEGIN/COMMIT).
+  await db.exec(`BEGIN;\n${await readFile(new URL('../../supabase/migrations/040_site_delivery_months.sql', import.meta.url), 'utf8')}\nCOMMIT;`);
   await db.exec(`CREATE TABLE seed_catalog(slug text PRIMARY KEY, name text NOT NULL, latin_name text, sort_order int NOT NULL DEFAULT 0);
     INSERT INTO seed_catalog VALUES ('kizilcam','Kızılçam','Pinus brutia',1), ('karacam','Karaçam','Pinus nigra',2), ('sedir','Sedir','Cedrus libani',3);
     UPDATE lands SET region='Antalya', province='Antalya', district='Manavgat', filled_seeds=1000, reserved_seeds=500, capacity_seeds=50000,

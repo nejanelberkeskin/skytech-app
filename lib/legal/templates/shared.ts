@@ -3,7 +3,8 @@
  * Bir koşul iki belgede de geçiyorsa metni burada tek yerde durur; böylece iki
  * belge birbiriyle çelişemez.
  */
-import { count, money, sellerRows, trDayOf, trLongDate, withdrawalChannels } from "../format";
+import type { MonthDeadline } from "@/lib/orders/schedule";
+import { count, money, sellerRows, trDayOf, trLongDate, trMonthYear, withdrawalChannels } from "../format";
 import type { LegalBlock, LegalContext } from "../types";
 
 export const ORDER_NO_PENDING = "Sipariş onaylandığında atanır";
@@ -66,6 +67,11 @@ export function priceTable(ctx: LegalContext): LegalBlock {
   };
 }
 
+/** "Haziran 2027 — en geç 30 Haziran 2027"; örnek metinde yer tutucu. */
+export function deliveryText(d: MonthDeadline | null): string {
+  return d ? `${trMonthYear(d.year, d.month)} — en geç ${trLongDate(d.lastDay)}` : "[Sahaya göre belirlenen ay ve yıl — en geç o ayın son günü]";
+}
+
 export function scheduleTable(ctx: LegalContext): LegalBlock {
   const { season, earliestReleaseOn, performanceDeadline } = ctx.schedule;
   return {
@@ -74,8 +80,8 @@ export function scheduleTable(ctx: LegalContext): LegalBlock {
       ["Bırakma sezonu", `${trLongDate(season.startsOn)} – ${trLongDate(season.endsOn)}`],
       ["En erken bırakma tarihi", trLongDate(earliestReleaseOn)],
       ["Tohum topu bırakma son tarihi (kesin süre)", trLongDate(performanceDeadline)],
-      ["Sertifika teslim son tarihi", "[YAYIN ÖNCESİ TAMAMLANACAK: siparişe özgü kesin tarih]"],
-      ["İzleme içeriği teslim son tarihi", "[YAYIN ÖNCESİ TAMAMLANACAK: siparişe özgü kesin tarih]"],
+      ["Katılım Sertifikası teslim ayı (kesin son tarih)", deliveryText(ctx.deliveries.certificate)],
+      ["İzleme içeriği teslim ayı (kesin son tarih)", deliveryText(ctx.deliveries.monitoring)],
     ],
   };
 }
@@ -114,7 +120,7 @@ export const TEXT = {
     "Tohum topu bırakma işlemleri Kasım–Mart döneminde yapılır; Nisan–Eylül döneminde sahalar incelenir, izlenir ve raporlanır. Bırakma işlemi, cayma süresi dolmadan yapılmaz.",
 
   completionNotice:
-    "Bırakma tamamlandığında ALICI’ya e-posta ile bilgi verilir. Katılım Sertifikası ve izleme içeriği, sipariş belgelerinde kendileri için ayrı ayrı kararlaştırılan kesin son tarihlere kadar e-posta veya kalıcı veri saklayıcısıyla sunulur. Bırakmanın tamamlanması, henüz teslim edilmemiş bu edimleri sona erdirmez.",
+    "Bırakma tamamlandığında ALICI’ya e-posta ile bilgi verilir. Katılım Sertifikası ve izleme içeriği, sipariş belgelerinde kendileri için ayrı ayrı belirtilen teslim ayının son gününe kadar e-posta veya kalıcı veri saklayıcısıyla sunulur. Teslim ayları her Proje Uygulama Sahası için sipariş öncesinde belirlenir; sipariş belgesine yazıldıktan sonra ALICI aleyhine değiştirilmez. Bırakmanın tamamlanması, henüz teslim edilmemiş bu edimleri sona erdirmez.",
 
   lateOrImpossible:
     "SATICI, kararlaştırılan ifa süresine uymakla yükümlüdür. Süresinde ifa edilmezse ALICI sözleşmeyi feshedebilir; tahsil edilen tüm bedel, fesih bildiriminin ulaşmasından itibaren 14 (on dört) gün içinde yasal faiziyle birlikte iade edilir. İfanın imkânsızlaşması hâlinde SATICI, durumu öğrendiği tarihten itibaren 3 (üç) gün içinde yazılı olarak veya kalıcı veri saklayıcısıyla bildirir ve tahsil edilen tüm bedeli bildirim tarihinden itibaren en geç 14 (on dört) gün içinde iade eder. Başka saha, tür veya sezon önerisi iadeyi durdurmaz ve süresini uzatmaz. Yeni bir hizmet ancak kapsamı, bedeli ve takvimi ayrıca açıklanıp ALICI’nın açık kabulü alınarak kararlaştırılır; sessizlik kabul değildir. Her hava veya izin sorunu kendiliğinden imkânsızlık sayılmaz; olayın gerçek etkisi ve SATICI’nın sorumluluğu değerlendirilir.",

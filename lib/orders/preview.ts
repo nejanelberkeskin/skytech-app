@@ -28,13 +28,18 @@ export async function checkSite(landId: string, quantity: number): Promise<SiteC
     const supabase = createServiceRoleClient();
     const { data: land, error } = await supabase
       .from("lands")
-      .select("id, is_public, status, capacity_seeds, filled_seeds, reserved_seeds")
+      .select("id, is_public, status, capacity_seeds, filled_seeds, reserved_seeds, certificate_month, monitoring_month")
       .eq("id", landId)
       .maybeSingle();
     if (error) return { ok: false, error: "unavailable" };
     if (!land || !land.is_public || land.status !== "open") return { ok: false, error: "site_unavailable" };
     const free = (land.capacity_seeds ?? 0) - (land.filled_seeds ?? 0) - (land.reserved_seeds ?? 0);
     if (free < quantity) return { ok: false, error: "capacity" };
+    // Sertifika ve izleme teslim ayı belirlenmemiş sahada sözleşmede kesin son tarih olmaz: sipariş açılmaz.
+    const month = (v: unknown) => (typeof v === "number" && Number.isInteger(v) && v >= 1 && v <= 12 ? v : null);
+    const certificateMonth = month(land.certificate_month);
+    const monitoringMonth = month(land.monitoring_month);
+    if (certificateMonth === null || monitoringMonth === null) return { ok: false, error: "site_unavailable" };
 
     // Hukuki metinler Türkçe düzenlenir; saha ve tür adları da Türkçe alınır.
     const site = (await getProjectSites("tr")).find((s) => s.id === landId);
@@ -52,6 +57,8 @@ export async function checkSite(landId: string, quantity: number): Promise<SiteC
         fireYear: site.fireYear,
         workType: site.workType,
         species: site.species.map((s) => ({ slug: s.slug, name: s.name, latinName: s.latinName })),
+        certificateMonth,
+        monitoringMonth,
       },
     };
   } catch {

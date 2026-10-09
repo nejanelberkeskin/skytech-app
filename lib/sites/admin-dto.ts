@@ -12,7 +12,7 @@ import type { WorkType } from "./types";
 export const SITE_ADMIN_COLUMNS = [
   "id", "slug", "name", "region", "province", "district", "area_hectares", "is_fire_affected", "fire_year",
   "work_type", "species_slugs", "name_i18n", "summary_i18n", "cover_image", "video_url", "sort_order", "status",
-  "is_public", "capacity_seeds", "filled_seeds", "reserved_seeds", "created_at", "updated_at",
+  "is_public", "capacity_seeds", "filled_seeds", "reserved_seeds", "certificate_month", "monitoring_month", "created_at", "updated_at",
 ].join(", ");
 
 export interface SiteAdminItem {
@@ -25,6 +25,9 @@ export interface SiteAdminItem {
   areaHectares: number | null;
   isFireAffected: boolean;
   fireYear: number | null;
+  /** Sertifika / izleme içeriği teslim ayı (1–12). */
+  certificateMonth: number | null;
+  monitoringMonth: number | null;
   workType: WorkType;
   speciesSlugs: string[];
   nameI18n: { en?: string; ru?: string };
@@ -109,6 +112,8 @@ export function siteItemOf(row: Row, capabilities: SiteAdminItem["capabilities"]
     areaHectares: maybeNumber(row.area_hectares),
     isFireAffected: row.is_fire_affected === true,
     fireYear: maybeNumber(row.fire_year),
+    certificateMonth: maybeNumber(row.certificate_month),
+    monitoringMonth: maybeNumber(row.monitoring_month),
     workType: (text(row.work_type) ?? "ormanlastirma_genclestirme") as WorkType,
     speciesSlugs: Array.isArray(row.species_slugs) ? row.species_slugs.map(String) : [],
     nameI18n: i18n(row.name_i18n, ["en", "ru"] as const),

@@ -12,7 +12,7 @@ import type { Permission } from "@/lib/admin/permissions";
 export const SITE_COLUMNS = [
   "name", "slug", "region", "province", "district", "area_hectares", "is_fire_affected", "fire_year", "work_type",
   "species_slugs", "name_i18n", "summary_i18n", "cover_image", "video_url", "sort_order", "status", "is_public",
-  "capacity_seeds",
+  "capacity_seeds", "certificate_month", "monitoring_month",
 ] as const;
 export type SiteColumn = (typeof SITE_COLUMNS)[number];
 export type SiteChanges = Partial<Record<SiteColumn, unknown>>;
@@ -24,7 +24,7 @@ export function siteVisibility(isPublic: unknown, status: unknown) {
   return { listed: pub && status !== "closed", acceptsOrders: pub && status === "open" };
 }
 
-const NUMERIC: ReadonlySet<SiteColumn> = new Set(["area_hectares", "fire_year", "sort_order", "capacity_seeds"]);
+const NUMERIC: ReadonlySet<SiteColumn> = new Set(["area_hectares", "fire_year", "sort_order", "capacity_seeds", "certificate_month", "monitoring_month"]);
 const OBJECTS: ReadonlySet<SiteColumn> = new Set(["name_i18n", "summary_i18n"]);
 
 function canonical(value: unknown): string {

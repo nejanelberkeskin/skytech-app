@@ -36,7 +36,7 @@ function blockText(b, generic=false) {
 }
 const names=['01-on-bilgilendirme.md','02-mesafeli-hizmet-sozlesmesi.md','04-cayma-formu.md','09-kvkk-aydinlatma.md'];
 buildOrderDocuments(ctx).forEach(({document:d},i) => {
- const note=i===3?'':'\n\nYayın notu: Siparişe özgü alanlar sunucu verisiyle doldurulur. Sertifika ve izleme son tarihleri şirket tarafından henüz bildirilmemiştir; kesin tarih olmadan satışa açılmaz.';
+ const note=i===3?'':'\n\nYayın notu: Siparişe özgü alanlar sunucu verisiyle doldurulur. Sertifika ve izleme teslim ayları her saha için yönetim panelinden belirlenir; kesin son tarih o ayın son günüdür. Ayları girilmemiş sahada sipariş açılmaz.';
  fs.writeFileSync(path.join(out,names[i]), `# ${d.title}\n\nMetin sürümü ${LEGAL_DOCUMENTS_VERSION}. Kodla aynı hukuki hükümler; sipariş alanları doldurulacak şablon olarak gösterilmiştir.${note}\n\n${d.blocks.map(b=>blockText(b,true)).join('\n\n')}\n`);
 });
 for (const [name,title,blocks] of [

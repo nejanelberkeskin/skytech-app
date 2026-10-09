@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 import { SITES_HREF } from "@/lib/sites/links";
@@ -63,6 +63,16 @@ import {
   type WizardProps,
 } from "./types";
 
+/**
+ * Hatanın gösterileceği adım. Ödemede dur kipinde KVKK onayı son ekranda alındığı için yalnız onay hatası varsa
+ * 4. adımda kalınır (görünmeyen bir kutu için 3. adıma atılmaz).
+ */
+function stepFor(mode: WizardProps["mode"], fields: Record<string, string>): number {
+  const keys = Object.keys(fields);
+  if (mode === "preorder" && keys.length > 0 && keys.every((k) => k === "contact.consent")) return 4;
+  return errorStep(fields);
+}
+
 export default function OrderWizard({
   site,
   locale,
@@ -73,7 +83,20 @@ export default function OrderWizard({
   pricing,
 }: WizardProps) {
   const t = useTranslations("orderWizard");
+  const common = useTranslations("requestForms.common");
   const requestErrors = useTranslations("requestForms.common.errors");
+  // "request" ve "preorder" iletişim formunu ve talep şemasını kullanır; alıcı + fatura bilgisi yalnız gerçek siparişte
+  // ("order") alınır. "preorder" ödeme olmadan sipariş özetini gösterir, isteğe bağlı talep bırakır.
+  const usesContact = mode !== "order";
+  const kvkkLink = (chunks: ReactNode) => (
+    <Link
+      href="/kvkk"
+      target="_blank"
+      className="font-semibold text-[#1B6B3A] underline underline-offset-2"
+    >
+      {chunks}
+    </Link>
+  );
   const pathname = usePathname();
   const [step, setStep] = useState(1);
   const [quantity, setQuantity] = useState<number | null>(() =>
@@ -96,6 +119,8 @@ export default function OrderWizard({
   const [preview, setPreview] = useState<OrderPreview | null>(null);
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  // Ödemede dur: "Ödemeye geç"e basıldı, "çevrim içi ödeme çok yakında" ekranı açık (sipariş/ödeme yok).
+  const [soon, setSoon] = useState(false);
   const [document, setDocument] = useState<OrderDocumentPreview | null>(null);
   const [focus, setFocus] = useState({ revision: 0, error: false });
   const [requestFields, setRequestFields] = useState<Record<string, string>>(
@@ -133,7 +158,7 @@ export default function OrderWizard({
         ([key, value]) => requestFields[key] !== value,
       )
     ) {
-      setStep(errorStep(request.fieldErrors));
+      setStep(stepFor(mode, request.fieldErrors));
       setFocus((v) => ({ revision: v.revision + 1, error: true }));
     }
   }
@@ -188,6 +213,7 @@ export default function OrderWizard({
     setLoading(false);
     setFailure(null);
     setNotice(null);
+    setSoon(false);
     setConsents((v) => ({ ...EMPTY_CONSENTS, marketing: v.marketing }));
   };
   const clear = (path: string) => {
@@ -238,8 +264,13 @@ export default function OrderWizard({
             value,
           ]),
         );
-      if (mode === "request") {
-        const result = contactSchema.safeParse({ ...contact, locale });
+      if (mode !== "order") {
+        // Ödemede dur: KVKK onayı 4. adımda alınır; 3. adımda yalnız iletişim alanları talep şemasıyla doğrulanır.
+        const result = contactSchema.safeParse({
+          ...contact,
+          ...(mode === "preorder" ? { consent: true } : {}),
+          locale,
+        });
         const fields = result.success
           ? {}
           : prefix(issuesToFieldErrors(result.error.issues), "contact");
@@ -265,9 +296,9 @@ export default function OrderWizard({
     setErrors(fields);
     setNotice(null);
     setFailure("validation");
-    setStep(errorStep(fields));
+    setStep(stepFor(mode, fields));
     setFocus((v) => ({ revision: v.revision + 1, error: true }));
-  }, []);
+  }, [mode]);
 
   const loadPreview = useCallback(async () => {
     const parsed = orderPreviewSchema.safeParse({
@@ -319,6 +350,7 @@ export default function OrderWizard({
       setErrors({});
       setFailure(null);
       setNotice(null);
+      setSoon(false);
       setConsents((v) => ({ ...EMPTY_CONSENTS, marketing: v.marketing }));
       if (push) {
         const url = new URL(window.location.href);
@@ -366,6 +398,35 @@ export default function OrderWizard({
       return;
     }
     if (mode === "request") {
+      await request.submit(
+        contact,
+        {
+          type: "open_land_seeding",
+          landId: site.id,
+          quantity: quantity ?? 0,
+          certificateName,
+        },
+        honeypot,
+      );
+      return;
+    }
+    if (mode === "preorder") {
+      // Ödemede dur: sipariş oluşturulmaz, ödeme başlatılmaz, sipariş ucuna istek gitmez. İlk basış bilgilendirme
+      // ekranını açar; müşteri isterse KVKK aydınlatma onayıyla bilgilerini talep olarak bırakır. Fatura adresi ve
+      // kimlik/vergi no hiç istenmez.
+      if (!soon) {
+        setSoon(true);
+        setErrors({});
+        setFailure(null);
+        setFocus((v) => ({ revision: v.revision + 1, error: false }));
+        return;
+      }
+      if (!contact.consent) {
+        setErrors({ "contact.consent": "consentRequired" });
+        setFailure("validation");
+        setFocus((v) => ({ revision: v.revision + 1, error: true }));
+        return;
+      }
       await request.submit(
         contact,
         {
@@ -455,6 +516,8 @@ export default function OrderWizard({
         ? t("next")
         : mode === "request"
           ? t("request.submit")
+          : mode === "preorder"
+            ? t(soon ? "preorder.notify" : "preorder.viewOptions")
           : preview
             ? t("review.pay", {
                 total: formatTry(preview.totals.totalKurus, locale),
@@ -465,6 +528,11 @@ export default function OrderWizard({
       {inOrderReview && preview && (
         <p className="mb-3 text-sm leading-relaxed text-[#0e2519]">
           {t("review.obligation")}
+        </p>
+      )}
+      {mode === "preorder" && step === 4 && !soon && (
+        <p className="mb-3 text-sm leading-relaxed text-[#0e2519]">
+          {t("preorder.buttonNote")}
         </p>
       )}
       <button
@@ -589,7 +657,7 @@ export default function OrderWizard({
             tabIndex={-1}
             className="scroll-mt-32 text-2xl font-semibold text-[#0e2519] outline-none"
           >
-            {steps[step - 1]}
+            {step === 4 && soon ? t("preorder.soonTitle") : steps[step - 1]}
           </h2>
           <div
             data-wizard-feedback
@@ -764,7 +832,7 @@ export default function OrderWizard({
               disabled={busy}
             />
           )}
-          {step === 3 && mode === "request" && (
+          {step === 3 && usesContact && (
             <div
               className="[&_label:has(input[type=checkbox])]:min-h-11"
               ref={(node) =>
@@ -785,6 +853,11 @@ export default function OrderWizard({
                 prefilled={isLoggedIn}
                 honeypot={honeypot}
                 onHoneypot={setHoneypot}
+                consentNotice={
+                  mode === "preorder"
+                    ? t.rich("preorder.contactNotice", { kvkk: kvkkLink })
+                    : undefined
+                }
               />
               <span id="ow-contact-consent-error" className="sr-only">
                 {errorFor("contact.consent")}
@@ -875,6 +948,109 @@ export default function OrderWizard({
               <div className="mt-6">{timeline}</div>
             </section>
           )}
+          {step === 4 && mode === "preorder" && !soon && (
+            <section className="vitrin-card p-6 lg:p-8">
+              <h3 className="mb-3 text-lg font-bold">{t("review.title")}</h3>
+              <ReviewRows
+                rows={[
+                  { label: t("review.site"), value: site.name },
+                  {
+                    label: t("review.species"),
+                    value: site.species.join(" · "),
+                  },
+                  {
+                    label: t("quantity.label"),
+                    value: formatCount(quantity ?? 0, locale),
+                  },
+                  ...(PRICING_VISIBLE && price !== null
+                    ? [
+                        {
+                          label: t("quantity.unit"),
+                          value: formatTry(pricing.unitPriceKurus, locale),
+                        },
+                        {
+                          label: t("request.estimated"),
+                          value: formatTry(price, locale),
+                        },
+                      ]
+                    : []),
+                  { label: t("certificate.label"), value: finalName },
+                  {
+                    label: t("steps.contact"),
+                    value: [
+                      contact.contactName,
+                      contact.email,
+                      contact.phone,
+                      contact.company,
+                    ]
+                      .filter(Boolean)
+                      .join(" · "),
+                  },
+                  ...(contact.message
+                    ? [{ label: t("request.message"), value: contact.message }]
+                    : []),
+                ]}
+              />
+              <p className="mt-6 rounded-2xl bg-[#f8faf5] p-4 text-sm leading-relaxed text-[#3d5a3d]">
+                {t("preorder.reviewNote")}
+              </p>
+              <div className="mt-6">{timeline}</div>
+            </section>
+          )}
+          {step === 4 && mode === "preorder" && soon && (
+            <section
+              role="status"
+              className="vitrin-card space-y-5 p-6 lg:p-8"
+            >
+              <p className="leading-relaxed text-[#0e2519]">
+                {t("preorder.soonBody")}
+              </p>
+              <p className="text-sm leading-relaxed text-[#3d5a3d]">
+                {t.rich("preorder.soonShared", { kvkk: kvkkLink })}
+              </p>
+              <label
+                className={`flex min-h-11 cursor-pointer items-start gap-3 pt-1 text-xs leading-relaxed ${errorFor("contact.consent") ? "text-[#dc2626]" : "text-[#3d5a3d]"}`}
+              >
+                <input
+                  type="checkbox"
+                  name="consent"
+                  disabled={busy}
+                  checked={contact.consent}
+                  onChange={(e) => {
+                    setContact((v) => ({ ...v, consent: e.target.checked }));
+                    clear("contact.consent");
+                    setFailure(null);
+                  }}
+                  aria-invalid={!!errorFor("contact.consent")}
+                  aria-describedby="ow-preorder-consent-error"
+                  className="mt-0.5 h-4 w-4 shrink-0 accent-[#1B6B3A]"
+                />
+                <span>
+                  {common.rich("consent", { kvkk: kvkkLink })}
+                </span>
+              </label>
+              <p
+                id="ow-preorder-consent-error"
+                role={errorFor("contact.consent") ? "alert" : undefined}
+                className="-mt-3 text-xs font-medium text-[#dc2626]"
+              >
+                {errorFor("contact.consent")}
+              </p>
+              <button
+                type="button"
+                disabled={busy}
+                onClick={() => {
+                  setSoon(false);
+                  setErrors({});
+                  setFailure(null);
+                  setFocus((v) => ({ revision: v.revision + 1, error: false }));
+                }}
+                className="min-h-11 px-1 text-sm font-semibold text-[#1B6B3A] underline underline-offset-4 disabled:opacity-50"
+              >
+                {t("preorder.backToReview")}
+              </button>
+            </section>
+          )}
           {mode === "order" && (
             <div
               aria-hidden="true"
@@ -943,9 +1119,9 @@ export default function OrderWizard({
                 ] ?? (preview?.schedule ?? schedule).performanceDeadline,
             })}
           </p>
-          {mode === "request" && (
+          {mode !== "order" && (
             <p className="text-xs leading-relaxed text-[#3d5a3d]">
-              {t("request.note")}
+              {t(mode === "preorder" ? "preorder.sideNote" : "request.note")}
             </p>
           )}
         </aside>

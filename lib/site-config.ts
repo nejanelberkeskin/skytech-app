@@ -24,6 +24,15 @@ import { OWN_LAND_HREF } from "@/lib/sites/links";
  *                        ödeme almadan TALEP toplar (REQUESTS_ENABLED).
  *                        (TRANSACTIONS_ENABLED yalnız B2B'yi açar.)
  *
+ *  PAYMENT_SOON          "Ödemede dur" kipi: satış kapalıyken (sipariş kapısı kapalı) sihirbaz dört adımla
+ *                        sipariş özetine ve tahmini bedele kadar ilerler; ilk adımdan "şu anda sipariş ve
+ *                        ödeme alınmıyor" notu görünür. 3. adım iletişim formudur (talep şeması; fatura,
+ *                        adres ve kimlik/vergi no istenmez). Son düğme sipariş OLUŞTURMAZ, ödeme almaz;
+ *                        "çevrim içi ödeme henüz açık değil" ekranını açar, müşteri isterse KVKK aydınlatma
+ *                        onayıyla talep bırakır. Bu yüzden REQUESTS_ENABLED de açık olmalı. Çağrı metinleri
+ *                        talep kipindeki gibi kalır ("Talep Oluştur"): satın alma henüz sunulmuyor.
+ *                        Varsayılan KAPALI; NEXT_PUBLIC_PAYMENT_SOON=true ile açılır.
+ *
  *  ACCOUNTS_ENABLED      Üyelik (kayıt / giriş / hesabım). Varsayılan AÇIK;
  *                        NEXT_PUBLIC_ACCOUNTS_ENABLED=false ile kapatılır.
  *                        B2B'ye bağlı hesap sayfası (sertifikalar)
@@ -36,6 +45,9 @@ export const REQUESTS_ENABLED =
   process.env.NEXT_PUBLIC_REQUESTS_ENABLED !== "false";
 
 export const SALES_ENABLED = process.env.NEXT_PUBLIC_SALES_ENABLED === "true";
+
+export const PAYMENT_SOON =
+  process.env.NEXT_PUBLIC_PAYMENT_SOON === "true" && REQUESTS_ENABLED;
 
 export const ACCOUNTS_ENABLED =
   process.env.NEXT_PUBLIC_ACCOUNTS_ENABLED !== "false";
@@ -90,7 +102,8 @@ export function orderCtaHref(kind: RequestRouteKey = "hub"): string {
  * CTA'lar "satın al" mı "talep oluştur" mu "yakında" mı diyecek — metin seçimi için.
  * "order" yeni satış modelinin bayrağına (SALES_ENABLED) bağlıdır; eski tohum satışı bayrağı
  * (TRANSACTIONS_ENABLED) çağrı metnini etkilemez. Çağrıların hedefi her kipte aynıdır: /sahalar
- * (sahanın sihirbazı, sipariş alınamıyorsa talep kipinde açılır).
+ * (sahanın sihirbazı, sipariş alınamıyorsa talep kipinde açılır). PAYMENT_SOON çağrı metnini değiştirmez:
+ * ödeme açık olmadığı için "Satın Al" denmez.
  */
 export type CtaMode = "order" | "request" | "soon";
 export const CTA_MODE: CtaMode = SALES_ENABLED

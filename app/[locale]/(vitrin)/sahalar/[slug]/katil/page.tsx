@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { redirect } from "@/i18n/navigation";
-import { REQUESTS_ENABLED, SALES_ENABLED } from "@/lib/site-config";
+import { PAYMENT_SOON, REQUESTS_ENABLED, SALES_ENABLED } from "@/lib/site-config";
 import { canAcceptOrders } from "@/lib/orders/gate";
 import { getPaymentProvider } from "@/lib/payments";
 import { getProjectSiteBySlug } from "@/lib/sites/data";
@@ -42,6 +42,8 @@ export default async function ParticipatePage({ params }: Props) {
   // sürümü + yönetimden durdurma): sipariş alınamıyorsa sihirbaz çıkmaz sokağa girmez, talep kipinde açılır.
   const canOrder = canAcceptOrders(getPaymentProvider(), settings);
   if (!canOrder && !REQUESTS_ENABLED) redirect({ href: "/yakinda", locale });
+  // "Ödemede dur" (PAYMENT_SOON): sipariş alınamıyorken sihirbaz sipariş görünümüyle açılır, ödeme adımında durur.
+  const mode = canOrder ? "order" : PAYMENT_SOON ? "preorder" : "request";
   // Satış açıkken sipariş alımı yönetimden durdurulduysa müşteriye kısa bir açıklama gösterilir.
   const paused = SALES_ENABLED && settings.ordersPaused;
   const [t, sites, seeds] = await Promise.all([
@@ -66,7 +68,7 @@ export default async function ParticipatePage({ params }: Props) {
     <div className="vitrin-container pb-12 pt-32 sm:pt-40">
       <header className="mb-8 max-w-3xl">
         <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-[#1B6B3A]">
-          {t(canOrder ? "orderMode" : "requestMode")}
+          {t(mode === "order" ? "orderMode" : "requestMode")}
         </p>
         <h1 className="display-headline text-3xl font-semibold text-[#0e2519] sm:text-5xl">
           {t("title")}
@@ -74,6 +76,15 @@ export default async function ParticipatePage({ params }: Props) {
         <p className="mt-4 leading-relaxed text-[#3d5a3d]">
           {t("description")}
         </p>
+        {mode === "preorder" && (
+          // Ödemede dur: ilk adımdan (mobilde de) görünür; süre vaadi yok.
+          <p
+            role="status"
+            className="mt-5 rounded-2xl border border-[#1B6B3A]/20 bg-[#f0f7ec] px-5 py-4 text-sm leading-relaxed text-[#0e2519]"
+          >
+            {t("preorder.notice")}
+          </p>
+        )}
         {paused && (
           <p
             role="status"
@@ -85,7 +96,7 @@ export default async function ParticipatePage({ params }: Props) {
       </header>
       <OrderWizard
         locale={locale}
-        mode={canOrder ? "order" : "request"}
+        mode={mode}
         site={{
           id: site.id,
           slug: site.slug,

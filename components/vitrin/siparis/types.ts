@@ -17,7 +17,8 @@ export interface WizardSite {
 export interface WizardProps {
   site: WizardSite;
   locale: PriceLocale;
-  mode: "order" | "request";
+  /** preorder: sipariş görünümü, ödeme adımında durur (PAYMENT_SOON); sipariş ya da ödeme yok. */
+  mode: "order" | "request" | "preorder";
   schedule: OrderSchedule;
   dateLabels: Record<string, string>;
   timeline: ReactNode;

@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Field, SectionCard, inputCls } from "./FormPrimitives";
@@ -8,6 +9,7 @@ import type { ContactState } from "./useRequestForm";
 /**
  * İletişim bloğu — üç formda ortak. Honeypot alanı da burada: gerçek
  * kullanıcı görmez (ekran dışı, tab sırasında yok, autocomplete kapalı).
+ * `consentNotice` verilirse KVKK onay kutusu yerine bu bilgi notu gösterilir (onay başka adımda alınır).
  */
 export default function ContactFields({
   step,
@@ -18,6 +20,7 @@ export default function ContactFields({
   prefilled,
   honeypot,
   onHoneypot,
+  consentNotice,
 }: {
   step: number;
   values: ContactState;
@@ -27,6 +30,7 @@ export default function ContactFields({
   prefilled: boolean;
   honeypot: string;
   onHoneypot: (v: string) => void;
+  consentNotice?: ReactNode;
 }) {
   const t = useTranslations("requestForms.common");
 
@@ -150,8 +154,10 @@ export default function ContactFields({
         </label>
       </div>
 
-      {/* KVKK onayı */}
-      <label className={`flex items-start gap-3 text-xs leading-relaxed pt-1 cursor-pointer ${errorFor("contact.consent") ? "text-[#dc2626]" : "text-[#3d5a3d]"}`}>
+      {consentNotice && <p className="text-xs leading-relaxed text-[#3d5a3d]">{consentNotice}</p>}
+
+      {/* KVKK onayı (consentNotice verilmediyse) */}
+      {!consentNotice && <label className={`flex items-start gap-3 text-xs leading-relaxed pt-1 cursor-pointer ${errorFor("contact.consent") ? "text-[#dc2626]" : "text-[#3d5a3d]"}`}>
         <input
           type="checkbox"
           name="consent"
@@ -171,8 +177,8 @@ export default function ContactFields({
             ),
           })}
         </span>
-      </label>
-      {errorFor("contact.consent") && (
+      </label>}
+      {!consentNotice && errorFor("contact.consent") && (
         <p role="alert" className="-mt-3 text-xs font-medium text-[#dc2626]">{errorFor("contact.consent")}</p>
       )}
     </SectionCard>

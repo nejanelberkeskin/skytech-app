@@ -2583,6 +2583,19 @@
       "certificateNameLong": "The name on the certificate can be at most {max} characters.",
       "certificateNameInvalid": "The name on the certificate may contain only letters, digits and basic punctuation."
     },
-    "pausedNotice": "Online orders are temporarily paused. You can still send a participation request on this page; no payment is taken and our team will contact you."
+    "pausedNotice": "Online orders are temporarily paused. You can still send a participation request on this page; no payment is taken and our team will contact you.",
+    "preorder": {
+      "notice": "Orders and payments are not being accepted at the moment; online payment is not available yet. You can see the estimated fee with this form and leave a request if you wish.",
+      "contactNotice": "We use these details only to contact you about your request. Details: <kvkk>Privacy Notice (KVKK)</kvkk>.",
+      "reviewNote": "The amount is for information, based on today's service fee. No order is created and no payment is taken at this step.",
+      "sideNote": "Orders and payments are not being accepted at the moment. The amount is for information.",
+      "buttonNote": "Orders and payments are not being accepted at the moment. On the next screen you can leave your details if you wish.",
+      "viewOptions": "View notification options",
+      "soonTitle": "Online payment is not available yet",
+      "soonBody": "No order has been created and no payment has been taken. If you wish, leave your details as a request and our team will contact you about the site and quantity you chose.",
+      "soonShared": "Form details you share with your request: name, email, phone, site, quantity, the name on the certificate and, if provided, company name and your note. No billing address or ID/tax number is requested. For technical data kept with the request record (time and version of your confirmation, IP hash, browser information, etc.) see the <kvkk>Privacy Notice (KVKK)</kvkk>.",
+      "notify": "Leave my details",
+      "backToReview": "Back to summary"
+    }
   }
 }

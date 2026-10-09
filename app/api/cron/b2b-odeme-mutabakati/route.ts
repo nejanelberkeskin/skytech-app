@@ -7,7 +7,7 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
-/** Configure an external scheduler every ten minutes; no production schedule is enabled by this route. */
+/** Scheduler worker: vercel.json runs it every ten minutes (Vercel Cron). Without CRON_SECRET the route stays closed (503). */
 export async function GET(req: NextRequest) {
   const secret = process.env.CRON_SECRET;
   const json = (body: Record<string, unknown>, status: number) => NextResponse.json(body, { status, headers: { "Cache-Control": "private, no-store" } });

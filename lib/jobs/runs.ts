@@ -12,13 +12,13 @@ export const JOBS = {
   "bildirimler": {
     label: "Sipariş bildirim kuyruğu",
     schedule: "*/10 * * * *",
-    scheduleText: "Harici zamanlayıcı kurulumu gerekli: her 10 dakikada bir",
+    scheduleText: "Her 10 dakikada bir (Vercel Cron; CRON_SECRET gerekir)",
     staleAfterHours: 1,
   },
   "b2b-odeme-mutabakati": {
     label: "B2B ödeme mutabakatı",
     schedule: "*/10 * * * *",
-    scheduleText: "Harici zamanlayıcı kurulumu gerekli: her 10 dakikada bir",
+    scheduleText: "Her 10 dakikada bir (Vercel Cron; CRON_SECRET gerekir)",
     staleAfterHours: 1,
   },
   "siparis-isleri": {

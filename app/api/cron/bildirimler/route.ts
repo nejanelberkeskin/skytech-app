@@ -7,7 +7,7 @@ import { runRecorded } from "@/lib/jobs/runs";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
-/** Optional scheduler worker; deliberately not added to vercel.json. */
+/** Scheduler worker: vercel.json runs it every ten minutes (Vercel Cron). Without CRON_SECRET the route stays closed (503). */
 export async function GET(req: NextRequest) {
     const reply = (body: unknown, status = 200) => NextResponse.json(body, { status, headers: { "Cache-Control": "no-store" } });
     const secret = process.env.CRON_SECRET;

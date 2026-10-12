@@ -169,6 +169,8 @@ export const ORDER_EVENT_TYPES = [
   "status_changed",
   "withdrawal_requested",
   "withdrawal_cancelled",
+  /** Olağan cayma süresi dışında gelen bildirim (ayıplı/geç ifa, uzayan süre) — yönetim inceler. */
+  "post_period_claim",
   "refund_started",
   "refund_succeeded",
   "refund_failed",

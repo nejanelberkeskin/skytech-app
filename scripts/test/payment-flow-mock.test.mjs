@@ -13,7 +13,7 @@ import { adminClient } from './admin-rest-client.mjs';
 
 process.env.ORDER_LINK_SECRET = 'test-odeme-anahtari';
 const server = createRequire(import.meta.url)('next/server');
-const State = load('lib/orders/state.ts');
+const State = load('lib/orders/state.ts', { './withdrawal-period': load('lib/orders/withdrawal-period.ts') });
 const Schedule = load('lib/orders/schedule.ts');
 const Access = await import('../../lib/orders/access.ts');
 const LinkGate = await import('../../lib/orders/link-gate.ts');

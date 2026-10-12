@@ -118,7 +118,8 @@ function EventData({ type, data }: { type: OrderEventType; data: Record<string, 
   add("iade son günü", data.refundDueOn);
   add("fatura no", data.invoiceNo);
   if (type === "admin_note") add("not", data.note === "invoice_queued" ? "fatura kuyruğuna alındı" : data.note);
-  if (type === "withdrawal_requested") add("müşteri notu", data.note);
+  if (type === "withdrawal_requested" || type === "post_period_claim") add("müşteri notu", data.note);
+  if (type === "post_period_claim") add("başvuru anındaki durum", ORDER_STATUS_LABELS[data.status as OrderStatus] ?? data.status);
   if (type === "documents_generated" && Array.isArray(data.kinds)) add("belgeler", (data.kinds as string[]).map((k) => DOCUMENT_LABELS[k] ?? k).join(", "));
   const text = parts.map((p) => p.replace(/^: /, "")).join(" · ");
   return text ? <p className="text-xs text-slate-500 break-words">{text}</p> : null;

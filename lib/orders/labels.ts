@@ -30,6 +30,7 @@ export const ORDER_EVENT_LABELS: Record<OrderEventType, string> = {
   status_changed: "Durum değişti",
   withdrawal_requested: "Cayma bildirimi alındı",
   withdrawal_cancelled: "Cayma bildirimi geri alındı",
+  post_period_claim: "Süre sonrası başvuru (ayıplı/geç ifa ya da uzayan cayma) — incelenmeli",
   refund_started: "İade başlatıldı",
   refund_succeeded: "İade yapıldı",
   refund_failed: "İade başarısız",

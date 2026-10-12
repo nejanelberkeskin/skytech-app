@@ -132,7 +132,7 @@ test('35: zamanlayıcı hatası kayda "failed" düşer; elle çalıştırma zama
 test('35: bırakmada satış faturası kuyruğa girer (kesim elle); ikinci kez eklenmez', async () => {
   const db = await createDb();
   try {
-    const state = load('lib/orders/state.ts');
+    const state = load('lib/orders/state.ts', { './withdrawal-period': load('lib/orders/withdrawal-period.ts') });
     const store = load('lib/orders/store.ts', { '@/lib/supabase/server': { createServiceRoleClient: () => { throw new Error('istemci verilmeli'); } }, './state': state });
     const batches = load('lib/orders/batches.ts', { './certificates': { issueCertificate: async () => {} }, './schedule': schedule, './store': store });
     const client = adminClient(db, { rpc: jobRpc(db) });

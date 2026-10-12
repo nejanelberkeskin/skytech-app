@@ -17,6 +17,7 @@ function setup(db, { providerResult = { ok: true, refundId: 'fake', method: 'ref
     '@/lib/payments': { getProviderByName: (name) => (name === 'mock' ? provider : null) },
     '@/lib/refunds/service': service,
     './duplicates': duplicates,
+    './withdrawal-period': load('lib/orders/withdrawal-period.ts'),
     './store': { db: () => { throw new Error('varsayılan istemci kullanılmamalı'); }, transitionOrder: async () => null, addOrderEvent: async () => {} },
   });
   return { api, client: restClient(db, { rpc: rpcHook }), get calls() { return calls; } };

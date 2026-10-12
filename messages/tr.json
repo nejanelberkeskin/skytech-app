@@ -2131,6 +2131,7 @@
       "tooLong": "Metin çok uzun.",
       "not_found": "Bu sipariş numarası ile e-posta adresi eşleşmedi. Bilgileri sipariş teyidi e-postanızdan kontrol edin.",
       "not_eligible": "Başvurunuz bu otomatik akışta sonuçlandırılamadı. Cayma veya diğer yasal haklarınıza ilişkin bildiriminizi {email} adresine iletebilirsiniz. Bu mesaj hakkınızın bulunmadığına ilişkin bir karar değildir.",
+      "recorded_as_claim": "Bu sipariş için olağan 14 günlük cayma süresi dolmuş görünüyor. Bildiriminiz reddedilmedi: kaydedildi ve ekibimiz inceleyecek. Ayıplı, geç ya da hiç ifa edilmeyen hizmete ilişkin haklarınız ve sürenin uzadığı durumlar bu incelemede değerlendirilir. Bu mesaj hakkınızın bulunmadığına ilişkin bir karar değildir. Ayrıntı eklemek isterseniz {email} adresine yazabilirsiniz.",
       "already_requested": "Bu sipariş için cayma bildirimi daha önce alınmış; iade süreci sürüyor.",
       "rate_limited": "Kısa sürede çok fazla deneme yapıldı. Lütfen biraz sonra yeniden deneyin.",
       "closed": "Çevrim içi cayma formu şu anda kapalı. Cayma bildiriminizi {email} adresine yazabilirsiniz.",

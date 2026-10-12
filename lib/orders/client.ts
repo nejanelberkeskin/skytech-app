@@ -106,6 +106,7 @@ export type WithdrawalErrorCode =
   | "not_eligible" //       cayma süresi dolmuş ya da sipariş bu aşamada caymaya uygun değil
   | "already_requested" //  bu sipariş için cayma bildirimi zaten alınmış; iade süreci sürüyor
   | "already_refunded" //   bu siparişin bedeli zaten iade edilmiş
+  | "recorded_as_claim" //  olağan süre dolmuş; bildirim süre sonrası başvuru olarak kaydedildi (yönetim inceler)
   | "rate_limited"
   | "closed"
   | "generic";
@@ -127,6 +128,7 @@ const WITHDRAWAL_KNOWN: readonly WithdrawalErrorCode[] = [
   "not_eligible",
   "already_requested",
   "already_refunded",
+  "recorded_as_claim",
   "rate_limited",
   "closed",
 ];

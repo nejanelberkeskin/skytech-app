@@ -5,7 +5,7 @@ import { buildPageMetadata } from "@/lib/seo";
 import { isDraftLegalVersion } from "@/lib/legal/version";
 
 const PATH = "/mesafeli-satis-sozlesmesi";
-const TITLE = "Mesafeli Satış Sözleşmesi";
+const TITLE = "Mesafeli Hizmet Sözleşmesi";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;

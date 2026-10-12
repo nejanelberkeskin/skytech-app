@@ -11,16 +11,40 @@
  */
 
 export const PENDING_CLAIM_KEY = "skytech_pending_claim";
+/** Bekleyen eşleştirme kaydının azami ömrü: 7 gün. Eşleşme (ya da kalıcı ret) olunca hemen silinir. */
+export const PENDING_CLAIM_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000;
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 export function isRequestId(v: unknown): v is string {
   return typeof v === "string" && UUID_RE.test(v);
 }
 
+/** Kayıt biçimi: `{"id":"<uuid>","t":<kayıt anı, ms>}`. */
+export function serializePendingClaim(requestId: string, now: number = Date.now()): string {
+  return JSON.stringify({ id: requestId, t: now });
+}
+
+/**
+ * Saklanan değeri çözer. Süresi dolmuş / bozuk kayıt → `expired` (silinmeli). Tarihsiz eski biçim (yalın UUID) →
+ * `legacy`: bugünden başlayan 7 günlük ömürle yeniden yazılır (sınırsız kalmaz).
+ */
+export function parsePendingClaim(raw: string | null, now: number = Date.now()): { id: string; legacy?: true } | { expired: true } | null {
+  if (!raw) return null;
+  if (isRequestId(raw)) return { id: raw, legacy: true };
+  try {
+    const v = JSON.parse(raw) as { id?: unknown; t?: unknown };
+    if (!isRequestId(v?.id) || typeof v.t !== "number" || !Number.isFinite(v.t)) return { expired: true };
+    if (v.t > now + 60_000 || now - v.t >= PENDING_CLAIM_MAX_AGE_MS) return { expired: true };
+    return { id: v.id };
+  } catch {
+    return { expired: true };
+  }
+}
+
 export function savePendingClaim(requestId: string): void {
   if (!isRequestId(requestId)) return;
   try {
-    localStorage.setItem(PENDING_CLAIM_KEY, requestId);
+    localStorage.setItem(PENDING_CLAIM_KEY, serializePendingClaim(requestId));
   } catch {
     // depolama yoksa sessiz geç — kullanıcı talebi yine de e-postasında görür
   }
@@ -28,8 +52,14 @@ export function savePendingClaim(requestId: string): void {
 
 export function readPendingClaim(): string | null {
   try {
-    const v = localStorage.getItem(PENDING_CLAIM_KEY);
-    return isRequestId(v) ? v : null;
+    const parsed = parsePendingClaim(localStorage.getItem(PENDING_CLAIM_KEY));
+    if (!parsed) return null;
+    if ("expired" in parsed) {
+      localStorage.removeItem(PENDING_CLAIM_KEY);
+      return null;
+    }
+    if (parsed.legacy) localStorage.setItem(PENDING_CLAIM_KEY, serializePendingClaim(parsed.id));
+    return parsed.id;
   } catch {
     return null;
   }

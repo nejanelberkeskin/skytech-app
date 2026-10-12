@@ -5,6 +5,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { supabase } from "@/lib/supabase/browser";
 import type { OrderStatus } from "@/lib/orders/types";
+import { withinWithdrawalPeriod } from "@/lib/orders/withdrawal-period";
 import { formatCount, formatTry } from "@/lib/pricing";
 import { intlLocale, uiLocale } from "@/lib/utils/locale";
 
@@ -137,7 +138,7 @@ export default function SiparislerPage() {
           {rows.map((r) => {
             const place = [r.site_snapshot.district, r.site_snapshot.province].filter(Boolean).join(", ");
             const releasedOn = r.released_at ? (r.batch?.released_on ?? r.released_at) : null;
-            const canWithdraw = r.status === "paid" && r.withdrawal_deadline !== null && loadedAt <= new Date(r.withdrawal_deadline).getTime();
+            const canWithdraw = r.status === "paid" && withinWithdrawalPeriod(r.withdrawal_deadline, new Date(loadedAt));
             const video = r.batch?.video_published_at ? r.batch.video_url : null;
             const interrupted = r.status === "withdrawal_requested" || r.status === "cancelled_by_seller" || r.status === "refunded";
             return (

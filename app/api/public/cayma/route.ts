@@ -11,6 +11,8 @@ import { recordWithdrawal, refundDueDay, sendWithdrawalEmails } from "@/lib/orde
  *
  * Yanıt: 200 { ok, orderNo, receivedAt, refundDueOn }
  *        400 { error:"validation", fields } · 404 { error:"not_found" }
+ *        202 { ok:false, error:"recorded_as_claim", orderNo, receivedAt } — olağan cayma süresi dolmuş; bildirim
+ *            reddedilmez, süre sonrası başvuru (ayıplı/geç ifa, uzayan süre) olarak kaydedilir, yönetim inceler
  *        409 { error:"not_eligible"|"already_requested"|"already_refunded" } · 429 · 503 { error:"closed" }
  *
  * Bildirim ulaştığı an geçerlidir: sipariş `withdrawal_requested` olur, bekleyen iade kaydı
@@ -68,6 +70,9 @@ export async function POST(req: NextRequest) {
     ipHash: hashIp(ip),
     userAgent: sanitizeUserAgent(req.headers.get("user-agent")),
   });
+  if (!result.ok && result.error === "recorded_as_claim") {
+    return NextResponse.json({ ok: false, error: "recorded_as_claim", orderNo: result.order.order_no, receivedAt: result.receivedAt }, { status: 202 });
+  }
   if (!result.ok) {
     return NextResponse.json({ error: result.error }, { status: result.error === "not_found" ? 404 : 409 });
   }

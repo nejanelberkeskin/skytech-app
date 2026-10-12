@@ -16,6 +16,7 @@ import { getProviderByName } from "@/lib/payments";
 import { createRefundService, type ActionOutcome as RefundActionOutcome, type ServiceError as RefundServiceError } from "@/lib/refunds/service";
 import { addOrderEvent, db, transitionOrder } from "./store";
 import type { OrderActor, OrderStatus, ReleaseOrderRow } from "./types";
+import { withinWithdrawalPeriod } from "./withdrawal-period";
 
 export type AdminActionError =
   | "not_found"
@@ -193,13 +194,19 @@ export async function reserveCapacityNow(orderId: string, adminUserId: string, s
 
 /* ── Cayma süresi dolan siparişler ────────────────────────────────────────── */
 
-/** `paid` ve cayma son anı geçmiş siparişleri `confirmed` yapar. Zamanlanmış iş (Faz 6) ve yönetim listesi çağırır. */
-export async function confirmDueOrders(supabase: SupabaseClient = db(), limit = 100): Promise<number> {
-  const now = new Date().toISOString();
-  const { data, error } = await supabase.from("release_orders").select("id").eq("status", "paid").lt("withdrawal_deadline", now).limit(limit);
+/**
+ * `paid` ve cayma son anı geçmiş siparişleri `confirmed` yapar. Zamanlanmış iş (Faz 6) ve yönetim listesi çağırır.
+ * Son gün tatile denk geldiyse (withdrawal-period.ts) süre izleyen iş gününe uzar; o siparişler henüz onaylanmaz,
+ * yoksa uzayan sürede gelen cayma bildirimi "paid değil" diye reddedilirdi. En eski son an önce işlenir.
+ */
+export async function confirmDueOrders(supabase: SupabaseClient = db(), limit = 100, at: Date = new Date()): Promise<number> {
+  const now = at.toISOString();
+  const { data, error } = await supabase.from("release_orders").select("id, withdrawal_deadline").eq("status", "paid").lt("withdrawal_deadline", now)
+    .order("withdrawal_deadline", { ascending: true }).limit(limit);
   if (error || !data) return 0;
   let confirmed = 0;
   for (const row of data) {
+    if (withinWithdrawalPeriod(row.withdrawal_deadline as string | null, at)) continue;
     const done = await transitionOrder(supabase, row.id as string, ["paid"], "confirmed", { confirmed_at: now });
     if (!done) continue;
     await addOrderEvent(supabase, done.id, "status_changed", "system", { from: "paid", to: "confirmed", reason: "withdrawal_period_ended" });

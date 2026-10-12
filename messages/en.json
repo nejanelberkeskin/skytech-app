@@ -2115,6 +2115,7 @@
       "tooLong": "The text is too long.",
       "not_found": "This order number and email address did not match. Check the details in your order confirmation email.",
       "not_eligible": "Your request could not be completed automatically. Send your withdrawal or other legal claim to {email}. This message is not a decision that you have no legal right.",
+      "recorded_as_claim": "The regular 14-day withdrawal period for this order appears to have ended. Your notice was not rejected: it has been recorded and our team will review it. Your rights regarding defective, late or non-performed services and any extended period are considered in this review. This message is not a decision that you have no legal right. To add details, write to {email}.",
       "already_requested": "A withdrawal notice for this order has already been received; the refund process is under way.",
       "rate_limited": "Too many attempts in a short time. Please try again later.",
       "closed": "The online withdrawal form is currently closed. You can send your withdrawal notice to {email}.",

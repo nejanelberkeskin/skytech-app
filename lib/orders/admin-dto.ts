@@ -178,6 +178,7 @@ const EVENT_FIELDS: Record<string, Fields> = {
   status_changed: { order: ["from", "to", "reason", "note", "capacityReserved", "batchId"] },
   withdrawal_requested: { order: ["channel", "refundDueOn"], contact: ["note"] },
   withdrawal_cancelled: { order: ["reason"] },
+  post_period_claim: { order: ["channel", "status", "withdrawalDeadline", "receivedAt"], contact: ["note"] },
   certificate_cancelled: { order: ["reason"] },
   refund_started: REFUND_FIELDS,
   refund_attempt_result: REFUND_FIELDS,

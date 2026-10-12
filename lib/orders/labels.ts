@@ -55,7 +55,8 @@ export const INVOICE_STATUS_LABELS: Record<string, string> = { pending: "Kesilec
 export const CONSENT_LABELS: Record<string, string> = {
   preInfo: "Ön Bilgilendirme Formu teyidi",
   contract: "Mesafeli Hizmet Sözleşmesi kabulü",
-  kvkkRead: "KVKK aydınlatma metni okundu",
+  kvkkRead: "KVKK aydınlatma metni okundu (eski kayıt)",
+  kvkkNotice: "KVKK aydınlatması gösterildi (rıza değil)",
   marketing: "Ticari ileti izni (isteğe bağlı)",
   certificatePublication: "Kendi adını sertifikada yayımlama izni (isteğe bağlı)",
   corporateAuthority: "Kurum adına yetki beyanı",

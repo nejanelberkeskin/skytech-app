@@ -44,7 +44,10 @@ export async function isOrderPrepared(
     const snapshot = oneEvent("documents_generated");
     if (!consentEvent || !record(consentEvent.consents) || !snapshot || snapshot.version !== order.documents_version
       || !Array.isArray(snapshot.documents) || snapshot.documents.length !== DOCUMENT_KINDS.length) return false;
-    const required = ["preInfo", "contract", "kvkkRead", ...(order.buyer_type === "corporate" ? ["corporateAuthority"] : [])];
+    const required = ["preInfo", "contract", ...(order.buyer_type === "corporate" ? ["corporateAuthority"] : [])];
+    // Aydınlatma bildirimi rıza değildir ama sipariş ekindeki KVKK kopyasıyla aynı sürümde gösterilmiş olmalı.
+    const notice = (order.consents as Record<string, unknown>).kvkkNotice;
+    if (!record(notice) || notice.version !== order.documents_version || typeof notice.shownAt !== "string") return false;
     for (const key of required) {
       const consent = (order.consents as Record<string, unknown>)[key];
       const saved = consentEvent.consents[key];

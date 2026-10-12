@@ -1061,7 +1061,8 @@
         "label": "Mesajınız",
         "placeholder": "Sorunuzu, ihtiyacınızı veya talebinizi detaylıca yazın..."
       },
-      "consent": "Kişisel verilerime ilişkin aydınlatma metnini okudum.",
+      "consent": "Mesajımla ilgili olarak belirttiğim iletişim kanalı üzerinden benimle iletişime geçilmesini istiyorum.",
+      "privacyNotice": "Bu formdaki bilgileriniz mesajınızı değerlendirmek ve size yanıt vermek için işlenir. Ayrıntılar <kvkk>KVKK Aydınlatma Metni</kvkk>'nde.",
       "submit": "Mesajı Gönder",
       "submitting": "Gönderiliyor...",
       "success": {
@@ -1215,7 +1216,8 @@
         "messagePlaceholder": "Eklemek istediğiniz bir şey var mı?"
       },
       "prefilled": "İletişim bilgileriniz hesabınızdan dolduruldu; dilerseniz değiştirebilirsiniz.",
-      "consent": "<kvkk>KVKK Aydınlatma Metni</kvkk>'ni okudum; talebimle ilgili benimle iletişime geçilmesini istiyorum.",
+      "consent": "Talebimle ilgili olarak belirttiğim iletişim kanalı üzerinden benimle iletişime geçilmesini istiyorum.",
+      "privacyNotice": "Bu formdaki bilgileriniz talebinizi değerlendirmek ve size yanıt vermek için işlenir. Ayrıntılar <kvkk>KVKK Aydınlatma Metni</kvkk>'nde.",
       "noPayment": "Bu formla ödeme alınmaz. Ayrıntılar ve takvim, ekibimizin dönüşünde netleşir.",
       "submit": "Talebi Gönder",
       "submitting": "Gönderiliyor…",
@@ -1254,7 +1256,7 @@
         "emailInvalid": "Geçerli bir e-posta adresi girin.",
         "phoneInvalid": "Geçerli bir telefon numarası girin (örn. 5XX XXX XX XX).",
         "contactRequired": "Telefon veya e-postadan en az birini girin.",
-        "consentRequired": "Devam etmek için onay kutusunu işaretleyin.",
+        "consentRequired": "Talebinize dönebilmemiz için iletişim isteğini işaretleyin.",
         "quantityInvalid": "Adet tam sayı olmalı.",
         "quantityMin": "En az {min} tohum topu seçebilirsiniz.",
         "quantityMax": "Tek talepte en çok {max} tohum topu seçebilirsiniz; daha fazlası için bize yazın.",
@@ -1271,7 +1273,8 @@
         "landInvalid": "Seçilen saha şu anda katılıma kapalı; başka bir saha seçin.",
         "certificateNameShort": "Sertifikadaki ad en az {min} karakter olmalı.",
         "certificateNameLong": "Sertifikadaki ad en çok {max} karakter olabilir.",
-        "certificateNameInvalid": "Sertifikadaki ad yalnız harf, rakam ve temel noktalama işaretlerinden oluşabilir."
+        "certificateNameInvalid": "Sertifikadaki ad yalnız harf, rakam ve temel noktalama işaretlerinden oluşabilir.",
+        "certificateNameThirdParty": "Sertifikaya yalnız kendi adınız, kurum unvanınız ya da adsız seçenek yazılabilir."
       }
     },
     "land": {
@@ -2464,7 +2467,14 @@
       "fallback": "Boş bırakırsanız adınız ve soyadınız yazılır.",
       "placeholder": "Adınız Soyadınız",
       "preview": "Katılım Sertifikası — {name}",
-      "delivery": "Sertifika, tohum topu bırakma tamamlandığında e-postayla gönderilir."
+      "delivery": "Sertifika, tohum topu bırakma tamamlandığında e-postayla gönderilir.",
+      "mode": {
+        "own": "Kendi adım ve soyadım (alıcı bilgilerinde yazacağım ad)",
+        "company": "Kurum unvanı (kurumsal fatura seçilirse)",
+        "anonymous": "Adsız sertifika"
+      },
+      "thirdPartyNote": "Başka bir kişinin adını sertifikaya yazamıyoruz; hediye için adsız sertifika seçebilirsiniz.",
+      "companyPlaceholder": "Kurum Unvanı"
     },
     "buyer": {
       "title": "Alıcı bilgileri",
@@ -2520,12 +2530,12 @@
       "title": "Belgeler ve beyanlar",
       "preInfo": "Ön Bilgilendirme Formu'nu okudum, içeriğini teyit ediyorum.",
       "contract": "Mesafeli Hizmet Sözleşmesi'ni okudum ve kabul ediyorum.",
-      "kvkkRead": "<kvkk>KVKK Aydınlatma Metni</kvkk>'ni okudum, bilgi edindim.",
       "corporateAuthority": "Bu siparişi, fatura bilgilerini verdiğim kurum adına vermeye yetkili olduğumu beyan ederim.",
       "marketing": "Skytech Green’in kampanya ve tanıtımlar için e-posta adresimi işlemesine ve bana e-postayla ticari ileti göndermesine isteğe bağlı olarak izin veriyorum. İznimi info@skytechgreen.com üzerinden veya iletideki ret bağlantısından ücretsiz geri alabilirim.",
       "certificatePublication": "Sertifikada bana ait adın, saha, adet ve tarih bilgileriyle birlikte bağlantıyı bilen kişilere açık sayfada yayımlanmasına açık rıza veriyorum. İsteğe bağlıdır; sipariş sayfasından veya info@skytechgreen.com üzerinden ücretsiz geri alabilirim.",
-      "thirdPartyName": "Başka bir kişinin adı, o kişi doğrudan bilgilendirilip yayın izni alınana kadar paylaşım sayfasında gizlenir."
+      "thirdPartyName": "Yayın izni yalnız sertifikada kendi adınız yazıyorsa verilebilir."
     },
+    "privacyNotice": "Bu formdaki bilgileriniz siparişinizi oluşturmak, sözleşmeyi kurmak ve hizmeti sunmak için işlenir. Ayrıntılar <kvkk>KVKK Aydınlatma Metni</kvkk>'nde.",
     "documents": {
       "title": "Sipariş belgeleri",
       "read": "Oku",
@@ -2575,7 +2585,6 @@
       "kepInvalid": "Geçerli bir KEP adresi girin.",
       "preInfoRequired": "Devam etmek için Ön Bilgilendirme Formu'nu teyit edin.",
       "contractRequired": "Devam etmek için sözleşmeyi kabul edin.",
-      "kvkkRequired": "Devam etmek için aydınlatma metnini okuduğunuzu belirtin.",
       "corporateAuthorityRequired": "Devam etmek için yetki beyanını işaretleyin.",
       "certificatePublicationSelfOnly": "Yayın iznini yalnız kendi adınız için verebilirsiniz.",
       "quantityMin": "En az {min} tohum topu seçebilirsiniz.",
@@ -2583,7 +2592,9 @@
       "quantityInvalid": "Adet tam sayı olmalı.",
       "certificateNameShort": "Sertifikadaki ad en az {min} karakter olmalı.",
       "certificateNameLong": "Sertifikadaki ad en çok {max} karakter olabilir.",
-      "certificateNameInvalid": "Sertifikadaki ad yalnız harf, rakam ve temel noktalama işaretlerinden oluşabilir."
+      "certificateNameInvalid": "Sertifikadaki ad yalnız harf, rakam ve temel noktalama işaretlerinden oluşabilir.",
+      "certificateNameThirdParty": "Sertifikaya yalnız kendi adınız, kurum unvanınız ya da adsız seçenek yazılabilir.",
+      "certificateCompanyRequiresCorporate": "Kurum unvanı yalnız kurumsal fatura bilgisiyle seçilebilir."
     },
     "pausedNotice": "Çevrim içi sipariş alımına geçici olarak ara verildi. Bu sayfadan katılım talebinizi iletebilirsiniz; ödeme alınmaz, ekibimiz sizinle iletişime geçer.",
     "preorder": {

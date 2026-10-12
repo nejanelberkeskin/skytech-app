@@ -8,6 +8,7 @@
  * Sunucu ek olarak: honeypot, doldurma süresi, rate limit, katalog/arazi
  * varlığı, IP hash — bkz. app/api/public/talep/route.ts
  */
+import { ANONYMOUS_CERTIFICATE_NAME, isCompanyCertificateName } from "@/lib/certificates/publication";
 import { z } from "zod";
 import { TR_IL_KODLARI } from "@/lib/tr-iller";
 import { QTY_HARD_LIMITS, RELEASE_QTY } from "@/lib/pricing";
@@ -222,6 +223,13 @@ export const requestPayloadSchema = z.object({
   sourcePath: z.string().max(300).optional(),
   /** Idempotency: form açılışında üretilir; ağ tekrarı aynı token'ı yollar → tek kayıt. */
   clientToken: z.uuid().optional(),
+}).superRefine((v, ctx) => {
+  // Talepte de üçüncü kişi adı alınmaz: sertifika adı ya iletişim kurulan kişinin kendi adı ya da adsız.
+  if (v.details.type !== "open_land_seeding" || !v.details.certificateName) return;
+  const name = v.details.certificateName;
+  if (name !== ANONYMOUS_CERTIFICATE_NAME && !isCompanyCertificateName(name, v.contact.contactName)) {
+    ctx.addIssue({ code: "custom", path: ["details", "certificateName"], message: "certificateNameThirdParty" });
+  }
 });
 
 export type ContactInput = z.input<typeof contactSchema>;

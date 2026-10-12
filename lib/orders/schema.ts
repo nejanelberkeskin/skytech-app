@@ -6,7 +6,7 @@
  * tutar göndermez, gönderse de okunmaz — sunucu lib/pricing.ts ile hesaplar.
  */
 import { z } from "zod";
-import { isOwnCertificateName } from "@/lib/certificates/publication";
+import { ANONYMOUS_CERTIFICATE_NAME, isCompanyCertificateName, isOwnCertificateName } from "@/lib/certificates/publication";
 import { TR_IL_KODLARI } from "@/lib/tr-iller";
 import { QTY_HARD_LIMITS } from "@/lib/pricing";
 import { certificateNameSchema, cleanText, normalizePhone, LOCALES } from "@/lib/requests/schema";
@@ -123,14 +123,14 @@ export const invoiceSchema = z.discriminatedUnion("type", [individualInvoiceSche
 /* ── Onaylar ──────────────────────────────────────────────────────────────── */
 
 /**
- * Kutular arayüzde AYRI ve işaretsiz gelir. `kvkkRead` rıza değil, aydınlatma
- * metninin okunduğu beyanıdır. `marketing` isteğe bağlıdır; satışın şartı
- * yapılamaz. `corporateAuthority` yalnız kurumsal faturada zorunludur.
+ * Kutular arayüzde AYRI ve işaretsiz gelir. KVKK aydınlatması kutu değildir (bildirim olarak gösterilir);
+ * eski istemcilerin gönderdiği `kvkkRead` kabul edilir ama kaydedilmez ve şart değildir. `marketing`
+ * isteğe bağlıdır, satışın şartı yapılamaz. `corporateAuthority` yalnız kurumsal faturada zorunludur.
  */
 export const consentsSchema = z.object({
   preInfo: z.literal(true, "preInfoRequired"),
   contract: z.literal(true, "contractRequired"),
-  kvkkRead: z.literal(true, "kvkkRequired"),
+  kvkkRead: z.boolean().optional(),
   marketing: z.boolean().default(false),
   certificatePublication: z.boolean().default(false),
   corporateAuthority: z.boolean().default(false),
@@ -147,7 +147,13 @@ const orderFields = z.object({
     .int("quantityInvalid")
     .min(QTY_HARD_LIMITS.min, "quantityMin")
     .max(QTY_HARD_LIMITS.max, "quantityMax"),
-  /** Boşsa sertifikaya alıcının adı soyadı yazılır (sunucuda doldurulur). */
+  /**
+   * Sertifikadaki ad: alıcının kendi adı (varsayılan), kurumsal faturada kurum unvanı ya da adsız. Başka bir
+   * kişinin adı ALINMAZ: KVKK aydınlatma metni 2026-10.5 — satın alanın "izin aldım" beyanı üçüncü kişi için işleme
+   * şartı değildir; uygulanabilir şart yoksa sertifika adsız hazırlanır, çocuk adı toplanmaz.
+   */
+  certificateMode: z.enum(["own", "company", "anonymous"]).default("own"),
+  /** Eski istemciler: boşsa kipe göre doldurulur; doluysa yalnız alıcının kendi adı ya da kurum unvanı olabilir. */
   certificateName: certificateNameSchema,
   buyer: buyerSchema,
   invoice: invoiceSchema,
@@ -163,7 +169,20 @@ const orderFields = z.object({
   sourcePath: z.string().max(300).optional(),
 });
 
+/** Üçüncü kişi adı yok: ad ya alıcının kendisi, ya kurumsal alıcının unvanı ya da adsız. */
+function certificateNameRule(v: Pick<OrderPayload, "certificateMode" | "certificateName" | "buyer" | "invoice">, ctx: z.RefinementCtx) {
+  if (v.certificateMode === "company" && v.invoice.type !== "corporate") {
+    ctx.addIssue({ code: "custom", path: ["certificateMode"], message: "certificateCompanyRequiresCorporate" });
+  }
+  const name = v.certificateName;
+  if (name && v.certificateMode === "own" && !isOwnCertificateName(name, v.buyer)
+      && !(v.invoice.type === "corporate" && isCompanyCertificateName(name, v.invoice.companyTitle))) {
+    ctx.addIssue({ code: "custom", path: ["certificateName"], message: "certificateNameThirdParty" });
+  }
+}
+
 export const orderPayloadSchema = orderFields.superRefine((v, ctx) => {
+  certificateNameRule(v, ctx);
   if (v.consents.certificatePublication && !isOwnCertificateName(resolveCertificateName(v), v.buyer)) {
     ctx.addIssue({ code: "custom", path: ["consents", "certificatePublication"], message: "certificatePublicationSelfOnly" });
   }
@@ -176,11 +195,12 @@ export const orderPayloadSchema = orderFields.superRefine((v, ctx) => {
 export const orderPreviewSchema = orderFields.pick({
   landId: true,
   quantity: true,
+  certificateMode: true,
   certificateName: true,
   buyer: true,
   invoice: true,
   locale: true,
-});
+}).superRefine(certificateNameRule);
 
 export type OrderPayloadInput = z.input<typeof orderPayloadSchema>;
 export type OrderPayload = z.output<typeof orderPayloadSchema>;
@@ -191,7 +211,11 @@ export type OrderPreviewPayload = z.output<typeof orderPreviewSchema>;
  * sertifika karakter kümesine ve 60 karakter sınırına indirgenir (alıcı adında
  * bu küme dışı bir işaret varsa atılır).
  */
-export function resolveCertificateName(payload: Pick<OrderPayload, "certificateName" | "buyer">): string {
+export function resolveCertificateName(
+  payload: Pick<OrderPayload, "certificateName" | "buyer"> & Partial<Pick<OrderPayload, "certificateMode" | "invoice">>,
+): string {
+  if (payload.certificateMode === "anonymous") return ANONYMOUS_CERTIFICATE_NAME;
+  if (payload.certificateMode === "company" && payload.invoice?.type === "corporate") return cleanText(payload.invoice.companyTitle).slice(0, 60).trim();
   if (payload.certificateName) return payload.certificateName;
   const fallback = [...`${payload.buyer.firstName} ${payload.buyer.lastName}`]
     .filter((ch) => /[\p{L}\p{M}\p{N} .,'’&()/+-]/u.test(ch))

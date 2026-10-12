@@ -219,11 +219,15 @@ export default function InfoForm() {
         </div>
 
         <div className="pt-2">
+          {/* KVKK aydınlatması bildirim olarak; kutu yalnız iletişim isteğidir (rıza kutusu değil). */}
+          <p className="mb-3 text-xs leading-relaxed text-[#6b8f6b]">
+            {t.rich("form.privacyNotice", {
+              kvkk: (chunks) => <Link href="/kvkk" target="_blank" rel="noopener noreferrer" className="underline underline-offset-4">{chunks}</Link>,
+            })}
+          </p>
           <div className="flex items-start gap-3 text-xs text-[#6b8f6b]">
             <input id={noticeId} name="noticeRead" type="checkbox" required disabled={status === "submitting"} className="mt-1 accent-[#1B6B3A]" onChange={() => clearProblem("noticeRead")} {...fieldProps("noticeRead")} />
-            <div><label htmlFor={noticeId} className="cursor-pointer">{t("form.consent")}</label>{" "}
-              <Link href="/kvkk" target="_blank" rel="noopener noreferrer" className="underline underline-offset-4">{t("form.privacyLink")}</Link>
-            </div>
+            <div><label htmlFor={noticeId} className="cursor-pointer">{t("form.consent")}</label></div>
           </div>
           {problemFor("noticeRead") && <p id={errorId("noticeRead")} className="mt-1.5 text-xs text-[#b91c1c]">{problemFor("noticeRead")!.text}</p>}
         </div>

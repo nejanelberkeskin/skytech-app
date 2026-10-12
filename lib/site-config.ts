@@ -41,6 +41,13 @@ import { OWN_LAND_HREF } from "@/lib/sites/links";
 export const TRANSACTIONS_ENABLED =
   process.env.NEXT_PUBLIC_TRANSACTIONS_ENABLED === "true";
 
+/**
+ * Sipariş sihirbazındaki isteğe bağlı ticari ileti (e-posta pazarlama) izni. İYS kaydı ve kanal bazlı onay/ret
+ * eşitlemesi kurulmadan açılmaz (6563 / Ticari İletişim Yönetmeliği m.7: İYS dışı onay 3 iş günü içinde kaydedilmezse
+ * geçersiz). Kapalıyken kutu gösterilmez ve sunucu gelen izni kaydetmez. Varsayılan KAPALI.
+ */
+export const MARKETING_CONSENT_ENABLED = process.env.NEXT_PUBLIC_MARKETING_CONSENT_ENABLED === "true";
+
 export const REQUESTS_ENABLED =
   process.env.NEXT_PUBLIC_REQUESTS_ENABLED !== "false";
 

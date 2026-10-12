@@ -60,7 +60,7 @@ const cases = {
   kurumsal: {
     input: preview({
       quantity: 5000,
-      certificateName: "Örnek Lojistik A.Ş. Çalışanları",
+      certificateMode: "company",
       invoice: {
         type: "corporate",
         companyTitle: "Örnek Lojistik Anonim Şirketi",
@@ -182,7 +182,7 @@ for (const [name, c] of Object.entries(cases)) {
     assert.ok(!pre.includes("Ankara Mahkemeleri") && pre.includes("Tüketici Hakem Heyetine"));
     assert.ok(pre.includes("Örnek Lojistik Anonim Şirketi") && pre.includes("Siparişi veren yetkili") && pre.includes("50.000"));
     assert.ok(contract.includes("Tüketici olmayan alıcıya da") && contract.includes("7.5."));
-    assert.ok(pre.includes("Örnek Lojistik A.Ş. Çalışanları"));
+    assert.ok(pre.includes("Örnek Lojistik Anonim Şirketi"), "kurum unvanı sertifika adı");
   }
   if (name === "sonraki-sezon") {
     assert.ok(pre.includes("2027-2028 sezonuna yazılmıştır") && pre.includes("31 Mart 2028"));
@@ -209,7 +209,7 @@ for (const [name, c] of Object.entries(cases)) {
 // kaçışlama: kullanıcı girdisi HTML'e ham giremez
 {
   const evil = preview({
-    certificateName: "Ali & Veli",
+    certificateName: "",
     buyer: { firstName: "Ali<b>", lastName: 'Veli"><img src=x>', email: "a@example.com", phone: "05320000000" },
     invoice: { type: "individual", address: { ...address, line: "Sokak <script>alert(1)</script> No: 1" } },
   });

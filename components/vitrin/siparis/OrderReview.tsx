@@ -7,6 +7,7 @@ import { formatCount, formatTry, type PriceLocale } from "@/lib/pricing";
 import { TR_ILLER_ALFABETIK } from "@/lib/tr-iller";
 import type { OrderPreview, OrderDocumentPreview } from "@/lib/orders/client";
 import { formatLongDay } from "@/lib/orders/dates";
+import { MARKETING_CONSENT_ENABLED } from "@/lib/site-config";
 import { downloadDocument } from "./DocumentDialog";
 import type { Buyer, Consents, InvoiceValues, WizardSite } from "./types";
 
@@ -136,7 +137,6 @@ export default function OrderReview({
   const requiredKeys: (keyof Consents)[] = [
     "preInfo",
     "contract",
-    "kvkkRead",
     ...(invoice.type === "corporate" ? ["corporateAuthority" as const] : []),
   ];
   function checkbox(key: keyof Consents) {
@@ -155,22 +155,7 @@ export default function OrderReview({
             aria-describedby={error ? `consent-${key}-error` : undefined}
             className="mt-1 h-4 w-4 shrink-0 accent-[#1B6B3A]"
           />
-          <span>
-            {key === "kvkkRead"
-              ? t.rich("consents.kvkkRead", {
-                  kvkk: (chunks) => (
-                    <Link
-                      href="/kvkk"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="font-semibold text-[#1B6B3A] underline underline-offset-4"
-                    >
-                      {chunks}
-                    </Link>
-                  ),
-                })
-              : t(`consents.${key}`)}
-          </span>
+          <span>{t(`consents.${key}`)}</span>
         </label>
         {error && (
           <p
@@ -269,15 +254,34 @@ export default function OrderReview({
       </section>
       <section className="vitrin-card p-6 lg:p-8">
         <h3 className="mb-3 text-lg font-bold">{t("consents.title")}</h3>
+        {/* KVKK aydınlatması bir onay kutusu değildir; veri alınırken bildirim olarak gösterilir. */}
+        <PrivacyNotice />
         {requiredKeys.map(checkbox)}
         <div className="mt-5 rounded-2xl border border-[#1B6B3A]/10 bg-[#f8faf5] px-4 py-3">
           <p className="text-xs font-semibold uppercase tracking-wider text-[#3d5a3d]">
             {t("optional")}
           </p>
           {isOwnCertificateName(certificateName, buyer) ? checkbox("certificatePublication") : <p className="py-3 text-sm">{t("consents.thirdPartyName")}</p>}
-          {checkbox("marketing")}
+          {/* İYS kurulmadan ticari ileti izni alınmaz (MARKETING_CONSENT_ENABLED). */}
+          {MARKETING_CONSENT_ENABLED && checkbox("marketing")}
         </div>
       </section>
     </div>
+  );
+}
+
+/** Sipariş verisi alınırken gösterilen KVKK bildirimi (rıza değil); alıcı adımında ve onay bölümünde. */
+export function PrivacyNotice() {
+  const t = useTranslations("orderWizard");
+  return (
+    <p className="text-xs leading-relaxed text-[#3d5a3d]">
+      {t.rich("privacyNotice", {
+        kvkk: (chunks) => (
+          <Link href="/kvkk" target="_blank" rel="noopener noreferrer" className="font-semibold text-[#1B6B3A] underline underline-offset-4">
+            {chunks}
+          </Link>
+        ),
+      })}
+    </p>
   );
 }

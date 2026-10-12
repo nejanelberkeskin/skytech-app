@@ -21,8 +21,8 @@ import {
   orderPreviewSchema,
   resolveCertificateName,
 } from "@/lib/orders/schema";
+import { ANONYMOUS_CERTIFICATE_NAME } from "@/lib/certificates/publication";
 import {
-  certificateNameSchema,
   CERTIFICATE_NAME,
   contactSchema,
   issuesToFieldErrors,
@@ -50,7 +50,7 @@ import {
   EMPTY_CONTACT,
 } from "@/components/vitrin/talep/useRequestForm";
 import BuyerInvoiceFields from "./BuyerInvoiceFields";
-import OrderReview, { ReviewRows } from "./OrderReview";
+import OrderReview, { PrivacyNotice, ReviewRows } from "./OrderReview";
 import DocumentDialog from "./DocumentDialog";
 import { readPreviewResponse } from "./preview-response";
 import {
@@ -59,6 +59,7 @@ import {
   invoiceInput,
   errorStep,
   type Buyer,
+  type CertificateMode,
   type Consents,
   type WizardProps,
 } from "./types";
@@ -102,7 +103,10 @@ export default function OrderWizard({
   const [quantity, setQuantity] = useState<number | null>(() =>
     initialQuantity(pricing),
   );
-  const [certificateName, setCertificateName] = useState("");
+  // Sertifikadaki ad: kendi adı, kurum unvanı ya da adsız; başka bir kişinin adı alınmaz (KVKK 2026-10.5).
+  const [certificateMode, setCertificateMode] = useState<CertificateMode>("own");
+  // Siparişte sunucu kipe göre doldurur; talepte yalnız adsız seçimi metin olarak gider.
+  const certificateName = mode !== "order" && certificateMode === "anonymous" ? ANONYMOUS_CERTIFICATE_NAME : "";
   const [buyer, setBuyer] = useState<Buyer>({
     firstName: "",
     lastName: "",
@@ -226,13 +230,13 @@ export default function OrderWizard({
   };
   const errorFor = (path: string): string | null => {
     const alias =
-      path === "quantity" || path === "certificateName"
+      path === "quantity" || path === "certificateName" || path === "certificateMode"
         ? `details.${path}`
         : path;
     const key =
       errors[path] ?? request.fieldErrors[path] ?? request.fieldErrors[alias];
     if (!key) return null;
-    const params = key.startsWith("certificateName")
+    const params = key.startsWith("certificateName") || key.startsWith("certificateCompany")
       ? { min: CERTIFICATE_NAME.min, max: CERTIFICATE_NAME.max }
       : { min: pricing.minQuantity, max: pricing.maxQuantity };
     return t.has(`errors.${key}`)
@@ -251,12 +255,7 @@ export default function OrderWizard({
         const range = quantityRangeError(result.data, pricing);
         return range ? { quantity: range } : {};
       }
-      if (stage === 2) {
-        const result = certificateNameSchema.safeParse(certificateName);
-        return result.success
-          ? {}
-          : { certificateName: result.error.issues[0].message };
-      }
+      if (stage === 2) return {};
       const prefix = (fields: Record<string, string>, root: string) =>
         Object.fromEntries(
           Object.entries(fields).map(([key, value]) => [
@@ -289,7 +288,7 @@ export default function OrderWizard({
           : prefix(issuesToFieldErrors(i.error.issues), "invoice")),
       };
     },
-    [quantity, certificateName, mode, contact, locale, buyer, invoice, pricing],
+    [quantity, mode, contact, locale, buyer, invoice, pricing],
   );
 
   const showErrors = useCallback((fields: Record<string, string>) => {
@@ -304,6 +303,7 @@ export default function OrderWizard({
     const parsed = orderPreviewSchema.safeParse({
       landId: site.id,
       quantity,
+      certificateMode,
       certificateName,
       buyer,
       invoice: invoiceInput(invoice),
@@ -332,7 +332,7 @@ export default function OrderWizard({
     )
       showErrors(result.fields);
     else setFailure(result.error);
-  }, [site.id, quantity, certificateName, buyer, invoice, locale, showErrors]);
+  }, [site.id, quantity, certificateMode, certificateName, buyer, invoice, locale, showErrors]);
 
   const move = useCallback(
     (target: number, push = true) => {
@@ -447,6 +447,7 @@ export default function OrderWizard({
     const payload = {
       landId: site.id,
       quantity,
+      certificateMode,
       certificateName,
       buyer,
       invoice: invoiceInput(invoice),
@@ -497,11 +498,14 @@ export default function OrderWizard({
     : totalKurus(quantity, pricing);
   const showPrice = inOrderReview || PRICING_VISIBLE;
   const finalName =
-    certificateName.trim() ||
-    (mode === "order"
-      ? resolveCertificateName({ certificateName: undefined, buyer })
-      : contact.contactName.trim().slice(0, CERTIFICATE_NAME.max)) ||
-    t("certificate.placeholder");
+    (certificateMode === "anonymous"
+      ? ANONYMOUS_CERTIFICATE_NAME
+      : certificateMode === "company"
+        ? invoice.companyTitle.trim().slice(0, CERTIFICATE_NAME.max)
+        : mode === "order"
+          ? resolveCertificateName({ certificateName: undefined, buyer })
+          : contact.contactName.trim().slice(0, CERTIFICATE_NAME.max)) ||
+    t(certificateMode === "company" ? "certificate.companyPlaceholder" : "certificate.placeholder");
   const steps = [
     t("steps.quantity"),
     t("steps.certificate"),
@@ -760,43 +764,34 @@ export default function OrderWizard({
           )}
           {step === 2 && (
             <SectionCard step={2} title={t("certificate.title")}>
-              <Field
-                label={t("certificate.label")}
-                optional
-                error={errorFor("certificateName")}
-                hint={
-                  errorFor("certificateName")
-                    ? undefined
-                    : t("certificate.publicNote")
-                }
-              >
-                {(a) => (
-                  <input
-                    id={a.id}
-                    name="certificateName"
-                    maxLength={CERTIFICATE_NAME.max}
-                    value={certificateName}
-                    onChange={(e) => {
-                      setCertificateName(e.target.value);
-                      clear("certificateName");
-                      request.clearError("details.certificateName");
-                      invalidate();
-                    }}
-                    disabled={busy}
-                    aria-invalid={a.invalid}
-                    aria-describedby={a.describedBy}
-                    className={inputCls(a.invalid ? "x" : null)}
-                  />
+              <fieldset className="space-y-1" aria-describedby="ow-certificate-note">
+                <legend className="mb-2 text-sm font-semibold text-[#0e2519]">{t("certificate.label")}</legend>
+                {(mode === "order" ? (["own", "company", "anonymous"] as const) : (["own", "anonymous"] as const)).map((value) => (
+                  <label key={value} className="flex min-h-11 cursor-pointer items-start gap-3 py-2 text-sm leading-relaxed">
+                    <input
+                      type="radio"
+                      name="certificateMode"
+                      value={value}
+                      checked={certificateMode === value}
+                      onChange={() => {
+                        setCertificateMode(value);
+                        clear("certificateMode");
+                        clear("certificateName");
+                        request.clearError("details.certificateName");
+                        invalidate();
+                      }}
+                      disabled={busy}
+                      className="mt-1 h-4 w-4 shrink-0 accent-[#1B6B3A]"
+                    />
+                    <span>{t(`certificate.mode.${value}`)}</span>
+                  </label>
+                ))}
+                {(errorFor("certificateMode") || errorFor("certificateName")) && (
+                  <p role="alert" className="text-sm text-red-700">{errorFor("certificateMode") ?? errorFor("certificateName")}</p>
                 )}
-              </Field>
-              <p className="text-right text-xs text-[#3d5a3d]">
-                {t("certificate.count", {
-                  count: formatCount([...certificateName].length, locale),
-                  max: formatCount(CERTIFICATE_NAME.max, locale),
-                })}
-              </p>
-              <p className="text-sm text-[#3d5a3d]">
-                {t("certificate.fallback")}
+              </fieldset>
+              <p id="ow-certificate-note" className="text-sm text-[#3d5a3d]">
+                {t("certificate.thirdPartyNote")} {t("certificate.publicNote")}
               </p>
               <div className="rounded-2xl border border-[#1B6B3A]/15 bg-[#f8faf5] p-5">
                 <p className="break-words font-semibold text-[#0e2519]">
@@ -832,6 +827,7 @@ export default function OrderWizard({
               disabled={busy}
             />
           )}
+          {step === 3 && mode === "order" && <PrivacyNotice />}
           {step === 3 && usesContact && (
             <div
               className="[&_label:has(input[type=checkbox])]:min-h-11"

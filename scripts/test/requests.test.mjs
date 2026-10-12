@@ -44,8 +44,11 @@ assert.deepEqual(errs(r), { "details.quantity": "quantityInvalid" });
 r = parse({ type: "open_land_seeding", landId: "x", quantity: 50 });
 assert.deepEqual(errs(r), { "details.landId": "landInvalid" });
 
-// sertifika adı
-const cert = (name) => parse({ type: "open_land_seeding", landId: land, quantity: 50, certificateName: name });
+// sertifika adı — biçim kuralları (ad sahibinin kendisi olduğu varsayımıyla: iletişimdeki ad = sertifika adı)
+const cert = (name) => {
+  const d = S.openLandSeedingSchema.safeParse({ type: "open_land_seeding", landId: land, quantity: 50, certificateName: name });
+  return d.success ? { success: true, data: { details: d.data } } : { success: false, error: { issues: d.error.issues.map((i) => ({ ...i, path: ["details", ...i.path] })) } };
+};
 r = cert("  Ayşe   Yılmaz  ");
 assert.ok(r.success);
 assert.equal(r.data.details.certificateName, "Ayşe Yılmaz");
@@ -75,6 +78,13 @@ const tree = String.fromCodePoint(0x1f332);
 for (const bad of ["https://evil.example", "Ayse " + tree, "<b>Ali</b>", "Ali; DROP TABLE", "a@b.com", "Ali_Veli"]) {
   assert.deepEqual(errs(cert(bad)), { "details.certificateName": "certificateNameInvalid" }, "reddedilmeli: " + bad);
 }
+
+// üçüncü kişi adı alınmaz: yalnız iletişim kurulan kişinin kendi adı ya da adsız (KVKK 2026-10.5)
+const certFor = (name) => parse({ type: "open_land_seeding", landId: land, quantity: 50, certificateName: name });
+assert.ok(certFor("  ayse   yilmaz ").success, "kendi adı (büyük/küçük harf ve boşluk farkı)");
+assert.ok(certFor("Adsız Katılım").success, "adsız");
+assert.ok(certFor("").success, "boş: talep kendi adıyla değerlendirilir");
+assert.deepEqual(errs(certFor("Mehmet Kaya")), { "details.certificateName": "certificateNameThirdParty" });
 
 // kaldırılan tür artık kabul edilmez
 r = parse({ type: "seed_purchase", seedItems: [{ slug: "kizilcam", quantity: 5 }], deliveryProvince: "34" });

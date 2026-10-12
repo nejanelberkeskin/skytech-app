@@ -15,6 +15,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { buildLegalContext, buildOrderDocuments } from "@/lib/legal/documents";
 import { LEGAL_DOCUMENTS_VERSION } from "@/lib/legal/version";
+import { MARKETING_CONSENT_ENABLED } from "@/lib/site-config";
 import { generateOrderNo } from "./identifiers";
 import { checkSite, offerVersion, siteTermsProblem } from "./preview";
 import { scheduleFor, trToday } from "./schedule";
@@ -68,8 +69,10 @@ function consentRecords(payload: OrderPayload, at: string): OrderConsents {
   return {
     preInfo: rec(payload.consents.preInfo),
     contract: rec(payload.consents.contract),
-    kvkkRead: rec(payload.consents.kvkkRead),
-    marketing: rec(payload.consents.marketing),
+    // Aydınlatma bildirimi: gösterilen sürüm ve an (rıza kaydı değil).
+    kvkkNotice: { shownAt: at, version: LEGAL_DOCUMENTS_VERSION },
+    // İYS kurulmadan ticari ileti izni kaydedilmez (MARKETING_CONSENT_ENABLED kapalıysa false).
+    marketing: rec(MARKETING_CONSENT_ENABLED && payload.consents.marketing),
     certificatePublication: { ...rec(payload.consents.certificatePublication), subjectName: resolveCertificateName(payload) },
     ...(payload.invoice.type === "corporate" ? { corporateAuthority: rec(payload.consents.corporateAuthority) } : {}),
   };
@@ -135,7 +138,7 @@ export async function createOrder(payload: OrderPayload, meta: CreateOrderMeta, 
     buyer_phone: payload.buyer.phone,
     invoice: payload.invoice,
     consents: consentRecords(payload, at),
-    marketing_consent: payload.consents.marketing,
+    marketing_consent: MARKETING_CONSENT_ENABLED && payload.consents.marketing,
     documents_version: LEGAL_DOCUMENTS_VERSION,
     ip_hash: meta.ipHash,
     user_agent: meta.userAgent,

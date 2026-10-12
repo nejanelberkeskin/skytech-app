@@ -97,11 +97,12 @@ export type InvoiceInfo = IndividualInvoice | CorporateInvoice;
 /* ── Onaylar ──────────────────────────────────────────────────────────────── */
 
 /**
- * Her kutu AYRI ve işaretsiz sunulur; tıklanma anı ve gösterilen metnin sürümü
- * saklanır. KVKK kutusu rıza DEĞİL, "okudum, bilgi edindim" beyanıdır. Ticari
- * ileti izni isteğe bağlıdır ve satışın şartı yapılamaz.
+ * Her kutu AYRI ve işaretsiz sunulur; tıklanma anı ve gösterilen metnin sürümü saklanır. KVKK aydınlatması
+ * kutu DEĞİLDİR: veri alınırken bildirim olarak gösterilir ve `kvkkNotice` ile (rıza olarak değil) kaydedilir.
+ * Ticari ileti izni isteğe bağlıdır, satışın şartı yapılamaz ve İYS kurulmadan alınmaz (MARKETING_CONSENT_ENABLED).
+ * Eski kayıtlarda `kvkkRead` bulunabilir; yeni siparişte yazılmaz.
  */
-export const CONSENT_KEYS = ["preInfo", "contract", "kvkkRead", "marketing", "corporateAuthority", "certificatePublication"] as const;
+export const CONSENT_KEYS = ["preInfo", "contract", "marketing", "corporateAuthority", "certificatePublication"] as const;
 export type ConsentKey = (typeof CONSENT_KEYS)[number];
 
 export interface ConsentRecord {
@@ -116,7 +117,13 @@ export interface ConsentRecord {
   version: string;
 }
 
-export type OrderConsents = Partial<Record<ConsentKey, ConsentRecord>>;
+/** Aydınlatma metninin hangi sürümünün ne zaman gösterildiği (rıza değil; sipariş ekindeki KVKK kopyasıyla eşleşir). */
+export interface NoticeRecord {
+  shownAt: string;
+  version: string;
+}
+
+export type OrderConsents = Partial<Record<ConsentKey, ConsentRecord>> & { kvkkNotice?: NoticeRecord };
 
 /* ── Saha anlık görüntüsü ─────────────────────────────────────────────────── */
 

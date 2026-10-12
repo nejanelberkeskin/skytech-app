@@ -313,8 +313,10 @@ export function legalOf(row: Row, documents: Row[]): NonNullable<OrderDetailDto[
   const consents: NonNullable<OrderDetailDto["legal"]>["consents"] = {};
   for (const [key, value] of Object.entries(record(row.consents))) {
     const c = record(value);
+    // Aydınlatma bildirimi rıza değildir: "gösterildi" olarak, gösterilme anıyla döner.
+    const notice = key === "kvkkNotice";
     consents[key] = {
-      granted: c.granted === true, at: text(c.at), version: text(c.version),
+      granted: notice ? typeof c.shownAt === "string" : c.granted === true, at: text(notice ? c.shownAt : c.at), version: text(c.version),
       revokedAt: text(c.revokedAt), subjectName: text(c.subjectName),
     };
   }

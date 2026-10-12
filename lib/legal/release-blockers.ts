@@ -7,5 +7,4 @@
 export const LEGAL_RELEASE_BLOCKERS: readonly { key: string; owner: string; text: string }[] = [
   { key: "transfer_annex", owner: "şirket + sağlayıcılar", text: "KVKK m.9 aktarım eki: Vercel, Supabase, Resend, Google Workspace için gerçek sözleşme tarafı, ülkeler, imzalı güvence ve Kurul bildirimi kanıtı." },
   { key: "retention_jobs", owner: "teknik + şirket", text: "Saklama ve imha planındaki silme görevleri (talep 12 ay, profil 30 gün, günlük 90 gün) uygulanıp doğrulanmalı." },
-  { key: "chamber_registry", owner: "şirket", text: "Meslek odası üyelik/sicil numarası resmî kayıtla teyit edilmeli." },
 ];

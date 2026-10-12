@@ -1205,10 +1205,10 @@
     "description": "Yangından etkilenmiş sahalara dronla tohum topu bırakıyoruz. Bir Proje Uygulama Sahasına katılın ya da kendi araziniz için başvurun; çalışmayı raporlarla ve görüntülerle izleyin."
   },
   "cookieConsent": {
-    "message": "Google Analytics ve Vercel ziyaret ve hız ölçümleri isteğe bağlıdır. Gerekli aktarım koşulları tamamlandığında yalnız analitik izninizle yüklenirler. Reddetmek site kullanımınızı etkilemez. Tercihinizi Çerez Tercihleri bağlantısından değiştirebilirsiniz.",
+    "message": "Site kullanımını ölçmek için isteğe bağlı çerezler kullanıyoruz. Tercihinizi dilediğiniz zaman değiştirebilirsiniz.",
     "policyLink": "Çerez Politikası",
-    "rejectAll": "Yalnız Zorunlu",
-    "acceptAll": "Analitiğe İzin Ver"
+    "rejectAll": "Yalnız zorunlu",
+    "acceptAll": "Kabul et"
   },
   "requestForms": {
     "common": {

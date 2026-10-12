@@ -38,8 +38,12 @@ export default async function CaymaVeIadePage({ params }: { params: Promise<{ lo
       <LegalSection no="1" title="Cayma hakkı">
         <LegalP>{TEXT.withdrawalRightGeneral}</LegalP>
         <LegalP>
-          Süre, ödemenizin onaylandığı gün başlar. Siparişinize özel son gün; Ön Bilgilendirme Formu&apos;nda,
-          sözleşmenizde ve sipariş teyidi e-postanızda tarih olarak yazılıdır.
+          Süre, sözleşmenin kurulduğu tarihten itibaren hesaplanır. Sözleşme, ön bilgilendirmeyi teyit edip sözleşmeyi
+          onaylamanız ve ödemenin gerçekleşmesiyle kurulur. Ödeme öncesi gösterilen tarih yalnız ön hesaptır; daha geç
+          kuruluş veya kanuni uzama hakkınızı kısaltmaz. Siparişinize özgü son gün sözleşme ve sipariş teyidinde gösterilir.
+          Cayma hakkında gereği gibi bilgilendirilmediyseniz olağan 14 günlük süreyle bağlı değilsiniz; hak, olağan
+          sürenin bitiminden bir yıl sonra sona erer. Bu yıl içinde usulüne uygun bilgilendirme yapılırsa 14 günlük süre
+          bu bilgilendirmeden itibaren başlar. Son günün kanuni tatile rastlamasına ilişkin haklar saklıdır.
         </LegalP>
       </LegalSection>
 

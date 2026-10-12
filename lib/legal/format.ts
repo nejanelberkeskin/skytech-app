@@ -45,6 +45,7 @@ export function sellerRows(): [string, string][] {
     ["Telefon", COMPANY.phone],
     ["E-posta", COMPANY.email],
     ["KEP adresi", COMPANY.kep],
+    ["Mensup olunan meslek odası", COMPANY.chamber],
     ["İnternet sitesi", COMPANY.website.replace(/^https?:\/\//, "")],
   ];
   return rows.filter((r): r is [string, string] => Boolean(r[1]));
@@ -56,8 +57,7 @@ export function withdrawalChannels(): string {
   const parts = [
     `${site}/cayma adresindeki form`,
     `${COMPANY.email} adresine e-posta`,
-    ...(COMPANY.kep ? [`${COMPANY.kep} KEP adresine ileti`] : []),
-    "SATICI'nın yukarıdaki adresine yazılı bildirim",
+    "SATICI'nın bu metinde belirtilen adresine yazılı bildirim",
   ];
   return parts.slice(0, -1).join(", ") + " veya " + parts.at(-1);
 }

@@ -742,6 +742,19 @@
       "subtitle": "İhtiyacınıza en uygun temas noktası için aşağıdan seçin.",
       "primary": "Bilgi Almak İstiyorum",
       "secondary": "Kurumsal Teklif"
+    },
+    "registry": {
+      "title": "Şirket künyesi",
+      "legalName": "Unvan",
+      "address": "Adres",
+      "tax": "Vergi dairesi / numarası",
+      "mersis": "MERSİS numarası",
+      "tradeRegistry": "Ticaret sicili / numarası",
+      "registeredOn": "Tescil tarihi",
+      "kep": "KEP adresi",
+      "chamber": "Mensup olunan meslek odası",
+      "phone": "Telefon",
+      "email": "E-posta"
     }
   },
   "seedBallPage": {

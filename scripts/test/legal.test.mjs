@@ -111,7 +111,7 @@ for (const [name, c] of Object.entries(cases)) {
     "SKYTECH HAVACILIK VE TEKNOLOJİ SANAYİ TİCARET ANONİM ŞİRKETİ", // veri sorumlusunun kimliği
     "KVKK m.5/2-c", "KVKK m.5/2-ç", "KVKK m.5/2-e", "KVKK m.5/2-f", "KVKK m.5/1", // hukuki sebepler
     "iyzico", "Gelir İdaresi Başkanlığı", "İleti Yönetim Sistemi", "Vercel", "Supabase", "Resend", // alıcılar
-    "yurt dışına aktarılır", "KVKK m.9",
+    "Yurt dışına aktarım", "KVKK m.9", "Google Workspace", "Hediye sertifikasında üçüncü kişinin adı",
     "tamamen veya kısmen otomatik yollarla", // toplama yöntemi
     "KVKK m.11", "Kişisel Verileri Koruma Kuruluna şikâyette", // haklar ve başvuru
     "rıza beyanı değildir",

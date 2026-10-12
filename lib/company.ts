@@ -32,10 +32,17 @@ export const COMPANY = {
   tradeRegistryOffice: "Ankara Ticaret Sicili Müdürlüğü" as string | null,
   /** Ulusal Elektronik Tebligat Sistemi adresi — resmî tebligat içindir; KEP değildir, müşteri kanalı olarak GÖSTERİLMEZ. */
   uets: "25838-72218-78313" as string | null,
-  /** Bekleniyor — mesafeli sözleşme ve "İletişim" sayfası için zorunlu. */
-  kep: null as string | null,
-  /** Mensubu olunan meslek odası (6563 sayılı Kanun gereği sitede belirtilir) — bekleniyor. */
-  chamber: null as string | null,
+  /** Kayıtlı elektronik posta — şirket yetkilisi bildirimi, 12 Ekim 2026 (UETS ile karıştırılmaz). */
+  kep: "skytechhavacilik@hs01.kep.tr" as string | null,
+  /** Ticaret siciline tescil tarihi — kullanıcı bildirimi, 12 Ekim 2026. */
+  registeredOn: "7 Mayıs 2024" as string | null,
+  /**
+   * Mensubu olunan meslek odası (6563 / e-ticaret yönetmeliği m.5). Kullanıcı 12 Ekim 2026'da "11-Tarım Ürünleri Meslek
+   * Komitesi" bildirdi; Ankara Ticaret Odası'nın 11 numaralı komitesiyle eşleşiyor. Oda üyelik/sicil numarası henüz
+   * teyit edilmedi (510174 ticaret sicil numarasıdır, oda sicil numarası diye kopyalanmaz) — `chamberRegistryNo`.
+   */
+  chamber: "Ankara Ticaret Odası (11. Tarım Ürünleri Meslek Komitesi)" as string | null,
+  chamberRegistryNo: null as string | null,
 } as const;
 
 export function companyAddressLine(): string {
@@ -45,7 +52,7 @@ export function companyAddressLine(): string {
 
 /** Açılıştan önce doldurulması gereken alanlar. */
 export function missingCompanyFields(): string[] {
-  return (["mersis", "kep", "phone", "tradeRegistryNo", "tradeRegistryOffice", "chamber"] as const).filter((k) => !COMPANY[k]);
+  return (["mersis", "kep", "phone", "tradeRegistryNo", "tradeRegistryOffice", "chamber", "chamberRegistryNo"] as const).filter((k) => !COMPANY[k]);
 }
 
 /** Ticaret sicil satırı: "Ankara Ticaret Sicili Müdürlüğü / 510174" (müdürlük teyit edilince eklenir). */

@@ -742,6 +742,19 @@
       "subtitle": "Choose the contact point that best fits your needs below.",
       "primary": "I Want Information",
       "secondary": "Corporate Quote"
+    },
+    "registry": {
+      "title": "Company details",
+      "legalName": "Legal name",
+      "address": "Address",
+      "tax": "Tax office / number",
+      "mersis": "MERSIS number",
+      "tradeRegistry": "Trade registry / number",
+      "registeredOn": "Registration date",
+      "kep": "Registered e-mail (KEP)",
+      "chamber": "Chamber membership",
+      "phone": "Phone",
+      "email": "E-mail"
     }
   },
   "seedBallPage": {

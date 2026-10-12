@@ -34,6 +34,18 @@ export default async function IletisimPage({
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("contactPage");
+  const registryRows = ([
+    [t("registry.legalName"), COMPANY.legalName],
+    [t("registry.address"), `${companyAddressLine()}, ${COMPANY.address.country}`],
+    [t("registry.tax"), `${COMPANY.taxOffice} Vergi Dairesi / ${COMPANY.taxId}`],
+    [t("registry.mersis"), COMPANY.mersis],
+    [t("registry.tradeRegistry"), COMPANY.tradeRegistryOffice && COMPANY.tradeRegistryNo ? `${COMPANY.tradeRegistryOffice} / ${COMPANY.tradeRegistryNo}` : null],
+    [t("registry.registeredOn"), COMPANY.registeredOn],
+    [t("registry.kep"), COMPANY.kep],
+    [t("registry.chamber"), COMPANY.chamber],
+    [t("registry.phone"), COMPANY.phone],
+    [t("registry.email"), COMPANY.email],
+  ] as [string, string | null][]).filter((r): r is [string, string] => Boolean(r[1]));
 
   const CONTACTS = [
     {
@@ -93,6 +105,21 @@ export default async function IletisimPage({
               </p>
             </div>
           ))}
+        </div>
+      </SectionWrapper>
+
+      {/* Şirket künyesi — 6563 / e-ticaret yönetmeliği m.5; değerler lib/company.ts tek kaynağından. */}
+      <SectionWrapper variant="light">
+        <div className="max-w-3xl">
+          <h2 className="text-2xl font-bold text-[#1a2e1a] mb-5">{t("registry.title")}</h2>
+          <dl className="grid sm:grid-cols-[minmax(0,14rem)_1fr] gap-x-6 gap-y-2 text-sm">
+            {registryRows.map(([label, value]) => (
+              <div key={label} className="contents">
+                <dt className="font-semibold text-[#1a2e1a]">{label}</dt>
+                <dd className="text-[#3d5a3d] break-words">{value}</dd>
+              </div>
+            ))}
+          </dl>
         </div>
       </SectionWrapper>
 

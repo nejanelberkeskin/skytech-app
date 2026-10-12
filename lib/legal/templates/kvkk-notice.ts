@@ -4,7 +4,7 @@
  *
  * TEK KAYNAK: `/kvkk` sayfası da, her siparişle birlikte saklanan kopya da (belge türü
  * `kvkk_notice`) bu bloklardan çıkar; müşteriye gösterilen metin ile saklanan metin ayrışamaz.
- * Aydınlatma metni rıza beyanı DEĞİLDİR: sihirbazdaki kutu "okudum, bilgi edindim" der.
+ * Aydınlatma metni rıza beyanı DEĞİLDİR: veri alınırken bildirim olarak gösterilir, onay kutusu yoktur.
  *
  * İçerik, kodun GERÇEKTE yaptığıyla uyumlu tutulmalıdır:
  *  • kart verisi sunucuya gelmez (lib/payments/iyzico.ts — barındırılan ödeme sayfası)
@@ -18,18 +18,19 @@
  */
 import { COMPANY, companyAddressLine } from "@/lib/company";
 import type { LegalBlock, LegalContext, LegalDocument } from "../types";
-import { metaLines, sellerTable } from "./shared";
+import { draftNotes, metaLines, sellerTable } from "./shared";
 
 export const KVKK_NOTICE_TITLE = "Kişisel Verilerin İşlenmesine İlişkin Aydınlatma Metni";
 
 /** Veri işleyen altyapı sağlayıcıları — değişirse yalnız burası güncellenir (ve sürüm artırılır). */
 const PROCESSORS = [
-  "Site barındırma ve içerik dağıtımı: Vercel; sözleşme tarafı ve aktarım ülkeleri aktarım dosyasında teyit edilecektir.",
-  "Veritabanı ve üyelik altyapısı: Supabase; proje veri bölgesi, destek erişim ülkeleri ve sözleşme tarafı aktarım dosyasında teyit edilecektir.",
-  "İşlem e-postalarının gönderimi: Resend; sözleşme tarafı, veri bölgeleri ve destek erişimi aktarım dosyasında teyit edilecektir.",
-  "Google ile giriş yapmayı seçerseniz: Google — kimlik doğrulama; ilgili hesap sözleşmesinin tarafı ve aktarım ülkeleri ayrıca teyit edilir.",
-  "İsteğinizle açılan YouTube videoları ve dış harita bağlantıları: ilgili hizmet sağlayıcı IP, cihaz ve erişim verilerini kendi ortamında işleyebilir. Video, oynatmaya basılmadan yüklenmez.",
-  "Gerekli aktarım hazırlığı tamamlanıp ayrıca analitik izni verirseniz: Google Analytics (Google LLC), Vercel Web Analytics ve Speed Insights. Bu taslak aşamasında teknik etkinleştirme kapalıdır. Ayrıntı Çerez Politikası'ndadır.",
+  "Site barındırma, sunucu işlemleri ve içerik dağıtımı: Vercel. Standart hizmet belgelerinde alıcı Vercel Inc. olarak geçer; istek, erişim ve uygulama verileri hizmet kapsamında işlenir.",
+  "Veritabanı ve üyelik altyapısı: Supabase. Standart veri işleme sözleşmesindeki veri işleyen Supabase Pte. Ltd.’dir. Frankfurt bölgesinin seçilmiş olması, destek ve işletim verilerinin yalnız Almanya’da kaldığı anlamına gelmez.",
+  "İşlem e-postalarının gönderimi: Resend. Standart hizmet belgelerinde alıcı Plus Five Five, Inc.’dir; alıcı e-posta adresi, ileti içeriği ve iletim kayıtları işlenir.",
+  "Şirket e-postası ve yazışmalar: Google Workspace. info@skytechgreen.com adresine gönderdiğiniz içerik ve iletişim bilgileri bu altyapıdan geçebilir.",
+  "Google ile giriş yapmayı seçerseniz: Google kimlik doğrulama hizmeti kapsamında gerekli hesap ve oturum bilgileri.",
+  "İsteğinizle açılan YouTube videoları: IP, cihaz ve oynatma verileri. Gizlilik geliştirilmiş oynatıcı, veri aktarımını ortadan kaldırmaz. Harita ve sosyal medya bağlantıları dış hizmete geçiştir; bu hizmetlerin kendi açıklamaları da uygulanır.",
+  "Analitik özelliği açılır ve ayrıca izin verirseniz: Google Analytics, Vercel Web Analytics ve Speed Insights. Analitik, geçerli aktarım koşulları sağlanmadan açılmaz.",
 ];
 
 export function kvkkNoticeBlocks(): LegalBlock[] {
@@ -44,7 +45,7 @@ export function kvkkNoticeBlocks(): LegalBlock[] {
   return [
     {
       type: "note",
-      text: `Bu metin, ${site} adresli internet sitesini ziyaret ettiğinizde, bize talep ilettiğinizde, üye olduğunuzda ve tohum topu bıraktırma siparişi verdiğinizde kişisel verilerinizin nasıl işlendiğini açıklar. Aydınlatma metni bir sözleşme ya da rıza beyanı değildir: okuduğunuzu beyan etmeniz, verilerinizin işlenmesine rıza gösterdiğiniz anlamına gelmez.`,
+      text: `Bu metin, ${site} adresli internet sitesini ziyaret ettiğinizde, bize talep ilettiğinizde, üye olduğunuzda ve tohum topu bıraktırma siparişi verdiğinizde kişisel verilerinizin nasıl işlendiğini açıklar. Aydınlatma metni bir sözleşme ya da rıza beyanı değildir: okuduğunuzu beyan etmeniz, verilerinizin işlenmesine rıza gösterdiğiniz anlamına gelmez. Aydınlatma, bilgi verme yükümlülüğüdür; rızaya dayanmayan gerekli işlemeler için genel bir açık rıza istenmez.`,
     },
 
     { type: "heading", text: "1. Veri sorumlusu" },
@@ -124,11 +125,19 @@ export function kvkkNoticeBlocks(): LegalBlock[] {
       type: "paragraph",
       text: "Sertifika için belirlediğiniz ad, saha, adet ve tarihler işlenir; e-posta, telefon, fatura adresi ve sipariş numarası herkese açık doğrulama sayfasına çıkarılmaz. Doğrulama bağlantısını bilen herkes sayfayı görebilir; arama motorlarına kapalı olması gizli erişim sağladığı anlamına gelmez. Kişisel ad varsayılan olarak gizlidir. Kendi adınızı yayımlamak için ayrı, isteğe bağlı açık rıza verebilirsiniz (KVKK m.5/1); vermemeniz siparişi engellemez. Bu izin sipariş sayfasından veya şirketin e-posta adresinden ücretsiz geri alınabilir. Başka birinin adı, o kişi doğrudan aydınlatılıp geçerli yayın izni alınana kadar kamuya açıklanmaz; alıcının beyanı o kişinin rızası yerine geçmez. İzin geri alındığında sonraki yayın durdurulur; üçüncü kişilerin daha önce aldığı kopyalar üzerindeki fiilî kontrolümüz sınırlıdır.",
     },
+    {
+      type: "paragraph",
+      text: "Hediye sertifikasında üçüncü kişinin adının kamuya kapalı olarak alınması da kişisel veri işlemedir. Sertifikayı isteyen kişinin sözleşmesi, adın sahibi üçüncü kişi bakımından kendiliğinden KVKK m.5/2-c dayanağı oluşturmaz. Üçüncü kişinin adı ancak ölçülülüğü ve hak dengesi belgelenmiş meşru menfaat veya ilgili kişinin geçerli rızası gibi somut bir işleme şartı varsa alınır. Bu şart yoksa sertifika adsız hazırlanır; ad daha sonra ilgili kişi tarafından eklenebilir. Çocuk adı için çocuğun durumuna uygun temsil ve izin koşulları ayrıca değerlendirilir; bu akış sağlanmadan çocuk adı toplanmaz veya yayımlanmaz.",
+    },
+    {
+      type: "paragraph",
+      text: "Ad başka kişiden alındıysa ilgili kişi makul sürede, kendisiyle ilk iletişimde ve en geç ilk aktarım sırasında aydınlatılır. Aydınlatma için gereksiz ek iletişim bilgisi istenmez. Bu yükümlülük ve veri işleme şartı karşılanamıyorsa üçüncü kişinin adı sisteme alınmaz. Yalnız satın alanın “izin aldım” beyanı yeterli sayılmaz.",
+    },
 
     { type: "subheading", text: "2.6. Ticari elektronik ileti" },
     {
       type: "paragraph",
-      text: "Duyuru ve kampanya iletileri yalnız bunun için ayrıca onay vermeniz hâlinde gönderilir. Bu durumda e-posta adresiniz, açık rızanıza (KVKK m.5/1) ve 6563 sayılı Kanun uyarınca verdiğiniz onaya dayanılarak işlenir; onay ve ret bildirimleri uygulanabilir İYS yükümlülükleri çerçevesinde üç iş günü içinde kayda alınır. İYS kaydı ve ret süreçleri tamamlanmadan kampanya gönderimi başlatılmaz. Bu izin siparişin şartı değildir; dilediğiniz an, hiçbir gerekçe göstermeden ve ücretsiz olarak geri alabilirsiniz. Sadece mevcut işlemin yürütülmesine ilişkin sipariş, cayma, bırakma ve fatura bildirimleri, içine tanıtım eklenmeksizin pazarlama izninden bağımsız gönderilir. Bu istisna kampanya göndermeye yetki vermez.",
+      text: "Duyuru ve kampanya iletileri yalnız bunun için ayrıca onay vermeniz hâlinde gönderilir. Bu durumda e-posta adresiniz, açık rızanıza (KVKK m.5/1) ve 6563 sayılı Kanun uyarınca verdiğiniz onaya dayanılarak işlenir; onay ve ret bildirimleri uygulanabilir İYS yükümlülükleri çerçevesinde üç iş günü içinde kayda alınır. İYS kaydı ve ret süreçleri tamamlanmadan kampanya gönderimi başlatılmaz. Bu izin siparişin şartı değildir; dilediğiniz an, hiçbir gerekçe göstermeden ve ücretsiz olarak geri alabilirsiniz. Ret bildiriminizin ulaşmasını izleyen en geç üç iş günü içinde ticari elektronik ileti gönderimi durdurulur. İYS dışından alınan onay ve ret kayıtları da mevzuattaki sürelerle İYS’ye işlenir. Sadece mevcut işlemin yürütülmesine ilişkin sipariş, cayma, bırakma ve fatura bildirimleri, içine tanıtım eklenmeksizin pazarlama izninden bağımsız gönderilir. Bu istisna kampanya göndermeye yetki vermez.",
     },
 
     { type: "heading", text: "3. Verilerinizi kimlere, hangi amaçla aktarıyoruz" },
@@ -136,8 +145,8 @@ export function kvkkNoticeBlocks(): LegalBlock[] {
       type: "list",
       items: [
         "Ödeme kuruluşu — iyzico (iyzi Ödeme ve Elektronik Para Hizmetleri A.Ş.): ödemenin alınması ve gerektiğinde iadesi için ad, soyad, e-posta, telefon, fatura adresi, IP adresi, sipariş numarası ve tutar. T.C. kimlik ve vergi numaranız ödeme kuruluşuna aktarılmaz.",
-        "Gelir İdaresi Başkanlığı ve e-belge hizmeti alınan özel entegratör: e-Fatura / e-Arşiv Fatura düzenlenmesi için fatura bilgileriniz.",
-        "İleti Yönetim Sistemi A.Ş.: ticari elektronik ileti onayı verdiyseniz, onayınıza ilişkin kayıt.",
+        "Gelir İdaresi Başkanlığı: e-Fatura / e-Arşiv Fatura düzenlenmesi için fatura bilgileriniz. Şirket e-Fatura sistemine kayıtlıdır; e-Arşiv belgeleri başlangıçta GİB portalından düzenlenir. Henüz seçilmemiş bir özel entegratöre veri aktarıldığı varsayılmaz; bu hizmet kullanılacaksa alıcı ve aktarım bilgisi işlem başlamadan güncellenir.",
+        "İleti Yönetim Sistemi A.Ş.: ticari elektronik ileti uygulaması başlatıldığında onay ve ret durumunun mevzuata uygun yönetilmesi için gerekli iletişim adresi, kanal, durum, kaynak ve zaman bilgileri.",
         "Hukuk, mali müşavirlik ve denetim hizmeti aldığımız kişiler: hizmetin gerektirdiği ölçüde ve sır saklama yükümlülüğü altında.",
         "Yetkili kamu kurum ve kuruluşları ile yargı mercileri: mevzuat gereği talep edilmesi hâlinde.",
       ],
@@ -147,9 +156,21 @@ export function kvkkNoticeBlocks(): LegalBlock[] {
       text: "Kullanılan bilişim hizmetleri ve ilgili alıcı grupları aşağıdadır. Hizmetin niteliğine göre alıcı, veri işleyen veya kendi amaçları bakımından ayrı veri sorumlusu olabilir; tüm sağlayıcılar otomatik olarak veri işleyen sayılmaz:",
     },
     { type: "list", items: PROCESSORS },
+    { type: "subheading", text: "3.1. Yurt dışına aktarım" },
     {
       type: "paragraph",
-      text: "Bu sağlayıcıların bir kısmı yurt dışında yerleşik olduğundan, verileriniz bu hizmetlerin gerektirdiği ölçüde yurt dışına aktarılır. KVKK m.9 kapsamındaki aktarım mekanizması, alıcı ve işlem bazında ayrıca belirlenmeli ve fiilen tamamlanmalıdır. [YAYIN ÖNCESİ TAMAMLANACAK: her alıcının teyitli sözleşme unvanı, aktarım ülkeleri, uygulanacak mekanizma ve güvence bilgisine erişim kanalı.] Bu taslak, henüz belgelenmeyen standart sözleşme veya Kurum bildiriminin yapılmış olduğu beyanını içermez. Analitik ya da video izni, düzenli yurt dışı aktarım için gerekli mekanizmanın yerine geçmez. Kişisel verileriniz satılmaz, kiralanmaz; pazarlama amacıyla üçüncü kişilerle paylaşılmaz.",
+      text: "Bu hizmetlerde yurt dışında depolama veya yurt dışından erişim kişisel veri aktarımı oluşturabilir. Avrupa Birliği içinde barındırma da Türkiye bakımından yurt dışına aktarımdır. Alıcının Türkiye’de merkezinin bulunması ise bütün alt işlem zincirinin Türkiye’de kaldığını tek başına göstermez.",
+    },
+    {
+      type: "paragraph",
+      text: "Yurt dışına aktarım için KVKK m.5 veya m.6’daki işleme şartına ek olarak m.9’daki koşullar sağlanır. Uygulanabilir yeterlilik kararı yoksa, uygun güvence yollarından somut işleme uygun olanı kurulmalıdır. Düzenli bulut, üyelik ve e-posta işlemleri, arızi aktarım istisnasına dayandırılamaz. Genel hizmet sözleşmesi, Avrupa Birliği standart sözleşmesi veya çerez izni tek başına Türk hukukundaki aktarım güvencesinin yerine geçmez.",
+    },
+    ...draftNotes(
+      "Her hizmet için fiilen sözleşme imzalayan tüzel kişi, barındırma ve erişim ülkeleri, aktarılan veri kategorileri, amaç, geçerli KVKK m.9 mekanizması ve güvenceye erişim yolu, bu metnin “Yurt dışı aktarım bilgileri” ekinde yayımlanacaktır. Envanterde teyit edilmeyen sağlayıcı unvanı, imzalanmamış standart sözleşme veya yapılmamış Kurum bildirimi tamamlanmış gibi gösterilemez. Ek tamamlanmadan bu sürüm yayına hazır değildir.",
+    ),
+    {
+      type: "paragraph",
+      text: "Aktarım hakkında bilgi ve uygulanabilir güvencenin kişisel veri veya ticari sır içermeyen açıklamasını info@skytechgreen.com üzerinden isteyebilirsiniz. Kişisel verileriniz satılmaz, kiralanmaz; bağımsız üçüncü kişilerin kendi pazarlaması için paylaşılmaz.",
     },
 
     { type: "heading", text: "4. Verilerinizi nasıl topluyoruz" },
@@ -164,16 +185,19 @@ export function kvkkNoticeBlocks(): LegalBlock[] {
       rows: [
         ["Sipariş, sözleşme, fatura, ödeme ve iade kayıtları", "TTK m.82 kapsamındaki ticari belgeler için ilgili takvim yılı sonundan itibaren 10 yıl; VUK m.253 kapsamındaki defter ve belgeler için ilgili yılı izleyen takvim yılından itibaren 5 yıl. Aynı belgeye birden çok yükümlülük uygulanırsa uzun olan süre dikkate alınır; tüm ham teknik kayıtlar bu kapsamda sayılmaz."],
         ["Ön bilgilendirme, cayma ve ifaya ilişkin bilgi ve belgeler", "En az 3 yıl (Mesafeli Sözleşmeler Yönetmeliği); ticari kayıt niteliğinde olanlar 10 yıl."],
-        ["Ticari elektronik ileti onay kayıtları", "Onayın geçerliliğinin sona erdiği tarihten itibaren 3 yıl (6563 sayılı Kanun ve ilgili yönetmelik)."],
-        ["Talep ve iletişim kayıtları", "Talebin takibi için gerekli süre; sonrasında yalnız somut hukuki saklama veya hak koruma ihtiyacı bulunan bölüm. Şirkete özgü azami süre saklama planında kesinleştirilecektir."],
-        ["Üyelik bilgileri", "Aktif üyeliğin gerektirdiği süre; kapanıştan sonra yalnız mevzuat veya somut hak koruma amacıyla gerekli kayıtlar. Sipariş belgelerinin ayrı saklama yükümlülükleri devam eder."],
-        ["Sunucu ve işlem güvenliği kayıtları", "Güvenlik amacı için gerekli, ölçülü süre; sağlayıcı günlükleri ve uygulama kayıtları ayrı değerlendirilir. Azami süreler saklama planında kesinleştirilecektir."],
+        ["Ticari elektronik ileti onay kayıtları", "Onayın geçerliliğinin sona erdiği tarihten itibaren 3 yıl; ticari elektronik iletilere ilişkin diğer kayıtlar, kayıt tarihinden itibaren 3 yıl. Daha uzun somut kanuni yükümlülük varsa yalnız ilgili belgeye uygulanır."],
+        ["Talep ve iletişim kayıtları", "Açık talebin yürütülmesi boyunca; kapanan ve siparişe dönüşmeyen genel talepler için kapanıştan sonra en çok 12 ay. Daha erken ihtiyaç kalmaması hâlinde silinir. Ticari yazışma veya somut uyuşmazlık niteliğindeki gerekli kayıtlar ilgili ayrı süreye tabidir."],
+        ["Üyelik bilgileri", "Aktif üyelik süresince; kapanışın tamamlanmasından sonra bağımsız saklama nedeni bulunmayan profil verileri en geç 30 gün içinde silinir. Mevzuat veya somut hak koruma amacıyla saklanması gereken sipariş belgeleri ayrı tutulur; eski hesaba giriş erişimi açık bırakılmaz."],
+        ["Sunucu ve işlem güvenliği kayıtları", "Genel uygulama erişim kayıtları için en çok 90 gün. Somut olayın incelenmesi için gereken kayıtlar olay dosyasına ayrılır. Siparişin hukuki ispat kaydı ile genel erişim günlüğü aynı kayıt türü sayılmaz. Sağlayıcıların kendi amaçlarıyla tuttuğu kayıtlar için ilgili sağlayıcının açıklamaları da incelenir."],
       ],
     },
     {
       type: "paragraph",
-      text: "Sürelerin sonunda verileriniz silinir, yok edilir veya anonim hâle getirilir. Bir uyuşmazlık veya inceleme için yalnız ilgili kayıtların gerekli bölümü korunur; bu gerekçe bütün verilerin süresiz tutulmasına yol açmaz. [YAYIN ÖNCESİ: şirkete özgü saklama süreleri ve silme süreçlerinin sorumlusu kesinleştirilecektir.]",
+      text: "Sürelerin sonunda verileriniz silinir, yok edilir veya anonim hâle getirilir. Bir uyuşmazlık veya inceleme için yalnız ilgili kayıtların gerekli bölümü korunur; bu gerekçe bütün verilerin süresiz tutulmasına yol açmaz.",
     },
+    ...draftNotes(
+      "Bu sürümdeki 12 ay, 30 gün ve 90 gün şirket için önerilen operasyonel üst sürelerdir; kanuni genel süreler değildir. Yayın öncesinde saklama ve imha planındaki görevler ve silme düzeni uygulanıp bu sürelerle uyumlu olduğu doğrulanacaktır.",
+    ),
 
     { type: "heading", text: "6. Haklarınız" },
     { type: "paragraph", text: "KVKK m.11 uyarınca veri sorumlusuna başvurarak:" },
@@ -196,6 +220,10 @@ export function kvkkNoticeBlocks(): LegalBlock[] {
     { type: "heading", text: "7. Başvuru" },
     { type: "paragraph", text: "Başvurunuzda ad, soyad; yazılı başvuruda imza; Türkiye Cumhuriyeti vatandaşı için T.C. kimlik numarası, yabancı için uyruğu ve pasaport/kimlik numarası; tebligata esas adres; varsa bildirim e-postası, telefon/faks ve talep konusu yer alır. Kimlik kartı fotokopisini kendiliğinizden göndermeniz gerekmez; kimlik doğrulama için yalnız gerekli ve ölçülü bilgi istenebilir. Şu yollardan biri kullanılabilir:" },
     { type: "list", items: channels },
+    {
+      type: "paragraph",
+      text: "Nihai cevap yazılı olarak veya elektronik ortamda bildirilir. Yalnız telefonla ya da yüz yüze açıklama, başvurunun kanuna uygun cevaplandırılması yerine geçmez; kabul edilen işlem ve varsa ret gerekçesi cevabımızda belirtilir.",
+    },
     {
       type: "paragraph",
       text: "Başvurunuz, Veri Sorumlusuna Başvuru Usul ve Esasları Hakkında Tebliğ'e uygun olarak en kısa sürede ve en geç 30 (otuz) gün içinde sonuçlandırılır; kural olarak ücretsizdir; işlemin ayrıca bir maliyet gerektirmesi hâlinde Kişisel Verileri Koruma Kurulunca belirlenen tarifedeki ücret alınabilir. Başvurunuzun reddedilmesi, verilen yanıtı yetersiz bulmanız ya da süresinde yanıt verilmemesi hâlinde; yanıtı öğrendiğiniz tarihten itibaren 30 (otuz) ve her hâlde başvuru tarihinden itibaren 60 (altmış) gün içinde Kişisel Verileri Koruma Kuruluna şikâyette bulunabilirsiniz. Cevap verilmezse 30 günlük cevap süresinin dolmasından sonra, başvurudan itibaren 60 günlük üst süre içinde şikâyet edilebilir. Başvuru SATICI’nın hatasından kaynaklanıyorsa alınan ücret iade edilir.",

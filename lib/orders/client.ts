@@ -10,7 +10,7 @@
  *   submitOrder()   "Siparişi Onayla ve Öde": siparişi oluşturur, ödeme sayfasının
  *                   adresini döner. İstemci `redirectUrl`e gider.
  */
-import type { OrderSchedule } from "./schedule";
+import type { MonthDeadline, OrderSchedule } from "./schedule";
 import type { OrderPayloadInput, WithdrawalRequestInput } from "./schema";
 import type { DocumentKind } from "./types";
 
@@ -34,6 +34,8 @@ export interface OrderPreview {
     vatRate: number;
   };
   schedule: OrderSchedule;
+  /** Sertifika ve izleme içeriği için kesin son tarihler (sahaya göre). */
+  deliveries: { certificate: MonthDeadline | null; monitoring: MonthDeadline | null };
 }
 
 export type OrderErrorCode =
@@ -104,6 +106,7 @@ export type WithdrawalErrorCode =
   | "not_eligible" //       cayma süresi dolmuş ya da sipariş bu aşamada caymaya uygun değil
   | "already_requested" //  bu sipariş için cayma bildirimi zaten alınmış; iade süreci sürüyor
   | "already_refunded" //   bu siparişin bedeli zaten iade edilmiş
+  | "recorded_as_claim" //  olağan süre dolmuş; bildirim süre sonrası başvuru olarak kaydedildi (yönetim inceler)
   | "rate_limited"
   | "closed"
   | "generic";
@@ -125,6 +128,7 @@ const WITHDRAWAL_KNOWN: readonly WithdrawalErrorCode[] = [
   "not_eligible",
   "already_requested",
   "already_refunded",
+  "recorded_as_claim",
   "rate_limited",
   "closed",
 ];

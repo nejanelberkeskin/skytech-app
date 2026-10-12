@@ -30,6 +30,7 @@ export const ORDER_EVENT_LABELS: Record<OrderEventType, string> = {
   status_changed: "Durum değişti",
   withdrawal_requested: "Cayma bildirimi alındı",
   withdrawal_cancelled: "Cayma bildirimi geri alındı",
+  post_period_claim: "Süre sonrası başvuru (ayıplı/geç ifa ya da uzayan cayma) — incelenmeli",
   refund_started: "İade başlatıldı",
   refund_succeeded: "İade yapıldı",
   refund_failed: "İade başarısız",
@@ -55,7 +56,8 @@ export const INVOICE_STATUS_LABELS: Record<string, string> = { pending: "Kesilec
 export const CONSENT_LABELS: Record<string, string> = {
   preInfo: "Ön Bilgilendirme Formu teyidi",
   contract: "Mesafeli Hizmet Sözleşmesi kabulü",
-  kvkkRead: "KVKK aydınlatma metni okundu",
+  kvkkRead: "KVKK aydınlatma metni okundu (eski kayıt)",
+  kvkkNotice: "KVKK aydınlatması gösterildi (rıza değil)",
   marketing: "Ticari ileti izni (isteğe bağlı)",
   certificatePublication: "Kendi adını sertifikada yayımlama izni (isteğe bağlı)",
   corporateAuthority: "Kurum adına yetki beyanı",

@@ -178,6 +178,7 @@ const EVENT_FIELDS: Record<string, Fields> = {
   status_changed: { order: ["from", "to", "reason", "note", "capacityReserved", "batchId"] },
   withdrawal_requested: { order: ["channel", "refundDueOn"], contact: ["note"] },
   withdrawal_cancelled: { order: ["reason"] },
+  post_period_claim: { order: ["channel", "status", "withdrawalDeadline", "receivedAt"], contact: ["note"] },
   certificate_cancelled: { order: ["reason"] },
   refund_started: REFUND_FIELDS,
   refund_attempt_result: REFUND_FIELDS,
@@ -313,8 +314,10 @@ export function legalOf(row: Row, documents: Row[]): NonNullable<OrderDetailDto[
   const consents: NonNullable<OrderDetailDto["legal"]>["consents"] = {};
   for (const [key, value] of Object.entries(record(row.consents))) {
     const c = record(value);
+    // Aydınlatma bildirimi rıza değildir: "gösterildi" olarak, gösterilme anıyla döner.
+    const notice = key === "kvkkNotice";
     consents[key] = {
-      granted: c.granted === true, at: text(c.at), version: text(c.version),
+      granted: notice ? typeof c.shownAt === "string" : c.granted === true, at: text(notice ? c.shownAt : c.at), version: text(c.version),
       revokedAt: text(c.revokedAt), subjectName: text(c.subjectName),
     };
   }

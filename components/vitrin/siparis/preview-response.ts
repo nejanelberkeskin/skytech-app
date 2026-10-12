@@ -4,6 +4,7 @@ import { DOCUMENT_KINDS } from "@/lib/orders/types";
 
 const text = z.string().refine((value) => value.trim().length > 0);
 const money = z.number().int().nonnegative();
+const delivery = z.object({ month: z.number().int().min(1).max(12), year: z.number().int(), lastDay: z.iso.date() });
 const previewResponse = z.object({
   version: text,
   documents: z.array(z.object({
@@ -30,6 +31,11 @@ const previewResponse = z.object({
     earliestReleaseOn: z.iso.date(),
     performanceDeadline: z.iso.date(),
     rolledToNextSeason: z.boolean(),
+  }),
+  // Sunucu teslim ayı olmayan sahada önizleme vermez; yine de eksik yanıt ödeme adımına geçirmez.
+  deliveries: z.object({
+    certificate: delivery,
+    monitoring: delivery,
   }),
 });
 

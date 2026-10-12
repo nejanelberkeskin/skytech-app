@@ -97,11 +97,12 @@ export type InvoiceInfo = IndividualInvoice | CorporateInvoice;
 /* ── Onaylar ──────────────────────────────────────────────────────────────── */
 
 /**
- * Her kutu AYRI ve işaretsiz sunulur; tıklanma anı ve gösterilen metnin sürümü
- * saklanır. KVKK kutusu rıza DEĞİL, "okudum, bilgi edindim" beyanıdır. Ticari
- * ileti izni isteğe bağlıdır ve satışın şartı yapılamaz.
+ * Her kutu AYRI ve işaretsiz sunulur; tıklanma anı ve gösterilen metnin sürümü saklanır. KVKK aydınlatması
+ * kutu DEĞİLDİR: veri alınırken bildirim olarak gösterilir ve `kvkkNotice` ile (rıza olarak değil) kaydedilir.
+ * Ticari ileti izni isteğe bağlıdır, satışın şartı yapılamaz ve İYS kurulmadan alınmaz (MARKETING_CONSENT_ENABLED).
+ * Eski kayıtlarda `kvkkRead` bulunabilir; yeni siparişte yazılmaz.
  */
-export const CONSENT_KEYS = ["preInfo", "contract", "kvkkRead", "marketing", "corporateAuthority", "certificatePublication"] as const;
+export const CONSENT_KEYS = ["preInfo", "contract", "marketing", "corporateAuthority", "certificatePublication"] as const;
 export type ConsentKey = (typeof CONSENT_KEYS)[number];
 
 export interface ConsentRecord {
@@ -116,7 +117,13 @@ export interface ConsentRecord {
   version: string;
 }
 
-export type OrderConsents = Partial<Record<ConsentKey, ConsentRecord>>;
+/** Aydınlatma metninin hangi sürümünün ne zaman gösterildiği (rıza değil; sipariş ekindeki KVKK kopyasıyla eşleşir). */
+export interface NoticeRecord {
+  shownAt: string;
+  version: string;
+}
+
+export type OrderConsents = Partial<Record<ConsentKey, ConsentRecord>> & { kvkkNotice?: NoticeRecord };
 
 /* ── Saha anlık görüntüsü ─────────────────────────────────────────────────── */
 
@@ -135,6 +142,11 @@ export interface SiteSnapshot {
   fireYear: number | null;
   workType: "ormanlastirma" | "genclestirme" | "ormanlastirma_genclestirme";
   species: { slug: string; name: string; latinName: string }[];
+  /** Sertifika ve izleme içeriğinin teslim ayı (1–12; migration 040). Eski kopyalarda yoktur. */
+  certificateMonth?: number | null;
+  monitoringMonth?: number | null;
+  /** Sipariş anında doğrulanmış bırakma izni (yoksa null → sipariş açılmaz). */
+  permit?: { reference: string; validUntil: string; verifiedAt: string } | null;
 }
 
 /* ── Belgeler ─────────────────────────────────────────────────────────────── */
@@ -157,6 +169,8 @@ export const ORDER_EVENT_TYPES = [
   "status_changed",
   "withdrawal_requested",
   "withdrawal_cancelled",
+  /** Olağan cayma süresi dışında gelen bildirim (ayıplı/geç ifa, uzayan süre) — yönetim inceler. */
+  "post_period_claim",
   "refund_started",
   "refund_succeeded",
   "refund_failed",

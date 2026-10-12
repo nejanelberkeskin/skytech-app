@@ -2,6 +2,14 @@
 import type { OrderConsents } from "@/lib/orders/types";
 export const HIDDEN_CERTIFICATE_NAME = "Ad paylaşılmıyor";
 const normalized = (s: string) => s.normalize("NFC").trim().replace(/\s+/g, " ").toLocaleLowerCase("tr-TR");
+/** Adsız sertifikada basılan sabit metin (kişisel veri içermez). */
+export const ANONYMOUS_CERTIFICATE_NAME = "Adsız Katılım";
+
+/** Ad, kurumsal alıcının unvanıyla aynı mı (tüzel kişi adı; üçüncü kişi adı sayılmaz). */
+export function isCompanyCertificateName(name: string, companyTitle: string): boolean {
+  return normalized(name) === normalized(companyTitle);
+}
+
 export function isOwnCertificateName(name: string, buyer: { firstName: string; lastName: string }): boolean {
   return normalized(name) === normalized(`${buyer.firstName} ${buyer.lastName}`);
 }

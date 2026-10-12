@@ -742,6 +742,19 @@
       "subtitle": "Choose the contact point that best fits your needs below.",
       "primary": "I Want Information",
       "secondary": "Corporate Quote"
+    },
+    "registry": {
+      "title": "Company details",
+      "legalName": "Legal name",
+      "address": "Address",
+      "tax": "Tax office / number",
+      "mersis": "MERSIS number",
+      "tradeRegistry": "Trade registry / number",
+      "registeredOn": "Registration date",
+      "kep": "Registered e-mail (KEP)",
+      "chamber": "Chamber membership",
+      "phone": "Phone",
+      "email": "E-mail"
     }
   },
   "seedBallPage": {
@@ -1061,7 +1074,8 @@
         "label": "Your Message",
         "placeholder": "Describe your question, need or request in detail..."
       },
-      "consent": "I have read the notice about my personal data.",
+      "consent": "I would like to be contacted about my message through the contact details I provided.",
+      "privacyNotice": "The information in this form is processed to assess your message and reply to you. Details are in the <kvkk>Personal Data Privacy Notice</kvkk>.",
       "submit": "Send Message",
       "submitting": "Sending...",
       "success": {
@@ -1215,7 +1229,8 @@
         "messagePlaceholder": "Anything you would like to add?"
       },
       "prefilled": "Your contact details were filled from your account; you can change them.",
-      "consent": "I have read the <kvkk>Privacy Notice (KVKK)</kvkk> and would like to be contacted about my request.",
+      "consent": "I would like to be contacted about my request through the contact details I provided.",
+      "privacyNotice": "The information in this form is processed to assess your request and reply to you. Details are in the <kvkk>Personal Data Privacy Notice</kvkk>.",
       "noPayment": "No payment is taken with this form. Details and scheduling are settled when our team gets back to you.",
       "submit": "Send Request",
       "submitting": "Sending…",
@@ -1254,7 +1269,7 @@
         "emailInvalid": "Enter a valid e-mail address.",
         "phoneInvalid": "Enter a valid phone number (e.g. +90 5XX XXX XX XX).",
         "contactRequired": "Enter at least one of phone or e-mail.",
-        "consentRequired": "Tick the consent box to continue.",
+        "consentRequired": "Tick the contact request so we can get back to you.",
         "quantityInvalid": "Quantity must be a whole number.",
         "quantityMin": "The minimum is {min} seed balls.",
         "quantityMax": "A single request can include up to {max} seed balls; write to us for more.",
@@ -1271,7 +1286,8 @@
         "landInvalid": "The selected site is currently closed for participation; choose another site.",
         "certificateNameShort": "The name on the certificate must be at least {min} characters.",
         "certificateNameLong": "The name on the certificate can be at most {max} characters.",
-        "certificateNameInvalid": "The name on the certificate may contain only letters, digits and basic punctuation."
+        "certificateNameInvalid": "The name on the certificate may contain only letters, digits and basic punctuation.",
+        "certificateNameThirdParty": "Only your own name, your company name or the no-name option can appear on the certificate."
       }
     },
     "land": {
@@ -2115,6 +2131,7 @@
       "tooLong": "The text is too long.",
       "not_found": "This order number and email address did not match. Check the details in your order confirmation email.",
       "not_eligible": "Your request could not be completed automatically. Send your withdrawal or other legal claim to {email}. This message is not a decision that you have no legal right.",
+      "recorded_as_claim": "The regular 14-day withdrawal period for this order appears to have ended. Your notice was not rejected: it has been recorded and our team will review it. Your rights regarding defective, late or non-performed services and any extended period are considered in this review. This message is not a decision that you have no legal right. To add details, write to {email}.",
       "already_requested": "A withdrawal notice for this order has already been received; the refund process is under way.",
       "rate_limited": "Too many attempts in a short time. Please try again later.",
       "closed": "The online withdrawal form is currently closed. You can send your withdrawal notice to {email}.",
@@ -2464,7 +2481,14 @@
       "fallback": "If left blank, your first and last name will be used.",
       "placeholder": "Your full name",
       "preview": "Participation Certificate — {name}",
-      "delivery": "The certificate is emailed when seed ball release is complete."
+      "delivery": "The certificate is emailed when seed ball release is complete.",
+      "mode": {
+        "own": "My own name (as entered in the buyer details)",
+        "company": "Company name (with a corporate invoice)",
+        "anonymous": "Certificate without a name"
+      },
+      "thirdPartyNote": "We cannot put another person's name on the certificate; for a gift, choose a certificate without a name.",
+      "companyPlaceholder": "Company Name"
     },
     "buyer": {
       "title": "Buyer details",
@@ -2505,6 +2529,8 @@
       "vat": "VAT included in total ({rate}%)",
       "schedule": "Release schedule",
       "deadline": "Release will be completed by {date}.",
+      "certificateDeadline": "The Participation Certificate is sent by {date} at the latest.",
+      "monitoringDeadline": "Monitoring content is shared by {date} at the latest.",
       "rolled": "The preparation window for this season has closed, so your order is scheduled for the {season} season.",
       "withdrawalTitle": "Right of withdrawal",
       "withdrawal": "You may withdraw without giving a reason within 14 days of payment. The full amount will be refunded to your original payment method within 14 days of your notice. Seed ball release will not take place before the withdrawal period ends.",
@@ -2518,12 +2544,12 @@
       "title": "Documents and declarations",
       "preInfo": "I have read the Pre-contract Information Form and confirm its contents.",
       "contract": "I have read and accept the Distance Service Agreement.",
-      "kvkkRead": "I have read the <kvkk>Personal Data Privacy Notice</kvkk> and have been informed.",
       "corporateAuthority": "I declare that I am authorized to place this order on behalf of the organization named in the invoice details.",
       "marketing": "I optionally agree to Skytech Green processing my email address and emailing me offers and promotions. I can withdraw this permission free of charge at info@skytechgreen.com or using the unsubscribe link.",
       "certificatePublication": "I explicitly consent to publishing my own name with the site, quantity and dates on the certificate page accessible to anyone with its link. This is optional; I can withdraw consent free of charge on the order page or via info@skytechgreen.com.",
-      "thirdPartyName": "Another person’s name stays hidden on the shared page until that person is informed directly and gives publication consent."
+      "thirdPartyName": "Publication permission can only be given when your own name is on the certificate."
     },
+    "privacyNotice": "The information in this form is processed to create your order, conclude the contract and provide the service. Details are in the <kvkk>Personal Data Privacy Notice</kvkk>.",
     "documents": {
       "title": "Order documents",
       "read": "Read",
@@ -2573,7 +2599,6 @@
       "kepInvalid": "Enter a valid registered email (KEP).",
       "preInfoRequired": "Confirm the Pre-contract Information Form to continue.",
       "contractRequired": "Accept the agreement to continue.",
-      "kvkkRequired": "Indicate that you have read the privacy notice to continue.",
       "corporateAuthorityRequired": "Confirm your authority to continue.",
       "certificatePublicationSelfOnly": "You can give publication consent only for your own name.",
       "quantityMin": "Select at least {min} seed balls.",
@@ -2581,7 +2606,9 @@
       "quantityInvalid": "Quantity must be a whole number.",
       "certificateNameShort": "The name on the certificate must be at least {min} characters.",
       "certificateNameLong": "The name on the certificate can be at most {max} characters.",
-      "certificateNameInvalid": "The name on the certificate may contain only letters, digits and basic punctuation."
+      "certificateNameInvalid": "The name on the certificate may contain only letters, digits and basic punctuation.",
+      "certificateNameThirdParty": "Only your own name, your company name or the no-name option can appear on the certificate.",
+      "certificateCompanyRequiresCorporate": "The company name can only be chosen with corporate invoice details."
     },
     "pausedNotice": "Online orders are temporarily paused. You can still send a participation request on this page; no payment is taken and our team will contact you.",
     "preorder": {

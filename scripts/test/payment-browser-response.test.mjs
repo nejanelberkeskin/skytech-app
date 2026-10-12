@@ -48,7 +48,7 @@ test('aynı oluşturma isteği ödenmiş siparişi döndürürse belirteç yaln�
     '@/lib/orders/settings': { getSalesSettings: async () => ({}), quoteVersion: () => 'v1' },
     '@/lib/payments': { getPaymentProvider: () => provider },
   });
-  const r = await route.POST(post('/api/public/siparis', { documentsVersion: 'v1', elapsedMs: 9000 }));
+  const r = await route.POST(post('/api/public/siparis', { documentsVersion: 'v1~2026-2027.5.8', elapsedMs: 9000 }));
   assert.equal(r.status, 201);
   await check(r, '/en/siparis/' + order.order_no);
   assert.equal(start, 0);

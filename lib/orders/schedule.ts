@@ -85,6 +85,29 @@ export function nextSeason(season: ReleaseSeason): ReleaseSeason {
   return seasonStartingIn(Number(season.label.slice(0, 4)) + 1);
 }
 
+/** Teslim ayı (1–12) ve o ayın son günü — sertifika / izleme içeriği için kesin son tarih. */
+export interface MonthDeadline {
+  month: number;
+  year: number;
+  /** Ayın son günü — YYYY-MM-DD */
+  lastDay: string;
+}
+
+/**
+ * `day`den (bırakma son tarihi) sonra gelen ilk `month` ayı; ayın son günü `day`den önce olamaz.
+ * Örn. son tarih 2027-03-31: Nisan → 30 Nisan 2027, Mart → 31 Mart 2027, Şubat → 29 Şubat 2028.
+ * Ay geçersizse null.
+ */
+export function monthDeadlineAfter(day: string, month: number | null | undefined): MonthDeadline | null {
+  if (typeof month !== "number" || !Number.isInteger(month) || month < 1 || month > 12) return null;
+  const [y] = day.split("-").map(Number);
+  for (const year of [y, y + 1]) {
+    const lastDay = iso(year, month, new Date(Date.UTC(year, month, 0)).getUTCDate());
+    if (lastDay >= day) return { month, year, lastDay };
+  }
+  return null;
+}
+
 /**
  * Siparişin takvimini hesaplar. `paidAt`: sözleşmenin kurulduğu an (ödeme onayı);
  * sihirbazda önizleme için "şimdi" verilir.

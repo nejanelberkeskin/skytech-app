@@ -12,7 +12,7 @@
 import { createHash } from "node:crypto";
 import { ilAdi } from "@/lib/tr-iller";
 import { formatHectares, formatSiteLocation } from "@/lib/sites/format";
-import type { OrderSchedule } from "@/lib/orders/schedule";
+import { monthDeadlineAfter, type OrderSchedule } from "@/lib/orders/schedule";
 import { resolveCertificateName, type OrderPreviewPayload } from "@/lib/orders/schema";
 import type { DocumentKind, SiteSnapshot } from "@/lib/orders/types";
 import { renderLegalHtml } from "./render-html";
@@ -83,6 +83,10 @@ export function buildLegalContext(p: LegalContextInput): LegalContext {
     vatKurus: p.totals.vatKurus,
     certificateName: resolveCertificateName(p.input),
     schedule: p.schedule,
+    deliveries: {
+      certificate: monthDeadlineAfter(p.schedule.performanceDeadline, p.site.certificateMonth),
+      monitoring: monthDeadlineAfter(p.schedule.performanceDeadline, p.site.monitoringMonth),
+    },
   };
 }
 

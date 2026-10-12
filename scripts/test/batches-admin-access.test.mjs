@@ -16,7 +16,7 @@ const dto = load('lib/batches/admin-dto.ts');
 const read = load('lib/batches/admin-read.ts', {
   '@/lib/admin/record-scope': scopeMod, '@/lib/orders/admin-access': orderAccess, '@/lib/orders/schedule': schedule, './admin-dto': dto,
 });
-const state = load('lib/orders/state.ts');
+const state = load('lib/orders/state.ts', { './withdrawal-period': load('lib/orders/withdrawal-period.ts') });
 
 /** Gerçek parti servisi; her çağrı sayılır. Sertifika üretimi taklit (ayrı sahiplikte). */
 function batchService(calls) {

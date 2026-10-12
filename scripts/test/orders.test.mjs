@@ -184,7 +184,8 @@ assert.deepEqual(errs(parse({ quantity: 1_000_001 })), { quantity: "quantityMax"
 assert.deepEqual(errs(parse({ quantity: 19 })), {}, "19 şemadan geçer; ayardaki en az adet uçta denetlenir");
 assert.deepEqual(errs(parse({ consents: { preInfo: true, contract: false, kvkkRead: true } })), { "consents.contract": "contractRequired" });
 assert.deepEqual(errs(parse({ consents: { preInfo: false, contract: true, kvkkRead: true } })), { "consents.preInfo": "preInfoRequired" });
-assert.deepEqual(errs(parse({ consents: { preInfo: true, contract: true } })), { "consents.kvkkRead": "kvkkRequired" });
+// KVKK aydınlatması kutu değildir: yokluğu hata değildir (bildirim olarak gösterilir, `kvkkNotice` kaydedilir).
+assert.deepEqual(errs(parse({ consents: { preInfo: true, contract: true } })), {});
 assert.deepEqual(errs(parse({ buyer: { ...base.buyer, email: "" } })), { "buyer.email": "emailRequired" });
 assert.deepEqual(errs(parse({ buyer: { ...base.buyer, email: "gecersiz" } })), { "buyer.email": "emailInvalid" });
 assert.deepEqual(errs(parse({ buyer: { ...base.buyer, firstName: " " } }))["buyer.firstName"], "firstNameRequired");

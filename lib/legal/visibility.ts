@@ -19,7 +19,7 @@ export function legalPagesVisible(): boolean {
 /** Sayfa adresleri — alt bilgi, sitemap ve middleware aynı listeyi kullanır. */
 export const SALES_LEGAL_PAGES = [
   { path: "/on-bilgilendirme", label: "Ön Bilgilendirme Formu" },
-  { path: "/mesafeli-satis-sozlesmesi", label: "Mesafeli Satış Sözleşmesi" },
+  { path: "/mesafeli-satis-sozlesmesi", label: "Mesafeli Hizmet Sözleşmesi" },
   { path: "/cayma-ve-iade", label: "Cayma ve İade Koşulları" },
   { path: "/ifa-kosullari", label: "İfa ve Teslimat Koşulları" },
   { path: "/islem-rehberi", label: "İşlem Rehberi" },

@@ -54,7 +54,7 @@ const slugTaken = () =>
 /** Yayın ve kapasite alanlarının önceki/sonraki değeri; diğer alanların yalnız adı. */
 function auditDetails(before: Record<string, unknown>, changes: SiteChanges) {
   const details: Record<string, unknown> = { changed: Object.keys(changes) };
-  for (const column of ["is_public", "status", "capacity_seeds"] as const) {
+  for (const column of ["is_public", "status", "capacity_seeds", "certificate_month", "monitoring_month", "permit_status"] as const) {
     if (column in changes) details[column] = { from: before[column] ?? null, to: changes[column] ?? null };
   }
   return details;
@@ -171,6 +171,14 @@ export async function PUT(request: NextRequest) {
     changes = diffSite(before, { is_public: body?.maintenance !== true });
   } else {
     changes = diffSite(before, toLandRow(form));
+    // İzin kararı: yalnız açık seçimle; doğrulayan ve an sunucuda yazılır (yetki: sites.publish + MFA).
+    const decision = form.permit_decision;
+    const permitChanged = "permit_reference" in changes || "permit_valid_until" in changes;
+    if (decision && (decision !== before.permit_status || (decision === "verified" && permitChanged))) {
+      changes.permit_status = decision;
+      changes.permit_verified_by = decision === "verified" ? guard.admin.user_id : null;
+      changes.permit_verified_at = decision === "verified" ? new Date().toISOString() : null;
+    }
     const current = typeof before.slug === "string" && before.slug ? before.slug : null;
     if (form.slug && form.slug !== current) changes.slug = form.slug;
     else if (!form.slug && !current) slugBase = slugify(form.name);

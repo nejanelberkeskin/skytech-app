@@ -66,6 +66,7 @@ const COMPANY_FIELD_LABELS: Record<string, string> = {
   tradeRegistryNo: "ticaret sicil no",
   tradeRegistryOffice: "ticaret sicil müdürlüğü",
   chamber: "meslek odası",
+  chamberRegistryNo: "oda sicil numarası",
 };
 
 type Env = Record<string, string | undefined>;

@@ -10,8 +10,15 @@
 
 export const GA_MEASUREMENT_ID = "G-E938FSNCWT";
 
-/** localStorage anahtarı — çerez tercihi burada saklanır: "granted" | "denied". */
+/**
+ * localStorage anahtarı — çerez tercihi burada saklanır. Değer `{"c":"granted"|"denied","t":<kayıt anı, ms>}` biçimindedir.
+ * Tercih CONSENT_MAX_AGE_MS (6 ay) sonra geçersizdir: bant yeniden çıkar, yeni seçim yapılana kadar analitik kapalıdır.
+ * Tarihsiz eski biçim ("granted" / "denied") süresi bilinemediği için geçersiz sayılır (bant yeniden sorar).
+ */
 export const CONSENT_STORAGE_KEY = "skytech_cookie_consent_v2";
+
+/** Çerez tercihinin ömrü: 6 ay (183 gün). */
+export const CONSENT_MAX_AGE_MS = 183 * 24 * 60 * 60 * 1000;
 
 /** Tercih değiştiğinde aynı sekmede yayımlanan olay (başka sekmeler `storage` olayını alır). */
 export const CONSENT_CHANGE_EVENT = "skytech-cookie-consent-change";
@@ -19,20 +26,45 @@ export const CONSENT_CHANGE_EVENT = "skytech-cookie-consent-change";
 /** Yurt dışı aktarım dosyası tamamlandıktan sonra dağıtım yapılandırmasında açılır. */
 export const ANALYTICS_TRANSFER_READY = process.env.NEXT_PUBLIC_ANALYTICS_TRANSFER_READY === "true";
 let memoryConsent: CookieConsent | null = null;
+
+/**
+ * Ölçüm dışı yollar (dil öneki çıkarıldıktan sonra). GA, Vercel Analytics ve Speed Insights için ortaktır; GA başlangıç betiği
+ * (GoogleAnalytics.tsx) aynı kalıpları tarayıcı geçmişi değişikliklerinde de uygular.
+ * `personel-daveti` ayrı yazılır: adresin içinde tek kullanımlık davet belirteci taşır ve `davet` kalıbıyla eşleşmez.
+ * `fatura/<sipariş kimliği>` ve kurumsal panel/giriş de hesap ve işlem ekranıdır.
+ */
+export const ANALYTICS_EXCLUDED_PATH_RE = /^\/(siparis|odeme|cayma|sertifika|hesabim|admin|giris|kayit|davet|personel-daveti|auth|sifre|fatura|kurumsal\/(?:panel|giris))(\/|$)/;
+export const ANALYTICS_EXCLUDED_SEGMENT_RE = /\/katil(?:\/|$)/;
+export const LOCALE_PREFIX_RE = /^\/(en|ru)(?=\/|$)/;
+
 export function analyticsAllowedPath(path: string): boolean {
-  const clean = path.replace(/^\/(en|ru)(?=\/|$)/, "");
-  // `personel-daveti` ayrı yazılır: adresin içinde tek kullanımlık davet belirteci taşır ve
-  // `davet` kalıbıyla eşleşmez. Bu liste GA, Vercel Analytics ve Speed Insights için ortaktır.
-  return !/^\/(siparis|odeme|cayma|sertifika|hesabim|admin|giris|kayit|davet|personel-daveti|auth|sifre)(\/|$)/.test(clean)
-    && !/\/katil(?:\/|$)/.test(clean);
+  const clean = path.replace(LOCALE_PREFIX_RE, "");
+  return !ANALYTICS_EXCLUDED_PATH_RE.test(clean) && !ANALYTICS_EXCLUDED_SEGMENT_RE.test(clean);
 }
 export type CookieConsent = "granted" | "denied";
 
-/** Kayıtlı tercih; yoksa (ya da depolama erişilemezse) null. */
+/** Saklanan değeri çözer; geçersiz, tarihsiz (eski biçim), gelecekte tarihli ya da süresi dolmuş kayıt null döner. */
+export function parseStoredConsent(raw: string | null, now: number = Date.now()): CookieConsent | null {
+  if (!raw) return null;
+  try {
+    const v = JSON.parse(raw) as { c?: unknown; t?: unknown };
+    if ((v?.c !== "granted" && v?.c !== "denied") || typeof v.t !== "number" || !Number.isFinite(v.t)) return null;
+    if (v.t > now + 60_000 || now - v.t >= CONSENT_MAX_AGE_MS) return null;
+    return v.c;
+  } catch {
+    return null;
+  }
+}
+
+/** Kaydedilecek değer: seçim + kayıt anı. */
+export function serializeConsent(consent: CookieConsent, now: number = Date.now()): string {
+  return JSON.stringify({ c: consent, t: now });
+}
+
+/** Kayıtlı ve süresi dolmamış tercih; yoksa (ya da depolama erişilemezse) null. */
 export function readConsent(): CookieConsent | null {
   try {
-    const stored = window.localStorage.getItem(CONSENT_STORAGE_KEY);
-    return stored === "granted" || stored === "denied" ? stored : null;
+    return parseStoredConsent(window.localStorage.getItem(CONSENT_STORAGE_KEY));
   } catch {
     return memoryConsent;
   }
@@ -58,7 +90,7 @@ export function subscribeConsent(onChange: () => void): () => void {
 export function writeConsent(consent: CookieConsent): void {
   memoryConsent = consent;
   try {
-    window.localStorage.setItem(CONSENT_STORAGE_KEY, consent);
+    window.localStorage.setItem(CONSENT_STORAGE_KEY, serializeConsent(consent));
   } catch {
     /* depolama kapalı: tercih yalnız bu sayfa için geçerli olur */
   }

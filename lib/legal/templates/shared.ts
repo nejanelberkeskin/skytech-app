@@ -3,8 +3,20 @@
  * Bir koşul iki belgede de geçiyorsa metni burada tek yerde durur; böylece iki
  * belge birbiriyle çelişemez.
  */
-import { count, money, sellerRows, trDayOf, trLongDate, withdrawalChannels } from "../format";
+import type { MonthDeadline } from "@/lib/orders/schedule";
+import { count, money, sellerRows, trDayOf, trLongDate, trMonthYear, withdrawalChannels } from "../format";
 import type { LegalBlock, LegalContext } from "../types";
+import { isDraftLegalVersion } from "../version";
+
+/**
+ * Yayın öncesi iç notlar (Astra hukuk paketi 2026-10.5): yalnız TASLAK sürümde, "Taslak notu" önekiyle görünür;
+ * sürüm kesinleşince hiçbir müşteri metnine basılmaz. Notlar tamamlanmadan sürüm kesinleştirilemez
+ * (lib/legal/release-blockers.ts ve legal-release testi).
+ */
+export function draftNotes(...texts: string[]): LegalBlock[] {
+  return isDraftLegalVersion() ? texts.map((text) => ({ type: "note" as const, text: `${DRAFT_NOTE_PREFIX} ${text}` })) : [];
+}
+export const DRAFT_NOTE_PREFIX = "Taslak notu (yayın öncesi tamamlanır, yayında görünmez):";
 
 export const ORDER_NO_PENDING = "Sipariş onaylandığında atanır";
 
@@ -60,10 +72,15 @@ export function priceTable(ctx: LegalContext): LegalBlock {
       ["Ek masraf", "Yoktur. Nakliye, teslimat veya benzeri adlarla ek bir bedel alınmaz."],
       [
         "Ödeme şekli",
-        "Banka veya kredi kartıyla, ödeme kuruluşunun güvenli ödeme sayfasında 3D Secure doğrulamasıyla. Kart bilgileri SATICI tarafından görülmez ve saklanmaz.",
+        "Peşin ve tek çekim olarak banka veya kredi kartıyla, ödeme kuruluşunun güvenli ödeme sayfasında 3D Secure doğrulamasıyla. Kart numarasının tamamı, son kullanma tarihi ve güvenlik kodu SATICI tarafından görülmez ve saklanmaz. Ödeme sonucu, işlem referansı ve maskeli kart bilgisi işlenebilir.",
       ],
     ],
   };
+}
+
+/** "Haziran 2027 — en geç 30 Haziran 2027"; örnek metinde yer tutucu. */
+export function deliveryText(d: MonthDeadline | null): string {
+  return d ? `${trMonthYear(d.year, d.month)} — en geç ${trLongDate(d.lastDay)}` : "[Sahaya göre belirlenen ay ve yıl — en geç o ayın son günü]";
 }
 
 export function scheduleTable(ctx: LegalContext): LegalBlock {
@@ -74,8 +91,8 @@ export function scheduleTable(ctx: LegalContext): LegalBlock {
       ["Bırakma sezonu", `${trLongDate(season.startsOn)} – ${trLongDate(season.endsOn)}`],
       ["En erken bırakma tarihi", trLongDate(earliestReleaseOn)],
       ["Tohum topu bırakma son tarihi (kesin süre)", trLongDate(performanceDeadline)],
-      ["Sertifika teslim son tarihi", "[YAYIN ÖNCESİ TAMAMLANACAK: siparişe özgü kesin tarih]"],
-      ["İzleme içeriği teslim son tarihi", "[YAYIN ÖNCESİ TAMAMLANACAK: siparişe özgü kesin tarih]"],
+      ["Katılım Sertifikası teslim ayı (kesin son tarih)", deliveryText(ctx.deliveries.certificate)],
+      ["İzleme içeriği teslim ayı (kesin son tarih)", deliveryText(ctx.deliveries.monitoring)],
     ],
   };
 }
@@ -103,18 +120,18 @@ export const TEXT = {
     "Hizmet; kararlaştırılan tohum toplarının hazırlanmasını ve sahaya bırakılmasını, Katılım Sertifikası ile izleme içeriğinin sunulmasını kapsar. Çimlenme, fidan gelişimi, orman oluşumu veya belirli bir karbon giderimi garanti edilmez. Bu açıklama, SATICI’nın mesleki özen, sözleşmeye uygun ifa ve ayıplı hizmetten doğan sorumluluğunu kaldırmaz.",
 
   notADonation:
-    "Bu işlem bir hizmet satın alımıdır; bağış, yardım veya yatırım değildir. ALICI’ya saha, ağaç veya ürün üzerinde mülkiyet, kullanım, tahsis ya da adlandırma hakkı; karbon kredisi veya denkleştirme hakkı vermez. Katılım Sertifikası bağış makbuzu veya karbon belgesi değildir. Vergisel sonuçlar alıcının durumu ve ilgili mevzuata göre belirlenir; vergi indirimi taahhüt edilmez.",
+    "Bu işlem bir hizmet satın alımıdır; bağış, yardım veya yatırım değildir. ALICI’ya saha, ağaç veya ürün üzerinde mülkiyet, kullanım, tahsis ya da adlandırma hakkı; karbon kredisi veya denkleştirme hakkı vermez. Katılım Sertifikası bağış makbuzu, resmî fatura, karbon kredisi veya bağımsız çevresel uygunluk belgesi değildir; şirketin gerçekleştirdiği bırakma çalışmasına katılımı gösterir. Vergisel sonuçlar alıcının durumu ve ilgili mevzuata göre belirlenir; vergi indirimi taahhüt edilmez.",
 
   noExtraCommunicationCost: "Uzaktan iletişim aracının kullanılması nedeniyle ALICI'ya ek bir maliyet yansıtılmaz.",
 
   invoice:
-    "Fatura, işlemin niteliğine ve yürürlükteki vergi mevzuatına uygun zamanda ve yasal süre içinde e-Fatura veya e-Arşiv Fatura olarak düzenlenir ve ALICI’ya iletilir. Peşin tahsilat, belgenin düzenlenme anı ve KDV’nin doğumu bakımından ilgili kurallarla birlikte değerlendirilir. Fatura veya muhasebe işlemleri, cayma ve iade hakkının kullanılmasının ön şartı değildir.",
+    "Bırakma, Katılım Sertifikası ve izleme, tek hizmet bedeli kapsamında sunulur. Siparişte alınan bedel, bırakma öncesinde avans niteliğinde izlenir. Fatura, bırakmanın tamamlandığı tarihten itibaren yasal süre içinde, kural olarak en geç yedi gün içinde düzenlenir. Vergiyi doğuran olayın daha önce oluştuğu veya daha kısa belge düzenleme süresi gerektiren bir durum bulunduğu hâllerde emredici vergi kuralları uygulanır. e-Fatura sistemine kayıtlı alıcıya e-Fatura, diğer alıcılara e-Arşiv Fatura düzenlenir. Siteden indirilen Sipariş Özeti resmî fatura yerine geçmez; resmî fatura ayrıca iletilir. Faturanın düzenlenmesi, sertifika ve izleme yükümlülüklerini sona erdirmez. Muhasebe ve fatura işlemleri, cayma ve iadenin ön şartı değildir.",
 
   calendar:
     "Tohum topu bırakma işlemleri Kasım–Mart döneminde yapılır; Nisan–Eylül döneminde sahalar incelenir, izlenir ve raporlanır. Bırakma işlemi, cayma süresi dolmadan yapılmaz.",
 
   completionNotice:
-    "Bırakma tamamlandığında ALICI’ya e-posta ile bilgi verilir. Katılım Sertifikası ve izleme içeriği, sipariş belgelerinde kendileri için ayrı ayrı kararlaştırılan kesin son tarihlere kadar e-posta veya kalıcı veri saklayıcısıyla sunulur. Bırakmanın tamamlanması, henüz teslim edilmemiş bu edimleri sona erdirmez.",
+    "Bırakma tamamlandığında ALICI’ya e-posta ile bilgi verilir. Katılım Sertifikası ve izleme içeriği, sipariş belgelerinde kendileri için ayrı ayrı belirtilen teslim ayının son gününe kadar e-posta veya kalıcı veri saklayıcısıyla sunulur. Teslim ayları her Proje Uygulama Sahası için sipariş öncesinde belirlenir; sipariş belgesine yazıldıktan sonra ALICI aleyhine değiştirilmez. Bırakmanın tamamlanması, henüz teslim edilmemiş bu edimleri sona erdirmez.",
 
   lateOrImpossible:
     "SATICI, kararlaştırılan ifa süresine uymakla yükümlüdür. Süresinde ifa edilmezse ALICI sözleşmeyi feshedebilir; tahsil edilen tüm bedel, fesih bildiriminin ulaşmasından itibaren 14 (on dört) gün içinde yasal faiziyle birlikte iade edilir. İfanın imkânsızlaşması hâlinde SATICI, durumu öğrendiği tarihten itibaren 3 (üç) gün içinde yazılı olarak veya kalıcı veri saklayıcısıyla bildirir ve tahsil edilen tüm bedeli bildirim tarihinden itibaren en geç 14 (on dört) gün içinde iade eder. Başka saha, tür veya sezon önerisi iadeyi durdurmaz ve süresini uzatmaz. Yeni bir hizmet ancak kapsamı, bedeli ve takvimi ayrıca açıklanıp ALICI’nın açık kabulü alınarak kararlaştırılır; sessizlik kabul değildir. Her hava veya izin sorunu kendiliğinden imkânsızlık sayılmaz; olayın gerçek etkisi ve SATICI’nın sorumluluğu değerlendirilir.",

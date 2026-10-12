@@ -53,6 +53,7 @@ export function sampleLegalContext(now: Date = new Date(), terms: SampleTerms = 
     vatKurus: Math.round((totalKurus * vatRate) / (100 + vatRate)),
     certificateName: "[Alıcının belirlediği ad]",
     schedule: scheduleFor(now, terms.prepDays),
+    deliveries: { certificate: null, monitoring: null },
   };
 }
 

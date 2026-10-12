@@ -7,6 +7,7 @@
  * imkânsızdır (veritabanında ayrıca koşullu UPDATE ile korunur).
  */
 import type { OrderStatus } from "./types";
+import { withinWithdrawalPeriod } from "./withdrawal-period";
 
 const TRANSITIONS: Record<OrderStatus, readonly OrderStatus[]> = {
   draft: ["awaiting_payment", "expired"],
@@ -58,9 +59,10 @@ export function assertTransition(from: OrderStatus, to: OrderStatus): void {
 /**
  * Müşteri cayma hakkını kullanabilir mi? Yalnız `paid` durumunda ve son an
  * geçmemişse. (Son an, ödeme anından 14 gün sonrasının İstanbul saatiyle gün
- * sonudur — bkz. schedule.ts.)
+ * sonudur — bkz. schedule.ts; son gün tatile denk gelirse izleyen ilk iş gününe
+ * uzar — bkz. withdrawal-period.ts.)
  */
 export function canWithdraw(status: OrderStatus, withdrawalDeadline: Date | string | null, now: Date = new Date()): boolean {
   if (status !== "paid" || !withdrawalDeadline) return false;
-  return now.getTime() <= new Date(withdrawalDeadline).getTime();
+  return withinWithdrawalPeriod(withdrawalDeadline, now);
 }

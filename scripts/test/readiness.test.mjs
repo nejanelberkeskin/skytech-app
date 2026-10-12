@@ -109,7 +109,7 @@ for (const key of ["email", "cron"]) assert.equal(res.items.find((i) => i.key ==
 assert.ok(!res.items.find((i) => i.key === "cron").detail.includes("yönetim ekranları açıldıkça"), "liste ekranları artık iş tetiklemiyor");
 const company = res.items.find((i) => i.key === "company");
 assert.equal(company.level, "warning");
-assert.match(company.detail, /KEP adresi/);
+assert.match(company.detail, /oda sicil numarası/, "KEP bildirildi (12 Ekim); açık künye maddesi oda sicil numarası");
 assert.ok(res.items.every((i) => i.label && i.detail), "her maddenin başlığı ve açıklaması var");
 
 console.log("✓ satışa hazırlık testleri geçti");

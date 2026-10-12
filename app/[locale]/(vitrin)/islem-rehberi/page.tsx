@@ -37,12 +37,17 @@ export default async function IslemRehberiPage({ params }: { params: Promise<{ l
 
   return (
     <LegalLayout title={TITLE} path={PATH} effectiveDate={LEGAL_EFFECTIVE_LABEL}>
+      <p className="text-base leading-relaxed text-[#3d5a3d]">
+        Satış kapalıyken ekranda yalnız bilgi veya talep oluşturma seçenekleri bulunabilir. Talep bırakılması sipariş
+        oluşturmaz, bedel tahsil edilmez ve ücretli hizmet sözleşmesi kurulmaz. Aşağıdaki satın alma akışı yalnız satışın
+        açık olduğu sahalarda uygulanır.
+      </p>
       <LegalSection no="1" title="Sözleşmenin kurulması için izlenen adımlar">
         <LegalList
           items={[
             <>Proje Uygulama Sahaları arasından bir saha seçersiniz.</>,
             <>Bıraktırmak istediğiniz tohum topu adedini belirlersiniz; toplam bedel anında gösterilir.</>,
-            <>Katılım Sertifikası&apos;nda yer alacak adı yazarsınız (isteğe bağlı).</>,
+            <>Katılım Sertifikası&apos;nda kendi adınızın, kurumsal faturada kurum unvanının yer almasını ya da adsız sertifikayı seçersiniz.</>,
             <>Alıcı bilgilerinizi ve fatura türünü (bireysel ya da kurumsal) girersiniz.</>,
             <>
               Özet ekranında siparişinizi, toplam bedeli, hizmetin ifa edileceği son tarihi ve cayma hakkınızı görürsünüz.
@@ -73,13 +78,13 @@ export default async function IslemRehberiPage({ params }: { params: Promise<{ l
           Siparişinize özel sözleşme metni Skytech Green tarafından elektronik ortamda, içeriği değiştirilemeyecek biçimde
           saklanır. Metin size e-posta ile gönderilir; üyeyseniz hesabınızdan da erişebilirsiniz. Örnek metinler:{" "}
           <Link href="/on-bilgilendirme" className={link}>Ön Bilgilendirme Formu</Link>,{" "}
-          <Link href="/mesafeli-satis-sozlesmesi" className={link}>Mesafeli Satış Sözleşmesi</Link>.
+          <Link href="/mesafeli-satis-sozlesmesi" className={link}>Mesafeli Hizmet Sözleşmesi</Link>.
         </LegalP>
       </LegalSection>
 
       <LegalSection no="4" title="Ödeme güvenliği">
         <LegalP>
-          Kart bilgileriniz ödeme kuruluşunun güvenli sayfasında girilir; Skytech Green bu bilgileri görmez ve saklamaz.
+          Kart numaranızın tamamı, son kullanma tarihi ve güvenlik kodu ödeme kuruluşunun güvenli sayfasında girilir; Skytech Green bunları görmez ve saklamaz. Gerekli işlem sonucu, ödeme referansı ve maskeli kart bilgisi işlenebilir.
         </LegalP>
       </LegalSection>
 

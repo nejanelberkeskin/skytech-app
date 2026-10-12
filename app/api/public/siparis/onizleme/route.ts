@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { rateLimit, getClientIP } from "@/lib/admin-auth";
 import { issuesToFieldErrors } from "@/lib/requests/schema";
 import { orderPreviewSchema } from "@/lib/orders/schema";
-import { buildPreview, checkSite } from "@/lib/orders/preview";
+import { buildPreview, checkSite, siteTermsProblem } from "@/lib/orders/preview";
 import { getSalesSettings } from "@/lib/orders/settings";
 import { quantityRangeError } from "@/lib/pricing";
 import { canAcceptOrders, ordersClosed } from "@/lib/orders/gate";
@@ -55,5 +55,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: site.error }, { status: site.error === "unavailable" ? 503 : 409 });
   }
 
-  return NextResponse.json({ ok: true, ...buildPreview(parsed.data, site.site, settings) });
+  const preview = buildPreview(parsed.data, site.site, settings);
+  // Teslim ayları ya da doğrulanmış izni olmayan sahada ödeme öncesi görünüm de açılmaz (sunucu kuralı).
+  if (siteTermsProblem(site.site, preview.schedule)) return NextResponse.json({ error: "site_unavailable" }, { status: 409 });
+  return NextResponse.json({ ok: true, ...preview });
 }

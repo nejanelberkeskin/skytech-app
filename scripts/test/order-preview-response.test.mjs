@@ -11,13 +11,17 @@ const valid = () => ({
     withdrawalDeadline: "2026-10-13T20:59:59.999Z", earliestReleaseOn: "2026-11-01",
     performanceDeadline: "2027-03-31", rolledToNextSeason: false,
   },
+  deliveries: {
+    certificate: { month: 5, year: 2027, lastDay: "2027-05-31" },
+    monitoring: { month: 8, year: 2027, lastDay: "2027-08-31" },
+  },
 });
 test("preview retains the server price and document contents without local recalculation", () => {
   const quote = valid();
   assert.deepEqual(readPreviewResponse({ ok: true, ...quote }, 100), quote);
 });
 test("incomplete or non-object successful JSON cannot become a quote", () => {
-  for (const value of [null, undefined, [], true, "ok", { ok: true }, { ...valid(), totals: null }, { ...valid(), schedule: {} }])
+  for (const value of [null, undefined, [], true, "ok", { ok: true }, { ...valid(), totals: null }, { ...valid(), schedule: {} }, { ...valid(), deliveries: undefined }, { ...valid(), deliveries: { certificate: null, monitoring: null } }])
     assert.equal(readPreviewResponse(value, 100), null);
 });
 test("another quantity and invalid monetary values cannot appear in the payment summary", () => {

@@ -7,7 +7,7 @@ import { formatCount, formatTry } from "@/lib/pricing";
 
 const NBSP = String.fromCharCode(0xa0);
 
-const MONTHS_TR = [
+export const MONTHS_TR = [
   "Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran",
   "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık",
 ] as const;
@@ -17,6 +17,11 @@ export function trLongDate(day: string): string {
   const [y, m, d] = day.split("-").map(Number);
   // Bölünmez boşluk: tarih satır sonunda ikiye ayrılmasın.
   return `${d}${NBSP}${MONTHS_TR[m - 1]}${NBSP}${y}`;
+}
+
+/** (2027, 6) → "Haziran 2027" */
+export function trMonthYear(year: number, month: number): string {
+  return `${MONTHS_TR[month - 1]}${NBSP}${year}`;
 }
 
 /** ISO an → İstanbul takvim günü ("2026-10-05T20:59:59.999Z" → "2026-10-05"). */
@@ -40,6 +45,7 @@ export function sellerRows(): [string, string][] {
     ["Telefon", COMPANY.phone],
     ["E-posta", COMPANY.email],
     ["KEP adresi", COMPANY.kep],
+    ["Mensup olunan meslek odası", COMPANY.chamber],
     ["İnternet sitesi", COMPANY.website.replace(/^https?:\/\//, "")],
   ];
   return rows.filter((r): r is [string, string] => Boolean(r[1]));
@@ -51,8 +57,7 @@ export function withdrawalChannels(): string {
   const parts = [
     `${site}/cayma adresindeki form`,
     `${COMPANY.email} adresine e-posta`,
-    ...(COMPANY.kep ? [`${COMPANY.kep} KEP adresine ileti`] : []),
-    "SATICI'nın yukarıdaki adresine yazılı bildirim",
+    "SATICI'nın bu metinde belirtilen adresine yazılı bildirim",
   ];
   return parts.slice(0, -1).join(", ") + " veya " + parts.at(-1);
 }

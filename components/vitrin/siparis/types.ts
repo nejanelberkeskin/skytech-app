@@ -26,6 +26,7 @@ export interface WizardProps {
   pricing: PublicPricing;
 }
 export type Buyer = OrderPayloadInput["buyer"];
+export type CertificateMode = "own" | "company" | "anonymous";
 export interface InvoiceValues {
   type: "" | "individual" | "corporate";
   province: string;
@@ -61,7 +62,6 @@ export const EMPTY_INVOICE: InvoiceValues = {
 export const EMPTY_CONSENTS = {
   preInfo: false,
   contract: false,
-  kvkkRead: false,
   corporateAuthority: false,
   marketing: false,
   certificatePublication: false,
@@ -103,7 +103,7 @@ export function errorStep(fields: Record<string, string>): number {
     return 1;
   if (
     paths.some(
-      (p) => p === "certificateName" || p === "details.certificateName",
+      (p) => p === "certificateName" || p === "certificateMode" || p === "details.certificateName",
     )
   )
     return 2;

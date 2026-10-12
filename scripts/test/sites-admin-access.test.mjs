@@ -24,6 +24,8 @@ async function sitesDb() {
     UPDATE lands SET status = 'scheduled' WHERE status NOT IN ('open','full','scheduled','seeded','monitoring','closed');`);
   const sql = await readFile(new URL('../../supabase/migrations/015_project_sites.sql', import.meta.url), 'utf8');
   await db.exec(sql.slice(sql.indexOf('-- ── 1. Sütunlar'), sql.indexOf('-- ── 4. Yetkiler')));
+  // 040: teslim ayları (tek işlemde uygulanır; SET LOCAL için BEGIN/COMMIT).
+  await db.exec(`BEGIN;\n${await readFile(new URL('../../supabase/migrations/040_site_delivery_and_permits.sql', import.meta.url), 'utf8')}\nCOMMIT;`);
   await db.exec(`CREATE TABLE seed_catalog(slug text PRIMARY KEY, name text NOT NULL, latin_name text, sort_order int NOT NULL DEFAULT 0);
     INSERT INTO seed_catalog VALUES ('kizilcam','Kızılçam','Pinus brutia',1), ('karacam','Karaçam','Pinus nigra',2), ('sedir','Sedir','Cedrus libani',3);
     UPDATE lands SET region='Antalya', province='Antalya', district='Manavgat', filled_seeds=1000, reserved_seeds=500, capacity_seeds=50000,
@@ -71,7 +73,8 @@ function formOf(item, patch = {}) {
     species_slugs: item.speciesSlugs, name_en: item.nameI18n.en ?? '', name_ru: item.nameI18n.ru ?? '',
     summary_tr: item.summaryI18n.tr ?? '', summary_en: item.summaryI18n.en ?? '', summary_ru: item.summaryI18n.ru ?? '',
     cover_image: item.coverImage ?? '', video_url: item.videoUrl ?? '', sort_order: item.sortOrder, status: item.status,
-    is_public: item.isPublic, capacity_seeds: item.capacity.total, ...patch,
+    is_public: item.isPublic, capacity_seeds: item.capacity.total, certificate_month: item.certificateMonth, monitoring_month: item.monitoringMonth,
+    permit_reference: item.permit.reference ?? '', permit_valid_until: item.permit.validUntil, ...patch,
   };
 }
 const siteOf = async (db, id) => (await api(db, IDS.superAdmin, { role: 'SUPER_ADMIN' }).list()).body.data.items.find((s) => s.id === id);
@@ -408,5 +411,50 @@ test('30: hatalar — veri kaynağı 503 (sahte boş liste yok); geçersiz kimli
     assert.deepEqual(same.body.data.changed, []);
     assert.deepEqual(o.writes, []); assert.deepEqual(o.audits, []);
     assert.equal((await owner({ failTables: ['lands'] }).put({ id: IDS.siteA, maintenance: true })).status, 503);
+  } finally { await db.close(); }
+});
+
+test('040: teslim ayları ve izin kararı yayın yetkisi (MFA) ister; izin bilgisi girmek onay değildir, bilgi değişince onay düşer', async () => {
+  const db = await sitesDb();
+  const permit = async () => (await db.query('SELECT certificate_month, monitoring_month, permit_status, permit_reference, permit_verified_by FROM lands WHERE id=$1', [IDS.siteA])).rows[0];
+  try {
+    await engineer(db);
+    await withMfaEnforced(async () => {
+      const eng = api(db, ENGINEER, { role: 'ENGINEER', assurance: aal2(1) });
+      // Düzenleyici izin bilgisini girer: durum "gönderildi", onay yok.
+      const a = await siteOf(db, IDS.siteA);
+      const entered = await eng.put(formOf(a, { permit_reference: 'Örnek OBM 2026/14', permit_valid_until: '2027-12-31' }));
+      assert.equal(entered.status, 200, JSON.stringify(entered.body));
+      assert.equal((await permit()).permit_status, 'submitted');
+      // Teslim ayı ve izin kararı yayın yetkisi ister (mühendiste yok) → yazma yok.
+      const before = eng.writes.length;
+      const months = await eng.put(formOf(await siteOf(db, IDS.siteA), { certificate_month: 5, monitoring_month: 8 }));
+      assert.equal(months.status, 403, JSON.stringify(months.body));
+      assert.deepEqual(months.body.error.details.permissions, ['sites.publish']);
+      const verify = await eng.put(formOf(await siteOf(db, IDS.siteA), {
+        permit_reference: 'Örnek OBM 2026/14', permit_valid_until: '2027-12-31', permit_decision: 'verified',
+      }));
+      assert.equal(verify.status, 403, JSON.stringify(verify.body));
+      assert.equal(eng.writes.length, before, 'ret durumunda yazma yok');
+      // Sahip taze MFA ile: aylar + doğrulama; doğrulayan sunucuda yazılır.
+      const owner = api(db, IDS.superAdmin, { role: 'SUPER_ADMIN', assurance: aal2(1) });
+      const ok = await owner.put(formOf(await siteOf(db, IDS.siteA), {
+        certificate_month: 5, monitoring_month: 8, permit_reference: 'Örnek OBM 2026/14', permit_valid_until: '2027-12-31', permit_decision: 'verified',
+      }));
+      assert.equal(ok.status, 200, JSON.stringify(ok.body));
+      const p = await permit();
+      assert.deepEqual([p.certificate_month, p.monitoring_month, p.permit_status, p.permit_verified_by], [5, 8, 'verified', IDS.superAdmin]);
+      assert.equal(ok.body.data.site.permit.status, 'verified');
+      // Doğrulanmış izin bilgisi kararsız değişirse onay düşer (tetikleyici).
+      const changed = await eng.put(formOf(await siteOf(db, IDS.siteA), { permit_reference: 'Örnek OBM 2026/15', permit_valid_until: '2027-12-31' }));
+      assert.equal(changed.status, 200);
+      const q = await permit();
+      assert.deepEqual([q.permit_status, q.permit_verified_by], ['submitted', null]);
+      // Kural: Nisan–Eylül dışı ay ve izlemeden sonra sertifika reddedilir (şema + veritabanı).
+      const bad = await owner.put(formOf(await siteOf(db, IDS.siteA), { certificate_month: 9, monitoring_month: 5 }));
+      assert.equal(bad.status, 400);
+      await assert.rejects(db.query(`UPDATE lands SET monitoring_month=10 WHERE id='${IDS.siteA}'`));
+      await assert.rejects(db.query(`UPDATE lands SET permit_status='verified' WHERE id='${IDS.siteB}'`), 'eksik bilgiyle doğrulanamaz');
+    });
   } finally { await db.close(); }
 });

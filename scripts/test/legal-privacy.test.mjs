@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { publicCertificateName, isOwnCertificateName, HIDDEN_CERTIFICATE_NAME } from '../../lib/certificates/publication.ts';
-import { orderPayloadSchema } from '../../lib/orders/schema.ts';
+import { publicCertificateName, isOwnCertificateName, HIDDEN_CERTIFICATE_NAME, ANONYMOUS_CERTIFICATE_NAME } from '../../lib/certificates/publication.ts';
+import { orderPayloadSchema, resolveCertificateName } from '../../lib/orders/schema.ts';
 import { ANALYTICS_TRANSFER_READY, analyticsAllowedPath, readConsent, writeConsent, trackEvent, CONSENT_STORAGE_KEY } from '../../lib/analytics.ts';
 const person = { firstName: 'Ayşe', lastName: 'Örnek' };
 const base = { certificate_name: 'Ayşe Örnek', buyer_first_name: 'Ayşe', buyer_last_name: 'Örnek', consents: {} };
@@ -18,15 +18,26 @@ test('Geri alınan, başka ada verilen veya üçüncü kişi için kullanılan r
   assert.equal(publicCertificateName({ ...base, buyer_first_name: 'Ali', consents: { certificatePublication: grant } }), HIDDEN_CERTIFICATE_NAME);
   assert.ok(isOwnCertificateName('  Ayşe   Örnek  ', person));
 });
-test('Sunucu şeması hediye adı için yayın iznini reddeder; izinsiz hediye siparişini kabul eder', () => {
+test('Sunucu şeması üçüncü kişi adını almaz (izinli/izinsiz); adsız ve kurum unvanı seçenekleri; yayın izni yalnız kendi adına', () => {
   const p = { landId: '3f2b8c1e-4a5d-4e6f-8a9b-0c1d2e3f4a5b', clientToken: 'a13b8c1e-4a5d-4e6f-8a9b-0c1d2e3f4a5b', quantity: 200, certificateName: 'Başka Kişi', buyer: { ...person, email: 'ayse@example.com', phone: '05320000000' }, invoice: { type: 'individual', address: { province: '17', district: 'Eceabat', line: 'Örnek Mahallesi Örnek Sokak No 1' } }, locale: 'tr', documentsVersion: '2026-09.4-taslak', consents: { preInfo: true, contract: true, kvkkRead: true, certificatePublication: true } };
   const rejected = orderPayloadSchema.safeParse(p);
   assert.equal(rejected.success, false);
   assert.ok(rejected.error.issues.some(i => i.message === 'certificatePublicationSelfOnly'));
-  const accepted = orderPayloadSchema.safeParse({ ...p, consents: { ...p.consents, certificatePublication: false } });
-  assert.equal(accepted.success, true, JSON.stringify(accepted.error?.issues));
-  const defaults = orderPayloadSchema.parse({ ...p, certificateName: '', consents: { preInfo: true, contract: true, kvkkRead: true } });
-  assert.equal(defaults.consents.certificatePublication, false);
+  assert.ok(rejected.error.issues.some(i => i.message === 'certificateNameThirdParty'));
+  const noPermission = orderPayloadSchema.safeParse({ ...p, consents: { ...p.consents, certificatePublication: false } });
+  assert.equal(noPermission.success, false, 'izinsiz de olsa üçüncü kişi adı alınmaz');
+  assert.ok(noPermission.error.issues.some(i => i.message === 'certificateNameThirdParty'));
+  // Hediye: adsız sertifika; yayın izni verilemez (kendi adı değil).
+  const gift = orderPayloadSchema.parse({ ...p, certificateName: '', certificateMode: 'anonymous', consents: { preInfo: true, contract: true } });
+  assert.equal(resolveCertificateName(gift), ANONYMOUS_CERTIFICATE_NAME);
+  assert.equal(orderPayloadSchema.safeParse({ ...p, certificateName: '', certificateMode: 'anonymous', consents: { preInfo: true, contract: true, certificatePublication: true } }).success, false);
+  // Kendi adı: aydınlatma kutusu artık şart değil (eski kvkkRead gönderilse de kaydedilmez).
+  const own = orderPayloadSchema.parse({ ...p, certificateName: '', consents: { preInfo: true, contract: true } });
+  assert.equal(own.consents.certificatePublication, false);
+  assert.equal(resolveCertificateName(own), 'Ayşe Örnek');
+  // Kurum unvanı yalnız kurumsal faturada.
+  assert.ok(orderPayloadSchema.safeParse({ ...p, certificateName: '', certificateMode: 'company', consents: { preInfo: true, contract: true } })
+    .error.issues.some(i => i.message === 'certificateCompanyRequiresCorporate'));
 });
 test('Aktarım hazırlığı varsayılan kapalı; özel yollar tüm dillerde ölçüm dışı', () => {
   assert.equal(ANALYTICS_TRANSFER_READY, false);

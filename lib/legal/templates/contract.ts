@@ -72,13 +72,14 @@ export function contractDocument(ctx: LegalContext): LegalDocument {
     { type: "heading", text: "Madde 5 — Ödeme ve fatura" },
     {
       type: "paragraph",
-      text: "5.1. Bedel, siparişin onaylanması sırasında banka veya kredi kartıyla, ödeme kuruluşunun güvenli ödeme sayfasında peşin olarak tahsil edilir. Kart bilgileri SATICI'ya ulaşmaz ve SATICI tarafından saklanmaz.",
+      text: "5.1. Bedel, siparişin onaylanması sırasında banka veya kredi kartıyla, ödeme kuruluşunun güvenli ödeme sayfasında peşin ve tek çekim olarak tahsil edilir. Kart numarasının tamamı, son kullanma tarihi ve güvenlik kodu SATICI'ya ulaşmaz ve SATICI tarafından saklanmaz; gerekli ödeme sonucu ve maskeli kart bilgisi işlenebilir.",
     },
     {
       type: "paragraph",
       text: "5.2. İlk ödemenin başarısız olması hâlinde sipariş tamamlanmaz. Başarıyla kurulmuş sözleşmede sonradan ortaya çıkan ters ibraz, banka itirazı veya ödeme uyuşmazlığı sözleşmeyi kendiliğinden geçmişe etkili olarak yok saydırmaz; tarafların hak ve borçları somut duruma ve mevzuata göre değerlendirilir.",
     },
     { type: "paragraph", text: `5.3. ${TEXT.invoice}` },
+    { type: "paragraph", text: "5.4. Ödeme kuruluşunun koruma programları ve kart itirazı süreçleri kendi koşullarına tabidir. Bu koşullar, ALICI’nın SATICI’ya karşı cayma, ayıplı hizmet, geç ifa veya ifa imkânsızlığı nedeniyle sahip olduğu kanuni ve sözleşmesel hakları daraltmaz. SATICI, hizmetin kararlaştırılan tarihlerde ifasından ve kendisine düşen iade yükümlülüklerinden sorumludur." },
 
     { type: "heading", text: "Madde 6 — Hizmetin ifası" },
     scheduleTable(ctx),
@@ -117,7 +118,7 @@ export function contractDocument(ctx: LegalContext): LegalDocument {
     },
     {
       type: "paragraph",
-      text: "8.3. Bedelin iade edildiği hâllerde düzenlenmiş Katılım Sertifikası iptal edilir ve doğrulama sayfasında iptal edildiği belirtilir.",
+      text: "8.3. Bedelin iade edildiği hâllerde düzenlenmiş Katılım Sertifikası iptal edilir. Doğrulama sayfasında yalnız belgenin geçerlilik durumu gösterilir; iade nedeni, ödeme bilgisi ve özel sipariş ayrıntıları açıklanmaz. Ad yayın izninin geri alınması bu sayfada da uygulanır.",
     },
     {
       type: "paragraph",
@@ -177,7 +178,7 @@ export function contractDocument(ctx: LegalContext): LegalDocument {
 
     { type: "heading", text: "Madde 13 — Uyuşmazlıkların çözümü" },
     { type: "paragraph", text: `13.1. ${TEXT.disputesConsumer} ${TEXT.disputesCorporate}` },
-    { type: "paragraph", text: "13.2. Bu sözleşmeye Türkiye Cumhuriyeti hukuku uygulanır." },
+    { type: "paragraph", text: "13.2. Bu sözleşmeye Türkiye Cumhuriyeti hukuku uygulanır. Uygulanması zorunlu diğer tüketici koruma hükümleri saklıdır." },
 
     { type: "heading", text: "Madde 14 — Yürürlük" },
     {

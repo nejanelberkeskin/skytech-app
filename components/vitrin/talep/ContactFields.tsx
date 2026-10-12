@@ -156,7 +156,19 @@ export default function ContactFields({
 
       {consentNotice && <p className="text-xs leading-relaxed text-[#3d5a3d]">{consentNotice}</p>}
 
-      {/* KVKK onayı (consentNotice verilmediyse) */}
+      {/* KVKK aydınlatması bildirim olarak (rıza kutusu değil); kutu yalnız iletişim isteğidir. */}
+      {!consentNotice && (
+        <p className="text-xs leading-relaxed text-[#3d5a3d]">
+          {t.rich("privacyNotice", {
+            kvkk: (chunks) => (
+              <Link href="/kvkk" target="_blank" className="font-semibold text-[#1B6B3A] underline underline-offset-2">
+                {chunks}
+              </Link>
+            ),
+          })}
+        </p>
+      )}
+      {/* İletişim isteği (consentNotice verilmediyse) */}
       {!consentNotice && <label className={`flex items-start gap-3 text-xs leading-relaxed pt-1 cursor-pointer ${errorFor("contact.consent") ? "text-[#dc2626]" : "text-[#3d5a3d]"}`}>
         <input
           type="checkbox"
@@ -169,13 +181,7 @@ export default function ContactFields({
           className="mt-0.5 w-4 h-4 shrink-0 accent-[#1B6B3A]"
         />
         <span>
-          {t.rich("consent", {
-            kvkk: (chunks) => (
-              <Link href="/kvkk" target="_blank" className="font-semibold text-[#1B6B3A] underline underline-offset-2">
-                {chunks}
-              </Link>
-            ),
-          })}
+          {t("consent")}
         </span>
       </label>}
       {!consentNotice && errorFor("contact.consent") && (

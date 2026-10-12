@@ -15,8 +15,9 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { buildLegalContext, buildOrderDocuments } from "@/lib/legal/documents";
 import { LEGAL_DOCUMENTS_VERSION } from "@/lib/legal/version";
+import { MARKETING_CONSENT_ENABLED } from "@/lib/site-config";
 import { generateOrderNo } from "./identifiers";
-import { checkSite } from "./preview";
+import { checkSite, offerVersion, siteTermsProblem } from "./preview";
 import { scheduleFor, trToday } from "./schedule";
 import { resolveCertificateName, type OrderPayload } from "./schema";
 import { quantityRangeError } from "@/lib/pricing";
@@ -35,7 +36,7 @@ export interface CreateOrderMeta {
 
 export type CreateOrderResult =
   | { ok: true; order: ReleaseOrderRow; reused: boolean }
-  | { ok: false; error: "site_unavailable" | "capacity" | "unavailable" }
+  | { ok: false; error: "site_unavailable" | "capacity" | "unavailable" | "documents_stale" }
   | { ok: false; error: "quantity"; field: "quantityMin" | "quantityMax" };
 
 const UNPAID = ["draft", "awaiting_payment", "payment_failed"] as const;
@@ -68,8 +69,10 @@ function consentRecords(payload: OrderPayload, at: string): OrderConsents {
   return {
     preInfo: rec(payload.consents.preInfo),
     contract: rec(payload.consents.contract),
-    kvkkRead: rec(payload.consents.kvkkRead),
-    marketing: rec(payload.consents.marketing),
+    // Aydınlatma bildirimi: gösterilen sürüm ve an (rıza kaydı değil).
+    kvkkNotice: { shownAt: at, version: LEGAL_DOCUMENTS_VERSION },
+    // İYS kurulmadan ticari ileti izni kaydedilmez (MARKETING_CONSENT_ENABLED kapalıysa false).
+    marketing: rec(MARKETING_CONSENT_ENABLED && payload.consents.marketing),
     certificatePublication: { ...rec(payload.consents.certificatePublication), subjectName: resolveCertificateName(payload) },
     ...(payload.invoice.type === "corporate" ? { corporateAuthority: rec(payload.consents.corporateAuthority) } : {}),
   };
@@ -102,6 +105,9 @@ export async function createOrder(payload: OrderPayload, meta: CreateOrderMeta, 
   const now = new Date();
   const totals = orderTotals(payload.quantity, settings);
   const schedule = scheduleFor(now, settings.prepDays);
+  // Saha koşulları (teslim ayları, doğrulanmış izin) ve müşterinin onayladığı teklifle aynı sezon/aylar.
+  if (siteTermsProblem(site.site, schedule)) return { ok: false, error: "site_unavailable" };
+  if (payload.documentsVersion !== offerVersion(settings, site.site, schedule)) return { ok: false, error: "documents_stale" };
 
   // 4 · Kapasiteyi satır kilidiyle ayır
   const reserved = await supabase.rpc("reserve_release_capacity", { p_land_id: payload.landId, p_quantity: payload.quantity });
@@ -132,7 +138,7 @@ export async function createOrder(payload: OrderPayload, meta: CreateOrderMeta, 
     buyer_phone: payload.buyer.phone,
     invoice: payload.invoice,
     consents: consentRecords(payload, at),
-    marketing_consent: payload.consents.marketing,
+    marketing_consent: MARKETING_CONSENT_ENABLED && payload.consents.marketing,
     documents_version: LEGAL_DOCUMENTS_VERSION,
     ip_hash: meta.ipHash,
     user_agent: meta.userAgent,

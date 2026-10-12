@@ -2,7 +2,7 @@
  * CAYMA FORMU — Mesafeli Sözleşmeler Yönetmeliği ekindeki örnek forma göre.
  * Kullanımı zorunlu değildir; cayma kararını bildiren açık bir beyan da yeterlidir.
  *
- * [AVUKAT] TASLAK. Metin değişirse lib/legal/version.ts içindeki sürüm artırılır.
+ * Avukat onayı: 12 Ekim 2026 (kullanıcı bildirimi). Metin değişirse lib/legal/version.ts içindeki sürüm artırılır.
  */
 import { COMPANY, companyAddressLine } from "@/lib/company";
 import { count, money, trLongDate } from "../format";

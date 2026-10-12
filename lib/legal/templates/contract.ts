@@ -6,10 +6,7 @@
  * 14 günlük cayma ve iade koşulları tüketici olmayan alıcıya da sözleşmesel
  * olarak tanınır. Fatura türü tek başına tüketici sıfatını belirlemez.
  *
- * [AVUKAT] Bu metin bir TASLAKTIR; yayına alınmadan önce hukuk incelemesinden
- * geçmelidir. Özellikle: m.6 (ifanın imkânsızlaşmasında seçimlik haklar), m.9.4
- * (tür değişikliği), m.12 (delil), kurumsal alıcıya ilişkin hükümler.
- * Metin değişirse lib/legal/version.ts içindeki sürüm artırılır.
+ * Avukat onayı: 12 Ekim 2026 (kullanıcı bildirimi). Metin değişirse lib/legal/version.ts içindeki sürüm artırılır.
  */
 import { COMPANY } from "@/lib/company";
 import type { LegalBlock, LegalContext, LegalDocument } from "../types";

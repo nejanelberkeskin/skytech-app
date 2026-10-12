@@ -164,7 +164,7 @@ export default async function VitrinFooter() {
 
         {/* Marka beyani — en alt satir. Telif satirindan ayri bir bilgi:
             Skytech Green bir marka, tuzel kisilik Skytech Havacilik A.S. */}
-        <div className="vitrin-container pb-6 -mt-1">
+        <div className="vitrin-container pb-20 lg:pb-6 -mt-1 flex flex-col items-center justify-between gap-4 lg:flex-row">
           <p className="text-[11px] text-[#4f6b4f] text-center lg:text-left">
             {t.rich("brandOf", {
               company: ORG_LEGAL_NAME,
@@ -180,6 +180,16 @@ export default async function VitrinFooter() {
               ),
             })}
           </p>
+          <div className="w-full max-w-[453px] shrink-0 rounded-lg bg-white px-3 py-3">
+            <Image
+              src="/images/brand/logo_band_colored.svg"
+              alt="iyzico, Mastercard, Visa, American Express, Troy"
+              width={429}
+              height={32}
+              className="h-auto w-full"
+              unoptimized
+            />
+          </div>
         </div>
       </div>
     </footer>

@@ -8,6 +8,7 @@ import WebSiteSchema from "@/components/seo/WebSiteSchema";
 import WebVitalsReporter from "@/components/seo/WebVitalsReporter";
 import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
 import CookieConsentBanner from "@/components/analytics/CookieConsentBanner";
+import StorageCleanup from "@/components/analytics/StorageCleanup";
 import { routing } from "@/i18n/routing";
 import {
   DEFAULT_OG_IMAGE,
@@ -132,6 +133,7 @@ export default async function LocaleLayout({
           {children}
           <GoogleAnalytics />
           <CookieConsentBanner />
+          <StorageCleanup />
         </NextIntlClientProvider>
       </body>
     </html>

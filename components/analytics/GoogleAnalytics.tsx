@@ -5,6 +5,7 @@ import Script from "next/script";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { GA_MEASUREMENT_ID, ANALYTICS_TRANSFER_READY, analyticsAllowedPath, readConsent, subscribeConsent, stopAnalytics } from "@/lib/analytics";
+import { GA_INIT_SCRIPT } from "@/lib/analytics-init";
 
 /** Aktarım dosyası + ayrı analitik izni gerekir; özel işlem sayfaları ölçüme girmez. */
 export default function GoogleAnalytics() {
@@ -23,23 +24,7 @@ export default function GoogleAnalytics() {
     return { ...event, url: url.toString() };
   };
   return <>
-    <Script id="ga4-init" strategy="afterInteractive">{`
-      if (window.localStorage.getItem('skytech_cookie_consent_v2') === 'granted') {
-        window.skytechAnalyticsLoaded = true;
-        window['ga-disable-${GA_MEASUREMENT_ID}'] = false;
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        window.gtag = gtag;
-        gtag('consent', 'default', { analytics_storage: 'granted', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied' });
-        gtag('js', new Date());
-        gtag('config', '${GA_MEASUREMENT_ID}', {
-          allow_google_signals: false, allow_ad_personalization_signals: false,
-          page_location: window.location.origin + window.location.pathname,
-          page_referrer: '', send_page_view: false
-        });
-        gtag('event', 'page_view', { page_location: window.location.origin + window.location.pathname, page_referrer: '' });
-      }
-    `}</Script>
+    <Script id="ga4-init" strategy="afterInteractive">{GA_INIT_SCRIPT}</Script>
     <Script src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`} strategy="afterInteractive" />
     <Analytics beforeSend={beforeSend} />
     <SpeedInsights beforeSend={beforeSend} />

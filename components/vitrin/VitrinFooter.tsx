@@ -164,7 +164,7 @@ export default async function VitrinFooter() {
 
         {/* Marka beyani — en alt satir. Telif satirindan ayri bir bilgi:
             Skytech Green bir marka, tuzel kisilik Skytech Havacilik A.S. */}
-        <div className="vitrin-container pb-6 -mt-1">
+        <div className="vitrin-container pb-6 -mt-1 flex flex-col items-center justify-between gap-4 sm:flex-row">
           <p className="text-[11px] text-[#4f6b4f] text-center lg:text-left">
             {t.rich("brandOf", {
               company: ORG_LEGAL_NAME,
@@ -180,6 +180,16 @@ export default async function VitrinFooter() {
               ),
             })}
           </p>
+          <div className="shrink-0 rounded-lg bg-white px-3 py-0.5">
+            <Image
+              src="/images/brand/iyzico-pay-horizontal-color-tr.svg"
+              alt="iyzico"
+              width={1074}
+              height={377}
+              className="h-auto w-40"
+              unoptimized
+            />
+          </div>
         </div>
       </div>
     </footer>

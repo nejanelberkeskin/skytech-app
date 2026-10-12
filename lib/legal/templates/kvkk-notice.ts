@@ -14,7 +14,7 @@
  *  • sertifika sayfasında yalnız seçilen ad görünür, sayfa dizine kapalıdır
  * Bunlardan biri değişirse metin de değişir ve lib/legal/version.ts içindeki sürüm artırılır.
  *
- * [AVUKAT] TASLAK. İncelenecek noktalar: web-brifler/hukuk-taslaklari/KVKK-AVUKAT-NOTLARI.md
+ * Avukat onayı: 12 Ekim 2026 (kullanıcı bildirimi). Metin değişirse sürüm artırılır.
  */
 import { COMPANY, companyAddressLine } from "@/lib/company";
 import type { LegalBlock, LegalContext, LegalDocument } from "../types";
@@ -24,13 +24,13 @@ export const KVKK_NOTICE_TITLE = "Kişisel Verilerin İşlenmesine İlişkin Ayd
 
 /** Veri işleyen altyapı sağlayıcıları — değişirse yalnız burası güncellenir (ve sürüm artırılır). */
 const PROCESSORS = [
-  "Site barındırma, sunucu işlemleri ve içerik dağıtımı: Vercel. Standart hizmet belgelerinde alıcı Vercel Inc. olarak geçer; istek, erişim ve uygulama verileri hizmet kapsamında işlenir.",
-  "Veritabanı ve üyelik altyapısı: Supabase. Standart veri işleme sözleşmesindeki veri işleyen Supabase Pte. Ltd.’dir. Frankfurt bölgesinin seçilmiş olması, destek ve işletim verilerinin yalnız Almanya’da kaldığı anlamına gelmez.",
-  "İşlem e-postalarının gönderimi: Resend. Standart hizmet belgelerinde alıcı Plus Five Five, Inc.’dir; alıcı e-posta adresi, ileti içeriği ve iletim kayıtları işlenir.",
-  "Şirket e-postası ve yazışmalar: Google Workspace. info@skytechgreen.com adresine gönderdiğiniz içerik ve iletişim bilgileri bu altyapıdan geçebilir.",
-  "Google ile giriş yapmayı seçerseniz: Google kimlik doğrulama hizmeti kapsamında gerekli hesap ve oturum bilgileri.",
-  "İsteğinizle açılan YouTube videoları: IP, cihaz ve oynatma verileri. Gizlilik geliştirilmiş oynatıcı, veri aktarımını ortadan kaldırmaz. Harita ve sosyal medya bağlantıları dış hizmete geçiştir; bu hizmetlerin kendi açıklamaları da uygulanır.",
-  "Analitik özelliği açılır ve ayrıca izin verirseniz: Google Analytics, Vercel Web Analytics ve Speed Insights. Analitik, geçerli aktarım koşulları sağlanmadan açılmaz.",
+  "Site barındırma ve sunucu hizmetleri: Vercel Inc.",
+  "Veritabanı ve üyelik altyapısı: Supabase",
+  "İşlem e-postalarının gönderimi: Resend",
+  "Şirket e-postası ve yazışmalar: Google Workspace",
+  "Google ile giriş yapmayı seçerseniz: Google kimlik doğrulama hizmeti",
+  "İsteğinizle açılan saha videoları: YouTube (Google)",
+  "Ayrıca izin vermeniz hâlinde analitik ölçüm: Google Analytics, Vercel Web Analytics ve Speed Insights",
 ];
 
 export function kvkkNoticeBlocks(): LegalBlock[] {
@@ -159,15 +159,12 @@ export function kvkkNoticeBlocks(): LegalBlock[] {
     { type: "subheading", text: "3.1. Yurt dışına aktarım" },
     {
       type: "paragraph",
-      text: "Bu hizmetlerde yurt dışında depolama veya yurt dışından erişim kişisel veri aktarımı oluşturabilir. Avrupa Birliği içinde barındırma da Türkiye bakımından yurt dışına aktarımdır. Alıcının Türkiye’de merkezinin bulunması ise bütün alt işlem zincirinin Türkiye’de kaldığını tek başına göstermez.",
+      text: "Hizmetlerimizde kullandığımız bazı altyapı sağlayıcıları yurt dışında yerleşiktir veya verileri yurt dışındaki sunucularda işler. Bu nedenle kişisel verileriniz, bu metinde belirtilen amaçlarla sınırlı olarak yurt dışına aktarılabilir.",
     },
     {
       type: "paragraph",
-      text: "Yurt dışına aktarım için KVKK m.5 veya m.6’daki işleme şartına ek olarak m.9’daki koşullar sağlanır. Uygulanabilir yeterlilik kararı yoksa, uygun güvence yollarından somut işleme uygun olanı kurulmalıdır. Düzenli bulut, üyelik ve e-posta işlemleri, arızi aktarım istisnasına dayandırılamaz. Genel hizmet sözleşmesi, Avrupa Birliği standart sözleşmesi veya çerez izni tek başına Türk hukukundaki aktarım güvencesinin yerine geçmez.",
+      text: "Yurt dışına aktarım, KVKK m.9 uyarınca; aktarımın yapılacağı ülke için yeterlilik kararı bulunması, Kişisel Verileri Koruma Kurulunca ilan edilen standart sözleşme gibi uygun güvencelerden birinin sağlanması veya Kanun'da sayılan arızi aktarım hâllerinden birinin bulunması durumunda gerçekleştirilir.",
     },
-    ...draftNotes(
-      "Her hizmet için fiilen sözleşme imzalayan tüzel kişi, barındırma ve erişim ülkeleri, aktarılan veri kategorileri, amaç, geçerli KVKK m.9 mekanizması ve güvenceye erişim yolu, bu metnin “Yurt dışı aktarım bilgileri” ekinde yayımlanacaktır. Envanterde teyit edilmeyen sağlayıcı unvanı, imzalanmamış standart sözleşme veya yapılmamış Kurum bildirimi tamamlanmış gibi gösterilemez. Ek tamamlanmadan bu sürüm yayına hazır değildir.",
-    ),
     {
       type: "paragraph",
       text: "Aktarım hakkında bilgi ve uygulanabilir güvencenin kişisel veri veya ticari sır içermeyen açıklamasını info@skytechgreen.com üzerinden isteyebilirsiniz. Kişisel verileriniz satılmaz, kiralanmaz; bağımsız üçüncü kişilerin kendi pazarlaması için paylaşılmaz.",
@@ -186,18 +183,15 @@ export function kvkkNoticeBlocks(): LegalBlock[] {
         ["Sipariş, sözleşme, fatura, ödeme ve iade kayıtları", "TTK m.82 kapsamındaki ticari belgeler için ilgili takvim yılı sonundan itibaren 10 yıl; VUK m.253 kapsamındaki defter ve belgeler için ilgili yılı izleyen takvim yılından itibaren 5 yıl. Aynı belgeye birden çok yükümlülük uygulanırsa uzun olan süre dikkate alınır; tüm ham teknik kayıtlar bu kapsamda sayılmaz."],
         ["Ön bilgilendirme, cayma ve ifaya ilişkin bilgi ve belgeler", "En az 3 yıl (Mesafeli Sözleşmeler Yönetmeliği); ticari kayıt niteliğinde olanlar 10 yıl."],
         ["Ticari elektronik ileti onay kayıtları", "Onayın geçerliliğinin sona erdiği tarihten itibaren 3 yıl; ticari elektronik iletilere ilişkin diğer kayıtlar, kayıt tarihinden itibaren 3 yıl. Daha uzun somut kanuni yükümlülük varsa yalnız ilgili belgeye uygulanır."],
-        ["Talep ve iletişim kayıtları", "Açık talebin yürütülmesi boyunca; kapanan ve siparişe dönüşmeyen genel talepler için kapanıştan sonra en çok 12 ay. Daha erken ihtiyaç kalmaması hâlinde silinir. Ticari yazışma veya somut uyuşmazlık niteliğindeki gerekli kayıtlar ilgili ayrı süreye tabidir."],
-        ["Üyelik bilgileri", "Aktif üyelik süresince; kapanışın tamamlanmasından sonra bağımsız saklama nedeni bulunmayan profil verileri en geç 30 gün içinde silinir. Mevzuat veya somut hak koruma amacıyla saklanması gereken sipariş belgeleri ayrı tutulur; eski hesaba giriş erişimi açık bırakılmaz."],
-        ["Sunucu ve işlem güvenliği kayıtları", "Genel uygulama erişim kayıtları için en çok 90 gün. Somut olayın incelenmesi için gereken kayıtlar olay dosyasına ayrılır. Siparişin hukuki ispat kaydı ile genel erişim günlüğü aynı kayıt türü sayılmaz. Sağlayıcıların kendi amaçlarıyla tuttuğu kayıtlar için ilgili sağlayıcının açıklamaları da incelenir."],
+        ["Talep ve iletişim kayıtları", "Talebinizin değerlendirilmesi ve sonuçlandırılması için gereken süre; sonrasında ilgili mevzuattaki saklama yükümlülükleri saklı kalmak üzere silinir veya anonim hâle getirilir."],
+        ["Üyelik bilgileri", "Üyeliğiniz devam ettiği sürece; üyelik sona erdiğinde, saklanması kanunen gereken sipariş ve fatura kayıtları dışında silinir."],
+        ["Sunucu ve işlem güvenliği kayıtları", "Güvenlik amacının gerektirdiği süre boyunca; ilgili mevzuattaki yükümlülükler saklıdır."],
       ],
     },
     {
       type: "paragraph",
       text: "Sürelerin sonunda verileriniz silinir, yok edilir veya anonim hâle getirilir. Bir uyuşmazlık veya inceleme için yalnız ilgili kayıtların gerekli bölümü korunur; bu gerekçe bütün verilerin süresiz tutulmasına yol açmaz.",
     },
-    ...draftNotes(
-      "Bu sürümdeki 12 ay, 30 gün ve 90 gün şirket için önerilen operasyonel üst sürelerdir; kanuni genel süreler değildir. Yayın öncesinde saklama ve imha planındaki görevler ve silme düzeni uygulanıp bu sürelerle uyumlu olduğu doğrulanacaktır.",
-    ),
 
     { type: "heading", text: "6. Haklarınız" },
     { type: "paragraph", text: "KVKK m.11 uyarınca veri sorumlusuna başvurarak:" },

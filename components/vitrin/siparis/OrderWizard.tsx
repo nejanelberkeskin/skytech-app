@@ -39,7 +39,6 @@ import {
   Field,
   QuantityInput,
   SectionCard,
-  inputCls,
   ErrorBanner,
 } from "@/components/vitrin/talep/FormPrimitives";
 import ContactFields from "@/components/vitrin/talep/ContactFields";

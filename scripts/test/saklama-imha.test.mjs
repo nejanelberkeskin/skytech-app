@@ -308,15 +308,15 @@ test('saklama (d1): talep onayı yalnız aydınlatma + talebe dönüş; pazarlam
   const route = read('app/api/public/talep/route.ts');
   assert.doesNotMatch(route, /marketing/i, 'talep ucu ticari ileti izni yazmaz');
   const tr = JSON.parse(read('messages/tr.json'));
-  assert.match(tr.requestForms.common.consent, /talebimle ilgili/);
+  assert.match(tr.requestForms.common.consent, /Talebimle ilgili/);
   assert.doesNotMatch(tr.requestForms.common.consent, /kampanya|ticari ileti|tanıtım/i);
 });
 
 test('saklama (d2): siparişte ticari ileti izni ayrı, isteğe bağlı ve varsayılan kapalı; zorunlu onaylardan türetilmez', () => {
-  const required = { preInfo: true, contract: true, kvkkRead: true };
+  const required = { preInfo: true, contract: true };
   assert.equal(consentsSchema.parse(required).marketing, false, 'işaretlenmezse false');
   assert.equal(consentsSchema.safeParse({ ...required, marketing: true }).success, true);
   assert.equal(consentsSchema.safeParse({ marketing: true }).success, false, 'pazarlama izni zorunlu onayların yerine geçmez');
   const create = read('lib/orders/create.ts');
-  assert.match(create, /marketing_consent:\s*payload\.consents\.marketing/, 'yalnız kutunun kendisinden yazılır');
+  assert.match(create, /marketing_consent:\s*MARKETING_CONSENT_ENABLED && payload\.consents\.marketing/, 'yalnız kutunun kendisinden ve İYS bayrağı açıkken yazılır');
 });

@@ -106,12 +106,9 @@ export default async function IletisimPage({
             </div>
           ))}
         </div>
-      </SectionWrapper>
-
-      {/* Şirket künyesi — 6563 / e-ticaret yönetmeliği m.5; değerler lib/company.ts tek kaynağından. */}
-      <SectionWrapper variant="light">
-        <div className="max-w-3xl">
-          <h2 className="text-2xl font-bold text-[#1a2e1a] mb-5">{t("registry.title")}</h2>
+        {/* Şirket künyesi — 6563 / e-ticaret yönetmeliği m.5; değerler lib/company.ts tek kaynağından. */}
+        <div className="vitrin-card p-7 max-w-5xl mx-auto mt-5">
+          <h2 className="text-lg font-bold text-[#1a2e1a] mb-4">{t("registry.title")}</h2>
           <dl className="grid sm:grid-cols-[minmax(0,14rem)_1fr] gap-x-6 gap-y-2 text-sm">
             {registryRows.map(([label, value]) => (
               <div key={label} className="contents">
@@ -122,6 +119,7 @@ export default async function IletisimPage({
           </dl>
         </div>
       </SectionWrapper>
+
 
       {/* Harita */}
       <SectionWrapper variant="tinted">

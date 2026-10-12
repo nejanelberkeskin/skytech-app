@@ -5,6 +5,7 @@
  * - `sites.publish` (MFA): `is_public`; vitrinde listelenmeyi ya da sipariş kabulünü değiştiren durum geçişleri
  *   (`closed` ↔ listelenen durumlar, `open` ↔ diğerleri). Yayında olmayan sahada durum geçişi vitrini etkilemez.
  * - `sites.capacity.manage` (MFA): `capacity_seeds`.
+ * - Teslim ayları ve izin kararı (`permit_status`) `sites.publish` (MFA) ister; izin bilgisini girmek `sites.edit`.
  * Form bütün alanları gönderse de yalnız gerçekten değişen kolonlar izin ister ve yazılır.
  */
 import type { Permission } from "@/lib/admin/permissions";
@@ -13,6 +14,7 @@ export const SITE_COLUMNS = [
   "name", "slug", "region", "province", "district", "area_hectares", "is_fire_affected", "fire_year", "work_type",
   "species_slugs", "name_i18n", "summary_i18n", "cover_image", "video_url", "sort_order", "status", "is_public",
   "capacity_seeds", "certificate_month", "monitoring_month",
+  "permit_reference", "permit_valid_until", "permit_status", "permit_verified_by", "permit_verified_at",
 ] as const;
 export type SiteColumn = (typeof SITE_COLUMNS)[number];
 export type SiteChanges = Partial<Record<SiteColumn, unknown>>;
@@ -62,7 +64,9 @@ export function diffSite(before: Row, next: SiteChanges): SiteChanges {
 export function requiredSitePermissions(before: Row, changes: SiteChanges): Permission[] {
   const need = new Set<Permission>();
   for (const column of Object.keys(changes) as SiteColumn[]) {
-    if (column === "is_public") need.add("sites.publish");
+    // Teslim ayları sözleşme koşulu, izin kararı satışın ön şartı: ikisi de yayın yetkisi (MFA) ister.
+    if (column === "is_public" || column === "certificate_month" || column === "monitoring_month" ||
+        column === "permit_status" || column === "permit_verified_by" || column === "permit_verified_at") need.add("sites.publish");
     else if (column === "capacity_seeds") need.add("sites.capacity.manage");
     else if (column === "status") {
       // Durum geçişi mevcut yayın durumuyla değerlendirilir; `is_public` de değişiyorsa o ayrıca publish ister.

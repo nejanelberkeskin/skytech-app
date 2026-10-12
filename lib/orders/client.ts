@@ -10,7 +10,7 @@
  *   submitOrder()   "Siparişi Onayla ve Öde": siparişi oluşturur, ödeme sayfasının
  *                   adresini döner. İstemci `redirectUrl`e gider.
  */
-import type { OrderSchedule } from "./schedule";
+import type { MonthDeadline, OrderSchedule } from "./schedule";
 import type { OrderPayloadInput, WithdrawalRequestInput } from "./schema";
 import type { DocumentKind } from "./types";
 
@@ -34,6 +34,8 @@ export interface OrderPreview {
     vatRate: number;
   };
   schedule: OrderSchedule;
+  /** Sertifika ve izleme içeriği için kesin son tarihler (sahaya göre). */
+  deliveries: { certificate: MonthDeadline | null; monitoring: MonthDeadline | null };
 }
 
 export type OrderErrorCode =

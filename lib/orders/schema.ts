@@ -154,7 +154,7 @@ const orderFields = z.object({
   consents: consentsSchema,
   locale: z.enum(LOCALES).default("tr"),
   /** Müşteriye gösterilen hukuki metinlerin şablon sürümü; sunucu güncel sürümle karşılaştırır. */
-  documentsVersion: z.string().min(1, "documentsStale").max(40, "documentsStale"),
+  documentsVersion: z.string().min(1, "documentsStale").max(80, "documentsStale"),
   /** Idempotency: sihirbaz açılışında üretilir; ağ tekrarı tek sipariş oluşturur. */
   clientToken: z.uuid("generic"),
   /** Honeypot ve doldurma süresi — talep formlarıyla aynı bot sinyalleri. */

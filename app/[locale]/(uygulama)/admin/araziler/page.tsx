@@ -61,10 +61,16 @@ interface SiteForm {
   capacity_seeds: string;
   certificate_month: string;
   monitoring_month: string;
+  permit_reference: string;
+  permit_valid_until: string;
+  /** Yalnız gönderimde: "" = karar yok. */
+  permit_decision: "" | "verified" | "rejected";
 }
 
-/** Teslim ayı seçenekleri; sözleşmede bırakma son tarihinden sonraki ilk bu ayın son günü yazılır. */
-const DELIVERY_MONTHS = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
+const PERMIT_LABELS = { missing: "İzin bilgisi yok", submitted: "Doğrulama bekliyor", verified: "Doğrulandı", rejected: "Reddedildi" } as const;
+
+/** Teslim ayı seçenekleri (izleme dönemi Nisan–Eylül); sözleşmede bu ayın son günü kesin son tarih olur. */
+const DELIVERY_MONTHS: [number, string][] = [[4, "Nisan"], [5, "Mayıs"], [6, "Haziran"], [7, "Temmuz"], [8, "Ağustos"], [9, "Eylül"]];
 
 const EMPTY_FORM: SiteForm = {
   name: "",
@@ -89,6 +95,9 @@ const EMPTY_FORM: SiteForm = {
   capacity_seeds: "",
   certificate_month: "",
   monitoring_month: "",
+  permit_reference: "",
+  permit_valid_until: "",
+  permit_decision: "",
 };
 
 const fmt = (n: number) => n.toLocaleString("tr-TR");
@@ -128,6 +137,9 @@ function formFromLand(l: Land): SiteForm {
     capacity_seeds: String(l.capacity.total),
     certificate_month: l.certificateMonth ? String(l.certificateMonth) : "",
     monitoring_month: l.monitoringMonth ? String(l.monitoringMonth) : "",
+    permit_reference: l.permit.reference ?? "",
+    permit_valid_until: l.permit.validUntil ?? "",
+    permit_decision: "",
   };
 }
 
@@ -156,6 +168,9 @@ function payloadFromForm(f: SiteForm) {
     capacity_seeds: num(f.capacity_seeds) ?? NaN,
     certificate_month: f.certificate_month ? Number(f.certificate_month) : null,
     monitoring_month: f.monitoring_month ? Number(f.monitoring_month) : null,
+    permit_reference: f.permit_reference,
+    permit_valid_until: f.permit_valid_until || null,
+    permit_decision: f.permit_decision || null,
   };
 }
 
@@ -605,7 +620,7 @@ function SiteModal({
             </div>
           </Section>
 
-          <Section title="Teslim ayları">
+          <Section disabled={!caps.publish} title="Teslim ayları">
             <div className="grid sm:grid-cols-2 gap-4">
               {(["certificate_month", "monitoring_month"] as const).map((key) => (
                 <Select
@@ -616,16 +631,55 @@ function SiteModal({
                   error={fieldErrors[key]}
                 >
                   <option value="">Seçilmedi</option>
-                  {DELIVERY_MONTHS.map((m, i) => (
-                    <option key={m} value={String(i + 1)}>{m}</option>
+                  {DELIVERY_MONTHS.map(([n, m]) => (
+                    <option key={n} value={String(n)}>{m}</option>
                   ))}
                 </Select>
               ))}
             </div>
             <p className="text-xs text-slate-500 mt-1.5">
               Sözleşmede kesin son tarih, bırakma son tarihinden (31 Mart) sonraki ilk seçilen ayın son günü olarak yazılır; örn. Haziran → 30 Haziran.
-              İki ay da seçilmeden bu sahada sipariş açılmaz. Değişiklik yalnız yeni siparişleri etkiler.
+              Sertifika ayı izleme ayından sonra olamaz. İki ay da seçilmeden bu sahada sipariş açılmaz. Değişiklik yalnız yeni siparişleri etkiler
+              ve yayın yetkisi (iki adımlı doğrulama) ister.
             </p>
+          </Section>
+
+          <Section disabled={!caps.edit && !caps.publish} title="Bırakma izni">
+            <p className="text-xs text-slate-400 mb-3">
+              Durum: <strong className="text-slate-200">{original ? PERMIT_LABELS[original.permit.status] : PERMIT_LABELS.missing}</strong>
+              {original?.permit.verifiedAt ? ` · doğrulama ${new Date(original.permit.verifiedAt).toLocaleDateString("tr-TR")}` : ""}.
+              İzin bilgisini girmek onay değildir; yetkili kişi belgeyi inceleyip ayrıca “Doğrulandı” seçer. Bilgi değişirse doğrulama düşer.
+              Doğrulanmış ve geçerliliği bırakma son tarihini kapsayan izni olmayan sahada sipariş açılmaz.
+            </p>
+            <div className="grid sm:grid-cols-3 gap-4">
+              <Input
+                label="İzni veren makam ve izin no"
+                placeholder="örn. … Orman Bölge Müdürlüğü, 2026/14"
+                value={form.permit_reference}
+                maxLength={300}
+                onChange={(e) => set("permit_reference", e.target.value)}
+                error={fieldErrors.permit_reference}
+              />
+              <Input
+                label="Geçerlilik son günü"
+                type="date"
+                value={form.permit_valid_until}
+                onChange={(e) => set("permit_valid_until", e.target.value)}
+                error={fieldErrors.permit_valid_until}
+              />
+              {original && caps.publish && (
+                <Select
+                  label="İzin kararı"
+                  value={form.permit_decision}
+                  onChange={(e) => set("permit_decision", e.target.value as SiteForm["permit_decision"])}
+                  error={fieldErrors.permit_decision}
+                >
+                  <option value="">Değiştirme</option>
+                  <option value="verified">Belgeyi inceledim — doğrulandı</option>
+                  <option value="rejected">Reddedildi</option>
+                </Select>
+              )}
+            </div>
           </Section>
 
           {/* 3 · Yayın ve kapasite */}

@@ -51,13 +51,13 @@ const optionalText = (max: number, message: string) =>
     .optional()
     .transform((v) => v ?? null);
 
-/** Teslim ayı 1–12; boş bırakılabilir ama boş sahada sipariş açılmaz. */
+/** Teslim ayı Nisan–Eylül (izleme dönemi; migration 040); boş bırakılabilir ama boş sahada sipariş açılmaz. */
 const deliveryMonth = (label: string) =>
   z
     .number(`${label} seçin.`)
     .int(`${label} geçersiz.`)
-    .min(1, `${label} geçersiz.`)
-    .max(12, `${label} geçersiz.`)
+    .min(4, `${label} Nisan–Eylül arasında olmalı.`)
+    .max(9, `${label} Nisan–Eylül arasında olmalı.`)
     .nullable()
     .optional()
     .transform((v) => v ?? null);
@@ -111,6 +111,16 @@ export const siteAdminSchema = z
     work_type: z.enum(WORK_TYPES, "Çalışma türü seçin."),
     certificate_month: deliveryMonth("Sertifika teslim ayı"),
     monitoring_month: deliveryMonth("İzleme teslim ayı"),
+    /** Bırakma izninin makamı ve numarası; girilmesi onay sayılmaz (doğrulama ayrı karar). */
+    permit_reference: optionalText(300, "İzin bilgisi çok uzun."),
+    permit_valid_until: z
+      .string()
+      .regex(/^\d{4}-\d{2}-\d{2}$/, "Geçerlilik tarihi YYYY-AA-GG olmalı.")
+      .nullable()
+      .optional()
+      .transform((v) => v ?? null),
+    /** Yalnız düzenlemede: izni doğrula ya da reddet (sites.publish + MFA). Kayda doğrudan yazılmaz. */
+    permit_decision: z.enum(["verified", "rejected"]).nullable().optional().transform((v) => v ?? null),
     species_slugs: z
       .array(z.string().regex(/^[a-z0-9-]{2,40}$/, "Geçersiz tür."))
       .max(SITE_LIMITS.species, `En çok ${SITE_LIMITS.species} tür seçilebilir.`)
@@ -155,6 +165,15 @@ export const siteAdminSchema = z
       .max(SITE_LIMITS.capacityMax, "Kapasite çok büyük."),
   })
   .superRefine((v, ctx) => {
+    if (v.certificate_month !== null && v.monitoring_month !== null && v.certificate_month > v.monitoring_month) {
+      ctx.addIssue({ code: "custom", path: ["certificate_month"], message: "Sertifika ayı izleme ayından sonra olamaz." });
+    }
+    if (v.permit_reference !== null && v.permit_reference.length < 3) {
+      ctx.addIssue({ code: "custom", path: ["permit_reference"], message: "İzin bilgisi en az 3 karakter olmalı." });
+    }
+    if (v.permit_decision === "verified" && (v.permit_reference === null || v.permit_valid_until === null)) {
+      ctx.addIssue({ code: "custom", path: ["permit_decision"], message: "Doğrulamak için izin bilgisi ve geçerlilik tarihi gerekir." });
+    }
     const thisYear = new Date().getFullYear();
     if (v.fire_year !== null && v.fire_year > thisYear) {
       ctx.addIssue({ code: "custom", path: ["fire_year"], message: "Yangın yılı gelecekte olamaz." });
@@ -183,6 +202,8 @@ export function toLandRow(data: SiteAdminData) {
     work_type: data.work_type,
     certificate_month: data.certificate_month,
     monitoring_month: data.monitoring_month,
+    permit_reference: data.permit_reference,
+    permit_valid_until: data.permit_valid_until,
     species_slugs: data.species_slugs,
     name_i18n: i18n([["en", data.name_en], ["ru", data.name_ru]]),
     summary_i18n: i18n([["tr", data.summary_tr], ["en", data.summary_en], ["ru", data.summary_ru]]),

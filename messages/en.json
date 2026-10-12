@@ -2505,6 +2505,8 @@
       "vat": "VAT included in total ({rate}%)",
       "schedule": "Release schedule",
       "deadline": "Release will be completed by {date}.",
+      "certificateDeadline": "The Participation Certificate is sent by {date} at the latest.",
+      "monitoringDeadline": "Monitoring content is shared by {date} at the latest.",
       "rolled": "The preparation window for this season has closed, so your order is scheduled for the {season} season.",
       "withdrawalTitle": "Right of withdrawal",
       "withdrawal": "You may withdraw without giving a reason within 14 days of payment. The full amount will be refunded to your original payment method within 14 days of your notice. Seed ball release will not take place before the withdrawal period ends.",

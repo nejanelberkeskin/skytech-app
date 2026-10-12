@@ -138,6 +138,8 @@ export interface SiteSnapshot {
   /** Sertifika ve izleme içeriğinin teslim ayı (1–12; migration 040). Eski kopyalarda yoktur. */
   certificateMonth?: number | null;
   monitoringMonth?: number | null;
+  /** Sipariş anında doğrulanmış bırakma izni (yoksa null → sipariş açılmaz). */
+  permit?: { reference: string; validUntil: string; verifiedAt: string } | null;
 }
 
 /* ── Belgeler ─────────────────────────────────────────────────────────────── */

@@ -65,7 +65,8 @@ export async function POST(req: NextRequest) {
   const settings = await getSalesSettings();
   // Sipariş alımı yönetimden durdurulduysa (Satış Ayarları) sihirbaz talep kipine geçer.
   if (!canAcceptOrders(provider, settings)) return NextResponse.json({ error: "closed" }, { status: 503 });
-  if (payload.documentsVersion !== quoteVersion(settings)) {
+  // Saha kısmı (sezon + teslim ayları) siparişte saha okunduktan sonra denetlenir (createOrder).
+  if (!payload.documentsVersion.startsWith(`${quoteVersion(settings)}~`)) {
     return NextResponse.json({ error: "documents_stale" }, { status: 409 });
   }
 

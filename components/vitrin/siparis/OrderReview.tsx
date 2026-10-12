@@ -6,6 +6,7 @@ import { Link } from "@/i18n/navigation";
 import { formatCount, formatTry, type PriceLocale } from "@/lib/pricing";
 import { TR_ILLER_ALFABETIK } from "@/lib/tr-iller";
 import type { OrderPreview, OrderDocumentPreview } from "@/lib/orders/client";
+import { formatLongDay } from "@/lib/orders/dates";
 import { downloadDocument } from "./DocumentDialog";
 import type { Buyer, Consents, InvoiceValues, WizardSite } from "./types";
 
@@ -205,6 +206,17 @@ export default function OrderReview({
               preview.schedule.performanceDeadline,
           })}
         </p>
+        {/* Sahaya göre teslim ayları: sözleşmeye yazılan kesin son günler (yıl dahil). */}
+        {preview.deliveries.certificate && (
+          <p className="text-sm text-[#3d5a3d]">
+            {t("review.certificateDeadline", { date: formatLongDay(preview.deliveries.certificate.lastDay, locale) })}
+          </p>
+        )}
+        {preview.deliveries.monitoring && (
+          <p className="text-sm text-[#3d5a3d]">
+            {t("review.monitoringDeadline", { date: formatLongDay(preview.deliveries.monitoring.lastDay, locale) })}
+          </p>
+        )}
         {preview.schedule.rolledToNextSeason && (
           <p
             role="status"

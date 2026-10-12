@@ -20,6 +20,7 @@ const antalya: SiteAdminItem = {
   fireYear: 2021,
   certificateMonth: 4,
   monitoringMonth: 9,
+  permit: { status: "verified", reference: "Örnek Orman Bölge Müdürlüğü 2026/14", validUntil: "2027-12-31", verifiedAt: "2026-10-01T09:00:00.000Z" },
   workType: "ormanlastirma_genclestirme",
   speciesSlugs: ["kizilcam"],
   nameI18n: { en: "Antalya Project Site" },

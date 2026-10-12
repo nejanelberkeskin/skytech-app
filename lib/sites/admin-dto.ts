@@ -12,7 +12,8 @@ import type { WorkType } from "./types";
 export const SITE_ADMIN_COLUMNS = [
   "id", "slug", "name", "region", "province", "district", "area_hectares", "is_fire_affected", "fire_year",
   "work_type", "species_slugs", "name_i18n", "summary_i18n", "cover_image", "video_url", "sort_order", "status",
-  "is_public", "capacity_seeds", "filled_seeds", "reserved_seeds", "certificate_month", "monitoring_month", "created_at", "updated_at",
+  "is_public", "capacity_seeds", "filled_seeds", "reserved_seeds", "certificate_month", "monitoring_month", "permit_status", "permit_reference", "permit_valid_until",
+  "permit_verified_at", "created_at", "updated_at",
 ].join(", ");
 
 export interface SiteAdminItem {
@@ -28,6 +29,8 @@ export interface SiteAdminItem {
   /** Sertifika / izleme içeriği teslim ayı (1–12). */
   certificateMonth: number | null;
   monitoringMonth: number | null;
+  /** Bırakma izni: yalnız `verified` ve geçerlilik tarihi sezon sonunu kapsıyorsa sipariş açılır. */
+  permit: { status: "missing" | "submitted" | "verified" | "rejected"; reference: string | null; validUntil: string | null; verifiedAt: string | null };
   workType: WorkType;
   speciesSlugs: string[];
   nameI18n: { en?: string; ru?: string };
@@ -78,6 +81,11 @@ export interface SiteMutationDto {
 
 type Row = Record<string, unknown>;
 const text = (v: unknown): string | null => (typeof v === "string" && v !== "" ? v : null);
+/** `date` kolonu: REST "YYYY-MM-DD" döner; sürücüler Date/ISO an da dönebilir → takvim günü. */
+const isoDay = (v: unknown): string | null => {
+  const s = v instanceof Date ? v.toISOString() : typeof v === "string" ? v : "";
+  return /^\d{4}-\d{2}-\d{2}/.test(s) ? s.slice(0, 10) : null;
+};
 const int = (v: unknown): number => {
   const n = Number(v);
   return Number.isFinite(n) ? Math.trunc(n) : 0;
@@ -114,6 +122,12 @@ export function siteItemOf(row: Row, capabilities: SiteAdminItem["capabilities"]
     fireYear: maybeNumber(row.fire_year),
     certificateMonth: maybeNumber(row.certificate_month),
     monitoringMonth: maybeNumber(row.monitoring_month),
+    permit: {
+      status: (["missing", "submitted", "verified", "rejected"] as const).find((s) => s === row.permit_status) ?? "missing",
+      reference: text(row.permit_reference),
+      validUntil: isoDay(row.permit_valid_until),
+      verifiedAt: text(row.permit_verified_at),
+    },
     workType: (text(row.work_type) ?? "ormanlastirma_genclestirme") as WorkType,
     speciesSlugs: Array.isArray(row.species_slugs) ? row.species_slugs.map(String) : [],
     nameI18n: i18n(row.name_i18n, ["en", "ru"] as const),

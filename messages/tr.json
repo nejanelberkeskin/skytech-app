@@ -2505,6 +2505,8 @@
       "vat": "Toplamın içindeki KDV (%{rate})",
       "schedule": "Bırakma takvimi",
       "deadline": "En geç {date} tarihine kadar bırakılır.",
+      "certificateDeadline": "Katılım Sertifikası en geç {date} tarihine kadar gönderilir.",
+      "monitoringDeadline": "İzleme içeriği en geç {date} tarihine kadar paylaşılır.",
       "rolled": "Bu sezonun hazırlık süresi dolduğu için siparişiniz {season} sezonuna yazılır.",
       "withdrawalTitle": "Cayma hakkı",
       "withdrawal": "Ödeme tarihinden itibaren 14 gün içinde hiçbir gerekçe göstermeden cayabilirsiniz. Bedelin tamamı, bildiriminizden itibaren 14 gün içinde ödemeyi yaptığınız araca iade edilir. Tohum topu bırakma, cayma süresi dolmadan yapılmaz.",

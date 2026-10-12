@@ -16,7 +16,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { buildLegalContext, buildOrderDocuments } from "@/lib/legal/documents";
 import { LEGAL_DOCUMENTS_VERSION } from "@/lib/legal/version";
 import { generateOrderNo } from "./identifiers";
-import { checkSite } from "./preview";
+import { checkSite, offerVersion, siteTermsProblem } from "./preview";
 import { scheduleFor, trToday } from "./schedule";
 import { resolveCertificateName, type OrderPayload } from "./schema";
 import { quantityRangeError } from "@/lib/pricing";
@@ -35,7 +35,7 @@ export interface CreateOrderMeta {
 
 export type CreateOrderResult =
   | { ok: true; order: ReleaseOrderRow; reused: boolean }
-  | { ok: false; error: "site_unavailable" | "capacity" | "unavailable" }
+  | { ok: false; error: "site_unavailable" | "capacity" | "unavailable" | "documents_stale" }
   | { ok: false; error: "quantity"; field: "quantityMin" | "quantityMax" };
 
 const UNPAID = ["draft", "awaiting_payment", "payment_failed"] as const;
@@ -102,6 +102,9 @@ export async function createOrder(payload: OrderPayload, meta: CreateOrderMeta, 
   const now = new Date();
   const totals = orderTotals(payload.quantity, settings);
   const schedule = scheduleFor(now, settings.prepDays);
+  // Saha koşulları (teslim ayları, doğrulanmış izin) ve müşterinin onayladığı teklifle aynı sezon/aylar.
+  if (siteTermsProblem(site.site, schedule)) return { ok: false, error: "site_unavailable" };
+  if (payload.documentsVersion !== offerVersion(settings, site.site, schedule)) return { ok: false, error: "documents_stale" };
 
   // 4 · Kapasiteyi satır kilidiyle ayır
   const reserved = await supabase.rpc("reserve_release_capacity", { p_land_id: payload.landId, p_quantity: payload.quantity });

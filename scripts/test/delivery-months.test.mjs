@@ -51,10 +51,47 @@ test("örnek metin: ay yerine yer tutucu", () => {
   assert.match(docs.find((x) => x.kind === "contract").html, /\[Sahaya göre belirlenen ay ve yıl/);
 });
 
-test("yönetim şeması: ay 1–12 ya da boş; satıra yazılır", () => {
+test("yönetim şeması: ay Nisan–Eylül ya da boş; sertifika izlemeden sonra olamaz; satıra yazılır", () => {
   const base = { name: "Saha", work_type: "ormanlastirma_genclestirme", status: "open", capacity_seeds: 100 };
   const ok = A.siteAdminSchema.parse({ ...base, certificate_month: 4, monitoring_month: 9 });
   assert.deepEqual([A.toLandRow(ok).certificate_month, A.toLandRow(ok).monitoring_month], [4, 9]);
   assert.equal(A.toLandRow(A.siteAdminSchema.parse(base)).certificate_month, null);
-  for (const bad of [0, 13, 2.5]) assert.equal(A.siteAdminSchema.safeParse({ ...base, monitoring_month: bad }).success, false);
+  for (const bad of [0, 3, 10, 13, 5.5]) assert.equal(A.siteAdminSchema.safeParse({ ...base, monitoring_month: bad }).success, false);
+  assert.equal(A.siteAdminSchema.safeParse({ ...base, certificate_month: 8, monitoring_month: 6 }).success, false);
+  assert.equal(A.siteAdminSchema.safeParse({ ...base, permit_decision: "verified" }).success, false, "bilgisiz doğrulama yok");
+});
+
+const { loadSource: load } = await import("./load-source.mjs");
+const server = { "@/lib/supabase/server": { createServiceRoleClient: () => { throw new Error("veritabanı yok"); } } };
+const real = {
+  "@/lib/legal/version": await import(ROOT + "/lib/legal/version.ts"),
+  "@/lib/pricing": await import(ROOT + "/lib/pricing.ts"),
+  "./schedule": Sc,
+  "./settings-schema": await import(ROOT + "/lib/orders/settings-schema.ts"),
+  "@/lib/legal/documents": D,
+};
+const St = load("lib/orders/settings.ts", { ...server, ...real });
+const Pv = load("lib/orders/preview.ts", { ...server, ...real, "@/lib/sites/data": { getProjectSites: async () => [] }, "./settings": St });
+
+test("satış koşulu: teslim ayı ve doğrulanmış, bırakma son tarihini kapsayan izin olmadan sipariş yok", () => {
+  const schedule = Sc.scheduleFor(now); // 2026-2027 sezonu, son tarih 2027-03-31
+  const ok = { ...site, certificateMonth: 5, monitoringMonth: 8, permit: { reference: "OBM 2026/14", validUntil: "2027-03-31", verifiedAt: "2026-10-01T09:00:00Z" } };
+  assert.equal(Pv.siteTermsProblem(ok, schedule), null);
+  assert.equal(Pv.siteTermsProblem({ ...ok, certificateMonth: null }, schedule), "delivery_unset");
+  assert.equal(Pv.siteTermsProblem({ ...ok, certificateMonth: 9, monitoringMonth: 6 }, schedule), "delivery_unset");
+  assert.equal(Pv.siteTermsProblem({ ...ok, permit: null }, schedule), "permit", "doğrulanmamış izin");
+  assert.equal(Pv.siteTermsProblem({ ...ok, permit: { ...ok.permit, validUntil: "2027-03-30" } }, schedule), "permit", "izin sezon sonundan önce bitiyor");
+  assert.equal(Pv.siteTermsProblem({ certificateMonth: 5, monitoringMonth: 8, permit: ok.permit }, schedule), null);
+});
+
+test("teklif sürümü: fiyat ayarları + sezon + teslim ayları; biri değişirse eski önizleme geçmez", () => {
+  const settings = { unitPriceKurus: 1000, vatRate: 20, prepDays: 21 };
+  const schedule = Sc.scheduleFor(now);
+  const s1 = { ...site, certificateMonth: 5, monitoringMonth: 8 };
+  const v = Pv.offerVersion(settings, s1, schedule);
+  assert.ok(v.startsWith(`${St.quoteVersion(settings)}~`), "sipariş ucu ön ek denetimi");
+  assert.ok(v.endsWith("~2026-2027.5.8"));
+  assert.notEqual(Pv.offerVersion(settings, { ...s1, monitoringMonth: 9 }, schedule), v);
+  assert.notEqual(Pv.offerVersion(settings, s1, Sc.scheduleFor(new Date("2027-03-20T09:00:00Z"))), v, "sezon değişince");
+  assert.ok(v.length <= 80);
 });

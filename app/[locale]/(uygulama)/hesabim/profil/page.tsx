@@ -52,14 +52,11 @@ export default function ProfilPage() {
     }
 
     // Aynı iki yazım, aynı sırayla; yalnız sonuç ekrana doğru yansıtılır (önceden hata da "Kaydedildi" gösteriyordu).
-    const { error: profileError } = await supabase.from("profiles").upsert({
-      id: session.session.user.id,
-      full_name: form.fullName,
-      email: form.email,
-      phone: form.phone,
-      address: form.address,
-      city: form.city,
-    });
+    // 044: üye yalnız bu dört alanı güncelleyebilir; e-posta hesap ayarından değişir, profil satırını handle_new_user açar.
+    const { error: profileError } = await supabase
+      .from("profiles")
+      .update({ full_name: form.fullName, phone: form.phone, address: form.address, city: form.city })
+      .eq("id", session.session.user.id);
 
     const { error: metaError } = await supabase.auth.updateUser({ data: { full_name: form.fullName } });
 

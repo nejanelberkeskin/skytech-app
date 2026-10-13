@@ -1616,7 +1616,7 @@
         "readyTitle": "Your Quote Is Ready!",
         "reviewTitle": "Your Quote Is Under Review",
         "total": "Total Amount",
-        "seedCount": "Seed Count",
+        "seedCount": "Seed balls",
         "seedUnit": "{count, number} pcs",
         "adminNote": "Manager's Note",
         "review": "Review the Quote",
@@ -1627,9 +1627,9 @@
         "activeSub": "pending",
         "paid": "Paid Quotes",
         "paidSub": "completed",
-        "seeds": "Total Seeds",
-        "seedsSub": "approved",
-        "invested": "Total Investment",
+        "seeds": "Seed balls",
+        "seedsSub": "to be released (paid)",
+        "invested": "Amount paid",
         "investedSub": "paid"
       },
       "history": "Your Quote History",
@@ -1643,7 +1643,8 @@
       },
       "reviewShort": "🎬 Review",
       "payShort": "Pay",
-      "paySoon": "Corporate payment opens very soon. Our team will contact you about your quote."
+      "paySoon": "Corporate payment opens very soon. Our team will contact you about your quote.",
+      "newQuote": "+ Request a new quote"
     },
     "employees": {
       "title": "👥 Employee Seed Allocation",

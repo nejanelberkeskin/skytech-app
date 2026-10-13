@@ -13,7 +13,7 @@ import AuthShell, { GoogleIcon, authInputClass, authInputErrorClass } from "@/co
  * Üye kaydı.
  *
  * - Profil satırı DB tetikleyicisi (handle_new_user) ile açılır; oturum varsa
- *   ad/soyadı garantiye almak için ayrıca upsert edilir (hata yutulur).
+ *   ad/soyadı garantiye almak için ayrıca güncellenir (hata yutulur).
  * - E-posta doğrulama açıksa signUp oturum döndürmez → "e-postanı kontrol et".
  * - ?talep=<uuid>: misafir talebi, oturum oluşunca hesaba bağlanır; doğrulama
  *   sonrası /hesabim'da da yeniden denenir (localStorage).
@@ -93,10 +93,12 @@ function RegisterPage() {
     }
 
     if (data.session && data.user) {
-      // Oturum var (doğrulama kapalı): profili garantiye al, bekleyen talebi bağla
+      // Oturum var (doğrulama kapalı): profil satırını handle_new_user açar; burada yalnız ad yazılır (044: üye
+      // yalnız ad/telefon/adres/şehir alanlarını güncelleyebilir). Sonra bekleyen talep bağlanır.
       await supabase
         .from("profiles")
-        .upsert({ id: data.user.id, full_name: fullName, email }, { onConflict: "id" })
+        .update({ full_name: fullName })
+        .eq("id", data.user.id)
         .then(() => undefined, () => undefined);
       await claimPendingRequest(talepId);
       setLoading(false);

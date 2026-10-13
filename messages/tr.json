@@ -1586,7 +1586,7 @@
     "overview": {
       "companyFallback": "Kurumsal",
       "title": "Genel Bakış",
-      "subtitle": "{company} — kurumsal orman ve sürdürülebilirlik paneliniz",
+      "subtitle": "{company} — kurumsal paneliniz",
       "status": {
         "pending": {
           "label": "Onay Bekliyor",
@@ -1616,7 +1616,7 @@
         "readyTitle": "Teklifiniz Hazır!",
         "reviewTitle": "Teklifiniz Değerlendiriliyor",
         "total": "Toplam Tutar",
-        "seedCount": "Tohum Sayısı",
+        "seedCount": "Tohum topu",
         "seedUnit": "{count, number} adet",
         "adminNote": "Yönetici Notu",
         "review": "Teklifi İncele",
@@ -1627,9 +1627,9 @@
         "activeSub": "bekleyen",
         "paid": "Ödenen Teklifler",
         "paidSub": "tamamlanan",
-        "seeds": "Toplam Tohum",
-        "seedsSub": "onaylanmış",
-        "invested": "Toplam Yatırım",
+        "seeds": "Tohum topu",
+        "seedsSub": "bırakılacak (ödenen)",
+        "invested": "Ödenen tutar",
         "investedSub": "ödenen"
       },
       "history": "Teklif Geçmişiniz",
@@ -1643,7 +1643,8 @@
       },
       "reviewShort": "🎬 İncele",
       "payShort": "Ödeyin",
-      "paySoon": "Kurumsal ödeme çok yakında açılıyor. Teklifinizle ilgili ekibimiz sizinle iletişime geçecek."
+      "paySoon": "Kurumsal ödeme çok yakında açılıyor. Teklifinizle ilgili ekibimiz sizinle iletişime geçecek.",
+      "newQuote": "+ Yeni teklif iste"
     },
     "employees": {
       "title": "👥 Çalışan Ekim Dağıtımı",

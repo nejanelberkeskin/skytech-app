@@ -126,69 +126,69 @@ export default async function VitrinFooter() {
         </div>
       </div>
 
-      {/* Bottom bar */}
+      {/* Bottom bar — 1: yasal bağlantılar · 2: telif + marka | dil + geliştirici | ödeme bandı.
+          Sağdaki boşluk sabit "yukarı çık" düğmesi banda binmesin diye. */}
       <div className="relative border-t border-white/5">
-        <div className="vitrin-container py-5 flex flex-col lg:flex-row items-center justify-between gap-4">
-          <div className="flex flex-col sm:flex-row sm:items-center gap-2.5 sm:gap-5 text-xs text-[#6b8f6b]">
-            <div className="flex items-center gap-2.5">
+        <div className="vitrin-container pt-6 pb-24 lg:pb-8">
+          <ul className="flex flex-wrap justify-center lg:justify-start gap-x-5 gap-y-2 text-xs">
+            {YASAL.map((item) => (
+              <li key={item.label}>
+                <Link href={item.href} className="text-[#6b8f6b] hover:text-white transition-colors">
+                  {item.label}
+                </Link>
+              </li>
+            ))}
+            <li>
+              <CookiePreferencesLink label={t("legal.cookiePreferences")} />
+            </li>
+          </ul>
+
+          <div className="mt-5 border-t border-white/5 pt-5 flex flex-col items-center gap-5 xl:flex-row xl:items-center xl:justify-between xl:gap-8 xl:pr-20">
+            <div className="flex items-start gap-2.5 text-xs text-[#6b8f6b] max-w-xl text-center xl:max-w-md xl:text-left">
               <Image
                 src="/images/brand/logo-mark-light.webp"
                 alt=""
                 aria-hidden="true"
                 width={26}
                 height={26}
-                className="w-6 h-6 shrink-0 opacity-80"
+                className="hidden xl:block w-6 h-6 shrink-0 opacity-80"
               />
-              <p>
-                &copy; {new Date().getFullYear()} {ORG_LEGAL_NAME} {t("rightsReserved")}
-              </p>
+              <div className="space-y-1">
+                <p>
+                  &copy; {new Date().getFullYear()} {ORG_LEGAL_NAME} {t("rightsReserved")}
+                </p>
+                {/* Marka beyanı: Skytech Green bir marka, tüzel kişilik Skytech Havacılık A.Ş. */}
+                <p className="text-[11px] text-[#4f6b4f]">
+                  {t.rich("brandOf", {
+                    company: ORG_LEGAL_NAME,
+                    link: (chunks) => (
+                      <a
+                        href={ORG_PARENT_URL}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="underline underline-offset-2 decoration-[#4f6b4f]/40 hover:text-[#a7d4a7] hover:decoration-[#a7d4a7] transition-colors"
+                      >
+                        {chunks}
+                      </a>
+                    ),
+                  })}
+                </p>
+              </div>
             </div>
-            <KenxBadge tone="light" />
-          </div>
-          <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs">
-            <ul className="flex flex-wrap items-center gap-x-5 gap-y-2">
-              {YASAL.map((item) => (
-                <li key={item.label}>
-                  <Link href={item.href} className="text-[#6b8f6b] hover:text-white transition-colors">
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
-              <li>
-                <CookiePreferencesLink label={t("legal.cookiePreferences")} />
-              </li>
-            </ul>
-            <LanguageSwitcher dark />
-          </div>
-        </div>
-
-        {/* Marka beyani — en alt satir. Telif satirindan ayri bir bilgi:
-            Skytech Green bir marka, tuzel kisilik Skytech Havacilik A.S. */}
-        <div className="vitrin-container pb-20 lg:pb-6 -mt-1 flex flex-col items-center justify-between gap-4 lg:flex-row">
-          <p className="text-[11px] text-[#4f6b4f] text-center lg:text-left">
-            {t.rich("brandOf", {
-              company: ORG_LEGAL_NAME,
-              link: (chunks) => (
-                <a
-                  href={ORG_PARENT_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="underline underline-offset-2 decoration-[#4f6b4f]/40 hover:text-[#a7d4a7] hover:decoration-[#a7d4a7] transition-colors"
-                >
-                  {chunks}
-                </a>
-              ),
-            })}
-          </p>
-          <div className="w-full max-w-[453px] shrink-0 rounded-lg bg-white px-3 py-3">
-            <Image
-              src="/images/brand/logo_band_colored.svg"
-              alt="iyzico, Mastercard, Visa, American Express, Troy"
-              width={429}
-              height={32}
-              className="h-auto w-full"
-              unoptimized
-            />
+            <div className="flex items-center gap-5 shrink-0">
+              <LanguageSwitcher dark />
+              <KenxBadge tone="light" />
+            </div>
+            <div className="w-full max-w-[340px] shrink-0 rounded-lg bg-white px-3 py-2">
+              <Image
+                src="/images/brand/logo_band_colored.svg"
+                alt="iyzico, Mastercard, Visa, American Express, Troy"
+                width={429}
+                height={32}
+                className="h-auto w-full"
+                unoptimized
+              />
+            </div>
           </div>
         </div>
       </div>

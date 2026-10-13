@@ -203,6 +203,11 @@ export const openLandSeedingSchema = z.object({
     .min(QTY_HARD_LIMITS.min, "quantityMin")
     .max(QTY_HARD_LIMITS.max, "quantityMax"),
   certificateName: certificateNameSchema,
+  /**
+   * Ödemede dur kaydında alıcının fatura bilgisi (bireysel/kurumsal). Burada yalnız biçim denetlenir; içerik talep
+   * ucunda `invoiceSchema` (lib/orders/schema.ts) ile doğrulanır — iki şema arasında döngüsel içe aktarma olmasın.
+   */
+  invoice: z.record(z.string(), z.unknown()).optional(),
 });
 
 export const requestDetailsSchema = z.discriminatedUnion(

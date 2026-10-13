@@ -1239,3 +1239,8 @@ html.custom-cursor-active textarea {
   .sj-aurora { animation: none !important; }
   .sj-progress { display: none; }
 }
+
+/* Sabit satın alma çubuğu (StickySiteCta) varken altbilginin son satırı çubuğun altında kalmasın. */
+body:has([data-sticky-cta]) footer {
+  padding-bottom: 6rem;
+}

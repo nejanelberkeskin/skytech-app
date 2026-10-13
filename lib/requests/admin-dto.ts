@@ -7,6 +7,7 @@
  * "son işlem yapan" (`lastHandled`) olarak döner.
  */
 import type { RecordScope } from "@/lib/admin/record-scope";
+import { invoiceRowsOf } from "./invoice-rows";
 
 export type RequestType = "seed_purchase" | "land_application" | "open_land_seeding";
 export type RequestStatus = "new" | "contacted" | "quoted" | "converted" | "closed" | "spam";
@@ -23,6 +24,8 @@ export interface RequestContact {
   mapLink: string | null;
   accessNotes: string | null;
   certificateName: string | null;
+  /** Ödemede dur kaydının fatura bilgisi (okunur satırlar); yoksa boş. */
+  invoiceRows: { label: string; value: string }[];
   /** Talep üye hesabıyla mı gönderildi? Hesap kimliğinin kendisi dönmez. */
   hasAccount: boolean;
 }
@@ -85,6 +88,7 @@ export const REQUEST_CONTACT_COLUMNS = [
   "id", "contact_name", "email", "phone", "company", "message", "consent_at", "consent_version", "source_path",
   "detail_map_link:details->>mapLink", "detail_access_notes:details->>accessNotes",
   "detail_certificate_name:details->>certificateName",
+  "detail_invoice:details->invoice",
   // Yalnız `hasAccount` bayrağı için; kimlik yanıta taşınmaz.
   "user_id",
 ];
@@ -123,6 +127,7 @@ export function contactOf(row: Row): RequestContact {
     mapLink: text(row.detail_map_link),
     accessNotes: text(row.detail_access_notes),
     certificateName: text(row.detail_certificate_name),
+    invoiceRows: invoiceRowsOf(row.detail_invoice),
     hasAccount: typeof row.user_id === "string" && row.user_id.length > 0,
   };
 }

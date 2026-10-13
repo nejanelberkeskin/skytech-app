@@ -13,7 +13,7 @@ test("sipariş: aydınlatma kutusu yok, `kvkkNotice` rıza olarak değil göster
   assert.doesNotMatch(create, /kvkkRead:/, "yeni siparişte okundu-rıza kaydı yazılmaz");
   assert.doesNotMatch(src("components/vitrin/siparis/OrderReview.tsx"), /"kvkkRead"/, "onay bölümünde KVKK kutusu yok");
   assert.match(src("components/vitrin/siparis/OrderReview.tsx"), /<PrivacyNotice \/>/);
-  assert.match(src("components/vitrin/siparis/OrderWizard.tsx"), /step === 3 && mode === "order" && <PrivacyNotice \/>/, "veri alınırken görünür");
+  assert.match(src("components/vitrin/siparis/OrderWizard.tsx"), /step === 3 && mode !== "request" && <PrivacyNotice \/>/, "veri alınırken görünür");
   const prep = src("lib/orders/preparation.ts");
   assert.match(prep, /const required = \["preInfo", "contract",/);
   assert.match(prep, /notice\.version !== order\.documents_version/, "bildirim sürümü sipariş ekiyle aynı olmalı");

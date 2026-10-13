@@ -20,12 +20,15 @@ function isImmersivePinned(): boolean {
 export default function ScrollToTop() {
   const t = useTranslations("common");
   const [visible, setVisible] = useState(false);
+  // Sayfada sabit satın alma çubuğu varsa düğme onun üstüne çıkar.
+  const [raised, setRaised] = useState(false);
 
   useEffect(() => {
     let frame = 0;
     const update = () => {
       frame = 0;
       setVisible(window.scrollY > 400 && !isImmersivePinned());
+      setRaised(!!document.querySelector("[data-sticky-cta]"));
     };
     // Ölçüm rAF'a ertelenir: kaydırma olayı başına en fazla bir düzen okuması.
     const schedule = () => {
@@ -46,7 +49,7 @@ export default function ScrollToTop() {
       onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
       aria-label={t("scrollTop")}
       tabIndex={visible ? 0 : -1}
-      className={`fixed bottom-6 right-6 z-30 w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 ${
+      className={`fixed ${raised ? "bottom-28" : "bottom-6"} right-6 z-30 w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 ${
         visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4 pointer-events-none"
       }`}
       style={{

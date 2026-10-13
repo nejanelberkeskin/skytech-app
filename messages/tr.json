@@ -2293,7 +2293,7 @@
     "ownLand": "Kendi arazim için işlem yaptırmak istiyorum",
     "fire": "Yangın Sahası",
     "hectares": "{value} hektar",
-    "participate": "Bu sahaya katıl",
+    "participate": "Tohum Topu Bıraktır",
     "details": "Sahayı incele",
     "info": "Bilgi alın",
     "empty": {
@@ -2301,7 +2301,7 @@
       "description": "Katılıma açılacak Proje Uygulama Sahalarını burada paylaşacağız. Kendi araziniz için başvurabilir veya çalışmalarımız hakkında bilgi alabilirsiniz."
     },
     "phases": {
-      "open": "Katılıma açık",
+      "open": "Satışta",
       "full": "Kontenjan doldu",
       "scheduled": "Bırakma planlandı",
       "released": "Bırakma tamamlandı",
@@ -2339,7 +2339,9 @@
       "scheduled": "Bu saha için bırakma tarihi planlandı.",
       "released": "Bu sahada tohum topu bırakma tamamlandı.",
       "monitoring": "Bu sahada izleme ve raporlama sürüyor."
-    }
+    },
+    "sticky": "Bu sahaya tohum topu bıraktır",
+    "stickyPrice": "Tohum topu başı {price}"
   },
   "seasonTimeline": {
     "title": "Çalışma takvimi",
@@ -2465,8 +2467,8 @@
     "cta": "Proje Uygulama Sahaları"
   },
   "orderWizard": {
-    "title": "Sahaya katılın",
-    "description": "Seçtiğiniz sahada dronla tohum topu bıraktırmak için bilgilerinizi adım adım tamamlayın.",
+    "title": "Bu sahaya tohum topu bıraktırın",
+    "description": "Adedi seçin, sertifikadaki adı ve fatura bilgilerinizi girin; tohum toplarınızı dronla sahaya bırakalım.",
     "orderMode": "Sipariş",
     "requestMode": "Katılım talebi",
     "next": "Devam",
@@ -2478,7 +2480,7 @@
     "yes": "Evet",
     "no": "Hayır",
     "steps": {
-      "label": "Katılım adımları",
+      "label": "Satın alma adımları",
       "quantity": "Miktar",
       "certificate": "Sertifikadaki ad",
       "buyer": "Alıcı ve fatura",
@@ -2517,7 +2519,8 @@
       "firstName": "Ad",
       "lastName": "Soyad",
       "email": "E-posta",
-      "phone": "Cep telefonu"
+      "phone": "Cep telefonu",
+      "contactEither": "E-posta ya da telefondan biri yeterli; ödeme açıldığında size buradan ulaşırız."
     },
     "invoice": {
       "title": "Fatura bilgileri",
@@ -2544,7 +2547,7 @@
     },
     "review": {
       "title": "Sipariş özeti",
-      "summaryLabel": "Katılım özeti",
+      "summaryLabel": "Sipariş özeti",
       "site": "Proje Uygulama Sahası",
       "species": "Türler",
       "total": "Toplam hizmet bedeli",
@@ -2642,10 +2645,16 @@
       "viewOptions": "Satın Al",
       "soonTitle": "Ödeme çok yakında açılıyor",
       "soonBody": "Kartınızdan çekim yapılmadı. Bilgilerinizi bırakın; ödeme açıldığında seçtiğiniz saha ve adetle size haber verelim, siparişinizi tamamlayın.",
-      "soonShared": "Paylaşacağınız bilgiler: ad soyad, e-posta, telefon, saha, adet, sertifikadaki ad ve girdiyseniz notunuz. Fatura adresi ve kimlik/vergi numarası şimdi istenmez. Ayrıntılar: <kvkk>KVKK Aydınlatma Metni</kvkk>.",
+      "soonShared": "Paylaşacağınız bilgiler: ad soyad, e-posta ve/veya telefon, saha, adet, sertifikadaki ad ve fatura bilgileriniz. Ayrıntılar: <kvkk>KVKK Aydınlatma Metni</kvkk>.",
       "notify": "Ödeme açılınca haber ver",
       "backToReview": "Özete dön",
       "consent": "Ödeme açıldığında belirttiğim e-posta ya da telefonla benimle iletişime geçilmesini istiyorum."
+    },
+    "guest": {
+      "title": "Misafir olarak devam ediyorsunuz",
+      "body": "Satın almak için hesap gerekmez. Hesabınız varsa giriş yapın, bilgileriniz otomatik dolsun.",
+      "login": "Giriş yap",
+      "register": "Hesap oluştur"
     }
   }
 }

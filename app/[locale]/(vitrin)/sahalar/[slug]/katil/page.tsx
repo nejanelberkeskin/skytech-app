@@ -13,7 +13,6 @@ import { scheduleFor } from "@/lib/orders/schedule";
 import { getSalesSettings } from "@/lib/orders/settings";
 import { publicPricing } from "@/lib/orders/settings-schema";
 import { buildPageMetadata } from "@/lib/seo";
-import SeasonTimeline from "@/components/vitrin/shared/SeasonTimeline";
 import OrderWizard from "@/components/vitrin/siparis/OrderWizard";
 
 type Props = { params: Promise<{ locale: PriceLocale; slug: string }> };
@@ -122,13 +121,8 @@ export default async function ParticipatePage({ params }: Props) {
         schedule={schedule}
         pricing={publicPricing(settings)}
         dateLabels={dateLabels}
-        timeline={
-          <SeasonTimeline
-            locale={locale}
-            currentMonth={now.getUTCMonth()}
-            variant="compact"
-          />
-        }
+        // Çalışma takvimi saha sayfasında; satın alma ekranı sade kalır.
+        timeline={null}
       />
     </div>
   );

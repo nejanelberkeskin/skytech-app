@@ -14,6 +14,7 @@ import { createServiceRoleClient } from "@/lib/supabase/server";
 import type { ServiceRequest } from "@/lib/types";
 import {
   REQUEST_TYPE_LABELS,
+  invoiceRowsOf,
   requestSummaryRows,
   type LabelLocale,
   type SummaryRow,
@@ -511,7 +512,10 @@ export async function sendServiceRequestNotification({ request, landName }: Requ
   const notifyTo = requestNotifyEmail();
   const typeLabel = REQUEST_TYPE_LABELS.tr[request.type];
   const subject = `[Talep] ${request.request_no} · ${typeLabel} — ${request.contact_name}`;
-  const rows = requestSummaryRows(request, "tr", landName);
+  const rows = [
+    ...requestSummaryRows(request, "tr", landName),
+    ...invoiceRowsOf((request.details as Record<string, unknown> | null)?.invoice),
+  ];
   const adminUrl = `${appUrl()}/admin/talepler?no=${encodeURIComponent(request.request_no)}`;
   const createdAt = new Date(request.created_at).toLocaleString("tr-TR", { dateStyle: "long", timeStyle: "short" });
 

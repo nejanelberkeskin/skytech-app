@@ -14,6 +14,7 @@ import {
 import { generateRequestNo, hashIp, sanitizeUserAgent } from "@/lib/requests/server";
 import { PRICING_VISIBLE, quantityRangeError } from "@/lib/pricing";
 import { getSalesSettings } from "@/lib/orders/settings";
+import { invoiceSchema } from "@/lib/orders/schema";
 import type { ServiceRequest } from "@/lib/types";
 
 /**
@@ -121,6 +122,18 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
+    // Ödemede dur kaydı fatura bilgisini de taşıyabilir: sipariş şemasıyla aynı kurallar.
+    let invoice: unknown = null;
+    if (details.invoice) {
+      const checked = invoiceSchema.safeParse(details.invoice);
+      if (!checked.success) {
+        const fields = Object.fromEntries(
+          Object.entries(issuesToFieldErrors(checked.error.issues)).map(([k, v]) => [`invoice.${k}`, v]),
+        );
+        return NextResponse.json({ error: "validation", fields }, { status: 400 });
+      }
+      invoice = checked.data;
+    }
     const { data: land, error } = await supabase
       .from("lands")
       .select("id, name, region, is_public, status, species_slugs")
@@ -141,6 +154,7 @@ export async function POST(req: NextRequest) {
       // null → sertifikaya talep sahibinin adı yazılır (formdaki ipucu böyle söyler).
       certificateName: details.certificateName ?? null,
       landName,
+      ...(invoice ? { invoice } : {}),
       // Talep anında sahada bırakılan tür(ler) — bilgi amaçlı anlık kopya.
       speciesSlugs: Array.isArray(land.species_slugs) ? land.species_slugs : [],
       // Müşterinin gördüğü birim bedel ve tahmini tutar (kuruş). Bağlayıcı değil.

@@ -153,3 +153,5 @@ export function requestSummaryRows(
 
   return rows;
 }
+
+export { invoiceRowsOf } from "./invoice-rows";

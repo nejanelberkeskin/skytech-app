@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link, redirect } from "@/i18n/navigation";
 import LandApplicationForm from "@/components/vitrin/talep/LandApplicationForm";
-import SeasonTimeline from "@/components/vitrin/shared/SeasonTimeline";
 import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
 import ApplicationLink from "@/components/vitrin/kendi-arazim/ApplicationLink";
 import { REQUESTS_ENABLED } from "@/lib/site-config";
@@ -76,7 +75,6 @@ export default async function OwnLandPage({ params }: Props) {
         <div><h2 id="information-title" className={heading}>{t("information.title")}</h2><p className="mt-5 font-medium leading-relaxed text-[#1B6B3A]">{t("free")}</p></div>
         <ul className="space-y-3">{questions.map((key) => <li key={key} className="flex gap-3 text-[#526352]"><span aria-hidden="true" className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#1B6B3A]" />{t(`information.${key}`)}</li>)}</ul>
       </section>
-      <SeasonTimeline locale={locale} currentMonth={new Date().getUTCMonth()} />
       <section id="basvuru" tabIndex={-1} aria-labelledby="application-title" className="scroll-mt-28 rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-8 focus-visible:outline-[#1B6B3A]">
         <h2 id="application-title" className={`${heading} mb-4`}>{t("formTitle")}</h2><p className="mb-8 text-[#526352]">{t("free")}</p>
         <LandApplicationForm />

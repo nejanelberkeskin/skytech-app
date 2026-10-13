@@ -12,7 +12,7 @@ import { adminClient } from './admin-rest-client.mjs';
 const schema = await import('../../lib/requests/schema.ts');
 const CUSTOMER = '30000000-0000-4000-8000-0000000000c1';
 const scopeMod = load('lib/admin/record-scope.ts', { '@/lib/admin/permissions': permissionKeys });
-const dto = load('lib/requests/admin-dto.ts');
+const dto = load('lib/requests/admin-dto.ts', { './invoice-rows': load('lib/requests/invoice-rows.ts') });
 const read = load('lib/requests/admin-read.ts', { '@/lib/admin/record-scope': scopeMod, './admin-dto': dto, './schema': schema });
 
 async function requestsDb() {

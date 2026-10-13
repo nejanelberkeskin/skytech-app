@@ -2293,7 +2293,7 @@
     "ownLand": "I would like work carried out on my own land",
     "fire": "Fire-affected site",
     "hectares": "{value} hectares",
-    "participate": "Take part at this site",
+    "participate": "Release Seed Balls",
     "details": "Explore the site",
     "info": "Get information",
     "empty": {
@@ -2301,7 +2301,7 @@
       "description": "Project sites will be listed here when participation opens. You can apply for work on your own land or ask about our activities."
     },
     "phases": {
-      "open": "Open for participation",
+      "open": "On sale",
       "full": "Fully subscribed",
       "scheduled": "Release scheduled",
       "released": "Release completed",
@@ -2339,7 +2339,9 @@
       "scheduled": "The release date has been scheduled for this site.",
       "released": "Seed ball release at this site has been completed.",
       "monitoring": "Monitoring and reporting continue at this site."
-    }
+    },
+    "sticky": "Release seed balls at this site",
+    "stickyPrice": "{price} per seed ball"
   },
   "seasonTimeline": {
     "title": "Work schedule",
@@ -2465,8 +2467,8 @@
     "cta": "Project Sites"
   },
   "orderWizard": {
-    "title": "Participate in this site",
-    "description": "Complete the steps to arrange seed ball release by drone at your chosen site.",
+    "title": "Have seed balls released at this site",
+    "description": "Choose the quantity, enter the certificate name and your billing details; we release your seed balls on site by drone.",
     "orderMode": "Order",
     "requestMode": "Participation request",
     "next": "Continue",
@@ -2478,7 +2480,7 @@
     "yes": "Yes",
     "no": "No",
     "steps": {
-      "label": "Participation steps",
+      "label": "Purchase steps",
       "quantity": "Quantity",
       "certificate": "Certificate name",
       "buyer": "Buyer and invoice",
@@ -2517,7 +2519,8 @@
       "firstName": "First name",
       "lastName": "Last name",
       "email": "Email",
-      "phone": "Mobile phone"
+      "phone": "Mobile phone",
+      "contactEither": "Email or phone — one is enough; we will reach you there when payment opens."
     },
     "invoice": {
       "title": "Invoice details",
@@ -2544,7 +2547,7 @@
     },
     "review": {
       "title": "Order details",
-      "summaryLabel": "Participation summary",
+      "summaryLabel": "Order summary",
       "site": "Project Implementation Site",
       "species": "Species",
       "total": "Total service price",
@@ -2642,10 +2645,16 @@
       "viewOptions": "Buy",
       "soonTitle": "Payment opens very soon",
       "soonBody": "Your card has not been charged. Leave your details and we will let you know when payment opens, with the site and quantity you chose, so you can complete your order.",
-      "soonShared": "Details you share: name, email, phone, site, quantity, the name on the certificate and your note if provided. No billing address or ID/tax number is requested now. Details: <kvkk>Privacy Notice (KVKK)</kvkk>.",
+      "soonShared": "Details you share: name, email and/or phone, site, quantity, the name on the certificate and your billing details. Details: <kvkk>Privacy Notice (KVKK)</kvkk>.",
       "notify": "Notify me when payment opens",
       "backToReview": "Back to summary",
       "consent": "I would like to be contacted by the email or phone I provided when payment opens."
+    },
+    "guest": {
+      "title": "You are continuing as a guest",
+      "body": "No account is needed to buy. If you have one, sign in to fill in your details automatically.",
+      "login": "Sign in",
+      "register": "Create account"
     }
   }
 }

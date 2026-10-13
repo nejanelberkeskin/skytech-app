@@ -15,6 +15,7 @@ import {
 } from "@/lib/pricing";
 import {
   buyerSchema,
+  preorderBuyerSchema,
   invoiceSchema,
   consentsSchema,
   orderPayloadSchema,
@@ -83,11 +84,10 @@ export default function OrderWizard({
   pricing,
 }: WizardProps) {
   const t = useTranslations("orderWizard");
-  const common = useTranslations("requestForms.common");
   const requestErrors = useTranslations("requestForms.common.errors");
-  // "request" ve "preorder" iletişim formunu ve talep şemasını kullanır; alıcı + fatura bilgisi yalnız gerçek siparişte
-  // ("order") alınır. "preorder" ödeme olmadan sipariş özetini gösterir, isteğe bağlı talep bırakır.
-  const usesContact = mode !== "order";
+  // "request" iletişim formunu kullanır. "order" ve "preorder" alıcı + fatura bilgisini alır; "preorder" ödeme olmadan
+  // durur ve bilgileri kayıt olarak bırakır (e-posta ya da telefondan biri yeterli).
+  const usesContact = mode === "request";
   const kvkkLink = (chunks: ReactNode) => (
     <Link
       href="/kvkk"
@@ -232,8 +232,21 @@ export default function OrderWizard({
       path === "quantity" || path === "certificateName" || path === "certificateMode"
         ? `details.${path}`
         : path;
+    // Ödemede dur kaydı sunucuya iletişim alanlarıyla gider; sunucu hatası alıcı alanında gösterilir.
+    const contactAlias =
+      mode === "preorder"
+        ? ({
+            "buyer.firstName": "contact.contactName",
+            "buyer.lastName": "contact.contactName",
+            "buyer.email": "contact.email",
+            "buyer.phone": "contact.phone",
+          } as Record<string, string>)[path]
+        : undefined;
     const key =
-      errors[path] ?? request.fieldErrors[path] ?? request.fieldErrors[alias];
+      errors[path] ??
+      request.fieldErrors[path] ??
+      request.fieldErrors[alias] ??
+      (contactAlias ? request.fieldErrors[contactAlias] : undefined);
     if (!key) return null;
     const params = key.startsWith("certificateName") || key.startsWith("certificateCompany")
       ? { min: CERTIFICATE_NAME.min, max: CERTIFICATE_NAME.max }
@@ -262,11 +275,9 @@ export default function OrderWizard({
             value,
           ]),
         );
-      if (mode !== "order") {
-        // Ödemede dur: KVKK onayı 4. adımda alınır; 3. adımda yalnız iletişim alanları talep şemasıyla doğrulanır.
+      if (mode === "request") {
         const result = contactSchema.safeParse({
           ...contact,
-          ...(mode === "preorder" ? { consent: true } : {}),
           locale,
         });
         const fields = result.success
@@ -276,7 +287,7 @@ export default function OrderWizard({
           fields["contact.email"] = "contactRequired";
         return fields;
       }
-      const b = buyerSchema.safeParse(buyer);
+      const b = (mode === "preorder" ? preorderBuyerSchema : buyerSchema).safeParse(buyer);
       const i = invoiceSchema.safeParse(invoiceInput(invoice));
       return {
         ...(b.success
@@ -426,13 +437,22 @@ export default function OrderWizard({
         setFocus((v) => ({ revision: v.revision + 1, error: true }));
         return;
       }
+      // Alıcı ve fatura bilgisi kayda girer; ödeme açılınca sipariş bu bilgilerle tamamlanır.
       await request.submit(
-        contact,
+        {
+          contactName: `${buyer.firstName.trim()} ${buyer.lastName.trim()}`.trim(),
+          email: buyer.email,
+          phone: buyer.phone,
+          company: invoice.type === "corporate" ? invoice.companyTitle : "",
+          message: "",
+          consent: contact.consent,
+        },
         {
           type: "open_land_seeding",
           landId: site.id,
           quantity: quantity ?? 0,
           certificateName,
+          invoice: invoiceInput(invoice),
         },
         honeypot,
       );
@@ -501,14 +521,14 @@ export default function OrderWizard({
       ? ANONYMOUS_CERTIFICATE_NAME
       : certificateMode === "company"
         ? invoice.companyTitle.trim().slice(0, CERTIFICATE_NAME.max)
-        : mode === "order"
+        : mode !== "request"
           ? resolveCertificateName({ certificateName: undefined, buyer })
           : contact.contactName.trim().slice(0, CERTIFICATE_NAME.max)) ||
     t(certificateMode === "company" ? "certificate.companyPlaceholder" : "certificate.placeholder");
   const steps = [
     t("steps.quantity"),
     t("steps.certificate"),
-    t(mode === "order" ? "steps.buyer" : "steps.contact"),
+    t(mode === "request" ? "steps.contact" : "steps.buyer"),
     t("steps.review"),
   ];
   const buttonLabel = busy
@@ -803,8 +823,12 @@ export default function OrderWizard({
               </p>
             </SectionCard>
           )}
-          {step === 3 && mode === "order" && (
+          {step === 3 && mode !== "request" && !isLoggedIn && (
+            <GuestChoice />
+          )}
+          {step === 3 && mode !== "request" && (
             <BuyerInvoiceFields
+              contactEither={mode === "preorder"}
               buyer={buyer}
               invoice={invoice}
               onBuyer={(patch) => {
@@ -827,7 +851,7 @@ export default function OrderWizard({
               disabled={busy}
             />
           )}
-          {step === 3 && mode === "order" && <PrivacyNotice />}
+          {step === 3 && mode !== "request" && <PrivacyNotice />}
           {step === 3 && usesContact && (
             <div
               className="[&_label:has(input[type=checkbox])]:min-h-11"
@@ -849,11 +873,6 @@ export default function OrderWizard({
                 prefilled={isLoggedIn}
                 honeypot={honeypot}
                 onHoneypot={setHoneypot}
-                consentNotice={
-                  mode === "preorder"
-                    ? t.rich("preorder.contactNotice", { kvkk: kvkkLink })
-                    : undefined
-                }
               />
               <span id="ow-contact-consent-error" className="sr-only">
                 {errorFor("contact.consent")}
@@ -941,7 +960,6 @@ export default function OrderWizard({
               <p className="mt-6 rounded-2xl bg-[#f8faf5] p-4 text-sm leading-relaxed text-[#3d5a3d]">
                 {t("request.note")}
               </p>
-              <div className="mt-6">{timeline}</div>
             </section>
           )}
           {step === 4 && mode === "preorder" && !soon && (
@@ -972,25 +990,27 @@ export default function OrderWizard({
                     : []),
                   { label: t("certificate.label"), value: finalName },
                   {
-                    label: t("steps.contact"),
+                    label: t("steps.buyer"),
                     value: [
-                      contact.contactName,
-                      contact.email,
-                      contact.phone,
-                      contact.company,
+                      `${buyer.firstName} ${buyer.lastName}`.trim(),
+                      buyer.email,
+                      buyer.phone,
                     ]
                       .filter(Boolean)
                       .join(" · "),
                   },
-                  ...(contact.message
-                    ? [{ label: t("request.message"), value: contact.message }]
-                    : []),
+                  {
+                    label: t("invoice.title"),
+                    value:
+                      invoice.type === "corporate"
+                        ? [invoice.companyTitle, invoice.taxOffice, invoice.taxId].filter(Boolean).join(" · ")
+                        : t("invoice.individual"),
+                  },
                 ]}
               />
               <p className="mt-6 rounded-2xl bg-[#f8faf5] p-4 text-sm leading-relaxed text-[#3d5a3d]">
                 {t("preorder.reviewNote")}
               </p>
-              <div className="mt-6">{timeline}</div>
             </section>
           )}
           {step === 4 && mode === "preorder" && soon && (
@@ -1047,7 +1067,7 @@ export default function OrderWizard({
               </button>
             </section>
           )}
-          {mode === "order" && (
+          {mode !== "request" && (
             <div
               aria-hidden="true"
               className="absolute -left-[9999px] h-px w-px overflow-hidden"
@@ -1075,7 +1095,6 @@ export default function OrderWizard({
               {t("back")}
             </button>
           )}
-          {actions(false)}
         </form>
         <aside
           aria-label={t("review.summaryLabel")}
@@ -1120,6 +1139,8 @@ export default function OrderWizard({
               {t(mode === "preorder" ? "preorder.sideNote" : "request.note")}
             </p>
           )}
+          {/* Masaüstünde düğme yapışkan özet kartında: uzun özet ekranında da hep görünür. */}
+          {actions(false)}
         </aside>
       </div>
       <div className="fixed inset-x-0 bottom-0 z-40 max-h-[45svh] overflow-y-auto border-t border-[#1B6B3A]/20 bg-white px-5 pb-[max(1rem,env(safe-area-inset-bottom))] pt-3 shadow-[0_-6px_24px_#0e25190a] lg:hidden">
@@ -1138,6 +1159,34 @@ export default function OrderWizard({
       {document && (
         <DocumentDialog document={document} onClose={() => setDocument(null)} />
       )}
+    </div>
+  );
+}
+
+/** Giriş yapmamış alıcıya: hesap gerekmez, misafir olarak devam edilir; isterse giriş yapar ya da hesap açar. */
+function GuestChoice() {
+  const t = useTranslations("orderWizard.guest");
+  const pathname = usePathname();
+  return (
+    <div className="flex flex-col gap-3 rounded-2xl border border-[#1B6B3A]/15 bg-[#f8faf5] p-5 sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <p className="font-semibold text-[#0e2519]">{t("title")}</p>
+        <p className="mt-1 text-sm leading-relaxed text-[#3d5a3d]">{t("body")}</p>
+      </div>
+      <div className="flex shrink-0 gap-4 text-sm font-semibold">
+        <Link
+          href={{ pathname: "/auth/login", query: { redirect: pathname } }}
+          className="inline-flex min-h-11 items-center text-[#1B6B3A] underline underline-offset-4"
+        >
+          {t("login")}
+        </Link>
+        <Link
+          href="/auth/register"
+          className="inline-flex min-h-11 items-center text-[#1B6B3A] underline underline-offset-4"
+        >
+          {t("register")}
+        </Link>
+      </div>
     </div>
   );
 }

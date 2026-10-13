@@ -55,6 +55,30 @@ export const buyerSchema = z.object({
     .transform((v) => normalizePhone(v) as string),
 });
 
+/**
+ * Ödemede dur kaydı (PAYMENT_SOON): ödeme yokken alıcıya e-posta ya da telefondan biriyle ulaşılır; en az biri zorunlu.
+ * Gerçek siparişte `buyerSchema` geçerlidir (e-posta zorunlu: teyit, sözleşme, fatura ve sertifika e-postayla gider).
+ */
+export const preorderBuyerSchema = z
+  .object({
+    firstName: buyerSchema.shape.firstName,
+    lastName: buyerSchema.shape.lastName,
+    email: z
+      .string()
+      .max(200, "tooLong")
+      .transform((v) => v.trim().toLowerCase())
+      .pipe(z.string().refine((v) => v === "" || z.email().safeParse(v).success, "emailInvalid")),
+    phone: z
+      .string()
+      .max(40, "tooLong")
+      .transform((v) => v.trim())
+      .refine((v) => v === "" || normalizePhone(v) !== null, "phoneInvalid")
+      .transform((v) => (v ? (normalizePhone(v) as string) : "")),
+  })
+  .superRefine((v, ctx) => {
+    if (!v.email && !v.phone) ctx.addIssue({ code: "custom", path: ["email"], message: "contactRequired" });
+  });
+
 /* ── Fatura ───────────────────────────────────────────────────────────────── */
 
 export const addressSchema = z.object({

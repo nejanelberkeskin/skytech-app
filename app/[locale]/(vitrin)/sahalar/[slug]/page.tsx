@@ -10,6 +10,9 @@ import SectionWrapper from "@/components/vitrin/SectionWrapper";
 import { SiteBadges } from "@/components/vitrin/sahalar/SiteCard";
 import SeasonTimeline from "@/components/vitrin/shared/SeasonTimeline";
 import SiteReleases from "@/components/vitrin/sahalar/SiteReleases";
+import StickySiteCta from "@/components/vitrin/sahalar/StickySiteCta";
+import { getSalesSettings } from "@/lib/orders/settings";
+import { PRICING_VISIBLE, formatTry } from "@/lib/pricing";
 import { getProjectSiteBySlug } from "@/lib/sites/data";
 import { getSiteReleases } from "@/lib/sites/releases-data";
 import { formatLongDay } from "@/lib/orders/dates";
@@ -263,6 +266,18 @@ export default async function SiteDetailPage({ params, searchParams }: Props) {
           </Link>
         </section>
       </SectionWrapper>
+      {site.acceptsOrders && (
+        <StickySiteCta
+          href={siteOrderHref(site)}
+          label={t("sticky")}
+          siteName={site.name}
+          priceNote={
+            PRICING_VISIBLE
+              ? t("stickyPrice", { price: formatTry((await getSalesSettings()).unitPriceKurus, locale) })
+              : null
+          }
+        />
+      )}
     </div>
   );
 }

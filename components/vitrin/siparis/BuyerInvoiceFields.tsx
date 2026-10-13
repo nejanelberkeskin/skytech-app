@@ -15,6 +15,8 @@ type Props = {
   onInvoice: (patch: Partial<InvoiceValues>) => void;
   errorFor: (path: string) => string | null;
   disabled: boolean;
+  /** Ödemede dur: e-posta ya da telefondan biri yeterli (ikisi de isteğe bağlı görünür, en az biri istenir). */
+  contactEither?: boolean;
 };
 export default function BuyerInvoiceFields({
   buyer,
@@ -23,6 +25,7 @@ export default function BuyerInvoiceFields({
   onInvoice,
   errorFor,
   disabled,
+  contactEither = false,
 }: Props) {
   const t = useTranslations("orderWizard");
   const invoiceField = (
@@ -87,7 +90,8 @@ export default function BuyerInvoiceFields({
             <Field
               key={key}
               label={t(`buyer.${key}`)}
-              required
+              required={!(contactEither && (key === "email" || key === "phone"))}
+              optional={contactEither && (key === "email" || key === "phone")}
               error={errorFor(`buyer.${key}`)}
             >
               {(a) => (
@@ -108,7 +112,7 @@ export default function BuyerInvoiceFields({
                   maxLength={key === "email" ? 200 : key === "phone" ? 40 : 60}
                   value={buyer[key]}
                   onChange={(e) => onBuyer({ [key]: e.target.value })}
-                  required
+                  required={!(contactEither && (key === "email" || key === "phone"))}
                   disabled={disabled}
                   aria-invalid={a.invalid}
                   aria-describedby={a.describedBy}
@@ -118,6 +122,9 @@ export default function BuyerInvoiceFields({
             </Field>
           ))}
         </div>
+        {contactEither && (
+          <p className="mt-3 text-xs leading-relaxed text-[#3d5a3d]">{t("buyer.contactEither")}</p>
+        )}
       </SectionCard>
       <section
         className="vitrin-card p-6 lg:p-8"

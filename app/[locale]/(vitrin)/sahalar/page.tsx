@@ -4,7 +4,6 @@ import { Link } from "@/i18n/navigation";
 import BreadCrumb from "@/components/vitrin/BreadCrumb";
 import SectionWrapper from "@/components/vitrin/SectionWrapper";
 import SiteCard from "@/components/vitrin/sahalar/SiteCard";
-import SeasonTimeline from "@/components/vitrin/shared/SeasonTimeline";
 import { getProjectSites } from "@/lib/sites/data";
 import { OWN_LAND_HREF, SITES_HREF } from "@/lib/sites/links";
 import type { SiteLocale } from "@/lib/sites/types";
@@ -74,12 +73,6 @@ export default async function SitesPage({ params }: Props) {
             </div>
           </div>
         )}
-        <div className="mt-16">
-          <SeasonTimeline
-            locale={locale}
-            currentMonth={new Date().getUTCMonth()}
-          />
-        </div>
       </SectionWrapper>
     </div>
   );

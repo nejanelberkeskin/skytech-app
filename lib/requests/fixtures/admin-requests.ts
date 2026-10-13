@@ -55,11 +55,11 @@ export const REQUEST_LIST_CONTACT: RequestListDto = {
   items: [
     { ...seeding, contact: { name: "Deneme Kişi", email: "kisi@example.invalid", phone: "+905550000000", company: null,
       message: "Sahaya katılmak istiyorum.", consent: { at: "2026-09-28T09:00:00.000Z", version: "2026-09" },
-      sourcePath: "/tr/talep/saha", mapLink: null, accessNotes: null, certificateName: "Deneme Kişi", hasAccount: true } },
+      sourcePath: "/tr/talep/saha", mapLink: null, accessNotes: null, certificateName: "Deneme Kişi", invoiceRows: [], hasAccount: true } },
     { ...landApplication, contact: { name: "Arazi Sahibi", email: "arazi@example.invalid", phone: null, company: "Örnek Tarım",
       message: null, consent: { at: "2026-09-28T09:00:00.000Z", version: "2026-09" }, sourcePath: "/tr/talep/arazim",
       mapLink: "https://maps.example.invalid/?q=37,31", accessNotes: "Köy yolundan girilir.", certificateName: null,
-      hasAccount: false } },
+      invoiceRows: [], hasAccount: false } },
   ],
   groups: ["request", "contact"],
   search: { contactFields: true },

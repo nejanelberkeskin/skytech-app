@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { coverImageCredit } from "@/lib/sites/image-credit";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { siteDetailHref } from "@/lib/sites/links";
@@ -66,6 +67,11 @@ export default async function SiteCard({
               <path d="M-40 280Q70 100 180 230T450 130M-40 250Q70 70 180 200T450 100M-40 220Q70 40 180 170T450 70M-40 190Q70 10 180 140T450 40" />
             </svg>
           </div>
+        )}
+        {coverImageCredit(site.coverImage) && (
+          <span className="absolute bottom-1.5 right-2 rounded bg-black/45 px-1.5 py-0.5 text-[9px] text-white/90">
+            {coverImageCredit(site.coverImage)}
+          </span>
         )}
       </div>
       <div className="flex flex-1 flex-col p-5 sm:p-6">

@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { coverImageCredit } from "@/lib/sites/image-credit";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
@@ -110,6 +111,11 @@ export default async function SiteDetailPage({ params, searchParams }: Props) {
               sizes="(min-width: 1280px) 1200px, 100vw"
               className="object-cover"
             />
+            {coverImageCredit(site.coverImage) && (
+              <span className="absolute bottom-2 right-3 rounded bg-black/45 px-2 py-0.5 text-[10px] text-white/90">
+                {coverImageCredit(site.coverImage)}
+              </span>
+            )}
           </div>
         )}
         {site.summary && (

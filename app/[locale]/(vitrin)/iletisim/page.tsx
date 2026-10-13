@@ -43,6 +43,7 @@ export default async function IletisimPage({
     [t("registry.registeredOn"), COMPANY.registeredOn],
     [t("registry.kep"), COMPANY.kep],
     [t("registry.chamber"), COMPANY.chamber],
+    [t("registry.chamberRegistryNo"), COMPANY.chamberRegistryNo],
     [t("registry.phone"), COMPANY.phone],
     [t("registry.email"), COMPANY.email],
   ] as [string, string | null][]).filter((r): r is [string, string] => Boolean(r[1]));

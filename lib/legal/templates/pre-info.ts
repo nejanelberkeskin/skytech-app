@@ -2,8 +2,7 @@
  * ÖN BİLGİLENDİRME FORMU — Mesafeli Sözleşmeler Yönetmeliği m.5'te sayılan
  * bilgiler, siparişin somut verileriyle.
  *
- * [AVUKAT] Bu metin bir TASLAKTIR; yayına alınmadan önce hukuk incelemesinden
- * geçmelidir. Metin değişirse lib/legal/version.ts içindeki sürüm artırılır.
+ * Avukat onayı: 12 Ekim 2026 (kullanıcı bildirimi). Metin değişirse lib/legal/version.ts içindeki sürüm artırılır.
  */
 import type { LegalBlock, LegalContext, LegalDocument } from "../types";
 import {

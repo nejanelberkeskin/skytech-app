@@ -753,6 +753,7 @@
       "registeredOn": "Tescil tarihi",
       "kep": "KEP adresi",
       "chamber": "Mensup olunan meslek odası",
+      "chamberRegistryNo": "Oda sicil numarası",
       "phone": "Telefon",
       "email": "E-posta"
     }

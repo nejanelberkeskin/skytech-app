@@ -1,11 +1,14 @@
 /**
- * Hukuki metin sürümünün kesinleşmesini (lib/legal/version.ts'den "-taslak" ekinin kaldırılmasını) engelleyen açık
- * işler — Astra hukuk paketi 2026-10.5. Liste boşalmadan sürüm kesinleşmez; `legal-release` testi bunu zorlar.
- * Yürürlük tarihi gerçek yayın günü yazılır (otomatik tarih yok).
- * Avukat incelemesi: kullanıcı bildirimi, 12 Ekim 2026 — hazırlanan metinlere avukat onay verdi.
+ * Hukuki metin sürümünün kesinleşmesini engelleyen açık işler. Boş değilse sürüm "-taslak" kalmak zorundadır
+ * (`legal-release` testi). Yürürlük tarihi gerçek yayın günü yazılır.
+ *
+ * 12 Ekim 2026: avukat onayı (kullanıcı bildirimi); kullanıcı kararıyla metinler sektördeki genel uygulama gibi
+ * sadeleştirildi (2026-10.6) ve sürüm kesinleşti. Aşağıdaki uyum işleri metni engellemez ama sürdürülür.
  */
-export const LEGAL_RELEASE_BLOCKERS: readonly { key: string; owner: string; text: string }[] = [
-  { key: "transfer_annex", owner: "şirket + sağlayıcılar", text: "KVKK m.9 aktarım eki: Vercel, Supabase, Resend, Google Workspace için gerçek sözleşme tarafı, ülkeler, imzalı güvence ve Kurul bildirimi kanıtı." },
-  { key: "retention_jobs", owner: "teknik + şirket", text: "Saklama ve imha planındaki silme görevleri (talep 12 ay, profil 30 gün, günlük 90 gün) uygulanıp doğrulanmalı." },
-  { key: "chamber_registry", owner: "şirket", text: "Meslek odası üyelik/sicil numarası resmî kayıtla teyit edilmeli." },
+export const LEGAL_RELEASE_BLOCKERS: readonly { key: string; owner: string; text: string }[] = [];
+
+/** Sürümü engellemeyen, sürdürülen uyum işleri (metin bunları yapılmış gibi beyan etmez). */
+export const LEGAL_COMPLIANCE_FOLLOWUPS: readonly { key: string; owner: string; text: string }[] = [
+  { key: "transfer_contracts", owner: "şirket + sağlayıcılar", text: "KVKK m.9: Google Workspace (Türk SCC seçeneği), Supabase, Vercel, Resend ile Kurul standart sözleşmesi (Model 2) ve 5 iş günü içinde Kurul bildirimi." },
+  { key: "retention_jobs", owner: "teknik", text: "Saklama/imha görevleri (talep, profil, günlük, bildirim gövdesi) ve imha günlüğü; payments FK düzeltmesi." },
 ];

@@ -38,11 +38,11 @@ test("kesin sürüm: açık iş, taslak notu, eksik künye ve boş yürürlük t
   assert.deepEqual(C.missingCompanyFields(), []);
 });
 
-test("künye: KEP ve tescil tarihi kaynakta; UETS KEP yerine kullanılmaz; 510174 oda sicili diye kopyalanmaz", () => {
+test("künye: KEP, tescil tarihi ve oda sicil no kaynakta; UETS KEP yerine kullanılmaz", () => {
   assert.equal(C.COMPANY.kep, "skytechhavacilik@hs01.kep.tr");
   assert.equal(C.COMPANY.registeredOn, "7 Mayıs 2024");
   assert.notEqual(C.COMPANY.kep, C.COMPANY.uets);
-  assert.notEqual(C.COMPANY.chamberRegistryNo, C.COMPANY.tradeRegistryNo);
+  assert.equal(C.COMPANY.chamberRegistryNo, "510174", "oda sicil no: şirket beyanı 12 Ekim 2026");
   assert.match(C.COMPANY.address.line, /^Macun Mah\./, "güncel adres Macun");
   assert.ok(!JSON.stringify(C.COMPANY).includes("Saray"), "eski adres yok");
 });

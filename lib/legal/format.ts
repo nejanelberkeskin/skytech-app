@@ -46,6 +46,7 @@ export function sellerRows(): [string, string][] {
     ["E-posta", COMPANY.email],
     ["KEP adresi", COMPANY.kep],
     ["Mensup olunan meslek odası", COMPANY.chamber],
+    ["Oda sicil numarası", COMPANY.chamberRegistryNo],
     ["İnternet sitesi", COMPANY.website.replace(/^https?:\/\//, "")],
   ];
   return rows.filter((r): r is [string, string] => Boolean(r[1]));

@@ -38,11 +38,11 @@ export const COMPANY = {
   registeredOn: "7 Mayıs 2024" as string | null,
   /**
    * Mensubu olunan meslek odası (6563 / e-ticaret yönetmeliği m.5). Kullanıcı 12 Ekim 2026'da "11-Tarım Ürünleri Meslek
-   * Komitesi" bildirdi; Ankara Ticaret Odası'nın 11 numaralı komitesiyle eşleşiyor. Oda üyelik/sicil numarası henüz
-   * teyit edilmedi (510174 ticaret sicil numarasıdır, oda sicil numarası diye kopyalanmaz) — `chamberRegistryNo`.
+   * Komitesi" bildirdi; Ankara Ticaret Odası'nın 11 numaralı komitesiyle eşleşiyor. Oda sicil numarası: kullanıcı
+   * 12 Ekim 2026'da "oda sicil numaramız 510174" diye bildirdi (ticaret sicil numarasıyla aynı; şirket beyanı).
    */
   chamber: "Ankara Ticaret Odası (11. Tarım Ürünleri Meslek Komitesi)" as string | null,
-  chamberRegistryNo: null as string | null,
+  chamberRegistryNo: "510174" as string | null,
 } as const;
 
 export function companyAddressLine(): string {

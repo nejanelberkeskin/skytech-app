@@ -753,6 +753,7 @@
       "registeredOn": "Registration date",
       "kep": "Registered e-mail (KEP)",
       "chamber": "Chamber membership",
+      "chamberRegistryNo": "Chamber registry number",
       "phone": "Phone",
       "email": "E-mail"
     }

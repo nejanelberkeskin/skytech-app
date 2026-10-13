@@ -21,6 +21,7 @@ const migrated: Record<string, Permission | readonly Permission[] | "self"> = {
   guvenlik: "self",
   finans: "finance.read",
   iadeler: "finance.read",
+  "kurumsal-hesaplar": "corporate.review",
 };
 export function visibleModules(me: AdminMe | null): AdminModule[] {
   if (!me?.admin.isActive) return [];

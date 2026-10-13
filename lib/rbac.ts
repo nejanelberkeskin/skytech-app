@@ -98,6 +98,13 @@ export const ADMIN_MODULES: AdminModule[] = [
     allowedRoles: ["SUPER_ADMIN"],
   },
   {
+    id: "kurumsal-hesaplar",
+    href: "/admin/kurumsal-hesaplar",
+    label: "Kurumsal Başvurular",
+    icon: "🏛️",
+    allowedRoles: ["SUPER_ADMIN"],
+  },
+  {
     id: "b2b",
     href: "/admin/b2b",
     label: "B2B Teklifler",

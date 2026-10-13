@@ -13,6 +13,7 @@ export const PERMISSIONS = [
   "content.edit", "content.publish", "media.upload", "legal.edit", "legal.publish",
   "staff.invite", "staff.manage", "roles.manage", "audit.read",
   "sales.pause", "sales.resume", "sales.pricing.manage", "system.readiness.read", "system.jobs.run",
+  "corporate.review",
 ] as const;
 
 export type Permission = (typeof PERMISSIONS)[number];

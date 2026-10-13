@@ -7,7 +7,7 @@ import { COMPANY, companyAddressLine } from "@/lib/company";
 import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
 import LocalBusinessSchema from "@/components/seo/LocalBusinessSchema";
 import { buildPageMetadata, ORG_SOCIAL } from "@/lib/seo";
-import { TRANSACTIONS_ENABLED } from "@/lib/site-config";
+import { CORPORATE_PORTAL_ENABLED } from "@/lib/site-config";
 
 export async function generateMetadata({
   params,
@@ -200,8 +200,8 @@ export default async function IletisimPage({
           </p>
           <div className="flex flex-col sm:flex-row gap-3 items-center justify-center">
             <Link href="/bilgi-al" className="vitrin-cta-primary">{t("cta.primary")}</Link>
-            {TRANSACTIONS_ENABLED && (
-              <Link href="/kurumsal/teklif-al" className="vitrin-cta-secondary">{t("cta.secondary")}</Link>
+            {CORPORATE_PORTAL_ENABLED && (
+              <Link href="/kurumsal/basvuru" className="vitrin-cta-secondary">{t("cta.secondary")}</Link>
             )}
           </div>
         </div>

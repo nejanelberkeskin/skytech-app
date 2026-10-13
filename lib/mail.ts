@@ -1162,3 +1162,80 @@ export async function sendFrozenNotification(body: string, idempotencyKey: strin
   if (typeof data?.id !== "string" || !data.id.trim() || data.id === SKIPPED_ID) throw new NotificationDeliveryError("invalid_provider_response");
   return { id: data.id };
 }
+
+// ═════════════════════════════════════════════════════════════════════
+// KURUMSAL HESAP BAŞVURUSU — alındı, ekibe bildirim, onay/ret
+// ═════════════════════════════════════════════════════════════════════
+
+interface CorporateApplicationMail {
+  userId: string;
+  companyTitle: string;
+  authorizedPerson: string;
+  email: string;
+  phone?: string;
+  taxId?: string;
+  taxOffice?: string;
+}
+
+async function sendLogged(template: string, to: string, subject: string, relatedId: string, html: string) {
+  try {
+    const result = await sendEmail({ to, subject, html });
+    await logEmail(template, to, subject, relatedId, result.id || null);
+    return result;
+  } catch (e: unknown) {
+    await logEmail(template, to, subject, relatedId, null, errorMessage(e));
+    throw e;
+  }
+}
+
+/** Başvuru sahibine: başvuru alındı, onaydan sonra panel açılır. */
+export async function sendCorporateApplicationReceived(data: CorporateApplicationMail) {
+  const subject = `Kurumsal hesap başvurunuz alındı — ${data.companyTitle}`;
+  const html = emailLayout(subject, `
+    <div class="header"><h1>Başvurunuz Alındı</h1><p>${esc(data.companyTitle)}</p></div>
+    <div class="body">
+      <p>Sayın <strong>${esc(data.authorizedPerson)}</strong>,</p>
+      <p><strong>${esc(data.companyTitle)}</strong> adına kurumsal hesap başvurunuzu aldık. Ekibimiz bilgileri inceleyip hesabınızı onayladığında size e-postayla haber vereceğiz.</p>
+      <p>Onaydan sonra kurumsal panelinize giriş yaparak teklif isteyebilirsiniz.</p>
+      <p style="color:#64748b;font-size:13px;margin-top:20px;">Sorularınız için bu e-postayı yanıtlayabilir ya da info@skytechgreen.com adresine yazabilirsiniz.</p>
+    </div>`);
+  return sendLogged("corporate_application_received", data.email, subject, data.userId, html);
+}
+
+/** Ekibe: yeni kurumsal başvuru (yönetimde Kurumsal Başvurular). */
+export async function sendCorporateApplicationStaffNotice(data: CorporateApplicationMail) {
+  const to = requestNotifyEmail();
+  const subject = `[Kurumsal başvuru] ${data.companyTitle}`;
+  const rows: SummaryRow[] = [
+    { label: "Unvan", value: data.companyTitle },
+    { label: "VKN / TCKN", value: data.taxId ?? "" },
+    { label: "Vergi dairesi", value: data.taxOffice ?? "" },
+    { label: "Yetkili", value: data.authorizedPerson },
+    { label: "E-posta", value: data.email },
+    { label: "Telefon", value: data.phone ?? "" },
+  ].filter((r) => r.value);
+  const html = emailLayout(subject, `
+    <div class="header"><h1>Yeni Kurumsal Başvuru</h1><p>Onay bekliyor</p></div>
+    <div class="body">
+      ${summaryTable(rows)}
+      <p style="text-align:center;margin-top:20px;"><a href="${appUrl()}/admin/kurumsal-hesaplar" class="btn">Başvuruyu incele</a></p>
+    </div>`);
+  return sendLogged("corporate_application_staff", to, subject, data.userId, html);
+}
+
+/** Başvuru sahibine: onaylandı ya da reddedildi. */
+export async function sendCorporateDecision(data: CorporateApplicationMail & { approved: boolean; note?: string | null }) {
+  const subject = data.approved
+    ? `Kurumsal hesabınız onaylandı — ${data.companyTitle}`
+    : `Kurumsal hesap başvurunuz hakkında — ${data.companyTitle}`;
+  const body = data.approved
+    ? `<p><strong>${esc(data.companyTitle)}</strong> kurumsal hesabınız onaylandı. Kurumsal panelinize giriş yaparak teklif isteyebilirsiniz.</p>
+       <p style="text-align:center;margin-top:20px;"><a href="${appUrl()}/kurumsal/giris" class="btn">Kurumsal panele giriş</a></p>`
+    : `<p><strong>${esc(data.companyTitle)}</strong> adına yaptığınız kurumsal hesap başvurusunu şu an onaylayamadık.</p>
+       ${data.note ? `<p><strong>Açıklama:</strong> ${esc(data.note)}</p>` : ""}
+       <p>Bilgileri güncelleyip yeniden başvurmak ya da soru sormak için info@skytechgreen.com adresine yazabilirsiniz.</p>`;
+  const html = emailLayout(subject, `
+    <div class="header"><h1>${data.approved ? "Hesabınız Onaylandı" : "Başvurunuz Hakkında"}</h1><p>${esc(data.companyTitle)}</p></div>
+    <div class="body"><p>Sayın <strong>${esc(data.authorizedPerson)}</strong>,</p>${body}</div>`);
+  return sendLogged(data.approved ? "corporate_approved" : "corporate_rejected", data.email, subject, data.userId, html);
+}

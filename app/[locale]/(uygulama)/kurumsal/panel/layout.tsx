@@ -5,6 +5,8 @@ import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase/browser";
+import ApprovalGate from "@/components/kurumsal/ApprovalGate";
+import { TRANSACTIONS_ENABLED } from "@/lib/site-config";
 
 /** Hesap rozeti: e-postanın yerel kısmından iki harf (ör. "uye@…" → "UY"); yoksa nötr nokta. Kişi/şirket adı uydurulmaz. */
 function initialsOf(email: string | null): string {
@@ -12,10 +14,15 @@ function initialsOf(email: string | null): string {
   return local.slice(0, 2).toUpperCase() || "•";
 }
 
+// Ödeme ve çalışan sertifikaları kurumsal satış (TRANSACTIONS_ENABLED) açılınca görünür.
 const NAV_ITEMS = [
   { href: "/kurumsal/panel", key: "overview", icon: "📊" },
-  { href: "/kurumsal/panel/sertifikalar", key: "certificates", icon: "🎖️" },
-  { href: "/kurumsal/panel/odeme", key: "payment", icon: "💳" },
+  ...(TRANSACTIONS_ENABLED
+    ? [
+        { href: "/kurumsal/panel/sertifikalar", key: "certificates", icon: "🎖️" },
+        { href: "/kurumsal/panel/odeme", key: "payment", icon: "💳" },
+      ]
+    : []),
 ];
 
 export default function CorporatePanelLayout({ children }: { children: React.ReactNode }) {
@@ -82,7 +89,7 @@ export default function CorporatePanelLayout({ children }: { children: React.Rea
       >
         {/* Logo */}
         <div className="px-6 py-5" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-          <Link href="/kurumsal" className="flex items-center gap-2.5" onClick={() => setSidebarOpen(false)} aria-label={tc("homeAria")}>
+          <Link href="/" className="flex items-center gap-2.5" onClick={() => setSidebarOpen(false)} aria-label={tc("homeAria")}>
             <Image
               src="/images/brand/logo-light.webp"
               alt="Skytech Green"
@@ -132,7 +139,7 @@ export default function CorporatePanelLayout({ children }: { children: React.Rea
             <p className="text-xs text-emerald-200/20 truncate">{userEmail}</p>
           )}
           <div className="flex items-center justify-between">
-            <Link href="/kurumsal" className="text-xs text-emerald-200/30 hover:text-white transition-colors"
+            <Link href="/" className="text-xs text-emerald-200/30 hover:text-white transition-colors"
               onClick={() => setSidebarOpen(false)}>
               {t("home")}
             </Link>
@@ -163,7 +170,7 @@ export default function CorporatePanelLayout({ children }: { children: React.Rea
           <span className="text-sm font-bold text-white">{t("title")}</span>
           <div className="w-10" />
         </div>
-        {children}
+        <ApprovalGate>{children}</ApprovalGate>
       </main>
     </div>
   );

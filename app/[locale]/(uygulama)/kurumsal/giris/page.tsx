@@ -66,7 +66,7 @@ export default function CorporateLogin() {
         style={{ backdropFilter: "blur(20px) saturate(1.4)", WebkitBackdropFilter: "blur(20px) saturate(1.4)" }}
       >
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between gap-3">
-          <Link href="/kurumsal" className="flex items-center gap-2.5 shrink-0" aria-label={tc("homeAria")}>
+          <Link href="/" className="flex items-center gap-2.5 shrink-0" aria-label={tc("homeAria")}>
             <Image
               src="/images/brand/logo.webp"
               alt="Skytech Green"
@@ -76,7 +76,7 @@ export default function CorporateLogin() {
               className="h-8 w-auto"
             />
           </Link>
-          <Link href="/kurumsal/teklif-al" className="text-xs sm:text-sm font-semibold text-[#1a2e1a] hover:text-[#1B6B3A] transition-colors text-right">
+          <Link href="/kurumsal/basvuru" className="text-xs sm:text-sm font-semibold text-[#1a2e1a] hover:text-[#1B6B3A] transition-colors text-right">
             <span className="hidden sm:inline">{t("noAccount")} </span>{t("getQuote")}
           </Link>
         </div>
@@ -164,7 +164,7 @@ export default function CorporateLogin() {
               </div>
 
               <Link
-                href="/kurumsal/teklif-al"
+                href="/kurumsal/basvuru"
                 className="block w-full mt-4 py-3.5 border border-white/[0.08] hover:border-white/[0.15] text-emerald-200/50 hover:text-white font-medium rounded-2xl text-center text-sm transition-all"
               >
                 {t("quoteAndAccount")}

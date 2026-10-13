@@ -1002,7 +1002,7 @@
         "highlight": "Corporate Project"
       },
       "subtitle": "Your headcount, the sites you want to join, your reporting needs — let's plan together.",
-      "primaryEnabled": "Request a Quote",
+      "primaryEnabled": "Apply for a Corporate Account",
       "primaryDisabled": "Get Information",
       "secondary": "Contact Us"
     },
@@ -1506,9 +1506,9 @@
     "homeAria": "Skytech Green Corporate",
     "login": {
       "noAccount": "Don't have an account yet?",
-      "getQuote": "Get a quote →",
+      "getQuote": "Apply for a corporate account →",
       "title": "Corporate Sign In",
-      "subtitle": "View your quote and your corporate panel.",
+      "subtitle": "View your quotes and corporate panel.",
       "email": "Corporate email",
       "emailPlaceholder": "name@company.com",
       "password": "Password",
@@ -1518,7 +1518,7 @@
       "submitting": "Signing in…",
       "submit": "Sign in",
       "or": "or",
-      "quoteAndAccount": "Get a Quote & Create an Account",
+      "quoteAndAccount": "Corporate account application",
       "trouble": "Having trouble with your account?",
       "errors": {
         "required": "Email and password are required.",
@@ -1642,7 +1642,8 @@
         "karbon": "Carbon"
       },
       "reviewShort": "🎬 Review",
-      "payShort": "Pay"
+      "payShort": "Pay",
+      "paySoon": "Corporate payment opens very soon. Our team will contact you about your quote."
     },
     "employees": {
       "title": "👥 Employee Seed Allocation",
@@ -1807,6 +1808,75 @@
         "resave": "Save the Quote Request Again",
         "loggedIn": "Send Your Quote Request",
         "new": "Create an Account and Send the Quote Request"
+      }
+    },
+    "apply": {
+      "title": "Corporate Account Application",
+      "subtitle": "Send your company details; once our team reviews and approves them, you can sign in to your corporate panel and request a quote.",
+      "haveAccount": "Already have an account?",
+      "login": "Sign in →",
+      "signedIn": "You are applying with {email}.",
+      "fields": {
+        "companyTitle": "Company name",
+        "taxId": "Tax ID (VKN, or TCKN for sole proprietors)",
+        "taxOffice": "Tax office",
+        "address": "Billing address",
+        "authorizedPerson": "Authorised person",
+        "email": "Corporate email",
+        "phone": "Phone",
+        "password": "Password",
+        "passwordConfirm": "Password (again)"
+      },
+      "authority": "I am authorised to apply on behalf of the company.",
+      "privacy": "Application details are used only to review your account and contact you. Details: <kvkk>Privacy Notice (KVKK)</kvkk>.",
+      "submit": "Send application",
+      "sending": "Sending…",
+      "done": {
+        "title": "Application received",
+        "body": "We will email you once our team has reviewed and approved your account.",
+        "confirmEmail": "We sent a verification link to your email; click it to be able to sign in.",
+        "home": "Back to home"
+      },
+      "errors": {
+        "companyTitleRequired": "Enter the company name.",
+        "taxIdRequired": "Enter a tax ID.",
+        "taxIdInvalid": "VKN must be 10 digits, TCKN 11 digits, and valid.",
+        "taxOfficeRequired": "Enter the tax office.",
+        "addressShort": "Enter the full billing address (at least 10 characters).",
+        "authorizedPersonRequired": "Enter the authorised person's name.",
+        "emailRequired": "Enter an email.",
+        "emailInvalid": "Enter a valid email.",
+        "phoneRequired": "Enter a phone number.",
+        "phoneInvalid": "Enter a valid phone number.",
+        "passwordShort": "Password must be at least {min} characters.",
+        "passwordMismatch": "Passwords do not match.",
+        "authorityRequired": "Confirm that you are authorised to act for the company.",
+        "tooLong": "Too long.",
+        "invalid": "Check this field.",
+        "emailExists": "An account with this email already exists. Sign in first, then apply from this page.",
+        "alreadyApplied": "This account already has an application. You can see its status in the corporate panel.",
+        "rateLimited": "Too many attempts. Try again in a few minutes.",
+        "generic": "The application could not be sent. Please try again."
+      }
+    },
+    "gate": {
+      "loading": "Loading",
+      "pending": {
+        "title": "Your application is under review",
+        "body": "The corporate account application for {company} is awaiting approval. We will email you once it is approved."
+      },
+      "rejected": {
+        "title": "Your application was not approved",
+        "body": "Your corporate account application was not approved at this time. For questions, write to info@skytechgreen.com."
+      },
+      "none": {
+        "title": "Corporate application required",
+        "body": "To use the corporate panel, first apply with your company details; after approval you can request a quote.",
+        "cta": "Apply for a corporate account"
+      },
+      "error": {
+        "title": "Status unavailable",
+        "body": "Please refresh the page."
       }
     }
   },

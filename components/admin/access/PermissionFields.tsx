@@ -29,6 +29,7 @@ const groups: Record<string, string> = {
   audit: "İşlem geçmişi",
   sales: "Satış",
   system: "Sistem",
+  corporate: "Kurumsal hesaplar",
 };
 import { globalOnly } from "./role-form";
 export default function PermissionFields({

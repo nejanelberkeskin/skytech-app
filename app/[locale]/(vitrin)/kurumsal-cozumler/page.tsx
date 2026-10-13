@@ -9,7 +9,7 @@ import DashboardParallax from "@/components/vitrin/kurumsal/DashboardParallax";
 import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
 import ServiceSchema from "@/components/seo/ServiceSchema";
 import { buildPageMetadata } from "@/lib/seo";
-import { TRANSACTIONS_ENABLED } from "@/lib/site-config";
+import { CORPORATE_PORTAL_ENABLED } from "@/lib/site-config";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
@@ -136,8 +136,8 @@ export default async function KurumsalCozumlerPage({ params }: { params: Promise
             {t("cta.subtitle")}
           </p>
           <div className="flex flex-col sm:flex-row gap-3 items-center justify-center">
-            <Link href={TRANSACTIONS_ENABLED ? "/kurumsal/teklif-al" : "/bilgi-al"} className="vitrin-cta-primary">
-              {TRANSACTIONS_ENABLED ? t("cta.primaryEnabled") : t("cta.primaryDisabled")}
+            <Link href={CORPORATE_PORTAL_ENABLED ? "/kurumsal/basvuru" : "/bilgi-al"} className="vitrin-cta-primary">
+              {CORPORATE_PORTAL_ENABLED ? t("cta.primaryEnabled") : t("cta.primaryDisabled")}
             </Link>
             <Link href="/iletisim" className="vitrin-cta-secondary">{t("cta.secondary")}</Link>
           </div>

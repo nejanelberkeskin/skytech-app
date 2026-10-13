@@ -38,7 +38,7 @@ export default function CookieConsentBanner() {
   if (!visible) return null;
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-50 sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2 sm:bottom-6 sm:w-[calc(100%-3rem)] sm:max-w-md animate-fade-in">
+    <div data-cookie-banner className="fixed inset-x-0 bottom-0 z-50 sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2 sm:bottom-6 sm:w-[calc(100%-3rem)] sm:max-w-md animate-fade-in">
       <div className="vitrin-card !rounded-none sm:!rounded-2xl p-5 sm:p-6 !bg-white/95 shadow-2xl shadow-black/15 border-t sm:border border-black/5">
         <p className="text-sm text-[#3d5a3d] leading-relaxed mb-4">
           {t("message")}{" "}

@@ -1002,7 +1002,7 @@
         "highlight": "Tasarlayalım"
       },
       "subtitle": "Çalışan sayınız, katılmak istediğiniz sahalar, raporlama ihtiyaçlarınız — birlikte planlayalım.",
-      "primaryEnabled": "Teklif Talep Et",
+      "primaryEnabled": "Kurumsal Hesap Başvurusu",
       "primaryDisabled": "Bilgi Al",
       "secondary": "Bize Ulaşın"
     },
@@ -1506,9 +1506,9 @@
     "homeAria": "Skytech Green Kurumsal",
     "login": {
       "noAccount": "Henüz hesabınız yok mu?",
-      "getQuote": "Teklif alın →",
+      "getQuote": "Kurumsal başvuru →",
       "title": "Kurumsal Giriş",
-      "subtitle": "Teklifinizi ve orman panelinizi görüntüleyin.",
+      "subtitle": "Teklifinizi ve kurumsal panelinizi görüntüleyin.",
       "email": "Kurumsal E-posta",
       "emailPlaceholder": "yetkili@sirket.com",
       "password": "Şifre",
@@ -1518,7 +1518,7 @@
       "submitting": "Giriş yapılıyor...",
       "submit": "Giriş Yap",
       "or": "veya",
-      "quoteAndAccount": "Teklif Al & Hesap Oluştur",
+      "quoteAndAccount": "Kurumsal hesap başvurusu",
       "trouble": "Hesabınızda sorun mu var?",
       "errors": {
         "required": "E-posta ve şifre zorunludur.",
@@ -1642,7 +1642,8 @@
         "karbon": "Karbon"
       },
       "reviewShort": "🎬 İncele",
-      "payShort": "Ödeyin"
+      "payShort": "Ödeyin",
+      "paySoon": "Kurumsal ödeme çok yakında açılıyor. Teklifinizle ilgili ekibimiz sizinle iletişime geçecek."
     },
     "employees": {
       "title": "👥 Çalışan Ekim Dağıtımı",
@@ -1807,6 +1808,75 @@
         "resave": "Teklifi Yeniden Kaydedin",
         "loggedIn": "Teklif Talebinizi Gönderin",
         "new": "Hesap Oluşturun ve Teklif Gönderin"
+      }
+    },
+    "apply": {
+      "title": "Kurumsal Hesap Başvurusu",
+      "subtitle": "Kurum bilgilerinizi gönderin; ekibimiz inceleyip onayladığında kurumsal panelinize girip teklif isteyebilirsiniz.",
+      "haveAccount": "Hesabınız var mı?",
+      "login": "Giriş yapın →",
+      "signedIn": "{email} hesabıyla başvuruyorsunuz.",
+      "fields": {
+        "companyTitle": "Şirket unvanı",
+        "taxId": "VKN (şahıs şirketinde TCKN)",
+        "taxOffice": "Vergi dairesi",
+        "address": "Fatura adresi",
+        "authorizedPerson": "Yetkili ad soyad",
+        "email": "Kurumsal e-posta",
+        "phone": "Telefon",
+        "password": "Şifre",
+        "passwordConfirm": "Şifre (tekrar)"
+      },
+      "authority": "Bu başvuruyu kurum adına yapmaya yetkiliyim.",
+      "privacy": "Başvuru bilgileri yalnız hesabınızı değerlendirmek ve sizinle iletişim kurmak için kullanılır. Ayrıntılar: <kvkk>KVKK Aydınlatma Metni</kvkk>.",
+      "submit": "Başvuruyu gönder",
+      "sending": "Gönderiliyor…",
+      "done": {
+        "title": "Başvurunuz alındı",
+        "body": "Ekibimiz bilgilerinizi inceleyip hesabınızı onayladığında size e-postayla haber vereceğiz.",
+        "confirmEmail": "E-posta adresinize bir doğrulama bağlantısı gönderdik; giriş yapabilmek için bağlantıya tıklayın.",
+        "home": "Ana sayfaya dön"
+      },
+      "errors": {
+        "companyTitleRequired": "Şirket unvanını girin.",
+        "taxIdRequired": "VKN ya da TCKN girin.",
+        "taxIdInvalid": "VKN 10, TCKN 11 haneli ve geçerli olmalı.",
+        "taxOfficeRequired": "Vergi dairesini girin.",
+        "addressShort": "Fatura adresini açık yazın (en az 10 karakter).",
+        "authorizedPersonRequired": "Yetkili kişinin adını girin.",
+        "emailRequired": "E-posta girin.",
+        "emailInvalid": "Geçerli bir e-posta girin.",
+        "phoneRequired": "Telefon girin.",
+        "phoneInvalid": "Geçerli bir telefon numarası girin.",
+        "passwordShort": "Şifre en az {min} karakter olmalı.",
+        "passwordMismatch": "Şifreler aynı değil.",
+        "authorityRequired": "Kurum adına yetkili olduğunuzu onaylayın.",
+        "tooLong": "Çok uzun.",
+        "invalid": "Bu alanı kontrol edin.",
+        "emailExists": "Bu e-postayla bir hesap zaten var. Önce giriş yapın, sonra bu sayfadan başvurun.",
+        "alreadyApplied": "Bu hesapla zaten bir başvuru var. Durumunu kurumsal panelden görebilirsiniz.",
+        "rateLimited": "Çok fazla deneme yapıldı. Birkaç dakika sonra yeniden deneyin.",
+        "generic": "Başvuru gönderilemedi. Lütfen yeniden deneyin."
+      }
+    },
+    "gate": {
+      "loading": "Yükleniyor",
+      "pending": {
+        "title": "Başvurunuz inceleniyor",
+        "body": "{company} için kurumsal hesap başvurunuz onay bekliyor. Onaylandığında size e-postayla haber vereceğiz."
+      },
+      "rejected": {
+        "title": "Başvurunuz onaylanmadı",
+        "body": "Kurumsal hesap başvurunuz şu an onaylanmadı. Sorularınız için info@skytechgreen.com adresine yazabilirsiniz."
+      },
+      "none": {
+        "title": "Kurumsal başvuru gerekli",
+        "body": "Kurumsal paneli kullanmak için önce kurum bilgilerinizle başvurun; onaydan sonra teklif isteyebilirsiniz.",
+        "cta": "Kurumsal başvuru yap"
+      },
+      "error": {
+        "title": "Durum alınamadı",
+        "body": "Lütfen sayfayı yenileyin."
       }
     }
   },

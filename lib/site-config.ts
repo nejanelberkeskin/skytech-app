@@ -53,6 +53,14 @@ export const REQUESTS_ENABLED =
 
 export const SALES_ENABLED = process.env.NEXT_PUBLIC_SALES_ENABLED === "true";
 
+/**
+ * Kurumsal portal: başvuru (/kurumsal/basvuru), giriş, panel ve teklif isteme. Kurumsal hesap yönetici onayıyla açılır
+ * (043). Kurumsal ÖDEME, çalışan sertifikaları, fatura ve orman sayfaları ayrıca TRANSACTIONS_ENABLED ister.
+ * Varsayılan KAPALI; NEXT_PUBLIC_CORPORATE_PORTAL_ENABLED=true ile açılır.
+ */
+export const CORPORATE_PORTAL_ENABLED =
+  process.env.NEXT_PUBLIC_CORPORATE_PORTAL_ENABLED === "true" || TRANSACTIONS_ENABLED;
+
 export const PAYMENT_SOON =
   process.env.NEXT_PUBLIC_PAYMENT_SOON === "true" && REQUESTS_ENABLED;
 
@@ -124,10 +132,8 @@ export const CTA_MODE: CtaMode = SALES_ENABLED || PAYMENT_SOON
 
 /** B2B sayfaları (kurumsal teklif → ödeme → çalışan sertifikaları) — TRANSACTIONS_ENABLED kapalıyken /yakinda'ya gider. */
 const TRANSACTION_ROUTE_PATTERNS: RegExp[] = [
-  /^\/kurumsal$/,                   // kurumsal app girişi
-  /^\/kurumsal\/giris(\/.*)?$/,     // kurumsal giriş
-  /^\/kurumsal\/panel(\/.*)?$/,     // kurumsal panel (ödeme gerektirir)
-  /^\/kurumsal\/teklif-al(\/.*)?$/, // hesap yaratan B2B teklif formu
+  /^\/kurumsal$/,                   // eski kurumsal tanıtım sayfası (vitrinde /kurumsal-cozumler var)
+  /^\/kurumsal\/panel\/.+$/,        // kurumsal ödeme ve çalışan sertifikaları
   /^\/fatura(\/.*)?$/,              // sipariş belgesi (B2B; resmî e-Arşiv faturası değil)
   /^\/orman(\/.*)?$/,               // şirket ormanı sayfası
 ];
@@ -170,9 +176,18 @@ const TRANSACTION_ONLY_ACCOUNT_PATTERNS: RegExp[] = [/^\/hesabim\/sertifikalar(\
 const REQUEST_ROUTE_PATTERNS: RegExp[] = [/^\/talep(\/.*)?$/, /^\/kendi-arazim$/];
 
 
+/** Kurumsal portal sayfaları: başvuru, giriş, panel özeti, teklif isteme — CORPORATE_PORTAL_ENABLED. */
+const CORPORATE_PORTAL_PATTERNS: RegExp[] = [
+  /^\/kurumsal\/basvuru\/?$/,
+  /^\/kurumsal\/giris\/?$/,
+  /^\/kurumsal\/panel\/?$/,
+  /^\/kurumsal\/teklif-al\/?$/,
+];
+
 /** Bayraklara göre bu yol şu an /yakinda'ya yönlenmeli mi? */
 export function isSuspendedRoute(pathname: string): boolean {
   if (!TRANSACTIONS_ENABLED && TRANSACTION_ROUTE_PATTERNS.some((re) => re.test(pathname))) return true;
+  if (!CORPORATE_PORTAL_ENABLED && CORPORATE_PORTAL_PATTERNS.some((re) => re.test(pathname))) return true;
   if (!ACCOUNTS_ENABLED && ACCOUNT_ROUTE_PATTERNS.some((re) => re.test(pathname))) return true;
   if (!REQUESTS_ENABLED && REQUEST_ROUTE_PATTERNS.some((re) => re.test(pathname))) return true;
   return false;
@@ -218,8 +233,16 @@ export function isRetiredApi(pathname: string): boolean {
   return RETIRED_API_PATTERNS.some((re) => re.test(pathname));
 }
 
+/** Kurumsal portalın uçları: başvuru, başvuru durumu, kendi teklifleri. Ödeme uçları B2B bayrağında kalır. */
+const CORPORATE_PORTAL_API_PATTERNS: RegExp[] = [
+  /^\/api\/kurumsal\/basvuru\/?$/,
+  /^\/api\/kurumsal\/durum\/?$/,
+  /^\/api\/kurumsal\/quotes\/?$/,
+];
+
 /** Bayrak kapalıyken kapalı olan B2B API ucu mu? (503) */
 export function isSuspendedApi(pathname: string): boolean {
+  if (CORPORATE_PORTAL_API_PATTERNS.some((re) => re.test(pathname))) return !CORPORATE_PORTAL_ENABLED;
   return !TRANSACTIONS_ENABLED && B2B_API_PATTERNS.some((re) => re.test(pathname));
 }
 

@@ -576,6 +576,7 @@ export default function OrderWizard({
           result={request.success}
           email={contact.email}
           isLoggedIn={isLoggedIn}
+          variant={mode === "preorder" ? "preorder" : "request"}
         />
       </div>
     );
@@ -1021,7 +1022,7 @@ export default function OrderWizard({
                   className="mt-0.5 h-4 w-4 shrink-0 accent-[#1B6B3A]"
                 />
                 <span>
-                  {common.rich("consent", { kvkk: kvkkLink })}
+                  {t.rich("preorder.consent", { kvkk: kvkkLink })}
                 </span>
               </label>
               <p

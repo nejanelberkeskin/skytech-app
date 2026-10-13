@@ -113,7 +113,8 @@ export function orderCtaHref(kind: RequestRouteKey = "hub"): string {
  * ödeme açık olmadığı için "Satın Al" denmez.
  */
 export type CtaMode = "order" | "request" | "soon";
-export const CTA_MODE: CtaMode = SALES_ENABLED
+// Ödemede dur (PAYMENT_SOON) de satış dilini kullanır: butonlar "Satın Al", sihirbaz ödeme adımında durur.
+export const CTA_MODE: CtaMode = SALES_ENABLED || PAYMENT_SOON
   ? "order"
   : REQUESTS_ENABLED
     ? "request"

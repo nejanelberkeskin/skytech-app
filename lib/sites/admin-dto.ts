@@ -8,10 +8,11 @@ import type { RecordScope } from "@/lib/admin/record-scope";
 import type { LandStatus } from "./admin";
 import { siteVisibility, type SiteColumn } from "./admin-access";
 import type { WorkType } from "./types";
+import { readMediaLinks, type SiteMediaLink } from "./media-links";
 
 export const SITE_ADMIN_COLUMNS = [
   "id", "slug", "name", "region", "province", "district", "area_hectares", "is_fire_affected", "fire_year",
-  "work_type", "species_slugs", "name_i18n", "summary_i18n", "cover_image", "video_url", "sort_order", "status",
+  "work_type", "species_slugs", "name_i18n", "summary_i18n", "cover_image", "video_url", "media_links", "sort_order", "status",
   "is_public", "capacity_seeds", "filled_seeds", "reserved_seeds", "certificate_month", "monitoring_month", "permit_status", "permit_reference", "permit_valid_until",
   "permit_verified_at", "created_at", "updated_at",
 ].join(", ");
@@ -37,6 +38,7 @@ export interface SiteAdminItem {
   summaryI18n: { tr?: string; en?: string; ru?: string };
   coverImage: string | null;
   videoUrl: string | null;
+  mediaLinks: SiteMediaLink[];
   sortOrder: number;
   status: LandStatus;
   isPublic: boolean;
@@ -134,6 +136,7 @@ export function siteItemOf(row: Row, capabilities: SiteAdminItem["capabilities"]
     summaryI18n: i18n(row.summary_i18n, ["tr", "en", "ru"] as const),
     coverImage: text(row.cover_image),
     videoUrl: text(row.video_url),
+    mediaLinks: readMediaLinks(row.media_links),
     sortOrder: int(row.sort_order),
     status: String(row.status) as LandStatus,
     isPublic: row.is_public === true,

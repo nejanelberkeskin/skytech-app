@@ -12,7 +12,7 @@ import type { Permission } from "@/lib/admin/permissions";
 
 export const SITE_COLUMNS = [
   "name", "slug", "region", "province", "district", "area_hectares", "is_fire_affected", "fire_year", "work_type",
-  "species_slugs", "name_i18n", "summary_i18n", "cover_image", "video_url", "sort_order", "status", "is_public",
+  "species_slugs", "name_i18n", "summary_i18n", "cover_image", "video_url", "media_links", "sort_order", "status", "is_public",
   "capacity_seeds", "certificate_month", "monitoring_month",
   "permit_reference", "permit_valid_until", "permit_status", "permit_verified_by", "permit_verified_at",
 ] as const;
@@ -42,6 +42,7 @@ function same(column: SiteColumn, before: unknown, after: unknown): boolean {
     return a === b;
   }
   if (OBJECTS.has(column)) return canonical(before) === canonical(after);
+  if (column === "media_links") return JSON.stringify(before ?? []) === JSON.stringify(after ?? []);
   if (column === "species_slugs") {
     const a = Array.isArray(before) ? before.map(String) : [];
     const b = Array.isArray(after) ? after.map(String) : [];

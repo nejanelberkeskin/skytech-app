@@ -2341,7 +2341,15 @@
       "monitoring": "Monitoring and reporting continue at this site."
     },
     "sticky": "Release seed balls at this site",
-    "stickyPrice": "{price} per seed ball"
+    "stickyPrice": "{price} per seed ball",
+    "media": {
+      "title": "News and videos",
+      "subtitle": "News coverage and footage about this site.",
+      "news": "News",
+      "video": "Video",
+      "read": "Read the article",
+      "watch": "Watch the video"
+    }
   },
   "seasonTimeline": {
     "title": "Work schedule",

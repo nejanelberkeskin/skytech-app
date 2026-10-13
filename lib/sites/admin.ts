@@ -8,6 +8,7 @@
 import { z } from "zod";
 import { SLUG_RE } from "./slug";
 import { WORK_TYPES } from "./types";
+import { mediaLinksSchema } from "./media-links";
 
 /** DB `land_status` enum'u. Vitrindeki karşılıkları için bkz. lib/sites/types.ts → SitePhase. */
 export const LAND_STATUSES = ["open", "full", "scheduled", "seeded", "monitoring", "closed"] as const;
@@ -155,6 +156,8 @@ export const siteAdminSchema = z
       .nullable()
       .optional()
       .transform((v) => (v ? v : null)),
+    /** Saha sayfasındaki haber ve video bağlantıları (041). */
+    media_links: mediaLinksSchema,
     sort_order: z.number().int("Sıra tam sayı olmalı.").min(-9999).max(9999).default(0),
     status: z.enum(LAND_STATUSES, "Durum seçin."),
     is_public: z.boolean().default(true),
@@ -209,6 +212,7 @@ export function toLandRow(data: SiteAdminData) {
     summary_i18n: i18n([["tr", data.summary_tr], ["en", data.summary_en], ["ru", data.summary_ru]]),
     cover_image: data.cover_image,
     video_url: data.video_url,
+    media_links: data.media_links,
     sort_order: data.sort_order,
     status: data.status,
     is_public: data.is_public,

@@ -28,6 +28,7 @@ export const SITE_FIXTURES: ProjectSite[] = [
     phase: "open",
     acceptsOrders: true,
     videoUrl: null,
+    mediaLinks: [],
   },
   {
     id: "00000000-0000-4000-8000-000000000002",
@@ -51,6 +52,7 @@ export const SITE_FIXTURES: ProjectSite[] = [
     phase: "scheduled",
     acceptsOrders: false,
     videoUrl: null,
+    mediaLinks: [],
   },
   {
     id: "00000000-0000-4000-8000-000000000003",
@@ -73,5 +75,6 @@ export const SITE_FIXTURES: ProjectSite[] = [
     phase: "monitoring",
     acceptsOrders: false,
     videoUrl: "https://www.youtube.com/watch?v=ornek",
+    mediaLinks: [],
   },
 ];

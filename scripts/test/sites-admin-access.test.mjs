@@ -12,7 +12,8 @@ const siteSchema = await import('../../lib/sites/admin.ts');
 const slugMod = await import('../../lib/sites/slug.ts');
 const scopeMod = load('lib/admin/record-scope.ts', { '@/lib/admin/permissions': permissionKeys });
 const rules = load('lib/sites/admin-access.ts');
-const dto = load('lib/sites/admin-dto.ts', { './admin-access': rules });
+const mediaMod = await import('../../lib/sites/media-links.ts');
+const dto = load('lib/sites/admin-dto.ts', { './admin-access': rules, './media-links': mediaMod });
 const service = load('lib/sites/admin-service.ts', { '@/lib/admin/record-scope': scopeMod, './admin-dto': dto });
 
 async function sitesDb() {
@@ -26,6 +27,8 @@ async function sitesDb() {
   await db.exec(sql.slice(sql.indexOf('-- ── 1. Sütunlar'), sql.indexOf('-- ── 4. Yetkiler')));
   // 040: teslim ayları (tek işlemde uygulanır; SET LOCAL için BEGIN/COMMIT).
   await db.exec(`BEGIN;\n${await readFile(new URL('../../supabase/migrations/040_site_delivery_and_permits.sql', import.meta.url), 'utf8')}\nCOMMIT;`);
+  // 041: haber/video bağlantıları.
+  await db.exec(`BEGIN;\n${await readFile(new URL('../../supabase/migrations/041_land_media_links.sql', import.meta.url), 'utf8')}\nCOMMIT;`);
   await db.exec(`CREATE TABLE seed_catalog(slug text PRIMARY KEY, name text NOT NULL, latin_name text, sort_order int NOT NULL DEFAULT 0);
     INSERT INTO seed_catalog VALUES ('kizilcam','Kızılçam','Pinus brutia',1), ('karacam','Karaçam','Pinus nigra',2), ('sedir','Sedir','Cedrus libani',3);
     UPDATE lands SET region='Antalya', province='Antalya', district='Manavgat', filled_seeds=1000, reserved_seeds=500, capacity_seeds=50000,

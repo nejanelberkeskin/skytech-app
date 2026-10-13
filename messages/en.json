@@ -1206,10 +1206,10 @@
     "description": "We release seed balls by drone over fire-affected sites. Join a Project Site or apply for your own land, and follow the work through reports and footage."
   },
   "cookieConsent": {
-    "message": "Google Analytics and Vercel traffic and performance measurement are optional. They load only with your analytics permission once the required transfer safeguards are in place. Refusing does not affect your use of the site. You can change your choice in Cookie Preferences.",
+    "message": "We use optional cookies to measure site usage. You can change your choice at any time.",
     "policyLink": "Cookie Policy",
-    "rejectAll": "Essential Only",
-    "acceptAll": "Allow Analytics"
+    "rejectAll": "Essential only",
+    "acceptAll": "Accept"
   },
   "requestForms": {
     "common": {

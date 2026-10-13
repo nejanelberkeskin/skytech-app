@@ -446,6 +446,51 @@ const CONFIRM_TEXT = {
 } as const;
 
 type MailLocale = keyof typeof CONFIRM_TEXT;
+
+/**
+ * Ödemede dur (PAYMENT_SOON) kipinde saha kaydının teyidi: müşteri "Satın Al" ile geldi, ödeme henüz açık değil.
+ * "Talep" dili yerine "ödeme açılınca haber" dili; ödeme alınmadığı açıkça yazılır.
+ */
+interface ConfirmText {
+  subject: (no: string) => string;
+  title: string;
+  sub: string;
+  hello: (name: string) => string;
+  intro: (type: string, no: string) => string;
+  summaryTitle: string;
+  next: string;
+  account: (url: string) => string;
+  contact: string;
+}
+const PREORDER_CONFIRM_TEXT: Record<MailLocale, ConfirmText> = {
+  tr: {
+    subject: (no: string) => `Kaydınız alındı — ${no}`,
+    title: "Kaydınız Alındı",
+    sub: "Ödeme açıldığında size haber vereceğiz",
+    hello: (name: string) => `Merhaba <strong>${name}</strong>,`,
+    intro: (_type: string, no: string) =>
+      `Seçtiğiniz saha ve adet kaydedildi. Kayıt numaranız: <strong style="font-family:monospace;font-size:16px;color:#059669;">${no}</strong>.`,
+    summaryTitle: "Sipariş özeti",
+    next: "Çevrim içi ödeme çok yakında açılıyor. Açıldığında bu e-posta adresine ya da telefonunuza haber vereceğiz; siparişinizi bu bilgilerle tamamlayabilirsiniz. Şu an kartınızdan herhangi bir çekim yapılmadı.",
+    account: (url: string) =>
+      `Kaydınızı hesabınızdan görmek için <a href="${url}" class="btn">ücretsiz hesap oluşturabilirsiniz</a>.`,
+    contact: CONFIRM_TEXT.tr.contact,
+  },
+  en: {
+    subject: (no: string) => `You're on the list — ${no}`,
+    title: "You're on the List",
+    sub: "We will let you know when payment opens",
+    hello: (name: string) => `Hello <strong>${name}</strong>,`,
+    intro: (_type: string, no: string) =>
+      `The site and quantity you chose have been saved. Your reference number is <strong style="font-family:monospace;font-size:16px;color:#059669;">${no}</strong>.`,
+    summaryTitle: "Order summary",
+    next: "Online payment opens very soon. We will let you know by e-mail or phone when it does, so you can complete your order with these details. Your card has not been charged.",
+    account: (url: string) =>
+      `To see this in your account you can <a href="${url}" class="btn">create a free account</a>.`,
+    contact: CONFIRM_TEXT.en.contact,
+  },
+};
+
 const mailLocale = (l: LabelLocale): MailLocale => (l === "tr" ? "tr" : "en");
 
 interface RequestMailInput {
@@ -453,6 +498,8 @@ interface RequestMailInput {
   landName?: string | null;
   /** Hesap oluşturma bağlantısı gösterilsin mi (ACCOUNTS_ENABLED) */
   accountLink?: boolean;
+  /** Ödemede dur kipinde saha kaydı: "talep" yerine "ödeme açılınca haber" metni */
+  preorder?: boolean;
 }
 
 /**
@@ -504,11 +551,11 @@ export async function sendServiceRequestNotification({ request, landName }: Requ
 }
 
 /** Talep sahibine alındı onayı — e-posta bırakmışsa. Fiyat içermez. */
-export async function sendServiceRequestConfirmation({ request, landName, accountLink }: RequestMailInput) {
+export async function sendServiceRequestConfirmation({ request, landName, accountLink, preorder }: RequestMailInput) {
   if (!request.email) return { id: "skipped-no-email" } as ResendResponse;
 
   const loc = mailLocale(request.locale);
-  const t = CONFIRM_TEXT[loc];
+  const t: ConfirmText = (preorder ? PREORDER_CONFIRM_TEXT : CONFIRM_TEXT)[loc];
   const typeLabel = REQUEST_TYPE_LABELS[loc][request.type];
   const subject = t.subject(request.request_no);
   const rows = requestSummaryRows(request, loc, landName);

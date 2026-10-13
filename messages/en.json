@@ -1122,7 +1122,7 @@
   "comingSoonPage": {
     "meta": {
       "title": "Coming Soon — Online Payment",
-      "description": "Online payment is launching soon. You can already request a seed ball release on a Project Site, apply for your own land and create an account."
+      "description": "Online payment opens very soon. You can already choose a Project Site and prepare your order."
     },
     "badge": "Coming Soon",
     "title": {
@@ -1130,8 +1130,8 @@
       "highlight": "Coming Soon"
     },
     "body": {
-      "primary": "We are finalising our online payment infrastructure. In the meantime we collect your request and settle the details and schedule together with you.",
-      "secondary": "To have seed balls released on a Project Site or to apply for your own land, fill in the form. Our team will review your application and contact you."
+      "primary": "We are completing the final preparations for online payment. Prepare your order now and we will let you know when payment opens.",
+      "secondary": "Choose a Project Site, set the quantity and prepare your order. If you would like to apply for your own land, our team will contact you."
     },
     "cta": {
       "home": "Back to Home",

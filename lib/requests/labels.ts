@@ -14,9 +14,9 @@ type Dict<K extends string> = Record<LabelLocale, Record<K, string>>;
 
 export const REQUEST_TYPE_LABELS: Dict<ServiceRequestType> = {
   // seed_purchase: 2026-09'da kaldırılan tür — yalnız eski kayıtlar için.
-  tr: { seed_purchase: "Tohum talebi (eski)", land_application: "Kendi arazim için başvuru", open_land_seeding: "Sahaya tohum topu bıraktırma talebi" },
-  en: { seed_purchase: "Seed request (legacy)", land_application: "Own-land application", open_land_seeding: "Seed ball release request" },
-  ru: { seed_purchase: "Заявка на семена (архив)", land_application: "Заявка для собственного участка", open_land_seeding: "Заявка на сброс семенных шаров" },
+  tr: { seed_purchase: "Tohum talebi (eski)", land_application: "Kendi arazim için başvuru", open_land_seeding: "Sahaya tohum topu bıraktırma" },
+  en: { seed_purchase: "Seed request (legacy)", land_application: "Own-land application", open_land_seeding: "Seed ball release" },
+  ru: { seed_purchase: "Заявка на семена (архив)", land_application: "Заявка для собственного участка", open_land_seeding: "Сброс семенных шаров" },
 };
 
 export const REQUEST_STATUS_LABELS: Dict<ServiceRequestStatus> = {

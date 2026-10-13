@@ -3,7 +3,7 @@ import { after } from "next/server";
 import { createServiceRoleClient, createSupabaseServer } from "@/lib/supabase/server";
 import { rateLimit, getClientIP } from "@/lib/admin-auth";
 import { sendServiceRequestConfirmation, sendServiceRequestNotification } from "@/lib/mail";
-import { ACCOUNTS_ENABLED, REQUESTS_ENABLED } from "@/lib/site-config";
+import { ACCOUNTS_ENABLED, PAYMENT_SOON, REQUESTS_ENABLED } from "@/lib/site-config";
 import {
   CONSENT_VERSION,
   MIN_FILL_MS,
@@ -252,7 +252,12 @@ export async function POST(req: NextRequest) {
     after(async () => {
       const results = await Promise.allSettled([
         sendServiceRequestNotification({ request, landName }),
-        sendServiceRequestConfirmation({ request, landName, accountLink: ACCOUNTS_ENABLED && !request.user_id }),
+        sendServiceRequestConfirmation({
+          request,
+          landName,
+          accountLink: ACCOUNTS_ENABLED && !request.user_id,
+          preorder: PAYMENT_SOON && request.type === "open_land_seeding",
+        }),
       ]);
       results.forEach((r, i) => {
         if (r.status === "rejected") {

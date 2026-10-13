@@ -16,6 +16,7 @@ import { CardStat, Button, Input, Select, Textarea } from "@/components/ui";
 import { TR_ILLER_ALFABETIK } from "@/lib/tr-iller";
 import { WORK_TYPES, type WorkType } from "@/lib/sites/types";
 import { slugify } from "@/lib/sites/slug";
+import { MEDIA_LIMITS, type MediaKind } from "@/lib/sites/media-links";
 import {
   LAND_STATUSES,
   LAND_STATUS_LABELS,
@@ -55,6 +56,7 @@ interface SiteForm {
   summary_ru: string;
   cover_image: string;
   video_url: string;
+  media_links: MediaRow[];
   sort_order: string;
   status: LandStatus;
   is_public: boolean;
@@ -66,6 +68,16 @@ interface SiteForm {
   /** Yalnız gönderimde: "" = karar yok. */
   permit_decision: "" | "verified" | "rejected";
 }
+
+/** Haber/video satırı (formda metin; boş satır gönderilmez). */
+interface MediaRow {
+  kind: MediaKind;
+  title: string;
+  source: string;
+  url: string;
+  date: string;
+}
+const EMPTY_MEDIA: MediaRow = { kind: "news", title: "", source: "", url: "", date: "" };
 
 const PERMIT_LABELS = { missing: "İzin bilgisi yok", submitted: "Doğrulama bekliyor", verified: "Doğrulandı", rejected: "Reddedildi" } as const;
 
@@ -89,6 +101,7 @@ const EMPTY_FORM: SiteForm = {
   summary_ru: "",
   cover_image: "",
   video_url: "",
+  media_links: [],
   sort_order: "0",
   status: "open",
   is_public: true,
@@ -131,6 +144,7 @@ function formFromLand(l: Land): SiteForm {
     summary_ru: l.summaryI18n?.ru ?? "",
     cover_image: l.coverImage ?? "",
     video_url: l.videoUrl ?? "",
+    media_links: (l.mediaLinks ?? []).map((m) => ({ ...m, date: m.date ?? "" })),
     sort_order: String(l.sortOrder ?? 0),
     status: l.status,
     is_public: l.isPublic,
@@ -162,6 +176,9 @@ function payloadFromForm(f: SiteForm) {
     summary_ru: f.summary_ru,
     cover_image: f.cover_image,
     video_url: f.video_url,
+    media_links: f.media_links
+      .filter((m) => m.title.trim() || m.url.trim() || m.source.trim())
+      .map((m) => ({ ...m, date: m.date || null })),
     sort_order: num(f.sort_order) ?? 0,
     status: f.status,
     is_public: f.is_public,
@@ -782,6 +799,41 @@ function SiteModal({
               error={fieldErrors.video_url}
               helperText="Bırakmadan yaklaşık altı ay sonra yayımlanan herkese açık video."
             />
+          </Section>
+
+          {/* 6 · Haber ve videolar */}
+          <Section disabled={!caps.edit} title="Haberler ve videolar">
+            <p className="text-sm text-slate-400">
+              Sahayla ilgili haberler ve videolar (ör. yangının haberleri). Saha sayfasında kart olarak gösterilir, bağlantı yeni sekmede açılır.
+            </p>
+            {fieldErrors.media_links && <p role="alert" className="text-sm text-red-400">{fieldErrors.media_links}</p>}
+            {form.media_links.map((m, i) => {
+              const patch = (p: Partial<MediaRow>) =>
+                set("media_links", form.media_links.map((x, j) => (j === i ? { ...x, ...p } : x)));
+              const err = (k: string) => fieldErrors[`media_links.${i}.${k}`];
+              return (
+                <div key={i} className="grid gap-3 rounded-xl border border-white/10 p-4 sm:grid-cols-2">
+                  <Select label="Tür" value={m.kind} onChange={(e) => patch({ kind: e.target.value as MediaKind })}>
+                    <option value="news">Haber</option>
+                    <option value="video">Video</option>
+                  </Select>
+                  <Input label="Kaynak" placeholder="AA, TRT Haber…" value={m.source} onChange={(e) => patch({ source: e.target.value })} error={err("source")} />
+                  <Input label="Başlık" wrapperClassName="sm:col-span-2" value={m.title} onChange={(e) => patch({ title: e.target.value })} error={err("title")} />
+                  <Input label="Bağlantı" placeholder="https://…" value={m.url} onChange={(e) => patch({ url: e.target.value })} error={err("url")} />
+                  <Input label="Yayın tarihi" type="date" value={m.date} onChange={(e) => patch({ date: e.target.value })} error={err("date")} />
+                  <div className="sm:col-span-2">
+                    <Button variant="ghost" size="sm" onClick={() => set("media_links", form.media_links.filter((_, j) => j !== i))}>
+                      Kaldır
+                    </Button>
+                  </div>
+                </div>
+              );
+            })}
+            {form.media_links.length < MEDIA_LIMITS.items && (
+              <Button variant="secondary" size="sm" onClick={() => set("media_links", [...form.media_links, { ...EMPTY_MEDIA }])}>
+                + Haber ya da video ekle
+              </Button>
+            )}
           </Section>
         </fieldset>
 

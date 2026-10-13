@@ -20,10 +20,11 @@ import {
   type SiteSpecies,
   type WorkType,
 } from "./types";
+import { readMediaLinks } from "./media-links";
 
 const SITE_COLUMNS =
   "id, slug, name, region, province, district, area_hectares, is_fire_affected, fire_year, " +
-  "work_type, species_slugs, name_i18n, summary_i18n, cover_image, gallery, video_url, " +
+  "work_type, species_slugs, name_i18n, summary_i18n, cover_image, gallery, video_url, media_links, " +
   "status, lat, lng, sort_order";
 const LEGACY_COLUMNS = "id, name, region, status, lat, lng";
 
@@ -124,6 +125,7 @@ function toSite(row: Row, locale: SiteLocale, species: Map<string, SiteSpecies>)
     phase,
     acceptsOrders: phase === "open",
     videoUrl: typeof row.video_url === "string" && row.video_url ? row.video_url : null,
+    mediaLinks: readMediaLinks(row.media_links),
   };
 }
 

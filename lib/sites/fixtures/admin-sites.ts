@@ -27,6 +27,7 @@ const antalya: SiteAdminItem = {
   summaryI18n: { tr: "Yangından etkilenen saha." },
   coverImage: "/images/sahalar/antalya.webp",
   videoUrl: null,
+  mediaLinks: [],
   sortOrder: 10,
   status: "open",
   isPublic: true,

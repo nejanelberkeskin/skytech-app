@@ -2341,7 +2341,15 @@
       "monitoring": "Bu sahada izleme ve raporlama sürüyor."
     },
     "sticky": "Bu sahaya tohum topu bıraktır",
-    "stickyPrice": "Tohum topu başı {price}"
+    "stickyPrice": "Tohum topu başı {price}",
+    "media": {
+      "title": "Haberler ve videolar",
+      "subtitle": "Bu sahayla ilgili haberler ve görüntüler.",
+      "news": "Haber",
+      "video": "Video",
+      "read": "Habere git",
+      "watch": "Videoyu izle"
+    }
   },
   "seasonTimeline": {
     "title": "Çalışma takvimi",

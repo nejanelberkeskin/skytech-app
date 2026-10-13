@@ -11,6 +11,7 @@ import { SiteBadges } from "@/components/vitrin/sahalar/SiteCard";
 import SeasonTimeline from "@/components/vitrin/shared/SeasonTimeline";
 import SiteReleases from "@/components/vitrin/sahalar/SiteReleases";
 import StickySiteCta from "@/components/vitrin/sahalar/StickySiteCta";
+import SiteMedia from "@/components/vitrin/sahalar/SiteMedia";
 import { getSalesSettings } from "@/lib/orders/settings";
 import { PRICING_VISIBLE, formatTry } from "@/lib/pricing";
 import { getProjectSiteBySlug } from "@/lib/sites/data";
@@ -233,6 +234,7 @@ export default async function SiteDetailPage({ params, searchParams }: Props) {
           currentMonth={new Date().getUTCMonth()}
         />
         <SiteReleases releases={releases} dates={releaseDates} locale={locale} />
+        <SiteMedia links={site.mediaLinks} locale={locale} />
         {!releases.some((release) => release.video) &&
           site.videoUrl &&
           /^https:\/\//i.test(site.videoUrl) && (

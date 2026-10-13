@@ -6,6 +6,7 @@
  * gösterilir, bırakılacak tohum topu sayısı gösterilmez. Satışa uygunluk yalnız
  * `acceptsOrders` ile iletilir; kapasite denetimi sipariş anında sunucuda yapılır.
  */
+import type { SiteMediaLink } from "./media-links";
 
 export const WORK_TYPES = ["ormanlastirma", "genclestirme", "ormanlastirma_genclestirme"] as const;
 export type WorkType = (typeof WORK_TYPES)[number];
@@ -56,4 +57,6 @@ export interface ProjectSite {
   acceptsOrders: boolean;
   /** Çalışma videosu (YouTube); yayımlanınca dolar. */
   videoUrl: string | null;
+  /** Sahayla ilgili haber ve video bağlantıları (ör. yangının haberleri); yönetimden girilir. */
+  mediaLinks: SiteMediaLink[];
 }

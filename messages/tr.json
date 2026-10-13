@@ -1136,7 +1136,8 @@
     "cta": {
       "home": "Ana Sayfaya Dön",
       "info": "Bilgi Al",
-      "request": "Talep Oluştur"
+      "request": "Talep Oluştur",
+      "order": "Satın Al"
     },
     "discover": {
       "heading": "Bu Arada Keşfedin",
@@ -1289,6 +1290,26 @@
         "certificateNameLong": "Sertifikadaki ad en çok {max} karakter olabilir.",
         "certificateNameInvalid": "Sertifikadaki ad yalnız harf, rakam ve temel noktalama işaretlerinden oluşabilir.",
         "certificateNameThirdParty": "Sertifikaya yalnız kendi adınız, kurum unvanınız ya da adsız seçenek yazılabilir."
+      },
+      "successPreorder": {
+        "title": "Kaydınız alındı",
+        "desc": "Ödeme açıldığında seçtiğiniz saha ve adetle size e-posta ya da telefonla haber vereceğiz.",
+        "numberLabel": "Kayıt numaranız",
+        "copy": "Kopyala",
+        "copied": "Kopyalandı",
+        "emailNote": "E-posta adresiniz: {email}. Bize yazarken kayıt numaranızı belirtebilirsiniz.",
+        "nextTitle": "Sırada ne var?",
+        "next": [
+          "Ödeme açıldığında size haber veriyoruz.",
+          "Siparişinizi kaldığınız yerden tamamlıyorsunuz.",
+          "Bırakma sezonunda tohum toplarınız sahaya bırakılıyor; sertifikanızı alıyorsunuz."
+        ],
+        "accountTitle": "Kaydınızı hesabınızdan görün",
+        "accountDesc": "Ücretsiz hesap açın; kaydınız hesabınıza bağlansın.",
+        "accountCta": "Hesap oluştur",
+        "trackCta": "Hesabıma git",
+        "home": "Ana sayfaya dön",
+        "another": "Diğer sahalara bak"
       }
     },
     "land": {
@@ -2613,17 +2634,18 @@
     },
     "pausedNotice": "Çevrim içi sipariş alımına geçici olarak ara verildi. Bu sayfadan katılım talebinizi iletebilirsiniz; ödeme alınmaz, ekibimiz sizinle iletişime geçer.",
     "preorder": {
-      "notice": "Şu anda sipariş ve ödeme alınmıyor; çevrim içi ödeme henüz açık değil. Bu formla tahmini bedeli görebilir, isterseniz talep bırakabilirsiniz.",
-      "contactNotice": "Bu bilgileri yalnız talebinizle ilgili sizinle iletişime geçmek için kullanırız. Ayrıntılar: <kvkk>KVKK Aydınlatma Metni</kvkk>.",
-      "reviewNote": "Tutar, bugünkü hizmet bedeline göre bilgi amaçlıdır. Bu adımda sipariş oluşturulmaz ve ödeme alınmaz.",
-      "sideNote": "Şu anda sipariş ve ödeme alınmıyor. Tutar bilgi amaçlıdır.",
-      "buttonNote": "Şu anda sipariş ve ödeme alınmıyor. Sonraki ekranda isterseniz bilgilerinizi bırakabilirsiniz.",
-      "viewOptions": "Bilgilendirme seçeneklerini gör",
-      "soonTitle": "Çevrim içi ödeme henüz açık değil",
-      "soonBody": "Sipariş oluşturulmadı ve sizden ödeme alınmadı. İsterseniz bilgilerinizi talep olarak bırakın; ekibimiz seçtiğiniz saha ve adet için sizinle iletişime geçsin.",
-      "soonShared": "Talebinizle paylaşacağınız form bilgileri: ad soyad, e-posta, telefon, saha, adet, sertifikadaki ad ve girdiyseniz şirket adı ile notunuz. Fatura adresi ve kimlik/vergi numarası istenmez. Talep kaydıyla birlikte tutulan teknik bilgiler (onayın zamanı ve sürümü, IP özeti, tarayıcı bilgisi gibi) için <kvkk>KVKK Aydınlatma Metni</kvkk>'ne bakın.",
-      "notify": "Bilgilerimi bırak",
-      "backToReview": "Özete dön"
+      "notice": "Çevrim içi ödeme çok yakında açılıyor. Siparişinizi şimdi hazırlayın; ödeme açıldığında size haber verelim, kaldığınız yerden tamamlayın.",
+      "contactNotice": "Bu bilgileri ödeme açıldığında size haber vermek ve siparişinizi tamamlamanız için kullanırız. Ayrıntılar: <kvkk>KVKK Aydınlatma Metni</kvkk>.",
+      "reviewNote": "Tutar bugünkü hizmet bedeline göredir. Ödeme açılınca bu tutarla tamamlayabilirsiniz; şu an kartınızdan çekim yapılmaz.",
+      "sideNote": "Ödeme çok yakında açılıyor. Şu an kartınızdan çekim yapılmaz.",
+      "buttonNote": "Ödeme çok yakında açılıyor; şu an kartınızdan çekim yapılmaz.",
+      "viewOptions": "Satın Al",
+      "soonTitle": "Ödeme çok yakında açılıyor",
+      "soonBody": "Kartınızdan çekim yapılmadı. Bilgilerinizi bırakın; ödeme açıldığında seçtiğiniz saha ve adetle size haber verelim, siparişinizi tamamlayın.",
+      "soonShared": "Paylaşacağınız bilgiler: ad soyad, e-posta, telefon, saha, adet, sertifikadaki ad ve girdiyseniz notunuz. Fatura adresi ve kimlik/vergi numarası şimdi istenmez. Ayrıntılar: <kvkk>KVKK Aydınlatma Metni</kvkk>.",
+      "notify": "Ödeme açılınca haber ver",
+      "backToReview": "Özete dön",
+      "consent": "Ödeme açıldığında belirttiğim e-posta ya da telefonla benimle iletişime geçilmesini istiyorum."
     }
   }
 }

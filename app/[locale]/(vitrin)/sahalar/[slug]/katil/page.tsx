@@ -68,7 +68,7 @@ export default async function ParticipatePage({ params }: Props) {
     <div className="vitrin-container pb-12 pt-32 sm:pt-40">
       <header className="mb-8 max-w-3xl">
         <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-[#1B6B3A]">
-          {t(mode === "order" ? "orderMode" : "requestMode")}
+          {t(mode === "request" ? "requestMode" : "orderMode")}
         </p>
         <h1 className="display-headline text-3xl font-semibold text-[#0e2519] sm:text-5xl">
           {t("title")}

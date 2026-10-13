@@ -1136,7 +1136,8 @@
     "cta": {
       "home": "Back to Home",
       "info": "Get Information",
-      "request": "Submit a Request"
+      "request": "Submit a Request",
+      "order": "Buy"
     },
     "discover": {
       "heading": "Explore in the Meantime",
@@ -1289,6 +1290,26 @@
         "certificateNameLong": "The name on the certificate can be at most {max} characters.",
         "certificateNameInvalid": "The name on the certificate may contain only letters, digits and basic punctuation.",
         "certificateNameThirdParty": "Only your own name, your company name or the no-name option can appear on the certificate."
+      },
+      "successPreorder": {
+        "title": "You're on the list",
+        "desc": "We will email or call you when payment opens, with the site and quantity you chose.",
+        "numberLabel": "Your reference number",
+        "copy": "Copy",
+        "copied": "Copied",
+        "emailNote": "Your email: {email}. You can quote your reference number when writing to us.",
+        "nextTitle": "What's next?",
+        "next": [
+          "We let you know when payment opens.",
+          "You complete your order where you left off.",
+          "Your seed balls are dropped on site in the drop season and you receive your certificate."
+        ],
+        "accountTitle": "See it in your account",
+        "accountDesc": "Create a free account and this record is linked to it.",
+        "accountCta": "Create account",
+        "trackCta": "Go to my account",
+        "home": "Back to home",
+        "another": "See other sites"
       }
     },
     "land": {
@@ -2613,17 +2634,18 @@
     },
     "pausedNotice": "Online orders are temporarily paused. You can still send a participation request on this page; no payment is taken and our team will contact you.",
     "preorder": {
-      "notice": "Orders and payments are not being accepted at the moment; online payment is not available yet. You can see the estimated fee with this form and leave a request if you wish.",
-      "contactNotice": "We use these details only to contact you about your request. Details: <kvkk>Privacy Notice (KVKK)</kvkk>.",
-      "reviewNote": "The amount is for information, based on today's service fee. No order is created and no payment is taken at this step.",
-      "sideNote": "Orders and payments are not being accepted at the moment. The amount is for information.",
-      "buttonNote": "Orders and payments are not being accepted at the moment. On the next screen you can leave your details if you wish.",
-      "viewOptions": "View notification options",
-      "soonTitle": "Online payment is not available yet",
-      "soonBody": "No order has been created and no payment has been taken. If you wish, leave your details as a request and our team will contact you about the site and quantity you chose.",
-      "soonShared": "Form details you share with your request: name, email, phone, site, quantity, the name on the certificate and, if provided, company name and your note. No billing address or ID/tax number is requested. For technical data kept with the request record (time and version of your confirmation, IP hash, browser information, etc.) see the <kvkk>Privacy Notice (KVKK)</kvkk>.",
-      "notify": "Leave my details",
-      "backToReview": "Back to summary"
+      "notice": "Online payment opens very soon. Prepare your order now; we will let you know when payment opens so you can complete it.",
+      "contactNotice": "We use these details to tell you when payment opens and to let you complete your order. Details: <kvkk>Privacy Notice (KVKK)</kvkk>.",
+      "reviewNote": "The amount is based on today's service fee. You can complete it at this amount when payment opens; your card is not charged now.",
+      "sideNote": "Payment opens very soon. Your card is not charged now.",
+      "buttonNote": "Payment opens very soon; your card is not charged now.",
+      "viewOptions": "Buy",
+      "soonTitle": "Payment opens very soon",
+      "soonBody": "Your card has not been charged. Leave your details and we will let you know when payment opens, with the site and quantity you chose, so you can complete your order.",
+      "soonShared": "Details you share: name, email, phone, site, quantity, the name on the certificate and your note if provided. No billing address or ID/tax number is requested now. Details: <kvkk>Privacy Notice (KVKK)</kvkk>.",
+      "notify": "Notify me when payment opens",
+      "backToReview": "Back to summary",
+      "consent": "I would like to be contacted by the email or phone I provided when payment opens."
     }
   }
 }

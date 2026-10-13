@@ -21,13 +21,16 @@ export default function SuccessCard({
   email,
   isLoggedIn,
   scroll = "page-top",
+  variant = "request",
 }: {
   result: SubmitSuccess;
   email: string;
   isLoggedIn: boolean;
   scroll?: "page-top" | "self";
+  /** preorder: ödemede dur kipinde "talep" yerine "ödeme açılınca haber" dili. */
+  variant?: "request" | "preorder";
 }) {
-  const t = useTranslations("requestForms.common.success");
+  const t = useTranslations(variant === "preorder" ? "requestForms.common.successPreorder" : "requestForms.common.success");
   const [copied, setCopied] = useState(false);
   const steps = t.raw("next") as string[];
   const cardRef = useRef<HTMLDivElement>(null);

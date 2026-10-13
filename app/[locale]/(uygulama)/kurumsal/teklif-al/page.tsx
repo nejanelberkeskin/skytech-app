@@ -7,6 +7,7 @@ import { supabase } from "@/lib/supabase/browser";
 import { Button, Input, Textarea, Card } from "@/components/ui";
 import { createQuoteSubmitter, type QuoteFields } from "@/lib/corporate/quote-submission";
 import { BUDGET_OPTIONS, SEED_OPTIONS, TIMELINE_OPTIONS, seedRangeLabelKey } from "@/lib/corporate/quote-options";
+import ApprovalGate from "@/components/kurumsal/ApprovalGate";
 
 type NeedType = "orman" | "sertifika" | "karbon";
 
@@ -270,7 +271,16 @@ function CarbonSimulator({ onApply, disabled = false }: { onApply: (seeds: numbe
 }
 
 // ── Ana Sayfa ──────────────────────────────────────────────────────────────────
-export default function CorporateQuoteForm() {
+/** Teklif yalnız onaylı kurumsal hesaptan istenir (043); hesap açma bu formda değil, /kurumsal/basvuru'da. */
+export default function CorporateQuotePage() {
+  return (
+    <ApprovalGate>
+      <CorporateQuoteForm />
+    </ApprovalGate>
+  );
+}
+
+function CorporateQuoteForm() {
   const t = useTranslations("corporatePages.quote");
   const tc = useTranslations("corporatePages");
   /** Kayıtlı `seed_count` değerinin gösterilen etiketi (değer değişmez). */
@@ -481,7 +491,7 @@ export default function CorporateQuoteForm() {
                 {isLoggedIn ? t("success.toPanel") : t("success.loginToPanel")}
               </Button>
             </Link>
-            <Link href="/kurumsal" className="text-sm text-slate-500 hover:text-slate-300 transition-colors">
+            <Link href="/kurumsal/panel" className="text-sm text-slate-500 hover:text-slate-300 transition-colors">
               {t("success.home")}
             </Link>
           </div>
@@ -497,7 +507,7 @@ export default function CorporateQuoteForm() {
       <div className="glass border-b border-white/[0.06]">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Link href="/kurumsal" className="text-slate-500 hover:text-white text-sm transition-colors">
+            <Link href="/kurumsal/panel" className="text-slate-500 hover:text-white text-sm transition-colors">
               {t("header.back")}
             </Link>
             <h1 className="text-sm font-semibold text-white">

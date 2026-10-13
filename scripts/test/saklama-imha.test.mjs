@@ -208,7 +208,9 @@ test('saklama (b1): kampanya/toplu gönderim kod yolu yok; e-posta yalnız lib/m
   assert.deepEqual(hits, [], 'kampanya, liste ya da İYS entegrasyonu kodu yok');
   const mail = read('lib/mail.ts');
   const exported = [...mail.matchAll(/export (?:async )?function (send\w+)|export const (send\w+)/g)].map((m) => m[1] ?? m[2]).sort();
-  assert.deepEqual(exported, ['sendB2BQuoteReadyEmail', 'sendContactFormNotification', 'sendEmployeeCertificateEmail', 'sendFrozenNotification',
+  // Kurumsal hesap başvurusu (043): alındı, ekibe bildirim, onay/ret — işlem e-postası, pazarlama değil.
+  assert.deepEqual(exported, ['sendB2BQuoteReadyEmail', 'sendContactFormNotification',
+    'sendCorporateApplicationReceived', 'sendCorporateApplicationStaffNotice', 'sendCorporateDecision', 'sendEmployeeCertificateEmail', 'sendFrozenNotification',
     'sendRefundCompleted', 'sendSellerCancellationNotice', 'sendServiceRequestConfirmation', 'sendServiceRequestNotification', 'sendStaffInvitation'].sort(),
     'yeni bir gönderim fonksiyonu eklenirse bu denetim ve İYS kararı yeniden gözden geçirilmeli');
   // Ticari ileti izni hiçbir sorguda alıcı seçmek için kullanılmıyor; İYS senkron alanı yazılmıyor.

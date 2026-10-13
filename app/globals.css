@@ -1244,3 +1244,8 @@ html.custom-cursor-active textarea {
 body:has([data-sticky-cta]) footer {
   padding-bottom: 6rem;
 }
+
+/* Sabit satın alma çubuğu varken çerez bandı çubuğun üstünde durur (ikisi üst üste binmez). */
+body:has([data-sticky-cta]) [data-cookie-banner] {
+  bottom: 5.5rem;
+}

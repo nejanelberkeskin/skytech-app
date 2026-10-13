@@ -11,6 +11,7 @@ import { intlLocale, uiLocale } from "@/lib/utils/locale";
 import { moneyTry, plainTl } from "@/lib/utils/money-display";
 import { seedRangeLabelKey } from "@/lib/corporate/quote-options";
 import { allocationOutcome, type AllocationOutcome } from "@/lib/corporate/api-responses";
+import { TRANSACTIONS_ENABLED } from "@/lib/site-config";
 
 // Durum adı ve açıklaması çeviriden (corporatePages.overview.status.<key>); DB durum değerleri değişmez.
 const STATUS_META: Record<string, { key: string; badge: string; icon: string }> = {
@@ -788,6 +789,8 @@ export default function CorporateDashboard() {
   const [quotes, setQuotes] = useState<CorporateQuote[]>([]);
   const [loading, setLoading] = useState(true);
   const [pitchQuote, setPitchQuote] = useState<CorporateQuote | null>(null);
+  // Kurumsal ödeme kapalıyken "Öde" düğmesi ödeme sayfasına gitmez, bilgi notu gösterir.
+  const [payNotice, setPayNotice] = useState(false);
   const t = useTranslations("corporatePages.overview");
   const tc = useTranslations("corporatePages");
   const lang = uiLocale(useLocale());
@@ -826,7 +829,10 @@ export default function CorporateDashboard() {
   });
   const paidQuotes = quotes.filter((q) => normalizeStatus(q.status) === "PAID");
 
-  const goToPay = (quoteId: string) => router.push({ pathname: "/kurumsal/panel/odeme", query: { quote_id: quoteId } });
+  const goToPay = (quoteId: string) =>
+    TRANSACTIONS_ENABLED
+      ? router.push({ pathname: "/kurumsal/panel/odeme", query: { quote_id: quoteId } })
+      : setPayNotice(true);
 
   return (
     <>
@@ -849,6 +855,11 @@ export default function CorporateDashboard() {
           <h1 className="text-2xl font-bold text-white">{t("title")}</h1>
           <p className="text-sm text-slate-400 mt-1">{t("subtitle", { company: companyName })}</p>
         </div>
+        {payNotice && (
+          <div role="status" className="rounded-2xl border border-emerald-500/20 bg-emerald-500/10 px-5 py-4 text-sm text-emerald-100">
+            {t("paySoon")}
+          </div>
+        )}
 
         {/* Aktif Teklif Uyarısı */}
         {activeQuote && (

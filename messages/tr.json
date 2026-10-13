@@ -1122,7 +1122,7 @@
   "comingSoonPage": {
     "meta": {
       "title": "Yakında — Çevrim İçi Ödeme",
-      "description": "Çevrim içi ödeme çok yakında açılıyor. Şimdiden bir Proje Uygulama Sahasına tohum topu bıraktırma talebi ya da kendi araziniz için başvuru bırakabilir, hesap oluşturabilirsiniz."
+      "description": "Çevrim içi ödeme çok yakında açılıyor. Şimdiden bir Proje Uygulama Sahası seçip siparişinizi hazırlayabilirsiniz."
     },
     "badge": "Çok Yakında",
     "title": {
@@ -1130,8 +1130,8 @@
       "highlight": "Çok Yakında"
     },
     "body": {
-      "primary": "Çevrim içi ödeme altyapımızda son hazırlıkları yapıyoruz. Bu aşamada talebinizi alıyor, ayrıntıları ve takvimi sizinle birlikte netleştiriyoruz.",
-      "secondary": "Bir Proje Uygulama Sahasına tohum topu bıraktırmak ya da kendi araziniz için başvurmak üzere formu doldurabilirsiniz. Ekibimiz başvurunuzu inceleyerek sizinle iletişime geçer."
+      "primary": "Çevrim içi ödeme altyapımızda son hazırlıkları yapıyoruz. Siparişinizi şimdi hazırlayın; ödeme açıldığında size haber verelim.",
+      "secondary": "Bir Proje Uygulama Sahası seçin, adedi belirleyin ve siparişinizi hazırlayın. Kendi araziniz için başvurmak isterseniz ekibimiz sizinle iletişime geçer."
     },
     "cta": {
       "home": "Ana Sayfaya Dön",

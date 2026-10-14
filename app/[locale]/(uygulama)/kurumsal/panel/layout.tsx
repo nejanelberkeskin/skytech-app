@@ -8,19 +8,13 @@ import { supabase } from "@/lib/supabase/browser";
 import ApprovalGate from "@/components/kurumsal/ApprovalGate";
 import { TRANSACTIONS_ENABLED } from "@/lib/site-config";
 
-/** Hesap rozeti: e-postanın yerel kısmından iki harf (ör. "uye@…" → "UY"); yoksa nötr nokta. Kişi/şirket adı uydurulmaz. */
-function initialsOf(email: string | null): string {
-  const local = (email ?? "").split("@")[0].replace(/[^\p{L}\p{N}]/gu, "");
-  return local.slice(0, 2).toUpperCase() || "•";
-}
-
 // Ödeme ve çalışan sertifikaları kurumsal satış (TRANSACTIONS_ENABLED) açılınca görünür.
 const NAV_ITEMS = [
-  { href: "/kurumsal/panel", key: "overview", icon: "📊" },
+  { href: "/kurumsal/panel", key: "overview" },
   ...(TRANSACTIONS_ENABLED
     ? [
-        { href: "/kurumsal/panel/sertifikalar", key: "certificates", icon: "🎖️" },
-        { href: "/kurumsal/panel/odeme", key: "payment", icon: "💳" },
+        { href: "/kurumsal/panel/sertifikalar", key: "certificates" },
+        { href: "/kurumsal/panel/odeme", key: "payment" },
       ]
     : []),
 ];
@@ -52,124 +46,105 @@ export default function CorporatePanelLayout({ children }: { children: React.Rea
 
   if (checking) {
     return (
-      <div className="relative min-h-screen">
-        <div className="nature-bg">
-          <div className="nature-orb nature-orb-1" />
-          <div className="nature-orb nature-orb-2" />
-        </div>
-        <div className="relative z-10 min-h-screen flex items-center justify-center">
-          <div role="status" aria-label={tc("loading")} className="w-10 h-10 rounded-full border-2 border-emerald-500/20 border-t-emerald-400 animate-spin" />
-        </div>
+      <div className="flex min-h-screen items-center justify-center bg-[#f6f7f5]" style={{ colorScheme: "light" }}>
+        <p role="status" className="text-sm text-slate-500">{tc("loading")}</p>
       </div>
     );
   }
 
-  return (
-    <div className="relative min-h-screen">
-      {/* Background */}
-      <div className="nature-bg">
-        <div className="nature-orb nature-orb-1" />
-        <div className="nature-orb nature-orb-2" />
-      </div>
-
-      {/* Mobile Overlay */}
-      {sidebarOpen && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
-          onClick={() => setSidebarOpen(false)} />
-      )}
-
-      {/* Sidebar */}
-      <aside className={`fixed inset-y-0 left-0 z-50 w-72 flex flex-col transition-transform duration-300 ease-out
-        ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0`}
-        style={{
-          background: "rgba(4, 11, 6, 0.85)",
-          backdropFilter: "blur(24px) saturate(1.6)",
-          borderRight: "1px solid rgba(255,255,255,0.06)",
-        }}
-      >
-        {/* Logo */}
-        <div className="px-6 py-5" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-          <Link href="/" className="flex items-center gap-2.5" onClick={() => setSidebarOpen(false)} aria-label={tc("homeAria")}>
-            <Image
-              src="/images/brand/logo-light.webp"
-              alt="Skytech Green"
-              width={256}
-              height={32}
-              priority
-              className="h-8 w-auto"
-            />
-          </Link>
-          <p className="text-xs text-emerald-200/25 mt-1.5">{t("title")}</p>
-        </div>
-
-        {/* Company info */}
-        <div className="px-5 py-4" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-          <div className="flex items-center gap-3">
-            <div aria-hidden="true" className="w-10 h-10 rounded-2xl flex items-center justify-center"
-              style={{ background: "linear-gradient(135deg, rgba(16,185,129,0.15), rgba(20,184,166,0.1))", border: "1px solid rgba(52,211,153,0.15)" }}>
-              <span className="text-emerald-400 font-bold text-sm">{initialsOf(userEmail)}</span>
-            </div>
-            <div>
-              <p className="text-sm font-medium text-white">{t("account")}</p>
-              <p className="text-xs text-emerald-200/25">{t("active")}</p>
-            </div>
-          </div>
-        </div>
-
-        <nav aria-label={t("navLabel")} className="flex-1 px-3 py-4 space-y-1">
-          {NAV_ITEMS.map((item) => {
-            const isActive = pathname === item.href;
-            return (
-              <Link key={item.href} href={item.href}
+  const nav = (
+    <nav aria-label={t("navLabel")} className="flex-1 px-3 py-4">
+      <ul className="space-y-0.5">
+        {NAV_ITEMS.map((item) => {
+          const isActive = pathname === item.href;
+          return (
+            <li key={item.href}>
+              <Link
+                href={item.href}
+                aria-current={isActive ? "page" : undefined}
                 onClick={() => setSidebarOpen(false)}
-                className={`flex items-center gap-3 px-4 py-3 rounded-2xl text-sm transition-all duration-300 ${
-                  isActive
-                    ? "glass-glow text-emerald-300 font-medium"
-                    : "text-emerald-200/40 hover:text-white hover:bg-white/[0.04]"
-                }`}>
-                <span className="text-base">{item.icon}</span>
-                <span>{t(`nav.${item.key}`)}</span>
+                className={`flex min-h-10 items-center rounded-lg px-3 text-sm transition-colors ${
+                  isActive ? "bg-[#f0f7ec] font-medium text-[#1B6B3A]" : "text-slate-700 hover:bg-slate-100 hover:text-slate-900"
+                }`}
+              >
+                {t(`nav.${item.key}`)}
               </Link>
-            );
-          })}
-        </nav>
+            </li>
+          );
+        })}
+        <li>
+          <Link
+            href="/kurumsal/teklif-al"
+            onClick={() => setSidebarOpen(false)}
+            className="flex min-h-10 items-center rounded-lg px-3 text-sm text-slate-700 hover:bg-slate-100 hover:text-slate-900"
+          >
+            {t("nav.newQuote")}
+          </Link>
+        </li>
+      </ul>
+    </nav>
+  );
+  const footer = (
+    <div className="border-t border-slate-200 px-5 py-4">
+      {userEmail && <p className="truncate text-sm text-slate-700">{userEmail}</p>}
+      <div className="mt-3 flex items-center justify-between text-sm">
+        <Link href="/" className="text-slate-600 hover:text-slate-900" onClick={() => setSidebarOpen(false)}>
+          {t("home")}
+        </Link>
+        <button type="button" onClick={handleLogout} className="min-h-10 text-slate-600 hover:text-red-700">
+          {t("logout")}
+        </button>
+      </div>
+    </div>
+  );
+  const logo = (
+    <Link href="/" className="flex flex-col items-start gap-0.5" onClick={() => setSidebarOpen(false)} aria-label={tc("homeAria")}>
+      <Image src="/images/brand/logo.webp" alt="Skytech Green" width={256} height={32} priority className="h-5 w-auto" />
+      <span className="text-xs text-slate-500">{t("title")}</span>
+    </Link>
+  );
 
-        <div className="px-5 py-4 space-y-3" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
-          {userEmail && (
-            <p className="text-xs text-emerald-200/20 truncate">{userEmail}</p>
-          )}
-          <div className="flex items-center justify-between">
-            <Link href="/" className="text-xs text-emerald-200/30 hover:text-white transition-colors"
-              onClick={() => setSidebarOpen(false)}>
-              {t("home")}
-            </Link>
-            <button type="button" onClick={handleLogout}
-              className="text-xs text-emerald-200/25 hover:text-rose-400 transition-colors">
-              {t("logout")}
-            </button>
-          </div>
-        </div>
-      </aside>
-
-      {/* Main content */}
-      <main className="relative z-10 lg:ml-72 min-h-screen">
-        {/* Mobile header */}
-        <div className="lg:hidden sticky top-0 z-30 px-4 py-3 flex items-center justify-between"
-          style={{
-            background: "rgba(4,11,6,0.8)",
-            backdropFilter: "blur(20px) saturate(1.4)",
-            borderBottom: "1px solid rgba(255,255,255,0.06)",
-          }}>
-          <button type="button" onClick={() => setSidebarOpen(true)} aria-label={t("menuOpen")} aria-expanded={sidebarOpen}
-            className="w-10 h-10 rounded-2xl flex items-center justify-center text-emerald-200/50 hover:text-white transition-colors"
-            style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}>
-            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" d="M4 6h16M4 12h16M4 18h16" />
+  return (
+    <div className="min-h-screen bg-[#f6f7f5] text-slate-900" style={{ colorScheme: "light" }}>
+      {/* Mobil: üst çubuk + soldan açılan menü */}
+      <div className="sticky top-0 z-30 flex items-center justify-between border-b border-slate-200 bg-white px-4 py-2 lg:hidden">
+        {logo}
+        <button
+          type="button"
+          onClick={() => setSidebarOpen(true)}
+          aria-label={t("menuOpen")}
+          aria-expanded={sidebarOpen}
+          className="flex min-h-11 items-center gap-2 rounded-lg border border-slate-300 px-3 text-sm font-medium text-slate-800"
+        >
+          <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} aria-hidden="true">
+            <path strokeLinecap="round" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+          {t("menu")}
+        </button>
+      </div>
+      {sidebarOpen && <div className="fixed inset-0 z-40 bg-slate-900/40 lg:hidden" onClick={() => setSidebarOpen(false)} />}
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 flex w-72 max-w-[88vw] flex-col border-r border-slate-200 bg-white transition-transform duration-200 ${
+          sidebarOpen ? "translate-x-0" : "-translate-x-full"
+        } lg:w-64 lg:translate-x-0`}
+      >
+        <div className="flex items-center justify-between px-5 py-5">
+          {logo}
+          <button
+            type="button"
+            onClick={() => setSidebarOpen(false)}
+            aria-label={t("menuClose")}
+            className="flex min-h-11 min-w-11 items-center justify-center rounded-lg text-slate-600 hover:bg-slate-100 lg:hidden"
+          >
+            <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} aria-hidden="true">
+              <path strokeLinecap="round" d="M18 6 6 18M6 6l12 12" />
             </svg>
           </button>
-          <span className="text-sm font-bold text-white">{t("title")}</span>
-          <div className="w-10" />
         </div>
+        {nav}
+        {footer}
+      </aside>
+      <main className="min-w-0 lg:ml-64">
         <ApprovalGate>{children}</ApprovalGate>
       </main>
     </div>

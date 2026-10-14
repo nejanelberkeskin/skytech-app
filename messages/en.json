@@ -1532,14 +1532,17 @@
       "nav": {
         "overview": "Overview",
         "certificates": "Certificate Center",
-        "payment": "Payment & Invoices"
+        "payment": "Payment & Invoices",
+        "newQuote": "Request a quote"
       },
       "title": "Corporate Panel",
       "account": "Corporate Account",
       "active": "Active",
       "home": "← Home",
       "logout": "Sign out",
-      "menuOpen": "Open menu"
+      "menuOpen": "Open menu",
+      "menu": "Menu",
+      "menuClose": "Close menu"
     },
     "payment": {
       "title": "Payment & Invoicing",
@@ -1637,9 +1640,9 @@
       "empty": "You have no quote requests yet.",
       "firstQuote": "Get Your First Quote",
       "need": {
-        "orman": "Forest",
-        "sertifika": "Certificate",
-        "karbon": "Carbon"
+        "orman": "Site participation",
+        "sertifika": "Certificates",
+        "karbon": "Reporting"
       },
       "reviewShort": "🎬 Review",
       "payShort": "Pay",
@@ -1701,16 +1704,16 @@
       },
       "need": {
         "orman": {
-          "label": "Establish a Company Forest",
-          "desc": "A forest area dedicated to your brand is allocated."
+          "label": "Site participation for your company",
+          "desc": "Seed balls are released at the Project Site you choose, on behalf of your company."
         },
         "sertifika": {
-          "label": "Gift Certificates",
-          "desc": "Digital certificates are distributed to your customers and employees."
+          "label": "Employee and customer certificates",
+          "desc": "Participation certificates are issued for your employees or customers."
         },
         "karbon": {
-          "label": "Carbon Offsetting",
-          "desc": "Scope and terms are set out in the quote."
+          "label": "Sustainability reporting",
+          "desc": "Release and monitoring records are shared in a form you can use in your reports."
         }
       },
       "success": {

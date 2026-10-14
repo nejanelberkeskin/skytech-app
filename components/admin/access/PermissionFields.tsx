@@ -50,15 +50,15 @@ export default function PermissionFields({
   );
   return (
     <section className="space-y-4">
-      <h2 className="text-lg font-semibold text-white">
+      <h2 className="text-lg font-semibold text-slate-900">
         İzinler · {value.length} seçili
       </h2>
-      <p className="text-sm text-slate-300">
+      <p className="text-sm text-slate-700">
         Yalnız tüm kayıtlar kapsamında ve süresiz sahip olduğunuz izinleri
         ekleyebilirsiniz. Rol oluşturmak kişilere erişim vermez; ayrıca atama
         gerekir.
       </p>
-      <p className="text-sm text-amber-200">
+      <p className="text-sm text-amber-800">
         Ek doğrulama işaretli izinler hassas işlemleri kapsar. Yeniden
         doğrulama, sunucuda MFA zorunluluğu etkin olduğunda uygulanır. Personel
         ve rol yönetimi izinleri yalnız tüm kayıtlar kapsamında atanabilir.
@@ -69,7 +69,7 @@ export default function PermissionFields({
         onChange={(e) => setSearch(e.target.value)}
       />
       {!matches.length && (
-        <p className="text-slate-300">
+        <p className="text-slate-700">
           Aramanıza uygun izin bulunmuyor. Mevcut seçimler korunur.
         </p>
       )}
@@ -80,13 +80,13 @@ export default function PermissionFields({
             <fieldset
               key={group}
               disabled={disabled}
-              className="border border-white/15 rounded-xl p-4 min-w-0"
+              className="border border-slate-200 rounded-xl p-4 min-w-0"
             >
-              <legend className="px-2 text-emerald-200">{label}</legend>
+              <legend className="px-2 text-emerald-800">{label}</legend>
               {items.map((p) => (
                 <label
                   key={p}
-                  className="flex gap-3 py-3 min-h-11 items-start text-sm text-slate-200"
+                  className="flex gap-3 py-3 min-h-11 items-start text-sm text-slate-800"
                 >
                   <input
                     className="mt-1 shrink-0"
@@ -104,17 +104,17 @@ export default function PermissionFields({
                   <span>
                     {permissionLabel(p)}
                     {MFA_PERMISSIONS.has(p) && (
-                      <span className="block text-xs text-amber-200">
+                      <span className="block text-xs text-amber-800">
                         Ek doğrulama kapsamı
                       </span>
                     )}
                     {globalOnly.has(p) && (
-                      <span className="block text-xs text-amber-200">
+                      <span className="block text-xs text-amber-800">
                         Yalnız tüm kayıtlar
                       </span>
                     )}
                     {!hasFullPermission(me, p) && (
-                      <span className="block text-xs text-slate-400">
+                      <span className="block text-xs text-slate-600">
                         Bu izni ekleme yetkiniz yok.
                       </span>
                     )}

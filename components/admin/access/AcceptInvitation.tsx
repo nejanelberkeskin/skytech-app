@@ -70,9 +70,9 @@ export default function AcceptInvitation({ token }: { token: string }) {
     }
   };
   return (
-    <main className="min-h-screen bg-[#020817] px-4 py-12 text-slate-200">
-      <section className="max-w-lg mx-auto border border-white/15 rounded-2xl p-5 sm:p-8 space-y-5">
-        <h1 className="text-2xl font-bold text-white">
+    <main className="min-h-screen bg-white px-4 py-12 text-slate-800">
+      <section className="max-w-lg mx-auto border border-slate-200 rounded-2xl p-5 sm:p-8 space-y-5">
+        <h1 className="text-2xl font-bold text-slate-900">
           Skytech Green personel daveti
         </h1>
         <p className="text-sm">
@@ -80,7 +80,7 @@ export default function AcceptInvitation({ token }: { token: string }) {
           e-posta adresine ait kendi hesabınızla kabul edin.
         </p>
         {error && (
-          <p role="alert" className="text-red-200">
+          <p role="alert" className="text-red-700">
             {error}
           </p>
         )}
@@ -88,7 +88,7 @@ export default function AcceptInvitation({ token }: { token: string }) {
           <p role="status">Oturum kontrol ediliyor…</p>
         ) : done ? (
           <>
-            <p role="status" className="text-emerald-200">
+            <p role="status" className="text-emerald-800">
               Davet kabul edildi. Erişiminizi ve güvenlik ayarlarınızı panelden
               inceleyebilirsiniz.
             </p>
@@ -102,7 +102,7 @@ export default function AcceptInvitation({ token }: { token: string }) {
           </>
         ) : uncertain ? (
           <>
-            <p className="text-amber-200">
+            <p className="text-amber-800">
               Yanıt alınamadı; davet kabul edilmiş olabilir. Bu sayfa isteği
               tekrarlamayacak. Panelde erişiminizi kontrol edin; erişim
               görünmüyorsa sizi davet eden kişiye başvurun.
@@ -139,13 +139,13 @@ export default function AcceptInvitation({ token }: { token: string }) {
             <Button type="submit" loading={busy}>
               Personel davetini kabul et
             </Button>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-600">
               Hesap davet adresiyle eşleşmezse erişim verilmez. Başka bir hesap
               kullanacaksanız giriş sayfasında oturum değiştirip buraya dönün.
             </p>
           </form>
         ) : (
-          <p className="text-amber-200">
+          <p className="text-amber-800">
             Önce kendi hesabınızla giriş yapın; ardından bu sekmeye dönüp
             oturumu yenileyin. Giriş yapmak daveti kendiliğinden kabul etmez.
           </p>

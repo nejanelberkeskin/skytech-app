@@ -14,9 +14,9 @@ export default function PaymentReview(){
  const {me,denial,clearDenial}=useAdmin();
  useEffect(()=>()=>clearDenial(path),[clearDenial]);
  return <div className="p-4 md:p-8 space-y-5">
-  <h1 className="text-2xl font-bold text-white">Kurumsal ödeme incelemeleri</h1>
-  <p className="text-slate-300">Belirsiz ödeme, geçmiş deneme ve sağlayıcı sonucu takibi.</p>
-  {denial?.scope===path&&<p role="alert" className="text-amber-200">{denial.message}</p>}
+  <h1 className="text-2xl font-bold text-slate-900">Kurumsal ödeme incelemeleri</h1>
+  <p className="text-slate-700">Belirsiz ödeme, geçmiş deneme ve sağlayıcı sonucu takibi.</p>
+  {denial?.scope===path&&<p role="alert" className="text-amber-800">{denial.message}</p>}
   <ReviewBody key={accessKey(me)}/>
  </div>;
 }
@@ -58,29 +58,29 @@ function ReviewBody(){
  if(!canRead)return <p role="alert">Bu sayfaya erişiminiz yok. Tüm kayıtlar kapsamında finans okuma yetkisi gerekir.</p>;
  return <>
   <div className="flex flex-wrap gap-4 items-center">
-   <button type="button" disabled={busy||loading} className="min-h-11 rounded border border-white/20 px-4 text-white disabled:opacity-50" onClick={()=>void load()}>Görünümü yenile</button>
-   <Link href="/admin/guvenlik" className="min-h-11 inline-flex items-center text-emerald-300 underline">İki aşamalı doğrulama</Link>
+   <button type="button" disabled={busy||loading} className="min-h-11 rounded border border-slate-200 px-4 text-slate-900 disabled:opacity-50" onClick={()=>void load()}>Görünümü yenile</button>
+   <Link href="/admin/guvenlik" className="min-h-11 inline-flex items-center text-emerald-700 underline">İki aşamalı doğrulama</Link>
   </div>
-  <p className="text-sm text-slate-400">İşlemler için tüm kayıtlar kapsamında finans okuma ve kurumsal ödeme incelemesini sonuçlandırma yetkileri ile son 15 dakika içinde iki aşamalı doğrulama gerekir. Bu ekran para iadesi veya yeni tahsilat yapmaz.</p>
-  {error&&<p role="alert" className="text-red-300">{error}</p>}
-  {notice&&<p ref={noticeRef} tabIndex={-1} role="status" className="text-emerald-200">{notice}</p>}
-  {uncertain&&<p role="alert" className="text-amber-200">İşlem uygulanmış olabilir. Yeniden göndermeden önce görünümü yenileyin.</p>}
+  <p className="text-sm text-slate-600">İşlemler için tüm kayıtlar kapsamında finans okuma ve kurumsal ödeme incelemesini sonuçlandırma yetkileri ile son 15 dakika içinde iki aşamalı doğrulama gerekir. Bu ekran para iadesi veya yeni tahsilat yapmaz.</p>
+  {error&&<p role="alert" className="text-red-700">{error}</p>}
+  {notice&&<p ref={noticeRef} tabIndex={-1} role="status" className="text-emerald-800">{notice}</p>}
+  {uncertain&&<p role="alert" className="text-amber-800">İşlem uygulanmış olabilir. Yeniden göndermeden önce görünümü yenileyin.</p>}
   {loading&&<p role="status">Kayıtlar yükleniyor…</p>}
-  {data&&<div className="flex flex-wrap items-center gap-3"><button type="button" disabled={busy||loading||page===0} onClick={()=>{setSelected(null);setPage(p=>p-1);}} className="min-h-11 px-3 border border-white/20 rounded disabled:opacity-50">Önceki sayfa</button><span>Sayfa {page+1}</span><button type="button" disabled={busy||loading||!data.hasMore} onClick={()=>{setSelected(null);setPage(p=>p+1);}} className="min-h-11 px-3 border border-white/20 rounded disabled:opacity-50">Sonraki sayfa</button></div>}
+  {data&&<div className="flex flex-wrap items-center gap-3"><button type="button" disabled={busy||loading||page===0} onClick={()=>{setSelected(null);setPage(p=>p-1);}} className="min-h-11 px-3 border border-slate-200 rounded disabled:opacity-50">Önceki sayfa</button><span>Sayfa {page+1}</span><button type="button" disabled={busy||loading||!data.hasMore} onClick={()=>{setSelected(null);setPage(p=>p+1);}} className="min-h-11 px-3 border border-slate-200 rounded disabled:opacity-50">Sonraki sayfa</button></div>}
   {data?.items.length===0&&<p>Kurumsal ödeme kaydı bulunamadı.</p>}
-  <ul className="space-y-3">{data?.items.map(row=><li key={row.id} className="rounded-xl border border-white/15 p-4 space-y-2 break-words">
-   <p className="font-medium text-white">{`${Number(row.amount).toLocaleString("tr-TR",{minimumFractionDigits:2,maximumFractionDigits:2})} ${row.currency}`} · {istanbulDate(row.createdAt)}</p>
-   <p className="text-xs text-slate-400 break-all">Ödeme: {row.id}</p>
-   <p className="text-sm text-slate-300">{row.hold?"Çelişkili ödeme: finans bekletmesi":row.released?"Doğrulanmış ret; yeniden deneme açıldı":row.reviewRequired?"İnceleme gerekiyor":row.status==="success"?"Ödeme kaydedildi":row.status==="pending"?"Ödeme sonucu bekleniyor":"Kapalı ödeme denemesi"}{!row.linked&&" · Ödeme oturumu kaydı eksik"}</p>
-   {canResolve&&<button type="button" disabled={busy||uncertain||loading} className="min-h-11 px-4 rounded border border-emerald-400/40 text-emerald-200 disabled:opacity-50" onClick={e=>{returnFocus.current=e.currentTarget;setSelected(row);setAction("refresh");setEvidence("");setClosed(false);setNotice("");}}>İncele</button>}
+  <ul className="space-y-3">{data?.items.map(row=><li key={row.id} className="rounded-xl border border-slate-200 p-4 space-y-2 break-words">
+   <p className="font-medium text-slate-900">{`${Number(row.amount).toLocaleString("tr-TR",{minimumFractionDigits:2,maximumFractionDigits:2})} ${row.currency}`} · {istanbulDate(row.createdAt)}</p>
+   <p className="text-xs text-slate-600 break-all">Ödeme: {row.id}</p>
+   <p className="text-sm text-slate-700">{row.hold?"Çelişkili ödeme: finans bekletmesi":row.released?"Doğrulanmış ret; yeniden deneme açıldı":row.reviewRequired?"İnceleme gerekiyor":row.status==="success"?"Ödeme kaydedildi":row.status==="pending"?"Ödeme sonucu bekleniyor":"Kapalı ödeme denemesi"}{!row.linked&&" · Ödeme oturumu kaydı eksik"}</p>
+   {canResolve&&<button type="button" disabled={busy||uncertain||loading} className="min-h-11 px-4 rounded border border-emerald-400/40 text-emerald-800 disabled:opacity-50" onClick={e=>{returnFocus.current=e.currentTarget;setSelected(row);setAction("refresh");setEvidence("");setClosed(false);setNotice("");}}>İncele</button>}
   </li>)}</ul>
   {selected&&<form onSubmit={submit} className="rounded-xl border border-emerald-400/40 p-4 space-y-4" aria-label="Ödeme inceleme işlemi">
-   <h2 className="font-semibold text-white">Seçilen ödeme <span className="block text-xs break-all">{selected.id}</span></h2>
-   <label className="block text-slate-200">İşlem<select aria-label="İşlem" value={action} disabled={busy||uncertain} onChange={e=>{setAction(e.target.value as "refresh"|"release");setClosed(false);}} className="block mt-2 min-h-11 w-full rounded bg-slate-900 border border-white/20 p-2"><option value="refresh">Sağlayıcıdan sorgula ve doğrulanmış sonucu kaydet</option><option value="release">Doğrulanmış ret sonrası yeniden deneme aç</option></select></label>
-   <label className="block text-slate-200">Kanıt referansı<textarea ref={firstInput} required minLength={10} maxLength={500} value={evidence} disabled={busy||uncertain} onChange={e=>setEvidence(e.target.value)} className="block w-full mt-2 rounded bg-slate-900 border border-white/20 p-3" aria-describedby="evidence-help"/></label>
-   <p id="evidence-help" className="text-sm text-slate-400">Sağlayıcı destek kaydı veya panel kontrol referansı. Kart bilgisi, kişisel veri ve gizli anahtar yazmayın.</p>
-   {action==="release"&&<><p className="text-amber-200 text-sm">Yalnız açık ret sonucu yeterli değildir. Eski ödeme oturumunun yeniden tahsilat alamayacak şekilde kapandığını sağlayıcıdan doğrulayın. Zaman aşımı veya “ödeme bulunamadı” sonucu yeniden deneme açmaz.</p><label className="flex items-start gap-3 text-slate-200"><input type="checkbox" required checked={closed} disabled={busy||uncertain} onChange={e=>setClosed(e.target.checked)} className="mt-1 size-5"/>Eski oturumun kapandığını sağlayıcıdan doğruladım; kanıt referansını girdim.</label></>}
-   <div className="flex flex-wrap gap-3"><button type="submit" disabled={busy||uncertain||evidence.trim().length<10||(action==="release"&&!closed)} className="min-h-11 rounded bg-emerald-700 px-4 text-white disabled:opacity-50">{busy?"Doğrulanıyor…":"Sorgula ve uygula"}</button><button type="button" onClick={cancel} disabled={busy} className="min-h-11 rounded border border-white/20 px-4 text-white">Vazgeç</button></div>
+   <h2 className="font-semibold text-slate-900">Seçilen ödeme <span className="block text-xs break-all">{selected.id}</span></h2>
+   <label className="block text-slate-800">İşlem<select aria-label="İşlem" value={action} disabled={busy||uncertain} onChange={e=>{setAction(e.target.value as "refresh"|"release");setClosed(false);}} className="block mt-2 min-h-11 w-full rounded bg-white border border-slate-200 p-2"><option value="refresh">Sağlayıcıdan sorgula ve doğrulanmış sonucu kaydet</option><option value="release">Doğrulanmış ret sonrası yeniden deneme aç</option></select></label>
+   <label className="block text-slate-800">Kanıt referansı<textarea ref={firstInput} required minLength={10} maxLength={500} value={evidence} disabled={busy||uncertain} onChange={e=>setEvidence(e.target.value)} className="block w-full mt-2 rounded bg-white border border-slate-200 p-3" aria-describedby="evidence-help"/></label>
+   <p id="evidence-help" className="text-sm text-slate-600">Sağlayıcı destek kaydı veya panel kontrol referansı. Kart bilgisi, kişisel veri ve gizli anahtar yazmayın.</p>
+   {action==="release"&&<><p className="text-amber-800 text-sm">Yalnız açık ret sonucu yeterli değildir. Eski ödeme oturumunun yeniden tahsilat alamayacak şekilde kapandığını sağlayıcıdan doğrulayın. Zaman aşımı veya “ödeme bulunamadı” sonucu yeniden deneme açmaz.</p><label className="flex items-start gap-3 text-slate-800"><input type="checkbox" required checked={closed} disabled={busy||uncertain} onChange={e=>setClosed(e.target.checked)} className="mt-1 size-5"/>Eski oturumun kapandığını sağlayıcıdan doğruladım; kanıt referansını girdim.</label></>}
+   <div className="flex flex-wrap gap-3"><button type="submit" disabled={busy||uncertain||evidence.trim().length<10||(action==="release"&&!closed)} className="min-h-11 rounded bg-emerald-700 px-4 text-white disabled:opacity-50">{busy?"Doğrulanıyor…":"Sorgula ve uygula"}</button><button type="button" onClick={cancel} disabled={busy} className="min-h-11 rounded border border-slate-200 px-4 text-slate-900">Vazgeç</button></div>
   </form>}
  </>;
 }

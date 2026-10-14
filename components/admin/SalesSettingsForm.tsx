@@ -209,9 +209,9 @@ function consequences(changes: SettingsChange[], openCheckouts: number | undefin
 }
 
 const LEVEL_STYLE: Record<ReadinessItem["level"], { icon: string; className: string; sr: string }> = {
-  ok: { icon: "✓", className: "text-emerald-400", sr: "Hazır" },
-  warning: { icon: "!", className: "text-amber-300", sr: "Açılıştan önce tamamlanmalı" },
-  blocker: { icon: "✕", className: "text-red-400", sr: "Siparişi şu an engelliyor" },
+  ok: { icon: "✓", className: "text-emerald-700", sr: "Hazır" },
+  warning: { icon: "!", className: "text-amber-800", sr: "Açılıştan önce tamamlanmalı" },
+  blocker: { icon: "✕", className: "text-red-700", sr: "Siparişi şu an engelliyor" },
 };
 const ENVIRONMENT_LABEL: Record<string, string> = { production: "canlı site", preview: "önizleme", development: "yerel geliştirme" };
 
@@ -323,8 +323,8 @@ export default function SalesSettingsForm() {
   // Kayıt sonucu odağa alınır; uzun formda geri bildirim kaybolmaz.
   const messages = (
     <>
-      {success && <div role="status" className="bg-emerald-500/10 ring-1 ring-emerald-500/30 text-emerald-400 px-4 py-3 rounded-xl text-sm">✅ {success}</div>}
-      {error && <div role="alert" className="bg-red-500/10 ring-1 ring-red-500/30 text-red-400 px-4 py-3 rounded-xl text-sm">❌ {error}</div>}
+      {success && <div role="status" className="bg-emerald-500/10 ring-1 ring-emerald-500/30 text-emerald-700 px-4 py-3 rounded-xl text-sm">{success}</div>}
+      {error && <div role="alert" className="bg-red-500/10 ring-1 ring-red-500/30 text-red-700 px-4 py-3 rounded-xl text-sm">{error}</div>}
     </>
   );
 
@@ -333,8 +333,8 @@ export default function SalesSettingsForm() {
   return (
     <div className="p-4 md:p-8 space-y-6 max-w-4xl">
       <div>
-        <h1 className="text-2xl font-bold text-white">Satış Ayarları</h1>
-        <p className="text-sm text-slate-400 mt-1">
+        <h1 className="text-2xl font-bold text-slate-900">Satış Ayarları</h1>
+        <p className="text-sm text-slate-600 mt-1">
           Birim bedel, adet sınırları, KDV ve süreler. Kaydettiğiniz değerler sihirbazda ve sitede hemen geçerli olur;
           oluşturulmuş siparişler kendi tutarı ve belgeleriyle sürer.
         </p>
@@ -342,9 +342,9 @@ export default function SalesSettingsForm() {
 
       <Button variant="secondary" disabled={saving||loading} onClick={()=>void load()}>Güncel ayarları yükle</Button>
       <div ref={feedback} tabIndex={-1} className="outline-none">{messages}</div>
-      {warnings.map((w,i)=><p role="alert" key={i} className="text-amber-100 text-sm">{w.message} İşlemi tekrar göndermeyin.</p>)}
-      {blocked&&!loading&&<p className="text-amber-100 text-sm">Sonuç belirsiz veya yetki değişti. İşlem kapalı; güncel ayarları yükleyin.</p>}
-      {data?.mfa.enforced&&!data.mfa.satisfied&&(data.capabilities.resume||data.capabilities.pricing)&&<div className="text-sm text-amber-100 border border-amber-400/30 rounded-xl p-4"><p>Yeniden açma ve fiyat değişiklikleri yeniden doğrulama gerektirir. Durdurma için doğrulama gerekmez. Doğrulamadan sonra güncel ayarları yükleyip işlemi yeniden seçin.</p><Link href="/admin/guvenlik" target="_blank" rel="noopener noreferrer" className="underline">Hesap güvenliği (yeni sekme)</Link></div>}
+      {warnings.map((w,i)=><p role="alert" key={i} className="text-amber-800 text-sm">{w.message} İşlemi tekrar göndermeyin.</p>)}
+      {blocked&&!loading&&<p className="text-amber-800 text-sm">Sonuç belirsiz veya yetki değişti. İşlem kapalı; güncel ayarları yükleyin.</p>}
+      {data?.mfa.enforced&&!data.mfa.satisfied&&(data.capabilities.resume||data.capabilities.pricing)&&<div className="text-sm text-amber-800 border border-amber-400/30 rounded-xl p-4"><p>Yeniden açma ve fiyat değişiklikleri yeniden doğrulama gerektirir. Durdurma için doğrulama gerekmez. Doğrulamadan sonra güncel ayarları yükleyip işlemi yeniden seçin.</p><Link href="/admin/guvenlik" target="_blank" rel="noopener noreferrer" className="underline">Hesap güvenliği (yeni sekme)</Link></div>}
 
       {loading && !data ? (
         <div className="flex items-center justify-center py-20">
@@ -352,17 +352,17 @@ export default function SalesSettingsForm() {
         </div>
       ) : !data ? null : (
         <>
-          {data.state?.repairRequired && <div role="alert" className="rounded-xl border border-amber-400/40 bg-amber-500/10 p-4 text-sm text-amber-100">
+          {data.state?.repairRequired && <div role="alert" className="rounded-xl border border-amber-400/40 bg-amber-500/10 p-4 text-sm text-amber-800">
             Kayıtlı ayarlarda geçersiz alanlar var; yeni sipariş alımı kapalı. İşaretli alanları düzeltip kaydedin.
             Onarım satış kapalıyken yapılır; yeniden açmak ayrı bir işlemdir.
           </div>}
           {data.readiness && (
-            <section className="bg-white/[0.03] ring-1 ring-white/[0.08] rounded-2xl p-5 space-y-3" aria-labelledby="hazirlik-baslik">
+            <section className="bg-white ring-1 ring-slate-200 rounded-2xl p-5 space-y-3" aria-labelledby="hazirlik-baslik">
               <div className="flex items-baseline justify-between gap-3 flex-wrap">
-                <h2 id="hazirlik-baslik" className="font-semibold text-white text-sm">Satışa hazırlık</h2>
+                <h2 id="hazirlik-baslik" className="font-semibold text-slate-900 text-sm">Satışa hazırlık</h2>
                 <span className="text-xs text-slate-500">{ENVIRONMENT_LABEL[data.readiness.environment] ?? data.readiness.environment}</span>
               </div>
-              <p className={`text-sm font-semibold ${data.readiness.accepting ? "text-emerald-400" : "text-red-300"}`}>
+              <p className={`text-sm font-semibold ${data.readiness.accepting ? "text-emerald-700" : "text-red-700"}`}>
                 {data.readiness.accepting ? "✓ Şu an sipariş alınıyor." : "✕ Şu an sipariş alınmıyor — sihirbaz talep topluyor."}
               </p>
               <ul className="space-y-2 text-sm">
@@ -371,9 +371,9 @@ export default function SalesSettingsForm() {
                     <span aria-hidden className={`w-4 shrink-0 text-center font-bold ${LEVEL_STYLE[item.level].className}`}>{LEVEL_STYLE[item.level].icon}</span>
                     <span>
                       <span className="sr-only">{LEVEL_STYLE[item.level].sr}: </span>
-                      <span className="text-slate-200">{item.label}</span>
-                      <span className="block text-xs text-slate-400">{item.detail}</span>
-                      <span className="grid sm:grid-cols-3 gap-2 mt-2 text-xs text-slate-300"><span>Yapılandırma: {item.configured?"Tanımlı":"Eksik"}</span><span>Doğrulama: {item.verification===null?"Bu madde için uygulanmaz":({verified:"Doğrulandı",not_verified:"Henüz doğrulanmadı",failed:"Başarısız",unknown:"Bilinmiyor"}[item.verification])}</span><span>Son sonuç: {item.lastResult?`${when(item.lastResult.at)} · ${item.lastResult.source==="provider"?(item.lastResult.ok?"Sağlayıcı kabul etti; teslim kanıtı değil":"Sağlayıcı hatası"):`${item.lastResult.source==="cron"?"Zamanlayıcı":"Elle çalıştırma"} · ${item.lastResult.ok?"başarılı":"başarısız"}`}`:"Kayıt yok"}</span></span>
+                      <span className="text-slate-800">{item.label}</span>
+                      <span className="block text-xs text-slate-600">{item.detail}</span>
+                      <span className="grid sm:grid-cols-3 gap-2 mt-2 text-xs text-slate-700"><span>Yapılandırma: {item.configured?"Tanımlı":"Eksik"}</span><span>Doğrulama: {item.verification===null?"Bu madde için uygulanmaz":({verified:"Doğrulandı",not_verified:"Henüz doğrulanmadı",failed:"Başarısız",unknown:"Bilinmiyor"}[item.verification])}</span><span>Son sonuç: {item.lastResult?`${when(item.lastResult.at)} · ${item.lastResult.source==="provider"?(item.lastResult.ok?"Sağlayıcı kabul etti; teslim kanıtı değil":"Sağlayıcı hatası"):`${item.lastResult.source==="cron"?"Zamanlayıcı":"Elle çalıştırma"} · ${item.lastResult.ok?"başarılı":"başarısız"}`}`:"Kayıt yok"}</span></span>
                     </span>
                   </li>
                 ))}
@@ -381,12 +381,12 @@ export default function SalesSettingsForm() {
             </section>
           )}
 
-          {data.state && <section className="rounded-xl border border-white/10 p-4 space-y-3"><h2 className="font-semibold text-white">Sipariş alımı</h2><p className="text-sm text-slate-200">{data.state.ordersPaused ? "Çevrim içi sipariş alımı durduruldu." : "Panelde sipariş alımı açık."} {data.state.accepting ? "Şu anda yeni sipariş kabul ediliyor." : "Diğer yayın koşulları nedeniyle de sipariş alımı kapalı olabilir."}</p><p className="text-xs text-slate-400">Son kayıt: {when(data.state.updatedAt)}</p>{!data.state.ordersPaused&&data.capabilities.pause&&<Button variant="danger" disabled={saving||blocked||data.state.repairRequired} onClick={()=>reviewState(true)}>Sipariş alımını durdur</Button>}{data.state.ordersPaused&&data.capabilities.resume&&<Button disabled={saving||blocked||data.state.repairRequired} onClick={()=>reviewState(false)}>Sipariş alımını yeniden aç</Button>}</section>}
-          {data.openCheckouts!==undefined&&<p className="text-sm text-slate-300">Ödeme bekleyen sipariş: {data.openCheckouts}</p>}
-          {data.settings?.values && <div className="bg-white/[0.03] ring-1 ring-white/[0.08] rounded-2xl p-5 text-sm text-slate-300 space-y-1"><p>Şu an geçerli: {formatTry(data.settings.values.unitPriceKurus,"tr")} / tohum topu (KDV dahil) · en az {formatCount(data.settings.values.minQuantity,"tr")} · KDV %{rateText(data.settings.values.vatRate)}</p><p className="text-xs text-slate-400">Teklif sürümü: {data.settings.quoteVersion}</p></div>}
+          {data.state && <section className="rounded-xl border border-slate-200 p-4 space-y-3"><h2 className="font-semibold text-slate-900">Sipariş alımı</h2><p className="text-sm text-slate-800">{data.state.ordersPaused ? "Çevrim içi sipariş alımı durduruldu." : "Panelde sipariş alımı açık."} {data.state.accepting ? "Şu anda yeni sipariş kabul ediliyor." : "Diğer yayın koşulları nedeniyle de sipariş alımı kapalı olabilir."}</p><p className="text-xs text-slate-600">Son kayıt: {when(data.state.updatedAt)}</p>{!data.state.ordersPaused&&data.capabilities.pause&&<Button variant="danger" disabled={saving||blocked||data.state.repairRequired} onClick={()=>reviewState(true)}>Sipariş alımını durdur</Button>}{data.state.ordersPaused&&data.capabilities.resume&&<Button disabled={saving||blocked||data.state.repairRequired} onClick={()=>reviewState(false)}>Sipariş alımını yeniden aç</Button>}</section>}
+          {data.openCheckouts!==undefined&&<p className="text-sm text-slate-700">Ödeme bekleyen sipariş: {data.openCheckouts}</p>}
+          {data.settings?.values && <div className="bg-white ring-1 ring-slate-200 rounded-2xl p-5 text-sm text-slate-700 space-y-1"><p>Şu an geçerli: {formatTry(data.settings.values.unitPriceKurus,"tr")} / tohum topu (KDV dahil) · en az {formatCount(data.settings.values.minQuantity,"tr")} · KDV %{rateText(data.settings.values.vatRate)}</p><p className="text-xs text-slate-600">Teklif sürümü: {data.settings.quoteVersion}</p></div>}
           {form && data.settings && data.capabilities.pricing && <fieldset disabled={saving||blocked} className="space-y-6">
-          <section className="bg-[var(--bg-surface)] border border-white/[0.06] rounded-2xl p-5 space-y-4">
-            <h2 className="font-semibold text-white text-sm">Fiyat</h2>
+          <section className="bg-white border border-white/[0.06] rounded-2xl p-5 space-y-4">
+            <h2 className="font-semibold text-slate-900 text-sm">Fiyat</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Input
                 label="Birim bedel — TL, KDV dâhil"
@@ -406,14 +406,14 @@ export default function SalesSettingsForm() {
               />
             </div>
             {preview && (
-              <p className="text-xs text-slate-400">
-                Örnek: {formatCount(preview.min, "tr")} tohum topu → <span className="text-white">{formatTry(preview.total, "tr")}</span> (içindeki KDV {formatTry(preview.vat, "tr")})
+              <p className="text-xs text-slate-600">
+                Örnek: {formatCount(preview.min, "tr")} tohum topu → <span className="text-slate-900">{formatTry(preview.total, "tr")}</span> (içindeki KDV {formatTry(preview.vat, "tr")})
               </p>
             )}
           </section>
 
-          <section className="bg-[var(--bg-surface)] border border-white/[0.06] rounded-2xl p-5 space-y-4">
-            <h2 className="font-semibold text-white text-sm">Adet</h2>
+          <section className="bg-white border border-white/[0.06] rounded-2xl p-5 space-y-4">
+            <h2 className="font-semibold text-slate-900 text-sm">Adet</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Input label="En az adet" inputMode="numeric" value={form.min} onChange={(e) => set("min", e.target.value)} error={errorFor("min")} helperText="Ana sayfadaki SSS ve hizmet kartında da görünür." />
               <Input label="En çok adet (tek siparişte)" inputMode="numeric" value={form.max} onChange={(e) => set("max", e.target.value)} error={errorFor("max")} helperText="Sahanın boş kapasitesi ayrıca denetlenir." />
@@ -427,8 +427,8 @@ export default function SalesSettingsForm() {
             />
           </section>
 
-          <section className="bg-[var(--bg-surface)] border border-white/[0.06] rounded-2xl p-5 space-y-4">
-            <h2 className="font-semibold text-white text-sm">Takvim, ödeme ve fatura</h2>
+          <section className="bg-white border border-white/[0.06] rounded-2xl p-5 space-y-4">
+            <h2 className="font-semibold text-slate-900 text-sm">Takvim, ödeme ve fatura</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Input
                 label="Hazırlık payı — gün"
@@ -460,15 +460,15 @@ export default function SalesSettingsForm() {
 
           {confirming ? (
             <div ref={reviewPanel} tabIndex={-1} role="region" aria-label="Değişiklik onayı" className="bg-amber-500/[0.06] ring-1 ring-amber-500/30 rounded-2xl p-5 space-y-4 outline-none">
-              <h2 className="text-sm font-semibold text-amber-200">Bu değişiklikler kaydedilecek</h2>
-              <ul className="text-sm text-slate-200 space-y-1">
+              <h2 className="text-sm font-semibold text-amber-800">Bu değişiklikler kaydedilecek</h2>
+              <ul className="text-sm text-slate-800 space-y-1">
                 {confirming.changes.map((c) => (
                   <li key={c.field}>
-                    <span className="text-slate-400">{FIELD_LABELS[c.field]}:</span> {valueText(c.field, c.from)} → <span className="text-white font-medium">{valueText(c.field, c.to)}</span>
+                    <span className="text-slate-600">{FIELD_LABELS[c.field]}:</span> {valueText(c.field, c.from)} → <span className="text-slate-900 font-medium">{valueText(c.field, c.to)}</span>
                   </li>
                 ))}
               </ul>
-              <ul className="text-xs text-slate-300 space-y-1 list-disc pl-5">
+              <ul className="text-xs text-slate-700 space-y-1 list-disc pl-5">
                 {consequences(confirming.changes, data.openCheckouts).map((line) => <li key={line}>{line}</li>)}
               </ul>
               <div className="flex gap-3 flex-wrap">
@@ -479,13 +479,13 @@ export default function SalesSettingsForm() {
           ) : null}
 
           {data.history && <section className="space-y-2">
-            <h2 className="font-semibold text-white text-sm">Son değişiklikler</h2>
+            <h2 className="font-semibold text-slate-900 text-sm">Son değişiklikler</h2>
             {data.history.length === 0 ? (
               <p className="text-sm text-slate-500">Bu ekrandan henüz değişiklik yapılmadı.</p>
             ) : (
-              <ul className="text-sm text-slate-300 space-y-2">
+              <ul className="text-sm text-slate-700 space-y-2">
                 {data.history.map((h) => (
-                  <li key={h.at} className="bg-white/[0.02] ring-1 ring-white/[0.06] rounded-xl px-4 py-3">
+                  <li key={h.at} className="bg-white ring-1 ring-slate-200 rounded-xl px-4 py-3">
                     <p className="text-xs text-slate-500">{when(h.at)} · {h.by ?? "—"}</p>
                     <p>
                       {h.changes.map((c) => `${FIELD_LABELS[c.field as keyof SalesSettings] ?? c.field}: ${valueText(c.field, c.from)} → ${valueText(c.field, c.to)}`).join(" · ")}

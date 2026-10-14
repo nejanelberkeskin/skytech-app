@@ -1,15 +1,7 @@
 import { forwardRef, useId, type InputHTMLAttributes, type SelectHTMLAttributes, type TextareaHTMLAttributes, type ReactNode } from "react";
 
-/* ═══════════════════════════════════════════════════════════════════════
-   Input & Textarea — Skytech Green Design System
-   ═══════════════════════════════════════════════════════════════════════
-   Glassmorphic form elements:
-     - bg-white/[0.03] arka plan, border-white/[0.08] kenarlık
-     - Focus: ring-1 ring-emerald-500, kenarlık aydınlanır
-     - Error state: ring-red-500, kırmızı alt metin
-     - Label ve helper text entegrasyonu: etiket kutuya bağlıdır (htmlFor), hata ya da
-       açıklama metni ekran okuyucuda kutuyla birlikte okunur (aria-describedby)
-   ═══════════════════════════════════════════════════════════════════════ */
+/* Input, Select, Textarea — yönetim ve kurumsal panel form alanları. Beyaz zemin, gri çerçeve, odakta marka yeşili.
+   Etiket kutuya bağlıdır (htmlFor); hata ya da açıklama metni ekran okuyucuda kutuyla okunur (aria-describedby). */
 
 /* ── Shared wrapper styles ──────────────────────────────────────────── */
 
@@ -28,14 +20,14 @@ function FieldWrapper({ label, helperText, error, required, children, className 
   return (
     <div className={className}>
       {label && (
-        <label htmlFor={fieldId} className="block text-sm font-medium text-slate-300 mb-1.5">
+        <label htmlFor={fieldId} className="block text-sm font-medium text-slate-700 mb-1.5">
           {label}
-          {required && <span className="text-emerald-500 ml-0.5">*</span>}
+          {required && <span className="text-emerald-700 ml-0.5">*</span>}
         </label>
       )}
       {children}
       {error && (
-        <p id={fieldId ? `${fieldId}-error` : undefined} className="text-xs text-red-400 mt-1.5 flex items-center gap-1">
+        <p id={fieldId ? `${fieldId}-error` : undefined} className="text-xs text-red-700 mt-1.5 flex items-center gap-1">
           <svg className="w-3.5 h-3.5 shrink-0" viewBox="0 0 20 20" fill="currentColor">
             <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-5a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0v-4.5A.75.75 0 0110 5zm0 10a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
           </svg>
@@ -76,17 +68,17 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 }
 
 const inputBase = [
-  // min-h-[44px] ensures Apple HIG 44×44px touch target minimum on all form elements
-  "w-full min-h-[44px] px-4 py-2.5 text-sm text-white",
-  "bg-white/[0.03] border border-white/[0.08] rounded-xl",
-  "placeholder:text-slate-600",
-  "transition-all duration-200",
-  "hover:bg-white/[0.05] hover:border-white/[0.12]",
-  "focus:outline-none focus:bg-white/[0.05] focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/40",
-  "disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white/[0.03]",
+  // min-h-[44px]: dokunmatik hedef en az 44 px
+  "w-full min-h-[44px] px-3.5 py-2.5 text-sm text-slate-900",
+  "bg-white border border-slate-300 rounded-lg",
+  "placeholder:text-slate-400",
+  "transition-colors duration-150",
+  "hover:border-slate-400",
+  "focus:outline-none focus:border-[#1B6B3A] focus:ring-2 focus:ring-[#1B6B3A]/20",
+  "disabled:bg-slate-50 disabled:text-slate-500 disabled:cursor-not-allowed",
 ].join(" ");
 
-const inputError = "border-red-500/40 focus:border-red-500/50 focus:ring-red-500/30";
+const inputError = "border-red-400 focus:border-red-500 focus:ring-red-500/20";
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
   ({ label, helperText, error, icon, iconRight, wrapperClassName, className = "", ...props }, ref) => {

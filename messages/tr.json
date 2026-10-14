@@ -1532,14 +1532,17 @@
       "nav": {
         "overview": "Genel Bakış",
         "certificates": "Sertifika Merkezi",
-        "payment": "Ödeme & Fatura"
+        "payment": "Ödeme & Fatura",
+        "newQuote": "Yeni teklif iste"
       },
       "title": "Kurumsal Panel",
       "account": "Kurumsal Hesap",
       "active": "Aktif",
       "home": "← Ana Sayfa",
       "logout": "Çıkış Yap",
-      "menuOpen": "Menüyü aç"
+      "menuOpen": "Menüyü aç",
+      "menu": "Menü",
+      "menuClose": "Menüyü kapat"
     },
     "payment": {
       "title": "Ödeme & Faturalandırma",
@@ -1637,9 +1640,9 @@
       "empty": "Henüz bir teklif talebiniz bulunmamaktadır.",
       "firstQuote": "İlk Teklifinizi Alın",
       "need": {
-        "orman": "Orman",
+        "orman": "Saha katılımı",
         "sertifika": "Sertifika",
-        "karbon": "Karbon"
+        "karbon": "Raporlama"
       },
       "reviewShort": "🎬 İncele",
       "payShort": "Ödeyin",
@@ -1701,16 +1704,16 @@
       },
       "need": {
         "orman": {
-          "label": "Şirket Ormanı Kurmak",
-          "desc": "Markanız adına özel bir orman alanı tahsis edilir."
+          "label": "Kurum adına saha katılımı",
+          "desc": "Seçtiğiniz Proje Uygulama Sahasında kurumunuz adına tohum topu bıraktırılır."
         },
         "sertifika": {
-          "label": "Hediye Sertifikaları",
-          "desc": "Müşterilerinize ve çalışanlarınıza dijital sertifika dağıtılır."
+          "label": "Çalışan ve müşteri sertifikaları",
+          "desc": "Katılım sertifikaları çalışanlarınız ya da müşterileriniz adına düzenlenir."
         },
         "karbon": {
-          "label": "Karbon Denkleştirme",
-          "desc": "Karbon ayak iziniz ağaçlandırma ile nötrleştirilir."
+          "label": "Sürdürülebilirlik raporlaması",
+          "desc": "Bırakma ve izleme kayıtları raporlarınızda kullanabileceğiniz biçimde paylaşılır."
         }
       },
       "success": {

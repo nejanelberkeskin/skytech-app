@@ -10,14 +10,14 @@ import { Button, Input, Textarea, Card } from "@/components/ui";
 import type { CorporateQuote, QuoteStatus } from "@/lib/types";
 
 const STATUS_META: Record<string, { label: string; badge: string; icon: string }> = {
-  PENDING:  { label: "Bekliyor",       badge: "ring-1 ring-yellow-500/50 bg-yellow-500/10 text-yellow-400", icon: "⏳" },
-  QUOTED:   { label: "Teklif Verildi", badge: "ring-1 ring-blue-500/50 bg-blue-500/10 text-blue-400", icon: "📋" },
-  PAID:     { label: "Ödendi",         badge: "ring-1 ring-emerald-500/50 bg-emerald-500/10 text-emerald-400", icon: "✅" },
-  REJECTED: { label: "Reddedildi",     badge: "ring-1 ring-red-500/50 bg-red-500/10 text-red-400", icon: "❌" },
-  EXPIRED:  { label: "Süresi Doldu",   badge: "ring-1 ring-slate-500/50 bg-slate-500/10 text-slate-400", icon: "⌛" },
+  PENDING:  { label: "Bekliyor",       badge: "ring-1 ring-yellow-500/50 bg-yellow-500/10 text-yellow-800", icon: "" },
+  QUOTED:   { label: "Teklif Verildi", badge: "ring-1 ring-blue-500/50 bg-blue-500/10 text-blue-700", icon: "" },
+  PAID:     { label: "Ödendi",         badge: "ring-1 ring-emerald-500/50 bg-emerald-500/10 text-emerald-700", icon: "" },
+  REJECTED: { label: "Reddedildi",     badge: "ring-1 ring-red-500/50 bg-red-500/10 text-red-700", icon: "" },
+  EXPIRED:  { label: "Süresi Doldu",   badge: "ring-1 ring-slate-500/50 bg-slate-500/10 text-slate-600", icon: "⌛" },
 };
 
-const FALLBACK_META = { label: "Bilinmiyor", badge: "ring-1 ring-slate-500/50 bg-slate-500/10 text-slate-400", icon: "❓" };
+const FALLBACK_META = { label: "Bilinmiyor", badge: "ring-1 ring-slate-500/50 bg-slate-500/10 text-slate-600", icon: "" };
 const normalizeStatus = (s: string): string => s?.toUpperCase() ?? "PENDING";
 const getMeta = (status: string) => STATUS_META[normalizeStatus(status)] ?? FALLBACK_META;
 
@@ -150,14 +150,13 @@ function B2BContent() {
       {/* Başlık */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-white">Kurumsal Teklifler</h1>
-          <p className="text-sm text-slate-400 mt-1">Teklif yönetimi ve fiyatlandırma merkezi</p>
+          <h1 className="text-2xl font-bold text-slate-900">Kurumsal Teklifler</h1>
+          <p className="text-sm text-slate-600 mt-1">Teklif yönetimi ve fiyatlandırma merkezi</p>
         </div>
         <div className="flex items-center gap-3">
-          <div className="bg-white/[0.04] ring-1 ring-yellow-500/30 rounded-xl px-4 py-2.5 flex items-center gap-2">
-            <span className="text-yellow-400 text-lg">⏳</span>
-            <span className="text-white font-bold">{counts.PENDING}</span>
-            <span className="text-xs text-slate-400">bekleyen</span>
+          <div className="bg-white ring-1 ring-yellow-500/30 rounded-xl px-4 py-2.5 flex items-center gap-2">
+            <span className="text-slate-900 font-bold">{counts.PENDING}</span>
+            <span className="text-xs text-slate-600">bekleyen</span>
           </div>
         </div>
       </div>
@@ -165,7 +164,7 @@ function B2BContent() {
       <Button variant="secondary" disabled={loading||actionLoading} onClick={()=>{setSelectedQuote(null);setError(null);void fetchQuotes();}}>Listeyi yenile</Button>
       {/* Bildirimler */}
       {notificationWarning && (
-        <div role="alert" className="bg-amber-500/10 ring-1 ring-amber-500/30 text-amber-200 px-4 py-3 rounded-xl text-sm flex items-start gap-3">
+        <div role="alert" className="bg-amber-500/10 ring-1 ring-amber-500/30 text-amber-800 px-4 py-3 rounded-xl text-sm flex items-start gap-3">
           <div className="flex-1 min-w-0 break-words">
             <p className="font-semibold">{notificationWarning.companyName}</p>
             <p className="text-xs mb-1">Teklif: {notificationWarning.quoteId}</p>
@@ -175,13 +174,11 @@ function B2BContent() {
         </div>
       )}
       {success && (
-        <div className="bg-emerald-500/10 ring-1 ring-emerald-500/30 text-emerald-400 px-4 py-3 rounded-xl text-sm flex items-center gap-2 animate-fade-in">
-          <span>✅</span> {success}
+        <div className="bg-emerald-500/10 ring-1 ring-emerald-500/30 text-emerald-700 px-4 py-3 rounded-xl text-sm flex items-center gap-2"> {success}
         </div>
       )}
       {error && (
-        <div role="alert" className="bg-red-500/10 ring-1 ring-red-500/30 text-red-400 px-4 py-3 rounded-xl text-sm flex items-center gap-2 animate-fade-in">
-          <span>❌</span> {error}
+        <div role="alert" className="bg-red-500/10 ring-1 ring-red-500/30 text-red-700 px-4 py-3 rounded-xl text-sm flex items-center gap-2"> {error}
         </div>
       )}
 
@@ -193,8 +190,8 @@ function B2BContent() {
             onClick={() => setActiveFilter(f)}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
               activeFilter === f
-                ? "bg-emerald-500/15 text-emerald-400 ring-1 ring-emerald-500/30"
-                : "bg-white/[0.03] text-slate-400 hover:text-white hover:bg-white/[0.06]"
+                ? "bg-emerald-500/15 text-emerald-700 ring-1 ring-emerald-500/30"
+                : "bg-white text-slate-600 hover:text-slate-900 hover:bg-slate-50"
             }`}
           >
             {f === "ALL" ? "Tümü" : (STATUS_META[f]?.label ?? f)} ({counts[f]})
@@ -209,8 +206,7 @@ function B2BContent() {
         </div>
       ) : listFailed ? null : filtered.length === 0 ? (
         <div className="text-center py-16">
-          <span className="text-4xl block mb-3">📭</span>
-          <p className="text-slate-400">Bu filtrede teklif bulunamadı.</p>
+          <p className="text-slate-600">Bu filtrede teklif bulunamadı.</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -220,18 +216,18 @@ function B2BContent() {
               <button
                 key={q.id}
                 onClick={() => openQuote(q)}
-                className={`w-full text-left bg-[var(--bg-surface)] border rounded-2xl p-5 transition-all hover:bg-white/[0.03] ${
+                className={`w-full text-left bg-white border rounded-2xl p-5 transition-all hover:bg-white/[0.03] ${
                   selectedQuote?.id === q.id
                     ? "border-emerald-500/40 ring-1 ring-emerald-500/20"
-                    : "border-white/[0.06] hover:border-white/[0.1]"
+                    : "border-slate-200 hover:border-slate-200"
                 }`}
               >
                 <div className="flex flex-wrap items-start justify-between gap-4">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-3 mb-2">
-                      <h3 className="font-semibold text-white truncate">{q.company_name}</h3>
+                      <h3 className="font-semibold text-slate-900 truncate">{q.company_name}</h3>
                       <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium ${meta.badge}`}>
-                        {meta.icon} {meta.label}
+                        {meta.label}
                       </span>
                     </div>
                     <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-500">
@@ -243,7 +239,7 @@ function B2BContent() {
                     {q.need_types && q.need_types.length > 0 && (
                       <div className="flex gap-1.5 mt-2">
                         {q.need_types.map((n) => (
-                          <span key={n} className="text-xs px-2 py-0.5 bg-white/[0.05] text-slate-400 rounded-md border border-white/[0.06]">
+                          <span key={n} className="text-xs px-2 py-0.5 bg-white text-slate-600 rounded-md border border-slate-200">
                             {NEED_LABELS[n] || n}
                           </span>
                         ))}
@@ -252,13 +248,13 @@ function B2BContent() {
                   </div>
                   <div className="text-right shrink-0">
                     {q.approved_price ? (
-                      <p className="text-lg font-bold text-emerald-400">
+                      <p className="text-lg font-bold text-emerald-700">
                         {Number(q.approved_price).toLocaleString("tr-TR", { style: "currency", currency: "TRY" })}
                       </p>
                     ) : (
-                      <p className="text-sm text-slate-600">Fiyat yok</p>
+                      <p className="text-sm text-slate-500">Fiyat yok</p>
                     )}
-                    <p className="text-xs text-slate-600 mt-1">
+                    <p className="text-xs text-slate-500 mt-1">
                       {new Date(q.created_at).toLocaleDateString("tr-TR")}
                     </p>
                   </div>
@@ -273,20 +269,20 @@ function B2BContent() {
       {selectedQuote && (
         <QuoteDialog busy={actionLoading} onClose={()=>setSelectedQuote(null)}>
             {/* Modal başlık */}
-            <div className="px-6 py-4 border-b border-white/[0.06] flex items-center justify-between">
+            <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
               <div>
-                <h2 className="font-bold text-white text-lg">{selectedQuote.company_name}</h2>
-                <p className="text-xs text-slate-400">
+                <h2 className="font-bold text-slate-900 text-lg">{selectedQuote.company_name}</h2>
+                <p className="text-xs text-slate-600">
                   Teklif #{selectedQuote.id.slice(0, 8)} — {new Date(selectedQuote.created_at).toLocaleDateString("tr-TR")}
                 </p>
               </div>
-              <button disabled={actionLoading} aria-label="Kapat" onClick={() => setSelectedQuote(null)} className="text-slate-500 hover:text-white text-xl transition-colors">
+              <button disabled={actionLoading} aria-label="Kapat" onClick={() => setSelectedQuote(null)} className="text-slate-500 hover:text-slate-900 text-xl transition-colors">
                 &times;
               </button>
             </div>
 
             <div className="p-6 space-y-6">
-              {error&&<p role="alert" className="text-red-200 text-sm">{error}</p>}
+              {error&&<p role="alert" className="text-red-700 text-sm">{error}</p>}
               {blocked&&<Button variant="secondary" disabled={actionLoading} onClick={()=>{setSelectedQuote(null);void fetchQuotes();}}>Güncel teklifleri yükle</Button>}
               {/* Firma bilgileri */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -303,13 +299,13 @@ function B2BContent() {
                 <p className="text-xs text-slate-500 mb-2 font-medium">İhtiyaçlar</p>
                 <div className="flex gap-2 flex-wrap">
                   {selectedQuote.need_types?.map((n) => (
-                    <span key={n} className="px-3 py-1.5 bg-emerald-500/10 text-emerald-400 ring-1 ring-emerald-500/20 rounded-lg text-sm font-medium">
+                    <span key={n} className="px-3 py-1.5 bg-emerald-500/10 text-emerald-700 ring-1 ring-emerald-500/20 rounded-lg text-sm font-medium">
                       {NEED_LABELS[n] || n}
                     </span>
                   ))}
                 </div>
                 {selectedQuote.need_details && (
-                  <p className="text-sm text-slate-400 mt-2">{selectedQuote.need_details}</p>
+                  <p className="text-sm text-slate-600 mt-2">{selectedQuote.need_details}</p>
                 )}
               </div>
 
@@ -322,14 +318,14 @@ function B2BContent() {
               {selectedQuote.notes && (
                 <div>
                   <p className="text-xs text-slate-500 mb-1">Ek Notlar</p>
-                  <p className="text-sm text-slate-300 bg-white/[0.03] border border-white/[0.06] rounded-lg p-3">{selectedQuote.notes}</p>
+                  <p className="text-sm text-slate-700 bg-white border border-slate-200 rounded-lg p-3">{selectedQuote.notes}</p>
                 </div>
               )}
 
               {/* Daha önce fiyatlanmış teklif */}
               {normalizeStatus(selectedQuote.status) !== "PENDING" && selectedQuote.approved_price && (
                 <div className="bg-emerald-500/[0.05] ring-1 ring-emerald-500/20 rounded-xl p-4 space-y-2">
-                  <p className="text-xs text-emerald-400 font-medium">Verilen Teklif</p>
+                  <p className="text-xs text-emerald-700 font-medium">Verilen Teklif</p>
                   <div className="grid grid-cols-3 gap-3">
                     <InfoField label="Toplam Fiyat" value={`${Number(selectedQuote.approved_price).toLocaleString("tr-TR")} TL`} />
                     <InfoField label="Tohum Sayısı" value={`${selectedQuote.approved_seed_count?.toLocaleString("tr-TR")} adet`} />
@@ -340,7 +336,7 @@ function B2BContent() {
                     } />
                   </div>
                   {selectedQuote.admin_note && (
-                    <p className="text-sm text-slate-400 mt-2">Not: {selectedQuote.admin_note}</p>
+                    <p className="text-sm text-slate-600 mt-2">Not: {selectedQuote.admin_note}</p>
                   )}
                 </div>
               )}
@@ -348,7 +344,7 @@ function B2BContent() {
               {/* Onay / Red formu (sadece PENDING) */}
               {normalizeStatus(selectedQuote.status) === "PENDING" && (
                 <Card variant="solid" padding="md" className="space-y-4">
-                  <h3 className="font-semibold text-white text-sm">Teklif Fiyatlandırma</h3>
+                  <h3 className="font-semibold text-slate-900 text-sm">Teklif Fiyatlandırma</h3>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <Input
@@ -371,8 +367,8 @@ function B2BContent() {
 
                   {pricePerSeed && (
                     <div className="bg-emerald-500/[0.05] ring-1 ring-emerald-500/20 rounded-lg px-4 py-2.5 text-center">
-                      <span className="text-xs text-slate-400">Birim Fiyat: </span>
-                      <span className="text-emerald-400 font-bold">{pricePerSeed} TL / tohum</span>
+                      <span className="text-xs text-slate-600">Birim Fiyat: </span>
+                      <span className="text-emerald-700 font-bold">{pricePerSeed} TL / tohum</span>
                     </div>
                   )}
 
@@ -415,7 +411,7 @@ function InfoField({ label, value }: { label: string; value: string }) {
   return (
     <div>
       <p className="text-xs text-slate-500 mb-0.5">{label}</p>
-      <p className="text-sm text-white font-medium">{value}</p>
+      <p className="text-sm text-slate-900 font-medium">{value}</p>
     </div>
   );
 }
@@ -423,5 +419,5 @@ function InfoField({ label, value }: { label: string; value: string }) {
 function QuoteDialog({busy,onClose,children}:{busy:boolean;onClose:()=>void;children:React.ReactNode}) {
  const ref=useRef<HTMLDialogElement>(null);
  useEffect(()=>{const el=ref.current,previous=document.activeElement instanceof HTMLElement?document.activeElement:null;el?.showModal();return()=>{el?.close();if(previous?.isConnected)previous.focus();};},[]);
- return <dialog ref={ref} aria-label="Kurumsal teklif" aria-busy={busy} onKeyDown={containDialogTab} onCancel={e=>{if(busy)e.preventDefault();else onClose();}} className="m-auto w-[calc(100%-1rem)] max-w-2xl max-h-[90dvh] overflow-y-auto rounded-2xl border border-white/15 bg-[#0b1410] text-white p-0 backdrop:bg-black/70">{children}</dialog>;
+ return <dialog ref={ref} aria-label="Kurumsal teklif" aria-busy={busy} onKeyDown={containDialogTab} onCancel={e=>{if(busy)e.preventDefault();else onClose();}} className="m-auto w-[calc(100%-1rem)] max-w-2xl max-h-[90dvh] overflow-y-auto rounded-2xl border border-white/15 bg-white text-white p-0 backdrop:bg-slate-900/40">{children}</dialog>;
 }

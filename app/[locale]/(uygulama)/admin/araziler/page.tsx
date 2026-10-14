@@ -194,18 +194,18 @@ function payloadFromForm(f: SiteForm) {
 function StatusBadge({ land }: { land: Land }) {
   if (!land.isPublic) {
     return (
-      <span className="text-xs font-medium px-2.5 py-1 rounded-full ring-1 ring-orange-500/40 bg-orange-500/10 text-orange-400">
+      <span className="text-xs font-medium px-2.5 py-1 rounded-full ring-1 ring-orange-500/40 bg-orange-500/10 text-orange-700">
         Yayında değil
       </span>
     );
   }
   const tone: Record<LandStatus, string> = {
-    open: "ring-emerald-500/40 bg-emerald-500/10 text-emerald-400",
-    full: "ring-amber-500/40 bg-amber-500/10 text-amber-400",
-    scheduled: "ring-sky-500/40 bg-sky-500/10 text-sky-300",
-    seeded: "ring-lime-500/40 bg-lime-500/10 text-lime-300",
-    monitoring: "ring-violet-500/40 bg-violet-500/10 text-violet-300",
-    closed: "ring-slate-500/40 bg-slate-500/10 text-slate-400",
+    open: "ring-emerald-500/40 bg-emerald-500/10 text-emerald-700",
+    full: "ring-amber-500/40 bg-amber-500/10 text-amber-800",
+    scheduled: "ring-sky-500/40 bg-sky-500/10 text-sky-700",
+    seeded: "ring-lime-500/40 bg-lime-500/10 text-lime-700",
+    monitoring: "ring-violet-500/40 bg-violet-500/10 text-violet-700",
+    closed: "ring-slate-500/40 bg-slate-500/10 text-slate-600",
   };
   return (
     <span className={`text-xs font-medium px-2.5 py-1 rounded-full ring-1 ${tone[land.status]}`}>
@@ -291,8 +291,8 @@ function SahalarContent() {
       {/* Başlık */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-white">Proje Uygulama Sahaları</h1>
-          <p className="text-sm text-slate-400 mt-1">
+          <h1 className="text-2xl font-bold text-slate-900">Proje Uygulama Sahaları</h1>
+          <p className="text-sm text-slate-600 mt-1">
             Vitrindeki saha kartlarını ve saha sayfalarını buradan yönetirsiniz. Kapasite yalnız bu ekranda görünür.
           </p>
         </div>
@@ -302,46 +302,45 @@ function SahalarContent() {
         <Button variant="secondary" disabled={saving || loading} onClick={reload}>Listeyi yenile</Button>
       </div>
 
-      {data && <p className="text-sm text-slate-300">{data.scope.kind === "all" ? "Kapsam: tüm sahalar" : `Kapsam: yetkili olduğunuz ${data.scope.siteIds.length} saha`}</p>}
-      {(blocked || needsVerification) && <div className="rounded-xl border border-amber-400/30 p-4 text-sm text-amber-100 space-y-3">
+      {data && <p className="text-sm text-slate-700">{data.scope.kind === "all" ? "Kapsam: tüm sahalar" : `Kapsam: yetkili olduğunuz ${data.scope.siteIds.length} saha`}</p>}
+      {(blocked || needsVerification) && <div className="rounded-xl border border-amber-400/30 p-4 text-sm text-amber-800 space-y-3">
         <p>{blocked ? "İşlem yeniden gönderilmeyecek. Güncel kayıtları yüklemek için listeyi yenileyin." : "Yayın ve kapasite değişiklikleri için yeniden doğrulama gerekir."}</p>
         {needsVerification && <><Link href="/admin/guvenlik" target="_blank" rel="noopener noreferrer" className="underline">Hesap güvenliğini aç (yeni sekme)</Link><p>Doğrulamadan sonra listeyi yenileyip işlemi yeniden seçin.</p></>}
       </div>}
-      {success && <p role="status" className="text-emerald-200">{success}</p>}
-      {warnings.map((w,i) => <p role="alert" key={i} className="text-amber-100">{w.message} İşlemi tekrar göndermeyin.</p>)}
-      {error && !modalMode && <p role="alert" className="text-red-200">{error}</p>}
+      {success && <p role="status" className="text-emerald-800">{success}</p>}
+      {warnings.map((w,i) => <p role="alert" key={i} className="text-amber-800">{w.message} İşlemi tekrar göndermeyin.</p>)}
+      {error && !modalMode && <p role="alert" className="text-red-700">{error}</p>}
       {/* Özet */}
-      {data && <div className="grid md:grid-cols-4 gap-5">
-        <CardStat icon="🗺️" label="Yayındaki Saha" value={fmt(published.length)} sub={`${fmt(openCount)} katılıma açık`} />
-        <CardStat icon="📐" label="Toplam Alan" value={totalHectares.toLocaleString("tr-TR", { maximumFractionDigits: 2 })} sub="hektar (yayındaki sahalar)" />
-        <CardStat icon="🌱" label="Bırakılan Tohum Topu" value={fmt(totalFilled)} sub="görüntüleme kapsamındaki sahalar" />
-        <CardStat icon="⚠️" label="Eksik Bilgi" value={fmt(missingInfo)} sub="hektarı ya da türü girilmemiş" />
+      {data && <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
+        <CardStat icon="" label="Yayındaki Saha" value={fmt(published.length)} sub={`${fmt(openCount)} katılıma açık`} />
+        <CardStat icon="" label="Toplam Alan" value={totalHectares.toLocaleString("tr-TR", { maximumFractionDigits: 2 })} sub="hektar (yayındaki sahalar)" />
+        <CardStat icon="" label="Bırakılan Tohum Topu" value={fmt(totalFilled)} sub="görüntüleme kapsamındaki sahalar" />
+        <CardStat icon="" label="Eksik Bilgi" value={fmt(missingInfo)} sub="hektarı ya da türü girilmemiş" />
       </div>}
 
       {loadError && (
-        <div role="alert" className="p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-sm text-red-400">{loadError}</div>
+        <div role="alert" className="p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-sm text-red-700">{loadError}</div>
       )}
 
       {/* Saha tablosu */}
       {loading ? (
         <div className="flex justify-center py-16">
-          <div className="w-8 h-8 border-2 border-white/[0.08] border-t-emerald-500 rounded-full animate-spin" />
+          <div className="w-8 h-8 border-2 border-slate-200 border-t-emerald-500 rounded-full animate-spin" />
         </div>
       ) : data ? (
-        <div className="bg-[var(--bg-surface)] border border-white/[0.06] rounded-2xl overflow-hidden">
-          <div className="px-5 py-4 border-b border-white/[0.06] flex items-center justify-between">
-            <h2 className="font-semibold text-white text-sm">Tüm Sahalar</h2>
+        <div className="bg-white border border-white/[0.06] rounded-2xl overflow-hidden">
+          <div className="px-5 py-4 border-b border-slate-200 flex items-center justify-between">
+            <h2 className="font-semibold text-slate-900 text-sm">Tüm Sahalar</h2>
             <span className="text-xs text-slate-500">{lands.length} saha</span>
           </div>
 
           {lands.length === 0 ? (
             <div className="p-12 text-center">
-              <span className="text-4xl block mb-3">🌿</span>
-              <p className="text-slate-400 mb-4">Henüz saha eklenmemiş.</p>
+              <p className="text-slate-600 mb-4">Henüz saha eklenmemiş.</p>
               {data.capabilities.create && <Button variant="primary" disabled={blocked} onClick={openAdd}>İlk Sahayı Ekle</Button>}
             </div>
           ) : (
-            <div className="divide-y divide-white/[0.04]">
+            <div className="divide-y divide-slate-200">
               {lands.map((l) => {
                 const used = l.capacity.filled + l.capacity.reserved;
                 const pct = l.capacity.total > 0 ? Math.round((used / l.capacity.total) * 100) : 0;
@@ -353,16 +352,16 @@ function SahalarContent() {
                     {/* Saha */}
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-2">
-                        <p className="text-white font-medium break-words">{l.name}</p>
+                        <p className="text-slate-900 font-medium break-words">{l.name}</p>
                         <StatusBadge land={l} />
                       </div>
-                      {place && <p className="text-xs text-slate-500 mt-1">📍 {place}</p>}
+                      {place && <p className="text-xs text-slate-500 mt-1">{place}</p>}
                       {l.slug && (
                         <a
                           href={`/sahalar/${l.slug}`}
                           target="_blank"
                           rel="noopener"
-                          className="text-xs text-emerald-400/80 hover:text-emerald-300 mt-1 inline-block break-all"
+                          className="text-xs text-emerald-700 hover:text-emerald-700 mt-1 inline-block break-all"
                         >
                           /sahalar/{l.slug} ↗
                         </a>
@@ -370,28 +369,28 @@ function SahalarContent() {
                     </div>
 
                     {/* Vitrin bilgileri */}
-                    <div className="text-xs text-slate-400 space-y-1 min-w-0">
+                    <div className="text-xs text-slate-600 space-y-1 min-w-0">
                       <p>
                         <span className="text-slate-500">Alan:</span>{" "}
                         {ha !== null ? (
-                          <span className="text-slate-200">{ha.toLocaleString("tr-TR", { maximumFractionDigits: 2 })} hektar</span>
+                          <span className="text-slate-800">{ha.toLocaleString("tr-TR", { maximumFractionDigits: 2 })} hektar</span>
                         ) : (
-                          <span className="text-amber-400">girilmemiş</span>
+                          <span className="text-amber-800">girilmemiş</span>
                         )}
                         {l.isFireAffected && (
-                          <span className="ml-2 text-orange-300">🔥 Yangın Sahası{l.fireYear ? ` · ${l.fireYear}` : ""}</span>
+                          <span className="ml-2 text-orange-700">Yangın Sahası{l.fireYear ? ` · ${l.fireYear}` : ""}</span>
                         )}
                       </p>
                       <p>
                         <span className="text-slate-500">Çalışma:</span>{" "}
-                        <span className="text-slate-200">{WORK_TYPE_LABELS[l.workType ?? "ormanlastirma_genclestirme"]}</span>
+                        <span className="text-slate-800">{WORK_TYPE_LABELS[l.workType ?? "ormanlastirma_genclestirme"]}</span>
                       </p>
                       <p className="break-words">
                         <span className="text-slate-500">Tür:</span>{" "}
                         {speciesList.length ? (
-                          <span className="text-slate-200">{speciesList.join(", ")}</span>
+                          <span className="text-slate-800">{speciesList.join(", ")}</span>
                         ) : (
-                          <span className="text-amber-400">girilmemiş</span>
+                          <span className="text-amber-800">girilmemiş</span>
                         )}
                       </p>
                     </div>
@@ -399,13 +398,13 @@ function SahalarContent() {
                     {/* Kapasite (yalnız panel) */}
                     <div className="min-w-0">
                       <div className="flex items-center gap-3">
-                        <div className="flex-1 h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
+                        <div className="flex-1 h-1.5 bg-white rounded-full overflow-hidden">
                           <div
                             className={`h-full rounded-full transition-all ${pct >= 90 ? "bg-amber-400" : "bg-emerald-500"}`}
                             style={{ width: `${Math.min(pct, 100)}%` }}
                           />
                         </div>
-                        <span className="text-xs text-slate-400 shrink-0">%{pct}</span>
+                        <span className="text-xs text-slate-600 shrink-0">%{pct}</span>
                       </div>
                       <p className="text-xs text-slate-500 mt-1.5">
                         {fmt(l.capacity.filled)} bırakılan + {fmt(l.capacity.reserved)} ayrılan / {fmt(l.capacity.total)}
@@ -417,7 +416,7 @@ function SahalarContent() {
                       {(l.capabilities.edit || l.capabilities.capacity || l.capabilities.publish) && <button disabled={saving || blocked}
 
                         onClick={() => openEdit(l)}
-                        className="text-xs text-slate-300 hover:text-white transition-colors px-3 py-2 rounded-lg hover:bg-white/[0.06] border border-white/[0.06]"
+                        className="text-xs text-slate-700 hover:text-slate-900 transition-colors px-3 py-2 rounded-lg hover:bg-slate-50 border border-slate-200"
                       >
                         Düzenle
                       </button>}
@@ -425,15 +424,15 @@ function SahalarContent() {
                         onClick={() => togglePublished(l)}
                         className={`text-xs transition-colors px-3 py-2 rounded-lg border ${
                           l.isPublic
-                            ? "text-orange-400 border-orange-500/20 hover:bg-orange-500/10"
-                            : "text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/10"
+                            ? "text-orange-700 border-orange-500/20 hover:bg-orange-500/10"
+                            : "text-emerald-700 border-emerald-500/20 hover:bg-emerald-500/10"
                         }`}
                       >
                         {l.isPublic ? "Yayından al" : "Yayına al"}
                       </button>}
                       {data.capabilities.delete && <button disabled={saving || blocked}
                         onClick={() => openDelete(l)}
-                        className="text-xs text-red-400/70 hover:text-red-400 transition-colors px-3 py-2 rounded-lg hover:bg-red-500/10 border border-red-500/[0.15]"
+                        className="text-xs text-red-700 hover:text-red-700 transition-colors px-3 py-2 rounded-lg hover:bg-red-500/10 border border-red-500/[0.15]"
                       >
                         Sil
                       </button>}
@@ -462,7 +461,7 @@ function SahalarContent() {
         />
       )}
 
-      {modalMode === "publish" && selectedLand && <SiteDialog title="Yayın durumunu değiştir" busy={saving} onClose={closeModal}><h2 className="font-semibold text-white">{selectedLand.name}</h2><p className="text-slate-300 my-4">{selectedLand.isPublic ? "Saha yayından alınacak ve yeni sipariş kabulü duracak." : "Saha yayına alınacak. Katılıma açık evredeyse yeni sipariş kabul edilecek."}</p>{error && <p role="alert" className="text-red-200">{error}</p>}{blocked && <Recovery onReload={reload} />}<div className="flex gap-3 mt-4"><Button disabled={saving} onClick={closeModal} variant="ghost">Vazgeç</Button><Button disabled={saving || blocked} onClick={() => void mutate("PUT", { id: selectedLand.id, maintenance: selectedLand.isPublic })}>Onayla</Button></div></SiteDialog>}
+      {modalMode === "publish" && selectedLand && <SiteDialog title="Yayın durumunu değiştir" busy={saving} onClose={closeModal}><h2 className="font-semibold text-slate-900">{selectedLand.name}</h2><p className="text-slate-700 my-4">{selectedLand.isPublic ? "Saha yayından alınacak ve yeni sipariş kabulü duracak." : "Saha yayına alınacak. Katılıma açık evredeyse yeni sipariş kabul edilecek."}</p>{error && <p role="alert" className="text-red-700">{error}</p>}{blocked && <Recovery onReload={reload} />}<div className="flex gap-3 mt-4"><Button disabled={saving} onClick={closeModal} variant="ghost">Vazgeç</Button><Button disabled={saving || blocked} onClick={() => void mutate("PUT", { id: selectedLand.id, maintenance: selectedLand.isPublic })}>Onayla</Button></div></SiteDialog>}
       {modalMode === "delete" && selectedLand && (
         <DeleteModal land={selectedLand} onConfirm={handleDelete} onClose={closeModal} saving={saving} error={error} blocked={blocked} onReload={reload} />
       )}
@@ -503,10 +502,10 @@ function SiteModal({
 
   return (
     <SiteDialog title={mode === "add" ? "Yeni Saha Ekle" : "Sahayı Düzenle"} busy={saving} onClose={onClose}>
-        <h2 id="site-modal-title" className="text-lg font-bold text-white mb-1">
+        <h2 id="site-modal-title" className="text-lg font-bold text-slate-900 mb-1">
           {mode === "add" ? "Yeni Saha Ekle" : "Sahayı Düzenle"}
         </h2>
-        <p className="text-sm text-slate-400 mb-6">
+        <p className="text-sm text-slate-600 mb-6">
           Buradaki bilgiler vitrindeki saha kartında ve saha sayfasında görünür. Boş bıraktığınız alan vitrinde gizlenir.
         </p>
 
@@ -600,7 +599,7 @@ function SiteModal({
             </div>
 
             <div>
-              <p className="block text-sm font-medium text-slate-300 mb-1.5">Sahaya bırakılan tür(ler)</p>
+              <p className="block text-sm font-medium text-slate-700 mb-1.5">Sahaya bırakılan tür(ler)</p>
               {species.length === 0 ? (
                 <p className="text-xs text-slate-500">Katalogda tür bulunamadı; önce Katalog ekranından tür ekleyin.</p>
               ) : (
@@ -616,8 +615,8 @@ function SiteModal({
                         onClick={() => toggleSpecies(s.slug)}
                         className={`px-3 py-2 rounded-xl text-xs font-medium border transition-colors ${
                           active
-                            ? "bg-emerald-500/15 border-emerald-500/40 text-emerald-300"
-                            : "bg-white/[0.03] border-white/[0.08] text-slate-300 hover:border-white/[0.16]"
+                            ? "bg-emerald-500/15 border-emerald-500/40 text-emerald-700"
+                            : "bg-white border-slate-200 text-slate-700 hover:border-slate-200"
                         }`}
                       >
                         {s.name}
@@ -628,7 +627,7 @@ function SiteModal({
                 </div>
               )}
               {fieldErrors.species_slugs ? (
-                <p className="text-xs text-red-400 mt-1.5">{fieldErrors.species_slugs}</p>
+                <p className="text-xs text-red-700 mt-1.5">{fieldErrors.species_slugs}</p>
               ) : (
                 <p className="text-xs text-slate-500 mt-1.5">
                   Müşteri tür seçmez; burada işaretlediğiniz tür(ler) saha kartında ve sipariş sırasında bilgi olarak gösterilir.
@@ -662,8 +661,8 @@ function SiteModal({
           </Section>
 
           <Section disabled={!caps.edit && !caps.publish} title="Bırakma izni">
-            <p className="text-xs text-slate-400 mb-3">
-              Durum: <strong className="text-slate-200">{original ? PERMIT_LABELS[original.permit.status] : PERMIT_LABELS.missing}</strong>
+            <p className="text-xs text-slate-600 mb-3">
+              Durum: <strong className="text-slate-800">{original ? PERMIT_LABELS[original.permit.status] : PERMIT_LABELS.missing}</strong>
               {original?.permit.verifiedAt ? ` · doğrulama ${new Date(original.permit.verifiedAt).toLocaleDateString("tr-TR")}` : ""}.
               İzin bilgisini girmek onay değildir; yetkili kişi belgeyi inceleyip ayrıca “Doğrulandı” seçer. Bilgi değişirse doğrulama düşer.
               Doğrulanmış ve geçerliliği bırakma son tarihini kapsayan izni olmayan sahada sipariş açılmaz.
@@ -803,16 +802,16 @@ function SiteModal({
 
           {/* 6 · Haber ve videolar */}
           <Section disabled={!caps.edit} title="Haberler ve videolar">
-            <p className="text-sm text-slate-400">
+            <p className="text-sm text-slate-600">
               Sahayla ilgili haberler ve videolar (ör. yangının haberleri). Saha sayfasında kart olarak gösterilir, bağlantı yeni sekmede açılır.
             </p>
-            {fieldErrors.media_links && <p role="alert" className="text-sm text-red-400">{fieldErrors.media_links}</p>}
+            {fieldErrors.media_links && <p role="alert" className="text-sm text-red-700">{fieldErrors.media_links}</p>}
             {form.media_links.map((m, i) => {
               const patch = (p: Partial<MediaRow>) =>
                 set("media_links", form.media_links.map((x, j) => (j === i ? { ...x, ...p } : x)));
               const err = (k: string) => fieldErrors[`media_links.${i}.${k}`];
               return (
-                <div key={i} className="grid gap-3 rounded-xl border border-white/10 p-4 sm:grid-cols-2">
+                <div key={i} className="grid gap-3 rounded-xl border border-slate-200 p-4 sm:grid-cols-2">
                   <Select label="Tür" value={m.kind} onChange={(e) => patch({ kind: e.target.value as MediaKind })}>
                     <option value="news">Haber</option>
                     <option value="video">Video</option>
@@ -838,7 +837,7 @@ function SiteModal({
         </fieldset>
 
         {error && (
-          <div role="alert" className="mt-6 p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-sm text-red-400">
+          <div role="alert" className="mt-6 p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-sm text-red-700">
             {error}
           </div>
         )}
@@ -859,7 +858,7 @@ function SiteModal({
 function Section({ title, hint, children, disabled }: { title: string; hint?: string; children: React.ReactNode; disabled?: boolean }) {
   return (
     <fieldset disabled={disabled}>
-      <h3 className="text-xs font-bold uppercase tracking-[0.16em] text-emerald-400/80 mb-1">{title}</h3>
+      <h3 className="text-xs font-bold uppercase tracking-[0.16em] text-emerald-700 mb-1">{title}</h3>
       {hint && <p className="text-xs text-slate-500 mb-3">{hint}</p>}
       <div className={`space-y-4 ${hint ? "" : "mt-3"}`}>{children}</div>
     </fieldset>
@@ -879,9 +878,9 @@ function Toggle({
   onChange: (v: boolean) => void;
 }) {
   return (
-    <div className="flex items-center justify-between gap-4 py-3 px-4 bg-white/[0.03] border border-white/[0.06] rounded-xl">
+    <div className="flex items-center justify-between gap-4 py-3 px-4 bg-white border border-slate-200 rounded-xl">
       <div>
-        <p className="text-sm font-medium text-white">{label}</p>
+        <p className="text-sm font-medium text-slate-900">{label}</p>
         <p className="text-xs text-slate-500 mt-0.5">{desc}</p>
       </div>
       <button
@@ -892,7 +891,7 @@ function Toggle({
         aria-label={label}
         onClick={() => onChange(!checked)}
         className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out ${
-          checked ? "bg-emerald-500" : "bg-slate-700"
+          checked ? "bg-emerald-500" : "bg-slate-100"
         }`}
       >
         <span
@@ -925,17 +924,15 @@ function DeleteModal({
   return (
     <SiteDialog title="Sahayı Sil" busy={saving} onClose={onClose}>
         <div className="flex items-start gap-4">
-          <span className="text-3xl shrink-0">🗑️</span>
           <div>
-            <h2 className="text-lg font-bold text-white">Sahayı Sil</h2>
-            <p className="text-sm text-slate-400 mt-1">
-              <span className="text-white font-medium">{land.name}</span> kaydını kalıcı olarak silmek istediğinizden emin misiniz?
+            <h2 className="text-lg font-bold text-slate-900">Sahayı Sil</h2>
+            <p className="text-sm text-slate-600 mt-1">
+              <span className="text-slate-900 font-medium">{land.name}</span> kaydını kalıcı olarak silmek istediğinizden emin misiniz?
               Saha sayfası da yayından kalkar.
             </p>
 
             {hasRecords && (
-              <div className="mt-3 p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-xs text-red-400">
-                ⚠️ Bu sahada {fmt(land.capacity.filled)} bırakılmış ve {fmt(land.capacity.reserved)} ayrılmış tohum topu kaydı var; silinemez.
+              <div className="mt-3 p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-xs text-red-700">Bu sahada {fmt(land.capacity.filled)} bırakılmış ve {fmt(land.capacity.reserved)} ayrılmış tohum topu kaydı var; silinemez.
                 Bunun yerine “Yayından al” düğmesini kullanın.
               </div>
             )}
@@ -943,7 +940,7 @@ function DeleteModal({
         </div>
 
         {error && (
-          <div role="alert" className="mt-4 p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-sm text-red-400">
+          <div role="alert" className="mt-4 p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-sm text-red-700">
             {error}
           </div>
         )}
@@ -971,9 +968,9 @@ export default function SahalarPage() {
   );
 }
 
-function Recovery({ onReload }: { onReload: () => void }) { return <div className="space-y-3 border border-amber-400/30 rounded-xl p-3 my-4 text-sm text-amber-100"><p>İşlem otomatik tekrarlanmayacak. Yeniden doğrulama gerekiyorsa hesap güvenliğini açın; ardından güncel kayıtları yükleyip işlemi yeniden seçin.</p><Link href="/admin/guvenlik" target="_blank" rel="noopener noreferrer" className="underline">Hesap güvenliği (yeni sekme)</Link><Button variant="secondary" onClick={onReload}>Güncel kayıtları yükle</Button></div>; }
+function Recovery({ onReload }: { onReload: () => void }) { return <div className="space-y-3 border border-amber-400/30 rounded-xl p-3 my-4 text-sm text-amber-800"><p>İşlem otomatik tekrarlanmayacak. Yeniden doğrulama gerekiyorsa hesap güvenliğini açın; ardından güncel kayıtları yükleyip işlemi yeniden seçin.</p><Link href="/admin/guvenlik" target="_blank" rel="noopener noreferrer" className="underline">Hesap güvenliği (yeni sekme)</Link><Button variant="secondary" onClick={onReload}>Güncel kayıtları yükle</Button></div>; }
 function SiteDialog({ title, busy, onClose, children }: { title: string; busy: boolean; onClose: () => void; children: React.ReactNode }) {
  const ref = useRef<HTMLDialogElement>(null);
  useEffect(() => { const el=ref.current, previous=document.activeElement instanceof HTMLElement ? document.activeElement : null; el?.showModal(); return () => { el?.close(); if(previous?.isConnected)previous.focus(); }; }, []);
- return <dialog ref={ref} aria-label={title} aria-busy={busy} onKeyDown={containDialogTab} onCancel={e => { if(busy)e.preventDefault();else onClose(); }} className="m-auto w-[calc(100%-1rem)] max-w-3xl max-h-[92dvh] overflow-y-auto rounded-2xl bg-[#0b1410] border border-white/15 p-4 sm:p-6 text-white backdrop:bg-black/70">{children}</dialog>;
+ return <dialog ref={ref} aria-label={title} aria-busy={busy} onKeyDown={containDialogTab} onCancel={e => { if(busy)e.preventDefault();else onClose(); }} className="m-auto w-[calc(100%-1rem)] max-w-3xl max-h-[92dvh] overflow-y-auto rounded-2xl bg-white border border-white/15 p-4 sm:p-6 text-white backdrop:bg-slate-900/40">{children}</dialog>;
 }

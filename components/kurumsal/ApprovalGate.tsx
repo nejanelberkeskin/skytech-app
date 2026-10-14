@@ -49,19 +49,19 @@ export default function ApprovalGate({ children }: { children: ReactNode }) {
   }
   const box = (title: string, body: ReactNode, action?: ReactNode) => (
     <div className="flex min-h-[60vh] items-center justify-center p-6">
-      <div role="status" className="liquid-glass max-w-lg rounded-3xl p-8 text-center space-y-3">
-        <h1 className="text-xl font-semibold text-white">{title}</h1>
-        <div className="text-sm leading-relaxed text-emerald-100/70">{body}</div>
+      <div role="status" className="bg-white border border-slate-200 max-w-lg rounded-xl p-6 sm:p-8 text-center space-y-3">
+        <h1 className="text-xl font-semibold text-slate-900">{title}</h1>
+        <div className="text-sm leading-relaxed text-slate-500">{body}</div>
         {action}
       </div>
     </div>
   );
   const link = (href: string, label: string) => (
-    <Link href={href} className="inline-block mt-3 rounded-2xl glass-btn px-5 py-3 text-sm font-medium text-white">{label}</Link>
+    <Link href={href} className="inline-block mt-3 rounded-lg bg-[#1B6B3A] hover:bg-[#165c31] px-5 py-3 text-sm font-medium text-white">{label}</Link>
   );
   if (state.kind === "pending") return box(t("pending.title"), t("pending.body", { company: state.company }));
   if (state.kind === "rejected")
-    return box(t("rejected.title"), <>{t("rejected.body")}{state.note && <p className="mt-2 text-emerald-100/90">{state.note}</p>}</>);
+    return box(t("rejected.title"), <>{t("rejected.body")}{state.note && <p className="mt-2 text-slate-500">{state.note}</p>}</>);
   if (state.kind === "none") return box(t("none.title"), t("none.body"), link("/kurumsal/basvuru", t("none.cta")));
   return box(t("error.title"), t("error.body"));
 }

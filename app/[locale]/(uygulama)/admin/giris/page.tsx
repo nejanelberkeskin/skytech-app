@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { Link, useRouter } from "@/i18n/navigation";
 import { supabase } from "@/lib/supabase/browser";
 
@@ -50,49 +51,42 @@ export default function AdminLoginPage() {
     router.refresh();
   };
 
-  const inputClasses = "w-full px-4 py-3 bg-white/[0.03] border border-white/[0.08] rounded-2xl text-white placeholder-emerald-100/60 outline-none focus:border-emerald-500/40 focus:ring-1 focus:ring-emerald-500/20 transition-all";
+  const inputClasses = "w-full px-4 py-3 bg-white border border-slate-200 rounded-lg text-slate-900 placeholder:text-slate-400 outline-none focus:border-emerald-500/40 focus:ring-1 focus:ring-emerald-500/20 transition-all";
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center p-6">
-      <div className="nature-bg">
-        <div className="nature-orb nature-orb-1" />
-        <div className="nature-orb nature-orb-2" />
-      </div>
+    <div className="relative min-h-screen flex items-center justify-center bg-[#f6f7f5] p-6 text-slate-900" style={{ colorScheme: "light" }}>
 
-      <div className="relative z-10 w-full max-w-md space-y-6 animate-fade-in-up">
+      <div className="relative z-10 w-full max-w-md space-y-6">
         <div className="text-center">
-          <div className="w-16 h-16 rounded-3xl flex items-center justify-center mx-auto mb-4"
-            style={{ background: "linear-gradient(135deg, rgba(16,185,129,0.15), rgba(20,184,166,0.1))", border: "1px solid rgba(52,211,153,0.2)" }}>
-            <span className="text-3xl">🛡️</span>
-          </div>
-          <h1 className="text-2xl font-bold text-white">Admin Paneli</h1>
-          <p className="text-emerald-100/80 text-sm mt-2">Skytech yönetim paneline giriş yapın.</p>
+          <Image src="/images/brand/logo.webp" alt="Skytech Green" width={256} height={32} priority className="mx-auto mb-6 h-6 w-auto" />
+          <h1 className="text-2xl font-semibold text-slate-900">Yönetim paneli</h1>
+          <p className="text-slate-600 text-sm mt-2">Ekip hesabınızla giriş yapın.</p>
         </div>
 
-        <form onSubmit={handleLogin} className="liquid-glass rounded-3xl p-8 space-y-5 overflow-hidden relative">
+        <form onSubmit={handleLogin} className="bg-white border border-slate-200 rounded-xl p-6 sm:p-8 space-y-5 overflow-hidden relative">
           <div className="relative z-10">
             <div>
-              <label htmlFor="admin-email" className="block text-sm font-medium text-emerald-100/90 mb-2">E-posta</label>
+              <label htmlFor="admin-email" className="block text-sm font-medium text-slate-700 mb-2">E-posta</label>
               <input id="admin-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)}
                 placeholder="admin@skytechgreen.com" autoComplete="email"
                 className={inputClasses} />
             </div>
             <div className="mt-5">
-              <label htmlFor="admin-password" className="block text-sm font-medium text-emerald-100/90 mb-2">Şifre</label>
+              <label htmlFor="admin-password" className="block text-sm font-medium text-slate-700 mb-2">Şifre</label>
               <input id="admin-password" type="password" value={password} onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••" autoComplete="current-password"
                 className={inputClasses} />
             </div>
 
             {error && (
-              <div role="alert" className="mt-5 bg-rose-500/10 border border-rose-500/20 text-rose-400 text-sm px-4 py-3 rounded-2xl">{error}</div>
+              <div role="alert" className="mt-5 bg-rose-500/10 border border-rose-500/20 text-rose-700 text-sm px-4 py-3 rounded-lg">{error}</div>
             )}
 
             <button type="submit" disabled={loading}
-              className="w-full mt-5 py-3.5 glass-btn rounded-2xl text-white font-medium transition-all disabled:opacity-50">
+              className="w-full mt-5 py-3.5 bg-[#1B6B3A] hover:bg-[#165c31] rounded-lg text-white font-medium transition-all disabled:opacity-50">
               {loading ? (
                 <span className="flex items-center justify-center gap-2">
-                  <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  <span className="w-4 h-4 border-2 border-slate-200 border-t-slate-200 rounded-full animate-spin" />
                   Kontrol ediliyor...
                 </span>
               ) : "Giriş Yap"}
@@ -100,8 +94,8 @@ export default function AdminLoginPage() {
           </div>
         </form>
 
-        <p className="text-center text-xs text-emerald-100/80">
-          <Link href="/" className="hover:text-white transition-colors">← Ana siteye dön</Link>
+        <p className="text-center text-xs text-slate-500">
+          <Link href="/" className="hover:text-slate-900 transition-colors">← Ana siteye dön</Link>
         </p>
       </div>
     </div>

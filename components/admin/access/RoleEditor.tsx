@@ -331,7 +331,7 @@ export default function RoleEditor({
         <h2
           ref={heading}
           tabIndex={-1}
-          className="text-xl font-semibold text-white"
+          className="text-xl font-semibold text-slate-900"
         >
           {edit ? "Rolü düzenle" : source ? "Rolü kopyala" : "Özel rol oluştur"}
         </h2>
@@ -362,19 +362,19 @@ export default function RoleEditor({
       ) : (
         <>
           {immutable && (
-            <p role="alert" className="text-amber-200">
+            <p role="alert" className="text-amber-800">
               Sistem rolleri değiştirilemez. Rol listesinde kopyalayarak ayrı
               bir özel rol oluşturabilirsiniz.
             </p>
           )}
           {ownRole && (
-            <p role="alert" className="text-amber-200">
+            <p role="alert" className="text-amber-800">
               Kendi erişiminizi dolaylı değiştirmemek için taşıdığınız rolü
               düzenleyemezsiniz. Başka bir yetkili yönetici işlem yapmalıdır.
             </p>
           )}
           {detail && edit && (
-            <p className="text-sm text-slate-300">
+            <p className="text-sm text-slate-700">
               Mevcut kullanım: {detail.usage.staffCount} kişi,{" "}
               {detail.usage.activeAssignments} etkin,{" "}
               {detail.usage.scheduledAssignments} ileri tarihli atama,{" "}
@@ -382,7 +382,7 @@ export default function RoleEditor({
             </p>
           )}
           {ungrantable.length > 0 && (
-            <p role="alert" className="text-amber-200 text-sm">
+            <p role="alert" className="text-amber-800 text-sm">
               Kopyalanan veya seçilen izinlerden {ungrantable.length} tanesini
               verme yetkiniz yok. Yeni rolü oluşturmak için bu izinleri
               kaldırın.
@@ -419,7 +419,7 @@ export default function RoleEditor({
                 onChange={(e) => change({ description: e.target.value })}
               />
               {fieldError("permissions") && (
-                <p role="alert" className="text-red-200 text-sm">
+                <p role="alert" className="text-red-700 text-sm">
                   {fieldError("permissions")}
                 </p>
               )}
@@ -442,7 +442,7 @@ export default function RoleEditor({
               )}
             </fieldset>
             {unchanged && (
-              <p role="status" className="text-sm text-slate-300">
+              <p role="status" className="text-sm text-slate-700">
                 Kaydedilecek değişiklik yok. Rol adı, açıklaması ve izinleri
                 güncel kayıtla aynı.
               </p>
@@ -474,17 +474,17 @@ export default function RoleEditor({
                 id="role-review-title"
                 ref={reviewHeading}
                 tabIndex={-1}
-                className="text-lg text-white font-semibold"
+                className="text-lg text-slate-900 font-semibold"
               >
                 {edit ? "Değişiklik onayı" : "Yeni rol onayı"} ·{" "}
                 {review.draft.label}
               </h3>
-              <p className="text-sm text-slate-300 whitespace-pre-wrap break-words">
+              <p className="text-sm text-slate-700 whitespace-pre-wrap break-words">
                 {review.draft.description}
               </p>
               {review.impact ? (
                 <>
-                  <p className="text-amber-200">
+                  <p className="text-amber-800">
                     Bu değişiklik {review.impact.usage.staffCount} kişinin{" "}
                     {review.impact.usage.activeAssignments} etkin,{" "}
                     {review.impact.usage.scheduledAssignments} ileri tarihli
@@ -499,18 +499,18 @@ export default function RoleEditor({
                     title="Kaldırılacak izinler"
                     permissions={review.impact.removed}
                   />
-                  <p className="text-sm text-slate-300">
+                  <p className="text-sm text-slate-700">
                     {review.impact.unchanged} izin aynı kalacak. Kişilere
                     atanmış kapsam ve süre değişmez.
                   </p>
-                  <p className="text-sm text-slate-300 break-words">
+                  <p className="text-sm text-slate-700 break-words">
                     Gerekçe: {review.draft.reason}
                   </p>
                   <details>
-                    <summary className="min-h-11 cursor-pointer text-emerald-200">
+                    <summary className="min-h-11 cursor-pointer text-emerald-800">
                       Etkilenen kayıt örnekleri (en çok 20 kişi ve 20 davet)
                     </summary>
-                    <ul className="space-y-2 text-sm text-slate-300 break-words">
+                    <ul className="space-y-2 text-sm text-slate-700 break-words">
                       {review.impact.affectedStaff.map((s) => (
                         <li key={s.id}>
                           {s.fullName} · {s.activeAssignments} etkin,{" "}
@@ -528,20 +528,20 @@ export default function RoleEditor({
                 </>
               ) : (
                 <>
-                  <p className="text-sm text-slate-300 break-all">
+                  <p className="text-sm text-slate-700 break-all">
                     Anahtar: {review.draft.key}
                   </p>
                   <PermissionList
                     title="Yeni rolün izinleri"
                     permissions={review.draft.permissions}
                   />
-                  <p className="text-amber-200 text-sm">
+                  <p className="text-amber-800 text-sm">
                     Rol oluşturulacak. Hiç kimseye otomatik atanmayacak.
                   </p>
                 </>
               )}
               {reviewUnchanged && (
-                <p role="status" className="text-slate-300">
+                <p role="status" className="text-slate-700">
                   Güncel rol ile önizlenen bilgiler aynı; tekrar kayıt
                   gerekmiyor.
                 </p>
@@ -589,15 +589,15 @@ function PermissionList({
 }) {
   return (
     <div>
-      <h4 className="text-white font-medium">{title}</h4>
+      <h4 className="text-slate-900 font-medium">{title}</h4>
       {permissions.length ? (
-        <ul className="list-disc pl-5 text-sm text-slate-300">
+        <ul className="list-disc pl-5 text-sm text-slate-700">
           {permissions.map((p) => (
             <li key={p}>{permissionLabel(p)}</li>
           ))}
         </ul>
       ) : (
-        <p className="text-sm text-slate-400">Yok.</p>
+        <p className="text-sm text-slate-600">Yok.</p>
       )}
     </div>
   );

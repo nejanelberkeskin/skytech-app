@@ -83,7 +83,7 @@ export default function StaffDirectory() {
       {error ? (
         <LoadError error={error} retry={() => setRevision((n) => n + 1)} />
       ) : !staff ? (
-        <p role="status" className="text-slate-300">
+        <p role="status" className="text-slate-700">
           Personel yükleniyor…
         </p>
       ) : (
@@ -91,29 +91,29 @@ export default function StaffDirectory() {
           {matches.map((person) => (
             <li
               key={person.id}
-              className="rounded-2xl border border-white/10 p-5 space-y-3"
+              className="rounded-2xl border border-slate-200 p-5 space-y-3"
             >
               <div className="flex flex-wrap justify-between gap-3">
                 <div>
                   <Link
-                    className="text-white font-semibold underline underline-offset-4"
+                    className="text-slate-900 font-semibold underline underline-offset-4"
                     href={`/admin/kullanicilar/${person.id}`}
                   >
                     {person.fullName}
                   </Link>
-                  <p className="text-sm text-slate-400 break-all">
+                  <p className="text-sm text-slate-600 break-all">
                     {person.email}
                   </p>
                 </div>
                 <span
                   className={
-                    person.isActive ? "text-emerald-200" : "text-slate-400"
+                    person.isActive ? "text-emerald-800" : "text-slate-600"
                   }
                 >
                   {person.isActive ? "Aktif" : "Pasif"}
                 </span>
               </div>
-              <ul className="space-y-1 text-sm text-slate-300">
+              <ul className="space-y-1 text-sm text-slate-700">
                 {person.assignments.map((a) => (
                   <li key={a.id} className="break-words">
                     {a.roleLabel} · {scopeLabel(a.scope)} ·{" "}
@@ -122,7 +122,7 @@ export default function StaffDirectory() {
                   </li>
                 ))}
               </ul>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-600">
                 Ek doğrulama:{" "}
                 {person.mfa === null
                   ? "Durum alınamadı"
@@ -132,7 +132,7 @@ export default function StaffDirectory() {
               </p>
               <Link
                 href={`/admin/kullanicilar/${person.id}`}
-                className="inline-flex min-h-11 items-center text-sm text-emerald-200 underline"
+                className="inline-flex min-h-11 items-center text-sm text-emerald-800 underline"
               >
                 Yetkileri incele →
               </Link>
@@ -141,7 +141,7 @@ export default function StaffDirectory() {
         </ul>
       )}
       {staff && matches.length === 0 && (
-        <p className="text-slate-300">
+        <p className="text-slate-700">
           {search
             ? "Bu sayfada aramanıza uygun personel yok."
             : "Personel kaydı bulunmuyor."}

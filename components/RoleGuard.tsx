@@ -13,24 +13,24 @@ export default function RoleGuard({
   const { me, loading, error, refresh } = useAdmin();
   if (loading)
     return (
-      <p role="status" className="p-8 text-slate-300">
+      <p role="status" className="p-8 text-slate-700">
         Yetkiler kontrol ediliyor…
       </p>
     );
   if (!me)
     return (
       <div className="p-8 space-y-4">
-        <h1 className="text-xl text-white">Yönetim erişimi doğrulanamadı</h1>
-        <p role="alert" className="text-slate-300">
+        <h1 className="text-xl text-slate-900">Yönetim erişimi doğrulanamadı</h1>
+        <p role="alert" className="text-slate-700">
           {error ?? "Lütfen yönetici hesabınızla giriş yapın."}
         </p>
         <button
-          className="min-h-11 px-4 text-white"
+          className="min-h-11 px-4 text-slate-900"
           onClick={() => void refresh()}
         >
           Yeniden dene
         </button>
-        <Link href="/admin/giris" className="text-emerald-300 underline">
+        <Link href="/admin/giris" className="text-emerald-700 underline">
           Giriş yap
         </Link>
       </div>
@@ -38,11 +38,11 @@ export default function RoleGuard({
   if (path && !canVisit(me, path))
     return (
       <div className="p-8 space-y-4">
-        <h1 className="text-xl text-white">Bu sayfaya erişiminiz yok</h1>
-        <p role="alert" className="text-slate-300">
+        <h1 className="text-xl text-slate-900">Bu sayfaya erişiminiz yok</h1>
+        <p role="alert" className="text-slate-700">
           Atanan izin veya kapsam bu ekranı açmaya uygun değil.
         </p>
-        <Link href="/admin/guvenlik" className="text-emerald-300 underline">
+        <Link href="/admin/guvenlik" className="text-emerald-700 underline">
           Hesap güvenliğine git
         </Link>
       </div>

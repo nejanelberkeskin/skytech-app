@@ -86,20 +86,20 @@ export default function OrderDialog({ id, onClose, onChanged }: { id: string; on
       if (alive.current) { setBusy(false); feedback.current?.focus(); }
     }
   };
-  return <dialog ref={dialog} aria-labelledby="siparis-detay-baslik" aria-busy={loading || busy} onKeyDown={containDialogTab} onCancel={e => { if (mutationLock.current) e.preventDefault(); else onClose(); }} className="m-auto w-[calc(100%-1rem)] sm:w-[calc(100%-2rem)] max-w-3xl max-h-[92dvh] overflow-y-auto rounded-2xl bg-[#0b1410] text-white border border-white/15 p-0 backdrop:bg-black/70">
-    <header className="sticky top-0 z-10 bg-[#0b1410] border-b border-white/10 p-4 flex flex-wrap items-center justify-between gap-3">
+  return <dialog ref={dialog} aria-labelledby="siparis-detay-baslik" aria-busy={loading || busy} onKeyDown={containDialogTab} onCancel={e => { if (mutationLock.current) e.preventDefault(); else onClose(); }} className="m-auto w-[calc(100%-1rem)] sm:w-[calc(100%-2rem)] max-w-3xl max-h-[92dvh] overflow-y-auto rounded-2xl bg-white text-white border border-white/15 p-0 backdrop:bg-slate-900/40">
+    <header className="sticky top-0 z-10 bg-white border-b border-slate-200 p-4 flex flex-wrap items-center justify-between gap-3">
       <h2 id="siparis-detay-baslik" className="font-semibold break-all">{detail?.order.orderNo ?? "Sipariş ayrıntısı"}</h2>
       <div className="flex flex-wrap gap-2"><Button size="sm" variant="secondary" disabled={busy || loading} onClick={() => void load()}>Ayrıntıyı yenile</Button><Button size="sm" variant="ghost" disabled={busy} onClick={onClose}>Kapat</Button></div>
     </header>
     <div className="p-4 sm:p-6 space-y-5">
       <div ref={feedback} tabIndex={-1} className="space-y-3 outline-none">
-        {problem && <p role="alert" className="rounded-xl border border-red-400/40 p-4 text-sm text-red-200 break-words">{problem.message}</p>}
-        {blocked && detail && <p className="text-sm text-amber-100">İşlem düğmeleri kapalı. Tekrar işlem yapmadan önce ayrıntıyı yenileyip güncel kayıtları kontrol edin.</p>}
-        {success && <p role="status" className="rounded-xl border border-emerald-400/40 p-4 text-sm text-emerald-200">{success}</p>}
-        {warnings.map((w, i) => <p role="alert" key={`${w.code}:${i}`} className="rounded-xl border border-amber-400/40 p-4 text-sm text-amber-100">{w.message} İşlem yeniden gönderilmedi.</p>)}
+        {problem && <p role="alert" className="rounded-xl border border-red-400/40 p-4 text-sm text-red-700 break-words">{problem.message}</p>}
+        {blocked && detail && <p className="text-sm text-amber-800">İşlem düğmeleri kapalı. Tekrar işlem yapmadan önce ayrıntıyı yenileyip güncel kayıtları kontrol edin.</p>}
+        {success && <p role="status" className="rounded-xl border border-emerald-400/40 p-4 text-sm text-emerald-800">{success}</p>}
+        {warnings.map((w, i) => <p role="alert" key={`${w.code}:${i}`} className="rounded-xl border border-amber-400/40 p-4 text-sm text-amber-800">{w.message} İşlem yeniden gönderilmedi.</p>)}
         {problem?.code === "mfa_required" && <VerifyNotice />}
       </div>
-      {loading && <p role="status" className="text-slate-300">Sipariş ayrıntısı yükleniyor…</p>}
+      {loading && <p role="status" className="text-slate-700">Sipariş ayrıntısı yükleniyor…</p>}
       {detail && <ReleaseOrderDetail key={version} detail={detail} act={act} disabled={blocked || busy || loading} canUseRefundPanel={hasFullPermission(me, "finance.read")} onRefundBusy={onBusyChange} onRefundChanged={() => { onChanged(); void load(true); }} />}
     </div>
   </dialog>;

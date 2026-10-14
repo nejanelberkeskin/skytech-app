@@ -310,7 +310,7 @@ test('saklama (d1): talep onayı yalnız aydınlatma + talebe dönüş; pazarlam
   const route = read('app/api/public/talep/route.ts');
   assert.doesNotMatch(route, /marketing/i, 'talep ucu ticari ileti izni yazmaz');
   const tr = JSON.parse(read('messages/tr.json'));
-  assert.match(tr.requestForms.common.consent, /Talebimle ilgili/);
+  assert.match(tr.requestForms.common.consent, /Başvurumla ilgili/);
   assert.doesNotMatch(tr.requestForms.common.consent, /kampanya|ticari ileti|tanıtım/i);
 });
 

@@ -419,29 +419,29 @@ function summaryTable(rows: SummaryRow[]): string {
 /** Talep sahibinin dilinde (ru → en) sabit metinler. */
 const CONFIRM_TEXT = {
   tr: {
-    subject: (no: string) => `Talebiniz alındı — ${no}`,
-    title: "Talebiniz Alındı",
-    sub: "Talebiniz kayda alındı; ekibimiz inceleyip sizinle iletişime geçecek",
+    subject: (no: string) => `Başvurunuz alındı — ${no}`,
+    title: "Başvurunuz Alındı",
+    sub: "Başvurunuz kayda alındı; ekibimiz inceleyip sizinle iletişime geçecek",
     hello: (name: string) => `Merhaba <strong>${name}</strong>,`,
     intro: (type: string, no: string) =>
-      `Talebiniz bize ulaştı: <strong>${type}</strong>. Talep numaranız: <strong style="font-family:monospace;font-size:16px;color:#059669;">${no}</strong>. Yazışmalarınızda bu numarayı belirtmeniz süreci hızlandırır.`,
-    summaryTitle: "Talep özeti",
-    next: "Ekibimiz talebinizi inceleyip verdiğiniz iletişim bilgileri üzerinden size dönüş yapacak. Ayrıntılar ve takvim bu görüşmede netleştirilir; şu an sizden herhangi bir ödeme istenmemektedir.",
+      `Başvurunuz bize ulaştı: <strong>${type}</strong>. Kayıt numaranız: <strong style="font-family:monospace;font-size:16px;color:#059669;">${no}</strong>. Yazışmalarınızda bu numarayı belirtmeniz süreci hızlandırır.`,
+    summaryTitle: "Başvuru özeti",
+    next: "Ekibimiz başvurunuzu inceleyip verdiğiniz iletişim bilgileri üzerinden size dönüş yapacak. Ayrıntılar ve takvim bu görüşmede netleştirilir; şu an sizden herhangi bir ödeme istenmemektedir.",
     account: (url: string) =>
-      `Talebinizin durumunu takip etmek için <a href="${url}" class="btn">ücretsiz hesap oluşturabilirsiniz</a>.`,
+      `Başvurunuzun durumunu takip etmek için <a href="${url}" class="btn">ücretsiz hesap oluşturabilirsiniz</a>.`,
     contact: "Sorularınız için bu e-postayı yanıtlayabilir veya info@skytechgreen.com adresine yazabilirsiniz.",
   },
   en: {
-    subject: (no: string) => `We received your request — ${no}`,
-    title: "Request Received",
-    sub: "Your request is recorded; our team will review it and contact you",
+    subject: (no: string) => `We received your application — ${no}`,
+    title: "Application Received",
+    sub: "Your application is recorded; our team will review it and contact you",
     hello: (name: string) => `Hello <strong>${name}</strong>,`,
     intro: (type: string, no: string) =>
-      `Your <strong>${type}</strong> has reached us. Your request number is <strong style="font-family:monospace;font-size:16px;color:#059669;">${no}</strong>. Quoting it in your correspondence speeds things up.`,
-    summaryTitle: "Request summary",
-    next: "Our team will review your request and get back to you using the contact details you provided. Details and scheduling are clarified in that conversation; no payment is requested at this stage.",
+      `Your <strong>${type}</strong> has reached us. Your reference number is <strong style="font-family:monospace;font-size:16px;color:#059669;">${no}</strong>. Quoting it in your correspondence speeds things up.`,
+    summaryTitle: "Application summary",
+    next: "Our team will review your application and get back to you using the contact details you provided. Details and scheduling are clarified in that conversation; no payment is requested at this stage.",
     account: (url: string) =>
-      `To track the status of your request you can <a href="${url}" class="btn">create a free account</a>.`,
+      `To track the status of your application you can <a href="${url}" class="btn">create a free account</a>.`,
     contact: "For questions, reply to this e-mail or write to info@skytechgreen.com.",
   },
 } as const;

@@ -50,30 +50,30 @@ export default function SifremiUnuttumPage() {
       subtitle={t("forgotSubtitle")}
       footer={
         <>
-          <Link href="/auth/login" className="text-emerald-400 hover:text-emerald-300 font-medium transition-colors">
+          <Link href="/auth/login" className="text-emerald-700 hover:text-emerald-700 font-medium transition-colors">
             {t("backLogin")}</Link>
         </>
       }
     >
       {sent ? (
-        <div className="liquid-glass relative rounded-3xl p-8 overflow-hidden text-center">
+        <div className="bg-white border border-slate-200 relative rounded-xl p-8 overflow-hidden text-center">
           <div className="relative z-10">
             <div className="w-14 h-14 mx-auto rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mb-4">
-              <svg className="w-7 h-7 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+              <svg className="w-7 h-7 text-emerald-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
                 <rect x="3" y="5" width="18" height="14" rx="2" />
                 <polyline points="3 7 12 13 21 7" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </div>
-            <h2 className="text-lg font-bold text-white">{t("sentTitle")}</h2>
-            <p className="text-sm text-emerald-200/50 mt-2 leading-relaxed">
+            <h2 className="text-lg font-bold text-slate-900">{t("sentTitle")}</h2>
+            <p className="text-sm text-slate-500 mt-2 leading-relaxed">
               {t("sentMessage")}</p>
           </div>
         </div>
       ) : (
-        <form onSubmit={handleSubmit} className="liquid-glass relative rounded-3xl p-8 overflow-hidden" noValidate>
+        <form onSubmit={handleSubmit} className="bg-white border border-slate-200 relative rounded-xl p-8 overflow-hidden" noValidate>
           <div className="relative z-10 space-y-5">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-emerald-200/50 mb-2">{t("email")}</label>
+              <label htmlFor="email" className="block text-sm font-medium text-slate-500 mb-2">{t("email")}</label>
               <input
                 id="email"
                 type="email"
@@ -86,12 +86,12 @@ export default function SifremiUnuttumPage() {
               />
             </div>
             {error && (
-              <div role="alert" className="bg-rose-500/10 border border-rose-500/20 text-rose-300 text-sm px-4 py-3 rounded-2xl">{error}</div>
+              <div role="alert" className="bg-rose-500/10 border border-rose-500/20 text-rose-700 text-sm px-4 py-3 rounded-2xl">{error}</div>
             )}
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3.5 glass-btn rounded-2xl text-white font-medium transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+              className="w-full py-3.5 bg-[#1B6B3A] hover:bg-[#165c31] rounded-2xl text-white font-medium transition-all disabled:opacity-40 disabled:cursor-not-allowed"
             >
               {loading ? t("sending") : t("sendLink")}
             </button>

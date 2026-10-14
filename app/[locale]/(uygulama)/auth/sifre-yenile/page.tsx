@@ -100,11 +100,11 @@ function SifreYenilePage() {
   if (ready === "invalid") {
     return (
       <AuthShell title={t("invalidTitle")} subtitle={t("invalidSubtitle")}>
-        <div className="liquid-glass relative rounded-3xl p-8 overflow-hidden text-center">
+        <div className="bg-white border border-slate-200 relative rounded-xl p-8 overflow-hidden text-center">
           <div className="relative z-10 space-y-4">
-            <p className="text-sm text-emerald-200/50 leading-relaxed">
+            <p className="text-sm text-slate-500 leading-relaxed">
               {t("invalidMessage")}</p>
-            <Link href="/auth/sifremi-unuttum" className="inline-block w-full py-3.5 glass-btn rounded-2xl text-white font-medium transition-all">
+            <Link href="/auth/sifremi-unuttum" className="inline-block w-full py-3.5 bg-[#1B6B3A] hover:bg-[#165c31] rounded-2xl text-white font-medium transition-all">
               {t("newLink")}</Link>
           </div>
         </div>
@@ -115,17 +115,17 @@ function SifreYenilePage() {
   return (
     <AuthShell title={t("resetTitle")} subtitle={t("resetSubtitle")}>
       {done ? (
-        <div className="liquid-glass relative rounded-3xl p-8 overflow-hidden text-center">
+        <div className="bg-white border border-slate-200 relative rounded-xl p-8 overflow-hidden text-center">
           <div className="relative z-10">
-            <p className="text-lg font-bold text-white">{t("updated")}</p>
-            <p className="text-sm text-emerald-200/50 mt-2">{t("redirecting")}</p>
+            <p className="text-lg font-bold text-slate-900">{t("updated")}</p>
+            <p className="text-sm text-slate-500 mt-2">{t("redirecting")}</p>
           </div>
         </div>
       ) : (
-        <form onSubmit={handleSubmit} className="liquid-glass relative rounded-3xl p-8 overflow-hidden" noValidate>
+        <form onSubmit={handleSubmit} className="bg-white border border-slate-200 relative rounded-xl p-8 overflow-hidden" noValidate>
           <div className="relative z-10 space-y-5">
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-emerald-200/50 mb-2">{t("newPassword")}</label>
+              <label htmlFor="password" className="block text-sm font-medium text-slate-500 mb-2">{t("newPassword")}</label>
               <input
                 id="password"
                 type={showPass ? "text" : "password"}
@@ -137,7 +137,7 @@ function SifreYenilePage() {
               />
             </div>
             <div>
-              <label htmlFor="confirm" className="block text-sm font-medium text-emerald-200/50 mb-2">{t("confirmNew")}</label>
+              <label htmlFor="confirm" className="block text-sm font-medium text-slate-500 mb-2">{t("confirmNew")}</label>
               <input
                 id="confirm"
                 type={showPass ? "text" : "password"}
@@ -148,16 +148,16 @@ function SifreYenilePage() {
                 className={confirm && !passwordsMatch ? authInputErrorClass : authInputClass}
               />
             </div>
-            <button type="button" onClick={() => setShowPass(!showPass)} className="text-xs text-emerald-200/30 hover:text-emerald-200/60 transition-colors">
+            <button type="button" onClick={() => setShowPass(!showPass)} className="text-xs text-slate-500 hover:text-slate-500 transition-colors">
               {showPass ? t("hidePasswords") : t("showPasswords")}
             </button>
             {error && (
-              <div role="alert" className="bg-rose-500/10 border border-rose-500/20 text-rose-300 text-sm px-4 py-3 rounded-2xl">{error}</div>
+              <div role="alert" className="bg-rose-500/10 border border-rose-500/20 text-rose-700 text-sm px-4 py-3 rounded-2xl">{error}</div>
             )}
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3.5 glass-btn rounded-2xl text-white font-medium transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+              className="w-full py-3.5 bg-[#1B6B3A] hover:bg-[#165c31] rounded-2xl text-white font-medium transition-all disabled:opacity-40 disabled:cursor-not-allowed"
             >
               {loading ? t("saving") : t("updatePassword")}
             </button>

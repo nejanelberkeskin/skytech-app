@@ -152,9 +152,9 @@ export default function CorporateLogin() {
               </button>
 
               <div className="flex items-center gap-3 pt-4 mt-4">
-                <div className="flex-1 h-px"  />
+                <div className="flex-1 h-px bg-slate-200" />
                 <span className="text-xs text-slate-500">{t("or")}</span>
-                <div className="flex-1 h-px"  />
+                <div className="flex-1 h-px bg-slate-200" />
               </div>
 
               <Link

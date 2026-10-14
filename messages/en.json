@@ -1385,7 +1385,11 @@
         "send": "Resend",
         "sending": "Sending…",
         "sent": "Sent ✓"
-      }
+      },
+      "title": "My account",
+      "home": "Home",
+      "menu": "Menu",
+      "menuClose": "Close menu"
     },
     "overview": {
       "title": "My Account",

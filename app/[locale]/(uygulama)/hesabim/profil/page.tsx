@@ -94,7 +94,7 @@ export default function ProfilPage() {
     }
   };
 
-  const inputClasses = "w-full px-4 py-3 bg-white/[0.03] border border-white/[0.08] rounded-2xl text-white placeholder-emerald-200/20 outline-none focus:border-emerald-500/40 focus:ring-1 focus:ring-emerald-500/20 transition-all";
+  const inputClasses = "w-full px-4 py-3 bg-white border border-slate-200 rounded-2xl text-slate-900 placeholder:text-slate-400 outline-none focus:border-emerald-500/40 focus:ring-1 focus:ring-emerald-500/20 transition-all";
 
   if (loading) {
     return (
@@ -105,42 +105,42 @@ export default function ProfilPage() {
   }
 
   return (
-    <div className="p-6 lg:p-8 space-y-8 max-w-2xl animate-fade-in-up">
+    <div className="p-6 lg:p-8 space-y-8 max-w-2xl">
       <div>
-        <h1 className="text-2xl font-bold text-white">{t("title")}</h1>
-        <p className="text-sm text-emerald-200/40 mt-1">{t("subtitle")}</p>
+        <h1 className="text-2xl font-bold text-slate-900">{t("title")}</h1>
+        <p className="text-sm text-slate-500 mt-1">{t("subtitle")}</p>
       </div>
 
       {/* Profile info */}
-      <div className="liquid-glass rounded-3xl p-6 space-y-5 overflow-hidden relative">
+      <div className="bg-white border border-slate-200 rounded-xl p-6 space-y-5 overflow-hidden relative">
         <div className="relative z-10">
-          <h2 className="font-semibold text-white">{t("personal")}</h2>
+          <h2 className="font-semibold text-slate-900">{t("personal")}</h2>
 
           <div className="grid md:grid-cols-2 gap-4 mt-5">
             <div>
-              <label htmlFor="profil-ad" className="block text-sm font-medium text-emerald-200/50 mb-2">{t("fullName")}</label>
+              <label htmlFor="profil-ad" className="block text-sm font-medium text-slate-500 mb-2">{t("fullName")}</label>
               <input id="profil-ad" autoComplete="name" value={form.fullName} onChange={(e) => setForm({ ...form, fullName: e.target.value })}
                 className={inputClasses} />
             </div>
             <div>
-              <label htmlFor="profil-eposta" className="block text-sm font-medium text-emerald-200/50 mb-2">{t("email")}</label>
+              <label htmlFor="profil-eposta" className="block text-sm font-medium text-slate-500 mb-2">{t("email")}</label>
               <input id="profil-eposta" value={form.email} disabled
-                className="w-full px-4 py-3 bg-white/[0.02] border border-white/[0.06] rounded-2xl text-emerald-200/30 cursor-not-allowed" />
+                className="w-full px-4 py-3 bg-white border border-slate-200 rounded-2xl text-slate-500 cursor-not-allowed" />
             </div>
             <div>
-              <label htmlFor="profil-telefon" className="block text-sm font-medium text-emerald-200/50 mb-2">{t("phone")}</label>
+              <label htmlFor="profil-telefon" className="block text-sm font-medium text-slate-500 mb-2">{t("phone")}</label>
               <input id="profil-telefon" type="tel" autoComplete="tel" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })}
                 placeholder="+90 5xx xxx xx xx"
                 className={inputClasses} />
             </div>
             <div>
-              <label htmlFor="profil-sehir" className="block text-sm font-medium text-emerald-200/50 mb-2">{t("city")}</label>
+              <label htmlFor="profil-sehir" className="block text-sm font-medium text-slate-500 mb-2">{t("city")}</label>
               <input id="profil-sehir" autoComplete="address-level2" value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })}
                 placeholder={t("cityPlaceholder")}
                 className={inputClasses} />
             </div>
             <div className="md:col-span-2">
-              <label htmlFor="profil-adres" className="block text-sm font-medium text-emerald-200/50 mb-2">{t("address")}</label>
+              <label htmlFor="profil-adres" className="block text-sm font-medium text-slate-500 mb-2">{t("address")}</label>
               <textarea id="profil-adres" autoComplete="street-address" value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })}
                 rows={2} placeholder={t("addressPlaceholder")}
                 className={`${inputClasses} resize-none`} />
@@ -149,34 +149,34 @@ export default function ProfilPage() {
 
           <div className="flex items-center gap-3 mt-5">
             <button type="button" onClick={handleSave} disabled={saving}
-              className="glass-btn px-6 py-3 rounded-2xl text-sm font-medium text-white transition-all disabled:opacity-50">
+              className="bg-[#1B6B3A] hover:bg-[#165c31] px-6 py-3 rounded-2xl text-sm font-medium text-white transition-all disabled:opacity-50">
               {saving ? t("saving") : t("save")}
             </button>
             {saved && (
-              <span role="status" className="text-sm text-emerald-400 font-medium animate-fade-in">{t("saved")}</span>
+              <span role="status" className="text-sm text-emerald-700 font-medium">{t("saved")}</span>
             )}
             {saveError && (
-              <span role="alert" className="text-sm text-rose-400 font-medium">{t("saveError")}</span>
+              <span role="alert" className="text-sm text-rose-700 font-medium">{t("saveError")}</span>
             )}
           </div>
         </div>
       </div>
 
       {/* Password change */}
-      <div className="liquid-glass rounded-3xl p-6 space-y-5 overflow-hidden relative">
+      <div className="bg-white border border-slate-200 rounded-xl p-6 space-y-5 overflow-hidden relative">
         <div className="relative z-10">
-          <h2 className="font-semibold text-white">{t("passwordTitle")}</h2>
+          <h2 className="font-semibold text-slate-900">{t("passwordTitle")}</h2>
 
           <div className="space-y-4 max-w-sm mt-5">
             <div>
-              <label htmlFor="profil-yeni-sifre" className="block text-sm font-medium text-emerald-200/50 mb-2">{t("newPassword")}</label>
+              <label htmlFor="profil-yeni-sifre" className="block text-sm font-medium text-slate-500 mb-2">{t("newPassword")}</label>
               <input id="profil-yeni-sifre" type="password" autoComplete="new-password" value={passwordForm.new}
                 onChange={(e) => setPasswordForm({ ...passwordForm, new: e.target.value })}
                 placeholder={t("passwordPlaceholder")}
                 className={inputClasses} />
             </div>
             <div>
-              <label htmlFor="profil-yeni-sifre-tekrar" className="block text-sm font-medium text-emerald-200/50 mb-2">{t("confirmPassword")}</label>
+              <label htmlFor="profil-yeni-sifre-tekrar" className="block text-sm font-medium text-slate-500 mb-2">{t("confirmPassword")}</label>
               <input id="profil-yeni-sifre-tekrar" type="password" autoComplete="new-password" value={passwordForm.confirm}
                 onChange={(e) => setPasswordForm({ ...passwordForm, confirm: e.target.value })}
                 placeholder={t("repeatPlaceholder")}
@@ -187,15 +187,15 @@ export default function ProfilPage() {
           {passwordMsg && (
             <div role={passwordMsg.ok ? "status" : "alert"} className={`text-sm px-4 py-3 rounded-2xl mt-4 ${
               passwordMsg.ok
-                ? "bg-emerald-500/10 border border-emerald-500/20 text-emerald-400"
-                : "bg-rose-500/10 border border-rose-500/20 text-rose-400"
+                ? "bg-emerald-500/10 border border-emerald-500/20 text-emerald-700"
+                : "bg-rose-500/10 border border-rose-500/20 text-rose-700"
             }`}>
               {passwordMsg.text}
             </div>
           )}
 
           <button type="button" onClick={handlePasswordChange}
-            className="mt-4 px-6 py-3 rounded-2xl text-sm font-medium transition-all border border-white/[0.08] text-emerald-200/50 hover:text-white hover:border-white/[0.15] hover:bg-white/[0.04]">
+            className="mt-4 px-6 py-3 rounded-2xl text-sm font-medium transition-all border border-slate-200 text-slate-500 hover:text-slate-900 hover:border-slate-200 hover:bg-slate-50">
             {t("updatePassword")}
           </button>
         </div>

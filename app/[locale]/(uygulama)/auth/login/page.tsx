@@ -85,19 +85,19 @@ function LoginPage() {
       footer={
         <>
           {t("noAccount")}{" "}
-          <Link href={talepId ? `/auth/register?talep=${encodeURIComponent(talepId)}` : "/auth/register"} className="text-emerald-400 hover:text-emerald-300 font-medium transition-colors">
+          <Link href={talepId ? `/auth/register?talep=${encodeURIComponent(talepId)}` : "/auth/register"} className="text-emerald-700 hover:text-emerald-700 font-medium transition-colors">
             {t("register")}</Link>
         </>
       }
     >
-      <form onSubmit={handleLogin} className="liquid-glass relative rounded-3xl p-8 overflow-hidden" noValidate>
+      <form onSubmit={handleLogin} className="bg-white border border-slate-200 relative rounded-xl p-8 overflow-hidden" noValidate>
         <div className="relative z-10 space-y-5">
           {linkNotice && (
-            <p className="text-xs text-amber-300 bg-amber-500/10 border border-amber-500/20 rounded-2xl px-4 py-3 leading-relaxed">{linkNotice}</p>
+            <p className="text-xs text-amber-800 bg-amber-500/10 border border-amber-500/20 rounded-2xl px-4 py-3 leading-relaxed">{linkNotice}</p>
           )}
 
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-emerald-200/50 mb-2">{t("email")}</label>
+            <label htmlFor="email" className="block text-sm font-medium text-slate-500 mb-2">{t("email")}</label>
             <input
               id="email"
               type="email"
@@ -111,8 +111,8 @@ function LoginPage() {
 
           <div>
             <div className="flex items-center justify-between mb-2">
-              <label htmlFor="password" className="text-sm font-medium text-emerald-200/50">{t("password")}</label>
-              <Link href="/auth/sifremi-unuttum" className="text-xs text-emerald-400/60 hover:text-emerald-300 transition-colors">
+              <label htmlFor="password" className="text-sm font-medium text-slate-500">{t("password")}</label>
+              <Link href="/auth/sifremi-unuttum" className="text-xs text-emerald-700 hover:text-emerald-700 transition-colors">
                 {t("forgotLink")}</Link>
             </div>
             <div className="relative">
@@ -128,7 +128,7 @@ function LoginPage() {
               <button
                 type="button"
                 onClick={() => setShowPass(!showPass)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-emerald-200/30 hover:text-emerald-200/60 transition-colors"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-slate-500 hover:text-slate-500 transition-colors"
               >
                 {showPass ? t("hide") : t("show")}
               </button>
@@ -136,17 +136,17 @@ function LoginPage() {
           </div>
 
           {error && (
-            <div role="alert" className="bg-rose-500/10 border border-rose-500/20 text-rose-300 text-sm px-4 py-3 rounded-2xl">{error}</div>
+            <div role="alert" className="bg-rose-500/10 border border-rose-500/20 text-rose-700 text-sm px-4 py-3 rounded-2xl">{error}</div>
           )}
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3.5 glass-btn rounded-2xl text-white font-medium transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+            className="w-full py-3.5 bg-[#1B6B3A] hover:bg-[#165c31] rounded-2xl text-white font-medium transition-all disabled:opacity-40 disabled:cursor-not-allowed"
           >
             {loading ? (
               <span className="flex items-center justify-center gap-2">
-                <span className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                <span className="w-4 h-4 border-2 border-slate-200 border-t-slate-200 rounded-full animate-spin" />
                 {t("loggingIn")}</span>
             ) : t("login")}
           </button>
@@ -154,9 +154,9 @@ function LoginPage() {
           {GOOGLE_AUTH_ENABLED && (
             <>
               <div className="flex items-center gap-4">
-                <div className="flex-1 h-px bg-white/[0.06]" />
-                <span className="text-xs text-emerald-200/20">{t("or")}</span>
-                <div className="flex-1 h-px bg-white/[0.06]" />
+                <div className="flex-1 h-px bg-slate-200" />
+                <span className="text-xs text-slate-500">{t("or")}</span>
+                <div className="flex-1 h-px bg-slate-200" />
               </div>
               <button
                 type="button"
@@ -166,7 +166,7 @@ function LoginPage() {
                     options: { redirectTo: `${window.location.origin}/api/auth/callback?next=${encodeURIComponent(redirect)}` },
                   });
                 }}
-                className="w-full py-3.5 glass-subtle rounded-2xl text-emerald-100/60 hover:text-white hover:bg-white/[0.06] font-medium text-sm transition-all duration-300 flex items-center justify-center gap-3"
+                className="w-full py-3.5 bg-white border border-slate-200 rounded-2xl text-slate-500 hover:text-slate-900 hover:bg-slate-50 font-medium text-sm transition-all duration-300 flex items-center justify-center gap-3"
               >
                 <GoogleIcon />
                 {t("googleLogin")}</button>

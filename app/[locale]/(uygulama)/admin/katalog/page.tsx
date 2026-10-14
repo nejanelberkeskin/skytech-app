@@ -427,8 +427,6 @@ function KatalogContent() {
         <div className="fixed inset-0 bg-slate-900/40 z-50 flex items-center justify-center p-4">
           <div className="glass border border-slate-200 rounded-2xl w-full max-w-md p-6 space-y-5 shadow-2xl animate-scale-in">
             <div className="text-center">
-              <div className="w-16 h-16 bg-red-500/10 ring-1 ring-red-500/30 rounded-full flex items-center justify-center mx-auto mb-3">
-              </div>
               <h3 className="text-lg font-bold text-slate-900">Silmek istediğinize emin misiniz?</h3>
               <p className="text-sm text-slate-600 mt-2">
                 <span className="text-slate-900 font-medium">{deleteTarget.emoji} {deleteTarget.name}</span> kalıcı olarak silinecektir.

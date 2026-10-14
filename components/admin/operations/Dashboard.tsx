@@ -11,6 +11,7 @@ import { formatCount, formatTry } from "@/lib/pricing";
 import { CardStat } from "@/components/ui";
 import JobsHealth from "./JobsHealth";
 import { NetCashChart } from "./FinanceSummary";
+import SalesSwitch from "./SalesSwitch";
 
 const panel = "rounded-2xl border border-white/10 bg-white p-5";
 const numeric = (value: unknown): value is number => typeof value === "number" && Number.isFinite(value);
@@ -119,6 +120,7 @@ function DashboardContent({ me }: { me: AdminMe }) {
       </button>
     </header>
 
+    <SalesSwitch />
     {error && <p role="alert" className="rounded-xl border border-red-400/40 p-4 text-sm text-red-700">{error}</p>}
     {loading && !data && <p role="status" className={panel + " text-sm text-slate-700"}>Yetkiniz kapsamındaki özet hazırlanıyor…</p>}
     {cards.length > 0 && <section aria-label="İş özeti" className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">

@@ -1231,39 +1231,39 @@
         "messagePlaceholder": "Anything you would like to add?"
       },
       "prefilled": "Your contact details were filled from your account; you can change them.",
-      "consent": "I would like to be contacted about my request through the contact details I provided.",
-      "privacyNotice": "The information in this form is processed to assess your request and reply to you. Details are in the <kvkk>Personal Data Privacy Notice</kvkk>.",
+      "consent": "I would like to be contacted about my application through the contact channel I provided.",
+      "privacyNotice": "The information in this form is processed to review your application and respond to you. Details in the <kvkk>Privacy Notice (KVKK)</kvkk>.",
       "noPayment": "No payment is taken with this form. Details and scheduling are settled when our team gets back to you.",
-      "submit": "Send Request",
+      "submit": "Send application",
       "submitting": "Sending…",
       "summary": {
-        "title": "Request summary",
+        "title": "Application summary",
         "empty": "Your summary appears here as you make your choices."
       },
       "success": {
-        "title": "Request received",
-        "desc": "Our team will review your request and get back to you using the contact details you provided.",
-        "numberLabel": "Your request number",
+        "title": "Application received",
+        "desc": "Our team will review your application and get back to you using the contact details you provided.",
+        "numberLabel": "Your reference number",
         "copy": "Copy",
         "copied": "Copied",
-        "emailNote": "Your contact email: {email}. If the confirmation email does not arrive, contact us with your request number.",
+        "emailNote": "Your contact email: {email}. If the confirmation email does not arrive, write to us quoting your reference number.",
         "nextTitle": "What happens next?",
         "next": [
-          "We review your request.",
+          "We review your application.",
           "We get back to you by phone or e-mail.",
           "We settle the details and schedule together."
         ],
-        "accountTitle": "Track your request from your account",
-        "accountDesc": "Create a free account and this request is linked to it automatically.",
+        "accountTitle": "Track your application in your account",
+        "accountDesc": "Create a free account and your application is linked to it automatically.",
         "accountCta": "Create account",
-        "trackCta": "Go to my requests",
+        "trackCta": "Go to my account",
         "home": "Back to home",
-        "another": "Submit another request"
+        "another": "See other sites"
       },
       "errors": {
         "generic": "Something went wrong. Please try again or write to info@skytechgreen.com.",
-        "rateLimited": "Too many requests in a short time. Please try again a little later.",
-        "closed": "Requests are currently closed.",
+        "rateLimited": "Too many attempts in a short time. Please wait a little and try again.",
+        "closed": "New registrations are not being accepted right now.",
         "fixFields": "Please check the highlighted fields.",
         "nameRequired": "Full name is required.",
         "nameShort": "Full name must be at least 2 characters.",
@@ -1274,7 +1274,7 @@
         "consentRequired": "Tick the contact request so we can get back to you.",
         "quantityInvalid": "Quantity must be a whole number.",
         "quantityMin": "The minimum is {min} seed balls.",
-        "quantityMax": "A single request can include up to {max} seed balls; write to us for more.",
+        "quantityMax": "You can choose at most {max} seed balls per order; write to us for more.",
         "provinceRequired": "Select a province.",
         "provinceInvalid": "Invalid province.",
         "areaRequired": "Enter the area size.",
@@ -1366,7 +1366,7 @@
       "navLabel": "Account menu",
       "nav": {
         "overview": "Overview",
-        "requests": "My Requests",
+        "requests": "My records",
         "orders": "My Orders",
         "certificates": "My Certificates",
         "profile": "Profile & Settings"
@@ -1375,7 +1375,7 @@
       "menuOpen": "Open menu",
       "userFallback": "User",
       "ctaOrder": "Buy Now",
-      "ctaRequest": "Submit a Request",
+      "ctaRequest": "Buy",
       "logout": "Sign out",
       "emailBanner": {
         "title": "Confirm your email address.",
@@ -1393,17 +1393,17 @@
     },
     "overview": {
       "title": "My Account",
-      "subtitle": "Follow a summary of your requests and their current status here.",
+      "subtitle": "Track your order records and applications here.",
       "stats": {
-        "total": "Total Requests",
+        "total": "Total records",
         "waiting": "Awaiting Response",
         "inProgress": "In Discussion",
         "done": "Completed"
       },
-      "recent": "Recent Requests",
+      "recent": "Recent records",
       "seeAll": "View all →",
-      "empty": "There are no requests linked to your account.",
-      "firstRequest": "Submit your first request →",
+      "empty": "No records are linked to your account.",
+      "firstRequest": "Release seed balls →",
       "seedBalls": "{count, plural, one {# seed ball} other {# seed balls}}",
       "actions": {
         "openLandTitle": "Have Seed Balls Released on a Site",
@@ -1413,22 +1413,22 @@
       }
     },
     "requests": {
-      "title": "My Requests",
-      "subtitle": "All requests linked to your account and their status.",
-      "newRequest": "+ New Request",
-      "empty": "There are no requests linked to your account.",
-      "emptyHint": "If you submitted a request as a guest, you can link it to your account using the link in the confirmation email.",
-      "firstRequest": "Submit your first request →",
+      "title": "My records",
+      "subtitle": "Your order records, land applications and their status.",
+      "newRequest": "+ Buy",
+      "empty": "No records are linked to your account.",
+      "emptyHint": "If you left an order record without signing in, you can link it to your account with the link in the confirmation email.",
+      "firstRequest": "Release seed balls →",
       "seeds": "{count, plural, one {# seed ball} other {# seed balls}}",
       "contact": "Contact",
       "yourNote": "Your note",
       "hints": {
-        "new": "Your request has been received and is awaiting review by our team.",
+        "new": "Your record has been received; our team will contact you.",
         "contacted": "Our team has contacted you; we are clarifying the details together.",
         "quoted": "A quote has been sent to you.",
-        "converted": "Your request has been completed. Thank you!",
-        "closed": "The request has been closed. You can submit a new request.",
-        "spam": "The request has been closed."
+        "converted": "Your record has been completed. Thank you!",
+        "closed": "Record closed. You can place a new order.",
+        "spam": "Record closed."
       }
     },
     "orders": {
@@ -1967,7 +1967,7 @@
     "rateLimited": "Too many attempts. Please try again in a few minutes.",
     "loginError": "Unable to sign in. Please try again.",
     "welcome": "Welcome back",
-    "loginSubtitle": "Sign in to track your requests.",
+    "loginSubtitle": "Sign in to track your orders and applications.",
     "noAccount": "Don't have an account?",
     "register": "Create account",
     "email": "Email",
@@ -1993,9 +1993,9 @@
     "resent": "Sent again ✓",
     "resend": "Resend link",
     "join": "Join us",
-    "joinSubtitle": "Track your requests in one place.",
+    "joinSubtitle": "Track your orders and certificates in one place.",
     "haveAccount": "Already have an account?",
-    "claimMessage": "Your request will be linked to your account when it is created.",
+    "claimMessage": "Once your account is created, your record is linked to it automatically.",
     "fullName": "Full name",
     "namePlaceholder": "Your full name",
     "minPlaceholder": "At least 8 characters",
@@ -2020,7 +2020,7 @@
     "resetError": "Unable to update your password. The link may have expired; request a new one.",
     "invalidTitle": "Invalid link",
     "invalidSubtitle": "The password reset link is invalid or expired.",
-    "invalidMessage": "Links expire and can only be used once. Open the link in the browser where you requested it, or request a new link.",
+    "invalidMessage": "Links are single-use and expire quickly. Make sure you open the link in the browser where you started, or request a new link.",
     "newLink": "Request new link",
     "resetTitle": "Set a new password",
     "resetSubtitle": "Choose a new password for your account.",
@@ -2721,7 +2721,7 @@
       "certificateNameThirdParty": "Only your own name, your company name or the no-name option can appear on the certificate.",
       "certificateCompanyRequiresCorporate": "The company name can only be chosen with corporate invoice details."
     },
-    "pausedNotice": "Online orders are temporarily paused. You can still send a participation request on this page; no payment is taken and our team will contact you.",
+    "pausedNotice": "Online ordering is temporarily paused. You can leave your details; no payment is taken and our team will contact you when ordering reopens.",
     "preorder": {
       "notice": "Online payment opens very soon. Prepare your order now; we will let you know when payment opens so you can complete it.",
       "contactNotice": "We use these details to tell you when payment opens and to let you complete your order. Details: <kvkk>Privacy Notice (KVKK)</kvkk>.",

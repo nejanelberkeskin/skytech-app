@@ -71,7 +71,7 @@ for (const [locale, mailLang] of [['tr', 'tr'], ['en', 'en'], ['ru', 'en']]) {
     assert.equal(call.init.method, 'POST');
     assert.deepEqual(call.body.to, ['deneme@example.invalid']);
     assert.equal(call.body.from, 'Skytech Green <noreply@skytechgreen.com>');
-    assert.equal(call.body.subject, mailLang === 'tr' ? 'Talebiniz alındı — TLP-PROVA1' : 'We received your request — TLP-PROVA1');
+    assert.equal(call.body.subject, mailLang === 'tr' ? 'Başvurunuz alındı — TLP-PROVA1' : 'We received your application — TLP-PROVA1');
     assert.equal(call.body.reply_to, undefined);
     const html = call.body.html;
     assert.doesNotMatch(html, PROMISE);

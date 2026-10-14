@@ -1385,7 +1385,11 @@
         "send": "Tekrar Gönder",
         "sending": "Gönderiliyor…",
         "sent": "Gönderildi ✓"
-      }
+      },
+      "title": "Hesabım",
+      "home": "Ana sayfa",
+      "menu": "Menü",
+      "menuClose": "Menüyü kapat"
     },
     "overview": {
       "title": "Hesabım",

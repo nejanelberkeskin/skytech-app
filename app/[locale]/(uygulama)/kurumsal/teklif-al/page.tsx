@@ -212,8 +212,6 @@ function CorporateQuoteForm() {
     return (
       <div className="min-h-screen bg-[#f6f7f5] bg-dot-grid flex items-center justify-center p-6">
         <div className="max-w-md text-center space-y-5">
-          <div className="w-20 h-20 bg-emerald-500/10 ring-1 ring-emerald-500/30 rounded-full flex items-center justify-center mx-auto">
-          </div>
           <h1 className="text-2xl font-bold text-slate-900">
             {isLoggedIn ? t("success.titleLoggedIn") : t("success.titleNew")}
           </h1>
@@ -279,8 +277,6 @@ function CorporateQuoteForm() {
           {/* Logged-in company banner */}
           {isLoggedIn && (
             <div className="bg-emerald-500/[0.06] ring-1 ring-emerald-500/20 rounded-xl px-5 py-4 flex items-center gap-4">
-              <div className="w-10 h-10 bg-emerald-500/10 rounded-lg flex items-center justify-center">
-              </div>
               <div className="flex-1">
                 <p className="text-sm text-slate-900 font-medium">{existingUser!.companyName || t("banner.accountFallback")}</p>
                 <p className="text-xs text-slate-600">{t("banner.existing", { email: existingUser!.email })}</p>

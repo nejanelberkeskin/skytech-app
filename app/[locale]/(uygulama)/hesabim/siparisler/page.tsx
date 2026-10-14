@@ -44,15 +44,15 @@ const COLUMNS =
   "id, order_no, status, is_test, site_snapshot, quantity, total_kurus, certificate_name, certificate_code, certificate_cancelled_at, paid_at, withdrawal_deadline, performance_deadline, released_at, created_at, batch:release_batches(released_on, video_url, video_published_at)";
 
 const STATUS_CLASS: Partial<Record<OrderStatus, string>> = {
-  paid: "bg-sky-500/15 text-sky-300 border-sky-500/20",
-  confirmed: "bg-emerald-500/15 text-emerald-300 border-emerald-500/20",
-  scheduled: "bg-teal-500/15 text-teal-300 border-teal-500/20",
-  released: "bg-green-500/15 text-green-300 border-green-500/20",
-  monitoring: "bg-lime-500/15 text-lime-300 border-lime-500/20",
-  completed: "bg-emerald-500/20 text-emerald-200 border-emerald-500/30",
-  withdrawal_requested: "bg-amber-500/15 text-amber-300 border-amber-500/20",
-  cancelled_by_seller: "bg-amber-500/15 text-amber-300 border-amber-500/20",
-  refunded: "bg-white/[0.04] text-emerald-200/50 border-white/[0.08]",
+  paid: "bg-sky-500/15 text-sky-700 border-sky-500/20",
+  confirmed: "bg-emerald-500/15 text-emerald-700 border-emerald-500/20",
+  scheduled: "bg-teal-500/15 text-teal-700 border-teal-500/20",
+  released: "bg-green-500/15 text-green-700 border-green-500/20",
+  monitoring: "bg-lime-500/15 text-lime-700 border-lime-500/20",
+  completed: "bg-emerald-500/20 text-emerald-800 border-emerald-500/30",
+  withdrawal_requested: "bg-amber-500/15 text-amber-800 border-amber-500/20",
+  cancelled_by_seller: "bg-amber-500/15 text-amber-800 border-amber-500/20",
+  refunded: "bg-white text-slate-500 border-slate-200",
 };
 
 const longDay = (iso: string | null | undefined, locale: string) =>
@@ -105,31 +105,31 @@ export default function SiparislerPage() {
   }
 
   return (
-    <div className="p-6 lg:p-8 space-y-6 animate-fade-in-up">
+    <div className="p-6 lg:p-8 space-y-6">
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div>
-          <h1 className="text-2xl font-bold text-white">{t("title")}</h1>
-          <p className="text-sm text-emerald-200/40 mt-1">{t("subtitle")}</p>
+          <h1 className="text-2xl font-bold text-slate-900">{t("title")}</h1>
+          <p className="text-sm text-slate-500 mt-1">{t("subtitle")}</p>
         </div>
-        <Link href="/sahalar" className="glass-btn px-5 py-2.5 rounded-2xl text-sm font-medium text-white transition-all">
+        <Link href="/sahalar" className="bg-[#1B6B3A] hover:bg-[#165c31] px-5 py-2.5 rounded-2xl text-sm font-medium text-white transition-all">
           {t("sitesCta")}
         </Link>
       </div>
 
       {linked > 0 && (
-        <p className="rounded-2xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200">
+        <p className="rounded-2xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-800">
           {t("linked", { count: linked })}
         </p>
       )}
       {failed && (
-        <p className="rounded-2xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-200" role="alert">{t("loadError")}</p>
+        <p className="rounded-2xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-700" role="alert">{t("loadError")}</p>
       )}
 
       {rows.length === 0 && !failed ? (
-        <div className="liquid-glass rounded-3xl p-10 text-center">
-          <p className="text-emerald-200/50 text-sm mb-2">{t("empty")}</p>
-          <p className="text-xs text-emerald-200/30 mb-5 max-w-md mx-auto">{t("emptyHint")}</p>
-          <Link href="/sahalar" className="inline-flex glass-btn px-6 py-3 rounded-2xl text-sm font-medium text-white transition-all">
+        <div className="bg-white border border-slate-200 rounded-xl p-10 text-center">
+          <p className="text-slate-500 text-sm mb-2">{t("empty")}</p>
+          <p className="text-xs text-slate-500 mb-5 max-w-md mx-auto">{t("emptyHint")}</p>
+          <Link href="/sahalar" className="inline-flex bg-[#1B6B3A] hover:bg-[#165c31] px-6 py-3 rounded-2xl text-sm font-medium text-white transition-all">
             {t("browseSites")}
           </Link>
         </div>
@@ -142,27 +142,27 @@ export default function SiparislerPage() {
             const video = r.batch?.video_published_at ? r.batch.video_url : null;
             const interrupted = r.status === "withdrawal_requested" || r.status === "cancelled_by_seller" || r.status === "refunded";
             return (
-              <div key={r.id} className="liquid-glass rounded-3xl p-6 space-y-4">
+              <div key={r.id} className="bg-white border border-slate-200 rounded-xl p-6 space-y-4">
                 <div className="flex items-start justify-between gap-4 flex-wrap">
                   <div className="min-w-0">
-                    <p className="text-sm text-white">
-                      <span className="font-mono text-emerald-300">{r.order_no}</span>
-                      {r.is_test && <span className="ml-2 px-2 py-0.5 rounded-full text-[10px] font-semibold border border-amber-500/30 bg-amber-500/10 text-amber-300">{t("testBadge")}</span>}
+                    <p className="text-sm text-slate-900">
+                      <span className="font-mono text-emerald-700">{r.order_no}</span>
+                      {r.is_test && <span className="ml-2 px-2 py-0.5 rounded-full text-[10px] font-semibold border border-amber-500/30 bg-amber-500/10 text-amber-800">{t("testBadge")}</span>}
                     </p>
-                    <p className="text-base font-semibold text-white mt-1 break-words">{r.site_snapshot.name}</p>
-                    <p className="text-xs text-emerald-200/30 mt-0.5">
+                    <p className="text-base font-semibold text-slate-900 mt-1 break-words">{r.site_snapshot.name}</p>
+                    <p className="text-xs text-slate-500 mt-0.5">
                       {longDay(r.created_at, lang)}
                       {place ? ` · ${place}` : ""}
                     </p>
                   </div>
-                  <span className={`text-xs font-medium px-3 py-1.5 rounded-full border shrink-0 ${STATUS_CLASS[r.status] ?? "bg-white/[0.04] text-emerald-200/50 border-white/[0.08]"}`}>
+                  <span className={`text-xs font-medium px-3 py-1.5 rounded-full border shrink-0 ${STATUS_CLASS[r.status] ?? "bg-white text-slate-500 border-slate-200"}`}>
                     {tStatus.has(r.status) ? tStatus(r.status) : r.status}
                   </span>
                 </div>
 
-                {t.has(`hints.${r.status}`) && <p className="text-sm text-emerald-200/50">{t(`hints.${r.status}`)}</p>}
+                {t.has(`hints.${r.status}`) && <p className="text-sm text-slate-500">{t(`hints.${r.status}`)}</p>}
 
-                <div className="rounded-2xl bg-white/[0.03] border border-white/[0.06] divide-y divide-white/[0.06] text-sm">
+                <div className="rounded-2xl bg-white border border-slate-200 divide-y divide-slate-200 text-sm">
                   <Line label={t("rows.quantity")} value={formatCount(r.quantity, lang)} />
                   <Line label={t("rows.total")} value={formatTry(r.total_kurus, lang)} />
                   <Line label={t("rows.certificateName")} value={r.certificate_name} />
@@ -175,14 +175,14 @@ export default function SiparislerPage() {
                 </div>
 
                 <div className="flex flex-wrap gap-x-5 gap-y-2 text-sm">
-                  <Link href={`/siparis/${r.order_no}`} className="text-emerald-300 hover:underline font-medium">{t("details")}</Link>
+                  <Link href={`/siparis/${r.order_no}`} className="text-emerald-700 hover:underline font-medium">{t("details")}</Link>
                   {r.certificate_code && !r.certificate_cancelled_at && (
-                    <Link href={`/sertifika/${r.certificate_code}`} className="text-emerald-300 hover:underline">{t("certificate")}</Link>
+                    <Link href={`/sertifika/${r.certificate_code}`} className="text-emerald-700 hover:underline">{t("certificate")}</Link>
                   )}
                   {video && /^https:\/\//.test(video) && (
-                    <a href={video} target="_blank" rel="noopener noreferrer" className="text-emerald-300 hover:underline">{t("video")}</a>
+                    <a href={video} target="_blank" rel="noopener noreferrer" className="text-emerald-700 hover:underline">{t("video")}</a>
                   )}
-                  {canWithdraw && <Link href={`/cayma?no=${r.order_no}`} className="text-emerald-200/50 hover:text-white hover:underline">{t("withdraw")}</Link>}
+                  {canWithdraw && <Link href={`/cayma?no=${r.order_no}`} className="text-slate-500 hover:text-slate-900 hover:underline">{t("withdraw")}</Link>}
                 </div>
               </div>
             );
@@ -196,8 +196,8 @@ export default function SiparislerPage() {
 function Line({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-start justify-between gap-4 px-4 py-2.5">
-      <span className="text-emerald-200/40 shrink-0">{label}</span>
-      <span className="text-white text-right break-words">{value}</span>
+      <span className="text-slate-500 shrink-0">{label}</span>
+      <span className="text-slate-900 text-right break-words">{value}</span>
     </div>
   );
 }

@@ -6,7 +6,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase/browser";
 import {
-  BarChartIcon, PackageIcon, SproutIcon, CertificateIcon,
+  BarChartIcon, PackageIcon, CertificateIcon,
   SettingsIcon, AlertTriangleIcon, MailIcon,
 } from "@/components/ui/Icons";
 import { CTA_MODE, SALES_ENABLED, TRANSACTIONS_ENABLED, orderCtaHref } from "@/lib/site-config";
@@ -77,161 +77,117 @@ export default function HesabimLayout({ children }: { children: React.ReactNode 
 
   if (loading) {
     return (
-      <div className="relative min-h-screen">
-        <div className="nature-bg">
-          <div className="nature-orb nature-orb-1" />
-          <div className="nature-orb nature-orb-2" />
-        </div>
-        <div className="relative z-10 min-h-screen flex items-center justify-center">
-          <div role="status" aria-label={tPages("loading")} className="w-10 h-10 rounded-full border-2 border-emerald-500/20 border-t-emerald-400 animate-spin" />
-        </div>
+      <div className="flex min-h-screen items-center justify-center bg-[#f6f7f5]" style={{ colorScheme: "light" }}>
+        <p role="status" className="text-sm text-slate-500">{tPages("loading")}</p>
       </div>
     );
   }
 
+  const logo = (
+    <Link href="/" className="flex flex-col items-start gap-0.5" onClick={() => setSidebarOpen(false)} aria-label={t("homeAria")}>
+      <Image src="/images/brand/logo.webp" alt="Skytech Green" width={256} height={32} priority className="h-5 w-auto" />
+      <span className="text-xs text-slate-500">{t("title")}</span>
+    </Link>
+  );
+
   return (
-    <div className="relative min-h-screen">
-      {/* Background */}
-      <div className="nature-bg">
-        <div className="nature-orb nature-orb-1" />
-        <div className="nature-orb nature-orb-2" />
+    <div className="min-h-screen bg-[#f6f7f5] text-slate-900" style={{ colorScheme: "light" }}>
+      {/* Mobil: üst çubuk + soldan açılan menü */}
+      <div className="sticky top-0 z-30 flex items-center justify-between border-b border-slate-200 bg-white px-4 py-2 lg:hidden">
+        {logo}
+        <button
+          type="button"
+          onClick={() => setSidebarOpen(true)}
+          aria-label={t("menuOpen")}
+          aria-expanded={sidebarOpen}
+          className="flex min-h-11 items-center gap-2 rounded-lg border border-slate-300 px-3 text-sm font-medium text-slate-800"
+        >
+          <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} aria-hidden="true">
+            <path strokeLinecap="round" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+          {t("menu")}
+        </button>
       </div>
+      {sidebarOpen && <div className="fixed inset-0 z-40 bg-slate-900/40 lg:hidden" onClick={() => setSidebarOpen(false)} />}
 
-      {/* Mobile Overlay */}
-      {sidebarOpen && (
-        <div
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
-
-      {/* Sidebar */}
-      <aside className={`fixed inset-y-0 left-0 z-50 w-72 flex flex-col transition-transform duration-300 ease-out
-        ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0`}
-        style={{
-          background: "rgba(4, 11, 6, 0.85)",
-          backdropFilter: "blur(24px) saturate(1.6)",
-          borderRight: "1px solid rgba(255,255,255,0.06)",
-        }}
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 flex w-72 max-w-[88vw] flex-col border-r border-slate-200 bg-white transition-transform duration-200 ${
+          sidebarOpen ? "translate-x-0" : "-translate-x-full"
+        } lg:w-64 lg:translate-x-0`}
       >
-        {/* Logo */}
-        <div className="px-6 py-5" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-          <Link href="/" className="flex items-center gap-2.5" onClick={() => setSidebarOpen(false)} aria-label={t("homeAria")}>
-            <Image
-              src="/images/brand/logo-light.webp"
-              alt="Skytech Green"
-              width={288}
-              height={36}
-              priority
-              className="h-9 w-auto"
-            />
-          </Link>
+        <div className="flex items-center justify-between px-5 py-5">
+          {logo}
+          <button
+            type="button"
+            onClick={() => setSidebarOpen(false)}
+            aria-label={t("menuClose")}
+            className="flex min-h-11 min-w-11 items-center justify-center rounded-lg text-slate-600 hover:bg-slate-100 lg:hidden"
+          >
+            <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} aria-hidden="true">
+              <path strokeLinecap="round" d="M18 6 6 18M6 6l12 12" />
+            </svg>
+          </button>
         </div>
 
-        {/* User info */}
-        <div className="px-5 py-4" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl flex items-center justify-center"
-              style={{ background: "linear-gradient(135deg, rgba(16,185,129,0.15), rgba(20,184,166,0.1))", border: "1px solid rgba(52,211,153,0.15)" }}>
-              <span className="text-emerald-400 font-bold text-sm">
-                {displayName.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()}
-              </span>
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-white truncate">{displayName}</p>
-              <p className="text-xs text-emerald-200/30 truncate">{userEmail}</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Navigation */}
-        <nav aria-label={t("navLabel")} className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-          {NAV_ITEMS.map((item) => {
-            const isActive = item.exact ? pathname === item.href : pathname.startsWith(item.href);
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={() => setSidebarOpen(false)}
-                className={`flex items-center gap-3 px-4 py-3 rounded-2xl text-sm transition-all duration-300 ${
-                  isActive
-                    ? "glass-glow text-emerald-300 font-medium"
-                    : "text-emerald-200/40 hover:text-white hover:bg-white/[0.04]"
-                }`}
-              >
-                <item.Icon className="w-4 h-4 shrink-0" />
-                <span>{t(`nav.${item.key}`)}</span>
-              </Link>
-            );
-          })}
-        </nav>
-
-        {/* Bottom actions */}
-        <div className="px-5 py-4 space-y-3" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+        <nav aria-label={t("navLabel")} className="flex-1 overflow-y-auto px-3 py-2">
+          <ul className="space-y-0.5">
+            {NAV_ITEMS.map((item) => {
+              const isActive = item.exact ? pathname === item.href : pathname.startsWith(item.href);
+              return (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    aria-current={isActive ? "page" : undefined}
+                    onClick={() => setSidebarOpen(false)}
+                    className={`flex min-h-10 items-center gap-3 rounded-lg px-3 text-sm transition-colors ${
+                      isActive ? "bg-[#f0f7ec] font-medium text-[#1B6B3A]" : "text-slate-700 hover:bg-slate-100 hover:text-slate-900"
+                    }`}
+                  >
+                    <item.Icon className={`h-[18px] w-[18px] shrink-0 ${isActive ? "text-[#1B6B3A]" : "text-slate-400"}`} />
+                    <span>{t(`nav.${item.key}`)}</span>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
           <Link
             href={orderCtaHref("hub")}
             onClick={() => setSidebarOpen(false)}
-            className="flex items-center justify-center gap-2 w-full py-3 rounded-2xl glass-btn text-sm font-medium text-white transition-all"
+            className="mt-4 flex min-h-11 items-center justify-center rounded-lg bg-[#1B6B3A] px-4 text-sm font-medium text-white hover:bg-[#165c31]"
           >
-            <SproutIcon className="w-4 h-4" />
             {CTA_MODE === "order" ? t("ctaOrder") : t("ctaRequest")}
           </Link>
-          <button
-            onClick={handleLogout}
-            className="w-full text-center text-xs text-emerald-200/25 hover:text-rose-400 transition-colors py-2"
-          >
-            {t("logout")}
-          </button>
+        </nav>
+
+        <div className="border-t border-slate-200 px-5 py-4">
+          <p className="truncate text-sm font-medium text-slate-900">{displayName}</p>
+          <p className="truncate text-xs text-slate-500">{userEmail}</p>
+          <div className="mt-3 flex items-center justify-between text-sm">
+            <Link href="/" className="text-slate-600 hover:text-slate-900" onClick={() => setSidebarOpen(false)}>
+              {t("home")}
+            </Link>
+            <button type="button" onClick={handleLogout} className="min-h-10 text-slate-600 hover:text-red-700">
+              {t("logout")}
+            </button>
+          </div>
         </div>
       </aside>
 
-      {/* Main content */}
-      <main className="relative z-10 lg:ml-72 min-h-screen">
-        {/* Mobile header */}
-        <div className="lg:hidden sticky top-0 z-30 px-4 py-3 flex items-center justify-between"
-          style={{
-            background: "rgba(4,11,6,0.8)",
-            backdropFilter: "blur(20px) saturate(1.4)",
-            borderBottom: "1px solid rgba(255,255,255,0.06)",
-          }}>
-          <button
-            type="button"
-            onClick={() => setSidebarOpen(true)}
-            aria-label={t("menuOpen")}
-            aria-expanded={sidebarOpen}
-            className="w-10 h-10 rounded-2xl flex items-center justify-center text-emerald-200/50 hover:text-white transition-colors"
-            style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}
-          >
-            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          </button>
-          <Image
-            src="/images/brand/logo-light.webp"
-            alt="Skytech Green"
-            width={224}
-            height={28}
-            className="h-7 w-auto"
-          />
-          <div className="w-10" /> {/* Spacer for centering */}
-        </div>
-
-        {/* E-posta onay banner'ı */}
+      <main className="min-w-0 lg:ml-64">
         {!emailConfirmed && (
-          <div className="mx-4 mt-4 lg:mx-8 rounded-2xl px-5 py-3 flex items-center justify-between gap-4"
-            style={{ background: "rgba(245,158,11,0.08)", border: "1px solid rgba(245,158,11,0.2)" }}>
-            <div className="flex items-center gap-2.5 min-w-0">
-              <AlertTriangleIcon className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
-              <p className="text-sm text-amber-300">
+          <div role="status" className="mx-4 mt-4 flex flex-col gap-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 sm:flex-row sm:items-center sm:justify-between lg:mx-8">
+            <div className="flex min-w-0 items-start gap-2.5">
+              <AlertTriangleIcon className="mt-0.5 h-5 w-5 shrink-0 text-amber-700" />
+              <p className="text-sm text-amber-900">
                 <span className="font-semibold">{t("emailBanner.title")}</span>{" "}
-                <span className="text-amber-400/60">{t("emailBanner.sent", { email: userEmail })}</span>
+                <span>{t("emailBanner.sent", { email: userEmail })}</span>
               </p>
             </div>
             <button
+              type="button"
               onClick={handleResendConfirmation}
               disabled={resendLoading || resendSent}
-              className="shrink-0 text-xs font-semibold px-4 py-2 rounded-xl transition-all disabled:opacity-60 disabled:cursor-not-allowed"
-              style={{ background: "rgba(245,158,11,0.15)", border: "1px solid rgba(245,158,11,0.3)", color: "rgb(251,191,36)" }}
+              className="min-h-10 shrink-0 rounded-lg border border-amber-300 bg-white px-4 text-sm font-medium text-amber-900 hover:bg-amber-100 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {resendSent ? t("resend.sent") : resendLoading ? t("resend.sending") : t("resend.send")}
             </button>

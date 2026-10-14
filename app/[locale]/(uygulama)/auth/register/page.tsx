@@ -124,22 +124,22 @@ function RegisterPage() {
   if (checkEmail) {
     return (
       <AuthShell title={t("verifyTitle")} subtitle={t("verifySubtitle")}>
-        <div className="liquid-glass relative rounded-3xl p-8 overflow-hidden text-center">
+        <div className="bg-white border border-slate-200 relative rounded-xl p-8 overflow-hidden text-center">
           <div className="relative z-10 space-y-4">
             <div className="w-14 h-14 mx-auto rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
-              <svg className="w-7 h-7 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+              <svg className="w-7 h-7 text-emerald-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
                 <rect x="3" y="5" width="18" height="14" rx="2" />
                 <polyline points="3 7 12 13 21 7" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </div>
-            <p className="text-sm text-emerald-200/60 leading-relaxed">
-              <strong className="text-white">{checkEmail}</strong> {t("verifyMessage")}</p>
-            {error && <p role="alert" className="text-rose-300">{error}</p>}
+            <p className="text-sm text-slate-500 leading-relaxed">
+              <strong className="text-slate-900">{checkEmail}</strong> {t("verifyMessage")}</p>
+            {error && <p role="alert" className="text-rose-700">{error}</p>}
             <button
               type="button"
               onClick={resend}
               disabled={resent}
-              className="text-sm text-emerald-400 hover:text-emerald-300 font-medium transition-colors disabled:opacity-60"
+              className="text-sm text-emerald-700 hover:text-emerald-700 font-medium transition-colors disabled:opacity-60"
             >
               {resent ? t("resent") : t("resend")}
             </button>
@@ -156,31 +156,31 @@ function RegisterPage() {
       footer={
         <>
           {t("haveAccount")}{" "}
-          <Link href={talepId ? `/auth/login?talep=${encodeURIComponent(talepId)}` : "/auth/login"} className="text-emerald-400 hover:text-emerald-300 font-medium transition-colors">
+          <Link href={talepId ? `/auth/login?talep=${encodeURIComponent(talepId)}` : "/auth/login"} className="text-emerald-700 hover:text-emerald-700 font-medium transition-colors">
             {t("login")}</Link>
         </>
       }
     >
-      <form onSubmit={handleRegister} className="liquid-glass relative rounded-3xl p-8 overflow-hidden" noValidate>
+      <form onSubmit={handleRegister} className="bg-white border border-slate-200 relative rounded-xl p-8 overflow-hidden" noValidate>
         <div className="relative z-10 space-y-5">
           {talepId && (
-            <p className="text-xs text-emerald-300 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl px-4 py-3">
+            <p className="text-xs text-emerald-700 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl px-4 py-3">
               {t("claimMessage")}</p>
           )}
 
           <div>
-            <label htmlFor="fullName" className="block text-sm font-medium text-emerald-200/50 mb-2">{t("fullName")}</label>
+            <label htmlFor="fullName" className="block text-sm font-medium text-slate-500 mb-2">{t("fullName")}</label>
             <input id="fullName" value={form.fullName} onChange={(e) => set("fullName", e.target.value)} placeholder={t("namePlaceholder")} autoComplete="name" maxLength={120} className={authInputClass} />
           </div>
 
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-emerald-200/50 mb-2">{t("email")}</label>
+            <label htmlFor="email" className="block text-sm font-medium text-slate-500 mb-2">{t("email")}</label>
             <input id="email" type="email" value={form.email} onChange={(e) => set("email", e.target.value)} placeholder="ornek@mail.com" autoComplete="email" className={authInputClass} />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-emerald-200/50 mb-2">{t("password")}</label>
+              <label htmlFor="password" className="block text-sm font-medium text-slate-500 mb-2">{t("password")}</label>
               <input
                 id="password"
                 type={showPass ? "text" : "password"}
@@ -192,7 +192,7 @@ function RegisterPage() {
               />
             </div>
             <div>
-              <label htmlFor="passwordConfirm" className="block text-sm font-medium text-emerald-200/50 mb-2">{t("confirmPassword")}</label>
+              <label htmlFor="passwordConfirm" className="block text-sm font-medium text-slate-500 mb-2">{t("confirmPassword")}</label>
               <input
                 id="passwordConfirm"
                 type={showPass ? "text" : "password"}
@@ -205,10 +205,10 @@ function RegisterPage() {
             </div>
           </div>
           {form.passwordConfirm && !passwordsMatch && (
-            <p className="text-xs text-rose-400 -mt-3">{t("mismatch")}</p>
+            <p className="text-xs text-rose-700 -mt-3">{t("mismatch")}</p>
           )}
 
-          <button type="button" onClick={() => setShowPass(!showPass)} className="text-xs text-emerald-200/30 hover:text-emerald-200/60 transition-colors">
+          <button type="button" onClick={() => setShowPass(!showPass)} className="text-xs text-slate-500 hover:text-slate-500 transition-colors">
             {showPass ? t("hidePasswords") : t("showPasswords")}
           </button>
 
@@ -220,27 +220,27 @@ function RegisterPage() {
               required
               className="mt-0.5 w-4 h-4 shrink-0 accent-emerald-500"
             />
-            <span className="text-xs text-emerald-200/40 group-hover:text-emerald-200/60 transition-colors leading-relaxed">
+            <span className="text-xs text-slate-500 group-hover:text-slate-500 transition-colors leading-relaxed">
               {t.rich("termsNotice", {
-                terms: (text) => <Link href="/kullanim-kosullari" target="_blank" rel="noopener noreferrer" className="underline text-emerald-300">{text}</Link>,
-                privacy: (text) => <Link href="/gizlilik-politikasi" target="_blank" rel="noopener noreferrer" className="underline text-emerald-300">{text}</Link>,
-                notice: (text) => <Link href="/kvkk" target="_blank" rel="noopener noreferrer" className="underline text-emerald-300">{text}</Link>,
+                terms: (text) => <Link href="/kullanim-kosullari" target="_blank" rel="noopener noreferrer" className="underline text-emerald-700">{text}</Link>,
+                privacy: (text) => <Link href="/gizlilik-politikasi" target="_blank" rel="noopener noreferrer" className="underline text-emerald-700">{text}</Link>,
+                notice: (text) => <Link href="/kvkk" target="_blank" rel="noopener noreferrer" className="underline text-emerald-700">{text}</Link>,
               })}
             </span>
           </label>
 
           {error && (
-            <div role="alert" className="bg-rose-500/10 border border-rose-500/20 text-rose-300 text-sm px-4 py-3 rounded-2xl">{error}</div>
+            <div role="alert" className="bg-rose-500/10 border border-rose-500/20 text-rose-700 text-sm px-4 py-3 rounded-2xl">{error}</div>
           )}
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3.5 glass-btn rounded-2xl text-white font-medium transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+            className="w-full py-3.5 bg-[#1B6B3A] hover:bg-[#165c31] rounded-2xl text-white font-medium transition-all disabled:opacity-40 disabled:cursor-not-allowed"
           >
             {loading ? (
               <span className="flex items-center justify-center gap-2">
-                <span className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                <span className="w-4 h-4 border-2 border-slate-200 border-t-slate-200 rounded-full animate-spin" />
                 {t("creating")}</span>
             ) : t("register")}
           </button>
@@ -248,9 +248,9 @@ function RegisterPage() {
           {GOOGLE_AUTH_ENABLED && (
             <>
               <div className="flex items-center gap-4">
-                <div className="flex-1 h-px bg-white/[0.06]" />
-                <span className="text-xs text-emerald-200/20">{t("or")}</span>
-                <div className="flex-1 h-px bg-white/[0.06]" />
+                <div className="flex-1 h-px bg-slate-200" />
+                <span className="text-xs text-slate-500">{t("or")}</span>
+                <div className="flex-1 h-px bg-slate-200" />
               </div>
               <button
                 type="button"
@@ -261,7 +261,7 @@ function RegisterPage() {
                     options: { redirectTo: `${window.location.origin}/api/auth/callback?next=${encodeURIComponent(localPath("/hesabim"))}` },
                   });
                 }}
-                className="w-full py-3.5 glass-subtle rounded-2xl text-emerald-100/60 hover:text-white hover:bg-white/[0.06] font-medium text-sm transition-all duration-300 flex items-center justify-center gap-3"
+                className="w-full py-3.5 bg-white border border-slate-200 rounded-2xl text-slate-500 hover:text-slate-900 hover:bg-slate-50 font-medium text-sm transition-all duration-300 flex items-center justify-center gap-3"
               >
                 <GoogleIcon />
                 {t("googleRegister")}</button>

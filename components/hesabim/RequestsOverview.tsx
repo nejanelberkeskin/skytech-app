@@ -34,18 +34,12 @@ export const MY_REQUEST_COLUMNS =
   "id, request_no, type, status, contact_name, email, phone, company, locale, land_id, total_seeds, seed_items, details, message, consent_at, created_at, updated_at, land:lands(name, region)";
 
 export const STATUS_CLASS: Record<ServiceRequestStatus, string> = {
-  new: "bg-amber-500/15 text-amber-300 border-amber-500/20",
-  contacted: "bg-sky-500/15 text-sky-300 border-sky-500/20",
-  quoted: "bg-blue-500/15 text-blue-300 border-blue-500/20",
-  converted: "bg-emerald-500/15 text-emerald-300 border-emerald-500/20",
-  closed: "bg-white/[0.04] text-emerald-200/40 border-white/[0.08]",
-  spam: "bg-white/[0.04] text-emerald-200/40 border-white/[0.08]",
-};
-
-export const TYPE_EMOJI: Record<ServiceRequestType, string> = {
-  seed_purchase: "🌱",
-  land_application: "🗺️",
-  open_land_seeding: "🚁",
+  new: "bg-amber-500/15 text-amber-800 border-amber-500/20",
+  contacted: "bg-sky-500/15 text-sky-700 border-sky-500/20",
+  quoted: "bg-blue-500/15 text-blue-700 border-blue-500/20",
+  converted: "bg-emerald-500/15 text-emerald-700 border-emerald-500/20",
+  closed: "bg-white text-slate-500 border-slate-200",
+  spam: "bg-white text-slate-500 border-slate-200",
 };
 
 export default function RequestsOverview() {
@@ -100,69 +94,61 @@ function RequestsOverviewContent() {
   const done = rows.filter((r) => r.status === "converted").length;
 
   const STATS = [
-    { label: t("stats.total"), value: total, icon: "📥", accent: "text-emerald-400" },
-    { label: t("stats.waiting"), value: waiting, icon: "⏳", accent: "text-amber-400" },
-    { label: t("stats.inProgress"), value: inProgress, icon: "📞", accent: "text-sky-400" },
-    { label: t("stats.done"), value: done, icon: "✅", accent: "text-teal-400" },
+    { label: t("stats.total"), value: total, accent: "text-emerald-700" },
+    { label: t("stats.waiting"), value: waiting, accent: "text-amber-800" },
+    { label: t("stats.inProgress"), value: inProgress, accent: "text-sky-700" },
+    { label: t("stats.done"), value: done, accent: "text-teal-700" },
   ];
 
   if (loading) return <Loading />;
 
   return (
-    <div className="p-6 lg:p-8 space-y-8 animate-fade-in-up">
+    <div className="p-6 lg:p-8 space-y-8">
       <div>
-        <h1 className="text-2xl font-bold text-white">{t("title")}</h1>
-        <p className="text-sm text-emerald-200/40 mt-1">{t("subtitle")}</p>
+        <h1 className="text-2xl font-bold text-slate-900">{t("title")}</h1>
+        <p className="text-sm text-slate-500 mt-1">{t("subtitle")}</p>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {STATS.map((s) => (
-          <div key={s.label} className="liquid-glass relative rounded-3xl p-5 overflow-hidden">
-            <div className="relative z-10">
-              <span className="text-2xl">{s.icon}</span>
-              <p className={`text-3xl font-black mt-3 ${s.accent}`}>{s.value}</p>
-              <p className="text-xs text-emerald-200/30 mt-1.5">{s.label}</p>
-            </div>
+          <div key={s.label} className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
+            <p className="text-sm text-slate-600">{s.label}</p>
+            <p className="mt-2 text-2xl font-semibold tabular-nums text-slate-900">{s.value}</p>
           </div>
         ))}
       </div>
 
-      <div className="liquid-glass rounded-3xl overflow-hidden">
-        <div className="px-6 py-4 flex items-center justify-between" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-          <h2 className="font-semibold text-white">{t("recent")}</h2>
+      <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+        <div className="px-6 py-4 flex items-center justify-between border-b border-slate-200">
+          <h2 className="font-semibold text-slate-900">{t("recent")}</h2>
           {rows.length > 0 && (
-            <Link href="/hesabim/taleplerim" className="text-xs text-emerald-400 hover:text-emerald-300 font-medium transition-colors">
+            <Link href="/hesabim/taleplerim" className="text-xs text-emerald-700 hover:text-emerald-700 font-medium transition-colors">
               {t("seeAll")}
             </Link>
           )}
         </div>
         {rows.length === 0 ? (
           <div className="p-10 text-center">
-            <span className="text-5xl block mb-4 animate-float">🌿</span>
-            <p className="text-emerald-200/40 text-sm mb-4">{t("empty")}</p>
-            <Link href={REQUEST_ROUTES.hub} className="inline-flex glass-btn px-6 py-3 rounded-2xl text-sm font-medium text-white transition-all">
+            <p className="text-slate-500 text-sm mb-4">{t("empty")}</p>
+            <Link href={REQUEST_ROUTES.hub} className="inline-flex bg-[#1B6B3A] hover:bg-[#165c31] px-6 py-3 rounded-2xl text-sm font-medium text-white transition-all">
               {t("firstRequest")}
             </Link>
           </div>
         ) : (
-          <div>
-            {rows.slice(0, 5).map((r, i) => (
+          <div className="divide-y divide-slate-200">
+            {rows.slice(0, 5).map((r) => (
               <Link
                 key={r.id}
                 href="/hesabim/taleplerim"
-                className="px-6 py-4 flex items-center gap-4 transition-colors hover:bg-white/[0.02]"
-                style={{ borderBottom: i < Math.min(rows.length, 5) - 1 ? "1px solid rgba(255,255,255,0.04)" : "none" }}
+                className="px-6 py-4 flex items-center gap-4 transition-colors hover:bg-slate-50"
               >
-                <div className="w-10 h-10 rounded-2xl flex items-center justify-center glass-subtle">
-                  <span className="text-lg">{TYPE_EMOJI[r.type]}</span>
-                </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm text-white">
-                    <span className="font-mono text-emerald-300">{r.request_no}</span> — {REQUEST_TYPE_LABELS[lang][r.type]}
+                  <p className="text-sm text-slate-900">
+                    <span className="font-mono text-emerald-700">{r.request_no}</span> — {REQUEST_TYPE_LABELS[lang][r.type]}
                     {r.total_seeds ? ` · ${t("seedBalls", { count: r.total_seeds })}` : ""}
                     {r.land?.name ? ` · ${r.land.name}` : ""}
                   </p>
-                  <p className="text-xs text-emerald-200/25 mt-0.5">{new Date(r.created_at).toLocaleDateString(intlLocale(lang))}</p>
+                  <p className="text-xs text-slate-500 mt-0.5">{new Date(r.created_at).toLocaleDateString(intlLocale(lang))}</p>
                 </div>
                 <span className={`text-xs font-medium px-3 py-1.5 rounded-full border ${STATUS_CLASS[r.status]}`}>
                   {REQUEST_STATUS_LABELS[lang][r.status]}
@@ -175,17 +161,15 @@ function RequestsOverviewContent() {
 
       <div className="grid md:grid-cols-2 gap-4">
         {[
-          { href: REQUEST_ROUTES.openLand, icon: "🚁", title: t("actions.openLandTitle"), desc: t("actions.openLandDesc") },
-          { href: REQUEST_ROUTES.land, icon: "🗺️", title: t("actions.ownLandTitle"), desc: t("actions.ownLandDesc") },
+          { href: REQUEST_ROUTES.openLand, title: t("actions.openLandTitle"), desc: t("actions.openLandDesc") },
+          { href: REQUEST_ROUTES.land, title: t("actions.ownLandTitle"), desc: t("actions.ownLandDesc") },
         ].map((a) => (
-          <Link key={a.href} href={a.href} className="liquid-glass liquid-glass-hover relative rounded-3xl p-5 flex items-center gap-4 group overflow-hidden">
-            <div className="w-12 h-12 rounded-2xl flex items-center justify-center glass-subtle group-hover:scale-110 transition-transform duration-300">
-              <span className="text-2xl">{a.icon}</span>
+          <Link key={a.href} href={a.href} className="flex items-center justify-between gap-4 rounded-xl border border-slate-200 bg-white p-5 transition-colors hover:border-[#1B6B3A]/40">
+            <div>
+              <p className="font-semibold text-slate-900">{a.title}</p>
+              <p className="text-xs text-slate-500">{a.desc}</p>
             </div>
-            <div className="relative z-10">
-              <p className="font-semibold text-white">{a.title}</p>
-              <p className="text-xs text-emerald-200/30">{a.desc}</p>
-            </div>
+            <span aria-hidden="true" className="text-[#1B6B3A]">→</span>
           </Link>
         ))}
       </div>

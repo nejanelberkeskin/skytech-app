@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import Image from "next/image";
 import type { ReactNode } from "react";
 
-/** Kayıt / giriş / şifre sayfalarının ortak çerçevesi (koyu uygulama teması). */
+/** Kayıt / giriş / şifre sayfalarının ortak çerçevesi: açık zemin, sade üst çubuk (yönetim ve kurumsal panelle aynı dil). */
 export default function AuthShell({
   title,
   subtitle,
@@ -19,35 +19,20 @@ export default function AuthShell({
 }) {
   const t = useTranslations("authPages");
   return (
-    <div className="relative min-h-screen flex flex-col overflow-hidden">
-      <div className="nature-bg">
-        <div className="nature-orb nature-orb-1" />
-        <div className="nature-orb nature-orb-2" />
-        <div className="nature-orb nature-orb-3" />
-      </div>
-      <nav
-        className="relative z-10 vitrin-navbar-top px-6 py-4"
-        style={{ backdropFilter: "blur(16px) saturate(1.25)", WebkitBackdropFilter: "blur(16px) saturate(1.25)" }}
-      >
-        <Link href="/" className="flex items-center gap-2.5 w-fit group" aria-label={t("home")}>
-          <Image
-            src="/images/brand/logo.webp"
-            alt="Skytech Green"
-            width={288}
-            height={36}
-            priority
-            className="h-9 w-auto transition-transform duration-300 group-hover:scale-105"
-          />
+    <div className="flex min-h-screen flex-col bg-[#f6f7f5] text-slate-900" style={{ colorScheme: "light" }}>
+      <nav className="border-b border-slate-200 bg-white px-4 py-3 sm:px-6">
+        <Link href="/" className="flex w-fit items-center" aria-label={t("home")}>
+          <Image src="/images/brand/logo.webp" alt="Skytech Green" width={256} height={32} priority className="h-5 w-auto sm:h-6" />
         </Link>
       </nav>
-      <div className="relative z-10 flex-1 flex items-center justify-center p-6">
-        <div className="w-full max-w-md space-y-8 animate-fade-in-up">
+      <div className="flex flex-1 items-start justify-center px-4 py-10 sm:items-center sm:p-6">
+        <div className="w-full max-w-md space-y-6">
           <div className="text-center">
-            <h1 className="text-3xl font-bold text-white">{title}</h1>
-            {subtitle && <p className="text-emerald-200/40 text-sm mt-3">{subtitle}</p>}
+            <h1 className="text-2xl font-semibold text-slate-900">{title}</h1>
+            {subtitle && <p className="mt-2 text-sm text-slate-600">{subtitle}</p>}
           </div>
           {children}
-          {footer && <p className="text-center text-sm text-emerald-200/30">{footer}</p>}
+          {footer && <p className="text-center text-sm text-slate-600">{footer}</p>}
         </div>
       </div>
     </div>
@@ -55,10 +40,10 @@ export default function AuthShell({
 }
 
 export const authInputClass =
-  "w-full px-4 py-3.5 bg-white/[0.03] border border-white/[0.08] rounded-2xl text-white placeholder:text-emerald-200/20 outline-none focus:border-emerald-500/40 focus:ring-1 focus:ring-emerald-500/20 transition-all duration-300";
+  "w-full min-h-[44px] px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm text-slate-900 placeholder:text-slate-400 outline-none hover:border-slate-400 focus:border-[#1B6B3A] focus:ring-2 focus:ring-[#1B6B3A]/20 transition-colors";
 
 export const authInputErrorClass =
-  "w-full px-4 py-3.5 bg-white/[0.03] border border-rose-500/30 rounded-2xl text-white placeholder:text-emerald-200/20 outline-none focus:border-rose-500/50 focus:ring-1 focus:ring-rose-500/20 transition-all duration-300";
+  "w-full min-h-[44px] px-3.5 py-2.5 bg-white border border-red-400 rounded-lg text-sm text-slate-900 placeholder:text-slate-400 outline-none focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-colors";
 
 export function GoogleIcon({ className = "w-5 h-5" }: { className?: string }) {
   return (

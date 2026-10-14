@@ -1,17 +1,8 @@
 import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from "react";
 
-/* ═══════════════════════════════════════════════════════════════════════
-   Button — Skytech Green Design System
-   ═══════════════════════════════════════════════════════════════════════
-   Variant'lar:
-     primary   → Emerald glow, CTA butonları ("Sepete Ekle", "Onayla")
-     secondary → Glass/outline, ikincil aksiyonlar ("Geri", "İptal")
-     ghost     → Saydam, minimal aksiyonlar ("Detay", "Daha Fazla")
-     danger    → Kırmızı, tehlikeli aksiyonlar ("Sil", "Reddet")
-     lime      → Lime accent, öne çıkan kampanya butonları
-
-   Size'lar: sm, md, lg
-   ═══════════════════════════════════════════════════════════════════════ */
+/* Button — yönetim ve kurumsal panel düğmesi. Düz renk, gölge/parlama yok.
+   primary: ana işlem (marka yeşili) · secondary: çerçeveli · ghost: yalın · danger: geri alınamaz işlem.
+   `lime` eski çağrılar için korunur (çerçeveli yeşil). */
 
 type Variant = "primary" | "secondary" | "ghost" | "danger" | "lime";
 type Size = "sm" | "md" | "lg";
@@ -26,47 +17,20 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variantStyles: Record<Variant, string> = {
-  primary: [
-    "bg-emerald-600 text-white",
-    "hover:bg-emerald-500 hover:shadow-[0_0_24px_rgba(16,185,129,0.3)]",
-    "active:bg-emerald-700",
-    "disabled:bg-white/[0.04] disabled:text-white/30 disabled:shadow-none",
-  ].join(" "),
-
-  secondary: [
-    "bg-white/[0.04] text-slate-200 border border-white/[0.08]",
-    "hover:bg-white/[0.07] hover:border-white/[0.14] hover:text-white",
-    "active:bg-white/[0.03]",
-    "disabled:bg-white/[0.02] disabled:text-white/20 disabled:border-white/[0.04]",
-  ].join(" "),
-
-  ghost: [
-    "bg-transparent text-slate-400",
-    "hover:bg-white/[0.05] hover:text-white",
-    "active:bg-white/[0.03]",
-    "disabled:text-white/20",
-  ].join(" "),
-
-  danger: [
-    "bg-red-500/10 text-red-400 border border-red-500/20",
-    "hover:bg-red-500/20 hover:border-red-500/30 hover:text-red-300",
-    "active:bg-red-500/15",
-    "disabled:bg-white/[0.02] disabled:text-white/20 disabled:border-white/[0.04]",
-  ].join(" "),
-
-  lime: [
-    "bg-lime-400/10 text-lime-400 border border-lime-400/20",
-    "hover:bg-lime-400/20 hover:border-lime-400/30 hover:shadow-[0_0_20px_rgba(163,230,53,0.15)]",
-    "active:bg-lime-400/15",
-    "disabled:bg-white/[0.02] disabled:text-white/20 disabled:border-white/[0.04]",
-  ].join(" "),
+  primary: "bg-[#1B6B3A] text-white hover:bg-[#165c31] active:bg-[#124d29] disabled:bg-slate-200 disabled:text-slate-500",
+  secondary:
+    "bg-white text-slate-800 border border-slate-300 hover:bg-slate-50 hover:border-slate-400 disabled:bg-slate-50 disabled:text-slate-400 disabled:border-slate-200",
+  ghost: "bg-transparent text-slate-700 hover:bg-slate-100 hover:text-slate-900 disabled:text-slate-400",
+  danger:
+    "bg-white text-red-700 border border-red-300 hover:bg-red-50 hover:border-red-400 disabled:bg-slate-50 disabled:text-slate-400 disabled:border-slate-200",
+  lime: "bg-white text-[#1B6B3A] border border-[#1B6B3A]/40 hover:bg-[#f0f7ec] disabled:text-slate-400 disabled:border-slate-200",
 };
 
 const sizeStyles: Record<Size, string> = {
   // min-h-[44px] on sm/md ensures Apple HIG 44×44px touch target minimum
-  sm: "min-h-[44px] px-3 text-xs gap-1.5 rounded-lg",
-  md: "min-h-[44px] px-5 text-sm gap-2 rounded-xl",
-  lg: "min-h-[44px] px-7 text-sm gap-2.5 rounded-xl",
+  sm: "min-h-[40px] px-3 text-sm gap-1.5 rounded-lg",
+  md: "min-h-[44px] px-4 text-sm gap-2 rounded-lg",
+  lg: "min-h-[48px] px-6 text-sm gap-2.5 rounded-lg",
 };
 
 const Spinner = () => (
@@ -101,8 +65,8 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         className={[
           // Base
           "inline-flex items-center justify-center font-medium",
-          "transition-all duration-200 ease-out",
-          "active:scale-[0.97] disabled:active:scale-100",
+          "transition-colors duration-150",
+          "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1B6B3A]",
           "select-none cursor-pointer disabled:cursor-not-allowed",
           // Variant + Size
           variantStyles[variant],

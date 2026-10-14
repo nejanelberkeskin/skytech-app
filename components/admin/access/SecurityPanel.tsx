@@ -81,12 +81,12 @@ export default function SecurityPanel() {
   return (
     <section
       aria-label="İki aşamalı doğrulama"
-      className="rounded-2xl border border-white/15 p-4 md:p-6 space-y-4"
+      className="rounded-2xl border border-slate-200 p-4 md:p-6 space-y-4"
     >
-      <h2 className="text-lg font-semibold text-white">
+      <h2 className="text-lg font-semibold text-slate-900">
         İki aşamalı doğrulama
       </h2>
-      <p className="text-sm text-slate-300">
+      <p className="text-sm text-slate-700">
         {me?.mfa.enrolled
           ? "Doğrulama uygulaması kayıtlı."
           : "Henüz doğrulama uygulaması kayıtlı değil."}{" "}
@@ -94,16 +94,16 @@ export default function SecurityPanel() {
           ? "Hassas işlemlerde ek doğrulama zorunlu."
           : "Ek doğrulama zorunluluğu henüz etkin değil."}
       </p>
-      <p className="text-sm text-slate-400">
+      <p className="text-sm text-slate-600">
         Son doğrulama: {istanbulDate(me?.mfa.verifiedAt)} · Türkiye saati
       </p>
       {error && (
-        <p role="alert" className="text-red-200">
+        <p role="alert" className="text-red-700">
           {error}
         </p>
       )}
       {done && (
-        <p role="status" className="text-emerald-200">
+        <p role="status" className="text-emerald-800">
           Doğrulama tamamlandı. Bekleyen işlem otomatik gönderilmedi; tekrar
           inceleyip onaylayın.
         </p>
@@ -128,7 +128,7 @@ export default function SecurityPanel() {
         >
           {factor.qr && (
             <>
-              <p className="text-sm text-slate-300">
+              <p className="text-sm text-slate-700">
                 Kodu kendi doğrulama uygulamanızla tarayın. Kurulum anahtarını
                 kimseyle paylaşmayın.
               </p>
@@ -140,10 +140,10 @@ export default function SecurityPanel() {
                 alt="Doğrulama uygulaması kurulum kodu"
               />
               <details>
-                <summary className="min-h-11 text-slate-300 cursor-pointer">
+                <summary className="min-h-11 text-slate-700 cursor-pointer">
                   Elle kurulum anahtarı
                 </summary>
-                <code className="break-all text-white">{factor.secret}</code>
+                <code className="break-all text-slate-900">{factor.secret}</code>
               </details>
             </>
           )}
@@ -162,7 +162,7 @@ export default function SecurityPanel() {
           </Button>
         </form>
       )}
-      <p className="text-xs text-slate-400">
+      <p className="text-xs text-slate-600">
         Uygulamaya erişiminizi kaybettiyseniz başka bir yetkili sistem
         sahibinden kurtarma isteyin. Kurulum anahtarı bu sayfadan ayrılınca
         tutulmaz.

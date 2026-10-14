@@ -8,7 +8,7 @@ export default function AccessProblem({
   return (
     <div
       role="alert"
-      className="border border-red-400/40 rounded-xl p-4 text-sm text-red-200 space-y-2 break-words"
+      className="border border-red-400/40 rounded-xl p-4 text-sm text-red-700 space-y-2 break-words"
     >
       <p>{problem.message}</p>
       {lines.length > 0 && (

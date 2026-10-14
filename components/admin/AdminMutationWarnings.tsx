@@ -12,7 +12,7 @@ export default function AdminMutationWarnings() {
   }, []);
   if (!auditWarning) return null;
   return (
-    <div role="alert" className="sticky top-16 lg:top-0 z-30 mx-4 my-3 rounded-xl border border-amber-400/50 bg-[#332b12] px-4 py-3 text-sm text-amber-100">
+    <div role="alert" className="sticky top-16 lg:top-0 z-30 mx-4 my-3 rounded-xl border border-amber-400/50 bg-amber-50 px-4 py-3 text-sm text-amber-800">
       <strong>İşlem kaydedildi; işlem geçmişi kaydı tamamlanamadı.</strong>{" "}
       Aynı işlemi yeniden yapmayın. Denetim kaydının tamamlanması için sistem sorumlusuna bildirin.
     </div>

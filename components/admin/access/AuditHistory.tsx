@@ -121,7 +121,7 @@ export default function AuditHistory() {
           }}
         />
       ) : busy ? (
-        <p role="status" className="text-slate-300">
+        <p role="status" className="text-slate-700">
           İşlem geçmişi yükleniyor…
         </p>
       ) : entries.length ? (
@@ -129,24 +129,24 @@ export default function AuditHistory() {
           {entries.map((entry) => (
             <li
               key={entry.id}
-              className="rounded-xl border border-white/10 p-4 space-y-2"
+              className="rounded-xl border border-slate-200 p-4 space-y-2"
             >
               <div className="flex flex-wrap justify-between gap-2">
-                <p className="font-medium text-white">
+                <p className="font-medium text-slate-900">
                   {entry.action} · {entry.entity}
                 </p>
-                <time className="text-sm text-slate-400">
+                <time className="text-sm text-slate-600">
                   {istanbulDate(entry.at)}
                 </time>
               </div>
-              <p className="text-sm text-slate-300 break-all">
+              <p className="text-sm text-slate-700 break-all">
                 {entry.actor.label || "Sistem"} · {entry.entityId}
               </p>
               <details>
-                <summary className="min-h-11 text-emerald-200 text-sm cursor-pointer">
+                <summary className="min-h-11 text-emerald-800 text-sm cursor-pointer">
                   Kayıt ayrıntıları
                 </summary>
-                <pre className="whitespace-pre-wrap break-all text-xs text-slate-300">
+                <pre className="whitespace-pre-wrap break-all text-xs text-slate-700">
                   {JSON.stringify(entry.details, null, 2)}
                 </pre>
               </details>
@@ -154,7 +154,7 @@ export default function AuditHistory() {
           ))}
         </ol>
       ) : (
-        <p className="text-slate-300">Bu filtrelerde işlem kaydı yok.</p>
+        <p className="text-slate-700">Bu filtrelerde işlem kaydı yok.</p>
       )}
       <div className="flex flex-wrap gap-3">
         {cursor && (

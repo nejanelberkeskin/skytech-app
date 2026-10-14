@@ -167,7 +167,7 @@ export default function Invitations() {
       >
         Davetleri yenile
       </Button>
-      <p className="text-sm text-slate-300">
+      <p className="text-sm text-slate-700">
         {canViewAll
           ? "Tüm personel davetlerini görüyorsunuz."
           : "Yalnız sizin oluşturduğunuz davetler gösterilir. Başka yöneticilerin davetlerini göremez veya değiştiremezsiniz."}
@@ -180,9 +180,9 @@ export default function Invitations() {
             e.preventDefault();
             review();
           }}
-          className="rounded-2xl border border-white/10 p-5 space-y-4"
+          className="rounded-2xl border border-slate-200 p-5 space-y-4"
         >
-          <h2 className="text-lg font-semibold text-white">
+          <h2 className="text-lg font-semibold text-slate-900">
             Yeni personel daveti
           </h2>
           <fieldset
@@ -219,10 +219,10 @@ export default function Invitations() {
             </div>
             {roleKey && (
               <details>
-                <summary className="min-h-11 cursor-pointer text-emerald-200 text-sm">
+                <summary className="min-h-11 cursor-pointer text-emerald-800 text-sm">
                   Bu rol hangi izinleri içeriyor?
                 </summary>
-                <ul className="text-slate-300 text-sm space-y-1">
+                <ul className="text-slate-700 text-sm space-y-1">
                   {roles
                     .find((r) => r.key === roleKey)
                     ?.permissions.map((p) => (
@@ -269,7 +269,7 @@ export default function Invitations() {
           <h2
             ref={confirmationHeading}
             tabIndex={-1}
-            className="text-white font-semibold"
+            className="text-slate-900 font-semibold"
           >
             {confirm.kind === "create"
               ? "Davet gönderilsin mi?"
@@ -277,13 +277,13 @@ export default function Invitations() {
                 ? "Davet yeniden gönderilsin mi?"
                 : "Davet iptal edilsin mi?"}
           </h2>
-          <p className="text-slate-200 break-all">
+          <p className="text-slate-800 break-all">
             {confirm.kind === "create"
               ? confirm.body.email
               : confirm.invitation.email}
           </p>
           {confirm.kind === "create" ? (
-            <p className="text-sm text-slate-300">
+            <p className="text-sm text-slate-700">
               {roles.find((r) => r.key === confirm.body.roleKey)?.label} ·{" "}
               {scopeLabel(confirm.body.scope)} · Erişim:{" "}
               {confirm.body.accessEndsAt
@@ -292,7 +292,7 @@ export default function Invitations() {
               · Bağlantı: {confirm.body.expiresInDays} gün
             </p>
           ) : (
-            <p className="text-sm text-slate-300">
+            <p className="text-sm text-slate-700">
               {confirm.kind === "resend"
                 ? "Eski bağlantı geçersiz olacak. Yeni bağlantı 7 gün geçerli olacak ve bu adrese e-posta gönderilecek."
                 : "Bekleyen bağlantı kullanılamayacak. Kabul edilmiş personel erişimi bu işlemle kaldırılmaz."}
@@ -321,7 +321,7 @@ export default function Invitations() {
       {error ? (
         <LoadError error={error} retry={() => void load()} />
       ) : !list ? (
-        <p role="status" className="text-slate-300">
+        <p role="status" className="text-slate-700">
           Davetler yükleniyor…
         </p>
       ) : (
@@ -341,18 +341,18 @@ export default function Invitations() {
             return (
               <li
                 key={inv.id}
-                className="rounded-2xl border border-white/10 p-5 space-y-2"
+                className="rounded-2xl border border-slate-200 p-5 space-y-2"
               >
                 <div className="flex flex-wrap justify-between gap-3">
-                  <p className="font-medium text-white break-all">
+                  <p className="font-medium text-slate-900 break-all">
                     {inv.email}
                   </p>
-                  <span className="text-sm text-slate-300">{label}</span>
+                  <span className="text-sm text-slate-700">{label}</span>
                 </div>
-                <p className="text-sm text-slate-300 break-words">
+                <p className="text-sm text-slate-700 break-words">
                   {inv.roleLabel} · {scopeLabel(inv.scope)}
                 </p>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-slate-600">
                   Bağlantı bitişi: {istanbulDate(inv.expiresAt)} · Erişim
                   bitişi:{" "}
                   {inv.accessEndsAt
@@ -387,7 +387,7 @@ export default function Invitations() {
         </ul>
       )}
       {list?.length === 0 && (
-        <p className="text-slate-300">Davet bulunmuyor.</p>
+        <p className="text-slate-700">Davet bulunmuyor.</p>
       )}
       <div className="flex gap-3">
         {cursor && (

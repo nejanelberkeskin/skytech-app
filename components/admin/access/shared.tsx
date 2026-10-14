@@ -27,7 +27,7 @@ export function AccessTabs() {
             key={href}
             href={href}
             aria-current={path === href ? "page" : undefined}
-            className={`min-h-11 px-4 py-3 rounded-xl border text-sm ${path === href ? "border-emerald-400/40 text-emerald-200" : "border-white/10 text-slate-300"}`}
+            className={`min-h-11 px-4 py-3 rounded-xl border text-sm ${path === href ? "border-emerald-400/40 text-emerald-800" : "border-slate-200 text-slate-700"}`}
           >
             {label}
           </Link>
@@ -47,8 +47,8 @@ export function AccessPage({
   return (
     <div className="p-4 md:p-8 space-y-6 max-w-6xl">
       <header>
-        <h1 className="text-2xl font-bold text-white">{title}</h1>
-        <p className="mt-2 text-slate-300 text-sm">{description}</p>
+        <h1 className="text-2xl font-bold text-slate-900">{title}</h1>
+        <p className="mt-2 text-slate-700 text-sm">{description}</p>
       </header>
       <AccessTabs />
       {children}
@@ -133,18 +133,18 @@ export function Feedback({
         <p
           key={i}
           role="alert"
-          className="border border-amber-400/40 rounded-xl p-4 text-sm text-amber-200"
+          className="border border-amber-400/40 rounded-xl p-4 text-sm text-amber-800"
         >
           {w.message}
         </p>
       ))}
       {command.result && (
-        <p role="status" className="text-emerald-200">
+        <p role="status" className="text-emerald-800">
           {command.result}
         </p>
       )}
       {command.uncertain && (
-        <p className="text-amber-200 text-sm">
+        <p className="text-amber-800 text-sm">
           Sonuç belirsiz. Yeniden işlem yapmadan önce üstteki yenile düğmesiyle
           güncel kayıtları alın.
         </p>
@@ -163,7 +163,7 @@ export function LoadError({
 }) {
   return (
     <div className="space-y-3">
-      <p role="alert" className="text-red-200">
+      <p role="alert" className="text-red-700">
         {error}
       </p>
       <Button variant="secondary" onClick={retry}>

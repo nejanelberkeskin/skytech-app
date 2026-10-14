@@ -116,21 +116,21 @@ export default function SitePicker({
   return (
     <fieldset
       disabled={disabled}
-      className="border border-white/15 rounded-xl p-4 space-y-4 min-w-0"
+      className="border border-slate-200 rounded-xl p-4 space-y-4 min-w-0"
     >
-      <legend className="text-sm text-slate-300 px-2">
+      <legend className="text-sm text-slate-700 px-2">
         Sahalar · {ids.length} seçili
       </legend>
       {!!ids.length && (
         <div className="space-y-2">
-          <h3 className="text-sm text-white">Seçilen sahalar</h3>
-          <p className="text-xs text-slate-400">
+          <h3 className="text-sm text-slate-900">Seçilen sahalar</h3>
+          <p className="text-xs text-slate-600">
             Arama veya sayfa değiştirmek seçimleri kaldırmaz.
           </p>
           {ids.map((id) => (
             <label
               key={id}
-              className="min-h-11 flex gap-3 items-center text-sm text-slate-200 break-all"
+              className="min-h-11 flex gap-3 items-center text-sm text-slate-800 break-all"
             >
               <input
                 type="checkbox"
@@ -146,7 +146,7 @@ export default function SitePicker({
         </div>
       )}
       {labelError && (
-        <p role="alert" className="text-amber-200 text-sm">
+        <p role="alert" className="text-amber-800 text-sm">
           Seçili saha adları alınamadı. Seçimler korunuyor. {labelError}
         </p>
       )}
@@ -163,7 +163,7 @@ export default function SitePicker({
       {page?.items.map((site) => (
         <label
           key={site.id}
-          className="min-h-11 flex gap-3 items-center text-sm text-slate-200"
+          className="min-h-11 flex gap-3 items-center text-sm text-slate-800"
         >
           <input
             type="checkbox"
@@ -174,24 +174,24 @@ export default function SitePicker({
           />
           <span>
             {site.name}
-            <span className="block text-xs text-slate-400 break-all">
+            <span className="block text-xs text-slate-600 break-all">
               {site.slug} · {site.isPublic ? "Yayında" : "Yayında değil"}
             </span>
           </span>
         </label>
       ))}
       {!busy && page?.items.length === 0 && (
-        <p className="text-sm text-slate-300">
+        <p className="text-sm text-slate-700">
           Aramanıza uygun saha bulunamadı.
         </p>
       )}
       {busy && (
-        <p role="status" className="text-sm text-slate-300">
+        <p role="status" className="text-sm text-slate-700">
           Sahalar yükleniyor…
         </p>
       )}
       {error && (
-        <p role="alert" className="text-red-200 text-sm">
+        <p role="alert" className="text-red-700 text-sm">
           {error}
         </p>
       )}
@@ -216,7 +216,7 @@ export default function SitePicker({
         </Button>
       )}
       {ids.length >= 200 && (
-        <p className="text-amber-200 text-sm">En fazla 200 saha seçilebilir.</p>
+        <p className="text-amber-800 text-sm">En fazla 200 saha seçilebilir.</p>
       )}
     </fieldset>
   );

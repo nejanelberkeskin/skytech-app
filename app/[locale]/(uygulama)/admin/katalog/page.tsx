@@ -11,7 +11,7 @@ const EMPTY_PRODUCT: Omit<SeedProduct, "id" | "created_at" | "updated_at"> = {
   slug: "",
   name: "",
   latin_name: "",
-  emoji: "🌱",
+  emoji: "",
   color: "from-green-600 to-green-800",
   description: "",
   price: 0,
@@ -163,8 +163,8 @@ function KatalogContent() {
       {/* Başlık */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">Tohum Kataloğu</h1>
-          <p className="text-slate-400 text-sm mt-1">
+          <h1 className="text-2xl font-bold text-slate-900">Tohum Kataloğu</h1>
+          <p className="text-slate-600 text-sm mt-1">
             Bireysel (B2C) tohum ürünlerini yönetin — fiyat, stok ve limit ayarları.
           </p>
         </div>
@@ -174,39 +174,36 @@ function KatalogContent() {
       </div>
 
       {/* İstatistikler */}
-      <div className="grid grid-cols-3 gap-4">
-        <CardStat icon="📦" label="Toplam Ürün" value={products.length.toString()} sub="katalogda" />
-        <CardStat icon="✅" label="Aktif Ürün" value={activeCount.toString()} sub="satışta" />
-        <CardStat icon="🌱" label="Toplam Stok" value={totalStock.toLocaleString("tr-TR")} sub="adet tohum" />
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
+        <CardStat icon="" label="Toplam Ürün" value={products.length.toString()} sub="katalogda" />
+        <CardStat icon="" label="Aktif Ürün" value={activeCount.toString()} sub="satışta" />
+        <CardStat icon="" label="Toplam Stok" value={totalStock.toLocaleString("tr-TR")} sub="adet tohum" />
       </div>
 
       {/* Bildirimler */}
       {success && (
-        <div className="bg-emerald-500/10 ring-1 ring-emerald-500/30 text-emerald-400 text-sm px-4 py-3 rounded-xl animate-fade-in">
-          ✅ {success}
+        <div className="bg-emerald-500/10 ring-1 ring-emerald-500/30 text-emerald-700 text-sm px-4 py-3 rounded-xl">{success}
         </div>
       )}
       {error && !modalOpen && (
-        <div className="bg-red-500/10 ring-1 ring-red-500/30 text-red-400 text-sm px-4 py-3 rounded-xl animate-fade-in">
-          ❌ {error}
+        <div className="bg-red-500/10 ring-1 ring-red-500/30 text-red-700 text-sm px-4 py-3 rounded-xl">{error}
         </div>
       )}
 
       {/* Tablo */}
       {loading ? (
         <div className="flex justify-center py-16">
-          <div className="w-8 h-8 border-2 border-white/[0.08] border-t-emerald-500 rounded-full animate-spin" />
+          <div className="w-8 h-8 border-2 border-slate-200 border-t-emerald-500 rounded-full animate-spin" />
         </div>
       ) : products.length === 0 ? (
         <div className="text-center py-16">
-          <div className="text-5xl mb-4">🌱</div>
-          <p className="text-slate-400">Henüz ürün bulunmamaktadır. İlk tohumu ekleyiniz!</p>
+          <p className="text-slate-600">Henüz ürün bulunmamaktadır. İlk tohumu ekleyiniz!</p>
         </div>
       ) : (
-        <div className="bg-[var(--bg-surface)] border border-white/[0.06] rounded-2xl overflow-hidden">
+        <div className="bg-white border border-white/[0.06] rounded-2xl overflow-hidden">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-white/[0.06]">
+              <tr className="border-b border-slate-200">
                 <th className="text-left px-5 py-3 text-xs text-slate-500 font-medium uppercase tracking-wider">Tohum</th>
                 <th className="text-left px-5 py-3 text-xs text-slate-500 font-medium uppercase tracking-wider">Fiyat</th>
                 <th className="text-left px-5 py-3 text-xs text-slate-500 font-medium uppercase tracking-wider">Stok</th>
@@ -217,36 +214,36 @@ function KatalogContent() {
             </thead>
             <tbody>
               {products.map((p) => (
-                <tr key={p.id} className="border-b border-white/[0.04] hover:bg-white/[0.02] transition-colors">
+                <tr key={p.id} className="border-b border-slate-200 hover:bg-slate-50 transition-colors">
                   <td className="px-5 py-4">
                     <div className="flex items-center gap-3">
                       <span className="text-2xl">{p.emoji}</span>
                       <div>
-                        <p className="font-medium text-white">{p.name}</p>
+                        <p className="font-medium text-slate-900">{p.name}</p>
                         <p className="text-xs text-slate-500 italic">{p.latin_name}</p>
                       </div>
                     </div>
                   </td>
                   <td className="px-5 py-4">
-                    <span className="text-white font-semibold">{p.price} ₺</span>
+                    <span className="text-slate-900 font-semibold">{p.price} ₺</span>
                     <span className="text-xs text-slate-500 ml-1">/ tohum</span>
                   </td>
                   <td className="px-5 py-4">
-                    <span className={`font-medium ${p.stock < 1000 ? "text-amber-400" : "text-slate-300"}`}>
+                    <span className={`font-medium ${p.stock < 1000 ? "text-amber-800" : "text-slate-700"}`}>
                       {p.stock.toLocaleString("tr-TR")}
                     </span>
                     {p.stock < 1000 && (
-                      <span className="ml-2 text-xs text-amber-500 bg-amber-500/10 ring-1 ring-amber-500/30 px-2 py-0.5 rounded-full">Düşük</span>
+                      <span className="ml-2 text-xs text-amber-800 bg-amber-500/10 ring-1 ring-amber-500/30 px-2 py-0.5 rounded-full">Düşük</span>
                     )}
                   </td>
-                  <td className="px-5 py-4 text-slate-300">{p.max_order_qty.toLocaleString("tr-TR")}</td>
+                  <td className="px-5 py-4 text-slate-700">{p.max_order_qty.toLocaleString("tr-TR")}</td>
                   <td className="px-5 py-4">
                     <button
                       onClick={() => toggleActive(p)}
                       className={`text-xs font-medium px-3 py-1.5 rounded-full transition-all ${
                         p.is_active
-                          ? "bg-emerald-500/10 text-emerald-400 ring-1 ring-emerald-500/30 hover:bg-emerald-500/20"
-                          : "bg-white/[0.04] text-slate-500 ring-1 ring-white/[0.06] hover:bg-white/[0.08]"
+                          ? "bg-emerald-500/10 text-emerald-700 ring-1 ring-emerald-500/30 hover:bg-emerald-500/20"
+                          : "bg-white text-slate-500 ring-1 ring-slate-200 hover:bg-slate-50"
                       }`}
                     >
                       {p.is_active ? "Aktif" : "Pasif"}
@@ -267,13 +264,13 @@ function KatalogContent() {
 
       {/* ── Ekle / Düzenle Modalı ── */}
       {modalOpen && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-md z-50 flex items-center justify-center p-4">
-          <div className="glass border border-white/[0.08] rounded-2xl w-full max-w-2xl shadow-2xl max-h-[90vh] overflow-y-auto animate-scale-in">
-            <div className="px-6 py-5 border-b border-white/[0.06] flex items-center justify-between">
-              <h2 className="text-lg font-bold text-white">
+        <div className="fixed inset-0 bg-slate-900/40 z-50 flex items-center justify-center p-4">
+          <div className="glass border border-slate-200 rounded-2xl w-full max-w-2xl shadow-2xl max-h-[90vh] overflow-y-auto animate-scale-in">
+            <div className="px-6 py-5 border-b border-slate-200 flex items-center justify-between">
+              <h2 className="text-lg font-bold text-slate-900">
                 {editingId ? "Tohumu Düzenleyin" : "Yeni Tohum Ekleyin"}
               </h2>
-              <button onClick={() => setModalOpen(false)} className="text-slate-500 hover:text-white text-xl transition-colors">&times;</button>
+              <button onClick={() => setModalOpen(false)} className="text-slate-500 hover:text-slate-900 text-xl transition-colors">&times;</button>
             </div>
 
             <div className="p-6 space-y-5">
@@ -304,7 +301,7 @@ function KatalogContent() {
               </div>
 
               {/* Satır 2: Latince + Emoji */}
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
                 <div className="col-span-2">
                   <Input
                     label="Latince Adı"
@@ -321,7 +318,7 @@ function KatalogContent() {
               </div>
 
               {/* Satır 3: Fiyat, Stok, Maks. Sipariş */}
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
                 <Input
                   label="Birim Fiyat (₺)"
                   required
@@ -353,7 +350,7 @@ function KatalogContent() {
               />
 
               {/* Renk + Sıralama + Aktif */}
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
                 <Select
                   label="Gradient Renk"
                   value={form.color}
@@ -378,29 +375,29 @@ function KatalogContent() {
                     <div
                       onClick={() => set("is_active", !form.is_active)}
                       className={`w-11 h-6 rounded-full transition-colors relative cursor-pointer ${
-                        form.is_active ? "bg-emerald-600" : "bg-white/[0.08]"
+                        form.is_active ? "bg-emerald-600" : "bg-white"
                       }`}
                     >
                       <div className={`w-5 h-5 bg-white rounded-full absolute top-0.5 transition-transform ${
                         form.is_active ? "translate-x-5.5 left-[22px]" : "left-0.5"
                       }`} />
                     </div>
-                    <span className="text-sm text-slate-300">{form.is_active ? "Aktif" : "Pasif"}</span>
+                    <span className="text-sm text-slate-700">{form.is_active ? "Aktif" : "Pasif"}</span>
                   </label>
                 </div>
               </div>
 
               {/* Önizleme */}
-              <div className="bg-white/[0.02] border border-white/[0.06] rounded-xl p-4">
+              <div className="bg-white border border-slate-200 rounded-xl p-4">
                 <p className="text-xs text-slate-500 uppercase font-medium mb-2 tracking-wider">Önizleme</p>
                 <div className="flex items-center gap-3">
                   <span className="text-3xl">{form.emoji}</span>
                   <div>
-                    <p className="font-semibold text-white">{form.name || "Tohum Adı"}</p>
-                    <p className="text-xs text-slate-400 italic">{form.latin_name || "Latin adı"}</p>
+                    <p className="font-semibold text-slate-900">{form.name || "Tohum Adı"}</p>
+                    <p className="text-xs text-slate-600 italic">{form.latin_name || "Latin adı"}</p>
                   </div>
                   <div className="ml-auto text-right">
-                    <p className="text-lg font-bold text-emerald-400">{form.price} ₺</p>
+                    <p className="text-lg font-bold text-emerald-700">{form.price} ₺</p>
                     <p className="text-xs text-slate-500">Maks. {form.max_order_qty} adet</p>
                   </div>
                 </div>
@@ -408,14 +405,14 @@ function KatalogContent() {
 
               {/* Hata */}
               {error && (
-                <div className="bg-red-500/10 ring-1 ring-red-500/30 text-red-400 text-sm px-4 py-3 rounded-xl">
+                <div className="bg-red-500/10 ring-1 ring-red-500/30 text-red-700 text-sm px-4 py-3 rounded-xl">
                   {error}
                 </div>
               )}
             </div>
 
             {/* Alt butonlar */}
-            <div className="px-6 py-4 border-t border-white/[0.06] flex items-center justify-end gap-3">
+            <div className="px-6 py-4 border-t border-slate-200 flex items-center justify-end gap-3">
               <Button variant="ghost" onClick={() => setModalOpen(false)}>İptal</Button>
               <Button variant="primary" onClick={handleSave} loading={saving}>
                 {editingId ? "Güncelleyin" : "Ekleyin"}
@@ -427,15 +424,14 @@ function KatalogContent() {
 
       {/* ── Silme Onay Modalı ── */}
       {deleteTarget && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-md z-50 flex items-center justify-center p-4">
-          <div className="glass border border-white/[0.08] rounded-2xl w-full max-w-md p-6 space-y-5 shadow-2xl animate-scale-in">
+        <div className="fixed inset-0 bg-slate-900/40 z-50 flex items-center justify-center p-4">
+          <div className="glass border border-slate-200 rounded-2xl w-full max-w-md p-6 space-y-5 shadow-2xl animate-scale-in">
             <div className="text-center">
               <div className="w-16 h-16 bg-red-500/10 ring-1 ring-red-500/30 rounded-full flex items-center justify-center mx-auto mb-3">
-                <span className="text-3xl">🗑️</span>
               </div>
-              <h3 className="text-lg font-bold text-white">Silmek istediğinize emin misiniz?</h3>
-              <p className="text-sm text-slate-400 mt-2">
-                <span className="text-white font-medium">{deleteTarget.emoji} {deleteTarget.name}</span> kalıcı olarak silinecektir.
+              <h3 className="text-lg font-bold text-slate-900">Silmek istediğinize emin misiniz?</h3>
+              <p className="text-sm text-slate-600 mt-2">
+                <span className="text-slate-900 font-medium">{deleteTarget.emoji} {deleteTarget.name}</span> kalıcı olarak silinecektir.
               </p>
             </div>
             <div className="flex gap-3">

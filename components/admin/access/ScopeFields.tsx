@@ -44,7 +44,7 @@ export default function ScopeFields({
       </Select>
       {fullScopeOnly && (
         <p
-          className="text-sm text-amber-200"
+          className="text-sm text-amber-800"
           role={scope.kind !== "all" ? "alert" : undefined}
         >
           Bu rol personel veya rol yönetimi izni içerdiği için yalnız “Tüm
@@ -61,7 +61,7 @@ export default function ScopeFields({
         />
       )}
       {scope.kind !== "all" && (
-        <p className="text-sm text-amber-200">
+        <p className="text-sm text-amber-800">
           Saha veya görev kapsamını henüz desteklemeyen ekranlara bu atamayla
           erişilemez.
         </p>
@@ -75,7 +75,7 @@ export default function ScopeFields({
         disabled={disabled}
         helperText="Boş bırakılırsa süresiz. Davet bağlantısının geçerlilik süresinden farklıdır."
       />
-      <p className="text-xs text-slate-400 break-words">
+      <p className="text-xs text-slate-600 break-words">
         Seçilen kapsam:{" "}
         {scope.kind === "sites"
           ? `${scope.siteIds.length} saha seçili`

@@ -83,27 +83,27 @@ function Content() {
     <div className="p-4 md:p-8 space-y-6">
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div>
-          <h1 className="text-2xl font-bold text-white">Bırakma Partileri</h1>
-          <p className="text-sm text-slate-400 mt-1">Kesinleşmiş siparişleri bırakma çalışmalarına atayın; bırakma yapılınca partiyi işaretleyin.</p>
+          <h1 className="text-2xl font-bold text-slate-900">Bırakma Partileri</h1>
+          <p className="text-sm text-slate-600 mt-1">Kesinleşmiş siparişleri bırakma çalışmalarına atayın; bırakma yapılınca partiyi işaretleyin.</p>
         </div>
         {canCreate && <Button disabled={saving || blocked} variant="primary" onClick={() => setCreating((v) => !v)}>{creating ? "Vazgeç" : "+ Yeni parti"}</Button>}
       </div>
 
       <Button variant="secondary" disabled={saving || loading} onClick={() => { setCreating(false); void load(); }}>Listeyi yenile</Button>
-      {blocked && <p className="text-amber-100 text-sm">Sonuç belirsiz veya kayıt değişti. Yeniden göndermeden önce listeyi yenileyin.</p>}
-      {warnings.map((w,i)=><p role="alert" key={i} className="text-amber-100">{w.message} İşlemi tekrar göndermeyin.</p>)}
-      {data && <p className="text-sm text-slate-300">{data.scope.kind === "all" ? "Kapsam: tüm sahalar" : `Kapsam: yetkili olduğunuz ${data.scope.siteIds.length} saha`}</p>}
-      {data && data.dueForConfirmation > 0 && <p role="alert" className="text-sm border border-amber-400/40 p-4 rounded-xl text-amber-100">{data.dueForConfirmation} siparişin cayma süresi dolmuş ancak kesinleştirme işi henüz tamamlanmamış. Bekleyen sipariş listesi eksik olabilir. Yetkili kişi zamanlanmış işleri kontrol etmeli.</p>}
-      {success && <div role="status" className="bg-emerald-500/10 ring-1 ring-emerald-500/30 text-emerald-400 px-4 py-3 rounded-xl text-sm">✅ {success}</div>}
-      {error && <div role="alert" className="bg-red-500/10 ring-1 ring-red-500/30 text-red-400 px-4 py-3 rounded-xl text-sm">❌ {error}</div>}
+      {blocked && <p className="text-amber-800 text-sm">Sonuç belirsiz veya kayıt değişti. Yeniden göndermeden önce listeyi yenileyin.</p>}
+      {warnings.map((w,i)=><p role="alert" key={i} className="text-amber-800">{w.message} İşlemi tekrar göndermeyin.</p>)}
+      {data && <p className="text-sm text-slate-700">{data.scope.kind === "all" ? "Kapsam: tüm sahalar" : `Kapsam: yetkili olduğunuz ${data.scope.siteIds.length} saha`}</p>}
+      {data && data.dueForConfirmation > 0 && <p role="alert" className="text-sm border border-amber-400/40 p-4 rounded-xl text-amber-800">{data.dueForConfirmation} siparişin cayma süresi dolmuş ancak kesinleştirme işi henüz tamamlanmamış. Bekleyen sipariş listesi eksik olabilir. Yetkili kişi zamanlanmış işleri kontrol etmeli.</p>}
+      {success && <div role="status" className="bg-emerald-500/10 ring-1 ring-emerald-500/30 text-emerald-700 px-4 py-3 rounded-xl text-sm">{success}</div>}
+      {error && <div role="alert" className="bg-red-500/10 ring-1 ring-red-500/30 text-red-700 px-4 py-3 rounded-xl text-sm">{error}</div>}
 
       {data && data.waiting.length > 0 && (
-        <div className="bg-white/[0.03] ring-1 ring-sky-500/30 rounded-2xl p-5">
-          <h2 className="text-sm font-semibold text-sky-200 mb-2">Partiye alınmayı bekleyen siparişler</h2>
-          <ul className="text-sm text-slate-300 space-y-1">
+        <div className="bg-white ring-1 ring-sky-500/30 rounded-2xl p-5">
+          <h2 className="text-sm font-semibold text-sky-700 mb-2">Partiye alınmayı bekleyen siparişler</h2>
+          <ul className="text-sm text-slate-700 space-y-1">
             {data.waiting.map((w) => (
               <li key={`${w.landId}|${w.seasonLabel}`}>
-                <span className="text-white font-medium">{w.landName}</span> · {w.seasonLabel} — {w.orders} sipariş, {formatCount(w.quantity, "tr")} tohum topu
+                <span className="text-slate-900 font-medium">{w.landName}</span> · {w.seasonLabel} — {w.orders} sipariş, {formatCount(w.quantity, "tr")} tohum topu
               </li>
             ))}
           </ul>
@@ -111,8 +111,8 @@ function Content() {
       )}
 
       {creating && data && (
-        <div className="bg-[var(--bg-surface)] border border-white/[0.06] rounded-2xl p-5 space-y-4">
-          <h2 className="font-semibold text-white text-sm">Yeni parti</h2>
+        <div className="bg-white border border-white/[0.06] rounded-2xl p-5 space-y-4">
+          <h2 className="font-semibold text-slate-900 text-sm">Yeni parti</h2>
           <fieldset disabled={saving || blocked} className="space-y-4"><div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Select label="Proje Uygulama Sahası" value={form.landId} onChange={(e) => setForm({ ...form, landId: e.target.value })}>
               <option value="">Saha seçin</option>
@@ -137,8 +137,7 @@ function Content() {
         </div>
       ) : !data ? null : data.batches.length === 0 ? (
         <div className="text-center py-16">
-          <span className="text-4xl block mb-3">🚁</span>
-          <p className="text-slate-400">Henüz parti yok.</p>
+          <p className="text-slate-600">Henüz parti yok.</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -146,14 +145,14 @@ function Content() {
             <button
               key={b.id}
               onClick={() => setSelectedId(b.id)}
-              className="w-full text-left bg-[var(--bg-surface)] border border-white/[0.06] hover:border-white/[0.1] rounded-2xl p-5 transition-all hover:bg-white/[0.03]"
+              className="w-full text-left bg-white border border-white/[0.06] hover:border-white/[0.1] rounded-2xl p-5 transition-all hover:bg-white/[0.03]"
             >
               <div className="flex flex-wrap items-start justify-between gap-4">
                 <div className="min-w-0">
-                  <p className="font-semibold text-white break-words">{b.landName} <span className="text-slate-400 font-normal">· {b.seasonLabel}{b.title ? ` · ${b.title}` : ""}</span></p>
+                  <p className="font-semibold text-slate-900 break-words">{b.landName} <span className="text-slate-600 font-normal">· {b.seasonLabel}{b.title ? ` · ${b.title}` : ""}</span></p>
                   <p className="text-xs text-slate-500 mt-1">{b.orders} sipariş · {formatCount(b.quantity, "tr")} tohum topu · plan {day(b.plannedOn)}</p>
                 </div>
-                <span className={`shrink-0 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${b.releasedOn ? "ring-1 ring-green-500/50 bg-green-500/10 text-green-300" : "ring-1 ring-teal-500/50 bg-teal-500/10 text-teal-300"}`}>
+                <span className={`shrink-0 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${b.releasedOn ? "ring-1 ring-green-500/50 bg-green-500/10 text-green-700" : "ring-1 ring-teal-500/50 bg-teal-500/10 text-teal-700"}`}>
                   {b.releasedOn ? `Bırakıldı · ${day(b.releasedOn)}` : "Planlandı"}
                 </span>
               </div>
@@ -222,19 +221,19 @@ function BatchDetail({ id, onClose, onChanged, onDeleted }: { id: string; onClos
   const videoPublished = Boolean(detail?.batch.videoPublishedAt);
 
   return (
-    <dialog ref={dialog} aria-label="Parti ayrıntısı" aria-busy={busy||loading} onKeyDown={containDialogTab} onCancel={e=>{if(state.current.busy)e.preventDefault();else onClose();}} className="m-auto w-[calc(100%-1rem)] max-w-3xl max-h-[92dvh] overflow-y-auto rounded-2xl bg-[#0b1410] border border-white/15 text-white p-0 backdrop:bg-black/70">
-      <header className="sticky top-0 z-10 bg-[#0b1410] p-4 flex flex-wrap gap-3 justify-between border-b border-white/10"><Button variant="secondary" disabled={busy||loading} onClick={()=>void load()}>Partiyi yenile</Button><Button variant="ghost" disabled={busy} onClick={onClose}>Kapat</Button></header>
-      <div className="px-4 space-y-3">{error&&<p role="alert" className="text-red-200 py-3">{error}</p>}{success&&<p role="status" className="text-emerald-200 py-3">{success}</p>}{warnings.map((w,i)=><p role="alert" key={i} className="text-amber-100">{w.message} İşlemi tekrar göndermeyin.</p>)}{blocked&&!loading&&<p className="text-sm text-amber-100">Güncel kayıt yüklenene kadar işlem kapalı. Partiyi yenileyin.</p>}{(verificationRequired || !!detail?.mfaRequiredGroups.length || (!blocked&&detail?.mfa.enforced&&!detail.mfa.satisfied&&(caps?.release||caps?.publish)))&&!loading&&<div className="my-3 text-sm text-amber-100"><p>{detail?.mfaRequiredGroups.length?"Bazı özel sipariş alanları yeniden doğrulama bekliyor.":verificationRequired?"Bu işlem yeniden doğrulama gerektirdiği için yapılmadı.":"Bırakma ve yayın işlemlerinde yeniden doğrulama gerekebilir."} Doğrulamadan sonra bu sayfaya döndüğünüzde görünüm kendiliğinden yenilenir. Partiyi yeniden açıp yapmak istediğiniz işlemi seçin; hiçbir işlem otomatik tekrarlanmaz.</p><Link href="/admin/guvenlik" target="_blank" rel="noopener noreferrer" className="underline">Hesap güvenliği (yeni sekme)</Link></div>}</div>
+    <dialog ref={dialog} aria-label="Parti ayrıntısı" aria-busy={busy||loading} onKeyDown={containDialogTab} onCancel={e=>{if(state.current.busy)e.preventDefault();else onClose();}} className="m-auto w-[calc(100%-1rem)] max-w-3xl max-h-[92dvh] overflow-y-auto rounded-2xl bg-white border border-white/15 text-white p-0 backdrop:bg-slate-900/40">
+      <header className="sticky top-0 z-10 bg-white p-4 flex flex-wrap gap-3 justify-between border-b border-slate-200"><Button variant="secondary" disabled={busy||loading} onClick={()=>void load()}>Partiyi yenile</Button><Button variant="ghost" disabled={busy} onClick={onClose}>Kapat</Button></header>
+      <div className="px-4 space-y-3">{error&&<p role="alert" className="text-red-700 py-3">{error}</p>}{success&&<p role="status" className="text-emerald-800 py-3">{success}</p>}{warnings.map((w,i)=><p role="alert" key={i} className="text-amber-800">{w.message} İşlemi tekrar göndermeyin.</p>)}{blocked&&!loading&&<p className="text-sm text-amber-800">Güncel kayıt yüklenene kadar işlem kapalı. Partiyi yenileyin.</p>}{(verificationRequired || !!detail?.mfaRequiredGroups.length || (!blocked&&detail?.mfa.enforced&&!detail.mfa.satisfied&&(caps?.release||caps?.publish)))&&!loading&&<div className="my-3 text-sm text-amber-800"><p>{detail?.mfaRequiredGroups.length?"Bazı özel sipariş alanları yeniden doğrulama bekliyor.":verificationRequired?"Bu işlem yeniden doğrulama gerektirdiği için yapılmadı.":"Bırakma ve yayın işlemlerinde yeniden doğrulama gerekebilir."} Doğrulamadan sonra bu sayfaya döndüğünüzde görünüm kendiliğinden yenilenir. Partiyi yeniden açıp yapmak istediğiniz işlemi seçin; hiçbir işlem otomatik tekrarlanmaz.</p><Link href="/admin/guvenlik" target="_blank" rel="noopener noreferrer" className="underline">Hesap güvenliği (yeni sekme)</Link></div>}</div>
         {loading ? (
           <div className="flex items-center justify-center py-24">
             <div className="w-8 h-8 border-2 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin" />
           </div>
         ) : detail ? (
           <>
-            <div className="px-6 py-4 border-b border-white/[0.06] flex items-center justify-between gap-4">
+            <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between gap-4">
               <div>
-                <h2 id="parti-baslik" className="font-bold text-white text-lg">{detail.land?.name ?? "Saha"} · {detail.batch.seasonLabel}</h2>
-                <p className="text-xs text-slate-400">{released ? `Bırakıldı · ${day(detail.batch.releasedOn)}` : `Planlandı · ${day(detail.batch.plannedOn)}`} · {totals.orders} sipariş · {formatCount(totals.quantity, "tr")} tohum topu</p>
+                <h2 id="parti-baslik" className="font-bold text-slate-900 text-lg">{detail.land?.name ?? "Saha"} · {detail.batch.seasonLabel}</h2>
+                <p className="text-xs text-slate-600">{released ? `Bırakıldı · ${day(detail.batch.releasedOn)}` : `Planlandı · ${day(detail.batch.plannedOn)}`} · {totals.orders} sipariş · {formatCount(totals.quantity, "tr")} tohum topu</p>
               </div>
 
             </div>
@@ -289,12 +288,12 @@ function BatchDetail({ id, onClose, onChanged, onDeleted }: { id: string; onClos
                 {detail.orders.length === 0 ? (
                   <p className="text-sm text-slate-500">Bu partide henüz sipariş yok.</p>
                 ) : (
-                  <div className="bg-white/[0.03] border border-white/[0.06] rounded-xl divide-y divide-white/[0.06]">
+                  <div className="bg-white border border-slate-200 rounded-xl divide-y divide-slate-200">
                     {detail.orders.map((o) => (
                       <div key={o.id} className="flex items-center justify-between gap-4 px-4 py-2.5 text-sm">
                         <OrderLine o={o} />
                         {caps?.assign && !released && o.status === "scheduled" && (
-                          <button disabled={busy} onClick={() => send("POST", { action: "unassign", orderId: o.id }, "Sipariş partiden çıkarıldı.")} className="shrink-0 text-xs text-slate-400 hover:text-red-300 disabled:opacity-50">Partiden çıkar</button>
+                          <button disabled={busy} onClick={() => send("POST", { action: "unassign", orderId: o.id }, "Sipariş partiden çıkarıldı.")} className="shrink-0 text-xs text-slate-600 hover:text-red-700 disabled:opacity-50">Partiden çıkar</button>
                         )}
                       </div>
                     ))}
@@ -307,16 +306,16 @@ function BatchDetail({ id, onClose, onChanged, onDeleted }: { id: string; onClos
                   <div className="flex items-center justify-between gap-4">
                     <h3 className="text-xs text-slate-500 font-medium uppercase tracking-wider">Partiye alınabilecek siparişler (kesinleşmiş, aynı saha ve sezon)</h3>
                     {caps?.assign && selectable.length > 0 && (
-                      <button className="text-xs text-emerald-300 hover:underline" onClick={() => setPicked(picked.size === selectable.length ? new Set() : new Set(selectable.map((c) => c.id)))}>
+                      <button className="text-xs text-emerald-700 hover:underline" onClick={() => setPicked(picked.size === selectable.length ? new Set() : new Set(selectable.map((c) => c.id)))}>
                         {picked.size === selectable.length ? "Seçimi kaldır" : "Tümünü seç"}
                       </button>
                     )}
                   </div>
-                  {detail.candidatesTruncated && <p role="status" className="text-sm text-amber-100">İlk 500 uygun sipariş gösteriliyor. Atamadan sonra partiyi yenileyerek kalanları görebilirsiniz.</p>}
+                  {detail.candidatesTruncated && <p role="status" className="text-sm text-amber-800">İlk 500 uygun sipariş gösteriliyor. Atamadan sonra partiyi yenileyerek kalanları görebilirsiniz.</p>}
                   {detail.candidates.length === 0 ? (
                     <p className="text-sm text-slate-500">Bu partiye uygun kesinleşmiş sipariş bulunamadı. Cayma süresi dolan siparişler kesinleştirme işi tamamlanınca burada görünür.</p>
                   ) : (
-                    <div className="bg-white/[0.03] border border-white/[0.06] rounded-xl divide-y divide-white/[0.06]">
+                    <div className="bg-white border border-slate-200 rounded-xl divide-y divide-slate-200">
                       {detail.candidates.map((o) => (
                         <label key={o.id} className={`flex items-center gap-3 px-4 py-2.5 text-sm ${o.capacityHeld ? "cursor-pointer" : "opacity-60"}`}>
                           {caps?.assign && (
@@ -334,7 +333,7 @@ function BatchDetail({ id, onClose, onChanged, onDeleted }: { id: string; onClos
                             />
                           )}
                           <OrderLine o={o} />
-                          {!o.capacityHeld && <span className="shrink-0 text-xs text-amber-300">kapasitesi ayrılamamış</span>}
+                          {!o.capacityHeld && <span className="shrink-0 text-xs text-amber-800">kapasitesi ayrılamamış</span>}
                         </label>
                       ))}
                     </div>
@@ -348,10 +347,10 @@ function BatchDetail({ id, onClose, onChanged, onDeleted }: { id: string; onClos
               )}
 
               {caps?.release && !released && (
-                <section className="bg-[var(--bg-surface)] border border-white/[0.06] rounded-2xl p-5 space-y-3">
-                  <h3 className="font-semibold text-white text-sm">Bırakma tamamlandı</h3>
+                <section className="bg-white border border-white/[0.06] rounded-2xl p-5 space-y-3">
+                  <h3 className="font-semibold text-slate-900 text-sm">Bırakma tamamlandı</h3>
                   <p className="text-xs text-slate-500">
-                    Partideki siparişler &quot;Bırakıldı&quot; olur, sahada ayrılan kapasite kalıcıya geçer ve siparişler fatura kuyruğuna girer. <strong className="text-slate-300">Bu işlem geri alınamaz.</strong>
+                    Partideki siparişler &quot;Bırakıldı&quot; olur, sahada ayrılan kapasite kalıcıya geçer ve siparişler fatura kuyruğuna girer. <strong className="text-slate-700">Bu işlem geri alınamaz.</strong>
                   </p>
                   <div className="max-w-xs">
                     <Input label="Bırakma tarihi" type="date" max={todayTr()} value={releasedOn} onChange={(e) => setReleasedOn(e.target.value)} />
@@ -370,10 +369,10 @@ function BatchDetail({ id, onClose, onChanged, onDeleted }: { id: string; onClos
               )}
 
               {caps?.publish && released && (
-                <section className="bg-[var(--bg-surface)] border border-white/[0.06] rounded-2xl p-5 space-y-3">
-                  <h3 className="font-semibold text-white text-sm">Çalışma videosu</h3>
+                <section className="bg-white border border-white/[0.06] rounded-2xl p-5 space-y-3">
+                  <h3 className="font-semibold text-slate-900 text-sm">Çalışma videosu</h3>
                   <p className="text-xs text-slate-500">
-                    Çalışmanın görüntüleri YouTube&apos;a <strong className="text-slate-300">herkese açık</strong> yüklendikten sonra bağlantıyı buraya girin. İlk yayımda partideki müşteriler için e-posta bildirimi başlatılır; teslim durumu ayrıca izlenir,
+                    Çalışmanın görüntüleri YouTube&apos;a <strong className="text-slate-700">herkese açık</strong> yüklendikten sonra bağlantıyı buraya girin. İlk yayımda partideki müşteriler için e-posta bildirimi başlatılır; teslim durumu ayrıca izlenir,
                     siparişleri &quot;Tamamlandı&quot; olur ve video saha sayfasında görünür. Sonradan yalnız bağlantı düzeltilebilir; yeniden e-posta gitmez.
                   </p>
                   <Input label="YouTube bağlantısı" type="url" value={videoUrl} onChange={(e) => { setVideoUrl(e.target.value); setConfirmVideo(false); }} maxLength={300} placeholder="https://youtu.be/…" />
@@ -395,7 +394,7 @@ function BatchDetail({ id, onClose, onChanged, onDeleted }: { id: string; onClos
               )}
 
               {caps?.plan && detail.orders.length === 0 && (
-                <div>{confirmDelete ? <div className="space-y-3"><p className="text-sm text-red-200">Boş parti kalıcı olarak silinecek.</p><Button variant="danger" onClick={()=>void send("DELETE",null,"Parti silindi.")}>Onayla: boş partiyi sil</Button><Button variant="ghost" onClick={()=>setConfirmDelete(false)}>Vazgeç</Button></div> : <Button variant="ghost" onClick={()=>setConfirmDelete(true)}>Bu boş partiyi sil</Button>}</div>
+                <div>{confirmDelete ? <div className="space-y-3"><p className="text-sm text-red-700">Boş parti kalıcı olarak silinecek.</p><Button variant="danger" onClick={()=>void send("DELETE",null,"Parti silindi.")}>Onayla: boş partiyi sil</Button><Button variant="ghost" onClick={()=>setConfirmDelete(false)}>Vazgeç</Button></div> : <Button variant="ghost" onClick={()=>setConfirmDelete(true)}>Bu boş partiyi sil</Button>}</div>
               )}
             </fieldset>
           </>
@@ -407,9 +406,9 @@ function BatchDetail({ id, onClose, onChanged, onDeleted }: { id: string; onClos
 function OrderLine({ o }: { o: OrderRow }) {
   return (
     <span className="flex-1 min-w-0 flex items-center gap-3 flex-wrap">
-      <a href={`/admin/birakma-siparisleri?no=${o.orderNo}`} target="_blank" rel="noopener noreferrer" className="font-mono text-emerald-300 hover:underline">{o.orderNo}</a>
-      {o.isTest && <span className="px-1.5 py-0.5 rounded-full text-[10px] font-semibold ring-1 ring-amber-500/50 bg-amber-500/10 text-amber-300">DENEME</span>}
-      {o.buyer && <span className="text-white break-words">{o.buyer.firstName} {o.buyer.lastName}</span>}
+      <a href={`/admin/birakma-siparisleri?no=${o.orderNo}`} target="_blank" rel="noopener noreferrer" className="font-mono text-emerald-700 hover:underline">{o.orderNo}</a>
+      {o.isTest && <span className="px-1.5 py-0.5 rounded-full text-[10px] font-semibold ring-1 ring-amber-500/50 bg-amber-500/10 text-amber-800">DENEME</span>}
+      {o.buyer && <span className="text-slate-900 break-words">{o.buyer.firstName} {o.buyer.lastName}</span>}
       <span className="text-xs text-slate-500">{formatCount(o.quantity, "tr")} tohum topu{o.finance && ` · ${formatTry(o.finance.totalKurus, "tr")}`}{o.certificateName !== undefined && ` · sertifika: ${o.certificateName}`}</span>
     </span>
   );

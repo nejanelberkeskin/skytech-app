@@ -280,7 +280,7 @@ export default function StaffDetail({ id }: { id: string }) {
       <div className="flex flex-wrap gap-3">
         <Link
           href="/admin/kullanicilar"
-          className="min-h-11 inline-flex items-center text-emerald-200 underline"
+          className="min-h-11 inline-flex items-center text-emerald-800 underline"
         >
           ← Personel listesi
         </Link>
@@ -300,24 +300,24 @@ export default function StaffDetail({ id }: { id: string }) {
       </div>
       <Feedback command={command} />
       {notice && (
-        <p role="status" className="text-amber-200">
+        <p role="status" className="text-amber-800">
           {notice}
         </p>
       )}
       {error ? (
         <LoadError error={error} retry={() => void load()} />
       ) : loading ? (
-        <p role="status" className="text-slate-300">
+        <p role="status" className="text-slate-700">
           Personel yükleniyor…
         </p>
       ) : (
         person && (
           <>
-            <section className="rounded-2xl border border-white/10 p-5 space-y-3">
-              <p className="text-slate-300 break-all">
+            <section className="rounded-2xl border border-slate-200 p-5 space-y-3">
+              <p className="text-slate-700 break-all">
                 {person.email} · {person.isActive ? "Aktif" : "Pasif"}
               </p>
-              <p className="text-sm text-slate-400">
+              <p className="text-sm text-slate-600">
                 Doğrulama uygulaması:{" "}
                 {person.mfa === null
                   ? "Durumu alınamadı"
@@ -326,21 +326,21 @@ export default function StaffDetail({ id }: { id: string }) {
                     : "Kurulmamış"}
               </p>
               {own && (
-                <p className="text-amber-200 text-sm">
+                <p className="text-amber-800 text-sm">
                   Bu sizin hesabınız. Kendi erişiminizi değiştiremezsiniz.
                 </p>
               )}
-              <h2 className="text-lg text-white font-semibold">
+              <h2 className="text-lg text-slate-900 font-semibold">
                 Atamalar ve yapabilecekleri
               </h2>
               <ul className="space-y-4">
                 {person.assignments.map((a) => (
                   <li
                     key={a.id}
-                    className="rounded-xl bg-white/[.03] p-4 space-y-2"
+                    className="rounded-xl bg-white p-4 space-y-2"
                   >
-                    <h3 className="font-medium text-white">{a.roleLabel}</h3>
-                    <p className="text-sm text-slate-300 break-words">
+                    <h3 className="font-medium text-slate-900">{a.roleLabel}</h3>
+                    <p className="text-sm text-slate-700 break-words">
                       {scopeLabel(a.scope)} ·{" "}
                       {a.endsAt
                         ? `Bitiş: ${istanbulDate(a.endsAt)}`
@@ -353,10 +353,10 @@ export default function StaffDetail({ id }: { id: string }) {
                           : "Şu anda geçerli değil"}
                     </p>
                     <details>
-                      <summary className="text-sm min-h-11 cursor-pointer text-emerald-200">
+                      <summary className="text-sm min-h-11 cursor-pointer text-emerald-800">
                         Bu atamayla neler yapılabilir?
                       </summary>
-                      <ul className="text-sm text-slate-300 space-y-1">
+                      <ul className="text-sm text-slate-700 space-y-1">
                         {roles
                           .find((r) => r.key === a.roleKey)
                           ?.permissions.map((p) => (
@@ -411,7 +411,7 @@ export default function StaffDetail({ id }: { id: string }) {
                 <h2
                   ref={formHeading}
                   tabIndex={-1}
-                  className="text-lg font-semibold text-white"
+                  className="text-lg font-semibold text-slate-900"
                 >
                   {draft.kind === "assign"
                     ? "Rol ataması"
@@ -444,7 +444,7 @@ export default function StaffDetail({ id }: { id: string }) {
                         ))}
                       </Select>
                     ) : (
-                      <p className="text-slate-200">
+                      <p className="text-slate-800">
                         {
                           person.assignments.find(
                             (a) => a.id === draft.assignmentId,
@@ -494,21 +494,21 @@ export default function StaffDetail({ id }: { id: string }) {
                     <h3
                       ref={confirmation}
                       tabIndex={-1}
-                      className="text-white font-semibold"
+                      className="text-slate-900 font-semibold"
                     >
                       Kaydetmeden önce kontrol edin
                     </h3>
-                    <p className="text-slate-300 text-sm">
+                    <p className="text-slate-700 text-sm">
                       {person.fullName} · {person.email} ·{" "}
                       {roles.find((r) => r.key === draft.roleKey)?.label}
                     </p>
-                    <p className="text-sm text-slate-300">
+                    <p className="text-sm text-slate-700">
                       {draft.kind === "revoke"
                         ? "Atama kaldırılacak."
                         : `${scopeLabel(draft.scope)} · ${draft.endsAt ? `Bitiş (Türkiye): ${draft.endsAt.replace("T", " ")}` : "Süresiz"}`}
                     </p>
                     <div className="text-sm space-y-2">
-                      <p className="text-emerald-200">
+                      <p className="text-emerald-800">
                         Eklenecek:{" "}
                         {preview.data.added
                           .map(
@@ -517,13 +517,13 @@ export default function StaffDetail({ id }: { id: string }) {
                           )
                           .join(", ") || "Yok"}
                       </p>
-                      <p className="text-rose-200">
+                      <p className="text-rose-700">
                         Kalkacak:{" "}
                         {preview.data.removed.map(permissionLabel).join(", ") ||
                           "Yok"}
                       </p>
                       {preview.data.scopeChanges.map((p) => (
-                        <p className="text-amber-200 break-words" key={p.key}>
+                        <p className="text-amber-800 break-words" key={p.key}>
                           {permissionLabel(p.key)}:{" "}
                           {p.from.map((s) => scopeLabel(s)).join(" / ")} →{" "}
                           {p.to.map((s) => scopeLabel(s)).join(" / ")}
@@ -531,7 +531,7 @@ export default function StaffDetail({ id }: { id: string }) {
                       ))}
                     </div>
                     {preview.data.legacyRoleChange?.to === "NONE" && (
-                      <p className="text-amber-200 text-sm">
+                      <p className="text-amber-800 text-sm">
                         Bu değişiklikten sonra kapsam geçişi tamamlanmamış eski
                         ekranlar kapanacak.
                       </p>
@@ -552,11 +552,11 @@ export default function StaffDetail({ id }: { id: string }) {
               </section>
             )}
             {canStaff && !own && (
-              <section className="rounded-2xl border border-white/10 p-5 space-y-3">
-                <h2 className="text-lg text-white font-semibold">
+              <section className="rounded-2xl border border-slate-200 p-5 space-y-3">
+                <h2 className="text-lg text-slate-900 font-semibold">
                   Personel durumu
                 </h2>
-                <p className="text-sm text-slate-300">
+                <p className="text-sm text-slate-700">
                   Pasifleştirmek yönetim erişimini kapatır. Müşteri hesabı ve
                   geçmiş kayıtlar silinmez.
                 </p>
@@ -572,7 +572,7 @@ export default function StaffDetail({ id }: { id: string }) {
                 />
                 {activeConfirm ? (
                   <div className="space-y-3">
-                    <p className="text-amber-200">
+                    <p className="text-amber-800">
                       {person.fullName} için yönetim erişimi{" "}
                       {person.isActive ? "kapatılacak" : "yeniden açılacak"}.
                       Onaylıyor musunuz?
@@ -611,18 +611,18 @@ export default function StaffDetail({ id }: { id: string }) {
               </section>
             )}
             {canStaff && !own && person.mfa?.enrolled && (
-              <section className="rounded-2xl border border-white/10 p-5 space-y-3">
-                <h2 className="text-lg font-semibold text-white">
+              <section className="rounded-2xl border border-slate-200 p-5 space-y-3">
+                <h2 className="text-lg font-semibold text-slate-900">
                   Doğrulama uygulamasına erişim kaybı
                 </h2>
-                <p className="text-sm text-slate-300">
+                <p className="text-sm text-slate-700">
                   Kişinin kimliğini kurum içinde doğruladıktan sonra kullanın.
                   Sıfırlamak mevcut doğrulama aygıtlarını kaldırır; kişinin
                   uygulamayı yeniden kurması gerekir.
                 </p>
                 {resetConfirm ? (
                   <>
-                    <p className="text-amber-200">
+                    <p className="text-amber-800">
                       {person.fullName} ({person.email}) için tüm doğrulama
                       aygıtları kaldırılsın mı?
                     </p>

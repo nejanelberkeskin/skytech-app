@@ -14,11 +14,11 @@ export interface AdminUser {
 
 // ── Role Metadata ────────────────────────────────────────────────────────────
 export const ROLE_META: Record<UserRole, { label: string; icon: string; color: string; desc: string }> = {
-  NONE: { label: "Özel erişim", icon: "👤", color: "text-slate-300", desc: "Atanan izinlerle sınırlı erişim" },
-  SUPER_ADMIN: { label: "Super Admin", icon: "👑", color: "text-amber-400 bg-amber-400/10", desc: "Tüm modüllere tam erişim" },
-  FINANCE:     { label: "Muhasebe & Finans", icon: "💰", color: "text-blue-400 bg-blue-400/10", desc: "Ciro, faturalar, ödemeler" },
-  OPERATIONS:  { label: "Operasyon", icon: "🚁", color: "text-orange-400 bg-orange-400/10", desc: "Bırakma partileri, saha çalışmaları" },
-  ENGINEER:    { label: "Orman Mühendisi", icon: "🌲", color: "text-emerald-400 bg-emerald-400/10", desc: "Proje Uygulama Sahaları, kapasite" },
+  NONE: { label: "Özel erişim", icon: "👤", color: "text-slate-700", desc: "Atanan izinlerle sınırlı erişim" },
+  SUPER_ADMIN: { label: "Super Admin", icon: "👑", color: "text-amber-800 bg-amber-400/10", desc: "Tüm modüllere tam erişim" },
+  FINANCE:     { label: "Muhasebe & Finans", icon: "💰", color: "text-blue-700 bg-blue-400/10", desc: "Ciro, faturalar, ödemeler" },
+  OPERATIONS:  { label: "Operasyon", icon: "🚁", color: "text-orange-700 bg-orange-400/10", desc: "Bırakma partileri, saha çalışmaları" },
+  ENGINEER:    { label: "Orman Mühendisi", icon: "🌲", color: "text-emerald-700 bg-emerald-400/10", desc: "Proje Uygulama Sahaları, kapasite" },
 };
 
 // ── Admin Modules (used for sidebar + permissions) ───────────────────────────

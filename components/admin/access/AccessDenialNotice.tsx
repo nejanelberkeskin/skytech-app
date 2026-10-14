@@ -23,7 +23,7 @@ export default function AccessDenialNotice({ scope }: { scope: string }) {
   useEffect(() => () => clearDenial(scope), [clearDenial, scope]);
   if (!visible) return null;
   return (
-    <div ref={box} tabIndex={-1} role="alert" className="mx-4 mt-4 md:mx-8 md:mt-8 space-y-2 rounded-xl border border-amber-400/40 bg-amber-500/10 p-4 text-sm text-amber-100 outline-none focus-visible:ring-2 focus-visible:ring-amber-300">
+    <div ref={box} tabIndex={-1} role="alert" className="mx-4 mt-4 md:mx-8 md:mt-8 space-y-2 rounded-xl border border-amber-400/40 bg-amber-500/10 p-4 text-sm text-amber-800 outline-none focus-visible:ring-2 focus-visible:ring-amber-300">
       <p className="font-semibold">Yetkiniz değişti; ekran güncel yetkinize göre yenilendi.</p>
       <p className="break-words">{visible.message}</p>
       <button type="button" onClick={() => clearDenial(scope, { keepPending: true })} className="min-h-11 underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-amber-300">

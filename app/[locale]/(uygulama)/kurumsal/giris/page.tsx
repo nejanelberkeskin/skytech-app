@@ -50,20 +50,15 @@ export default function CorporateLogin() {
     router.refresh();
   };
 
-  const inputClasses = "w-full px-4 py-3 bg-white/[0.03] border border-white/[0.08] rounded-2xl text-white placeholder-emerald-200/20 outline-none focus:border-emerald-500/40 focus:ring-1 focus:ring-emerald-500/20 transition-all";
+  const inputClasses = "w-full px-4 py-3 bg-white border border-slate-200 rounded-lg text-slate-900 placeholder:text-slate-400 outline-none focus:border-emerald-500/40 focus:ring-1 focus:ring-emerald-500/20 transition-all";
 
   return (
-    <div className="relative min-h-screen flex flex-col">
-      {/* Background */}
-      <div className="nature-bg">
-        <div className="nature-orb nature-orb-1" />
-        <div className="nature-orb nature-orb-2" />
-      </div>
+    <div className="relative min-h-screen flex flex-col bg-[#f6f7f5] text-slate-900" style={{ colorScheme: "light" }}>
 
       {/* Top bar — beyazımsı liquid, logo dark zeminde net okunur */}
       <nav
-        className="relative z-10 vitrin-navbar-top"
-        style={{ backdropFilter: "blur(20px) saturate(1.4)", WebkitBackdropFilter: "blur(20px) saturate(1.4)" }}
+        className="relative z-10 border-b border-slate-200 bg-white"
+        
       >
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between gap-3">
           <Link href="/" className="flex items-center gap-2.5 shrink-0" aria-label={tc("homeAria")}>
@@ -73,7 +68,7 @@ export default function CorporateLogin() {
               width={256}
               height={32}
               priority
-              className="h-8 w-auto"
+              className="h-5 w-auto sm:h-6"
             />
           </Link>
           <Link href="/kurumsal/basvuru" className="text-xs sm:text-sm font-semibold text-[#1a2e1a] hover:text-[#1B6B3A] transition-colors text-right">
@@ -84,20 +79,19 @@ export default function CorporateLogin() {
 
       {/* Login card */}
       <div className="relative z-10 flex-1 flex items-center justify-center p-6">
-        <div className="w-full max-w-md space-y-8 animate-fade-in-up">
+        <div className="w-full max-w-md space-y-8">
           <div className="text-center">
-            <div className="w-16 h-16 rounded-3xl flex items-center justify-center mx-auto mb-4"
-              style={{ background: "linear-gradient(135deg, rgba(16,185,129,0.15), rgba(20,184,166,0.1))", border: "1px solid rgba(52,211,153,0.2)" }}>
-              <BuildingIcon className="w-8 h-8 text-emerald-300" strokeWidth={1.6} />
+            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-[#f0f7ec] text-[#1B6B3A]">
+              <BuildingIcon className="h-6 w-6" strokeWidth={1.8} />
             </div>
-            <h1 className="text-2xl font-bold text-white">{t("title")}</h1>
-            <p className="text-emerald-200/40 text-sm mt-2">{t("subtitle")}</p>
+            <h1 className="text-2xl font-bold text-slate-900">{t("title")}</h1>
+            <p className="text-slate-500 text-sm mt-2">{t("subtitle")}</p>
           </div>
 
-          <form onSubmit={handleLogin} className="liquid-glass rounded-3xl p-8 space-y-5 overflow-hidden relative">
+          <form onSubmit={handleLogin} className="bg-white border border-slate-200 rounded-xl p-6 sm:p-8 space-y-5 overflow-hidden relative">
             <div className="relative z-10">
               <div>
-                <label htmlFor="kurumsal-eposta" className="block text-sm font-medium text-emerald-200/50 mb-2">{t("email")}</label>
+                <label htmlFor="kurumsal-eposta" className="block text-sm font-medium text-slate-700 mb-2">{t("email")}</label>
                 <input
                   id="kurumsal-eposta"
                   type="email"
@@ -111,8 +105,8 @@ export default function CorporateLogin() {
 
               <div className="mt-5">
                 <div className="flex items-center justify-between mb-2">
-                  <label htmlFor="kurumsal-sifre" className="text-sm font-medium text-emerald-200/50">{t("password")}</label>
-                  <Link href="/auth/sifremi-unuttum" className="text-xs text-emerald-400 hover:text-emerald-300 transition-colors">
+                  <label htmlFor="kurumsal-sifre" className="text-sm font-medium text-slate-700">{t("password")}</label>
+                  <Link href="/auth/sifremi-unuttum" className="text-xs text-emerald-700 hover:text-emerald-700 transition-colors">
                     {t("forgot")}
                   </Link>
                 </div>
@@ -129,7 +123,7 @@ export default function CorporateLogin() {
                   <button
                     type="button"
                     onClick={() => setShowPass(!showPass)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-emerald-200/30 hover:text-white transition-colors"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-500 hover:text-slate-900 transition-colors"
                   >
                     {showPass ? t("hide") : t("show")}
                   </button>
@@ -137,7 +131,7 @@ export default function CorporateLogin() {
               </div>
 
               {error && (
-                <div role="alert" className="mt-5 bg-rose-500/10 border border-rose-500/20 text-rose-400 text-sm px-4 py-3 rounded-2xl">
+                <div role="alert" className="mt-5 bg-rose-500/10 border border-rose-500/20 text-rose-700 text-sm px-4 py-3 rounded-lg">
                   {error}
                 </div>
               )}
@@ -145,11 +139,11 @@ export default function CorporateLogin() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full mt-5 py-3.5 glass-btn rounded-2xl text-white font-medium transition-all disabled:opacity-50"
+                className="w-full mt-5 py-3.5 bg-[#1B6B3A] hover:bg-[#165c31] rounded-lg text-white font-medium transition-all disabled:opacity-50"
               >
                 {loading ? (
                   <span className="flex items-center justify-center gap-2">
-                    <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    <span className="w-4 h-4 border-2 border-slate-200 border-t-slate-200 rounded-full animate-spin" />
                     {t("submitting")}
                   </span>
                 ) : (
@@ -157,24 +151,24 @@ export default function CorporateLogin() {
                 )}
               </button>
 
-              <div className="flex items-center gap-3 pt-4 mt-4" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
-                <div className="flex-1 h-px" style={{ background: "rgba(255,255,255,0.06)" }} />
-                <span className="text-xs text-emerald-200/20">{t("or")}</span>
-                <div className="flex-1 h-px" style={{ background: "rgba(255,255,255,0.06)" }} />
+              <div className="flex items-center gap-3 pt-4 mt-4">
+                <div className="flex-1 h-px"  />
+                <span className="text-xs text-slate-500">{t("or")}</span>
+                <div className="flex-1 h-px"  />
               </div>
 
               <Link
                 href="/kurumsal/basvuru"
-                className="block w-full mt-4 py-3.5 border border-white/[0.08] hover:border-white/[0.15] text-emerald-200/50 hover:text-white font-medium rounded-2xl text-center text-sm transition-all"
+                className="block w-full mt-4 py-3.5 border border-slate-200 hover:border-slate-200 text-slate-500 hover:text-slate-900 font-medium rounded-lg text-center text-sm transition-all"
               >
                 {t("quoteAndAccount")}
               </Link>
             </div>
           </form>
 
-          <p className="text-center text-xs text-emerald-200/20">
+          <p className="text-center text-xs text-slate-500">
             {t("trouble")}{" "}
-            <a href="mailto:info@skytechgreen.com" className="text-emerald-400 hover:underline">
+            <a href="mailto:info@skytechgreen.com" className="text-emerald-700 hover:underline">
               info@skytechgreen.com
             </a>
           </p>

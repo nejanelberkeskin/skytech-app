@@ -70,7 +70,7 @@ export default function RoleCatalog() {
       description="Bir rolün neleri yapabildiğini inceleyin. Gerçek erişim, kişiye atanan kapsam ve süreyle birlikte belirlenir."
     >
       {notice && (
-        <p role="status" className="text-emerald-200">
+        <p role="status" className="text-emerald-800">
           {notice}
         </p>
       )}
@@ -90,7 +90,7 @@ export default function RoleCatalog() {
       {error ? (
         <LoadError error={error} retry={() => setRevision((n) => n + 1)} />
       ) : !roles ? (
-        <p role="status" className="text-slate-300">
+        <p role="status" className="text-slate-700">
           Roller yükleniyor…
         </p>
       ) : (
@@ -98,11 +98,11 @@ export default function RoleCatalog() {
           {matches.map((role) => (
             <article
               key={role.key}
-              className="rounded-2xl border border-white/10 p-5 space-y-3"
+              className="rounded-2xl border border-slate-200 p-5 space-y-3"
             >
-              <h2 className="text-lg font-semibold text-white">{role.label}</h2>
-              <p className="text-sm text-slate-300">{role.description}</p>
-              <p className="text-xs text-slate-400">
+              <h2 className="text-lg font-semibold text-slate-900">{role.label}</h2>
+              <p className="text-sm text-slate-700">{role.description}</p>
+              <p className="text-xs text-slate-600">
                 {role.isSystem ? "Sistem rolü · değiştirilemez" : "Özel rol"} ·{" "}
                 {role.permissions.length} izin
               </p>
@@ -131,15 +131,15 @@ export default function RoleCatalog() {
                 )}
               </div>
               <details>
-                <summary className="min-h-11 cursor-pointer text-emerald-200">
+                <summary className="min-h-11 cursor-pointer text-emerald-800">
                   İzinleri incele
                 </summary>
-                <ul className="space-y-2 text-sm text-slate-300">
+                <ul className="space-y-2 text-sm text-slate-700">
                   {role.permissions.map((p) => (
                     <li key={p}>
                       {permissionLabel(p)}
                       {(MFA_PERMISSIONS as ReadonlySet<string>).has(p) && (
-                        <span className="text-amber-200">
+                        <span className="text-amber-800">
                           {" "}
                           · Ek doğrulama kapsamı
                         </span>
@@ -153,9 +153,9 @@ export default function RoleCatalog() {
         </div>
       )}
       {roles && !error && matches.length === 0 && (
-        <p className="text-slate-300">Aramanıza uygun rol bulunmuyor.</p>
+        <p className="text-slate-700">Aramanıza uygun rol bulunmuyor.</p>
       )}
-      <p className="text-sm text-slate-400">
+      <p className="text-sm text-slate-600">
         Sistem rollerini kopyalayarak özel roller oluşturabilirsiniz. Rol
         değişiklikleri mevcut atamaları ve bekleyen davetleri etkiler;
         kaydetmeden önce etkiyi inceleyin.

@@ -1,5 +1,6 @@
 import HeroSection from "@/components/vitrin/homepage/HeroSection";
 import MarqueeStrip from "@/components/vitrin/homepage/MarqueeStrip";
+import InstitutionLogos from "@/components/vitrin/homepage/InstitutionLogos";
 import ValueCards from "@/components/vitrin/homepage/ValueCards";
 import HowItWorks from "@/components/vitrin/homepage/HowItWorks";
 import SeedJourney from "@/components/vitrin/homepage/SeedJourney";
@@ -40,6 +41,7 @@ export default async function VitrinHomePage({
   return (
     <>
       <HeroSection />
+      <InstitutionLogos />
       <MarqueeStrip />
       <ValueCards />
       <HowItWorks />

@@ -2427,6 +2427,11 @@
       "video": "Video",
       "read": "Habere git",
       "watch": "Videoyu izle"
+    },
+    "boundary": {
+      "title": "Saha sınırı",
+      "caption": "Sarı çizgi uygulama sahasının sınırını gösterir. Uydu görüntüsü: {date}.",
+      "alt": "{name}: uydu görüntüsü üzerinde saha sınırı"
     }
   },
   "seasonTimeline": {
@@ -2742,5 +2747,9 @@
       "login": "Giriş yap",
       "register": "Hesap oluştur"
     }
+  },
+  "institutionLogos": {
+    "label": "Kurum logoları",
+    "open": "{name} web sitesi (yeni sekmede açılır)"
   }
 }

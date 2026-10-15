@@ -2427,6 +2427,11 @@
       "video": "Video",
       "read": "Read the article",
       "watch": "Watch the video"
+    },
+    "boundary": {
+      "title": "Site boundary",
+      "caption": "The yellow line marks the project site boundary. Satellite image: {date}.",
+      "alt": "{name}: site boundary on a satellite image"
     }
   },
   "seasonTimeline": {
@@ -2742,5 +2747,9 @@
       "login": "Sign in",
       "register": "Create account"
     }
+  },
+  "institutionLogos": {
+    "label": "Institution logos",
+    "open": "{name} website (opens in a new tab)"
   }
 }

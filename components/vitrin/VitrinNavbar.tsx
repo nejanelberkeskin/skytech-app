@@ -235,153 +235,106 @@ export default function VitrinNavbar() {
         </div>
       </header>
 
-      {/* Mobile Drawer — Premium glass + stagger */}
-      <AnimatePresence>
-        {mobileOpen && (
-          <dialog onKeyDown={containDialogTab} ref={menuRef} id="vitrin-mobile-menu" aria-label={tNav("menu")} onCancel={() => setMobileOpenPath(null)} className="fixed inset-0 z-[60] m-0 h-dvh max-h-none w-screen max-w-none border-0 bg-transparent p-0 backdrop:bg-transparent">
-            {/* Backdrop */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              onClick={() => setMobileOpen(false)}
-              className="absolute inset-0 bg-black/50 backdrop-blur-sm"
-            />
-
-            {/* Drawer */}
-            <motion.div
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
-              transition={{ type: "spring", damping: 32, stiffness: 280, mass: 0.7 }}
-              className="absolute right-0 top-0 bottom-0 w-[88%] max-w-sm overflow-hidden mesh-dark grain-overlay"
-            >
-              {/* Aurora background */}
-              <div className="aurora-bg">
-                <div className="aurora-blob aurora-blob-1" />
-                <div className="aurora-blob aurora-blob-2" />
-              </div>
-
-              {/* Header */}
-              <motion.div
-                initial={{ opacity: 0, y: -8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.15, duration: 0.4 }}
-                className="relative flex items-center justify-between p-5 border-b border-white/8"
+      {/* Mobil menü: sağdan açılan beyaz panel. Liste kendi içinde kayar, giriş ve Satın Al altta sabit. */}
+      {mobileOpen && (
+        <dialog
+          onKeyDown={containDialogTab}
+          ref={menuRef}
+          id="vitrin-mobile-menu"
+          aria-label={tNav("menu")}
+          onCancel={() => setMobileOpenPath(null)}
+          className="fixed inset-0 z-[60] m-0 h-dvh max-h-none w-screen max-w-none border-0 bg-transparent p-0 backdrop:bg-transparent"
+          style={{ colorScheme: "light" }}
+        >
+          <div onClick={() => setMobileOpen(false)} className="absolute inset-0 bg-[#0e2519]/40" />
+          <div className="absolute inset-y-0 right-0 flex w-full max-w-sm flex-col bg-white text-[#0e2519] shadow-xl animate-[menu-in_180ms_ease-out]">
+            <div className="flex items-center justify-between border-b border-slate-200 px-5 py-3">
+              <Link href="/" aria-label="Skytech Green ana sayfa" onClick={() => setMobileOpen(false)}>
+                <Image src="/images/brand/logo.webp" alt="Skytech Green" width={256} height={32} className="h-5 w-auto" />
+              </Link>
+              <button
+                type="button"
+                onClick={() => setMobileOpen(false)}
+                className="flex h-11 w-11 items-center justify-center rounded-lg text-slate-700 hover:bg-slate-100"
+                aria-label={tCommon("close")}
               >
-                <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#a7d4a7]">
-                  {tNav("menu")}
-                </p>
-                <button
-                  onClick={() => setMobileOpen(false)}
-                  className="w-10 h-10 rounded-xl premium-glass-dark flex items-center justify-center"
-                  aria-label={tCommon("close")}
-                >
-                  <CloseIcon className="w-4 h-4 text-white" />
-                </button>
-              </motion.div>
+                <CloseIcon className="h-5 w-5" />
+              </button>
+            </div>
 
-              {/* Nav with stagger */}
-              <motion.nav
-                initial="hidden"
-                animate="show"
-                variants={{
-                  hidden: {},
-                  show: { transition: { staggerChildren: 0.05, delayChildren: 0.2 } },
-                }}
-                className="relative p-5 space-y-1.5 overflow-y-auto max-h-[calc(100vh-80px-180px)]"
-              >
+            <nav aria-label={tNav("menu")} className="flex-1 overflow-y-auto overscroll-contain px-3 py-3">
+              <ul className="space-y-0.5">
                 {NAV_ITEMS.map((item) =>
                   item.children ? (
-                    <motion.div
-                      key={item.label}
-                      variants={drawerItemVariants}
-                      className="space-y-1 pt-2"
-                    >
-                      <p className="px-3 pb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-[#22894a]">
-                        {item.label}
-                      </p>
-                      {item.children.map((child, ci) => (
-                        <motion.div
-                          key={child.href}
-                          variants={drawerItemVariants}
-                          custom={ci}
-                        >
-                          <Link
-                            href={child.href}
-                            className={`block px-4 py-3 rounded-xl text-sm font-semibold transition-colors ${
-                              isActive(child.href)
-                                ? "bg-[#22894a]/15 text-white border border-[#22894a]/25"
-                                : "text-[#a7d4a7] hover:bg-white/5 hover:text-white border border-transparent"
-                            }`}
-                          >
-                            {child.label}
-                          </Link>
-                        </motion.div>
-                      ))}
-                    </motion.div>
+                    <li key={item.label} className="pb-2">
+                      <p className="px-3 pb-1 pt-2 text-xs font-semibold text-slate-500">{item.label}</p>
+                      <ul className="space-y-0.5">
+                        {item.children.map((child) => (
+                          <li key={child.href}>
+                            <Link
+                              href={child.href}
+                              onClick={() => setMobileOpen(false)}
+                              aria-current={isActive(child.href) ? "page" : undefined}
+                              className={`flex min-h-12 items-center rounded-lg px-3 text-[15px] ${
+                                isActive(child.href) ? "bg-[#f0f7ec] font-semibold text-[#1B6B3A]" : "text-[#0e2519] hover:bg-slate-50"
+                              }`}
+                            >
+                              {child.label}
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </li>
                   ) : (
-                    <motion.div key={item.href} variants={drawerItemVariants}>
+                    <li key={item.href} className="border-t border-slate-100 first:border-t-0">
                       <Link
                         href={item.href}
-                        className={`block px-4 py-3 rounded-xl text-base font-bold transition-colors ${
-                          isActive(item.href)
-                            ? "bg-[#22894a]/15 text-white border border-[#22894a]/25"
-                            : "text-white hover:bg-white/5 border border-transparent"
+                        onClick={() => setMobileOpen(false)}
+                        aria-current={isActive(item.href) ? "page" : undefined}
+                        className={`flex min-h-12 items-center rounded-lg px-3 text-base font-semibold ${
+                          isActive(item.href) ? "bg-[#f0f7ec] text-[#1B6B3A]" : "text-[#0e2519] hover:bg-slate-50"
                         }`}
                       >
                         {item.label}
                       </Link>
-                    </motion.div>
+                    </li>
                   )
                 )}
-              </motion.nav>
+              </ul>
+            </nav>
 
-              {/* Bottom CTAs */}
-              <motion.div
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.55, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                className="absolute bottom-0 left-0 right-0 p-5 border-t border-white/8 space-y-3 mesh-dark"
-              >
-                <div className="flex justify-center pb-1">
-                  <LanguageSwitcher dark />
-                </div>
+            <div className="space-y-3 border-t border-slate-200 px-5 pb-[max(1rem,env(safe-area-inset-bottom))] pt-4">
+              <div className="flex justify-center">
+                <LanguageSwitcher large />
+              </div>
+              <div className="flex gap-3">
                 {ACCOUNTS_ENABLED && (
                   <Link
                     href={accountHref}
-                    className="block w-full text-center py-3 rounded-xl premium-glass-dark text-sm font-bold text-white"
+                    onClick={() => setMobileOpen(false)}
+                    className="flex min-h-12 flex-1 items-center justify-center rounded-lg border border-slate-300 text-sm font-semibold text-[#0e2519]"
                   >
                     {accountLabel}
                   </Link>
                 )}
                 <Link
                   href={ctaHref}
-                  className="block w-full text-center py-3 rounded-xl bg-gradient-to-br from-[#1B6B3A] via-[#22894a] to-[#1B6B3A] text-white text-sm font-bold shadow-lg shadow-[#1B6B3A]/30"
+                  onClick={() => setMobileOpen(false)}
+                  className="flex min-h-12 flex-1 items-center justify-center rounded-lg bg-[#1B6B3A] text-sm font-semibold text-white"
                 >
-                  {CTA_MODE === "soon" ? ctaLabel : `${ctaLabel} →`}
+                  {ctaLabel}
                 </Link>
-              </motion.div>
-            </motion.div>
-          </dialog>
-        )}
-      </AnimatePresence>
+              </div>
+            </div>
+          </div>
+        </dialog>
+      )}
 
       {/* Spacer for fixed nav */}
       <div className="h-20" />
     </>
   );
 }
-
-const drawerItemVariants = {
-  hidden: { opacity: 0, x: 24 },
-  show: {
-    opacity: 1,
-    x: 0,
-    transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] },
-  },
-};
 
 function ChevronDownIcon({ className }: { className?: string }) {
   return (

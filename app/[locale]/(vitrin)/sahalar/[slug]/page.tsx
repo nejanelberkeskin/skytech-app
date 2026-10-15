@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { coverImageCredit } from "@/lib/sites/image-credit";
+import { siteBoundaryImage } from "@/lib/sites/boundary";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
@@ -48,6 +49,7 @@ export default async function SiteDetailPage({ params, searchParams }: Props) {
   // `?ornek=` yalnız geliştirme örnekleri içindir. Canlıda `searchParams` HİÇ okunmaz: okunursa sayfa
   // her istekte yeniden üretilir ve yukarıdaki `revalidate` (5 dakikalık önbellek) devre dışı kalır.
   const ornek = process.env.NODE_ENV === "production" ? null : (await searchParams).ornek;
+  const boundary = siteBoundaryImage(site.slug);
   const releases = await getSiteReleases(site.id, {
     sample: typeof ornek === "string" ? ornek : null,
   });
@@ -227,6 +229,29 @@ export default async function SiteDetailPage({ params, searchParams }: Props) {
               <h2 className="text-sm text-[#3d5a3d]">{t("location")}</h2>
               <p className="font-semibold text-[#0e2519]">{location}</p>
             </div>
+          </section>
+        )}
+        {boundary && (
+          <section className="mb-14" aria-labelledby="site-boundary-title">
+            <h2 id="site-boundary-title" className="mb-2 text-2xl font-semibold text-[#0e2519]">
+              {t("boundary.title")}
+            </h2>
+            <p className="mb-5 text-sm text-[#3d5a3d]">
+              {t("boundary.caption", { date: formatLongDay(boundary.capturedOn, locale) })}
+            </p>
+            <figure>
+              <a href={boundary.src} target="_blank" rel="noopener" className="block overflow-hidden rounded-2xl border border-[#1B6B3A]/15">
+                <Image
+                  src={boundary.src}
+                  alt={t("boundary.alt", { name: site.name })}
+                  width={boundary.width}
+                  height={boundary.height}
+                  sizes="(min-width: 1024px) 1000px, 100vw"
+                  className="h-auto w-full"
+                />
+              </a>
+              <figcaption className="mt-2 text-xs text-[#3d5a3d]">{coverImageCredit(boundary.src)}</figcaption>
+            </figure>
           </section>
         )}
         <SeasonTimeline

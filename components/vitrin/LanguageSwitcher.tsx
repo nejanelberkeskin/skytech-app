@@ -10,7 +10,7 @@ import { routing, type Locale } from "@/i18n/routing";
  * Aktif locale segment'i pathname'den okunur; tıklamada aynı path başka
  * locale prefix'iyle replace edilir.
  */
-export default function LanguageSwitcher({ dark = false }: { dark?: boolean }) {
+export default function LanguageSwitcher({ dark = false, large = false }: { dark?: boolean; large?: boolean }) {
   const t = useTranslations("languageSwitcher");
   const current = useLocale();
   const router = useRouter();
@@ -28,7 +28,7 @@ export default function LanguageSwitcher({ dark = false }: { dark?: boolean }) {
     <div
       role="group"
       aria-label={t("label")}
-      className={`inline-flex items-center gap-0.5 rounded-full p-0.5 text-[11px] font-semibold ${
+      className={`inline-flex items-center gap-0.5 rounded-full p-0.5 font-semibold ${large ? "text-sm" : "text-[11px]"} ${
         dark
           ? "bg-white/10 border border-white/15"
           : "bg-[#1B6B3A]/8 border border-[#1B6B3A]/15"
@@ -43,7 +43,7 @@ export default function LanguageSwitcher({ dark = false }: { dark?: boolean }) {
             onClick={() => onChange(loc)}
             disabled={pending}
             aria-pressed={active}
-            className={`px-2.5 py-1 rounded-full uppercase tracking-widest transition-colors ${
+            className={`${large ? "min-h-11 min-w-14 px-4" : "px-2.5 py-1"} rounded-full uppercase tracking-widest transition-colors ${
               active
                 ? dark
                   ? "bg-white/20 text-white"

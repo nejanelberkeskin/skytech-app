@@ -170,6 +170,25 @@ export async function markInvoiceIssued(orderId: string, input: InvoiceIssueInpu
   return { ok: true, order };
 }
 
+/** Başarısız (Paraşüt) satış faturasını yeniden kuyruğa alır; Paraşüt'teki fatura kimliği korunur (ikinci fatura açılmaz). */
+export async function retryInvoice(orderId: string, invoiceId: string, adminUserId: string, supabase: SupabaseClient = db()): Promise<AdminActionResult> {
+  const order = await getOrder(supabase, orderId);
+  if (!order) return { ok: false, error: "not_found" };
+  const { data, error } = await supabase
+    .from("order_invoices")
+    .update({ status: "pending", attempts: 0, error: null })
+    .eq("id", invoiceId)
+    .eq("order_id", order.id)
+    .eq("kind", "sale")
+    .eq("status", "failed")
+    .select("id")
+    .maybeSingle();
+  if (error) return { ok: false, error: error.code === "23505" ? "already_done" : "unavailable" };
+  if (!data) return { ok: false, error: "invalid_state" };
+  await addOrderEvent(supabase, order.id, "admin_note", actorOf(adminUserId), { note: "invoice_retry" });
+  return { ok: true, order };
+}
+
 /* ── Geç ödemede ayrılamamış kapasite ─────────────────────────────────────── */
 
 /**

@@ -9,7 +9,7 @@ import {
   cancelBySeller,
   executeRefund,
   markInvoiceIssued,
-  queueInvoice,
+  queueInvoice, retryInvoice,
   refundDuplicate,
   reserveCapacityNow,
   type AdminActionResult,
@@ -70,6 +70,7 @@ const actionSchema = z.discriminatedUnion("action", [
   z.object({ action: z.literal("refund") }),
   z.object({ action: z.literal("refund_duplicate"), paymentId: z.string().trim().min(1).max(100) }),
   z.object({ action: z.literal("invoice_now") }),
+  z.object({ action: z.literal("invoice_retry"), invoiceId: z.uuid() }),
   z.object({ action: z.literal("reserve_capacity") }),
   z.object({
     action: z.literal("invoice_issued"),
@@ -152,6 +153,9 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     details = { paymentId: input.paymentId };
   } else if (input.action === "invoice_now") {
     result = await queueInvoice(id, admin.user_id, supabase);
+  } else if (input.action === "invoice_retry") {
+    result = await retryInvoice(id, input.invoiceId, admin.user_id, supabase);
+    details = { invoiceId: input.invoiceId };
   } else if (input.action === "reserve_capacity") {
     result = await reserveCapacityNow(id, admin.user_id, supabase);
   } else {

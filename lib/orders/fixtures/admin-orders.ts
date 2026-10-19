@@ -114,7 +114,7 @@ export const ORDER_DETAIL_FINANCE: OrderDetailDto = {
     payment: { reviewRequired: false, provider: "iyzico", paymentId: "PAY-EXAMPLE", startedAt: "2026-09-28T09:01:00.000Z", expiresAt: null },
     refunds: [], duplicates: [],
   },
-  invoices: [{ id: "50000000-0000-4000-8000-000000000001", kind: "sale", provider: "manual", status: "pending", invoiceNo: null, ettn: null, issuedAt: null, sentAt: null, error: null, createdAt: "2026-09-28T09:05:00.000Z" }],
+  invoices: [{ id: "50000000-0000-4000-8000-000000000001", kind: "sale", provider: "manual", status: "pending", invoiceNo: null, ettn: null, issuedAt: null, sentAt: null, error: null, createdAt: "2026-09-28T09:05:00.000Z", documentType: null, attempts: 0 }],
   legal: {
     documentsVersion: "2026-09.5", sourcePath: "/tr/sahalar/ana-saha",
     documents: [{ kind: "contract", title: "Mesafeli Hizmet Sözleşmesi", sha256: "b".repeat(64), templateVersion: "2026-09.5", createdAt: "2026-09-28T09:00:00.000Z" }],

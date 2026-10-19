@@ -13,9 +13,9 @@ export const IDS = {
   siteB: '20000000-0000-0000-0000-0000000000bb',
 };
 
-const MIGRATIONS = ['007_admin_audit_log.sql', '016_release_orders.sql', '017_sales_pause.sql', '019_audit_hardening.sql', '020_refund_reconciliation.sql', '021_permission_core.sql', '022_custom_roles.sql', '023_invitation_ownership.sql', '038_b2b_resolution_permission.sql', '042_corporate_review_permission.sql'];
+const MIGRATIONS = ['007_admin_audit_log.sql', '016_release_orders.sql', '017_sales_pause.sql', '019_audit_hardening.sql', '020_refund_reconciliation.sql', '021_permission_core.sql', '022_custom_roles.sql', '023_invitation_ownership.sql', '038_b2b_resolution_permission.sql', '042_corporate_review_permission.sql', '045_invoice_provider_tracking.sql'];
 
-export async function createDb({ upTo = '042_corporate_review_permission.sql' } = {}) {
+export async function createDb({ upTo = '045_invoice_provider_tracking.sql' } = {}) {
   const db = new PGlite();
   await db.exec(`CREATE ROLE anon; CREATE ROLE authenticated; CREATE ROLE service_role;
     CREATE SCHEMA auth; CREATE TABLE auth.users(id uuid PRIMARY KEY);

@@ -27,13 +27,14 @@
     "comingSoon": "Coming Soon",
     "requests": "Submit a Request",
     "account": "My Account",
-    "register": "Sign Up"
+    "register": "Sign Up",
+    "coatedSeed": "Coated Seeds"
   },
   "hero": {
     "badge": "Reforestation · Regeneration · Monitoring",
     "headlineLine1": "We Are Greening Nature",
     "headlineLine2": "with Technology",
-    "subtitle": "We release seeds by drone over fire-affected and hard-to-reach sites. Because we work without entering the land, the soil and wildlife are left undisturbed.",
+    "subtitle": "We release seeds by drone on fire-affected and hard-to-reach sites. Explore the sites, work schedule and published work records.",
     "ctaPrimary": "Buy Now",
     "ctaSecondary": "Corporate Solutions",
     "trustForestRegions": "Coordinated with Regional Forestry Directorates",
@@ -48,22 +49,22 @@
     "subtitle": "Reforestation and regeneration work built on three core principles — traceable at every step.",
     "items": {
       "zeroFootprint": {
-        "title": "Zero Ground Footprint",
-        "description": "We release seeds over the site by drone. With no machinery or crews entering the land, the soil structure stays intact and wildlife is protected on steep and fire-affected terrain.",
-        "stat": "100%",
-        "statLabel": "Nature-Safe"
+        "title": "Aerial application",
+        "description": "Drone release aims to reduce the need for ground access when delivering seeds to target locations. Site preparation and monitoring needs are assessed separately.",
+        "stat": "Drone",
+        "statLabel": "Planned release"
       },
       "transparentSupply": {
         "title": "Transparent Supply Chain",
-        "description": "Our regionally-suited seeds are sourced from the relevant Regional Forestry Directorates; species, collection dates, and origin of every seed are securely verified by blockchain technology.",
-        "stat": "100%",
-        "statLabel": "Traceability"
+        "description": "Seed species, origin and sourcing information are considered alongside site and work records. Published information is available on the relevant site page.",
+        "stat": "Records",
+        "statLabel": "Species and source"
       },
       "annualReport": {
         "title": "Annual Drone Monitoring",
         "description": "Sites are re-surveyed by drone every year. Growth data and footage are compiled in an Activity Report, which organisations can use as supporting evidence in their sustainability reporting.",
-        "stat": "12 mo",
-        "statLabel": "Monitoring"
+        "stat": "Schedule",
+        "statLabel": "Site monitoring"
       }
     },
     "titleLine1": "We are Pushing Past the Limits of",
@@ -72,20 +73,20 @@
   "howItWorks": {
     "badge": "Process",
     "title": "Four Steps to",
-    "titleAccent": "Full Automation",
+    "titleAccent": "Planned Work",
     "subtitle": "Science and technology at every step, from seed selection to the monitoring report.",
     "steps": {
       "research": {
         "title": "Seed Technology R&D",
-        "description": "We work with our expert forest engineers and academic advisors to drive ecosystem restoration and the rehabilitation of burned areas and mining sites. We develop our seed coating and seed ball formulas in line with forestry science — selecting seeds suited to the region's climate and ecology and coating them with the most appropriate materials."
+        "description": "Coated seeds and seed balls are distinct application options. Product and species selection follows the site characteristics and work plan."
       },
       "analysis": {
         "title": "Target Site Analysis",
-        "description": "Our application analyses satellite and drone imagery to study the site's topography, soil moisture and ecosystem structure. It uses artificial intelligence to determine the most suitable target points for releasing seeds. Legal permits are obtained in coordination with the Regional Forestry Directorate, and the process is run scientifically and safely."
+        "description": "Site location, terrain and working conditions are assessed. The application route and required permissions are planned accordingly."
       },
       "distribution": {
         "title": "Release by Drone",
-        "description": "Guided by high-precision GPS data, our drone fleet releases 200+ seeds in a single flight at pre-determined target points. Because no one enters the land, soil and vegetation are left undamaged."
+        "description": "Seeds are released by drone along a planned route. Flight time and release quantity depend on site and operating conditions."
       },
       "monitoring": {
         "title": "Annual Monitoring & Reporting",
@@ -97,98 +98,52 @@
     "badge": "Advantages",
     "titleLine1": "Where We",
     "titleAccent": "Make a Difference",
-    "subtitle": "We create measurable change in three critical ecosystem domains, powered by science and technology.",
+    "subtitle": "Our approach to application and monitoring for different site needs.",
     "tabs": {
       "fire": {
         "label": "Post-Fire",
         "title": "Regreening Burned Forests",
-        "description": "To restore the ecological dynamics of burned forest land, we run large-scale, fast and sustainable reforestation campaigns using autonomous drone fleets and high-germination seeds.",
+        "description": "Work on fire-affected sites is planned following site assessment and permission procedures. Release operations and subsequent growth and monitoring records are tracked separately.",
         "bullets": [
-          "Worker safety: Avoids risking lives on loose, landslide-prone terrain after fires",
-          "Golden time window: Rapid intervention before topsoil loses nutrients or erosion begins",
-          "Even distribution with GIS: the number of seeds per m² is precisely tuned",
-          "Digital traceability: Every coordinate is logged, germination is monitored from satellites"
+          "Method selected for site conditions",
+          "Permissions and route planning before work",
+          "Records of the release work",
+          "Scheduled monitoring and reporting"
         ],
-        "stat": "65%+",
-        "statLabel": "Germination rate",
+        "stat": "Site",
+        "statLabel": "Planning for local conditions",
         "showDetails": "Show Details",
         "hideDetails": "Hide Details",
-        "detailIntro": "The scientific foundation of UAV seed release in the rehabilitation of burned areas:",
+        "detailIntro": "Topics considered in the work plan:",
         "detailGroups": [
           {
-            "title": "Accessibility and Logistical Advantages",
+            "title": "Site assessment",
             "items": [
               {
-                "title": "Labor Savings",
-                "description": "Work that takes hundreds of labourers weeks with traditional hand planting is completed by autonomous drone fleets in a very short time."
-              },
-              {
-                "title": "Worker Safety",
-                "description": "Seeds are released without risking human life on dangerous terrain with loosened soil, fallen trees and landslide risk after a fire."
+                "title": "Method and access",
+                "description": "Drone release aims to reduce the need for ground access when delivering seeds to target locations. Site preparation and monitoring needs are assessed separately."
               }
             ]
           },
           {
-            "title": "Higher Germination and Survival Rate",
+            "title": "Seeds and outcomes",
             "items": [
               {
-                "title": "Protective Coating",
-                "description": "In seed balls, which are used where site conditions call for them, the clay, compost and nutrients shield the seed from birds, rodents and ants."
+                "title": "Source information",
+                "description": "Seed species, origin and sourcing information are considered alongside site and work records. Published information is available on the relevant site page."
               },
               {
-                "title": "Micro-Habitat Support",
-                "description": "The seed ball carries the moisture and organic nutrients needed for germination right in its first layer."
-              },
-              {
-                "title": "Natural Adaptation",
-                "description": "Because seeds are not buried deep in the soil, they germinate at the right time and in their natural cycle, together with the rain."
+                "title": "Natural conditions",
+                "description": "Germination and growth depend on species, soil, rainfall and other site conditions. No particular germination rate, tree count or lifespan is promised."
               }
             ]
           },
           {
-            "title": "Time and Cost Efficiency",
+            "title": "Application",
             "items": [
               {
-                "title": "Speed and Wide-Area Coverage",
-                "description": "A single drone can release thousands of seeds homogeneously over a wide hectarage in a day."
-              },
-              {
-                "title": "Lower Cost",
-                "description": "It optimises the reforestation budget by removing the costs of raising saplings, transport, digging and planting labour."
-              },
-              {
-                "title": "Critical Time Management",
-                "description": "Allows fast intervention right after the fire — in the critical \"golden window\" before the soil loses nutrients and erosion begins."
-              }
-            ]
-          },
-          {
-            "title": "Technological and Scientific Precision",
-            "items": [
-              {
-                "title": "GIS and Mapping Integration",
-                "description": "Thanks to 3D maps of the area prepared in advance, seeds are not scattered at random but released at micro-basins and moist spots where germination is most likely."
-              },
-              {
-                "title": "Homogeneous Distribution",
-                "description": "Sensors and autonomous algorithms precisely tune the number of seeds per m², preventing overcrowding or gaps."
-              },
-              {
-                "title": "Digital Traceability",
-                "description": "Because the coordinates where seeds are released are recorded, germination success and vegetation development can easily be tracked by satellite or drone."
-              }
-            ]
-          },
-          {
-            "title": "Maximum Restoration with Minimum Environmental Footprint",
-            "items": [
-              {
-                "title": "Soil Protection",
-                "description": "Prevents heavy machinery and intense human traffic from compacting the soil, protecting the post-fire sensitive topsoil from erosion."
-              },
-              {
-                "title": "Ecosystem-Friendly",
-                "description": "Using only native flora seeds preserves the region's natural gene pool and supports ecological succession without disruption."
+                "title": "Release plan",
+                "description": "Seeds are released by drone along a planned route. Flight time and release quantity depend on site and operating conditions."
               }
             ]
           }
@@ -197,17 +152,15 @@
       "mining": {
         "label": "Mining Sites",
         "title": "Ecological Restoration of Mining Sites",
-        "description": "We accelerate the restoration of sites whose natural structure, vegetation and soil quality have been disturbed by mining. Using remote sensing and AI, we boost vegetation success in degraded topographies, building a gradual and sustainable forest ecosystem.",
+        "description": "Suitability for mining sites is assessed against current land conditions and the rehabilitation plan. Species, permissions and monitoring scope are considered for each site.",
         "bullets": [
-          "200+ seeds in a single drone flight — 10 times faster than traditional methods",
-          "Zero ground footprint: maximum restoration with the smallest environmental footprint",
-          "Full transparency: seed species, origin and germination rates logged end-to-end",
-          "Annual monitoring: high-resolution digital data via periodic drone flights",
-          "Corporate reporting: an Activity Report for every job, covering site, area, species and footage",
-          "Legal compliance: 100% compliant, coordinated with Regional Forestry Directorates"
+          "Site-specific assessment",
+          "Suitable species and product selection",
+          "Permission and route planning",
+          "Work and monitoring records"
         ],
-        "stat": "10×",
-        "statLabel": "Speed vs. traditional"
+        "stat": "Plan",
+        "statLabel": "Site-specific work"
       },
       "carbon": {
         "label": "Corporate Participation",
@@ -238,7 +191,8 @@
       "droneTech": "Drone Technology",
       "carbonProgram": "Carbon & Reporting",
       "ownLand": "For My Own Land",
-      "corporate": "Corporate Solutions"
+      "corporate": "Corporate Solutions",
+      "coatedSeed": "Seaweed-Extract Coated Seeds"
     },
     "quickLinks": {
       "about": "About Us",
@@ -268,7 +222,7 @@
     "sectionTitleLine": "Four Native",
     "sectionTitleAccent": "Species",
     "sectionSubtitle": "Each species is selected for the climate and soil of the region where it is released. Our seeds are sourced through the Regional Forestry Directorates.",
-    "footnote": "Our region-appropriate seeds are sourced from the relevant Regional Forestry Directorates; the species information, the dates the seeds were collected from the trees and their origin details are securely verified with blockchain technology.",
+    "footnote": "Seed species, origin and sourcing information are considered alongside site and work records. Published information is available on the relevant site page.",
     "typeLabel": "Species {number}",
     "labels": {
       "region": "Region",
@@ -289,7 +243,7 @@
         "germination": "20–30 days",
         "lifespan": "150–200 years",
         "ecologicalRole": "The first colonizing species after fire. It stabilizes the soil and provides habitat for birds and insects.",
-        "description": "Our most widespread conifer, covering roughly 25% of Türkiye's forest area. It adapts perfectly to the Mediterranean climate, grows quickly and is known for its ability to regenerate automatically after fire."
+        "description": "Turkish pine (Pinus brutia) is among the species considered during site planning. Species used are determined by the published information and implementation plan for the relevant site."
       },
       "karacam": {
         "name": "Black Pine",
@@ -343,15 +297,15 @@
     "items": {
       "speed": {
         "title": "Fast Operation",
-        "description": "200+ seeds in a single drone flight. 10 times faster than traditional methods."
+        "description": "Seeds are released by drone along a planned route. Flight time and release quantity depend on site and operating conditions."
       },
       "noDamage": {
-        "title": "Zero Site Damage",
-        "description": "Seeds are released from the air, so the ecosystem is protected — even areas untouched by human feet can be reached."
+        "title": "Ground access needs",
+        "description": "Drone release aims to reduce the need for ground access when delivering seeds to target locations. Site preparation and monitoring needs are assessed separately."
       },
       "transparency": {
         "title": "Full Transparency",
-        "description": "Each seed's harvest date, origin and species are verified on the blockchain. An end-to-end transparent supply chain."
+        "description": "Seed species, origin and sourcing information are considered alongside site and work records. Published information is available on the relevant site page."
       },
       "monitoring": {
         "title": "Annual Monitoring",
@@ -363,7 +317,7 @@
       },
       "compliance": {
         "title": "Legal Compliance",
-        "description": "Projects run in coordination with the Regional Forestry Directorates, with 100% legal permits and full regulatory compliance."
+        "description": "Permission and coordination requirements are assessed for the site and planned work."
       }
     }
   },
@@ -371,26 +325,26 @@
     "badge": "Comparison",
     "title": "Traditional Method vs.",
     "titleAccent": "Skytech Green",
-    "subtitle": "We placed the measurable differences side by side. The choice is yours.",
+    "subtitle": "Application methods differ; suitability depends on site conditions.",
     "traditional": {
       "heading": "Traditional Reforestation",
       "imageAlt": "Traditional tree planting — saplings planted by hand",
       "items": {
-        "manual": "Reliant on manual labor, inadequate in rugged terrain",
-        "damage": "Site damage is unavoidable",
-        "untraceable": "Undocumented, untraceable supply chain",
-        "reporting": "Manual reporting, weak oversight",
-        "speed": "Planting rate of 2-3 saplings per minute"
+        "manual": "Transporting seedlings and planting on the ground",
+        "damage": "Site preparation and selection of planting positions",
+        "untraceable": "Seedling species and sourcing records",
+        "reporting": "Monitoring and reporting defined for the work",
+        "speed": "Duration depends on terrain, team and method"
       }
     },
     "skytech": {
       "imageAlt": "Skytech Green — seed release by drone",
       "items": {
-        "access": "Access to every region with drone technology",
-        "noTrace": "Zero site footprint, the ecosystem is protected",
-        "verified": "Harvest date + origin verified on the blockchain",
+        "access": "Drone release over the planned site",
+        "noTrace": "Reduced need for ground access to deliver seeds",
+        "verified": "Records of seed species and sourcing",
         "reporting": "Annual drone monitoring and an Activity Report",
-        "distribution": "200+ seeds per flight"
+        "distribution": "Duration depends on site, weather and flight plan"
       }
     }
   },
@@ -398,10 +352,10 @@
     "badge": "Magic Lens",
     "title": "A Barren Land.",
     "titleAccent": "A Green Future.",
-    "subtitle": "Move your cursor — see with your own eyes the forest growing beneath the scorched soil.",
+    "subtitle": "Illustration: this interaction is not a before-and-after record of completed Skytech work.",
     "hint": "Move your cursor",
-    "labelBefore": "Before — After the Fire",
-    "labelAfter": "After — Skytech Green",
+    "labelBefore": "After fire — illustration",
+    "labelAfter": "Green forest — illustration",
     "barrenAlt": "Barren land after a fire",
     "forestAlt": "Renewed green forest"
   },
@@ -435,15 +389,15 @@
     "faqs": {
       "seedBall": {
         "question": "What is Seed Ball Technology and how does it work?",
-        "answer": "Seed Ball Technology is a method in which native seeds are encapsulated in clay and organic nutrients, protecting them from external factors and raising germination success above 65%+. The capsule shields the seed from drought and from being eaten; it dissolves with rainfall and the seed germinates in its natural cycle. The seed ball is a separate product that we use where site conditions call for it; on the current Project Sites, seaweed-extract coated seeds are released."
+        "answer": "A seed ball is a seed enclosed in a ball of clay and a nutrient mixture. A seaweed-extract coated seed is a different product. The product used is shown on the site page. Germination depends on natural conditions; no particular success rate is promised."
       },
       "sourcing": {
         "question": "Where are the seeds sourced from?",
-        "answer": "All seeds are sourced in cooperation with the Regional Forestry Directorates. In line with the principles of preserving biodiversity and sustainability, the collection date, genetic origin, and taxonomic (species) information of every seed lot is recorded using blockchain technology. Thanks to our end-to-end transparent supply chain, our customers can access seed ID cards and certification data at any time."
+        "answer": "Seed species, origin and sourcing information are considered alongside site and work records. Published information is available on the relevant site page."
       },
       "droneEfficiency": {
         "question": "How efficient is seed release by drone?",
-        "answer": "By releasing more than 200 seeds in a single flight, it is 10 times faster than traditional methods and highly cost-effective. GPS-precise coordinates make it possible to reach steep and fire-affected areas that people cannot access, and because no one enters the land, soil and vegetation are protected."
+        "answer": "Seeds are released by drone along a planned route. Flight time and release quantity depend on site and operating conditions."
       },
       "tracking": {
         "question": "How can I follow the development of the released seeds?",
@@ -514,7 +468,7 @@
     "acts": {
       "prepare": {
         "title": "The Seed Is Coated",
-        "desc": "Native seed is coated with a protective mixture. The coating helps protect it from birds, rodents and drying out."
+        "desc": "Depending on the site product, the seed is coated with a mixture containing seaweed extract or enclosed in a ball of clay and a nutrient mixture."
       },
       "flight": {
         "title": "To the Field by Drone",
@@ -530,7 +484,7 @@
       }
     },
     "labels": {
-      "clay": "Clay",
+      "clay": "Coating",
       "organic": "Organic matter",
       "seed": "Native seed",
       "route": "Planned route"
@@ -590,9 +544,9 @@
     }
   },
   "beforeAfter": {
-    "badge": "Before / After the Fire",
+    "badge": "Illustrative images",
     "titleLine1": "Scroll Down —",
-    "titleAccent": "Nature's Return",
+    "titleAccent": "Different Views of a Forest",
     "labelBefore": "Before the Fire",
     "labelAfter": "After the Fire",
     "altBefore": "View of a green forest",
@@ -601,7 +555,7 @@
   "aboutPage": {
     "meta": {
       "title": "About Us — Science, Technology and Nature",
-      "description": "A vision born from the 2021 Mediterranean wildfires — a 36+ person family of forest engineers, drone pilots and a software team. The founding story and values of Skytech Green."
+      "description": "The story of the Skytech Green brand, its approach to drone seed release and the company providing the service."
     },
     "breadcrumb": {
       "label": "About Us"
@@ -615,7 +569,7 @@
       "badge": "Our Story",
       "titleLead": "After the Wildfires,",
       "titleAccent": "A Call from Nature",
-      "paragraph1": "After the 2021 Mediterranean forest fires, we saw that drones could rapidly release seeds and reach areas where human footsteps struggle to arrive. We combined three things: scientific foundation + aviation technology + a transparent software infrastructure.",
+      "paragraph1": "The idea behind Skytech Green dates back to the Mediterranean forest fires of 2021. The service provider, SKYTECH HAVACILIK VE TEKNOLOJİ SANAYİ TİCARET A.Ş., was registered on 7 May 2024.",
       "paragraph2": "Today <brand>Skytech Green</brand> releases seeds by drone on Project Sites in three regions of Türkiye, enabling organisations and individuals to take part in bringing forest back to fire-affected sites.",
       "imageCaption": "Our Field Team"
     },
@@ -663,7 +617,7 @@
     "team": {
       "badge": "Team",
       "title": "An <accent>Interdisciplinary Family</accent>",
-      "subtitle": "From forest engineers to drone pilots, from software developers to project coordinators — a family of 36+ people.",
+      "subtitle": "Areas of responsibility in planning, carrying out and documenting the work.",
       "foresters": {
         "name": "Forest Engineers",
         "desc": "Seed species selection, formulation and soil analysis"
@@ -674,7 +628,7 @@
       },
       "coordinators": {
         "name": "Project Coordinators",
-        "desc": "Coordination with the General Directorate of Forestry, Karadeniz Teknik Üniversitesi and Artvin Çoruh Üniversitesi"
+        "desc": "Site planning, permission procedures and operation coordination"
       },
       "software": {
         "name": "Software & Data Team",
@@ -761,7 +715,7 @@
   "seedBallPage": {
     "meta": {
       "title": "Seed Ball — A Whole Forest in a Sphere",
-      "description": "What is a seed ball made of clay, organic fertilizer and selected seeds, and how is it made? 65%+ germination rate, production process and scientific formulation.",
+      "description": "Explore seed ball ingredients, preparation and drone release services, how seed balls differ from coated seeds and why site conditions matter.",
       "imageAlt": "Seed ball close-up — clay sphere, cracks and sprout"
     },
     "breadcrumb": {
@@ -769,7 +723,7 @@
     },
     "schema": {
       "name": "Seed Ball Production and Supply",
-      "description": "Seed ball production with a 65%+ germination rate, formulated from native seeds coordinated with the Regional Forestry Directorates, clay and organic fertilizer."
+      "description": "Drone release of seed balls selected according to the site plan."
     },
     "hero": {
       "title": "A Whole Forest in a Sphere",
@@ -778,8 +732,8 @@
     "what": {
       "badge": "What Is a Seed Ball?",
       "heading": "Nature's <grad>Smart Capsule</grad>",
-      "p1": "A seed ball is an innovative artificial encapsulation method in which plant seeds are coated with clay and organic nutrients to protect them from external factors, raising germination success to<strong>65%+</strong>.",
-      "p2": "As an eco-friendly biotechnological approach, the seed ball protects seeds from risks such as drought and consumption by wildlife, helping them take hold in the soil safely. Sprouting with the rain, it accelerates nature's rate of renewal.",
+      "p1": "A seed ball is made by enclosing a seed in <strong>clay and a nutrient mixture</strong>. The site and seed species are determined in the work plan.",
+      "p2": "Germination and growth depend on species, soil, rainfall and other site conditions. No particular germination rate, tree count or lifespan is promised.",
       "imageAlt": "Seed ball close-up — clay sphere, cracks and sprout",
       "caption": {
         "eyebrow": "Close-up",
@@ -788,8 +742,8 @@
     },
     "science": {
       "badge": "Scientific Design",
-      "heading": "<grad>Academic Literature + Lab</grad> Analyses",
-      "body": "Optimized through academic literature and laboratory analyses, our seed ball technology has been scientifically designed — as a result of our expert team's research — to deliver maximum germination and root development success even in nature's harshest conditions."
+      "heading": "Site Conditions and <grad>Monitoring</grad>",
+      "body": "Germination and growth depend on species, soil, rainfall and other site conditions. No particular germination rate, tree count or lifespan is promised."
     },
     "formulation": {
       "badge": "Formulation",
@@ -825,7 +779,7 @@
       },
       "drying": {
         "title": "Drying & Packaging",
-        "desc": "48 hours of natural drying; packaged with protection from moisture."
+        "desc": "Prepared seed balls are dried and stored according to the application plan."
       }
     },
     "stats": {
@@ -836,7 +790,7 @@
         "label": "Seed Balls / Drone Flight"
       },
       "lifespan": {
-        "value": "25 yrs",
+        "value": "Site-dependent",
         "label": "Average Lifespan"
       },
       "season": {
@@ -855,8 +809,8 @@
   },
   "droneTechPage": {
     "meta": {
-      "title": "Drone Technology — Precision Release, Zero Footprint",
-      "description": "Our GPS-precise drone fleet releases seeds over hard-to-reach areas untouched by human feet. RTK GPS, LiDAR, autonomous flight, 200+ seeds per flight.",
+      "title": "Drone Technology — Planned Seed Release",
+      "description": "Seeds are released by drone along a planned route. Flight time and release quantity depend on site and operating conditions.",
       "imageAlt": "Skytech Green seed release drone"
     },
     "breadcrumb": {
@@ -864,36 +818,36 @@
     },
     "schema": {
       "name": "Drone Reforestation Service",
-      "description": "Releasing 200+ seeds per flight with our GPS-precise, autonomous professional drone fleet. Zero site disturbance, access to hard-to-reach areas, full traceability."
+      "description": "Seeds are released by drone along a planned route. Flight time and release quantity depend on site and operating conditions."
     },
     "hero": {
-      "title": "Precision Release, Zero Footprint",
+      "title": "Planned Seed Release by Drone",
       "subtitle": "With GPS-precise drones, we release seeds over areas no human step can reach."
     },
     "system": {
       "badge": "Drone System",
       "heading": "<grad>Our Autonomous Drone Fleet</grad> in the Field",
-      "p1": "Unmanned aerial vehicles (UAVs) with autonomous flight capability reach predefined target coordinates with high precision and successfully place 200+ seeds in a single operation.",
-      "p2": "Guided by high-precision GPS data, our UAV fleet operates on the principle of <strong>zero ecological disturbance</strong>. All flight records are logged to your corporate dashboard in real time — for transparency and verifiability.",
+      "p1": "Seeds are released by drone along a planned route. Flight time and release quantity depend on site and operating conditions.",
+      "p2": "Drone release aims to reduce the need for ground access when delivering seeds to target locations. Site preparation and monitoring needs are assessed separately.",
       "imageAlt": "Skytech Green drone with its seed hopper",
       "thermalCamera": "Thermal Camera"
     },
     "featuresSection": {
       "badge": "Technical Specifications",
-      "title": "Industry-Leading <grad>Drone Hardware</grad>"
+      "title": "Drone Equipment"
     },
     "features": {
       "gps": {
         "title": "GPS Precision",
-        "desc": "Centimeter-level RTK GPS — the drop point of every seed is recorded."
+        "desc": "Location data is used to plan the flight route and application area."
       },
       "capacity": {
-        "title": "200+ Seeds / Flight",
-        "desc": "With advanced capacity we can cover large areas in a single pass."
+        "title": "Site-based Planning",
+        "desc": "Seeds are released by drone along a planned route. Flight time and release quantity depend on site and operating conditions."
       },
       "speed": {
-        "title": "10x Speed",
-        "desc": "Ten times faster than traditional hand planting, cutting operation time from days to hours."
+        "title": "Operation Plan",
+        "desc": "Seeds are released by drone along a planned route. Flight time and release quantity depend on site and operating conditions."
       },
       "autonomous": {
         "title": "Autonomous Mission",
@@ -940,7 +894,7 @@
   "corporatePage": {
     "meta": {
       "title": "Corporate Solutions — ESG Partnership",
-      "description": "Custom corporate afforestation for your company, automatic PDF certificate per employee and GRI/CDP/SASB-compliant ESG reporting."
+      "description": "Drone seed release for companies: group participation, Participation Certificates, site monitoring records and an Activity Report."
     },
     "breadcrumb": {
       "label": "Corporate Solutions"
@@ -950,7 +904,7 @@
       "description": "Group participation for companies, a Certificate of Participation per employee, an Activity Report and corporate invoicing."
     },
     "hero": {
-      "title": "Promotional Products End Up in the Trash. Your Corporate Forest Lives Forever.",
+      "title": "Drone Seed Release for Your Organisation",
       "subtitle": "Measurable contribution to your ESG goals, tangible meaning for the employee experience — from a single corporate partner."
     },
     "comparison": {
@@ -968,7 +922,7 @@
       },
       "forest": {
         "item": "A Forest Unique to Your Brand",
-        "impact": "Lives 25+ years, creates an ecosystem",
+        "impact": "Site work and monitoring records",
         "esg": "Full ESG integration"
       }
     },
@@ -1149,10 +1103,10 @@
   },
   "projectsPage": {
     "meta": {
-      "title": "Projects & Map — Proof from the Field",
+      "title": "Projects and Site Information",
       "description": "Our Project Sites in Çanakkale, İzmir and Bursa. An interactive map of Türkiye with site information by province."
     },
-    "breadcrumbTitle": "Proof from the Field",
+    "breadcrumbTitle": "Project Sites",
     "breadcrumbSubtitle": "Work is under way on our Project Sites in Çanakkale, İzmir and Bursa.",
     "breadcrumbSchemaName": "Projects",
     "stats": {
@@ -1359,6 +1313,51 @@
       },
       "backToSites": "Back to Project Sites"
     }
+  },
+  "seoContent": {
+    "legalNotice": "These legal documents are published in Turkish. Your language choice changes the navigation; the document below remains in Turkish.",
+    "demo": "Example screen — illustrative data, not actual operational results.",
+    "illustration": "Illustrative images; not a measured before-and-after comparison of the same site or a guarantee of results.",
+    "siteSummary": "{name} is a published project site in {location}. Product: {product}. Current work phase: {phase}.",
+    "scopeTitle": "Work and monitoring scope",
+    "scope": "Release work, a Certificate of Participation and monitoring records form part of the service. Consider the site conditions and work schedule shown before ordering. Germination and tree counts are not guaranteed.",
+    "methodLink": "Explore the method used on this site",
+    "speciesPending": "Species information will appear here when published for this site. Customers do not select the species or product.",
+    "newsNote": "These links provide background on the site; they are not presented as evidence of completed Skytech work.",
+    "reportsLink": "What does the Activity Report contain?",
+    "seedBallLink": "Compare with seed balls"
+  },
+  "coatedSeedPage": {
+    "title": "Seaweed-Extract Coated Seeds",
+    "intro": "Learn what coated seeds are, how they differ from seed balls and what the drone release service includes.",
+    "serviceName": "Coated seed release service",
+    "serviceDescription": "Drone release of seaweed-extract coated seeds on the selected project site.",
+    "definition": {
+      "title": "What is a coated seed?",
+      "body": "The seed surface is coated with a mixture containing seaweed extract. The site page identifies this product by name. The counting unit is one seed; the product and current unit price are shown on the site page."
+    },
+    "difference": {
+      "title": "How it differs from a seed ball",
+      "body": "A seed ball encloses a seed in a ball made with clay and a nutrient mixture. Coated seeds and seed balls are separate products. Information or measurements about one method should not be treated as results for the other product."
+    },
+    "selection": {
+      "title": "How are product and species selected?",
+      "body": "Product, species and work plan are defined for each site. Customers choose a published site; they do not change the product or species used there. Published species information appears in the site details."
+    },
+    "service": {
+      "title": "What you purchase",
+      "body": "You purchase drone seed release on your behalf at the selected site. Seeds are not shipped to your address. Release work, a subsequent Certificate of Participation and monitoring records form part of the service. Current prices and conditions are shown before ordering."
+    },
+    "outcomes": {
+      "title": "Outcomes and limitations",
+      "body": "Coating, releasing seeds and a seed growing into a tree are different stages. Germination and growth depend on species, soil, rainfall and other natural conditions. No particular germination rate, tree count, carbon offset or lifespan is promised."
+    },
+    "records": {
+      "title": "Following the work",
+      "body": "The general release season is November–March; monitoring and reporting are scheduled for April–September. Check the site-specific schedule and delivery information before ordering. Published records of completed work appear on the site page; planned work is not completed work."
+    },
+    "sitesLink": "Explore project sites",
+    "speciesLink": "Explore seed species"
   },
   "accountPages": {
     "loading": "Loading…",
@@ -2757,12 +2756,14 @@
     "coated_seed": {
       "name": "Seaweed-Extract Coated Seed",
       "unit": "seeds",
-      "short": "Seeds coated with seaweed extract, released on site by drone."
+      "short": "Seeds coated with seaweed extract, released on site by drone.",
+      "unitSingular": "seed"
     },
     "seed_ball": {
       "name": "Seed Ball",
       "unit": "seed balls",
-      "short": "Seed balls prepared with clay and nutrients, released on site by drone."
+      "short": "Seed balls prepared with clay and nutrients, released on site by drone.",
+      "unitSingular": "seed ball"
     }
   }
 }

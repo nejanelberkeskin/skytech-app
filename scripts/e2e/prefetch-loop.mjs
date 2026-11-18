@@ -19,7 +19,7 @@
  * görünür), sayfa sonuna kadar kaydırılır (görünür her bağlantı ön yüklensin), beklenir ve `_rsc`
  * istekleri yola göre sayılır. Bir yola ESIK'ten fazla ya da senaryo başına TAVAN'dan fazla RSC
  * isteği giderse senaryo kalır. Sayım yalnız RSC sayısına bakmaz — senaryo ancak şu koşullarda geçer:
- *   - doğrudan: ilk yanıt 2xx, adres değişmedi, sayfa hazır (aşağıda).
+ *   - doğrudan: son yanıt 2xx, adres beklenen canonical (/tr → /), sayfa hazır (aşağıda).
  *   - geçiş / dil: tetikleme (router.push ya da dil düğmesi) sonrası BEKLENEN adrese varıldı (zaman aşımı
  *     yutulmaz), sayfa hazır ve hedef dilde. Sayım tetiklemeden ÖNCE başlar; ilk istekler kaçmaz.
  *   - sayfa hazır: document.readyState "complete", <html lang> beklenen dil, boş olmayan bir h1, anlamlı
@@ -76,7 +76,11 @@ const withLocale = (locale, rest) => (locale === "tr" ? rest || "/" : `/${locale
  */
 export function expectationFor(scenario, { session = false } = {}) {
   if (scenario.expect) return scenario.expect;
-  if (scenario.kind === "doğrudan") return { paths: [scenario.start], lang: localeOf(scenario.start).locale, blocked: [] };
+  if (scenario.kind === "doğrudan") {
+    const { locale, rest } = localeOf(scenario.start);
+    const canonical = /^\/tr(?:\/|$)/.test(scenario.start) ? withLocale("tr", rest) : scenario.start;
+    return { paths: [canonical], lang: locale, blocked: [] };
+  }
   if (scenario.kind === "dil") {
     const { rest } = localeOf(scenario.start);
     const paths = scenario.locale === "tr" ? [withLocale("tr", rest), `/tr${rest}`] : [withLocale(scenario.locale, rest)];

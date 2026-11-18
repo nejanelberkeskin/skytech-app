@@ -191,6 +191,7 @@ function loadMiddleware(intlCalls) {
     'next/server': server,
     'next-intl/middleware': { __esModule: true, default: () => (req) => { intlCalls.push(req.nextUrl.pathname); return server.NextResponse.next(); } },
     '@/i18n/routing': { routing: {} },
+    '@/lib/seo-policy': loadSource('lib/seo-policy.ts'),
     '@/lib/supabase/middleware': { updateSession: async () => ({ user: null, response: server.NextResponse.next() }) },
     '@/lib/site-config': SiteConfig,
     '@/lib/orders/link-gate': Gate,
@@ -397,4 +398,49 @@ test('sayfalar ve bileşenler belirteci adresten okumaz, bağlantıya ya da iste
   assert.equal(ViewData.orderDocumentUrl({ id: ORDERS['SG-2026-ABCDEF'].id, order_no: 'SG-2026-ABCDEF' }, 'contract', 'pdf'), '/api/public/siparis/SG-2026-ABCDEF/belge/contract?bicim=pdf');
   // E-posta bağlantıları belirteçli kalır (eski ve yeni e-postalar kapıdan geçer).
   assert.equal(Access.orderPagePath('SG-2026-ABCDEF', ORDERS['SG-2026-ABCDEF'].id, 'en'), `/en/siparis/SG-2026-ABCDEF?t=${TOKEN}`);
+});
+
+test('SEO hostname/content canonicalization preserves token-gate precedence and public query strings', async () => {
+  const mw = loadMiddleware([]);
+  const publicResponse = await mw.middleware(new NextRequest('https://www.skytechgreen.com/tr/sahalar?utm_source=test'));
+  assert.equal(publicResponse.status, 308);
+  assert.equal(publicResponse.headers.get('location'), 'https://skytechgreen.com/sahalar?utm_source=test');
+  const trResponse = await mw.middleware(new NextRequest('https://skytechgreen.com/tr/kaplamali-tohum'));
+  assert.equal(trResponse.headers.get('location'), 'https://skytechgreen.com/kaplamali-tohum');
+  for (const host of ['skytechgreen.com', 'www.skytechgreen.com']) {
+    const tokenResponse = await mw.middleware(new NextRequest(`https://${host}/tr/siparis/SG-2026-ABCDEF?t=${TOKEN}`));
+    assert.equal(tokenResponse.headers.get('location'), null);
+    assert.equal(tokenResponse.headers.get('x-middleware-rewrite'), `https://${host}/api/public/siparis/SG-2026-ABCDEF/baglanti`);
+  }
+});
+
+test('SEO normalization does not redirect next-intl internal rewrites back to the external URL', async () => {
+  const mw = loadMiddleware([]);
+  for (const path of ['/tr', '/tr/sahalar']) {
+    const res = await mw.middleware(new NextRequest(`http://localhost:3348${path}`, { headers: { 'x-next-intl-locale': 'tr' } }));
+    assert.equal(res.status, 200);
+    assert.equal(res.headers.get('location'), null);
+  }
+});
+
+test('SEO canonical redirect leaves RSC locale-prefetch transport untouched', async () => {
+  const mw = loadMiddleware([]);
+  const res = await mw.middleware(new NextRequest('http://localhost:3348/tr/hakkimizda', {headers:{rsc:'1','next-router-prefetch':'1'}}));
+  assert.equal(res.status,200);
+  assert.equal(res.headers.get('location'),null);
+});
+
+test('SEO hostname normalization leaves tokenless order cookies on their original host', async () => {
+  const mw = loadMiddleware([]);
+  for (const path of ['/siparis/SG-2026-ABCDEF','/odeme/sonuc/SG-2026-ABCDEF']) {
+    const res = await mw.middleware(new NextRequest(`https://www.skytechgreen.com${path}`));
+    assert.equal(res.headers.get('location'),null);
+  }
+});
+
+test('SEO canonicalization treats browser background fetches as transport even when RSC headers are stripped', async () => {
+  const mw = loadMiddleware([]);
+  const res = await mw.middleware(new NextRequest('http://localhost:3348/tr/hakkimizda', {headers:{'sec-fetch-dest':'empty','sec-fetch-mode':'cors'}}));
+  assert.equal(res.status,200);
+  assert.equal(res.headers.get('location'),null);
 });

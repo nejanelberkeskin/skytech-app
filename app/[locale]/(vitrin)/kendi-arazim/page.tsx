@@ -28,7 +28,7 @@ export default async function OwnLandPage({ params }: Props) {
   const questions = ["location", "area", "condition", "ownership", "timing", "contact"] as const;
   return (
     <div className="vitrin-container space-y-14 pb-20 pt-28 text-[#14261a] sm:space-y-20 sm:pt-36 motion-reduce:[&_*]:!transition-none motion-reduce:[&_*]:!animate-none">
-      <BreadcrumbSchema items={[{ name: t("breadcrumb"), path: `${locale === "tr" ? "" : `/${locale}`}/kendi-arazim` }]} />
+      <BreadcrumbSchema items={[{ name: t("breadcrumb"), path: "/kendi-arazim" }]} />
       <header>
         <nav aria-label={t("breadcrumbLabel")} className="mb-7 flex flex-wrap gap-2 text-sm text-[#6b8f6b]">
           <Link href="/" className="underline-offset-4 hover:text-[#1B6B3A] hover:underline">{nav("home")}</Link>

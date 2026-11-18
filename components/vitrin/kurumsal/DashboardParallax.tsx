@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 
 export default function DashboardParallax() {
   const t = useTranslations("corporatePage.dashboard");
+  const seo = useTranslations("seoContent");
   const ref = useRef<HTMLDivElement>(null);
 
   // Parallax yalnızca lg+ ekranda: dar ekranda mutlak konumlu kartlar
@@ -45,6 +46,7 @@ export default function DashboardParallax() {
   return (
     <section ref={ref} className="relative overflow-hidden vitrin-section bg-white">
       <div className="vitrin-container">
+        <p className="mb-8 rounded-lg border border-[#14261a]/15 bg-[#f6f6f1] p-4 text-sm font-medium text-[#3d5a3d]">{seo("demo")}</p>
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-10 items-center max-w-6xl mx-auto">
           {/* Text */}
           <div className="lg:col-span-2">
@@ -115,7 +117,7 @@ export default function DashboardParallax() {
           </div>
 
           {/* 3D Stacked Mockup — lg+: mutlak konum + parallax; mobil: normal akış */}
-          <div className="lg:col-span-3 relative space-y-4 lg:space-y-0 lg:h-[620px]" style={{ perspective: 1400 }}>
+          <div data-nosnippet="" className="lg:col-span-3 relative space-y-4 lg:space-y-0 lg:h-[620px]" style={{ perspective: 1400 }}>
             {/* Back card — drone feed */}
             <motion.div
               style={

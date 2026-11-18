@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { isTurkishLegalPage } from "@/lib/seo-policy";
 import { localeUrl } from "@/lib/seo";
 import { getProjectSites } from "@/lib/sites/data";
 import { OWN_LAND_HREF, SITES_HREF, siteDetailHref } from "@/lib/sites/links";
@@ -24,6 +25,7 @@ interface SitemapEntry {
 
 const VITRIN_PAGES: SitemapEntry[] = [
   { path: "/", changeFrequency: "weekly", priority: 1.0 },
+  { path: "/kaplamali-tohum", changeFrequency: "monthly", priority: 0.9 },
   { path: "/tohum-topu", changeFrequency: "monthly", priority: 0.9 },
   { path: "/tohumlarimiz", changeFrequency: "monthly", priority: 0.85 },
   { path: "/dron-teknolojisi", changeFrequency: "monthly", priority: 0.9 },
@@ -43,15 +45,6 @@ const VITRIN_PAGES: SitemapEntry[] = [
   { path: "/cerez-politikasi", changeFrequency: "yearly", priority: 0.3 },
 ];
 
-const APP_ENTRY_PAGES: SitemapEntry[] = [
-  // Uygulama akışlarının "girişi" kabul edilen anonim sayfalar (B2B; bayrak kapalıyken elenir).
-  // Eski bireysel tohum satışının sayfaları (/lands, /bireysel/*, /kargo-takip) Faz 8'de kaldırıldı.
-  { path: "/kurumsal", changeFrequency: "monthly", priority: 0.7 },
-  { path: "/kurumsal/teklif-al", changeFrequency: "monthly", priority: 0.7 },
-  // /auth/login ve /auth/register: arama sonucunda görünmesinde fayda yok,
-  // dahil etmiyoruz (robots.txt disallow'da da var).
-];
-
 const LOCALES = ["tr", "en", "ru"] as const;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -64,7 +57,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     })),
   ];
-  const lastModified = new Date();
+  // No reliable per-page publication timestamp is available. Omit lastmod rather than stamping every deployment.
   // Bayraklarla /yakinda'ya yönlenen sayfaları sitemap'e koymayoruz —
   // yönlendirilen URL'ler arama motorlarına verilmemeli.
   // Satış hukuk sayfaları yalnız yayımlandıklarında (bayrak açık, metin taslak değil) listelenir.
@@ -74,21 +67,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       : [];
   const all: SitemapEntry[] = [
     ...VITRIN_PAGES,
-    ...APP_ENTRY_PAGES,
     ...sitePages,
     ...legalPages,
   ].filter((entry) => !isSuspendedRoute(entry.path));
 
   // Her sayfa için 3 dilde URL üret + alternates ile hreflang sinyali ver
   return all.flatMap((entry) =>
-    LOCALES.map((locale) => ({
+    (isTurkishLegalPage(entry.path) ? (["tr"] as const) : LOCALES).map((locale) => ({
       url: localeUrl(entry.path, locale),
-      lastModified,
       changeFrequency: entry.changeFrequency,
       priority: entry.priority,
       alternates: {
         languages: Object.fromEntries(
-          LOCALES.map((l) => [l, localeUrl(entry.path, l)]),
+          (isTurkishLegalPage(entry.path) ? (["tr"] as const) : LOCALES).map((l) => [l, localeUrl(entry.path, l)]),
         ),
       },
     })),

@@ -10,6 +10,7 @@
 import type { Metadata } from "next";
 import { COMPANY } from "./company";
 import { seoKeywords } from "./seo-keywords";
+import { isTurkishLegalPage } from "./seo-policy";
 
 export const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
@@ -17,9 +18,9 @@ export const SITE_URL =
   "https://skytechgreen.com";
 
 export const SITE_NAME = "Skytech Green";
-export const SITE_TAGLINE = "Tohum Topu Teknolojisiyle Ormanlaştırma";
+export const SITE_TAGLINE = "Dron ve Tohum Teknolojisiyle Ormanlaştırma";
 export const SITE_DESCRIPTION =
-  "Yangından etkilenmiş sahalara dronla tohum topu bırakıyoruz. " +
+  "Yangından etkilenmiş sahalara dronla tohum bırakıyoruz. " +
   "Proje Uygulama Sahalarına katılım, yıllık izleme ve Faaliyet Raporu.";
 
 export const SITE_LOCALE = "tr_TR";
@@ -45,7 +46,7 @@ export function ogLocaleAlternates(active: string): string[] {
 export const ORG_LEGAL_NAME = COMPANY.legalName;
 /** Bagli oldugumuz ana sirket. Footer'daki marka beyani buraya baglaniyor. */
 export const ORG_PARENT_URL = "https://skytechhavacilik.com";
-export const ORG_FOUNDED = "2021";
+export const ORG_FOUNDED = "2024-05-07";
 export const ORG_AREA_SERVED = "Türkiye";
 /**
  * Şirket adresi — alt bilgi, İletişim sayfası ve yapısal veri buradan okur. Kaynağı sözleşmelerdeki
@@ -97,9 +98,9 @@ export const DEFAULT_OG_IMAGE = {
 
 /** Varsayılan OG görseli alt metni — aktif locale'e göre. */
 export const DEFAULT_OG_ALT: Record<string, string> = {
-  tr: `${SITE_NAME} — Tohum Toplarıyla Geleceği Ekin`,
-  en: `${SITE_NAME} — Plant the Future with Seed Balls`,
-  ru: `${SITE_NAME} — Сажайте будущее семенными шарами`,
+  tr: `${SITE_NAME} — Dronla Tohum Bırakma Hizmeti`,
+  en: `${SITE_NAME} — Drone Seed Release Service`,
+  ru: `${SITE_NAME} — Услуга посева семян с дронов`,
 };
 
 /** Locale'e göre varsayılan OG alt metni (fallback tr). */
@@ -184,7 +185,9 @@ export function buildPageMetadata(
   input: PageMetaInput,
   locale: string = DEFAULT_LOCALE
 ): Metadata {
-  const url = localeUrl(input.path, locale);
+  const contentLocale = isTurkishLegalPage(input.path) ? DEFAULT_LOCALE : locale;
+  const url = localeUrl(input.path, contentLocale);
+  const noindex = input.noindex || (isTurkishLegalPage(input.path) && locale !== DEFAULT_LOCALE);
   const titleFull =
     input.path === "/" ? `${SITE_NAME} — ${input.title}` : `${input.title} | ${SITE_NAME}`;
 
@@ -212,9 +215,10 @@ export function buildPageMetadata(
     keywords: input.keywords ?? seoKeywords(input.path, locale),
     alternates: {
       canonical: url,
-      languages: hreflangMap(input.path),
+      languages: noindex ? undefined : isTurkishLegalPage(input.path)
+        ? { tr: url, "x-default": url } : hreflangMap(input.path),
     },
-    robots: input.noindex
+    robots: noindex
       ? { index: false, follow: false }
       : { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large" } },
     openGraph: {
@@ -223,8 +227,8 @@ export function buildPageMetadata(
       siteName: SITE_NAME,
       title: titleFull,
       description: input.description,
-      locale: LOCALE_TO_OG_LOCALE[locale] ?? SITE_LOCALE,
-      alternateLocale: ogLocaleAlternates(locale),
+      locale: LOCALE_TO_OG_LOCALE[contentLocale] ?? SITE_LOCALE,
+      alternateLocale: isTurkishLegalPage(input.path) ? [] : ogLocaleAlternates(locale),
       images: [image],
       ...(input.publishedTime && { publishedTime: input.publishedTime }),
       ...(input.modifiedTime && { modifiedTime: input.modifiedTime }),

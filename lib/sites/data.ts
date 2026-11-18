@@ -21,6 +21,7 @@ import {
   type WorkType,
 } from "./types";
 import { readMediaLinks } from "./media-links";
+import { localizeSiteName } from "./localization";
 import { productTypeOf } from "@/lib/products";
 
 const SITE_COLUMNS =
@@ -108,7 +109,7 @@ function toSite(row: Row, locale: SiteLocale, species: Map<string, SiteSpecies>)
   return {
     id: String(row.id),
     slug,
-    name: pickI18n(row.name_i18n, locale) ?? baseName,
+    name: localizeSiteName(pickI18n(row.name_i18n, locale) ?? baseName, locale),
     province: (row.province as string | null) ?? (row.region as string | null) ?? null,
     district: (row.district as string | null) ?? null,
     areaHectares: Number.isFinite(area) && area > 0 ? area : null,

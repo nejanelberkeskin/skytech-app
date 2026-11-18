@@ -50,7 +50,7 @@ export default function HeroSection() {
       <div className="vitrin-container grid items-center gap-10 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-14">
         <div>
           <motion.p
-            initial={{ opacity: 0, y: -8 }}
+            initial={false}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
             className="mb-6 flex items-center gap-3 text-[12px] font-semibold uppercase tracking-[0.16em] text-[#1B6B3A]"
@@ -66,7 +66,7 @@ export default function HeroSection() {
           </h1>
 
           <motion.p
-            initial={{ opacity: 0, y: 16 }}
+            initial={false}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.75, ease: [0.16, 1, 0.3, 1] }}
             className="mb-9 max-w-xl text-lg leading-relaxed text-[#3d5a3d] sm:text-xl"
@@ -75,7 +75,7 @@ export default function HeroSection() {
           </motion.p>
 
           <motion.div
-            initial={{ opacity: 0, y: 16 }}
+            initial={false}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.9, ease: [0.16, 1, 0.3, 1] }}
             className="mb-10 flex flex-col gap-3 sm:flex-row sm:items-center"
@@ -92,7 +92,7 @@ export default function HeroSection() {
           </motion.div>
 
           <motion.ul
-            initial={{ opacity: 0 }}
+            initial={false}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 1.1 }}
             className="flex flex-col gap-2 border-t border-[#14261a]/10 pt-6 text-sm font-medium text-[#3d5a3d] sm:flex-row sm:flex-wrap sm:gap-x-7"
@@ -106,7 +106,7 @@ export default function HeroSection() {
         </div>
 
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
+          initial={false}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
           className="relative"
@@ -152,7 +152,7 @@ function WordReveal({
         <span key={i} className="inline-block overflow-hidden align-bottom py-[0.1em]">
           <motion.span
             className="inline-block"
-            initial={{ y: "110%", opacity: 0 }}
+            initial={false}
             animate={{ y: "0%", opacity: 1 }}
             transition={{
               duration: 0.9,

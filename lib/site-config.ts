@@ -132,7 +132,6 @@ export const CTA_MODE: CtaMode = SALES_ENABLED || PAYMENT_SOON
 
 /** B2B sayfaları (kurumsal teklif → ödeme → çalışan sertifikaları) — TRANSACTIONS_ENABLED kapalıyken /yakinda'ya gider. */
 const TRANSACTION_ROUTE_PATTERNS: RegExp[] = [
-  /^\/kurumsal$/,                   // eski kurumsal tanıtım sayfası (vitrinde /kurumsal-cozumler var)
   /^\/kurumsal\/panel\/.+$/,        // kurumsal ödeme ve çalışan sertifikaları
   /^\/fatura(\/.*)?$/,              // sipariş belgesi (B2B; resmî e-Arşiv faturası değil)
   /^\/orman(\/.*)?$/,               // şirket ormanı sayfası

@@ -484,8 +484,7 @@
       }
     },
     "labels": {
-      "clay": "Kaplama",
-      "organic": "Organik madde",
+      "coating": "Yosun ekstraktı kaplama",
       "seed": "Yerli tohum",
       "route": "Planlı rota"
     },

@@ -8,7 +8,7 @@ import { readConsent, subscribeConsent, writeConsent, type CookieConsent as Cons
 const REOPEN_EVENT = "open-cookie-preferences";
 
 const CHOICE_BUTTON =
-  "flex-1 min-h-11 px-4 py-2.5 rounded-xl text-sm font-semibold text-[#0e2519] bg-white border border-[#1B6B3A]/40 hover:bg-[#edf4e9] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1B6B3A] transition-colors";
+  "flex-1 min-h-11 px-4 py-2.5 rounded-[10px] text-sm font-semibold text-[#14261a] bg-white border border-[#14261a]/25 hover:border-[#1B6B3A] hover:text-[#1B6B3A] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1B6B3A] transition-colors";
 
 /** Footer'daki "Çerez Tercihleri" linkinden banner'ı yeniden açmak için. */
 export function reopenCookiePreferences(): void {
@@ -39,12 +39,12 @@ export default function CookieConsentBanner() {
 
   return (
     <div data-cookie-banner className="fixed inset-x-0 bottom-0 z-50 sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2 sm:bottom-6 sm:w-[calc(100%-3rem)] sm:max-w-md animate-fade-in">
-      <div className="vitrin-card !rounded-none sm:!rounded-2xl p-5 sm:p-6 !bg-white/95 shadow-2xl shadow-black/15 border-t sm:border border-black/5">
+      <div className="rounded-none sm:rounded-xl bg-white p-5 sm:p-6 shadow-sm border-t sm:border border-[#14261a]/15">
         <p className="text-sm text-[#3d5a3d] leading-relaxed mb-4">
           {t("message")}{" "}
           <Link
             href="/cerez-politikasi"
-            className="text-[#1B6B3A] font-semibold underline underline-offset-2 hover:text-[#22894a]"
+            className="text-[#1B6B3A] font-semibold underline underline-offset-2 hover:text-[#14552d]"
           >
             {t("policyLink")}
           </Link>

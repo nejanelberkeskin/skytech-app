@@ -1,37 +1,34 @@
 "use client";
 
 import { motion, useTransform, type MotionValue } from "framer-motion";
-import { useId } from "react";
 import { useTranslations } from "next-intl";
 
 export type Act = "prepare" | "flight" | "soil" | "sprout";
-type SceneProps = { progress: MotionValue<number>; clay: string };
+type SceneProps = { progress: MotionValue<number> };
 
 export function JourneyScene({ act, progress }: { act: Act; progress: MotionValue<number> }) {
-  const clay = `sj-clay-${useId()}`;
   return (
     <svg viewBox="0 0 640 420" aria-hidden="true" focusable="false" fill="none" strokeLinecap="round" strokeLinejoin="round" className="sj-svg">
-      <defs>
-        <radialGradient id={clay} cx="30%" cy="23%" r="80%">
-          <stop stopColor="#d9b887" /><stop offset="0.38" stopColor="#a67a49" />
-          <stop offset="0.78" stopColor="#6b4527" /><stop offset="1" stopColor="#382311" />
-        </radialGradient>
-      </defs>
-      {act === "prepare" && <Preparation progress={progress} clay={clay} />}
-      {act === "flight" && <Flight progress={progress} clay={clay} />}
-      {act === "soil" && <Soil progress={progress} clay={clay} />}
+      {act === "prepare" && <Preparation progress={progress} />}
+      {act === "flight" && <Flight progress={progress} />}
+      {act === "soil" && <Soil progress={progress} />}
       {act === "sprout" && <Sprout progress={progress} />}
     </svg>
   );
 }
 
-function Ball({ clay }: { clay: string }) {
+/** Tohumun dış hattı; kaplama aynı hattın biraz büyütülmüş hâlidir. */
+const SEED_OUTLINE = "M-15 9C-19-4-8-17 14-13C17 1 5 15-15 9Z";
+
+/** Yosun ekstraktı kaplamalı tohum: tohumun biçimini koruyan ince, mat yeşil kaplama. */
+function CoatedSeed() {
   return (
     <g>
-      <circle r="64" fill={`url(#${clay})`} stroke="#c9a06f" strokeOpacity="0.5" strokeWidth="1.5" />
-      <path d="M-49-20C-46-41-27-52-8-53" stroke="#e5c99d" strokeOpacity="0.5" strokeWidth="1.5" />
-      <path d="M-42 24l9 3m49-62 4 3M26 30l8-4M-12-32l4 2M-21 43l7-2M40-7l5 4M-41-5l3-2M2 18l6-2" stroke="#382311" strokeOpacity="0.55" strokeWidth="1.5" />
-      <path d="M-28-22l4-1M20-5l3 2M-9 34l3 1M37 11l3-1" stroke="#d9b887" strokeOpacity="0.5" strokeWidth="1.5" />
+      <g transform="scale(1.3)">
+        <path d={SEED_OUTLINE} fill="#55683a" stroke="#b9cf8f" strokeWidth="1.5" vectorEffect="non-scaling-stroke" />
+      </g>
+      <path d="M-13 2Q-9-9 3-13" stroke="#dbe8b9" strokeOpacity="0.5" strokeWidth="1.5" vectorEffect="non-scaling-stroke" />
+      <path d="M-6 9l2-1M4 6l2-1M9-2l1-2M-2-4l2-1M-12-3l1-2M12-11l2 0" stroke="#2f3b1e" strokeOpacity="0.7" strokeWidth="1.5" vectorEffect="non-scaling-stroke" />
     </g>
   );
 }
@@ -39,41 +36,43 @@ function Ball({ clay }: { clay: string }) {
 function Seed() {
   return (
     <g stroke="#e3c99f" strokeWidth="1.5">
-      <path d="M-15 9C-19-4-8-17 14-13C17 1 5 15-15 9Z" fill="#382b18" />
-      <path d="M-12 7Q-3-2 10-9" />
+      <path d={SEED_OUTLINE} fill="#382b18" vectorEffect="non-scaling-stroke" />
+      <path d="M-12 7Q-3-2 10-9" vectorEffect="non-scaling-stroke" />
     </g>
   );
 }
 
-function Preparation({ progress, clay }: SceneProps) {
+function Preparation({ progress }: SceneProps) {
   const t = useTranslations("seedJourney");
-  const closeX = useTransform(progress, [0, 0.7], [-42, 0]);
-  const closeY = useTransform(progress, [0, 0.7], [20, 0]);
-  const scale = useTransform(progress, [0, 0.7], [0.86, 1]);
-  const shell = useTransform(progress, [0.65, 0.94], [0, 1]);
-  const labels = useTransform(progress, [0.6, 0.85], [1, 0]);
+  // Önce çıplak tohum görünür; kaplamanın hattı çizilir, sonra dolgusu oturur.
+  const outline = useTransform(progress, [0.12, 0.58], [0, 1]);
+  const fill = useTransform(progress, [0.5, 0.9], [0, 1]);
+  const settle = useTransform(progress, [0, 0.7], [0.92, 1]);
+  const labels = useTransform(progress, [0.62, 0.86], [1, 0]);
+  // Kaplama etiketi, kaplamanın hattı çizilmeye başlayınca belirir.
+  const coatingLabel = useTransform(progress, [0.14, 0.36, 0.62, 0.86], [0, 1, 1, 0]);
   return (
     <>
       <ellipse cx="320" cy="352" rx="115" ry="9" fill="#050d08" opacity="0.5" />
       <g transform="translate(320 206)">
         <circle r="147" stroke="#a7d4a7" strokeOpacity="0.12" strokeWidth="1.25" strokeDasharray="2 9" />
-        <g transform="scale(1.7)"><Ball clay={clay} /></g>
-        <motion.g style={{ x: closeX, y: closeY, scale }}>
-          <circle r="88" fill="#433821" stroke="#c9a06f" strokeWidth="1.5" />
-          <path d="M-68-13l8-9M-56 43l11 3M26 66l8-6M48-49l7 8M-24-68l9 4M65 16l-8 6M-41-39l5 8M18 44l7-7M42-17l8 3" stroke="#8f8751" strokeWidth="1.5" />
-          <circle r="46" fill="#241e12" stroke="#ad965e" strokeWidth="1.5" />
-          <g transform="scale(1.6)"><Seed /></g>
+        <motion.g style={{ scale: settle }}>
+          <g transform="scale(6.2)"><Seed /></g>
+          <g transform="scale(8.06)">
+            <motion.path d={SEED_OUTLINE} stroke="#b9cf8f" strokeWidth="2" vectorEffect="non-scaling-stroke" style={{ pathLength: outline }} />
+          </g>
+          <motion.g style={{ opacity: fill }}><g transform="scale(6.2)"><CoatedSeed /></g></motion.g>
         </motion.g>
-        <motion.g style={{ opacity: shell }}><g transform="scale(1.7)"><Ball clay={clay} /></g></motion.g>
       </g>
+      <motion.g style={{ opacity: coatingLabel }} stroke="#a7d4a7" strokeWidth="1.25">
+        <path d="M418 116L452 84H500" opacity="0.7" />
+        <text x="398" y="66" fill="#a7d4a7" stroke="none" fontSize="18">{t("labels.coating")}</text>
+        <circle cx="418" cy="116" r="2.5" fill="#a7d4a7" stroke="none" />
+      </motion.g>
       <motion.g style={{ opacity: labels }} stroke="#a7d4a7" strokeWidth="1.25">
-        <path d="M383 119L430 76H472M260 201H181L105 80H42M314 215L414 310H468" opacity="0.7" />
-        <g fill="#a7d4a7" stroke="none" fontSize="18">
-          <text x="475" y="65">{t("labels.clay")}</text>
-          <text x="42" y="60">{t("labels.organic")}</text>
-          <text x="390" y="350">{t("labels.seed")}</text>
-        </g>
-        <g fill="#a7d4a7" stroke="none"><circle cx="383" cy="119" r="2.5" /><circle cx="260" cy="201" r="2.5" /><circle cx="314" cy="215" r="2.5" /></g>
+        <path d="M318 214L414 310H468" opacity="0.7" />
+        <text x="390" y="350" fill="#a7d4a7" stroke="none" fontSize="18">{t("labels.seed")}</text>
+        <circle cx="318" cy="214" r="2.5" fill="#a7d4a7" stroke="none" />
       </motion.g>
     </>
   );
@@ -88,7 +87,7 @@ const CONTOURS = [
   "M-35 385C124 289 197 437 326 373S542 286 684 334",
 ];
 
-function Flight({ progress, clay }: SceneProps) {
+function Flight({ progress }: SceneProps) {
   const t = useTranslations("seedJourney");
   const terrainX = useTransform(progress, [0, 1], [24, -24]);
   const route = useTransform(progress, [0.05, 0.85], [0, 1]);
@@ -120,7 +119,7 @@ function Flight({ progress, clay }: SceneProps) {
             </g>
           ))}
         </g>
-        <g transform="translate(320 208)"><motion.g style={{ y: ballY }}><g transform="scale(.24)"><Ball clay={clay} /></g></motion.g></g>
+        <g transform="translate(320 208)"><motion.g style={{ y: ballY }}><g transform="rotate(24) scale(1.05)"><CoatedSeed /></g></motion.g></g>
       </motion.g>
     </>
   );
@@ -141,15 +140,14 @@ function Ground() {
   );
 }
 
-function Soil({ progress, clay }: SceneProps) {
+function Soil({ progress }: SceneProps) {
   const y = useTransform(progress, [0, 0.24, 0.31, 0.38, 1], [-180, -10, 0, 0, 0]);
   const x = useTransform(progress, [0, 0.28, 0.4, 1], [-15, -15, 0, 0]);
   const rotate = useTransform(progress, [0, 0.24, 0.4, 1], [-18, -18, 8, 8]);
   const squash = useTransform(progress, [0, 0.24, 0.29, 0.38, 1], [1, 1, 0.93, 1, 1]);
-  const clayOpacity = useTransform(progress, [0.64, 0.95], [1, 0]);
+  const coatingOpacity = useTransform(progress, [0.64, 0.95], [1, 0]);
   const dissolveY = useTransform(progress, [0.64, 1], [0, 26]);
   const dissolveScale = useTransform(progress, [0.64, 1], [1, 0.45]);
-  const crack = useTransform(progress, [0.56, 0.74], [0, 1]);
   const rain = useTransform(progress, [0.4, 0.5, 0.78, 0.91], [0, 0.6, 0.6, 0]);
   const rainY = useTransform(progress, [0.4, 0.9], [-30, 55]);
   const dust = useTransform(progress, [0.24, 0.29, 0.43], [0, 0.22, 0]);
@@ -164,10 +162,8 @@ function Soil({ progress, clay }: SceneProps) {
       <g transform="translate(320 310)"><motion.ellipse rx="65" ry="9" fill="#c9a06f" style={{ opacity: dust, scale: dustScale }} /></g>
       <g transform="translate(320 276)">
         <motion.g style={{ x, y, rotate, scaleY: squash }}>
-          <motion.g style={{ opacity: clayOpacity, y: dissolveY, scaleY: dissolveScale }}>
-            <g transform="scale(.59)"><Ball clay={clay} />
-              <motion.path d="M-15-60L-9-30L-23-10L-6 7L-13 39M-6 7L21 16L33 47M-9-30L19-41" stroke="#241407" strokeWidth="2" style={{ pathLength: crack }} />
-            </g>
+          <motion.g style={{ opacity: coatingOpacity, y: dissolveY, scaleY: dissolveScale }}>
+            <g transform="scale(2.4)"><CoatedSeed /></g>
           </motion.g>
         </motion.g>
       </g>

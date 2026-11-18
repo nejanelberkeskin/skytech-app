@@ -530,8 +530,7 @@
       }
     },
     "labels": {
-      "clay": "Kil",
-      "organic": "Organik madde",
+      "coating": "Yosun ekstraktı kaplama",
       "seed": "Yerli tohum",
       "route": "Planlı rota"
     },

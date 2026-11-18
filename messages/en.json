@@ -530,8 +530,7 @@
       }
     },
     "labels": {
-      "clay": "Clay",
-      "organic": "Organic matter",
+      "coating": "Seaweed-extract coating",
       "seed": "Native seed",
       "route": "Planned route"
     },

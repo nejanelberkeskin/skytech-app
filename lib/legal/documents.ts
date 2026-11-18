@@ -22,6 +22,7 @@ import { kvkkNoticeDocument } from "./templates/kvkk-notice";
 import { withdrawalFormDocument } from "./templates/withdrawal-form";
 import type { LegalBuyer, LegalContext, LegalDocument, LegalSite } from "./types";
 import { LEGAL_DOCUMENTS_VERSION } from "./version";
+import { PRODUCT_TR, productTypeOf } from "@/lib/products";
 
 const WORK_TYPE_TR: Record<SiteSnapshot["workType"], string> = {
   ormanlastirma: "Ormanlaştırma",
@@ -37,6 +38,7 @@ export function legalSiteFrom(site: SiteSnapshot): LegalSite {
     fire: site.isFireAffected ? (site.fireYear ? `Yangın Sahası (${site.fireYear})` : "Yangın Sahası") : null,
     workType: WORK_TYPE_TR[site.workType],
     species: site.species.map((s) => (s.latinName ? `${s.name} (${s.latinName})` : s.name)),
+    product: PRODUCT_TR[productTypeOf(site.productType)],
   };
 }
 

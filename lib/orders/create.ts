@@ -12,6 +12,7 @@
  * Herhangi bir adım düşerse ayrılan kapasite geri verilir; yarım kalan sipariş `expired` olur
  * (gerçek siparişler silinemez).
  */
+import { productTypeOf } from "@/lib/products";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { buildLegalContext, buildOrderDocuments } from "@/lib/legal/documents";
 import { LEGAL_DOCUMENTS_VERSION } from "@/lib/legal/version";
@@ -103,7 +104,7 @@ export async function createOrder(payload: OrderPayload, meta: CreateOrderMeta, 
   if (!site.ok) return { ok: false, error: site.error };
 
   const now = new Date();
-  const totals = orderTotals(payload.quantity, settings);
+  const totals = orderTotals(payload.quantity, settings, productTypeOf(site.site.productType));
   const schedule = scheduleFor(now, settings.prepDays);
   // Saha koşulları (teslim ayları, doğrulanmış izin) ve müşterinin onayladığı teklifle aynı sezon/aylar.
   if (siteTermsProblem(site.site, schedule)) return { ok: false, error: "site_unavailable" };

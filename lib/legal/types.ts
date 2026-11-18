@@ -10,6 +10,7 @@
  * `new Date()` ya da ortam okuması yoktur; böylece siparişe özel kopyanın
  * SHA-256 özeti yeniden üretilebilir.
  */
+import type { ProductWords } from "@/lib/products";
 import type { MonthDeadline, OrderSchedule } from "@/lib/orders/schedule";
 import type { BuyerType, DocumentKind } from "@/lib/orders/types";
 
@@ -55,6 +56,8 @@ export interface LegalSite {
   fire: string | null;
   workType: string;
   species: string[];
+  /** Sahada bırakılan ürünün Türkçe adları (ürün tipi sipariş anındaki saha kopyasından). */
+  product: ProductWords;
 }
 
 export interface LegalContext {

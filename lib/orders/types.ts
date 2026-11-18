@@ -1,3 +1,4 @@
+import type { ProductType } from "@/lib/products";
 /**
  * Tohum topu bıraktırma siparişi — alan sözlüğü (saf tipler ve sabitler).
  *
@@ -142,6 +143,8 @@ export interface SiteSnapshot {
   fireYear: number | null;
   workType: "ormanlastirma" | "genclestirme" | "ormanlastirma_genclestirme";
   species: { slug: string; name: string; latinName: string }[];
+  /** Sahada bırakılan ürün (migration 046). Eski kopyalarda yoktur → `productTypeOf` varsayılana düşer. */
+  productType?: ProductType;
   /** Sertifika ve izleme içeriğinin teslim ayı (1–12; migration 040). Eski kopyalarda yoktur. */
   certificateMonth?: number | null;
   monitoringMonth?: number | null;

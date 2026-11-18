@@ -85,12 +85,13 @@ test("satış koşulu: teslim ayı ve doğrulanmış, bırakma son tarihini kaps
 });
 
 test("teklif sürümü: fiyat ayarları + sezon + teslim ayları; biri değişirse eski önizleme geçmez", () => {
-  const settings = { unitPriceKurus: 1000, vatRate: 20, prepDays: 21 };
+  const settings = { unitPriceKurus: 1000, seedBallUnitPriceKurus: 5000, vatRate: 20, prepDays: 21 };
   const schedule = Sc.scheduleFor(now);
   const s1 = { ...site, certificateMonth: 5, monitoringMonth: 8 };
   const v = Pv.offerVersion(settings, s1, schedule);
   assert.ok(v.startsWith(`${St.quoteVersion(settings)}~`), "sipariş ucu ön ek denetimi");
-  assert.ok(v.endsWith("~2026-2027.5.8"));
+  assert.ok(v.endsWith("~2026-2027.5.8.k"));
+  assert.notEqual(Pv.offerVersion(settings, { ...s1, productType: "seed_ball" }, schedule), v, "ürün tipi değişince");
   assert.notEqual(Pv.offerVersion(settings, { ...s1, monitoringMonth: 9 }, schedule), v);
   assert.notEqual(Pv.offerVersion(settings, s1, Sc.scheduleFor(new Date("2027-03-20T09:00:00Z"))), v, "sezon değişince");
   assert.ok(v.length <= 80);

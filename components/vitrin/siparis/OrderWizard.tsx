@@ -634,6 +634,7 @@ export default function OrderWizard({
               </span>
             )}
             <span className="py-1 text-[#3d5a3d]">{site.workType}</span>
+            <span className="rounded-full bg-[#e5efdf] px-3 py-1 font-semibold text-[#1B6B3A]">{site.product}</span>
           </div>
           <p className="mt-2 text-sm text-[#3d5a3d]">
             {site.species.join(" · ")}

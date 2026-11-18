@@ -6,6 +6,7 @@
  * gösterilir, bırakılacak tohum topu sayısı gösterilmez. Satışa uygunluk yalnız
  * `acceptsOrders` ile iletilir; kapasite denetimi sipariş anında sunucuda yapılır.
  */
+import type { ProductType } from "@/lib/products";
 import type { SiteMediaLink } from "./media-links";
 
 export const WORK_TYPES = ["ormanlastirma", "genclestirme", "ormanlastirma_genclestirme"] as const;
@@ -43,6 +44,8 @@ export interface ProjectSite {
   isFireAffected: boolean;
   fireYear: number | null;
   workType: WorkType;
+  /** Sahada bırakılan ürün: yosun ekstraktı kaplamalı tohum ya da tohum topu (birim bedeli belirler). */
+  productType: ProductType;
   /** Sahaya bırakılan tür(ler). Müşteri seçmez; bilgi olarak gösterilir. */
   species: SiteSpecies[];
   /** İstenen dilde kısa tanıtım; yoksa null. */

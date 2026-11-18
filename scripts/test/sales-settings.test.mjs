@@ -7,6 +7,7 @@ const Sample = await import(ROOT + "/lib/legal/sample.ts");
 
 const base = {
   unitPriceKurus: 1000,
+  seedBallUnitPriceKurus: 5000,
   minQuantity: 20,
   maxQuantity: 100_000,
   quantityPresets: [50, 100, 200, 500, 5000],
@@ -62,7 +63,7 @@ assert.deepEqual(S.diffSettings(base, { ...base, quantityPresets: [...base.quant
 const diff = S.diffSettings(base, { ...base, unitPriceKurus: 1200, quantityPresets: [50, 100] });
 assert.deepEqual(diff.map((c) => c.field), ["unitPriceKurus", "quantityPresets"]);
 assert.deepEqual(diff[0], { field: "unitPriceKurus", from: 1000, to: 1200 });
-assert.deepEqual([...S.QUOTE_FIELDS].sort(), ["prepDays", "unitPriceKurus", "vatRate"], "quoteVersion ile aynı alanlar");
+assert.deepEqual([...S.QUOTE_FIELDS].sort(), ["prepDays", "seedBallUnitPriceKurus", "unitPriceKurus", "vatRate"], "quoteVersion ile aynı alanlar");
 assert.deepEqual(S.diffSettings(base, { ...base, ordersPaused: true }), [{ field: "ordersPaused", from: false, to: true }]);
 assert.ok(!S.QUOTE_FIELDS.includes("ordersPaused"), "durdurma teklif sürümünü değiştirmez");
 

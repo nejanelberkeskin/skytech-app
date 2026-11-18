@@ -7,7 +7,7 @@ import type { SalesSettings } from "@/lib/orders/settings-schema";
 import type { SalesSettingsDto, SalesSettingsMutationDto, SalesState } from "../admin-dto";
 
 const values: SalesSettings = {
-  unitPriceKurus: 1000, minQuantity: 20, maxQuantity: 100000, quantityPresets: [50, 100, 200, 500, 5000],
+  unitPriceKurus: 1000, seedBallUnitPriceKurus: 5000, minQuantity: 20, maxQuantity: 100000, quantityPresets: [50, 100, 200, 500, 5000],
   vatRate: 20, invoiceTiming: "on_performance", prepDays: 21, paymentTtlMinutes: 45, ordersPaused: false,
 };
 const state: SalesState = { ordersPaused: false, accepting: true, updatedAt: "2026-09-29T08:00:00.000000+00:00", repairRequired: false };

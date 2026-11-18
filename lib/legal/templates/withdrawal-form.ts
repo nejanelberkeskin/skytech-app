@@ -37,7 +37,7 @@ export function withdrawalFormDocument(ctx: LegalContext): LegalDocument {
           ["Sipariş tarihi", trLongDate(ctx.orderDate)],
           [
             "Hizmet",
-            `${ctx.site.name} adlı Proje Uygulama Sahasına ${count(ctx.quantity)} adet tohum topunun dronla bırakılması`,
+            `${ctx.site.name} adlı Proje Uygulama Sahasına ${count(ctx.quantity)} adet ${ctx.site.product.gen} dronla bırakılması`,
           ],
           ["Ödenen toplam bedel", money(ctx.totalKurus)],
         ],

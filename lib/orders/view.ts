@@ -10,6 +10,7 @@
  * bağlantıyla (`?t=<belirteç>`) erişir. Sipariş numarasını bilmek tek başına
  * yetmez — numara tahmin edilerek başkasının siparişi görülemez.
  */
+import type { ProductType } from "@/lib/products";
 import type { WorkType } from "@/lib/sites/types";
 import type { DocumentKind, OrderStatus } from "./types";
 
@@ -40,7 +41,7 @@ export interface PublicOrderView {
   /** Sipariş tarihi — YYYY-MM-DD */
   createdOn: string;
   buyerFirstName: string;
-  site: { name: string; slug: string | null; location: string | null; workType: WorkType };
+  site: { name: string; slug: string | null; location: string | null; workType: WorkType; productType: ProductType };
   /** Tür adları Türkçe katalog adlarıdır; çeviri için `ourSeeds.seeds.<slug>.name` kullanılır. */
   species: { slug: string; name: string }[];
   quantity: number;
@@ -99,7 +100,7 @@ const docs = (no: string) => [
 const base = {
   isTest: false,
   buyerFirstName: "Ayşe",
-  site: { name: "ÖRNEK · Çanakkale Proje Uygulama Sahası", slug: "ornek-canakkale-proje-uygulama-sahasi", location: "Eceabat, Çanakkale", workType: "ormanlastirma_genclestirme" as WorkType },
+  site: { name: "ÖRNEK · Çanakkale Proje Uygulama Sahası", slug: "ornek-canakkale-proje-uygulama-sahasi", location: "Eceabat, Çanakkale", workType: "ormanlastirma_genclestirme" as WorkType, productType: "coated_seed" as ProductType },
   species: [{ slug: "kizilcam", name: "Kızılçam" }],
   quantity: 200,
   totals: { unitPriceKurus: 1000, totalKurus: 200_000, vatRate: 20 },

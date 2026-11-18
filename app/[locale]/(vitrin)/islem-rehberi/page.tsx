@@ -46,7 +46,7 @@ export default async function IslemRehberiPage({ params }: { params: Promise<{ l
         <LegalList
           items={[
             <>Proje Uygulama Sahaları arasından bir saha seçersiniz.</>,
-            <>Bıraktırmak istediğiniz tohum topu adedini belirlersiniz; toplam bedel anında gösterilir.</>,
+            <>Bıraktırmak istediğiniz adedi belirlersiniz; toplam bedel anında gösterilir.</>,
             <>Katılım Sertifikası&apos;nda kendi adınızın, kurumsal faturada kurum unvanının yer almasını ya da adsız sertifikayı seçersiniz.</>,
             <>Alıcı bilgilerinizi ve fatura türünü (bireysel ya da kurumsal) girersiniz.</>,
             <>

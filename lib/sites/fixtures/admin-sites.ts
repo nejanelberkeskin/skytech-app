@@ -22,6 +22,7 @@ const antalya: SiteAdminItem = {
   monitoringMonth: 9,
   permit: { status: "verified", reference: "Örnek Orman Bölge Müdürlüğü 2026/14", validUntil: "2027-12-31", verifiedAt: "2026-10-01T09:00:00.000Z" },
   workType: "ormanlastirma_genclestirme",
+  productType: "coated_seed",
   speciesSlugs: ["kizilcam"],
   nameI18n: { en: "Antalya Project Site" },
   summaryI18n: { tr: "Yangından etkilenen saha." },

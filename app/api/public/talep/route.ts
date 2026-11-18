@@ -1,3 +1,5 @@
+import { unitPriceFor } from "@/lib/orders/settings-schema";
+import { productTypeOf } from "@/lib/products";
 import { NextRequest, NextResponse } from "next/server";
 import { after } from "next/server";
 import { createServiceRoleClient, createSupabaseServer } from "@/lib/supabase/server";
@@ -136,7 +138,7 @@ export async function POST(req: NextRequest) {
     }
     const { data: land, error } = await supabase
       .from("lands")
-      .select("id, name, region, is_public, status, species_slugs")
+      .select("id, name, region, is_public, status, species_slugs, product_type")
       .eq("id", details.landId)
       .maybeSingle();
     if (error) return dbError("land");
@@ -154,12 +156,13 @@ export async function POST(req: NextRequest) {
       // null → sertifikaya talep sahibinin adı yazılır (formdaki ipucu böyle söyler).
       certificateName: details.certificateName ?? null,
       landName,
+      productType: productTypeOf(land.product_type),
       ...(invoice ? { invoice } : {}),
       // Talep anında sahada bırakılan tür(ler) — bilgi amaçlı anlık kopya.
       speciesSlugs: Array.isArray(land.species_slugs) ? land.species_slugs : [],
       // Müşterinin gördüğü birim bedel ve tahmini tutar (kuruş). Bağlayıcı değil.
       ...(PRICING_VISIBLE
-        ? { unitPriceKurus: settings.unitPriceKurus, estimatedTotalKurus: details.quantity * settings.unitPriceKurus }
+        ? { unitPriceKurus: unitPriceFor(productTypeOf(land.product_type), settings), estimatedTotalKurus: details.quantity * unitPriceFor(productTypeOf(land.product_type), settings) }
         : {}),
     };
   } else {

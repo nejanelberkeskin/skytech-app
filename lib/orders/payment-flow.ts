@@ -9,6 +9,7 @@
  * `withdrawal_deadline` burada (ödeme anına göre) yazılır. Belgelerde yazan tarih sipariş
  * anına göredir; ödeme gece yarısını aşarsa gerçek son an bir gün ileridir — müşteri lehine.
  */
+import { PRODUCT_TR, productTypeOf } from "@/lib/products";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { PaymentProvider } from "@/lib/payments/types";
 import { scheduleFor } from "./schedule";
@@ -42,7 +43,7 @@ export async function startPayment(
       ip: ctx.ip,
     },
     address: { line: address.line, district: address.district, province: address.province, postalCode: address.postalCode },
-    description: `${order.site_snapshot.name} — ${order.quantity} tohum topu bırakma hizmeti`,
+    description: `${order.site_snapshot.name} — ${order.quantity} adet ${PRODUCT_TR[productTypeOf(order.site_snapshot.productType)].noun} bırakma hizmeti`,
     callbackUrl: `${ctx.origin}/api/payment/donus`,
   });
 

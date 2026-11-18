@@ -33,14 +33,14 @@
     "badge": "Ormanlaştırma · Gençleştirme · İzleme",
     "headlineLine1": "Doğayı Teknolojiyle",
     "headlineLine2": "Yeşertiyoruz",
-    "subtitle": "Yangından etkilenmiş ve ulaşılması zor sahalara dronla tohum topu bırakıyoruz. Araziye girmeden çalıştığımız için toprağı ve doğal yaşamı örselemiyoruz.",
+    "subtitle": "Yangından etkilenmiş ve ulaşılması zor sahalara dronla tohum bırakıyoruz. Araziye girmeden çalıştığımız için toprağı ve doğal yaşamı örselemiyoruz.",
     "ctaPrimary": "Satın Al",
     "ctaSecondary": "Kurumsal Çözümler",
     "trustForestRegions": "Orman Bölge Müdürlükleri ile koordineli",
     "trustAnnualReport": "Dronla yıllık izleme",
     "trustCertificate": "Katılım Sertifikası",
     "discover": "Keşfet",
-    "backgroundAlt": "Dronla tohum topu bırakılan orman sahası",
+    "backgroundAlt": "Dronla tohum bırakılan orman sahası",
     "ctaRequest": "Talep Oluştur"
   },
   "valueCards": {
@@ -1203,8 +1203,8 @@
     }
   },
   "homeMeta": {
-    "title": "Tohum Topu Teknolojisiyle Ormanlaştırma",
-    "description": "Yangından etkilenmiş sahalara dronla tohum topu bırakıyoruz. Bir Proje Uygulama Sahasına katılın ya da kendi araziniz için başvurun; çalışmayı raporlarla ve görüntülerle izleyin."
+    "title": "Dron ve Tohum Teknolojisiyle Ormanlaştırma",
+    "description": "Yangından etkilenmiş sahalara dronla tohum bırakıyoruz. Bir Proje Uygulama Sahasına katılın ya da kendi araziniz için başvurun; çalışmayı raporlarla ve görüntülerle izleyin."
   },
   "cookieConsent": {
     "message": "Site kullanımını ölçmek için isteğe bağlı çerezler kullanıyoruz. Tercihinizi dilediğiniz zaman değiştirebilirsiniz.",
@@ -1273,8 +1273,8 @@
         "contactRequired": "Telefon veya e-postadan en az birini girin.",
         "consentRequired": "Size dönebilmemiz için iletişim isteğini işaretleyin.",
         "quantityInvalid": "Adet tam sayı olmalı.",
-        "quantityMin": "En az {min} tohum topu seçebilirsiniz.",
-        "quantityMax": "Tek siparişte en çok {max} tohum topu seçebilirsiniz; daha fazlası için bize yazın.",
+        "quantityMin": "En az {min} adet seçebilirsiniz.",
+        "quantityMax": "Tek siparişte en çok {max} adet seçebilirsiniz; daha fazlası için bize yazın.",
         "provinceRequired": "İl seçin.",
         "provinceInvalid": "Geçersiz il.",
         "areaRequired": "Alan büyüklüğünü girin.",
@@ -1314,8 +1314,8 @@
     },
     "land": {
       "meta": {
-        "title": "Kendi Arazim İçin — Dronla Tohum Topu Bırakma Başvurusu",
-        "description": "Yanmış, bozulmuş ya da atıl araziniz için dronla tohum topu bırakma başvurusu. Konum, alan ve arazi durumunu paylaşın; keşif ve planlama bizden."
+        "title": "Kendi Arazim İçin — Dronla Tohum Bırakma Başvurusu",
+        "description": "Yanmış, bozulmuş ya da atıl araziniz için dronla tohum bırakma başvurusu. Konum, alan ve arazi durumunu paylaşın; keşif ve planlama bizden."
       },
       "breadcrumb": {
         "label": "Kendi Arazim İçin",
@@ -1403,13 +1403,13 @@
       "recent": "Son kayıtlar",
       "seeAll": "Tümünü Gör →",
       "empty": "Hesabınıza bağlı kayıt bulunmuyor.",
-      "firstRequest": "Tohum topu bıraktır →",
-      "seedBalls": "{count, number} tohum topu",
+      "firstRequest": "Tohum bıraktır →",
+      "seedBalls": "{count, number} adet",
       "actions": {
-        "openLandTitle": "Sahaya Tohum Topu Bıraktırın",
+        "openLandTitle": "Sahaya Tohum Bıraktırın",
         "openLandDesc": "Bir Proje Uygulama Sahası seçin, adedi belirleyin",
         "ownLandTitle": "Kendi Arazim İçin",
-        "ownLandDesc": "Araziniz için dronla tohum topu bırakma başvurusu"
+        "ownLandDesc": "Araziniz için dronla tohum bırakma başvurusu"
       }
     },
     "requests": {
@@ -1418,8 +1418,8 @@
       "newRequest": "+ Satın Al",
       "empty": "Hesabınıza bağlı kayıt bulunmuyor.",
       "emptyHint": "Giriş yapmadan sipariş kaydı bıraktıysanız, onay e-postasındaki bağlantıyla hesabınıza bağlayabilirsiniz.",
-      "firstRequest": "Tohum topu bıraktır →",
-      "seeds": "{count, number} tohum topu",
+      "firstRequest": "Tohum bıraktır →",
+      "seeds": "{count, number} adet",
       "contact": "İletişim",
       "yourNote": "Notunuz",
       "hints": {
@@ -1433,7 +1433,7 @@
     },
     "orders": {
       "title": "Siparişlerim",
-      "subtitle": "Proje Uygulama Sahalarına tohum topu bıraktırma siparişleriniz.",
+      "subtitle": "Proje Uygulama Sahalarına bıraktırma siparişleriniz.",
       "sitesCta": "Proje Uygulama Sahaları",
       "linked": "Bu e-posta adresiyle daha önce verdiğiniz {count, number} sipariş hesabınıza bağlandı.",
       "loadError": "Siparişler şu anda yüklenemedi. Lütfen sayfayı yenileyin.",
@@ -1442,7 +1442,7 @@
       "browseSites": "Sahaları incele →",
       "testBadge": "DENEME",
       "rows": {
-        "quantity": "Tohum topu adedi",
+        "quantity": "Adet",
         "total": "Toplam hizmet bedeli (KDV dâhil)",
         "certificateName": "Sertifikadaki ad",
         "releasedOn": "Bırakma tarihi",
@@ -1453,7 +1453,7 @@
         "paid": "Siparişiniz kesinleşti; 14 günlük cayma süresi işliyor.",
         "confirmed": "Cayma süresi tamamlandı; siparişiniz bırakma planına alınabilir.",
         "scheduled": "Siparişiniz bir bırakma çalışmasına atandı.",
-        "released": "Tohum toplarınız sahaya bırakıldı; Katılım Sertifikanız düzenlendi.",
+        "released": "Tohumlarınız sahaya bırakıldı; Katılım Sertifikanız düzenlendi.",
         "monitoring": "Saha inceleniyor, izleniyor ve raporlanıyor.",
         "completed": "Çalışmanın görüntüleri paylaşıldı.",
         "withdrawal_requested": "Cayma bildiriminiz alındı; bedelin tamamı 14 gün içinde iade edilir.",
@@ -2034,7 +2034,7 @@
   },
   "siteReleases": {
     "title": "Bu sahadaki çalışmalar",
-    "intro": "Bu sahada tamamlanan tohum topu bırakma çalışmaları. Çalışmanın görüntüleri, bırakmayı izleyen izleme döneminde yayımlanır.",
+    "intro": "Bu sahada tamamlanan bırakma çalışmaları. Çalışmanın görüntüleri, bırakmayı izleyen izleme döneminde yayımlanır.",
     "season": "{season} sezonu",
     "play": "Videoyu oynat",
     "playNamed": "{date} çalışmasının videosunu oynat",
@@ -2087,8 +2087,8 @@
         "description": "Siparişiniz bir bırakma çalışmasına atandı."
       },
       "released": {
-        "title": "Tohum topları bırakıldı",
-        "description": "Tohum toplarınız sahaya bırakıldı; Katılım Sertifikanız düzenlendi."
+        "title": "Bırakma yapıldı",
+        "description": "Tohumlarınız sahaya bırakıldı; Katılım Sertifikanız düzenlendi."
       },
       "monitoring": {
         "title": "İzleme dönemi",
@@ -2105,7 +2105,7 @@
       "location": "Konum",
       "workType": "Çalışma türü",
       "species": "Tür",
-      "quantity": "Tohum topu adedi",
+      "quantity": "Adet",
       "unitPrice": "Birim hizmet bedeli",
       "total": "Toplam hizmet bedeli (KDV dâhil)",
       "certificateName": "Sertifikadaki ad"
@@ -2154,7 +2154,7 @@
       "ready": "Katılım Sertifikanız hazır.",
       "cancelled": "Bu siparişin Katılım Sertifikası iptal edildi.",
       "view": "Sertifikayı görüntüle",
-      "pending": "Sertifikanız, tohum topu bırakma tamamlandığında e-postayla gönderilir.",
+      "pending": "Sertifikanız, bırakma tamamlandığında e-postayla gönderilir.",
       "publication": {
         "visible": "Adınız ayrı yayın izninizle herkese açık sertifikada görünebilir.",
         "hidden": "Adınız herkese açık sertifikada gizlidir. Daha önce başkalarının kaydettiği kopyalar bu işlemle silinmez.",
@@ -2366,12 +2366,12 @@
   },
   "sitesPage": {
     "title": "Proje Uygulama Sahaları",
-    "intro": "Yangından etkilenmiş sahaların yeniden ormanlaşmasına katılın. Bir saha seçin; o sahaya sizin adınıza tohum topu bırakalım.",
+    "intro": "Yangından etkilenmiş sahaların yeniden ormanlaşmasına katılın. Bir saha seçin; o sahaya sizin adınıza tohum bırakalım.",
     "description": "Her sahanın alanını, çalışma türünü ve bırakılan türü aşağıda görebilirsiniz.",
     "ownLand": "Kendi arazim için işlem yaptırmak istiyorum",
     "fire": "Yangın Sahası",
     "hectares": "{value} hektar",
-    "participate": "Tohum Topu Bıraktır",
+    "participate": "Tohum Bıraktır",
     "details": "Sahayı incele",
     "info": "Bilgi alın",
     "empty": {
@@ -2392,7 +2392,7 @@
     }
   },
   "siteDetail": {
-    "meta": "{name}: sahanın alanını, türlerini ve tohum topu bırakma takvimini inceleyin.",
+    "meta": "{name}: sahanın alanını, türlerini ve bırakma takvimini inceleyin.",
     "location": "Konum",
     "area": "Alan",
     "workType": "Çalışma türü",
@@ -2403,7 +2403,7 @@
     "gallery": "Sahadan görüntüler",
     "galleryAlt": "{name} — {location} — saha görüntüsü {number}",
     "video": "Çalışmanın görüntüleri",
-    "order": "Bu sahaya tohum topu bıraktır",
+    "order": "Bu sahaya tohum bıraktır",
     "back": "Tüm sahalara dön",
     "reasons": {
       "kizilcam": "Akdeniz ikliminin yerli türüdür; sıcağa ve kuraklığa dayanır. Yangın sonrası sahalarda doğal olarak geri gelen türlerin başında gelir.",
@@ -2415,11 +2415,11 @@
       "open": "Bu saha şu anda yeni katılım almıyor.",
       "full": "Bu sahanın kontenjanı doldu; diğer sahalara göz atabilirsiniz.",
       "scheduled": "Bu saha için bırakma tarihi planlandı.",
-      "released": "Bu sahada tohum topu bırakma tamamlandı.",
+      "released": "Bu sahada bırakma tamamlandı.",
       "monitoring": "Bu sahada izleme ve raporlama sürüyor."
     },
-    "sticky": "Bu sahaya tohum topu bıraktır",
-    "stickyPrice": "Tohum topu başı {price}",
+    "sticky": "Bu sahaya tohum bıraktır",
+    "stickyPrice": "{price} / {unit}",
     "media": {
       "title": "Haberler ve videolar",
       "subtitle": "Bu sahayla ilgili haberler ve görüntüler.",
@@ -2436,8 +2436,8 @@
   },
   "seasonTimeline": {
     "title": "Çalışma takvimi",
-    "description": "Tohum topu bırakma Kasım–Mart arasında yapılır. Nisan–Eylül döneminde sahalar incelenir, izlenir ve raporlanır.",
-    "release": "Tohum topu bırakma",
+    "description": "Bırakma Kasım–Mart arasında yapılır. Nisan–Eylül döneminde sahalar incelenir, izlenir ve raporlanır.",
+    "release": "Bırakma",
     "monitoring": "İzleme ve raporlama",
     "offSeason": "Bırakma sezonu dışında",
     "current": "İçinde bulunduğumuz ay",
@@ -2460,17 +2460,17 @@
     "copyError": "Bağlantı kopyalanamadı. Tarayıcınızın adres çubuğundan kopyalayabilirsiniz.",
     "share": "Paylaş",
     "shareError": "Paylaşım açılamadı. Bağlantıyı kopyalayabilirsiniz.",
-    "shareText": "{site} sahasına {quantity} tohum topu bıraktırdım. #SkytechGreen",
-    "quantity": "{quantity} tohum topu",
+    "shareText": "{site} sahasına {quantity} {unit} bıraktırdım. #SkytechGreen",
+    "quantity": "{quantity} {unit}",
     "details": "Çalışmanın kaydı",
     "meaning": "Bu sertifika neyi belgeler?",
-    "records": "Belirtilen sahaya, belirtilen adette tohum topunun dronla bırakıldığını belgeler.",
+    "records": "Belirtilen sahaya, belirtilen ürünün belirtilen adette dronla bırakıldığını belgeler.",
     "monitoring": "Saha sonraki dönemlerde izlenir.",
     "video": "Çalışmanın görüntüleri",
     "sites": "Proje Uygulama Sahaları",
     "notes": {
       "document": "Bu belge bir Katılım Sertifikasıdır; bağış makbuzu değildir ve vergi indirimi sağlamaz.",
-      "nature": "Tohum topları doğaya bırakılmıştır; çimlenme ve gelişim doğal koşullara bağlıdır, garanti edilmez."
+      "nature": "Tohumlar doğaya bırakılmıştır; çimlenme ve gelişim doğal koşullara bağlıdır, garanti edilmez."
     },
     "facts": {
       "site": "Saha",
@@ -2483,7 +2483,7 @@
       "code": "Sertifika kodu"
     },
     "image": {
-      "quantity": "{quantity} tohum topu,",
+      "quantity": "{quantity} {unit},",
       "site": "{site} sahasına",
       "date": "{date} tarihinde dronla bırakılmıştır."
     },
@@ -2501,15 +2501,15 @@
     "rows": {
       "orderNo": "Sipariş numarası",
       "site": "Proje Uygulama Sahası",
-      "quantity": "Tohum topu adedi",
+      "quantity": "Adet",
       "total": "Toplam bedel (KDV dâhil)"
     },
     "success": {
       "badge": "Ödeme onaylandı",
       "title": "Siparişiniz alındı",
-      "body": "Ödemeniz onaylandı ve sözleşmeniz kuruldu. Tohum topu bırakma siparişiniz kayda geçti.",
+      "body": "Ödemeniz onaylandı ve sözleşmeniz kuruldu. Bıraktırma siparişiniz kayda geçti.",
       "email": "Sipariş teyidiniz; Ön Bilgilendirme Formu, Mesafeli Hizmet Sözleşmesi, Cayma Formu ve KVKK Aydınlatma Metni ile birlikte {email} adresine e-postayla gönderilir. Birkaç dakika içinde ulaşmazsa gereksiz (spam) klasörünü kontrol edebilirsiniz.",
-      "deadline": "Tohum topları en geç {date} tarihine kadar bırakılır.",
+      "deadline": "Bırakma en geç {date} tarihine kadar yapılır.",
       "withdrawal": "Cayma hakkınızı {date} günü sonuna kadar, gerekçe göstermeden kullanabilirsiniz.",
       "cta": "Siparişimi görüntüle",
       "sites": "Proje Uygulama Sahaları"
@@ -2558,8 +2558,8 @@
     "cta": "Proje Uygulama Sahaları"
   },
   "orderWizard": {
-    "title": "Bu sahaya tohum topu bıraktırın",
-    "description": "Adedi seçin, sertifikadaki adı ve fatura bilgilerinizi girin; tohum toplarınızı dronla sahaya bırakalım.",
+    "title": "Bu sahaya tohum bıraktırın",
+    "description": "Adedi seçin, sertifikadaki adı ve fatura bilgilerinizi girin; tohumlarınızı dronla sahaya bırakalım.",
     "orderMode": "Sipariş",
     "requestMode": "Katılım talebi",
     "next": "Devam",
@@ -2579,13 +2579,13 @@
       "review": "Özet ve onay"
     },
     "quantity": {
-      "title": "Bırakılacak tohum topları",
+      "title": "Bırakılacak adet",
       "description": "Hazır adetlerden birini seçin veya adet girin.",
-      "label": "Tohum topu adedi",
+      "label": "Adet",
       "speciesNote": "Tür, sahanın iklim ve toprak koşullarına göre uzman ekibimizce belirlenir; seçim yapmanız gerekmez.",
       "unit": "Birim hizmet bedeli",
       "vatIncluded": "KDV dâhil",
-      "selected": "{count} tohum topu",
+      "selected": "{count} adet",
       "change": "Adedi değiştir"
     },
     "certificate": {
@@ -2596,7 +2596,7 @@
       "fallback": "Boş bırakırsanız adınız ve soyadınız yazılır.",
       "placeholder": "Adınız Soyadınız",
       "preview": "Katılım Sertifikası — {name}",
-      "delivery": "Sertifika, tohum topu bırakma tamamlandığında e-postayla gönderilir.",
+      "delivery": "Sertifika, bırakma tamamlandığında e-postayla gönderilir.",
       "mode": {
         "own": "Kendi adım ve soyadım (alıcı bilgilerinde yazacağım ad)",
         "company": "Kurum unvanı (kurumsal fatura seçilirse)",
@@ -2649,7 +2649,7 @@
       "monitoringDeadline": "İzleme içeriği en geç {date} tarihine kadar paylaşılır.",
       "rolled": "Bu sezonun hazırlık süresi dolduğu için siparişiniz {season} sezonuna yazılır.",
       "withdrawalTitle": "Cayma hakkı",
-      "withdrawal": "Ödeme tarihinden itibaren 14 gün içinde hiçbir gerekçe göstermeden cayabilirsiniz. Bedelin tamamı, bildiriminizden itibaren 14 gün içinde ödemeyi yaptığınız araca iade edilir. Tohum topu bırakma, cayma süresi dolmadan yapılmaz.",
+      "withdrawal": "Ödeme tarihinden itibaren 14 gün içinde hiçbir gerekçe göstermeden cayabilirsiniz. Bedelin tamamı, bildiriminizden itibaren 14 gün içinde ödemeyi yaptığınız araca iade edilir. Bırakma, cayma süresi dolmadan yapılmaz.",
       "loading": "Tutar ve belgeler hazırlanıyor…",
       "retryNote": "Özeti yüklemek için yeniden deneyin. Bilgileriniz korunuyor.",
       "pay": "Siparişi Onayla ve Öde ({total})",
@@ -2717,8 +2717,8 @@
       "contractRequired": "Devam etmek için sözleşmeyi kabul edin.",
       "corporateAuthorityRequired": "Devam etmek için yetki beyanını işaretleyin.",
       "certificatePublicationSelfOnly": "Yayın iznini yalnız kendi adınız için verebilirsiniz.",
-      "quantityMin": "En az {min} tohum topu seçebilirsiniz.",
-      "quantityMax": "Tek siparişte en çok {max} tohum topu seçebilirsiniz; daha fazlası için bize yazın.",
+      "quantityMin": "En az {min} adet seçebilirsiniz.",
+      "quantityMax": "Tek siparişte en çok {max} adet seçebilirsiniz; daha fazlası için bize yazın.",
       "quantityInvalid": "Adet tam sayı olmalı.",
       "certificateNameShort": "Sertifikadaki ad en az {min} karakter olmalı.",
       "certificateNameLong": "Sertifikadaki ad en çok {max} karakter olabilir.",
@@ -2751,5 +2751,18 @@
   "institutionLogos": {
     "label": "Kurum logoları",
     "open": "{name} web sitesi (yeni sekmede açılır)"
+  },
+  "products": {
+    "label": "Ürün",
+    "coated_seed": {
+      "name": "Yosun Ekstraktı Kaplamalı Tohum",
+      "unit": "tohum",
+      "short": "Yosun ekstraktıyla kaplanan tohum, dronla sahaya bırakılır."
+    },
+    "seed_ball": {
+      "name": "Tohum Topu",
+      "unit": "tohum topu",
+      "short": "Kil ve besleyici karışımla hazırlanan tohum topu, dronla sahaya bırakılır."
+    }
   }
 }

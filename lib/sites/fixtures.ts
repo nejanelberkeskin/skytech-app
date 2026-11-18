@@ -17,6 +17,7 @@ export const SITE_FIXTURES: ProjectSite[] = [
     isFireAffected: true,
     fireYear: 2023,
     workType: "ormanlastirma_genclestirme",
+    productType: "coated_seed",
     species: [
       { slug: "kizilcam", name: "Kızılçam", latinName: "Pinus brutia", image: "/images/tohumlar/kizilcam.webp" },
     ],
@@ -40,6 +41,7 @@ export const SITE_FIXTURES: ProjectSite[] = [
     isFireAffected: true,
     fireYear: 2024,
     workType: "genclestirme",
+    productType: "coated_seed",
     species: [
       { slug: "kizilcam", name: "Kızılçam", latinName: "Pinus brutia", image: "/images/tohumlar/kizilcam.webp" },
       { slug: "sedir", name: "Sedir (Toros Sediri)", latinName: "Cedrus libani", image: "/images/tohumlar/sedir.webp" },
@@ -64,6 +66,7 @@ export const SITE_FIXTURES: ProjectSite[] = [
     isFireAffected: false,
     fireYear: null,
     workType: "ormanlastirma",
+    productType: "coated_seed",
     species: [
       { slug: "karacam", name: "Karaçam", latinName: "Pinus nigra", image: "/images/tohumlar/karacam.webp" },
     ],

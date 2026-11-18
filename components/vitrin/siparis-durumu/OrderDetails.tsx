@@ -63,10 +63,11 @@ export default async function OrderDetails({
   refundDueOn: string | null;
   withdrawalExpired: boolean;
 }) {
-  const [t, sites, seeds] = await Promise.all([
+  const [t, sites, seeds, products] = await Promise.all([
     getTranslations({ locale, namespace: "orderStatusPage" }),
     getTranslations({ locale, namespace: "sitesPage" }),
     getTranslations({ locale, namespace: "ourSeeds" }),
+    getTranslations({ locale, namespace: "products" }),
   ]);
   const interrupted = [
     "withdrawal_requested",
@@ -175,6 +176,7 @@ export default async function OrderDetails({
                 label: t("summary.workType"),
                 value: sites(`workTypes.${order.site.workType}`),
               },
+              { label: products("label"), value: products(`${order.site.productType}.name`) },
               ...(order.species.length
                 ? [
                     {

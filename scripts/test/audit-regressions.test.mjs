@@ -13,7 +13,7 @@ function query(data,error=null,count){const q={};for(const m of ['select','eq','
 // aynı güvenceler orada gerçek 019/020 SQL'i ile sınanıyor.
 test('settings read or malformed row closes sales',async()=>{
  for(const data of [null,{unit_price_kurus:-1}]){
- const api=load('lib/orders/settings.ts',{'@/lib/supabase/server':{createServiceRoleClient:()=>({from:()=>query(data)})},'./settings-schema':{salesSettingsSchema},'@/lib/legal/version':{LEGAL_DOCUMENTS_VERSION:'test'},'@/lib/pricing':{UNIT_PRICE_KURUS:1000,RELEASE_QTY:{min:20,max:100000},QUANTITY_PRESETS:[20,100]},'./schedule':{DEFAULT_PREP_DAYS:15}});
+ const api=load('lib/orders/settings.ts',{'@/lib/supabase/server':{createServiceRoleClient:()=>({from:()=>query(data)})},'./settings-schema':{salesSettingsSchema},'@/lib/legal/version':{LEGAL_DOCUMENTS_VERSION:'test'},'@/lib/pricing':{UNIT_PRICE_KURUS:1000,SEED_BALL_UNIT_PRICE_KURUS:5000,RELEASE_QTY:{min:20,max:100000},QUANTITY_PRESETS:[20,100]},'./schedule':{DEFAULT_PREP_DAYS:15}});
  assert.equal((await api.getSalesSettings()).ordersPaused,true);
  }
 });

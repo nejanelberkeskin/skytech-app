@@ -9,6 +9,7 @@
 import { UNIT_PRICE_KURUS } from "@/lib/pricing";
 import { DEFAULT_PREP_DAYS, scheduleFor, trToday } from "@/lib/orders/schedule";
 import type { LegalContext } from "./types";
+import { DEFAULT_PRODUCT_TYPE, PRODUCT_TR, type ProductType } from "@/lib/products";
 import { LEGAL_DOCUMENTS_VERSION } from "./version";
 
 const SAMPLE_QUANTITY = 100;
@@ -18,6 +19,8 @@ export interface SampleTerms {
   unitPriceKurus: number;
   vatRate: number;
   prepDays: number;
+  /** Örnek metnin ürünü; verilmezse varsayılan ürün. */
+  productType?: ProductType;
 }
 
 const DEFAULT_TERMS: SampleTerms = { unitPriceKurus: UNIT_PRICE_KURUS, vatRate: 20, prepDays: DEFAULT_PREP_DAYS };
@@ -45,6 +48,7 @@ export function sampleLegalContext(now: Date = new Date(), terms: SampleTerms = 
       fire: null,
       workType: "Ormanlaştırma – Gençleştirme",
       species: ["[Sahaya bırakılan tür]"],
+      product: PRODUCT_TR[terms.productType ?? DEFAULT_PRODUCT_TYPE],
     },
     quantity: SAMPLE_QUANTITY,
     unitPriceKurus,

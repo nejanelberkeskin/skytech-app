@@ -45,13 +45,13 @@ export function kvkkNoticeBlocks(): LegalBlock[] {
   return [
     {
       type: "note",
-      text: `Bu metin, ${site} adresli internet sitesini ziyaret ettiğinizde, bize talep ilettiğinizde, üye olduğunuzda ve tohum topu bıraktırma siparişi verdiğinizde kişisel verilerinizin nasıl işlendiğini açıklar. Aydınlatma metni bir sözleşme ya da rıza beyanı değildir: okuduğunuzu beyan etmeniz, verilerinizin işlenmesine rıza gösterdiğiniz anlamına gelmez. Aydınlatma, bilgi verme yükümlülüğüdür; rızaya dayanmayan gerekli işlemeler için genel bir açık rıza istenmez.`,
+      text: `Bu metin, ${site} adresli internet sitesini ziyaret ettiğinizde, bize talep ilettiğinizde, üye olduğunuzda ve tohum ya da tohum topu bıraktırma siparişi verdiğinizde kişisel verilerinizin nasıl işlendiğini açıklar. Aydınlatma metni bir sözleşme ya da rıza beyanı değildir: okuduğunuzu beyan etmeniz, verilerinizin işlenmesine rıza gösterdiğiniz anlamına gelmez. Aydınlatma, bilgi verme yükümlülüğüdür; rızaya dayanmayan gerekli işlemeler için genel bir açık rıza istenmez.`,
     },
 
     { type: "heading", text: "1. Veri sorumlusu" },
     {
       type: "paragraph",
-      text: "Kişisel verileriniz, 6698 sayılı Kişisel Verilerin Korunması Kanunu (\"KVKK\") uyarınca veri sorumlusu sıfatıyla aşağıda bilgileri yer alan şirket tarafından işlenir. \"Skytech Green\", bu şirketin tohum topu ve dron teknolojisiyle yürüttüğü ormanlaştırma ve gençleştirme çalışmalarının markasıdır.",
+      text: "Kişisel verileriniz, 6698 sayılı Kişisel Verilerin Korunması Kanunu (\"KVKK\") uyarınca veri sorumlusu sıfatıyla aşağıda bilgileri yer alan şirket tarafından işlenir. \"Skytech Green\", bu şirketin kaplamalı tohum, tohum topu ve dron teknolojisiyle yürüttüğü ormanlaştırma ve gençleştirme çalışmalarının markasıdır.",
     },
     sellerTable(),
 
@@ -87,12 +87,12 @@ export function kvkkNoticeBlocks(): LegalBlock[] {
       ],
     },
 
-    { type: "subheading", text: "2.4. Tohum topu bıraktırma siparişi verdiğinizde" },
+    { type: "subheading", text: "2.4. Bıraktırma siparişi verdiğinizde" },
     {
       type: "list",
       items: [
         "Kimlik ve iletişim: ad, soyad, e-posta, cep telefonu, fatura adresi. Kurumsal siparişte ticaret unvanı, vergi dairesi ve vergi numarası, siparişi veren yetkilinin adı; verdiyseniz MERSİS numarası, KEP adresi ve satın alma numarası. Bireysel siparişte T.C. kimlik numarası isteğe bağlıdır ve yalnız faturaya yazılmak üzere alınır.",
-        "Sipariş ve işlem: sipariş numarası, seçtiğiniz Proje Uygulama Sahası, tohum topu adedi, bedel, sertifikada yer almasını istediğiniz ad; sipariş, ödeme ve bırakma tarihleri; cayma bildirimi ve iade kayıtları; size gönderilen sipariş bildirimleri.",
+        "Sipariş ve işlem: sipariş numarası, seçtiğiniz Proje Uygulama Sahası, ürün tipi ve adedi, bedel, sertifikada yer almasını istediğiniz ad; sipariş, ödeme ve bırakma tarihleri; cayma bildirimi ve iade kayıtları; size gönderilen sipariş bildirimleri.",
         "Ödeme: ödeme kuruluşunun bildirdiği işlem numarası ve sonucu, kartın türü, bankayı tanımlayan ilk haneleri (BIN) ve son dört hanesi, taksit bilgisi. Kart numaranızın tamamı, son kullanma tarihi ve güvenlik kodu tarafımıza ulaşmaz; ödeme kuruluşunun güvenli ödeme sayfasında işlenir.",
         "Hukuki işlem kayıtları: Ön Bilgilendirme Formu'nu teyit ettiğinize, sözleşmeyi kabul ettiğinize ve bu metni okuduğunuza ilişkin beyanların anı ve size gösterilen metnin sürümü; siparişinize özel belgelerin kopyası; IP adresinizin tuzlu özeti ve tarayıcı bilgisi. Özetleme tek başına anonimleştirme değildir; barındırma veya ödeme sağlayıcısı ham IP işleyebilir.",
       ],

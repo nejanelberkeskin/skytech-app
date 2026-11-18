@@ -12,7 +12,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   return buildPageMetadata(
     {
       title: TITLE,
-      description: "Skytech Green tohum topu bıraktırma hizmetine ilişkin Mesafeli Hizmet Sözleşmesi'nin örnek metni: taraflar, bedel, ifa takvimi, 14 günlük cayma hakkı ve iade koşulları.",
+      description: "Skytech Green bıraktırma hizmetine ilişkin Mesafeli Hizmet Sözleşmesi'nin örnek metni: taraflar, bedel, ifa takvimi, 14 günlük cayma hakkı ve iade koşulları.",
       path: PATH,
       // Taslak metin arama motorlarına verilmez.
       noindex: isDraftLegalVersion(),

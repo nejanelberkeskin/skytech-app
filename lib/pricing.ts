@@ -7,8 +7,11 @@
  * sunucuda yeniden hesaplanır — istemciden gelen tutara güvenilmez.
  */
 
-/** Tohum topu başına hizmet bedeli — 10,00 TL, KDV dâhil (varsayılan). */
+/** Yosun ekstraktı kaplamalı tohum başına hizmet bedeli — 10,00 TL, KDV dâhil (varsayılan). */
 export const UNIT_PRICE_KURUS = 1_000;
+
+/** Tohum topu başına hizmet bedeli — 50,00 TL, KDV dâhil (varsayılan). */
+export const SEED_BALL_UNIT_PRICE_KURUS = 5_000;
 
 /** Bir talepte/siparişte en az ve en çok tohum topu adedi (varsayılan). */
 export const RELEASE_QTY = { min: 20, max: 100_000 } as const;

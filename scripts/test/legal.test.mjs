@@ -136,11 +136,11 @@ for (const [name, c] of Object.entries(cases)) {
     "Ankara Ticaret Sicili Müdürlüğü / 510174", // ticaret sicili
     "0850 308 2600",
     "info@skytechgreen.com",
-    "tohum topunu insansız hava aracı (dron) ile bırakması",
+    "yosun ekstraktı kaplamalı tohumu insansız hava aracı (dron) ile bırakması",
     "Toplam bedel (tüm vergiler dâhil)",
     "Ek masraf",
     "3D Secure",
-    "Tohum topu bırakma son tarihi (kesin süre)",
+    "Bırakma son tarihi (kesin süre)",
     "14 (on dört) gün içinde, hiçbir gerekçe göstermeksizin ve cezai şart ödemeksizin",
     "skytechgreen.com/cayma",
     "tek seferde",

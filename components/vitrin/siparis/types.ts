@@ -11,6 +11,8 @@ export interface WizardSite {
   hectares: string | null;
   fire: string | null;
   workType: string;
+  /** Sahada bırakılan ürünün adı (istenen dilde). */
+  product: string;
   species: string[];
   cover: string | null;
 }

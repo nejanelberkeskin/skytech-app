@@ -129,7 +129,7 @@ assert.deepEqual(
   [
     ["Proje Uygulama Sahası", "Bursa Proje Uygulama Sahası (Bursa)"],
     ["Bırakılacak tür", "Kızılçam"],
-    ["Tohum topu adedi", "500"],
+    ["Adet", "500"],
     ["Birim bedel (KDV dâhil)", "10" + NBSP + "TL"],
     ["Tahmini tutar (KDV dâhil)", "5.000" + NBSP + "TL"],
     ["Sertifikadaki ad", "Ayşe Yılmaz"],

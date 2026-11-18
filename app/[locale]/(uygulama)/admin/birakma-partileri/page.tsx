@@ -103,7 +103,7 @@ function Content() {
           <ul className="text-sm text-slate-700 space-y-1">
             {data.waiting.map((w) => (
               <li key={`${w.landId}|${w.seasonLabel}`}>
-                <span className="text-slate-900 font-medium">{w.landName}</span> · {w.seasonLabel} — {w.orders} sipariş, {formatCount(w.quantity, "tr")} tohum topu
+                <span className="text-slate-900 font-medium">{w.landName}</span> · {w.seasonLabel} — {w.orders} sipariş, {formatCount(w.quantity, "tr")} adet
               </li>
             ))}
           </ul>
@@ -150,7 +150,7 @@ function Content() {
               <div className="flex flex-wrap items-start justify-between gap-4">
                 <div className="min-w-0">
                   <p className="font-semibold text-slate-900 break-words">{b.landName} <span className="text-slate-600 font-normal">· {b.seasonLabel}{b.title ? ` · ${b.title}` : ""}</span></p>
-                  <p className="text-xs text-slate-500 mt-1">{b.orders} sipariş · {formatCount(b.quantity, "tr")} tohum topu · plan {day(b.plannedOn)}</p>
+                  <p className="text-xs text-slate-500 mt-1">{b.orders} sipariş · {formatCount(b.quantity, "tr")} adet · plan {day(b.plannedOn)}</p>
                 </div>
                 <span className={`shrink-0 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${b.releasedOn ? "ring-1 ring-green-500/50 bg-green-500/10 text-green-700" : "ring-1 ring-teal-500/50 bg-teal-500/10 text-teal-700"}`}>
                   {b.releasedOn ? `Bırakıldı · ${day(b.releasedOn)}` : "Planlandı"}
@@ -233,7 +233,7 @@ function BatchDetail({ id, onClose, onChanged, onDeleted }: { id: string; onClos
             <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between gap-4">
               <div>
                 <h2 id="parti-baslik" className="font-bold text-slate-900 text-lg">{detail.land?.name ?? "Saha"} · {detail.batch.seasonLabel}</h2>
-                <p className="text-xs text-slate-600">{released ? `Bırakıldı · ${day(detail.batch.releasedOn)}` : `Planlandı · ${day(detail.batch.plannedOn)}`} · {totals.orders} sipariş · {formatCount(totals.quantity, "tr")} tohum topu</p>
+                <p className="text-xs text-slate-600">{released ? `Bırakıldı · ${day(detail.batch.releasedOn)}` : `Planlandı · ${day(detail.batch.plannedOn)}`} · {totals.orders} sipariş · {formatCount(totals.quantity, "tr")} adet</p>
               </div>
 
             </div>
@@ -358,7 +358,7 @@ function BatchDetail({ id, onClose, onChanged, onDeleted }: { id: string; onClos
                   {confirmRelease ? (
                     <div className="flex gap-3 flex-wrap">
                       <Button variant="primary" loading={busy} onClick={async () => { const ok = await send("POST", { action: "release", releasedOn }, "Bırakma işlendi."); if (ok) setConfirmRelease(false); }}>
-                        Evet: {totals.orders} sipariş, {formatCount(totals.quantity, "tr")} tohum topu bırakıldı
+                        Evet: {totals.orders} sipariş, {formatCount(totals.quantity, "tr")} adet bırakıldı
                       </Button>
                       <Button variant="secondary" disabled={busy} onClick={() => setConfirmRelease(false)}>Vazgeç</Button>
                     </div>
@@ -409,7 +409,7 @@ function OrderLine({ o }: { o: OrderRow }) {
       <a href={`/admin/birakma-siparisleri?no=${o.orderNo}`} target="_blank" rel="noopener noreferrer" className="font-mono text-emerald-700 hover:underline">{o.orderNo}</a>
       {o.isTest && <span className="px-1.5 py-0.5 rounded-full text-[10px] font-semibold ring-1 ring-amber-500/50 bg-amber-500/10 text-amber-800">DENEME</span>}
       {o.buyer && <span className="text-slate-900 break-words">{o.buyer.firstName} {o.buyer.lastName}</span>}
-      <span className="text-xs text-slate-500">{formatCount(o.quantity, "tr")} tohum topu{o.finance && ` · ${formatTry(o.finance.totalKurus, "tr")}`}{o.certificateName !== undefined && ` · sertifika: ${o.certificateName}`}</span>
+      <span className="text-xs text-slate-500">{formatCount(o.quantity, "tr")} adet{o.finance && ` · ${formatTry(o.finance.totalKurus, "tr")}`}{o.certificateName !== undefined && ` · sertifika: ${o.certificateName}`}</span>
     </span>
   );
 }

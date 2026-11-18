@@ -6,6 +6,7 @@
  * telefon, fatura ve sipariş numarası ASLA çıkmaz. İade edilmiş siparişin sertifikası "iptal" görünür.
  * Canlı sitede deneme siparişlerinin sertifikaları gösterilmez. Geliştirmede iki ÖRNEK kod da çalışır.
  */
+import { productTypeOf } from "@/lib/products";
 import { publicCertificateName } from "./publication";
 import type { OrderConsents } from "@/lib/orders/types";
 import { createServiceRoleClient } from "@/lib/supabase/server";
@@ -23,6 +24,7 @@ const FIXTURES: PublicCertificate[] = [
     siteSlug: "ornek-canakkale-proje-uygulama-sahasi",
     province: "Çanakkale",
     workType: "ormanlastirma_genclestirme",
+    productType: "coated_seed",
     species: [{ slug: "kizilcam", name: "Kızılçam", latinName: "Pinus brutia" }],
     releasedOn: "2026-11-14",
     issuedOn: "2026-11-16",
@@ -37,6 +39,7 @@ const FIXTURES: PublicCertificate[] = [
     siteSlug: null,
     province: "İzmir",
     workType: "genclestirme",
+    productType: "coated_seed",
     species: [
       { slug: "kizilcam", name: "Kızılçam", latinName: "Pinus brutia" },
       { slug: "sedir", name: "Sedir (Toros Sediri)", latinName: "Cedrus libani" },
@@ -91,6 +94,7 @@ export async function getPublicCertificate(rawCode: string): Promise<PublicCerti
       siteSlug: landRow?.is_public && landRow.slug ? landRow.slug : null,
       province: site.province,
       workType: site.workType,
+      productType: productTypeOf(site.productType),
       species: site.species.map((sp) => ({ slug: sp.slug, name: sp.name, latinName: sp.latinName })),
       releasedOn,
       issuedOn: trToday(new Date(order.certificate_issued_at as string)),

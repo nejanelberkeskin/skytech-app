@@ -8,11 +8,12 @@ import type { RecordScope } from "@/lib/admin/record-scope";
 import type { LandStatus } from "./admin";
 import { siteVisibility, type SiteColumn } from "./admin-access";
 import type { WorkType } from "./types";
+import { productTypeOf, type ProductType } from "@/lib/products";
 import { readMediaLinks, type SiteMediaLink } from "./media-links";
 
 export const SITE_ADMIN_COLUMNS = [
   "id", "slug", "name", "region", "province", "district", "area_hectares", "is_fire_affected", "fire_year",
-  "work_type", "species_slugs", "name_i18n", "summary_i18n", "cover_image", "video_url", "media_links", "sort_order", "status",
+  "work_type", "product_type", "species_slugs", "name_i18n", "summary_i18n", "cover_image", "video_url", "media_links", "sort_order", "status",
   "is_public", "capacity_seeds", "filled_seeds", "reserved_seeds", "certificate_month", "monitoring_month", "permit_status", "permit_reference", "permit_valid_until",
   "permit_verified_at", "created_at", "updated_at",
 ].join(", ");
@@ -33,6 +34,7 @@ export interface SiteAdminItem {
   /** Bırakma izni: yalnız `verified` ve geçerlilik tarihi sezon sonunu kapsıyorsa sipariş açılır. */
   permit: { status: "missing" | "submitted" | "verified" | "rejected"; reference: string | null; validUntil: string | null; verifiedAt: string | null };
   workType: WorkType;
+  productType: ProductType;
   speciesSlugs: string[];
   nameI18n: { en?: string; ru?: string };
   summaryI18n: { tr?: string; en?: string; ru?: string };
@@ -131,6 +133,7 @@ export function siteItemOf(row: Row, capabilities: SiteAdminItem["capabilities"]
       verifiedAt: text(row.permit_verified_at),
     },
     workType: (text(row.work_type) ?? "ormanlastirma_genclestirme") as WorkType,
+    productType: productTypeOf(row.product_type),
     speciesSlugs: Array.isArray(row.species_slugs) ? row.species_slugs.map(String) : [],
     nameI18n: i18n(row.name_i18n, ["en", "ru"] as const),
     summaryI18n: i18n(row.summary_i18n, ["tr", "en", "ru"] as const),

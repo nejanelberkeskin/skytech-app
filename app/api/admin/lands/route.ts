@@ -264,7 +264,7 @@ export async function DELETE(request: NextRequest) {
         return fail(404, "not_found", "Saha bulunamadı.");
       case "not_empty":
         return fail(409, "not_empty",
-          `"${result.name}" sahasında ${result.filled} bırakılmış ve ${result.reserved} ayrılmış tohum topu kaydı var; silinemez. Yayından almak için "Yayından al" düğmesini kullanın.`,
+          `"${result.name}" sahasında ${result.filled} bırakılmış ve ${result.reserved} ayrılmış adet kaydı var; silinemez. Yayından almak için "Yayından al" düğmesini kullanın.`,
           { filled: result.filled, reserved: result.reserved });
       case "in_use":
         return fail(409, "in_use", "Sahaya bağlı talep ya da sipariş kaydı var; silinemez. Yayından almak için \"Yayından al\" düğmesini kullanın.");

@@ -1,5 +1,5 @@
 /**
- * MESAFELİ HİZMET SÖZLEŞMESİ — tohum topu bıraktırma hizmeti.
+ * MESAFELİ HİZMET SÖZLEŞMESİ — bıraktırma hizmeti (ürün tipi sahaya göre: kaplamalı tohum ya da tohum topu).
  *
  * Tek şablon iki alıcı türüne hizmet eder: tüketici (6502 sayılı Kanun) ve
  * tüketici sıfatı taşımayan alıcı (kurumsal). İkincisinde Kanun uygulanmaz;
@@ -38,9 +38,9 @@ export function contractDocument(ctx: LegalContext): LegalDocument {
       type: "list",
       items: [
         `Site: SATICI'ya ait ${site} adresli internet sitesi.`,
-        "Proje Uygulama Sahası: SATICI'nın tohum topu bırakma çalışması yürüttüğü, Site'de tanıtılan ve ALICI tarafından seçilen saha.",
-        "Tohum topu: Tohumun kil ve besleyici karışımla kaplanarak hazırlandığı, sahaya dronla bırakılan küre.",
-        "Bırakma: Tohum toplarının SATICI tarafından insansız hava aracı (dron) ile Proje Uygulama Sahası'na bırakılması.",
+        "Proje Uygulama Sahası: SATICI'nın bırakma çalışması yürüttüğü, Site'de tanıtılan ve ALICI tarafından seçilen saha.",
+        ctx.site.product.definition,
+        `Bırakma: ${ctx.site.product.pluralGen.charAt(0).toUpperCase()}${ctx.site.product.pluralGen.slice(1)} SATICI tarafından insansız hava aracı (dron) ile Proje Uygulama Sahası'na bırakılması.`,
         "Katılım Sertifikası: Bırakma işleminin yapıldığını belgeleyen, ALICI'nın belirlediği adla düzenlenen elektronik belge.",
         "İzleme dönemi: Bırakmayı izleyen, sahanın incelendiği ve raporlandığı Nisan–Eylül dönemi.",
       ],
@@ -51,7 +51,7 @@ export function contractDocument(ctx: LegalContext): LegalDocument {
       type: "paragraph",
       text: "3.1. Bu sözleşmenin konusu, ALICI'nın Site üzerinden elektronik ortamda sipariş verdiği, nitelikleri ve bedeli aşağıda belirtilen hizmetin sunulmasına ilişkin olarak tarafların hak ve yükümlülüklerinin belirlenmesidir.",
     },
-    { type: "paragraph", text: `3.2. ${TEXT.serviceDefinition}` },
+    { type: "paragraph", text: `3.2. ${TEXT.serviceDefinition(ctx.site.product)}` },
     {
       type: "paragraph",
       text: "3.3. Tüketici sıfatı, işlemin ticari veya mesleki olmayan amaçla yapılmasına göre belirlenir. Bireysel veya kurumsal fatura seçimi tek başına bu sıfatı belirlemez. Tüketici işlemlerinde 6502 sayılı Kanunun emredici hükümleri uygulanır. Tüketici olmayan alıcıya da bu sözleşmedeki 14 günlük cayma ve iade imkânı sözleşmesel olarak tanınır.",
@@ -107,7 +107,7 @@ export function contractDocument(ctx: LegalContext): LegalDocument {
     { type: "heading", text: "Madde 8 — Katılım Sertifikası ve görüntüler" },
     {
       type: "paragraph",
-      text: "8.1. Katılım Sertifikası, bırakma işlemi tamamlandıktan sonra ALICI'nın belirlediği adla düzenlenir ve e-posta ile iletilir. Sertifika; adı, sahayı, bırakılan tohum topu adedini, türü ve bırakma tarihini gösterir; Site’de paylaşılabilir bir doğrulama sayfası bulunur. Kişisel ad, ancak adın sahibi tarafından ayrıca ve isteğe bağlı olarak verilen yayın izniyle bu sayfada gösterilir. İzin verilmemesi siparişe veya sertifika hakkına engel değildir.",
+      text: "8.1. Katılım Sertifikası, bırakma işlemi tamamlandıktan sonra ALICI'nın belirlediği adla düzenlenir ve e-posta ile iletilir. Sertifika; adı, sahayı, bırakılan ürünü ve adedini, türü ve bırakma tarihini gösterir; Site’de paylaşılabilir bir doğrulama sayfası bulunur. Kişisel ad, ancak adın sahibi tarafından ayrıca ve isteğe bağlı olarak verilen yayın izniyle bu sayfada gösterilir. İzin verilmemesi siparişe veya sertifika hakkına engel değildir.",
     },
     {
       type: "paragraph",
@@ -123,7 +123,7 @@ export function contractDocument(ctx: LegalContext): LegalDocument {
     },
 
     { type: "heading", text: "Madde 9 — Hizmetin sınırları" },
-    { type: "paragraph", text: `9.1. ${TEXT.noResultGuarantee}` },
+    { type: "paragraph", text: `9.1. ${TEXT.noResultGuarantee(ctx.site.product)}` },
     { type: "paragraph", text: `9.2. ${TEXT.notADonation}` },
     {
       type: "paragraph",

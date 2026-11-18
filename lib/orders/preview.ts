@@ -13,6 +13,7 @@ import { scheduleFor, trToday, type OrderSchedule } from "./schedule";
 import type { OrderPreviewPayload } from "./schema";
 import { orderTotals, quoteVersion, type SalesSettings } from "./settings";
 import type { SiteSnapshot } from "./types";
+import { productTypeOf } from "@/lib/products";
 
 export type SiteCheck =
   | { ok: true; site: SiteSnapshot }
@@ -28,7 +29,7 @@ export async function checkSite(landId: string, quantity: number): Promise<SiteC
     const supabase = createServiceRoleClient();
     const { data: land, error } = await supabase
       .from("lands")
-      .select("id, is_public, status, capacity_seeds, filled_seeds, reserved_seeds, certificate_month, monitoring_month, permit_status, permit_reference, permit_valid_until, permit_verified_at")
+      .select("id, is_public, status, product_type, capacity_seeds, filled_seeds, reserved_seeds, certificate_month, monitoring_month, permit_status, permit_reference, permit_valid_until, permit_verified_at")
       .eq("id", landId)
       .maybeSingle();
     if (error) return { ok: false, error: "unavailable" };
@@ -60,6 +61,7 @@ export async function checkSite(landId: string, quantity: number): Promise<SiteC
         fireYear: site.fireYear,
         workType: site.workType,
         species: site.species.map((s) => ({ slug: s.slug, name: s.name, latinName: s.latinName })),
+        productType: productTypeOf(land.product_type),
         certificateMonth,
         monitoringMonth,
         permit,
@@ -84,9 +86,10 @@ export function siteTermsProblem(site: SiteSnapshot, schedule: OrderSchedule): "
   return null;
 }
 
-/** Teklif anahtarının saha kısmı: sezon ve teslim ayları değişirse müşteri önizlemeyi yeniden onaylar. */
+/** Teklif anahtarının saha kısmı: sezon, teslim ayları ya da ürün tipi değişirse müşteri önizlemeyi yeniden onaylar. */
 export function siteTermsKey(site: SiteSnapshot, schedule: OrderSchedule): string {
-  return `${schedule.season.label}.${site.certificateMonth ?? 0}.${site.monitoringMonth ?? 0}`;
+  const product = productTypeOf(site.productType) === "seed_ball" ? "t" : "k";
+  return `${schedule.season.label}.${site.certificateMonth ?? 0}.${site.monitoringMonth ?? 0}.${product}`;
 }
 
 /** Ödeme öncesi gösterilen, siparişe yazılan ve belgeye basılan teklif sürümü — üçü de bu işlevden. */
@@ -99,7 +102,7 @@ export function offerVersion(settings: SalesSettings, site: SiteSnapshot, schedu
  * dönen `version` bu ayarları da kapsar (bkz. quoteVersion).
  */
 export function buildPreview(input: OrderPreviewPayload, site: SiteSnapshot, settings: SalesSettings, now: Date = new Date()): OrderPreview {
-  const totals = orderTotals(input.quantity, settings);
+  const totals = orderTotals(input.quantity, settings, productTypeOf(site.productType));
   const schedule = scheduleFor(now, settings.prepDays);
   const context = buildLegalContext({ input, site, totals, schedule, orderDate: trToday(now) });
   return {

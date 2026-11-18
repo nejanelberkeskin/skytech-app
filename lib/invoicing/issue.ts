@@ -11,13 +11,16 @@
  * Deneme sınırı aşılırsa satır `failed` olur; yönetimden "yeniden dene" ile tekrar kuyruğa alınır.
  * Test siparişleri atlanır. Yalnız satış faturaları (iade belgeleri elle).
  */
+import { PRODUCT_TR, productTypeOf } from "@/lib/products";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { ilAdi } from "@/lib/tr-iller";
 import type { InvoiceInfo } from "@/lib/orders/types";
 import { ParasutError, many, one, type ParasutClient } from "./parasut";
 
 export const MAX_ATTEMPTS = 5;
-export const SERVICE_PRODUCT_NAME = "Tohum topu bırakma hizmeti";
+/** Paraşüt ürün kartının adı: sahanın ürün tipine göre (her ürün için ayrı kart). */
+export const serviceProductName = (order: Pick<OrderForInvoice, "site_snapshot">) =>
+  PRODUCT_TR[productTypeOf(order.site_snapshot?.productType)].service;
 /** e-Arşivde TCKN verilmeyen tüketici için GİB'in kabul ettiği yer tutucu (mali müşavir kararı). */
 export const PLACEHOLDER_TCKN = "11111111111";
 
@@ -47,7 +50,7 @@ export interface OrderForInvoice {
   total_kurus: number;
   vat_rate: number | string;
   paid_at: string | null;
-  site_snapshot: { name?: string } | null;
+  site_snapshot: { name?: string; productType?: string } | null;
 }
 
 export type StepResult =
@@ -107,12 +110,12 @@ async function findOrCreateContact(client: ParasutClient, order: OrderForInvoice
   return created.id;
 }
 
-async function findOrCreateProduct(client: ParasutClient, vatRate: number): Promise<string> {
-  const found = many(await client.request("GET", `/products?filter[name]=${encodeURIComponent(SERVICE_PRODUCT_NAME)}&page[size]=1`));
+async function findOrCreateProduct(client: ParasutClient, vatRate: number, name: string): Promise<string> {
+  const found = many(await client.request("GET", `/products?filter[name]=${encodeURIComponent(name)}&page[size]=1`));
   if (found[0]) return found[0].id;
   const created = one(
     await client.request("POST", "/products", {
-      data: { type: "products", attributes: { name: SERVICE_PRODUCT_NAME, vat_rate: vatRate, unit: "Adet", currency: "TRL", inventory_tracking: false } },
+      data: { type: "products", attributes: { name, vat_rate: vatRate, unit: "Adet", currency: "TRL", inventory_tracking: false } },
     }),
   );
   if (!created) throw new ParasutError(500, "Paraşüt hizmet ürünü oluşturulamadı.");
@@ -154,7 +157,7 @@ async function createSalesInvoice(client: ParasutClient, order: OrderForInvoice,
                   quantity: order.quantity,
                   unit_price: netUnitPrice(order.unit_price_kurus, vat),
                   vat_rate: vat,
-                  description: `${siteName} — dronla tohum topu bırakma hizmeti (${order.order_no})`,
+                  description: `${siteName} — dronla ${PRODUCT_TR[productTypeOf(order.site_snapshot?.productType)].noun} bırakma hizmeti (${order.order_no})`,
                 },
                 relationships: { product: { data: { id: productId, type: "products" } } },
               },
@@ -198,7 +201,7 @@ export async function advanceInvoice(
   if (!invoiceId) {
     const vat = Number(order.vat_rate);
     const contactId = await findOrCreateContact(client, order);
-    const productId = await findOrCreateProduct(client, vat);
+    const productId = await findOrCreateProduct(client, vat, serviceProductName(order));
     const created = await createSalesInvoice(client, order, contactId, productId, today);
     invoiceId = created.id;
     await ctx.save({ external_id: invoiceId, provider: "parasut" });

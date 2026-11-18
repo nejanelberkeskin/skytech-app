@@ -40,9 +40,9 @@ export function preInfoDocument(ctx: LegalContext): LegalDocument {
     buyerTable(ctx),
 
     { type: "heading", text: "3. Hizmetin temel nitelikleri" },
-    { type: "paragraph", text: TEXT.serviceDefinition },
+    { type: "paragraph", text: TEXT.serviceDefinition(ctx.site.product) },
     serviceTable(ctx),
-    { type: "list", items: [TEXT.speciesBySeller, TEXT.noResultGuarantee, TEXT.notADonation] },
+    { type: "list", items: [TEXT.speciesBySeller, TEXT.noResultGuarantee(ctx.site.product), TEXT.notADonation] },
 
     { type: "heading", text: "4. Toplam bedel ve ödeme" },
     priceTable(ctx),

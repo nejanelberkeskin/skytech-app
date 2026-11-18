@@ -3,6 +3,7 @@
  * Bir koşul iki belgede de geçiyorsa metni burada tek yerde durur; böylece iki
  * belge birbiriyle çelişemez.
  */
+import type { ProductWords } from "@/lib/products";
 import type { MonthDeadline } from "@/lib/orders/schedule";
 import { count, money, sellerRows, trDayOf, trLongDate, trMonthYear, withdrawalChannels } from "../format";
 import type { LegalBlock, LegalContext } from "../types";
@@ -54,8 +55,9 @@ export function serviceTable(ctx: LegalContext): LegalBlock {
     ["Alan", s.area],
     ["Saha niteliği", s.fire],
     ["Çalışma türü", s.workType],
+    ["Bırakılacak ürün", s.product.name],
     ["Sahaya bırakılan tür(ler)", s.species.length ? s.species.join(", ") : null],
-    ["Tohum topu adedi", `${count(ctx.quantity)} adet`],
+    [`${s.product.unit.charAt(0).toUpperCase()}${s.product.unit.slice(1)} adedi`, `${count(ctx.quantity)} adet`],
     ["Sertifikada yer alacak ad", ctx.certificateName],
   ];
   return { type: "table", rows: rows.filter((r): r is [string, string] => Boolean(r[1])) };
@@ -65,7 +67,7 @@ export function priceTable(ctx: LegalContext): LegalBlock {
   return {
     type: "table",
     rows: [
-      ["Birim bedel (KDV dâhil)", `${money(ctx.unitPriceKurus)} / tohum topu`],
+      ["Birim bedel (KDV dâhil)", `${money(ctx.unitPriceKurus)} / ${ctx.site.product.unit}`],
       ["Adet", count(ctx.quantity)],
       ["Toplam bedel (tüm vergiler dâhil)", money(ctx.totalKurus)],
       [`Toplamın içindeki KDV (%${ctx.vatRate})`, money(ctx.vatKurus)],
@@ -90,7 +92,7 @@ export function scheduleTable(ctx: LegalContext): LegalBlock {
     rows: [
       ["Bırakma sezonu", `${trLongDate(season.startsOn)} – ${trLongDate(season.endsOn)}`],
       ["En erken bırakma tarihi", trLongDate(earliestReleaseOn)],
-      ["Tohum topu bırakma son tarihi (kesin süre)", trLongDate(performanceDeadline)],
+      ["Bırakma son tarihi (kesin süre)", trLongDate(performanceDeadline)],
       ["Katılım Sertifikası teslim ayı (kesin son tarih)", deliveryText(ctx.deliveries.certificate)],
       ["İzleme içeriği teslim ayı (kesin son tarih)", deliveryText(ctx.deliveries.monitoring)],
     ],
@@ -110,14 +112,14 @@ const TEXT_WITHDRAWAL_GENERAL =
   "ALICI, sözleşmenin kurulduğu tarihten itibaren 14 (on dört) gün içinde, hiçbir gerekçe göstermeksizin ve cezai şart ödemeksizin sözleşmeden cayma hakkına sahiptir.";
 
 export const TEXT = {
-  serviceDefinition:
-    "Sözleşme konusu hizmet; SATICI'nın, aşağıda belirtilen Proje Uygulama Sahasına, aşağıda belirtilen adette tohum topunu insansız hava aracı (dron) ile bırakması, bırakma işlemi tamamlandığında ALICI adına bir Katılım Sertifikası düzenlemesi ve izleme döneminde çalışmaya ilişkin görüntüleri ALICI ile paylaşmasıdır.",
+  serviceDefinition: (p: ProductWords) =>
+    `Sözleşme konusu hizmet; SATICI'nın, aşağıda belirtilen Proje Uygulama Sahasına, aşağıda belirtilen adette ${p.acc} insansız hava aracı (dron) ile bırakması, bırakma işlemi tamamlandığında ALICI adına bir Katılım Sertifikası düzenlemesi ve izleme döneminde çalışmaya ilişkin görüntüleri ALICI ile paylaşmasıdır.`,
 
   speciesBySeller:
     "Sahaya bırakılacak tür, sahanın iklim ve toprak koşullarına göre SATICI tarafından belirlenir; ALICI tür seçimi yapmaz.",
 
-  noResultGuarantee:
-    "Hizmet; kararlaştırılan tohum toplarının hazırlanmasını ve sahaya bırakılmasını, Katılım Sertifikası ile izleme içeriğinin sunulmasını kapsar. Çimlenme, fidan gelişimi, orman oluşumu veya belirli bir karbon giderimi garanti edilmez. Bu açıklama, SATICI’nın mesleki özen, sözleşmeye uygun ifa ve ayıplı hizmetten doğan sorumluluğunu kaldırmaz.",
+  noResultGuarantee: (p: ProductWords) =>
+    `Hizmet; kararlaştırılan ${p.pluralGen} hazırlanmasını ve sahaya bırakılmasını, Katılım Sertifikası ile izleme içeriğinin sunulmasını kapsar. Çimlenme, fidan gelişimi, orman oluşumu veya belirli bir karbon giderimi garanti edilmez. Bu açıklama, SATICI’nın mesleki özen, sözleşmeye uygun ifa ve ayıplı hizmetten doğan sorumluluğunu kaldırmaz.`,
 
   notADonation:
     "Bu işlem bir hizmet satın alımıdır; bağış, yardım veya yatırım değildir. ALICI’ya saha, ağaç veya ürün üzerinde mülkiyet, kullanım, tahsis ya da adlandırma hakkı; karbon kredisi veya denkleştirme hakkı vermez. Katılım Sertifikası bağış makbuzu, resmî fatura, karbon kredisi veya bağımsız çevresel uygunluk belgesi değildir; şirketin gerçekleştirdiği bırakma çalışmasına katılımı gösterir. Vergisel sonuçlar alıcının durumu ve ilgili mevzuata göre belirlenir; vergi indirimi taahhüt edilmez.",
@@ -128,7 +130,7 @@ export const TEXT = {
     "Bırakma, Katılım Sertifikası ve izleme, tek hizmet bedeli kapsamında sunulur. Siparişte alınan bedel, bırakma öncesinde avans niteliğinde izlenir. Fatura, bırakmanın tamamlandığı tarihten itibaren yasal süre içinde, kural olarak en geç yedi gün içinde düzenlenir. Vergiyi doğuran olayın daha önce oluştuğu veya daha kısa belge düzenleme süresi gerektiren bir durum bulunduğu hâllerde emredici vergi kuralları uygulanır. e-Fatura sistemine kayıtlı alıcıya e-Fatura, diğer alıcılara e-Arşiv Fatura düzenlenir. Siteden indirilen Sipariş Özeti resmî fatura yerine geçmez; resmî fatura ayrıca iletilir. Faturanın düzenlenmesi, sertifika ve izleme yükümlülüklerini sona erdirmez. Muhasebe ve fatura işlemleri, cayma ve iadenin ön şartı değildir.",
 
   calendar:
-    "Tohum topu bırakma işlemleri Kasım–Mart döneminde yapılır; Nisan–Eylül döneminde sahalar incelenir, izlenir ve raporlanır. Bırakma işlemi, cayma süresi dolmadan yapılmaz.",
+    "Bırakma işlemleri Kasım–Mart döneminde yapılır; Nisan–Eylül döneminde sahalar incelenir, izlenir ve raporlanır. Bırakma işlemi, cayma süresi dolmadan yapılmaz.",
 
   completionNotice:
     "Bırakma tamamlandığında ALICI’ya e-posta ile bilgi verilir. Katılım Sertifikası ve izleme içeriği, sipariş belgelerinde kendileri için ayrı ayrı belirtilen teslim ayının son gününe kadar e-posta veya kalıcı veri saklayıcısıyla sunulur. Teslim ayları her Proje Uygulama Sahası için sipariş öncesinde belirlenir; sipariş belgesine yazıldıktan sonra ALICI aleyhine değiştirilmez. Bırakmanın tamamlanması, henüz teslim edilmemiş bu edimleri sona erdirmez.",

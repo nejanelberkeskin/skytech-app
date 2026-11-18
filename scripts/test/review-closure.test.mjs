@@ -7,8 +7,8 @@ const response={json:(body,init)=>({body,status:init?.status??200,headers:init?.
 const admin={user_id:'10000000-0000-0000-0000-000000000001',role:'SUPER_ADMIN',email:'test@example.invalid'};
 const auth={requireAdmin:async()=>({admin,error:null}),getClientIP:()=> 'local'};
 function query(data){const q={};for(const m of ['select','eq','in','order','limit'])q[m]=()=>q;q.maybeSingle=q.single=async()=>({data,error:null});q.then=(resolve,reject)=>Promise.resolve({data,error:null,count:0}).then(resolve,reject);return q;}
-const row={unit_price_kurus:1000,min_quantity:20,max_quantity:1000,quantity_presets:[20,100],vat_rate:20,invoice_timing:'on_performance',prep_days:15,payment_ttl_minutes:45,orders_paused:false,updated_at:'2026-09-22T12:00:00Z',updated_by:null};
-function settingsModule(db){return load('lib/orders/settings.ts',{'@/lib/supabase/server':{createServiceRoleClient:()=>db},'./settings-schema':settingsSchema,'@/lib/legal/version':{LEGAL_DOCUMENTS_VERSION:'test'},'@/lib/pricing':{UNIT_PRICE_KURUS:1000,RELEASE_QTY:{min:20,max:1000},QUANTITY_PRESETS:[20,100]},'./schedule':{DEFAULT_PREP_DAYS:15}});}
+const row={unit_price_kurus:1000,seed_ball_unit_price_kurus:5000,min_quantity:20,max_quantity:1000,quantity_presets:[20,100],vat_rate:20,invoice_timing:'on_performance',prep_days:15,payment_ttl_minutes:45,orders_paused:false,updated_at:'2026-09-22T12:00:00Z',updated_by:null};
+function settingsModule(db){return load('lib/orders/settings.ts',{'@/lib/supabase/server':{createServiceRoleClient:()=>db},'./settings-schema':settingsSchema,'@/lib/legal/version':{LEGAL_DOCUMENTS_VERSION:'test'},'@/lib/pricing':{UNIT_PRICE_KURUS:1000,SEED_BALL_UNIT_PRICE_KURUS:5000,RELEASE_QTY:{min:20,max:1000},QUANTITY_PRESETS:[20,100]},'./schedule':{DEFAULT_PREP_DAYS:15}});}
 test('malformed settings remain visible only through admin repair read; binding reads reject',async()=>{
  for(const change of [{unit_price_kurus:99},{invoice_timing:'unexpected'},{orders_paused:null},{quantity_presets:null}]){
  const db={from:()=>query({...row,...change})};const api=settingsModule(db);

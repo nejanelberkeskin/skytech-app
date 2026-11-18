@@ -141,7 +141,7 @@ export const iyzicoProvider: PaymentProvider = {
         {
           id: input.orderNo,
           name: input.description.slice(0, 120),
-          category1: "Tohum topu bırakma hizmeti",
+          category1: "Tohum bırakma hizmeti",
           itemType: "VIRTUAL",
           price,
         },

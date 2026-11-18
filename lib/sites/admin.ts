@@ -8,6 +8,7 @@
 import { z } from "zod";
 import { SLUG_RE } from "./slug";
 import { WORK_TYPES } from "./types";
+import { PRODUCT_TYPES, PRODUCT_TR, type ProductType } from "@/lib/products";
 import { mediaLinksSchema } from "./media-links";
 
 /** DB `land_status` enum'u. Vitrindeki karşılıkları için bkz. lib/sites/types.ts → SitePhase. */
@@ -27,6 +28,11 @@ export const WORK_TYPE_LABELS: Record<(typeof WORK_TYPES)[number], string> = {
   ormanlastirma: "Ormanlaştırma",
   genclestirme: "Gençleştirme",
   ormanlastirma_genclestirme: "Ormanlaştırma – Gençleştirme",
+};
+
+export const PRODUCT_TYPE_LABELS: Record<ProductType, string> = {
+  coated_seed: PRODUCT_TR.coated_seed.name,
+  seed_ball: PRODUCT_TR.seed_ball.name,
 };
 
 export const SITE_LIMITS = {
@@ -110,6 +116,8 @@ export const siteAdminSchema = z
       .optional()
       .transform((v) => v ?? null),
     work_type: z.enum(WORK_TYPES, "Çalışma türü seçin."),
+    // Gönderilmezse dokunulmaz (eski istemciler); yeni kayıtta veritabanı varsayılanı (kaplamalı tohum) geçerli olur.
+    product_type: z.enum(PRODUCT_TYPES, "Ürün tipi seçin.").optional(),
     certificate_month: deliveryMonth("Sertifika teslim ayı"),
     monitoring_month: deliveryMonth("İzleme teslim ayı"),
     /** Bırakma izninin makamı ve numarası; girilmesi onay sayılmaz (doğrulama ayrı karar). */
@@ -203,6 +211,7 @@ export function toLandRow(data: SiteAdminData) {
     is_fire_affected: data.is_fire_affected,
     fire_year: data.is_fire_affected ? data.fire_year : null,
     work_type: data.work_type,
+    ...(data.product_type ? { product_type: data.product_type } : {}),
     certificate_month: data.certificate_month,
     monitoring_month: data.monitoring_month,
     permit_reference: data.permit_reference,

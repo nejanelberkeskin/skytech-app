@@ -14,7 +14,7 @@ type Dict<K extends string> = Record<LabelLocale, Record<K, string>>;
 
 export const REQUEST_TYPE_LABELS: Dict<ServiceRequestType> = {
   // seed_purchase: 2026-09'da kaldırılan tür — yalnız eski kayıtlar için.
-  tr: { seed_purchase: "Tohum talebi (eski)", land_application: "Kendi arazim için başvuru", open_land_seeding: "Sahaya tohum topu bıraktırma" },
+  tr: { seed_purchase: "Tohum talebi (eski)", land_application: "Kendi arazim için başvuru", open_land_seeding: "Sahaya tohum bıraktırma" },
   en: { seed_purchase: "Seed request (legacy)", land_application: "Own-land application", open_land_seeding: "Seed ball release" },
   ru: { seed_purchase: "Заявка на семена (архив)", land_application: "Заявка для собственного участка", open_land_seeding: "Сброс семенных шаров" },
 };
@@ -61,7 +61,7 @@ const FIELD: Dict<
   | "ownership" | "timing" | "mapLink" | "accessNotes" | "land" | "species" | "quantity"
   | "certificateName" | "unitPrice" | "estimatedTotal"
 > = {
-  tr: { seeds: "Tohum türleri", totalSeeds: "Toplam tohum", province: "İl", district: "İlçe", area: "Alan", conditions: "Arazi durumu", ownership: "Mülkiyet", timing: "Zamanlama", mapLink: "Konum bağlantısı", accessNotes: "Erişim / arazi notu", land: "Proje Uygulama Sahası", species: "Bırakılacak tür", quantity: "Tohum topu adedi", certificateName: "Sertifikadaki ad", unitPrice: "Birim bedel (KDV dâhil)", estimatedTotal: "Tahmini tutar (KDV dâhil)" },
+  tr: { seeds: "Tohum türleri", totalSeeds: "Toplam tohum", province: "İl", district: "İlçe", area: "Alan", conditions: "Arazi durumu", ownership: "Mülkiyet", timing: "Zamanlama", mapLink: "Konum bağlantısı", accessNotes: "Erişim / arazi notu", land: "Proje Uygulama Sahası", species: "Bırakılacak tür", quantity: "Adet", certificateName: "Sertifikadaki ad", unitPrice: "Birim bedel (KDV dâhil)", estimatedTotal: "Tahmini tutar (KDV dâhil)" },
   en: { seeds: "Seed species", totalSeeds: "Total seeds", province: "Province", district: "District", area: "Area", conditions: "Land condition", ownership: "Ownership", timing: "Timing", mapLink: "Map link", accessNotes: "Access / terrain notes", land: "Project Site", species: "Species released", quantity: "Seed balls", certificateName: "Name on certificate", unitPrice: "Unit price (VAT incl.)", estimatedTotal: "Estimated total (VAT incl.)" },
   ru: { seeds: "Виды семян", totalSeeds: "Всего семян", province: "Провинция", district: "Район", area: "Площадь", conditions: "Состояние участка", ownership: "Собственность", timing: "Сроки", mapLink: "Ссылка на карту", accessNotes: "Доступ / рельеф", land: "Проектный участок", species: "Древесная порода", quantity: "Семенные шары", certificateName: "Имя в сертификате", unitPrice: "Цена за шар (с НДС)", estimatedTotal: "Ориентировочная сумма (с НДС)" },
 };

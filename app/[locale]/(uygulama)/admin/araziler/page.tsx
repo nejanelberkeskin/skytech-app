@@ -15,6 +15,7 @@ import { CardStat, Button, Input, Select, Textarea } from "@/components/ui";
 
 import { TR_ILLER_ALFABETIK } from "@/lib/tr-iller";
 import { WORK_TYPES, type WorkType } from "@/lib/sites/types";
+import { PRODUCT_TYPES, type ProductType } from "@/lib/products";
 import { slugify } from "@/lib/sites/slug";
 import { MEDIA_LIMITS, type MediaKind } from "@/lib/sites/media-links";
 import {
@@ -22,6 +23,7 @@ import {
   LAND_STATUS_LABELS,
   SITE_LIMITS,
   WORK_TYPE_LABELS,
+  PRODUCT_TYPE_LABELS,
   siteAdminSchema,
   siteFieldErrors,
   type LandStatus,
@@ -48,6 +50,7 @@ interface SiteForm {
   is_fire_affected: boolean;
   fire_year: string;
   work_type: WorkType;
+  product_type: ProductType;
   species_slugs: string[];
   name_en: string;
   name_ru: string;
@@ -93,6 +96,7 @@ const EMPTY_FORM: SiteForm = {
   is_fire_affected: true,
   fire_year: "",
   work_type: "ormanlastirma_genclestirme",
+  product_type: "coated_seed",
   species_slugs: [],
   name_en: "",
   name_ru: "",
@@ -136,6 +140,7 @@ function formFromLand(l: Land): SiteForm {
     is_fire_affected: l.isFireAffected ?? false,
     fire_year: l.fireYear ? String(l.fireYear) : "",
     work_type: l.workType ?? "ormanlastirma_genclestirme",
+    product_type: l.productType ?? "coated_seed",
     species_slugs: l.speciesSlugs ?? [],
     name_en: l.nameI18n?.en ?? "",
     name_ru: l.nameI18n?.ru ?? "",
@@ -168,6 +173,7 @@ function payloadFromForm(f: SiteForm) {
     is_fire_affected: f.is_fire_affected,
     fire_year: f.is_fire_affected ? num(f.fire_year) : null,
     work_type: f.work_type,
+    product_type: f.product_type,
     species_slugs: f.species_slugs,
     name_en: f.name_en,
     name_ru: f.name_ru,
@@ -314,7 +320,7 @@ function SahalarContent() {
       {data && <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
         <CardStat icon="" label="Yayındaki Saha" value={fmt(published.length)} sub={`${fmt(openCount)} katılıma açık`} />
         <CardStat icon="" label="Toplam Alan" value={totalHectares.toLocaleString("tr-TR", { maximumFractionDigits: 2 })} sub="hektar (yayındaki sahalar)" />
-        <CardStat icon="" label="Bırakılan Tohum Topu" value={fmt(totalFilled)} sub="görüntüleme kapsamındaki sahalar" />
+        <CardStat icon="" label="Bırakılan Adet" value={fmt(totalFilled)} sub="görüntüleme kapsamındaki sahalar" />
         <CardStat icon="" label="Eksik Bilgi" value={fmt(missingInfo)} sub="hektarı ya da türü girilmemiş" />
       </div>}
 
@@ -384,6 +390,10 @@ function SahalarContent() {
                       <p>
                         <span className="text-slate-500">Çalışma:</span>{" "}
                         <span className="text-slate-800">{WORK_TYPE_LABELS[l.workType ?? "ormanlastirma_genclestirme"]}</span>
+                      </p>
+                      <p>
+                        <span className="text-slate-500">Ürün:</span>{" "}
+                        <span className="text-slate-800">{PRODUCT_TYPE_LABELS[l.productType ?? "coated_seed"]}</span>
                       </p>
                       <p className="break-words">
                         <span className="text-slate-500">Tür:</span>{" "}
@@ -577,6 +587,17 @@ function SiteModal({
                   <option key={w} value={w}>{WORK_TYPE_LABELS[w]}</option>
                 ))}
               </Select>
+              <Select
+                label="Bırakılan ürün"
+                value={form.product_type}
+                onChange={(e) => set("product_type", e.target.value as ProductType)}
+                error={fieldErrors.product_type}
+                helperText="Birim bedeli ve sözleşmedeki hizmet tanımını belirler. Değiştirmek yayın yetkisi ister."
+              >
+                {PRODUCT_TYPES.map((p) => (
+                  <option key={p} value={p}>{PRODUCT_TYPE_LABELS[p]}</option>
+                ))}
+              </Select>
             </div>
 
             <div className="grid sm:grid-cols-2 gap-4 items-start">
@@ -715,7 +736,7 @@ function SiteModal({
               </Select>
               <Input
                 disabled={!caps.capacity}
-                label="Kapasite (tohum topu)"
+                label="Kapasite (adet)"
                 required
                 inputMode="numeric"
                 placeholder="örn. 50000"
@@ -932,7 +953,7 @@ function DeleteModal({
             </p>
 
             {hasRecords && (
-              <div className="mt-3 p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-xs text-red-700">Bu sahada {fmt(land.capacity.filled)} bırakılmış ve {fmt(land.capacity.reserved)} ayrılmış tohum topu kaydı var; silinemez.
+              <div className="mt-3 p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-xs text-red-700">Bu sahada {fmt(land.capacity.filled)} bırakılmış ve {fmt(land.capacity.reserved)} ayrılmış adet kaydı var; silinemez.
                 Bunun yerine “Yayından al” düğmesini kullanın.
               </div>
             )}

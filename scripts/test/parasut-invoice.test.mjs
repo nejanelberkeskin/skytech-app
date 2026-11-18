@@ -29,7 +29,7 @@ function fakeParasut(opts = {}) {
       return json(200, { data: st.contacts.filter((c) => (tax && c.attributes.tax_number === tax) || (email && c.attributes.email === email)) });
     }
     if (p === '/contacts' && method === 'POST') { const c = { id: `c${st.seq++}`, type: 'contacts', attributes: body.data.attributes }; st.contacts.push(c); return json(201, { data: c }); }
-    if (p === '/products' && method === 'GET') return json(200, { data: st.products });
+    if (p === '/products' && method === 'GET') return json(200, { data: st.products.filter((r) => r.attributes.name === u.searchParams.get('filter[name]')) });
     if (p === '/products' && method === 'POST') { const r = { id: `p${st.seq++}`, type: 'products', attributes: body.data.attributes }; st.products.push(r); return json(201, { data: r }); }
     if (p === '/sales_invoices' && method === 'POST') {
       const d = body.data.relationships.details.data[0].attributes;
@@ -131,6 +131,18 @@ test('bireysel alıcı: e-Arşiv (internet satışı), TCKN yoksa yer tutucu; nu
   const ea = f.calls.find((c) => c.method === 'POST' && c.path.endsWith('/e_archives')).body.data;
   assert.deepEqual(ea.attributes.internet_sale, { url: 'https://skytechgreen.com', payment_type: 'KREDIKARTI/BANKAKARTI', payment_platform: 'iyzico', payment_date: '2026-10-10' });
   assert.equal(db.events[0].type, 'invoice_issued');
+  assert.equal(f.st.products[0].attributes.name, 'Yosun ekstraktı kaplamalı tohum bırakma hizmeti');
+  assert.match(si.relationships.details.data[0].attributes.description, /yosun ekstraktı kaplamalı tohum bırakma hizmeti/);
+});
+
+test('tohum topu sahası: ayrı ürün kartı ve 50 TL birim bedelin KDV hariç karşılığı', async () => {
+  const f = fakeParasut();
+  const inv = [pending()];
+  await run(memDb(inv, [order({ unit_price_kurus: 5000, total_kurus: 500000, site_snapshot: { name: 'Örnek Saha', productType: 'seed_ball' } })]), f.client);
+  assert.equal(inv[0].status, 'issued');
+  assert.equal(f.st.products[0].attributes.name, 'Tohum topu bırakma hizmeti');
+  const d = f.calls.find((c) => c.method === 'POST' && c.path.endsWith('/sales_invoices')).body.data.relationships.details.data[0].attributes;
+  assert.equal(d.unit_price, '41.66666667'); assert.match(d.description, /tohum topu bırakma hizmeti/);
 });
 
 test('e-Fatura kayıtlı kurum: e-Fatura (etiket alıcı adresi, ilişki adı "invoice")', async () => {

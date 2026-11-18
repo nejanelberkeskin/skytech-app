@@ -16,9 +16,10 @@ export async function renderCertificate(
   locale: string,
   format: CertificateFormat,
 ) {
-  const [t, seeds, [regular, bold, logo]] = await Promise.all([
+  const [t, seeds, products, [regular, bold, logo]] = await Promise.all([
     getTranslations({ locale, namespace: "certificatePage" }),
     getTranslations({ locale, namespace: "ourSeeds" }),
+    getTranslations({ locale, namespace: "products" }),
     assets,
   ]);
   const layout = CERT_LAYOUT[format];
@@ -112,7 +113,7 @@ export async function renderCertificate(
         ))}
       </div>
       <div style={{ ...layout.quantity, color: "#c7e99e", fontWeight: 700 }}>
-        {t("image.quantity", { quantity })}
+        {t("image.quantity", { quantity, unit: products(`${cert.productType}.unit`) })}
       </div>
       <div style={layout.site}>{t("image.site", { site: cert.siteName })}</div>
       <div style={{ ...layout.date, color: "#d0dfce" }}>

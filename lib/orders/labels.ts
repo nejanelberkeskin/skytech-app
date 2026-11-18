@@ -87,7 +87,7 @@ export const CUSTOMER_STATUS_HINTS: Partial<Record<OrderStatus, string>> = {
   paid: "Siparişiniz kesinleşti; 14 günlük cayma süresi işliyor.",
   confirmed: "Cayma süresi tamamlandı; siparişiniz bırakma planına alınabilir.",
   scheduled: "Siparişiniz bir bırakma çalışmasına atandı.",
-  released: "Tohum toplarınız sahaya bırakıldı; Katılım Sertifikanız düzenlendi.",
+  released: "Tohumlarınız sahaya bırakıldı; Katılım Sertifikanız düzenlendi.",
   monitoring: "Saha inceleniyor, izleniyor ve raporlanıyor.",
   completed: "Çalışmanın görüntüleri paylaşıldı.",
   withdrawal_requested: "Cayma bildiriminiz alındı; bedelin tamamı 14 gün içinde iade edilir.",

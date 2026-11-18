@@ -33,7 +33,7 @@ import {
    sürer. Başkası aynı anda kaydettiyse üzerine yazılmaz (409).
    ═══════════════════════════════════════════════════════════════════════ */
 
-type Form = Record<"price" | "vat" | "min" | "max" | "presets" | "prep" | "ttl", string> & {
+type Form = Record<"price" | "ballPrice" | "vat" | "min" | "max" | "presets" | "prep" | "ttl", string> & {
   timing: InvoiceTiming | "";
   paused: boolean;
 };
@@ -44,7 +44,8 @@ const TIMING_LABELS: Record<InvoiceTiming, string> = {
 };
 
 const FIELD_LABELS: Record<keyof SalesSettings, string> = {
-  unitPriceKurus: "Birim bedel",
+  unitPriceKurus: "Kaplamalı tohum birim bedeli",
+  seedBallUnitPriceKurus: "Tohum topu birim bedeli",
   minQuantity: "En az adet",
   maxQuantity: "En çok adet",
   quantityPresets: "Hazır seçenekler",
@@ -58,6 +59,7 @@ const FIELD_LABELS: Record<keyof SalesSettings, string> = {
 /** Form alanı → ayar alanı (hata iletisini doğru kutuya koymak için). */
 const FORM_FIELD: Record<keyof SalesSettings, keyof Form> = {
   unitPriceKurus: "price",
+  seedBallUnitPriceKurus: "ballPrice",
   minQuantity: "min",
   maxQuantity: "max",
   quantityPresets: "presets",
@@ -71,6 +73,7 @@ const FORM_FIELD: Record<keyof SalesSettings, keyof Form> = {
 const L = SETTINGS_LIMITS;
 const RANGE_TEXT: Record<keyof SalesSettings, string> = {
   unitPriceKurus: `${formatTry(L.unitPriceKurus.min, "tr")} ile ${formatTry(L.unitPriceKurus.max, "tr")} arasında olmalı.`,
+  seedBallUnitPriceKurus: `${formatTry(L.unitPriceKurus.min, "tr")} ile ${formatTry(L.unitPriceKurus.max, "tr")} arasında olmalı.`,
   minQuantity: `${formatCount(L.minQuantity.min, "tr")} ile ${formatCount(L.minQuantity.max, "tr")} arasında olmalı.`,
   maxQuantity: `${formatCount(L.maxQuantity.min, "tr")} ile ${formatCount(L.maxQuantity.max, "tr")} arasında olmalı.`,
   quantityPresets: "Her seçenek geçerli bir adet olmalı.",
@@ -122,6 +125,7 @@ const rateText = (rate: number) => String(rate).replace(".", ",");
 function toForm(s: SalesSettings): Form {
   return {
     price: priceText(s.unitPriceKurus),
+    ballPrice: priceText(s.seedBallUnitPriceKurus),
     vat: rateText(s.vatRate),
     min: String(s.minQuantity),
     max: String(s.maxQuantity),
@@ -138,6 +142,7 @@ function repairForm(raw: Record<string, unknown>): Form {
   const numberText = (v: unknown) => typeof v === "number" || typeof v === "string" ? String(v) : "";
   return {
     price: typeof raw.unitPriceKurus === "number" ? priceText(raw.unitPriceKurus) : numberText(raw.unitPriceKurus),
+    ballPrice: typeof raw.seedBallUnitPriceKurus === "number" ? priceText(raw.seedBallUnitPriceKurus) : numberText(raw.seedBallUnitPriceKurus),
     vat: numberText(raw.vatRate), min: numberText(raw.minQuantity), max: numberText(raw.maxQuantity),
     presets: Array.isArray(raw.quantityPresets) ? raw.quantityPresets.map(numberText).join(", ") : "",
     timing: raw.invoiceTiming === "on_payment" || raw.invoiceTiming === "on_performance" ? raw.invoiceTiming : "",
@@ -151,6 +156,7 @@ function formErrors(fields: Record<string, string>) {
 function fromForm(f: Form): SalesSettings {
   return {
     unitPriceKurus: parsePrice(f.price),
+    seedBallUnitPriceKurus: parsePrice(f.ballPrice),
     minQuantity: parseWhole(f.min),
     maxQuantity: parseWhole(f.max),
     quantityPresets: f.presets.split(/[,;]+/).map((p) => p.trim()).filter(Boolean).map(parseWhole),
@@ -168,7 +174,8 @@ function valueText(field: string, value: unknown): string {
       (typeof value !== "number" || !Number.isFinite(value))) return `Geçersiz kayıt (${String(value)})`;
   if (Array.isArray(value)) return value.map((v) => formatCount(Number(v), "tr")).join(" · ");
   switch (field) {
-    case "unitPriceKurus": return formatTry(Number(value), "tr");
+    case "unitPriceKurus":
+    case "seedBallUnitPriceKurus": return formatTry(Number(value), "tr");
     case "vatRate": return `%${rateText(Number(value))}`;
     case "invoiceTiming": return TIMING_LABELS[value as InvoiceTiming] ?? String(value);
     case "prepDays": return `${value} gün`;
@@ -194,7 +201,7 @@ function consequences(changes: SettingsChange[], openCheckouts: number | undefin
       `Sihirbazın son adımındaki müşteriler güncel ${has("prepDays") ? "tutarı ve takvimi" : "tutarı"} görüp siparişi yeniden onaylar. Oluşturulmuş siparişler (${openCheckouts === undefined ? "sayısını görüntüleme yetkiniz yok" : `şu an ${openCheckouts}`} ödeme bekleyen dâhil) kendi tutarı ve belgeleriyle sürer.`,
     );
   }
-  if (has("unitPriceKurus") || has("vatRate")) {
+  if (has("unitPriceKurus") || has("seedBallUnitPriceKurus") || has("vatRate")) {
     out.push("Sihirbaz, örnek sözleşme ve ön bilgilendirme sayfaları yeni değeri hemen kullanır.");
   }
   if (has("minQuantity")) out.push("Ana sayfadaki hizmet kartı ve SSS'deki en az adet de değişir.");
@@ -383,18 +390,26 @@ export default function SalesSettingsForm() {
 
           {data.state && <section className="rounded-xl border border-slate-200 p-4 space-y-3"><h2 className="font-semibold text-slate-900">Sipariş alımı</h2><p className="text-sm text-slate-800">{data.state.ordersPaused ? "Çevrim içi sipariş alımı durduruldu." : "Panelde sipariş alımı açık."} {data.state.accepting ? "Şu anda yeni sipariş kabul ediliyor." : "Diğer yayın koşulları nedeniyle de sipariş alımı kapalı olabilir."}</p><p className="text-xs text-slate-600">Son kayıt: {when(data.state.updatedAt)}</p>{!data.state.ordersPaused&&data.capabilities.pause&&<Button variant="danger" disabled={saving||blocked||data.state.repairRequired} onClick={()=>reviewState(true)}>Sipariş alımını durdur</Button>}{data.state.ordersPaused&&data.capabilities.resume&&<Button disabled={saving||blocked||data.state.repairRequired} onClick={()=>reviewState(false)}>Sipariş alımını yeniden aç</Button>}</section>}
           {data.openCheckouts!==undefined&&<p className="text-sm text-slate-700">Ödeme bekleyen sipariş: {data.openCheckouts}</p>}
-          {data.settings?.values && <div className="bg-white ring-1 ring-slate-200 rounded-2xl p-5 text-sm text-slate-700 space-y-1"><p>Şu an geçerli: {formatTry(data.settings.values.unitPriceKurus,"tr")} / tohum topu (KDV dahil) · en az {formatCount(data.settings.values.minQuantity,"tr")} · KDV %{rateText(data.settings.values.vatRate)}</p><p className="text-xs text-slate-600">Teklif sürümü: {data.settings.quoteVersion}</p></div>}
+          {data.settings?.values && <div className="bg-white ring-1 ring-slate-200 rounded-2xl p-5 text-sm text-slate-700 space-y-1"><p>Şu an geçerli: {formatTry(data.settings.values.unitPriceKurus,"tr")} / kaplamalı tohum · {formatTry(data.settings.values.seedBallUnitPriceKurus,"tr")} / tohum topu (KDV dahil) · en az {formatCount(data.settings.values.minQuantity,"tr")} · KDV %{rateText(data.settings.values.vatRate)}</p><p className="text-xs text-slate-600">Teklif sürümü: {data.settings.quoteVersion}</p></div>}
           {form && data.settings && data.capabilities.pricing && <fieldset disabled={saving||blocked} className="space-y-6">
           <section className="bg-white border border-white/[0.06] rounded-2xl p-5 space-y-4">
             <h2 className="font-semibold text-slate-900 text-sm">Fiyat</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Input
-                label="Birim bedel — TL, KDV dâhil"
+                label="Yosun ekstraktı kaplamalı tohum — TL, KDV dâhil"
                 inputMode="decimal"
                 value={form.price}
                 onChange={(e) => set("price", e.target.value)}
                 error={errorFor("price")}
-                helperText="Tohum topu başına. Örnek: 10 ya da 10,50"
+                helperText="Tohum başına. Örnek: 10 ya da 10,50"
+              />
+              <Input
+                label="Tohum topu — TL, KDV dâhil"
+                inputMode="decimal"
+                value={form.ballPrice}
+                onChange={(e) => set("ballPrice", e.target.value)}
+                error={errorFor("ballPrice")}
+                helperText="Tohum topu başına. Sahanın ürün tipi saha kaydından seçilir."
               />
               <Input
                 label="KDV oranı — %"
@@ -402,12 +417,12 @@ export default function SalesSettingsForm() {
                 value={form.vat}
                 onChange={(e) => set("vat", e.target.value)}
                 error={errorFor("vat")}
-                helperText={vatUnusual ? "Dikkat: Türkiye'de uygulanan oranlar 0, 1, 10 ve 20. Mali müşavirle teyit edin." : "Birim bedelin içindeki KDV; bedel değişmez, yalnız vergi ayrımı değişir."}
+                helperText={vatUnusual ? "Dikkat: Türkiye'de uygulanan oranlar 0, 1, 10 ve 20. Mali müşavirle teyit edin." : "Birim bedellerin içindeki KDV; bedel değişmez, yalnız vergi ayrımı değişir."}
               />
             </div>
             {preview && (
               <p className="text-xs text-slate-600">
-                Örnek: {formatCount(preview.min, "tr")} tohum topu → <span className="text-slate-900">{formatTry(preview.total, "tr")}</span> (içindeki KDV {formatTry(preview.vat, "tr")})
+                Örnek: {formatCount(preview.min, "tr")} kaplamalı tohum → <span className="text-slate-900">{formatTry(preview.total, "tr")}</span> (içindeki KDV {formatTry(preview.vat, "tr")})
               </p>
             )}
           </section>

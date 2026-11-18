@@ -12,7 +12,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   return buildPageMetadata(
     {
       title: TITLE,
-      description: "Skytech Green tohum topu bıraktırma hizmeti için sipariş öncesi ön bilgilendirme formunun örnek metni: hizmetin nitelikleri, toplam bedel, ifa ve cayma hakkı.",
+      description: "Skytech Green bıraktırma hizmeti için sipariş öncesi ön bilgilendirme formunun örnek metni: hizmetin nitelikleri, toplam bedel, ifa ve cayma hakkı.",
       path: PATH,
       // Taslak metin arama motorlarına verilmez.
       noindex: isDraftLegalVersion(),

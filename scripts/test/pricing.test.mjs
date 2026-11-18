@@ -22,3 +22,15 @@ assert.equal(formatTry(5_000_000, "tr"), "50.000 TL");
 assert.equal(formatTry(1050, "tr"), "10,50 TL");
 assert.equal(formatTry(1005, "en"), "₺10.05");
 console.log("✓ pricing testleri geçti");
+
+// Ürün tipi: birim bedel sahanın ürününe göre seçilir (046).
+{
+  const S = await import("../../lib/orders/settings-schema.ts");
+  const Pr = await import("../../lib/products.ts");
+  const s = { unitPriceKurus: 1000, seedBallUnitPriceKurus: 5000 };
+  assert.equal(S.unitPriceFor("coated_seed", s), 1000);
+  assert.equal(S.unitPriceFor("seed_ball", s), 5000);
+  assert.equal(Pr.productTypeOf(undefined), "coated_seed", "eski kayıt varsayılan ürüne düşer");
+  assert.equal(Pr.productTypeOf("seed_ball"), "seed_ball");
+  assert.equal(Pr.productTypeOf("x"), "coated_seed");
+}

@@ -93,14 +93,14 @@ function DashboardContent({ me }: { me: AdminMe }) {
   };
   add(full("finance.read"), k?.netRevenueKurus, FINANCE_DEFINITIONS.heldOrderValue.label, "", "Tüm zamanlar · iade sürecindekiler hariç", "/admin/finans", true);
   add(full("orders.read"), k?.orderCount, "Siparişler", "", "Ödenmiş ve iade sürecinde olmayan", "/admin/birakma-siparisleri");
-  add(full("orders.read"), k?.releasedQuantity, "Bırakılan Tohum Topu", "", "Bırakması tamamlanan siparişler");
+  add(full("orders.read"), k?.releasedQuantity, "Bırakılan Adet", "", "Bırakması tamamlanan siparişler");
   add(full("requests.read"), k?.newRequests, "Yeni Talepler", "", numeric(k?.contactedRequests) ? `${formatCount(k.contactedRequests, "tr")} talep için iletişim kuruldu` : "", "/admin/talepler");
   add(full("finance.read"), k?.pendingRefunds, "Bekleyen Sipariş İadeleri", "↩️", "İadesi tamamlanmamış siparişler", "/admin/iadeler");
   add(full("finance.read"), k?.pendingDuplicateRefunds, "Çift Tahsilat İadeleri", "↩️", "İadesi bekleyen ikinci ödemeler", "/admin/iadeler");
   add(full("invoices.read"), k?.pendingInvoices, "Bekleyen Faturalar", "", "Düzenlenmesi bekleyen faturalar", "/admin/finans");
   add(full("batches.read"), k?.awaitingBatch, "Partiye Alınacak Siparişler", "", "Planlama bekleyen siparişler", "/admin/birakma-partileri");
   add(["SUPER_ADMIN", "FINANCE"].includes(me.admin.legacyRole), k?.pendingB2b, "Bekleyen B2B Teklifleri", "", numeric(k?.quotedB2b) ? `${formatCount(k.quotedB2b, "tr")} teklif fiyatlandırıldı` : "", "/admin/b2b");
-  add(full("sites.read"), k?.publicSites, "Yayındaki Sahalar", "", numeric(k?.freeCapacity) ? `${formatCount(k.freeCapacity, "tr")} tohum topu boş kapasite` : "", "/admin/araziler");
+  add(full("sites.read"), k?.publicSites, "Yayındaki Sahalar", "", numeric(k?.freeCapacity) ? `${formatCount(k.freeCapacity, "tr")} adet boş kapasite` : "", "/admin/araziler");
 
   const seedMonths = full("orders.read") ? (data?.monthlyGrowth ?? []).flatMap((p) => numeric(p.seeds) ? [{ month: p.month, seeds: p.seeds }] : []) : [];
   const moneyMonths = full("finance.read") ? (data?.monthlyGrowth ?? []).flatMap((p) => numeric(p.revenue) ? [{ month: p.month, revenue: p.revenue }] : []) : [];
@@ -145,7 +145,7 @@ function DashboardContent({ me }: { me: AdminMe }) {
         <NetCashChart months={moneyMonths} />
       </div>}
       {seedMonths.length > 0 && <div className={panel}>
-        <h2 className="font-semibold text-slate-900">Aylık Tohum Topu (sipariş)</h2>
+        <h2 className="font-semibold text-slate-900">Aylık Adet (sipariş)</h2>
         <p className="mb-5 mt-2 text-xs text-slate-600">Son 6 ay · ödenen siparişlerdeki adet</p>
         <div className="space-y-4">
           {seedMonths.map((m) => <div key={m.month} className="text-sm">
@@ -161,7 +161,7 @@ function DashboardContent({ me }: { me: AdminMe }) {
       <h2 className="font-semibold text-slate-900">Saha Kapasitesi</h2>
       {alerts.length === 0 ? <p className="mt-3 text-sm text-slate-700">Yayındaki sahalarda %90 ve üzeri doluluk uyarısı bulunmuyor.</p> : <ul className="mt-3 divide-y divide-slate-200">
         {alerts.map((alert) => <li key={alert.id} className="flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="min-w-0"><p className="break-words font-medium text-slate-900">{alert.name}</p><p className="mt-1 text-sm text-slate-600">{alert.available > 0 ? `${formatCount(alert.available, "tr")} tohum topu yer kaldı` : "Kapasite tamamen doldu"}</p></div>
+          <div className="min-w-0"><p className="break-words font-medium text-slate-900">{alert.name}</p><p className="mt-1 text-sm text-slate-600">{alert.available > 0 ? `${formatCount(alert.available, "tr")} adet yer kaldı` : "Kapasite tamamen doldu"}</p></div>
           <p className={`shrink-0 text-sm font-semibold ${alert.pct >= 100 ? "text-red-700" : "text-amber-800"}`}>%{alert.pct} dolu</p>
         </li>)}
       </ul>}

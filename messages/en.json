@@ -33,14 +33,14 @@
     "badge": "Reforestation · Regeneration · Monitoring",
     "headlineLine1": "We Are Greening Nature",
     "headlineLine2": "with Technology",
-    "subtitle": "We release seed balls by drone over fire-affected and hard-to-reach sites. Because we work without entering the land, the soil and wildlife are left undisturbed.",
+    "subtitle": "We release seeds by drone over fire-affected and hard-to-reach sites. Because we work without entering the land, the soil and wildlife are left undisturbed.",
     "ctaPrimary": "Buy Now",
     "ctaSecondary": "Corporate Solutions",
     "trustForestRegions": "Coordinated with Regional Forestry Directorates",
     "trustAnnualReport": "Annual drone monitoring",
     "trustCertificate": "Certificate of Participation",
     "discover": "Explore",
-    "backgroundAlt": "Forest site where seed balls are released by drone",
+    "backgroundAlt": "Forest site where seeds are released by drone",
     "ctaRequest": "Submit a Request"
   },
   "valueCards": {
@@ -1203,8 +1203,8 @@
     }
   },
   "homeMeta": {
-    "title": "Reforestation with Seed Ball Technology",
-    "description": "We release seed balls by drone over fire-affected sites. Join a Project Site or apply for your own land, and follow the work through reports and footage."
+    "title": "Reforestation with Drone and Seed Technology",
+    "description": "We release seeds by drone over fire-affected sites. Join a Project Site or apply for your own land, and follow the work through reports and footage."
   },
   "cookieConsent": {
     "message": "We use optional cookies to measure site usage. You can change your choice at any time.",
@@ -1273,8 +1273,8 @@
         "contactRequired": "Enter at least one of phone or e-mail.",
         "consentRequired": "Tick the contact request so we can get back to you.",
         "quantityInvalid": "Quantity must be a whole number.",
-        "quantityMin": "The minimum is {min} seed balls.",
-        "quantityMax": "You can choose at most {max} seed balls per order; write to us for more.",
+        "quantityMin": "The minimum is {min}.",
+        "quantityMax": "You can choose at most {max} per order; write to us for more.",
         "provinceRequired": "Select a province.",
         "provinceInvalid": "Invalid province.",
         "areaRequired": "Enter the area size.",
@@ -1314,8 +1314,8 @@
     },
     "land": {
       "meta": {
-        "title": "For My Own Land — Drone Seed Ball Release Application",
-        "description": "Apply for a drone seed ball release on your burnt, degraded or idle land. Share the location, area and land condition; survey and planning are on us."
+        "title": "For My Own Land — Drone Seed Release Application",
+        "description": "Apply for a drone seed release on your burnt, degraded or idle land. Share the location, area and land condition; survey and planning are on us."
       },
       "breadcrumb": {
         "label": "For My Own Land",
@@ -1403,13 +1403,13 @@
       "recent": "Recent records",
       "seeAll": "View all →",
       "empty": "No records are linked to your account.",
-      "firstRequest": "Release seed balls →",
-      "seedBalls": "{count, plural, one {# seed ball} other {# seed balls}}",
+      "firstRequest": "Release seeds →",
+      "seedBalls": "{count, number} units",
       "actions": {
-        "openLandTitle": "Have Seed Balls Released on a Site",
+        "openLandTitle": "Have Seeds Released on a Site",
         "openLandDesc": "Choose a Project Site and set the quantity",
         "ownLandTitle": "For My Own Land",
-        "ownLandDesc": "Application for drone seed ball release on your land"
+        "ownLandDesc": "Application for drone seed release on your land"
       }
     },
     "requests": {
@@ -1418,8 +1418,8 @@
       "newRequest": "+ Buy",
       "empty": "No records are linked to your account.",
       "emptyHint": "If you left an order record without signing in, you can link it to your account with the link in the confirmation email.",
-      "firstRequest": "Release seed balls →",
-      "seeds": "{count, plural, one {# seed ball} other {# seed balls}}",
+      "firstRequest": "Release seeds →",
+      "seeds": "{count, number} units",
       "contact": "Contact",
       "yourNote": "Your note",
       "hints": {
@@ -1433,7 +1433,7 @@
     },
     "orders": {
       "title": "My Orders",
-      "subtitle": "Your seed ball release orders for Project Sites.",
+      "subtitle": "Your release orders for Project Sites.",
       "sitesCta": "Project Sites",
       "linked": "{count, plural, one {# order you previously placed with this email address has been linked to your account.} other {# orders you previously placed with this email address have been linked to your account.}}",
       "loadError": "Your orders could not be loaded right now. Please refresh the page.",
@@ -1442,7 +1442,7 @@
       "browseSites": "Explore the sites →",
       "testBadge": "TEST",
       "rows": {
-        "quantity": "Seed ball quantity",
+        "quantity": "Quantity",
         "total": "Total service fee (VAT included)",
         "certificateName": "Name on certificate",
         "releasedOn": "Release date",
@@ -1453,7 +1453,7 @@
         "paid": "Your order is placed; the 14-day withdrawal period is running.",
         "confirmed": "The withdrawal period has ended; your order can be added to the release plan.",
         "scheduled": "Your order has been assigned to a release operation.",
-        "released": "Your seed balls have been released on the site; your Certificate of Participation has been issued.",
+        "released": "Your seeds have been released on the site; your Certificate of Participation has been issued.",
         "monitoring": "The site is being inspected, monitored and reported on.",
         "completed": "Footage of the work has been shared.",
         "withdrawal_requested": "Your withdrawal notice has been received; the full amount will be refunded within 14 days.",
@@ -2034,7 +2034,7 @@
   },
   "siteReleases": {
     "title": "Work at this site",
-    "intro": "Completed seed ball releases at this site. Footage is published during the monitoring period following each release.",
+    "intro": "Completed releases at this site. Footage is published during the monitoring period following each release.",
     "season": "{season} season",
     "play": "Play video",
     "playNamed": "Play the video of the release on {date}",
@@ -2087,8 +2087,8 @@
         "description": "Your order has been assigned to a release operation."
       },
       "released": {
-        "title": "Seed balls released",
-        "description": "Your seed balls have been released at the site; your Certificate of Participation has been issued."
+        "title": "Release completed",
+        "description": "Your seeds have been released at the site; your Certificate of Participation has been issued."
       },
       "monitoring": {
         "title": "Monitoring period",
@@ -2105,7 +2105,7 @@
       "location": "Location",
       "workType": "Type of work",
       "species": "Species",
-      "quantity": "Seed ball quantity",
+      "quantity": "Quantity",
       "unitPrice": "Service fee per seed ball",
       "total": "Total service fee (VAT included)",
       "certificateName": "Name on certificate"
@@ -2154,7 +2154,7 @@
       "ready": "Your Certificate of Participation is ready.",
       "cancelled": "The Certificate of Participation for this order has been cancelled.",
       "view": "View certificate",
-      "pending": "Your certificate will be emailed when seed ball release is complete.",
+      "pending": "Your certificate will be emailed when the release is complete.",
       "publication": {
         "visible": "Your name may appear on the public certificate with your separate permission.",
         "hidden": "Your name is hidden on the public certificate. Copies previously saved by others are not deleted by this action.",
@@ -2366,12 +2366,12 @@
   },
   "sitesPage": {
     "title": "Project Sites",
-    "intro": "Take part in the recovery of fire-affected forests. Choose a site and have seed balls released there on your behalf.",
+    "intro": "Take part in the recovery of fire-affected forests. Choose a site and have seeds released there on your behalf.",
     "description": "Explore the area, work type and species of each project site below.",
     "ownLand": "I would like work carried out on my own land",
     "fire": "Fire-affected site",
     "hectares": "{value} hectares",
-    "participate": "Release Seed Balls",
+    "participate": "Release Seeds",
     "details": "Explore the site",
     "info": "Get information",
     "empty": {
@@ -2392,7 +2392,7 @@
     }
   },
   "siteDetail": {
-    "meta": "Explore the area, species and seed ball release schedule for {name}.",
+    "meta": "Explore the area, species and release schedule for {name}.",
     "location": "Location",
     "area": "Area",
     "workType": "Work type",
@@ -2403,7 +2403,7 @@
     "gallery": "Site images",
     "galleryAlt": "{name} — {location} — site image {number}",
     "video": "Footage of the work",
-    "order": "Have seed balls released at this site",
+    "order": "Have seeds released at this site",
     "back": "Back to all sites",
     "reasons": {
       "kizilcam": "Native to the Mediterranean climate, it tolerates heat and drought. It is among the species that naturally return after forest fires.",
@@ -2415,11 +2415,11 @@
       "open": "This site is not currently accepting new participation.",
       "full": "This site is fully subscribed. You can explore other sites.",
       "scheduled": "The release date has been scheduled for this site.",
-      "released": "Seed ball release at this site has been completed.",
+      "released": "The release at this site has been completed.",
       "monitoring": "Monitoring and reporting continue at this site."
     },
-    "sticky": "Release seed balls at this site",
-    "stickyPrice": "{price} per seed ball",
+    "sticky": "Release seeds at this site",
+    "stickyPrice": "{price} per {unit}",
     "media": {
       "title": "News and videos",
       "subtitle": "News coverage and footage about this site.",
@@ -2436,8 +2436,8 @@
   },
   "seasonTimeline": {
     "title": "Work schedule",
-    "description": "Seed balls are released from November to March. Sites are surveyed and monitored, with reporting from April to September.",
-    "release": "Seed ball release",
+    "description": "Releases take place from November to March. Sites are surveyed and monitored, with reporting from April to September.",
+    "release": "Release",
     "monitoring": "Monitoring and reporting",
     "offSeason": "Outside release season",
     "current": "Current month",
@@ -2460,17 +2460,17 @@
     "copyError": "The link could not be copied. You can copy it from your browser’s address bar.",
     "share": "Share",
     "shareError": "Sharing could not be opened. You can copy the link instead.",
-    "shareText": "I had {quantity} seed balls released at {site}. #SkytechGreen",
-    "quantity": "{quantity} seed balls",
+    "shareText": "I had {quantity} {unit} released at {site}. #SkytechGreen",
+    "quantity": "{quantity} {unit}",
     "details": "Record of the work",
     "meaning": "What does this certificate document?",
-    "records": "It documents the release by drone of the stated number of seed balls at the specified site.",
+    "records": "It documents the release by drone of the stated quantity of the stated product at the specified site.",
     "monitoring": "The site is monitored in the following seasons.",
     "video": "Footage of the work",
     "sites": "Project Sites",
     "notes": {
       "document": "This is a Certificate of Participation, not a donation receipt. It does not provide a tax deduction.",
-      "nature": "The seed balls have been released into nature. Germination and growth depend on natural conditions and are not guaranteed."
+      "nature": "The seeds have been released into nature. Germination and growth depend on natural conditions and are not guaranteed."
     },
     "facts": {
       "site": "Site",
@@ -2483,7 +2483,7 @@
       "code": "Certificate code"
     },
     "image": {
-      "quantity": "{quantity} seed balls",
+      "quantity": "{quantity} {unit}",
       "site": "were released by drone at {site}",
       "date": "on {date}."
     },
@@ -2501,15 +2501,15 @@
     "rows": {
       "orderNo": "Order number",
       "site": "Project Site",
-      "quantity": "Seed balls",
+      "quantity": "Quantity",
       "total": "Total (VAT included)"
     },
     "success": {
       "badge": "Payment approved",
       "title": "Your order is confirmed",
-      "body": "Your payment has been approved and your contract is concluded. Your seed ball release order has been recorded.",
+      "body": "Your payment has been approved and your contract is concluded. Your release order has been recorded.",
       "email": "Your order confirmation is sent by e-mail to {email} together with the Preliminary Information Form, the Distance Service Agreement, the Withdrawal Form and the Personal Data Notice (KVKK). If it does not arrive within a few minutes, please check your spam folder.",
-      "deadline": "The seed balls will be released no later than {date}.",
+      "deadline": "The release will be carried out no later than {date}.",
       "withdrawal": "You may withdraw, without giving any reason, until the end of {date}.",
       "cta": "View my order",
       "sites": "Project Sites"
@@ -2558,8 +2558,8 @@
     "cta": "Project Sites"
   },
   "orderWizard": {
-    "title": "Have seed balls released at this site",
-    "description": "Choose the quantity, enter the certificate name and your billing details; we release your seed balls on site by drone.",
+    "title": "Have seeds released at this site",
+    "description": "Choose the quantity, enter the certificate name and your billing details; we release your seeds on site by drone.",
     "orderMode": "Order",
     "requestMode": "Participation request",
     "next": "Continue",
@@ -2579,13 +2579,13 @@
       "review": "Review and confirm"
     },
     "quantity": {
-      "title": "Seed balls to release",
+      "title": "Quantity to release",
       "description": "Choose a preset or enter a quantity.",
-      "label": "Seed ball quantity",
+      "label": "Quantity",
       "speciesNote": "Our specialists select the species for the site's climate and soil; you do not need to choose.",
       "unit": "Service price per seed ball",
       "vatIncluded": "VAT included",
-      "selected": "{count} seed balls",
+      "selected": "{count} units",
       "change": "Change quantity"
     },
     "certificate": {
@@ -2596,7 +2596,7 @@
       "fallback": "If left blank, your first and last name will be used.",
       "placeholder": "Your full name",
       "preview": "Participation Certificate — {name}",
-      "delivery": "The certificate is emailed when seed ball release is complete.",
+      "delivery": "The certificate is emailed when the release is complete.",
       "mode": {
         "own": "My own name (as entered in the buyer details)",
         "company": "Company name (with a corporate invoice)",
@@ -2649,7 +2649,7 @@
       "monitoringDeadline": "Monitoring content is shared by {date} at the latest.",
       "rolled": "The preparation window for this season has closed, so your order is scheduled for the {season} season.",
       "withdrawalTitle": "Right of withdrawal",
-      "withdrawal": "You may withdraw without giving a reason within 14 days of payment. The full amount will be refunded to your original payment method within 14 days of your notice. Seed ball release will not take place before the withdrawal period ends.",
+      "withdrawal": "You may withdraw without giving a reason within 14 days of payment. The full amount will be refunded to your original payment method within 14 days of your notice. The release will not take place before the withdrawal period ends.",
       "loading": "Preparing total and documents…",
       "retryNote": "Try again to load the summary. Your details have been retained.",
       "pay": "Confirm Order and Pay ({total})",
@@ -2717,8 +2717,8 @@
       "contractRequired": "Accept the agreement to continue.",
       "corporateAuthorityRequired": "Confirm your authority to continue.",
       "certificatePublicationSelfOnly": "You can give publication consent only for your own name.",
-      "quantityMin": "Select at least {min} seed balls.",
-      "quantityMax": "Select up to {max} seed balls per order; contact us for larger quantities.",
+      "quantityMin": "Select at least {min}.",
+      "quantityMax": "Select up to {max} per order; contact us for larger quantities.",
       "quantityInvalid": "Quantity must be a whole number.",
       "certificateNameShort": "The name on the certificate must be at least {min} characters.",
       "certificateNameLong": "The name on the certificate can be at most {max} characters.",
@@ -2751,5 +2751,18 @@
   "institutionLogos": {
     "label": "Institution logos",
     "open": "{name} website (opens in a new tab)"
+  },
+  "products": {
+    "label": "Product",
+    "coated_seed": {
+      "name": "Seaweed-Extract Coated Seed",
+      "unit": "seeds",
+      "short": "Seeds coated with seaweed extract, released on site by drone."
+    },
+    "seed_ball": {
+      "name": "Seed Ball",
+      "unit": "seed balls",
+      "short": "Seed balls prepared with clay and nutrients, released on site by drone."
+    }
   }
 }

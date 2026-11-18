@@ -7,7 +7,7 @@ import { trackLead } from "@/lib/analytics";
 import { CONTACT_FIELD_ORDER, problemsFromResponse, validateContact, type ContactField, type ContactProblem } from "@/lib/contact-form";
 
 const inputClass =
-  "w-full px-4 py-3 rounded-xl bg-white border border-black/10 text-sm text-[#1a2e1a] placeholder:text-[#94b494] focus:outline-none focus:border-[#1B6B3A]/40 focus:ring-2 focus:ring-[#1B6B3A]/15 transition-all disabled:opacity-60 aria-[invalid=true]:border-[#dc2626]/60";
+  "w-full px-4 py-3 rounded-[10px] bg-white border border-[#14261a]/25 text-sm text-[#14261a] placeholder:text-[#6b8f6b] focus:outline-none focus:border-[#1B6B3A] focus:ring-1 focus:ring-[#1B6B3A] transition-colors disabled:opacity-60 aria-[invalid=true]:border-[#dc2626]/60";
 
 type Status = "idle" | "submitting" | "success" | "error" | "uncertain";
 type Problems = Partial<Record<ContactField, ContactProblem>>;
@@ -154,10 +154,10 @@ export default function InfoForm() {
   if (status === "success") {
     return (
       <div ref={success} role="status" tabIndex={-1} className="vitrin-card p-7 lg:p-10 text-center">
-        <div className="w-14 h-14 mx-auto rounded-2xl bg-[#1B6B3A]/10 flex items-center justify-center mb-5">
+        <div className="w-14 h-14 mx-auto rounded-lg bg-[#1B6B3A]/8 flex items-center justify-center mb-5">
           <CheckIcon className="w-7 h-7 text-[#1B6B3A]" />
         </div>
-        <h2 className="text-2xl font-bold text-[#1a2e1a] mb-2">{t("form.success.title")}</h2>
+        <h2 className="text-2xl font-bold text-[#14261a] mb-2">{t("form.success.title")}</h2>
         <p className="text-sm text-[#3d5a3d]">{t("form.success.desc")}</p>
       </div>
     );
@@ -170,7 +170,7 @@ export default function InfoForm() {
 
   return (
     <div className="vitrin-card p-7 lg:p-10">
-      <h2 className="text-2xl font-bold text-[#1a2e1a] mb-2">{t("form.heading")}</h2>
+      <h2 className="text-2xl font-bold text-[#14261a] mb-2">{t("form.heading")}</h2>
       <p className="text-sm text-[#3d5a3d] mb-7">{t("form.subheading")}</p>
 
       <form className="space-y-5" noValidate onSubmit={handleSubmit} aria-busy={status === "submitting"} aria-describedby={errorMsg ? feedbackId : undefined}>
@@ -233,7 +233,7 @@ export default function InfoForm() {
         </div>
 
         {errorMsg && (
-          <p ref={feedback} id={feedbackId} tabIndex={-1} role="alert" className="text-sm text-[#dc2626] bg-[#fef2f2] border border-[#fecaca] rounded-xl px-4 py-3">{errorMsg}</p>
+          <p ref={feedback} id={feedbackId} tabIndex={-1} role="alert" className="text-sm text-[#dc2626] bg-[#fef2f2] border border-[#fecaca] rounded-lg px-4 py-3">{errorMsg}</p>
         )}
 
         <button type="submit" disabled={status === "submitting" || status === "uncertain"} className="vitrin-cta-primary w-full justify-center disabled:opacity-70">
@@ -253,7 +253,7 @@ function Field({ label, required, problem, children }: { label: string; required
   return (
     <div>
       <label className="block">
-        <span className="block text-xs font-semibold text-[#1a2e1a] mb-1.5 uppercase tracking-wider">
+        <span className="block text-xs font-semibold text-[#14261a] mb-1.5 uppercase tracking-wider">
           {label}{required && <span className="text-[#dc2626] ml-0.5">*</span>}
         </span>
         {children}

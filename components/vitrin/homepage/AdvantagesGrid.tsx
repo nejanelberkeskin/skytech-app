@@ -37,8 +37,7 @@ export default function AdvantagesGrid() {
   const t = useTranslations("advantagesGrid");
   const ADVANTAGES = useAdvantages();
   return (
-    <SectionWrapper variant="tinted" className="relative overflow-hidden">
-      <div aria-hidden className="absolute inset-0 mesh-gradient opacity-50 pointer-events-none" />
+    <SectionWrapper variant="tinted" className="!bg-[#f6f6f1] relative overflow-hidden">
       <div className="relative">
         <SectionHeading
           badge={t("badge")}
@@ -46,7 +45,7 @@ export default function AdvantagesGrid() {
             <>
               {t("title")}
               <br />
-              <span className="text-gradient-aurora">{t("titleAccent")}</span>
+              <span className="text-[#1B6B3A]">{t("titleAccent")}</span>
             </>
           }
           subtitle={t("subtitle")}
@@ -84,8 +83,6 @@ function AdvantageCard({ adv }: { adv: Advantage }) {
     const y = e.clientY - rect.top;
     rx.set(((y - rect.height / 2) / (rect.height / 2)) * -4);
     ry.set(((x - rect.width / 2) / (rect.width / 2)) * 4);
-    ref.current?.style.setProperty("--spotlight-x", `${x}px`);
-    ref.current?.style.setProperty("--spotlight-y", `${y}px`);
   };
   const handleLeave = () => {
     rx.set(0);
@@ -98,17 +95,17 @@ function AdvantageCard({ adv }: { adv: Advantage }) {
       onMouseMove={handleMove}
       onMouseLeave={handleLeave}
       style={{ rotateX, rotateY, transformPerspective: 1000, transformStyle: "preserve-3d" }}
-      className="spotlight-card relative vitrin-card p-7 flex items-start gap-5 group h-full"
+      className="relative p-7 flex items-start gap-5 group h-full rounded-xl border border-[#14261a]/12 bg-white transition-colors hover:border-[#1B6B3A]/50"
     >
       <motion.div
         whileHover={{ scale: 1.1, rotate: -3 }}
         transition={{ type: "spring", stiffness: 280, damping: 18 }}
-        className="shrink-0 w-12 h-12 rounded-2xl bg-gradient-to-br from-[#1B6B3A] to-[#22894a] flex items-center justify-center shadow-md shadow-[#1B6B3A]/20"
+        className="shrink-0 w-11 h-11 rounded-lg bg-[#1B6B3A] flex items-center justify-center"
       >
         <adv.Icon className="w-5 h-5 text-white" />
       </motion.div>
       <div style={{ transform: "translateZ(20px)" }}>
-        <h3 className="text-base font-bold text-[#0e2519] mb-2 leading-tight tracking-tight">{adv.title}</h3>
+        <h3 className="text-base font-bold text-[#14261a] mb-2 leading-tight tracking-tight">{adv.title}</h3>
         <p className="text-sm text-[#3d5a3d] leading-relaxed">{adv.description}</p>
       </div>
     </motion.div>

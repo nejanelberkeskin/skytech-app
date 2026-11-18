@@ -29,13 +29,13 @@ export default async function SampleLegalDocument({
 
   return (
     <LegalLayout title={title} path={path} effectiveDate={LEGAL_EFFECTIVE_LABEL}>
-      <div className="rounded-2xl border border-[#fed7aa] bg-[#fff7ed] px-5 py-4 text-sm leading-relaxed text-[#7c2d12]">
+      <div className="rounded-xl border border-[#fed7aa] bg-[#fff7ed] px-5 py-4 text-sm leading-relaxed text-[#7c2d12]">
         {SAMPLE_NOTICE}
       </div>
 
       <LegalBlocks blocks={document.blocks} />
 
-      <div className="flex flex-wrap items-center gap-x-6 gap-y-3 border-t border-black/8 pt-6 text-sm">
+      <div className="flex flex-wrap items-center gap-x-6 gap-y-3 border-t border-[#14261a]/10 pt-6 text-sm">
         <a
           href={samplePdfHref(PDF_SLUG[kind])}
           target="_blank"

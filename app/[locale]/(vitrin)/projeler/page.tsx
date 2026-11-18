@@ -50,7 +50,7 @@ export default async function ProjelerPage({ params }: { params: Promise<{ local
         <div className="grid grid-cols-3 gap-2 sm:gap-5 max-w-3xl mx-auto">
           {STATS.map((s) => (
             <div key={s.label} className="vitrin-card min-w-0 p-3 sm:p-6 text-center">
-              <p className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-br from-[#1B6B3A] to-[#22894a] bg-clip-text text-transparent mb-1 tabular-nums">
+              <p className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#1B6B3A] mb-1 tabular-nums">
                 {s.value}
               </p>
               <p className="text-[11px] sm:text-xs uppercase tracking-normal sm:tracking-wider text-[#6b8f6b] font-semibold hyphens-auto wrap-break-word">
@@ -68,7 +68,7 @@ export default async function ProjelerPage({ params }: { params: Promise<{ local
           title={
             <>
               {t("map.titleLine")}{" "}
-              <span className="text-gradient-aurora">{t("map.titleAccent")}</span>
+              <span className="text-[#1B6B3A]">{t("map.titleAccent")}</span>
             </>
           }
           subtitle={t("map.subtitle")}
@@ -89,7 +89,7 @@ export default async function ProjelerPage({ params }: { params: Promise<{ local
       <SectionWrapper variant="light">
         <SectionHeading
           badge={t("list.badge")}
-          title={<>{t("list.titleLine")} <span className="text-gradient-aurora">{t("list.titleAccent")}</span></>}
+          title={<>{t("list.titleLine")} <span className="text-[#1B6B3A]">{t("list.titleAccent")}</span></>}
           subtitle={t("list.subtitle")}
         />
         <ProjectsGrid />
@@ -103,8 +103,8 @@ export default async function ProjelerPage({ params }: { params: Promise<{ local
       {/* CTA */}
       <SectionWrapper variant="tinted">
         <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-3xl lg:text-4xl font-bold text-[#1a2e1a] leading-tight mb-5">
-            {t("cta.titleLine")} <span className="text-gradient-forest">{t("cta.titleAccent")}</span> {t("cta.titleTail")}
+          <h2 className="display-headline text-3xl sm:text-4xl lg:text-5xl font-bold text-[#14261a] mb-5">
+            {t("cta.titleLine")} <span className="text-[#1B6B3A]">{t("cta.titleAccent")}</span> {t("cta.titleTail")}
           </h2>
           <p className="text-base text-[#3d5a3d] mb-8 max-w-xl mx-auto">
             {t("cta.subtitle")}

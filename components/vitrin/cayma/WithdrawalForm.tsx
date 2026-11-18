@@ -164,11 +164,11 @@ export default function WithdrawalForm({
     }
   }
   const primary =
-    "min-h-12 rounded-2xl bg-[#1B6B3A] px-6 py-3 text-sm font-semibold text-white disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#1B6B3A]";
+    "min-h-12 rounded-[10px] bg-[#1B6B3A] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#14552d] disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#1B6B3A]";
   return (
     <div
       ref={section}
-      className="rounded-3xl border border-[#1B6B3A]/15 bg-white p-6 sm:p-8 motion-reduce:[&_*]:!transition-none motion-reduce:[&_*]:!animate-none"
+      className="rounded-xl border border-[#14261a]/12 bg-white p-6 sm:p-8 motion-reduce:[&_*]:!transition-none motion-reduce:[&_*]:!animate-none"
     >
       {phase === "form" && (
         <form
@@ -290,7 +290,7 @@ export default function WithdrawalForm({
           <p className="break-words font-mono text-sm font-semibold">
             {values.orderNo.trim()}
           </p>
-          <p className="text-sm leading-relaxed text-[#526352]">
+          <p className="text-sm leading-relaxed text-[#3d5a3d]">
             {t("confirm.description")}
           </p>
           <div data-form-feedback tabIndex={-1} className="outline-none">
@@ -317,7 +317,7 @@ export default function WithdrawalForm({
                 setError(null);
                 focusOn("heading");
               }}
-              className="min-h-12 rounded-2xl border border-[#1B6B3A]/25 px-6 py-3 text-sm font-semibold text-[#1B6B3A] disabled:opacity-60"
+              className="min-h-12 rounded-[10px] border border-[#14261a]/25 px-6 py-3 text-sm font-semibold text-[#14261a] transition-colors hover:border-[#1B6B3A] hover:text-[#1B6B3A] disabled:opacity-60"
             >
               {t("confirm.cancel")}
             </button>
@@ -334,9 +334,9 @@ export default function WithdrawalForm({
           >
             {t("success.title")}
           </h2>
-          <dl className="space-y-4 rounded-2xl bg-[#f1f5ed] p-5">
+          <dl className="space-y-4 rounded-xl bg-[#f6f6f1] p-5">
             <div>
-              <dt className="text-xs font-semibold text-[#526352]">
+              <dt className="text-xs font-semibold text-[#3d5a3d]">
                 {t("form.orderNo")}
               </dt>
               <dd className="mt-1 break-words font-mono font-semibold">
@@ -344,7 +344,7 @@ export default function WithdrawalForm({
               </dd>
             </div>
             <div>
-              <dt className="text-xs font-semibold text-[#526352]">
+              <dt className="text-xs font-semibold text-[#3d5a3d]">
                 {t("success.receivedAt")}
               </dt>
               <dd className="mt-1 text-sm">
@@ -359,7 +359,7 @@ export default function WithdrawalForm({
               date: dates?.refundDueOn ?? receipt.refundDueOn,
             })}
           </p>
-          <p className="text-sm leading-relaxed text-[#526352]">
+          <p className="text-sm leading-relaxed text-[#3d5a3d]">
             {t("success.email", { email: COMPANY.email })}
           </p>
         </section>

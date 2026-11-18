@@ -16,12 +16,12 @@ export async function SiteBadges({
   return (
     <div className="flex flex-wrap gap-2 text-xs font-medium">
       {site.isFireAffected && (
-        <span className="rounded-full border border-[#fed7aa] bg-[#fff7ed] px-3 py-1.5 text-[#9a3412]">
+        <span className="rounded-md border border-orange-200 bg-orange-50 px-2.5 py-1 text-orange-800">
           {t("fire")}
           {site.fireYear !== null ? ` · ${site.fireYear}` : ""}
         </span>
       )}
-      <span className="rounded-full border border-[#1B6B3A]/15 bg-[#edf4e9] px-3 py-1.5 text-[#1B6B3A]">
+      <span className="rounded-md border border-[#14261a]/12 bg-white px-2.5 py-1 text-[#1B6B3A]">
         {t(`phases.${site.phase}`)}
       </span>
     </div>
@@ -42,9 +42,9 @@ export default async function SiteCard({
   return (
     <Link
       href={siteDetailHref(site)}
-      className="group flex min-w-0 flex-col overflow-hidden rounded-3xl border border-[#1B6B3A]/15 bg-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#1B6B3A]"
+      className="group flex min-w-0 flex-col overflow-hidden rounded-xl border border-[#14261a]/12 bg-white transition-colors hover:border-[#1B6B3A]/50 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#1B6B3A]"
     >
-      <div className="relative aspect-[4/3] overflow-hidden bg-[#e7eee1]">
+      <div className="relative aspect-[4/3] overflow-hidden bg-[#e9ebe2]">
         {site.coverImage ? (
           <Image
             src={site.coverImage}
@@ -57,7 +57,7 @@ export default async function SiteCard({
         ) : (
           <div
             aria-hidden="true"
-            className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,#a7c4a1,transparent_70%)]"
+            className="absolute inset-0"
           >
             <svg
               className="h-full w-full text-[#1B6B3A]/25"
@@ -77,13 +77,13 @@ export default async function SiteCard({
       </div>
       <div className="flex flex-1 flex-col p-5 sm:p-6">
         <SiteBadges site={site} locale={locale} />
-        <h2 className="mt-5 break-words text-xl font-semibold leading-snug text-[#0e2519]">
+        <h2 className="mt-5 break-words text-xl font-semibold leading-snug text-[#14261a]">
           {site.name}
         </h2>
         {location && <p className="mt-2 text-sm text-[#3d5a3d]">{location}</p>}
-        <div className="my-5 space-y-2 border-y border-[#1B6B3A]/10 py-4 text-sm text-[#3d5a3d]">
+        <div className="my-5 space-y-2 border-y border-[#14261a]/10 py-4 text-sm text-[#3d5a3d]">
           {site.areaHectares !== null && (
-            <p className="font-semibold text-[#0e2519]">
+            <p className="font-semibold text-[#14261a]">
               {t("hectares", {
                 value: new Intl.NumberFormat(locale).format(site.areaHectares),
               })}

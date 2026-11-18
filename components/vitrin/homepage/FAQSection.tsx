@@ -47,10 +47,8 @@ export default function FAQSection({ minQuantity }: { minQuantity: number }) {
   const [openIdx, setOpenIdx] = useState<number | null>(0);
 
   return (
-    <SectionWrapper variant="light" className="relative overflow-hidden">
+    <SectionWrapper variant="light" className="relative overflow-hidden !bg-[#f6f6f1]">
       <FAQSchema items={FAQS.map((f) => ({ question: f.q, answer: f.a }))} />
-      <div aria-hidden className="absolute inset-0 mesh-gradient opacity-40 pointer-events-none" />
-
       <div className="relative">
         <SectionHeading
           badge={t("badge")}
@@ -58,7 +56,7 @@ export default function FAQSection({ minQuantity }: { minQuantity: number }) {
             <>
               {t("titleLine1")}
               <br />
-              <span className="text-gradient-aurora">{t("titleAccent")}</span>
+              <span className="text-[#1B6B3A]">{t("titleAccent")}</span>
             </>
           }
           subtitle={t("subtitle")}
@@ -107,16 +105,14 @@ function FAQItem({
   return (
     <motion.div
       animate={{
-        boxShadow: isOpen
-          ? "0 12px 32px rgba(27, 107, 58, 0.10), 0 0 0 1px rgba(34, 137, 74, 0.18)"
-          : "0 1px 2px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(0, 0, 0, 0.06)",
+        borderColor: isOpen ? "rgba(27, 107, 58, 0.5)" : "rgba(20, 38, 26, 0.12)",
       }}
       transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-      className="bg-white rounded-2xl overflow-hidden"
+      className="bg-white rounded-xl border overflow-hidden"
     >
       <button
         onClick={onToggle}
-        className="w-full flex items-center justify-between p-5 lg:p-6 text-left text-base lg:text-[17px] font-bold text-[#0e2519] hover:text-[#1B6B3A] transition-colors tracking-tight"
+        className="w-full flex items-center justify-between p-5 lg:p-6 text-left text-base lg:text-[17px] font-semibold text-[#14261a] hover:text-[#1B6B3A] transition-colors tracking-tight"
         aria-expanded={isOpen}
       >
         <span className="pr-4">{item.q}</span>

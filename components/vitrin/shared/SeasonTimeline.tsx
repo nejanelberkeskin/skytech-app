@@ -22,11 +22,11 @@ export default async function SeasonTimeline({
   return (
     <section
       aria-label={t("title")}
-      className={`rounded-3xl border border-[#1B6B3A]/15 bg-[#f8faf5] ${compact ? "p-3" : "p-5 sm:p-8 lg:p-10"}`}
+      className={`rounded-xl border border-[#14261a]/12 bg-[#f6f6f1] ${compact ? "p-3" : "p-5 sm:p-8 lg:p-10"}`}
     >
       {!compact && (
         <div className="mb-8 max-w-2xl">
-          <h2 className="display-headline text-2xl font-semibold text-[#0e2519] sm:text-3xl">
+          <h2 className="display-headline text-2xl font-semibold text-[#14261a] sm:text-3xl">
             {t("title")}
           </h2>
           <p className="mt-4 text-sm leading-relaxed text-[#3d5a3d] sm:text-base">
@@ -51,10 +51,10 @@ export default async function SeasonTimeline({
             className="min-w-0 text-center"
           >
             <div
-              className={`h-2 ${i < 5 ? "bg-[#1B6B3A]" : i < 11 ? "bg-[#c3d4bd]" : "bg-[#e4e7df]"} ${i === 0 || i === 5 || i === 11 ? "rounded-l-full" : ""} ${i === 4 || i === 10 || i === 11 ? "rounded-r-full" : ""}`}
+              className={`h-2 ${i < 5 ? "bg-[#1B6B3A]" : i < 11 ? "bg-[#a9c3ad]" : "bg-[#d9ddd0]"} ${i === 0 || i === 5 || i === 11 ? "rounded-l-sm" : ""} ${i === 4 || i === 10 || i === 11 ? "rounded-r-sm" : ""}`}
             />
             <span
-              className={`mt-3 block whitespace-nowrap text-[9px] sm:text-xs ${month === currentMonth ? "font-bold text-[#0e2519] underline decoration-2 underline-offset-4" : "text-[#3d5a3d]"}`}
+              className={`mt-3 block whitespace-nowrap text-[9px] sm:text-xs ${month === currentMonth ? "font-bold text-[#14261a] underline decoration-2 underline-offset-4" : "text-[#3d5a3d]"}`}
             >
               {formatter
                 .format(new Date(Date.UTC(2026, month, 1)))
@@ -68,7 +68,7 @@ export default async function SeasonTimeline({
         ))}
       </ol>
       <p
-        className={`mt-6 border-t border-[#1B6B3A]/15 pt-4 text-[#3d5a3d] ${compact ? "text-xs" : "text-sm"}`}
+        className={`mt-6 border-t border-[#14261a]/10 pt-4 text-[#3d5a3d] ${compact ? "text-xs" : "text-sm"}`}
       >
         {t("video")}
       </p>

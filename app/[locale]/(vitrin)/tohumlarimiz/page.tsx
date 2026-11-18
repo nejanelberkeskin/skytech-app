@@ -23,13 +23,6 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 
 const SEED_IDS = ["kizilcam", "karacam", "sedir", "ardic"] as const;
 
-const SEED_ACCENTS: Record<(typeof SEED_IDS)[number], string> = {
-  kizilcam: "from-[#1B6B3A] to-[#22894a]",
-  karacam: "from-[#22894a] to-[#34d399]",
-  sedir: "from-[#34d399] to-[#a3e635]",
-  ardic: "from-[#1B6B3A] to-[#34d399]",
-};
-
 export default async function TohumlarimizPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
@@ -47,7 +40,6 @@ export default async function TohumlarimizPage({ params }: { params: Promise<{ l
     lifespan: t(`seeds.${id}.lifespan`),
     ecologicalRole: t(`seeds.${id}.ecologicalRole`),
     description: t(`seeds.${id}.description`),
-    accent: SEED_ACCENTS[id],
   }));
 
   return (
@@ -62,7 +54,7 @@ export default async function TohumlarimizPage({ params }: { params: Promise<{ l
       <SectionWrapper variant="light">
         <SectionHeading
           badge={t("sectionBadge")}
-          title={<>{t("sectionTitleLine")} <span className="text-gradient-forest">{t("sectionTitleAccent")}</span></>}
+          title={<>{t("sectionTitleLine")} <span className="text-[#1B6B3A]">{t("sectionTitleAccent")}</span></>}
           subtitle={t("sectionSubtitle")}
         />
 
@@ -72,7 +64,7 @@ export default async function TohumlarimizPage({ params }: { params: Promise<{ l
               key={seed.id}
               className="vitrin-card overflow-hidden grid grid-cols-1 md:grid-cols-12 gap-0"
             >
-              {/* Sol — Tür kartı: gerçek ağaç görseli + okunabilirlik gradyanı */}
+              {/* Sol — Tür kartı: gerçek ağaç görseli + tek düz koyu perde */}
               <div className="relative md:col-span-4 min-h-[340px] text-white overflow-hidden">
                 <Image
                   src={`/images/tohumlar/${seed.id}.webp`}
@@ -81,14 +73,14 @@ export default async function TohumlarimizPage({ params }: { params: Promise<{ l
                   sizes="(max-width: 768px) 100vw, 33vw"
                   className="object-cover"
                 />
-                {/* Üst + alt koyu gradyan — metin fotoğrafın üstünde okunur kalsın */}
-                <div className="absolute inset-0 bg-gradient-to-b from-[#0a1f12]/70 via-[#0a1f12]/10 to-[#0a1f12]/85 pointer-events-none" />
+                {/* Düz koyu perde — metin fotoğrafın üstünde okunur kalsın */}
+                <div className="absolute inset-0 bg-[#0a1f12]/55 pointer-events-none" />
                 <div className="relative h-full p-8 flex flex-col justify-between">
                   <div>
                     <span className="text-xs font-bold uppercase tracking-widest text-white/80">
                       {t("typeLabel", { number: String(i + 1).padStart(2, "0") })}
                     </span>
-                    <h3 className="text-3xl font-bold mt-2 leading-tight drop-shadow-md">{seed.name}</h3>
+                    <h3 className="text-3xl font-bold mt-2 leading-tight">{seed.name}</h3>
                     <p className="text-sm italic text-white/85 mt-1">{seed.latin}</p>
                   </div>
                   <div className="mt-8 flex items-center gap-3 text-sm text-white/95">

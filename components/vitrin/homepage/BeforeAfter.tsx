@@ -44,7 +44,7 @@ export default function BeforeAfter() {
   const seamOpacity = useTransform(smooth, [0, 0.04, 0.96, 1], [0, 1, 1, 0]);
 
   return (
-    <section className="relative bg-[#f8faf5] vitrin-section">
+    <section className="relative bg-[#f6f6f1] vitrin-section">
       <div className="vitrin-container">
         <SectionHeading
           badge={t("badge")}
@@ -52,14 +52,14 @@ export default function BeforeAfter() {
             <>
               {t("titleLine1")}
               <br />
-              <span className="text-gradient-aurora">{t("titleAccent")}</span>
+              <span className="text-[#1B6B3A]">{t("titleAccent")}</span>
             </>
           }
         />
 
         <div
           ref={ref}
-          className="relative aspect-[16/9] max-w-6xl mx-auto rounded-3xl overflow-hidden shadow-2xl"
+          className="relative aspect-[16/9] max-w-6xl mx-auto rounded-xl overflow-hidden border border-[#14261a]/12 bg-[#dfe3d6]"
         >
           {/* Taban katman — yanmış arazi (Yangın Sonrası): sağ tarafta kalır */}
           <div className="absolute inset-0 overflow-hidden">
@@ -69,13 +69,6 @@ export default function BeforeAfter() {
               fill
               sizes="(max-width: 1024px) 100vw, 80vw"
               className="object-cover"
-            />
-            <div
-              className="absolute inset-0 opacity-25 mix-blend-multiply pointer-events-none"
-              style={{
-                background:
-                  "linear-gradient(180deg, transparent 35%, rgba(0,0,0,0.4) 100%)",
-              }}
             />
           </div>
 
@@ -89,25 +82,18 @@ export default function BeforeAfter() {
                 sizes="(max-width: 1024px) 100vw, 80vw"
                 className="object-cover"
               />
-              <div
-                className="absolute inset-0 opacity-15 mix-blend-screen pointer-events-none"
-                style={{
-                  background:
-                    "radial-gradient(ellipse at 30% 0%, rgba(163, 230, 53, 0.5), transparent 60%)",
-                }}
-              />
             </div>
           </motion.div>
 
           {/* Dikey sürgü çizgisi + tutamaç — ilerlemeyi takip eder */}
           <motion.div
             style={{ left: seamLeft, opacity: seamOpacity }}
-            className="absolute top-0 bottom-0 w-px pointer-events-none -translate-x-1/2 z-10"
+            className="absolute top-0 bottom-0 w-0.5 pointer-events-none -translate-x-1/2 z-10"
           >
-            <div className="relative h-full w-px bg-gradient-to-b from-[#a3e635] via-[#34d399] to-[#22894a] shadow-[0_0_24px_rgba(52,211,153,0.7)]" />
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 rounded-full premium-glass-dark flex items-center justify-center shadow-[0_0_30px_rgba(34,197,94,0.5)]">
+            <div className="relative h-full w-0.5 bg-white" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white border border-[#14261a]/25 flex items-center justify-center">
               <svg
-                className="w-6 h-6 text-[#a3e635]"
+                className="w-5 h-5 text-[#1B6B3A]"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
@@ -118,18 +104,12 @@ export default function BeforeAfter() {
             </div>
           </motion.div>
 
-          {/* Rozetler — sol: yeşilin üzerinde Öncesi, sağ: yanığın üzerinde Sonrası */}
-          <div className="absolute top-6 left-6 px-3 py-1.5 rounded-full bg-black/60 backdrop-blur-md text-[10px] font-bold uppercase tracking-[0.2em] text-[#a3e635] z-20">
-            <span className="inline-flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#a3e635]" />
-              {t("labelBefore")}
-            </span>
+          {/* Etiketler — sol: yeşilin üzerinde Öncesi, sağ: yanığın üzerinde Sonrası */}
+          <div className="absolute top-3 left-3 sm:top-6 sm:left-6 px-2.5 py-1.5 rounded-md bg-[#14261a]/80 text-[10px] font-semibold uppercase tracking-[0.16em] text-white z-20">
+            {t("labelBefore")}
           </div>
-          <div className="absolute top-6 right-6 px-3 py-1.5 rounded-full bg-black/60 backdrop-blur-md text-[10px] font-bold uppercase tracking-[0.2em] text-[#fda4af] z-20">
-            <span className="inline-flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#fda4af]" />
-              {t("labelAfter")}
-            </span>
+          <div className="absolute top-3 right-3 sm:top-6 sm:right-6 px-2.5 py-1.5 rounded-md bg-[#14261a]/80 text-[10px] font-semibold uppercase tracking-[0.16em] text-white z-20">
+            {t("labelAfter")}
           </div>
         </div>
       </div>

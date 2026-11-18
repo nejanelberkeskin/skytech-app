@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { motion, useMotionValue, useSpring } from "framer-motion";
 import Image from "next/image";
 import { useRef } from "react";
 import { useTranslations } from "next-intl";
@@ -12,7 +12,6 @@ function useValueCards() {
     {
       title: t("zeroFootprint.title"),
       description: t("zeroFootprint.description"),
-      accent: "from-[#1B6B3A] to-[#22894a]",
       Icon: DroneIcon,
       image: "/images/values/sifir-saha-izi.webp",
       stat: t("zeroFootprint.stat"),
@@ -21,7 +20,6 @@ function useValueCards() {
     {
       title: t("transparentSupply.title"),
       description: t("transparentSupply.description"),
-      accent: "from-[#22894a] to-[#34d399]",
       Icon: ShieldIcon,
       image: "/images/values/seffaf-tedarik.webp",
       stat: t("transparentSupply.stat"),
@@ -30,7 +28,6 @@ function useValueCards() {
     {
       title: t("annualReport.title"),
       description: t("annualReport.description"),
-      accent: "from-[#34d399] to-[#a3e635]",
       Icon: ChartIcon,
       image: "/images/values/yillik-raporlama.webp",
       stat: t("annualReport.stat"),
@@ -69,33 +66,27 @@ export default function ValueCards() {
   const VALUE_CARDS = useValueCards();
   return (
     <SectionWrapper variant="light" className="!pt-24 !pb-20 relative overflow-hidden">
-      {/* Subtle aurora behind heading */}
-      <div
-        aria-hidden
-        className="absolute top-0 left-1/2 -translate-x-1/2 w-[1200px] h-[600px] opacity-50 pointer-events-none mesh-gradient blur-3xl"
-      />
-
       <motion.div
         variants={containerVariants}
         initial="hidden"
         whileInView="show"
         viewport={{ once: true, margin: "-80px" }}
-        className="relative max-w-3xl mx-auto text-center mb-16 lg:mb-20"
+        className="relative max-w-3xl mx-auto text-center mb-12 lg:mb-16"
       >
         <motion.div variants={headingVariants}>
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#1B6B3A]/8 border border-[#1B6B3A]/15 mb-6 text-[11px] font-bold uppercase tracking-[0.18em] text-[#1B6B3A]">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#1B6B3A]" />
+          <p className="mb-5 flex items-center gap-3 text-[12px] font-semibold uppercase tracking-[0.16em] justify-center text-[#1B6B3A]">
+            <span aria-hidden className="h-px w-8 bg-current" />
             {t("badge")}
-          </div>
+          </p>
         </motion.div>
 
         <motion.h2
           variants={headingVariants}
-          className="display-headline text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-[#0e2519] mb-6"
+          className="display-headline text-3xl sm:text-4xl lg:text-5xl font-bold text-[#14261a] mb-5"
         >
           {t("titleLine1")}
           <br />
-          <span className="text-gradient-aurora">{t("titleAccent")}</span>
+          <span className="text-[#1B6B3A]">{t("titleAccent")}</span>
         </motion.h2>
 
         <motion.p
@@ -136,9 +127,6 @@ function ValueCard({ card }: { card: ValueCardData }) {
   const rotateY = useSpring(ry, springConfig);
 
   // Glow scale based on hover
-  const glowOpacity = useMotionValue(0);
-  const glow = useSpring(glowOpacity, { damping: 30, stiffness: 200 });
-  const glowScale = useTransform(glow, [0, 1], [0.85, 1]);
 
   const handleMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = cardRef.current?.getBoundingClientRect();
@@ -155,12 +143,10 @@ function ValueCard({ card }: { card: ValueCardData }) {
     cardRef.current?.style.setProperty("--spotlight-y", `${y}px`);
   };
   const handleEnter = () => {
-    glowOpacity.set(1);
   };
   const handleLeave = () => {
     rx.set(0);
     ry.set(0);
-    glowOpacity.set(0);
   };
 
   return (
@@ -175,19 +161,8 @@ function ValueCard({ card }: { card: ValueCardData }) {
         transformPerspective: 1200,
         transformStyle: "preserve-3d",
       }}
-      className="group relative spotlight-card premium-glass rounded-3xl h-full overflow-hidden flex flex-col"
+      className="group relative h-full overflow-hidden rounded-xl border border-[#14261a]/12 bg-white flex flex-col transition-colors hover:border-[#1B6B3A]/50"
     >
-      {/* Animated radial glow that follows cursor */}
-      <motion.div
-        aria-hidden
-        style={{ opacity: glow, scale: glowScale }}
-        className="absolute inset-0 pointer-events-none z-0"
-      >
-        <div
-          className={`absolute inset-0 rounded-3xl bg-gradient-to-br ${card.accent} opacity-[0.06] blur-2xl`}
-        />
-      </motion.div>
-
       {/* Hero image */}
       <div className="relative aspect-[16/10] overflow-hidden">
         <Image
@@ -197,12 +172,11 @@ function ValueCard({ card }: { card: ValueCardData }) {
           sizes="(max-width: 768px) 100vw, 33vw"
           className="object-cover transition-transform duration-700 group-hover:scale-105"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-white via-white/10 to-transparent pointer-events-none" />
         {/* Icon overlay top-left */}
         <motion.div
           whileHover={{ scale: 1.08, rotate: -3 }}
           transition={{ type: "spring", stiffness: 300, damping: 18 }}
-          className={`absolute top-4 left-4 inline-flex w-12 h-12 rounded-2xl bg-gradient-to-br ${card.accent} items-center justify-center shadow-lg shadow-[#1B6B3A]/30 ring-2 ring-white/40`}
+          className="absolute top-4 left-4 inline-flex h-11 w-11 items-center justify-center rounded-lg bg-[#1B6B3A]"
         >
           <card.Icon className="w-6 h-6 text-white" />
         </motion.div>
@@ -220,9 +194,9 @@ function ValueCard({ card }: { card: ValueCardData }) {
         </p>
 
         {/* Stat */}
-        <div className="flex items-baseline gap-2 pt-5 border-t border-[#1B6B3A]/8">
+        <div className="flex items-baseline gap-2 pt-5 border-t border-[#14261a]/10">
           <span
-            className={`text-3xl font-bold bg-gradient-to-br ${card.accent} bg-clip-text text-transparent tabular-nums`}
+            className="text-3xl font-bold tabular-nums text-[#1B6B3A]"
           >
             {card.stat}
           </span>

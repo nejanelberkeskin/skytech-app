@@ -22,7 +22,7 @@ function Card({
     <section
       id={id}
       aria-labelledby={`${id}-title`}
-      className="rounded-3xl border border-[#1B6B3A]/15 bg-white p-6 sm:p-8"
+      className="rounded-xl border border-[#14261a]/12 bg-white p-6 sm:p-8"
     >
       <h2 id={`${id}-title`} className="mb-4 text-xl font-semibold">
         {title}
@@ -33,13 +33,13 @@ function Card({
 }
 function Rows({ rows }: { rows: { label: string; value: ReactNode }[] }) {
   return (
-    <dl className="divide-y divide-[#1B6B3A]/10">
+    <dl className="divide-y divide-[#14261a]/10">
       {rows.map((row) => (
         <div
           key={row.label}
           className="grid min-w-0 gap-1 py-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] sm:gap-4"
         >
-          <dt className="text-sm text-[#526352]">{row.label}</dt>
+          <dt className="text-sm text-[#3d5a3d]">{row.label}</dt>
           <dd className="break-words text-sm font-semibold sm:text-right">
             {row.value}
           </dd>
@@ -49,7 +49,7 @@ function Rows({ rows }: { rows: { label: string; value: ReactNode }[] }) {
   );
 }
 const linkClass =
-  "inline-flex min-h-11 items-center rounded-xl border border-[#1B6B3A]/25 px-4 py-2 text-sm font-semibold text-[#1B6B3A] underline-offset-4 hover:underline";
+  "inline-flex min-h-11 items-center rounded-[10px] border border-[#14261a]/25 px-4 py-2 text-sm font-semibold text-[#14261a] transition-colors hover:border-[#1B6B3A] hover:text-[#1B6B3A]";
 export default async function OrderDetails({
   order,
   locale,
@@ -84,7 +84,7 @@ export default async function OrderDetails({
     </a>
   );
   return (
-    <div className="vitrin-container space-y-7 pb-20 pt-32 text-[#0e2519] sm:pt-40 motion-reduce:[&_*]:!transition-none motion-reduce:[&_*]:!animate-none">
+    <div className="vitrin-container space-y-7 pb-20 pt-32 text-[#14261a] sm:pt-40 motion-reduce:[&_*]:!transition-none motion-reduce:[&_*]:!animate-none">
       {order.isTest && (
         <p className="rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-900">
           {t("testOrder")}
@@ -96,7 +96,7 @@ export default async function OrderDetails({
             {t("title")}
           </h1>
           <span
-            className={`rounded-full border px-4 py-2 text-sm font-semibold ${interrupted ? "border-amber-200 bg-amber-50 text-amber-900" : "border-[#1B6B3A]/20 bg-[#edf4e9] text-[#1B6B3A]"}`}
+            className={`rounded-md border px-3 py-1.5 text-sm font-semibold ${interrupted ? "border-amber-200 bg-amber-50 text-amber-900" : "border-[#1B6B3A]/25 bg-[#1B6B3A]/5 text-[#1B6B3A]"}`}
           >
             {t(`statuses.${order.status}`)}
           </span>
@@ -105,14 +105,14 @@ export default async function OrderDetails({
         <p className="text-lg">
           {t("greeting", { name: order.buyerFirstName })}
         </p>
-        <p className="text-sm text-[#526352]">
+        <p className="text-sm text-[#3d5a3d]">
           {t("createdOn", { date: dates[order.createdOn] })}
         </p>
       </header>
       {order.refund && (
         <section
           aria-labelledby="refund-title"
-          className="rounded-3xl border border-amber-200 bg-amber-50 p-6 sm:p-8"
+          className="rounded-xl border border-amber-200 bg-amber-50 p-6 sm:p-8"
         >
           <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-amber-900">
             {t(`refund.${order.refund.reason}`)}
@@ -138,7 +138,7 @@ export default async function OrderDetails({
               </p>
             )
           )}
-          <p className="mt-4 text-sm leading-relaxed text-[#526352]">
+          <p className="mt-4 text-sm leading-relaxed text-[#3d5a3d]">
             {t("refund.bankNote")}
           </p>
         </section>
@@ -212,7 +212,7 @@ export default async function OrderDetails({
         </Card>
         <div className="min-w-0 space-y-7">
           <Card id="order-schedule" title={t("schedule.title")}>
-            <p className="text-sm text-[#526352]">
+            <p className="text-sm text-[#3d5a3d]">
               {t("schedule.season", { season: order.schedule.seasonLabel })}
             </p>
             <p className="mt-3 font-semibold leading-relaxed">
@@ -231,7 +231,7 @@ export default async function OrderDetails({
             <Card id="withdrawal-right" title={t("withdrawal.title")}>
               {order.canWithdraw ? (
                 <>
-                  <p className="mb-5 text-sm leading-relaxed text-[#526352]">
+                  <p className="mb-5 text-sm leading-relaxed text-[#3d5a3d]">
                     {t("withdrawal.available", {
                       date: dates[order.schedule.withdrawalLastDay],
                     })}
@@ -246,7 +246,7 @@ export default async function OrderDetails({
                   </Link>
                 </>
               ) : (
-                <p className="text-sm leading-relaxed text-[#526352]">
+                <p className="text-sm leading-relaxed text-[#3d5a3d]">
                   {withdrawalExpired
                     ? t("withdrawal.expired", {
                         date: dates[order.schedule.withdrawalLastDay],
@@ -261,9 +261,9 @@ export default async function OrderDetails({
       </div>
       <Card id="order-documents" title={t("documents.title")}>
         {locale !== "tr" && (
-          <p className="mb-4 text-sm text-[#526352]">{t("documents.languageNote")}</p>
+          <p className="mb-4 text-sm text-[#3d5a3d]">{t("documents.languageNote")}</p>
         )}
-        <ul className="divide-y divide-[#1B6B3A]/10">
+        <ul className="divide-y divide-[#14261a]/10">
           {order.documents.map((doc) => (
             <li
               key={doc.kind}
@@ -273,7 +273,7 @@ export default async function OrderDetails({
                 <h3 className="font-semibold">
                   {t(`documents.kinds.${doc.kind}`)}
                 </h3>
-                <p className="mt-2 break-words text-xs text-[#526352]">
+                <p className="mt-2 break-words text-xs text-[#3d5a3d]">
                   {t("documents.hash", { hash: `${doc.sha256.slice(0, 12)}…` })}
                 </p>
               </div>
@@ -307,7 +307,7 @@ export default async function OrderDetails({
           ))}
         </ul>
         {order.documents.length === 0 && (
-          <p className="text-sm text-[#526352]">{t("documents.pending")}</p>
+          <p className="text-sm text-[#3d5a3d]">{t("documents.pending")}</p>
         )}
       </Card>
       <div className="grid items-start gap-7 lg:grid-cols-2">
@@ -315,7 +315,7 @@ export default async function OrderDetails({
           <Card id="order-certificate" title={t("certificate.title")}>
             {order.certificate ? (
               <>
-                <p className="mb-4 break-words text-sm leading-relaxed text-[#526352]">
+                <p className="mb-4 break-words text-sm leading-relaxed text-[#3d5a3d]">
                   {order.certificate.status === "cancelled"
                     ? t("certificate.cancelled")
                     : t("certificate.ready")}
@@ -331,7 +331,7 @@ export default async function OrderDetails({
                 </Link>
               </>
             ) : (
-              <p className="text-sm leading-relaxed text-[#526352]">
+              <p className="text-sm leading-relaxed text-[#3d5a3d]">
                 {t("certificate.pending")}
               </p>
             )}
@@ -351,7 +351,7 @@ export default async function OrderDetails({
                 {t("video.view")}
               </a>
             ) : (
-              <p className="text-sm leading-relaxed text-[#526352]">
+              <p className="text-sm leading-relaxed text-[#3d5a3d]">
                 {t("video.pending")}
               </p>
             )}
@@ -361,7 +361,7 @@ export default async function OrderDetails({
           <Card id="order-invoice" title={t("invoice.title")}>
             {order.invoice ? (
               <>
-                <p className="text-sm text-[#526352]">
+                <p className="text-sm text-[#3d5a3d]">
                   {order.invoice.status === "issued"
                     ? order.invoice.issuedOn
                       ? t("invoice.issuedOn", {
@@ -383,7 +383,7 @@ export default async function OrderDetails({
                 )}
               </>
             ) : (
-              <p className="text-sm leading-relaxed text-[#526352]">
+              <p className="text-sm leading-relaxed text-[#3d5a3d]">
                 {t("invoice.notYet")}
               </p>
             )}
@@ -392,12 +392,12 @@ export default async function OrderDetails({
       </div>
       <section
         aria-labelledby="order-help-title"
-        className="rounded-3xl bg-[#f1f5ed] p-6 sm:p-8"
+        className="rounded-xl bg-[#f6f6f1] p-6 sm:p-8"
       >
         <h2 id="order-help-title" className="text-lg font-semibold">
           {t("help.title")}
         </h2>
-        <p className="mt-3 text-sm leading-relaxed text-[#526352]">
+        <p className="mt-3 text-sm leading-relaxed text-[#3d5a3d]">
           {t("help.description")} {mail}
         </p>
         <Link

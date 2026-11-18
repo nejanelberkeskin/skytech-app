@@ -22,7 +22,7 @@ export default function YouTubeLite({
 
   return (
     <div className="min-w-0">
-      <div className="relative aspect-video overflow-hidden rounded-2xl bg-[#0e2519]">
+      <div className="relative aspect-video overflow-hidden rounded-xl bg-[#10241a]">
         {playing ? (
           <iframe
             ref={(frame) => {
@@ -42,9 +42,9 @@ export default function YouTubeLite({
             onClick={() => setPlaying(true)}
             aria-label={playLabel.accessibleName}
             aria-describedby={noteId}
-            className="absolute inset-0 flex min-h-11 min-w-11 w-full flex-col items-center justify-center gap-3 bg-linear-to-br from-[#1B6B3A] to-[#0e2519] px-4 text-white hover:from-[#247d46] focus-visible:outline-4 focus-visible:-outline-offset-4 focus-visible:outline-[#d8edb9] sm:gap-4"
+            className="group absolute inset-0 flex min-h-11 min-w-11 w-full flex-col items-center justify-center gap-3 bg-[#10241a] px-4 text-white transition-colors hover:bg-[#173324] focus-visible:outline-4 focus-visible:-outline-offset-4 focus-visible:outline-[#d8edb9] sm:gap-4"
           >
-            <span className="flex h-14 w-14 items-center justify-center rounded-full border border-white/40 bg-white/10 sm:h-16 sm:w-16">
+            <span className="flex h-14 w-14 items-center justify-center rounded-full bg-[#1B6B3A] transition-colors group-hover:bg-[#14552d] sm:h-16 sm:w-16">
               <svg
                 aria-hidden="true"
                 viewBox="0 0 24 24"
@@ -62,7 +62,7 @@ export default function YouTubeLite({
       </div>
       <p
         id={noteId}
-        className="mt-3 text-xs leading-relaxed text-[#526352] sm:text-sm"
+        className="mt-3 text-xs leading-relaxed text-[#3d5a3d] sm:text-sm"
       >
         {note}
       </p>

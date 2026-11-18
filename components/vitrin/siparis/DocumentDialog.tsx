@@ -43,9 +43,9 @@ export default function DocumentDialog({
         e.preventDefault();
         onClose();
       }}
-      className="fixed inset-0 m-auto max-h-[90svh] w-[calc(100%_-_2rem)] max-w-3xl overflow-hidden rounded-2xl border border-[#1B6B3A]/20 bg-white p-0 text-[#0e2519] shadow-2xl backdrop:bg-[#050d08]/60"
+      className="fixed inset-0 m-auto max-h-[90svh] w-[calc(100%_-_2rem)] max-w-3xl overflow-hidden rounded-xl border border-[#14261a]/12 bg-white p-0 text-[#14261a] shadow-sm backdrop:bg-[#050d08]/60"
     >
-      <div className="flex items-center justify-between gap-3 border-b border-black/10 p-4">
+      <div className="flex items-center justify-between gap-3 border-b border-[#14261a]/12 p-4">
         <h2 id="document-title" className="text-base font-semibold sm:text-lg">
           {document.title}
         </h2>
@@ -53,7 +53,7 @@ export default function DocumentDialog({
           type="button"
           autoFocus
           onClick={onClose}
-          className="min-h-11 shrink-0 rounded-xl border border-[#1B6B3A]/20 px-4 text-sm font-semibold"
+          className="min-h-11 shrink-0 rounded-[10px] border border-[#14261a]/25 px-4 text-sm font-semibold text-[#14261a] transition-colors hover:border-[#1B6B3A] hover:text-[#1B6B3A]"
         >
           {t("close")}
         </button>
@@ -64,11 +64,11 @@ export default function DocumentDialog({
         title={document.title}
         className="block h-[60svh] w-full border-0 bg-white"
       />
-      <div className="flex justify-end border-t border-black/10 p-4">
+      <div className="flex justify-end border-t border-[#14261a]/12 p-4">
         <button
           type="button"
           onClick={() => downloadDocument(document)}
-          className="min-h-11 rounded-xl bg-[#1B6B3A] px-5 text-sm font-semibold text-white"
+          className="min-h-11 rounded-[10px] bg-[#1B6B3A] px-5 text-sm font-semibold text-white transition-colors hover:bg-[#14552d]"
         >
           {t("download")}
         </button>

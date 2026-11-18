@@ -18,11 +18,11 @@ export default function StickySiteCta({
   return (
     <div
         data-sticky-cta
-        className="fixed inset-x-0 bottom-0 z-40 border-t border-[#1B6B3A]/15 bg-white/95 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 shadow-[0_-6px_24px_#0e25190f] backdrop-blur"
+        className="fixed inset-x-0 bottom-0 z-40 border-t border-[#14261a]/12 bg-white px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3"
       >
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4">
           <div className="hidden min-w-0 sm:block">
-            <p className="truncate font-semibold text-[#0e2519]">{siteName}</p>
+            <p className="truncate font-semibold text-[#14261a]">{siteName}</p>
             {priceNote && <p className="text-sm text-[#3d5a3d]">{priceNote}</p>}
           </div>
           <Link

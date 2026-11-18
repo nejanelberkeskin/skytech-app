@@ -16,9 +16,9 @@ export default function CertificatePublicationControl({ orderNo, initiallyPublic
     } catch { setError(true); }
     finally { setPending(false); }
   }
-  return <div className="mt-5 border-t border-[#1B6B3A]/15 pt-4 text-sm leading-relaxed">
+  return <div className="mt-5 border-t border-[#14261a]/12 pt-4 text-sm leading-relaxed">
     <p role="status">{t(isPublic ? "visible" : "hidden")}</p>
-    {isPublic && <button type="button" disabled={pending} onClick={revoke} className="mt-3 min-h-11 rounded-xl border border-[#1B6B3A]/40 px-4 py-2 font-semibold disabled:opacity-60">{t(pending ? "pending" : "revoke")}</button>}
+    {isPublic && <button type="button" disabled={pending} onClick={revoke} className="mt-3 min-h-11 rounded-[10px] border border-[#14261a]/25 px-4 py-2 font-semibold text-[#14261a] transition-colors hover:border-[#1B6B3A] hover:text-[#1B6B3A] disabled:opacity-60">{t(pending ? "pending" : "revoke")}</button>}
     {error && <p role="alert" className="mt-2">{t("error")}</p>}
   </div>;
 }

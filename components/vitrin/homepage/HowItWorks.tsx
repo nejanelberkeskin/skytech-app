@@ -34,12 +34,7 @@ export default function HowItWorks() {
   const t = useTranslations("howItWorks");
   const STEPS = useSteps();
   return (
-    <SectionWrapper variant="tinted" id="nasil-calisir" className="relative overflow-hidden">
-      {/* Soft mesh wash */}
-      <div
-        aria-hidden
-        className="absolute inset-0 mesh-gradient opacity-50 pointer-events-none"
-      />
+    <SectionWrapper variant="tinted" id="nasil-calisir" className="!bg-[#f6f6f1] relative overflow-hidden">
 
       <div className="relative">
         <SectionHeading
@@ -48,7 +43,7 @@ export default function HowItWorks() {
             <>
               {t("title")}
               <br />
-              <span className="text-gradient-aurora">{t("titleAccent")}</span>
+              <span className="text-[#1B6B3A]">{t("titleAccent")}</span>
             </>
           }
           subtitle={t("subtitle")}
@@ -87,8 +82,6 @@ function StepCard({ step, isLast }: { step: Step; isLast: boolean }) {
     const cy = rect.height / 2;
     rx.set(((y - cy) / cy) * -5);
     ry.set(((x - cx) / cx) * 5);
-    ref.current?.style.setProperty("--spotlight-x", `${x}px`);
-    ref.current?.style.setProperty("--spotlight-y", `${y}px`);
   };
   const handleLeave = () => {
     rx.set(0);
@@ -111,9 +104,9 @@ function StepCard({ step, isLast }: { step: Step; isLast: boolean }) {
           style={{ transformOrigin: "left" }}
           className="hidden lg:block absolute top-[60px] left-[calc(50%+50px)] right-[-30%] h-px pointer-events-none z-0"
         >
-          <div className="h-full bg-gradient-to-r from-[#22894a]/40 via-[#22894a]/20 to-transparent" />
+          <div className="h-full bg-[#14261a]/15" />
           <svg
-            className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-4 text-[#22894a]/60"
+            className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-4 text-[#1B6B3A]"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
@@ -134,7 +127,7 @@ function StepCard({ step, isLast }: { step: Step; isLast: boolean }) {
           transformPerspective: 1000,
           transformStyle: "preserve-3d",
         }}
-        className="spotlight-card relative vitrin-card h-full z-10 overflow-hidden flex flex-col"
+        className="relative h-full z-10 overflow-hidden flex flex-col rounded-xl border border-[#14261a]/12 bg-white transition-colors hover:border-[#1B6B3A]/50"
       >
         {/* Step image */}
         <div className="relative aspect-[16/10] overflow-hidden">
@@ -145,21 +138,20 @@ function StepCard({ step, isLast }: { step: Step; isLast: boolean }) {
             sizes="(max-width: 768px) 100vw, 25vw"
             className="object-cover transition-transform duration-700 group-hover:scale-105"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-white via-white/10 to-transparent pointer-events-none" />
           <motion.div
             whileHover={{ scale: 1.08, rotate: -3 }}
             transition={{ type: "spring", stiffness: 280, damping: 18 }}
-            className="absolute top-3 left-3 w-12 h-12 rounded-2xl bg-gradient-to-br from-[#1B6B3A] to-[#22894a] flex items-center justify-center shadow-lg shadow-[#1B6B3A]/30 ring-2 ring-white/40"
+            className="absolute top-3 left-3 w-11 h-11 rounded-lg bg-[#1B6B3A] flex items-center justify-center"
           >
             <step.Icon className="w-5 h-5 text-white" />
           </motion.div>
-          <span className="absolute top-3 right-3 px-3 py-1 rounded-full bg-white/85 backdrop-blur text-xs font-bold tracking-tighter tabular-nums text-[#1B6B3A]">
+          <span className="absolute top-3 right-3 px-2.5 py-1 rounded-md bg-white text-xs font-bold tabular-nums text-[#1B6B3A]">
             {step.num}
           </span>
         </div>
 
         <div style={{ transform: "translateZ(30px)" }} className="relative p-7 flex-1">
-          <h3 className="text-lg font-bold text-[#0e2519] mb-3 leading-tight tracking-tight">
+          <h3 className="text-lg font-bold text-[#14261a] mb-3 leading-tight tracking-tight">
             {step.title}
           </h3>
           <p className="text-sm text-[#3d5a3d] leading-relaxed">{step.description}</p>

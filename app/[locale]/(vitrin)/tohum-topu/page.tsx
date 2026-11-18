@@ -71,13 +71,13 @@ export default async function TohumTopuPage({ params }: { params: Promise<{ loca
       <SectionWrapper variant="light">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center max-w-6xl mx-auto">
           <div>
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#1B6B3A]/8 text-[#1B6B3A] mb-5 text-xs font-semibold uppercase tracking-wider">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#1B6B3A]" />
+            <p className="mb-5 flex items-center gap-3 text-[12px] font-semibold uppercase tracking-[0.16em] text-[#1B6B3A]">
+              <span aria-hidden className="h-px w-8 bg-current" />
               {t("what.badge")}
-            </div>
-            <h2 className="text-3xl lg:text-4xl font-bold text-[#1a2e1a] leading-tight mb-5">
+            </p>
+            <h2 className="display-headline text-3xl sm:text-4xl lg:text-5xl font-bold text-[#14261a] mb-5">
               {t.rich("what.heading", {
-                grad: (chunks) => <span className="text-gradient-forest">{chunks}</span>,
+                grad: (chunks) => <span className="text-[#1B6B3A]">{chunks}</span>,
               })}
             </h2>
             <p className="text-base text-[#3d5a3d] leading-relaxed mb-5">
@@ -90,7 +90,7 @@ export default async function TohumTopuPage({ params }: { params: Promise<{ loca
             </p>
           </div>
 
-          <div className="relative aspect-square rounded-3xl overflow-hidden bg-[#0a1f12]">
+          <div className="relative aspect-square rounded-xl overflow-hidden bg-[#dfe3d6]">
             <Image
               src="/images/tohum-topu/hero.webp"
               alt={t("what.imageAlt")}
@@ -99,9 +99,9 @@ export default async function TohumTopuPage({ params }: { params: Promise<{ loca
               sizes="(max-width: 1024px) 100vw, 50vw"
               className="object-cover"
             />
-            <div className="absolute bottom-6 left-6 right-6 liquid-glass-dark rounded-2xl p-5 text-center">
-              <p className="text-xs text-[#a7d4a7] uppercase tracking-wider font-semibold mb-1">{t("what.caption.eyebrow")}</p>
-              <p className="text-sm text-white">{t("what.caption.text")}</p>
+            <div className="absolute bottom-4 left-4 right-4 rounded-lg border border-[#14261a]/10 bg-white px-4 py-3 text-center">
+              <p className="text-xs text-[#1B6B3A] uppercase tracking-wider font-semibold mb-1">{t("what.caption.eyebrow")}</p>
+              <p className="text-sm text-[#14261a]">{t("what.caption.text")}</p>
             </div>
           </div>
         </div>
@@ -110,13 +110,13 @@ export default async function TohumTopuPage({ params }: { params: Promise<{ loca
       {/* Akademik literatür + laboratuvar analiziyle bilimsel tasarım */}
       <SectionWrapper variant="tinted" className="!py-16">
         <div className="max-w-3xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#1B6B3A]/8 text-[#1B6B3A] mb-5 text-xs font-semibold uppercase tracking-wider">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#1B6B3A]" />
+          <p className="mb-5 flex items-center justify-center gap-3 text-[12px] font-semibold uppercase tracking-[0.16em] text-[#1B6B3A]">
+            <span aria-hidden className="h-px w-8 bg-current" />
             {t("science.badge")}
-          </div>
-          <h2 className="text-3xl lg:text-4xl font-bold text-[#1a2e1a] leading-tight mb-5">
+          </p>
+          <h2 className="display-headline text-3xl sm:text-4xl lg:text-5xl font-bold text-[#14261a] mb-5">
             {t.rich("science.heading", {
-              grad: (chunks) => <span className="text-gradient-forest">{chunks}</span>,
+              grad: (chunks) => <span className="text-[#1B6B3A]">{chunks}</span>,
             })}
           </h2>
           <p className="text-base text-[#3d5a3d] leading-relaxed">
@@ -130,17 +130,17 @@ export default async function TohumTopuPage({ params }: { params: Promise<{ loca
         <SectionHeading
           badge={t("formulation.badge")}
           title={t.rich("formulation.title", {
-            grad: (chunks) => <span className="text-gradient-forest">{chunks}</span>,
+            grad: (chunks) => <span className="text-[#1B6B3A]">{chunks}</span>,
           })}
           subtitle={t("formulation.subtitle")}
         />
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 lg:gap-6 max-w-5xl mx-auto stagger-children">
           {COMPONENTS.map((c) => (
             <div key={c.label} className="vitrin-card p-7 text-center">
-              <div className="text-4xl font-bold bg-gradient-to-br from-[#1B6B3A] to-[#22894a] bg-clip-text text-transparent mb-2">
+              <div className="text-4xl font-bold tabular-nums text-[#1B6B3A] mb-2">
                 {c.pct}
               </div>
-              <h3 className="text-lg font-bold text-[#1a2e1a] mb-2">{c.label}</h3>
+              <h3 className="text-lg font-bold text-[#14261a] mb-2">{c.label}</h3>
               <p className="text-sm text-[#3d5a3d] leading-relaxed">{c.desc}</p>
             </div>
           ))}
@@ -152,14 +152,14 @@ export default async function TohumTopuPage({ params }: { params: Promise<{ loca
         <SectionHeading
           badge={t("production.badge")}
           title={t.rich("production.title", {
-            grad: (chunks) => <span className="text-gradient-forest">{chunks}</span>,
+            grad: (chunks) => <span className="text-[#1B6B3A]">{chunks}</span>,
           })}
         />
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto stagger-children">
           {STEPS.map((s) => (
             <div key={s.num} className="vitrin-card p-7">
-              <div className="text-2xl font-bold text-[#1B6B3A]/20 mb-3 tracking-tighter">{s.num}</div>
-              <h3 className="text-lg font-bold text-[#1a2e1a] mb-2.5">{s.title}</h3>
+              <div className="text-xs font-bold tabular-nums tracking-[0.18em] text-[#1B6B3A] mb-3">{s.num}</div>
+              <h3 className="text-lg font-bold text-[#14261a] mb-2.5">{s.title}</h3>
               <p className="text-sm text-[#3d5a3d] leading-relaxed">{s.desc}</p>
             </div>
           ))}
@@ -171,7 +171,7 @@ export default async function TohumTopuPage({ params }: { params: Promise<{ loca
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 max-w-5xl mx-auto">
           {STATS.map((s) => (
             <div key={s.label} className="vitrin-card p-6 lg:p-7 text-center">
-              <p className="text-3xl lg:text-4xl font-bold bg-gradient-to-br from-[#1B6B3A] to-[#22894a] bg-clip-text text-transparent mb-2 tabular-nums">
+              <p className="text-3xl lg:text-4xl font-bold text-[#1B6B3A] mb-2 tabular-nums">
                 {s.value}
               </p>
               <p className="text-xs uppercase tracking-wider text-[#6b8f6b] font-semibold">
@@ -185,9 +185,9 @@ export default async function TohumTopuPage({ params }: { params: Promise<{ loca
       {/* CTA */}
       <SectionWrapper variant="light">
         <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-3xl lg:text-4xl font-bold text-[#1a2e1a] leading-tight mb-5">
+          <h2 className="display-headline text-3xl sm:text-4xl lg:text-5xl font-bold text-[#14261a] mb-5">
             {t.rich(CTA_MODE === "request" ? "cta.titleRequest" : "cta.title", {
-              grad: (chunks) => <span className="text-gradient-forest">{chunks}</span>,
+              grad: (chunks) => <span className="text-[#1B6B3A]">{chunks}</span>,
             })}
           </h2>
           <p className="text-base text-[#3d5a3d] mb-8 max-w-xl mx-auto">

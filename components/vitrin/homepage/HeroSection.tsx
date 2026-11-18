@@ -23,19 +23,16 @@ export default function HeroSection() {
 
   const heroRef = useRef<HTMLElement>(null);
 
-  // Mouse-tracked aurora parallax
+  // Fareyi izleyen hafif derinlik: fotoğraf ve künye kartı ters yönde birkaç piksel kayar.
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
   const springConfig = { damping: 30, stiffness: 80, mass: 1 };
   const smoothX = useSpring(mouseX, springConfig);
   const smoothY = useSpring(mouseY, springConfig);
-
-  const aurora1X = useTransform(smoothX, (v) => v * 0.04);
-  const aurora1Y = useTransform(smoothY, (v) => v * 0.04);
-  const aurora2X = useTransform(smoothX, (v) => v * -0.025);
-  const aurora2Y = useTransform(smoothY, (v) => v * -0.025);
-  const aurora3X = useTransform(smoothX, (v) => v * 0.015);
-  const aurora3Y = useTransform(smoothY, (v) => v * -0.02);
+  const photoX = useTransform(smoothX, (v) => v * -0.012);
+  const photoY = useTransform(smoothY, (v) => v * -0.012);
+  const noteX = useTransform(smoothX, (v) => v * 0.02);
+  const noteY = useTransform(smoothY, (v) => v * 0.02);
 
   useEffect(() => {
     const onMove = (e: MouseEvent) => {
@@ -49,164 +46,91 @@ export default function HeroSection() {
   }, [mouseX, mouseY]);
 
   return (
-    <section
-      ref={heroRef}
-      className="relative overflow-hidden -mt-20 pt-32 pb-24 lg:pb-36 mesh-dark grain-overlay"
-    >
-      {/* Background image — drone seeding action, subtle blend with mesh-dark */}
-      <div className="absolute inset-0 pointer-events-none">
-        <Image
-          src="/images/anasayfa/hero-bg.webp"
-          alt={t("backgroundAlt")}
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover opacity-30 mix-blend-screen"
-        />
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              "linear-gradient(180deg, rgba(10,31,18,0.55) 0%, rgba(10,31,18,0.35) 50%, rgba(10,31,18,0.85) 100%)",
-          }}
-        />
-      </div>
-
-      {/* Aurora layer */}
-      <div className="aurora-bg">
-        <motion.div
-          className="aurora-blob aurora-blob-1"
-          style={{ x: aurora1X, y: aurora1Y }}
-        />
-        <motion.div
-          className="aurora-blob aurora-blob-2"
-          style={{ x: aurora2X, y: aurora2Y }}
-        />
-        <motion.div
-          className="aurora-blob aurora-blob-3"
-          style={{ x: aurora3X, y: aurora3Y }}
-        />
-      </div>
-
-      {/* Subtle grid pattern */}
-      <div
-        className="absolute inset-0 opacity-[0.06] pointer-events-none"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)",
-          backgroundSize: "64px 64px",
-          maskImage: "radial-gradient(ellipse at center, black 30%, transparent 70%)",
-          WebkitMaskImage: "radial-gradient(ellipse at center, black 30%, transparent 70%)",
-        }}
-      />
-
-      <div className="relative vitrin-container">
-        <div className="max-w-6xl mx-auto text-center">
-          {/* Eyebrow badge */}
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
+    <section ref={heroRef} className="relative overflow-hidden bg-[#f6f6f1] pt-10 pb-16 lg:pt-16 lg:pb-24">
+      <div className="vitrin-container grid items-center gap-10 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-14">
+        <div>
+          <motion.p
+            initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full premium-glass-dark mb-10"
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            className="mb-6 flex items-center gap-3 text-[12px] font-semibold uppercase tracking-[0.16em] text-[#1B6B3A]"
           >
-            <span className="relative flex w-2 h-2">
-              <span className="absolute inline-flex w-full h-full rounded-full bg-[#34d399] opacity-75 animate-ping" />
-              <span className="relative inline-flex w-2 h-2 rounded-full bg-[#34d399]" />
-            </span>
-            <span className="text-[11px] font-semibold tracking-[0.18em] uppercase text-[#a7d4a7]">
-              {t("badge")}
-            </span>
-          </motion.div>
+            <span aria-hidden className="h-px w-8 bg-[#1B6B3A]" />
+            {t("badge")}
+          </motion.p>
 
-          {/* Headline — word-by-word reveal */}
-          <h1 className="display-headline text-6xl sm:text-7xl lg:text-8xl xl:text-[9.5rem] font-bold mb-10 leading-[1.05]">
-            <WordReveal text={HEADLINE_LINE_1} className="text-white" delay={0.15} />
+          <h1 className="display-headline mb-7 text-[2.6rem] font-bold text-[#14261a] sm:text-6xl xl:text-7xl">
+            <WordReveal text={HEADLINE_LINE_1} delay={0.1} />
             <br />
-            <WordReveal text={HEADLINE_LINE_2} gradient delay={0.5} />
+            <WordReveal text={HEADLINE_LINE_2} className="text-[#1B6B3A]" delay={0.4} />
           </h1>
 
-          {/* Sub headline — line reveal */}
           <motion.p
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, delay: 0.95, ease: [0.16, 1, 0.3, 1] }}
-            className="text-lg sm:text-xl lg:text-2xl text-[#a7d4a7] max-w-3xl mx-auto mb-12 leading-relaxed font-light"
+            transition={{ duration: 0.8, delay: 0.75, ease: [0.16, 1, 0.3, 1] }}
+            className="mb-9 max-w-xl text-lg leading-relaxed text-[#3d5a3d] sm:text-xl"
           >
             {SUBTEXT}
           </motion.p>
 
-          {/* CTAs */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, delay: 1.15, ease: [0.16, 1, 0.3, 1] }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16"
+            transition={{ duration: 0.8, delay: 0.9, ease: [0.16, 1, 0.3, 1] }}
+            className="mb-10 flex flex-col gap-3 sm:flex-row sm:items-center"
           >
             <MagneticCTA href={orderCtaHref("hub")} variant="primary">
               <span>{CTA_MODE === "order" ? t("ctaPrimary") : CTA_MODE === "request" ? t("ctaRequest") : tNav("comingSoon")}</span>
-              <motion.svg
-                className="w-5 h-5"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={2.5}
-              >
-                <motion.path
-                  d="M5 12h14M13 5l7 7-7 7"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </motion.svg>
+              <svg className="h-5 w-5 transition-transform group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.25}>
+                <path d="M5 12h14M13 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
             </MagneticCTA>
             <MagneticCTA href="/kurumsal-cozumler" variant="ghost">
               {t("ctaSecondary")}
             </MagneticCTA>
           </motion.div>
 
-          {/* Trust strip */}
-          <motion.div
+          <motion.ul
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 1, delay: 1.4 }}
-            className="flex flex-wrap items-center justify-center gap-x-7 gap-y-3 text-xs sm:text-sm font-medium text-[#a7d4a7]"
+            transition={{ duration: 0.8, delay: 1.1 }}
+            className="flex flex-col gap-2 border-t border-[#14261a]/10 pt-6 text-sm font-medium text-[#3d5a3d] sm:flex-row sm:flex-wrap sm:gap-x-7"
           >
-            {TRUST_BADGES.map((badge, i) => (
-              <span key={badge} className="flex items-center gap-x-7">
+            {TRUST_BADGES.map((badge) => (
+              <li key={badge}>
                 <TrustItem>{badge}</TrustItem>
-                {i < TRUST_BADGES.length - 1 && (
-                  <span className="w-1 h-1 rounded-full bg-[#22894a]/50" />
-                )}
-              </span>
+              </li>
             ))}
-          </motion.div>
+          </motion.ul>
         </div>
-      </div>
 
-      {/* Scroll indicator */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 2 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 hidden lg:flex flex-col items-center gap-2"
-      >
-        <span className="text-[10px] uppercase tracking-[0.2em] text-[#6b8f6b] font-semibold">
-          {t("discover")}
-        </span>
         <motion.div
-          animate={{ y: [0, 8, 0] }}
-          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.9, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
+          className="relative"
         >
-          <svg
-            className="w-5 h-5 text-[#22894a]"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={2}
+          <div className="relative aspect-[4/5] overflow-hidden rounded-xl bg-[#dfe3d6] sm:aspect-[16/11] lg:aspect-[4/5]">
+            <motion.div className="absolute -inset-3" style={{ x: photoX, y: photoY }}>
+              <Image
+                src="/images/anasayfa/hero-bg.webp"
+                alt={t("backgroundAlt")}
+                fill
+                priority
+                sizes="(min-width: 1024px) 46vw, 100vw"
+                className="object-cover"
+              />
+            </motion.div>
+          </div>
+          <motion.p
+            style={{ x: noteX, y: noteY }}
+            className="absolute -bottom-4 left-4 right-4 rounded-lg border border-[#14261a]/10 bg-white px-4 py-3 text-sm font-medium text-[#14261a] sm:left-6 sm:right-auto sm:max-w-xs"
           >
-            <polyline points="6 9 12 15 18 9" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
+            {t("backgroundAlt")}
+          </motion.p>
         </motion.div>
-      </motion.div>
+      </div>
     </section>
   );
 }
@@ -216,12 +140,10 @@ function WordReveal({
   text,
   delay = 0,
   className = "",
-  gradient = false,
 }: {
   text: string;
   delay?: number;
   className?: string;
-  gradient?: boolean;
 }) {
   const words = text.split(" ");
   return (
@@ -229,14 +151,7 @@ function WordReveal({
       {words.map((word, i) => (
         <span key={i} className="inline-block overflow-hidden align-bottom py-[0.1em]">
           <motion.span
-            /* Gradyan, harfleri TASIYAN elemanin uzerinde durmali.
-               Disdaki span'de dururken background-clip:text, arada transform'lu
-               ve overflow:hidden'li bir katman oldugu icin ilk boyamada
-               calismiyordu: giris animasyonu bitince tarayici kirpilmis arka
-               plani yeniden boyamiyor ve yazi gorunmez kaliyordu (mobilde ilk
-               acilista). Scroll gibi bir repaint tetikleyicisi gelince
-               duzeliyordu — bu yuzden aralikli bir hata gibi gorunuyordu. */
-            className={`inline-block ${gradient ? "text-gradient-aurora" : ""}`}
+            className="inline-block"
             initial={{ y: "110%", opacity: 0 }}
             animate={{ y: "0%", opacity: 1 }}
             transition={{
@@ -285,11 +200,11 @@ function MagneticCTA({
   };
 
   const baseClasses =
-    "group relative inline-flex items-center gap-3 px-8 py-4 rounded-2xl font-semibold transition-shadow duration-300";
+    "group inline-flex min-h-12 items-center justify-center gap-2.5 rounded-[10px] px-7 py-3.5 font-semibold transition-colors duration-200";
   const variantClasses =
     variant === "primary"
-      ? "bg-gradient-to-br from-[#1B6B3A] via-[#22894a] to-[#1B6B3A] text-white shadow-xl shadow-[#1B6B3A]/40 hover:shadow-2xl hover:shadow-[#22894a]/50"
-      : "premium-glass-dark text-white hover:border-white/30";
+      ? "bg-[#1B6B3A] text-white hover:bg-[#14552d]"
+      : "border border-[#14261a]/25 text-[#14261a] hover:border-[#1B6B3A] hover:text-[#1B6B3A]";
 
   return (
     <MotionLink
@@ -300,25 +215,7 @@ function MagneticCTA({
       style={{ x: sx, y: sy }}
       className={`${baseClasses} ${variantClasses}`}
     >
-      {/* Inner shimmer for primary */}
-      {variant === "primary" && (
-        <span
-          className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none"
-          aria-hidden
-        >
-          <span
-            className="absolute inset-0"
-            style={{
-              background:
-                "linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent)",
-              transform: "translateX(-100%)",
-              animation: "shimmer-flow 3s ease-in-out infinite",
-              backgroundSize: "200% 100%",
-            }}
-          />
-        </span>
-      )}
-      <span className="relative inline-flex items-center gap-3">{children}</span>
+      {children}
     </MotionLink>
   );
 }
@@ -327,7 +224,7 @@ function TrustItem({ children }: { children: React.ReactNode }) {
   return (
     <span className="inline-flex items-center gap-1.5">
       <svg
-        className="w-4 h-4 text-[#34d399]"
+        className="w-4 h-4 text-[#1B6B3A]"
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"

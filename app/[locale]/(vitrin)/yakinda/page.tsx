@@ -32,24 +32,21 @@ export default async function YakindaPage({
   const t = await getTranslations("comingSoonPage");
 
   return (
-    <SectionWrapper variant="light" className="!py-24 lg:!py-32">
+    <SectionWrapper variant="tinted" className="!py-24 lg:!py-32">
       <div className="max-w-2xl mx-auto text-center">
-        {/* Badge */}
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#1B6B3A]/8 text-[#1B6B3A] mb-8 text-xs font-bold uppercase tracking-[0.18em]">
-          <span className="relative flex h-2 w-2">
-            <span className="absolute inline-flex h-full w-full rounded-full bg-[#22894a] opacity-60 animate-ping" />
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-[#1B6B3A]" />
-          </span>
+        {/* Üst etiket */}
+        <p className="mb-8 flex items-center justify-center gap-3 text-[12px] font-semibold uppercase tracking-[0.16em] text-[#1B6B3A]">
+          <span aria-hidden className="h-px w-8 bg-current" />
           {t("badge")}
-        </div>
+        </p>
 
         {/* Görsel ikon */}
-        <div className="w-24 h-24 mx-auto mb-8 rounded-3xl bg-gradient-to-br from-[#1B6B3A] to-[#22894a] flex items-center justify-center shadow-xl shadow-[#1B6B3A]/20">
-          <SproutIcon className="w-12 h-12 text-white" />
+        <div className="w-16 h-16 mx-auto mb-8 rounded-lg bg-[#1B6B3A] flex items-center justify-center">
+          <SproutIcon className="w-8 h-8 text-white" />
         </div>
 
-        <h1 className="text-4xl lg:text-5xl font-bold text-[#0e2519] leading-tight mb-5 tracking-tight">
-          {t("title.lead")} <span className="text-gradient-forest">{t("title.highlight")}</span>
+        <h1 className="display-headline text-4xl sm:text-5xl lg:text-6xl font-bold text-[#14261a] mb-5">
+          {t("title.lead")} <span className="text-[#1B6B3A]">{t("title.highlight")}</span>
         </h1>
 
         <p className="text-lg text-[#3d5a3d] leading-relaxed mb-4">
@@ -83,15 +80,15 @@ export default async function YakindaPage({
         </div>
 
         {/* Hızlı linkler */}
-        <div className="mt-14 pt-10 border-t border-black/5">
+        <div className="mt-14 pt-10 border-t border-[#14261a]/10">
           <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#6b8f6b] mb-5">
             {t("discover.heading")}
           </p>
           <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm">
-            <Link href="/tohum-topu" className="text-[#1B6B3A] hover:text-[#22894a] font-semibold transition-colors">{t("discover.seedBall")}</Link>
-            <Link href="/dron-teknolojisi" className="text-[#1B6B3A] hover:text-[#22894a] font-semibold transition-colors">{t("discover.drone")}</Link>
-            <Link href="/projeler" className="text-[#1B6B3A] hover:text-[#22894a] font-semibold transition-colors">{t("discover.projects")}</Link>
-            <Link href="/kurumsal-cozumler" className="text-[#1B6B3A] hover:text-[#22894a] font-semibold transition-colors">{t("discover.corporate")}</Link>
+            <Link href="/tohum-topu" className="text-[#1B6B3A] hover:text-[#14552d] font-semibold transition-colors">{t("discover.seedBall")}</Link>
+            <Link href="/dron-teknolojisi" className="text-[#1B6B3A] hover:text-[#14552d] font-semibold transition-colors">{t("discover.drone")}</Link>
+            <Link href="/projeler" className="text-[#1B6B3A] hover:text-[#14552d] font-semibold transition-colors">{t("discover.projects")}</Link>
+            <Link href="/kurumsal-cozumler" className="text-[#1B6B3A] hover:text-[#14552d] font-semibold transition-colors">{t("discover.corporate")}</Link>
           </div>
         </div>
       </div>

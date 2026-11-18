@@ -549,12 +549,12 @@ export default function OrderWizard({
   const actions = (mobile: boolean) => (
     <div className={mobile ? "lg:hidden" : "hidden lg:block"}>
       {inOrderReview && preview && (
-        <p className="mb-3 text-sm leading-relaxed text-[#0e2519]">
+        <p className="mb-3 text-sm leading-relaxed text-[#14261a]">
           {t("review.obligation")}
         </p>
       )}
       {mode === "preorder" && step === 4 && !soon && (
-        <p className="mb-3 text-sm leading-relaxed text-[#0e2519]">
+        <p className="mb-3 text-sm leading-relaxed text-[#14261a]">
           {t("preorder.buttonNote")}
         </p>
       )}
@@ -562,7 +562,7 @@ export default function OrderWizard({
         type="submit"
         form="order-wizard"
         disabled={busy || loading}
-        className="min-h-12 w-full rounded-2xl bg-[#1B6B3A] px-5 py-3 text-sm font-semibold leading-relaxed text-white shadow-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#1B6B3A] disabled:opacity-60"
+        className="min-h-12 w-full rounded-[10px] bg-[#1B6B3A] px-5 py-3 text-sm font-semibold leading-relaxed text-white transition-colors hover:bg-[#14552d] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#1B6B3A] disabled:opacity-60"
       >
         {buttonLabel}
       </button>
@@ -606,7 +606,7 @@ export default function OrderWizard({
       data-immersive
       className="relative pb-72 lg:pb-0 motion-reduce:[&_*]:!transition-none motion-reduce:[&_*]:!animate-none"
     >
-      <div className="mb-8 flex flex-col gap-5 rounded-3xl border border-[#1B6B3A]/15 bg-[#f8faf5] p-5 sm:flex-row sm:items-center sm:p-6">
+      <div className="mb-8 flex flex-col gap-5 rounded-xl border border-[#14261a]/12 bg-[#f6f6f1] p-5 sm:flex-row sm:items-center sm:p-6">
         {site.cover && (
           <Image
             src={site.cover}
@@ -614,22 +614,22 @@ export default function OrderWizard({
             width={112}
             height={84}
             unoptimized={/^https?:\/\//i.test(site.cover)}
-            className="h-21 w-28 shrink-0 rounded-2xl object-cover"
+            className="h-21 w-28 shrink-0 rounded-xl object-cover"
           />
         )}
         <div className="min-w-0 flex-1">
-          <p className="text-lg font-semibold text-[#0e2519]">{site.name}</p>
+          <p className="text-lg font-semibold text-[#14261a]">{site.name}</p>
           {site.location && (
             <p className="mt-1 text-sm text-[#3d5a3d]">{site.location}</p>
           )}
           <div className="mt-3 flex flex-wrap gap-2 text-xs">
             {site.fire && (
-              <span className="rounded-full border border-orange-200 bg-orange-50 px-3 py-1 text-orange-800">
+              <span className="rounded-md border border-orange-200 bg-orange-50 px-2.5 py-1 text-orange-800">
                 {site.fire}
               </span>
             )}
             {site.hectares && (
-              <span className="rounded-full bg-[#e5efdf] px-3 py-1 text-[#1B6B3A]">
+              <span className="rounded-md border border-[#14261a]/12 bg-white px-2.5 py-1 text-[#1B6B3A]">
                 {site.hectares}
               </span>
             )}
@@ -655,7 +655,7 @@ export default function OrderWizard({
           <li
             key={i}
             aria-current={step === i + 1 ? "step" : undefined}
-            className={`min-w-0 border-t-2 pt-3 ${step === i + 1 ? "border-[#1B6B3A] text-[#1B6B3A]" : "border-[#1B6B3A]/15 text-[#3d5a3d]"}`}
+            className={`min-w-0 border-t-2 pt-3 ${step === i + 1 ? "border-[#1B6B3A] text-[#1B6B3A]" : "border-[#14261a]/12 text-[#3d5a3d]"}`}
           >
             <span className="block text-xs font-semibold">
               {formatCount(i + 1, locale)}
@@ -680,7 +680,7 @@ export default function OrderWizard({
           <h2
             ref={heading}
             tabIndex={-1}
-            className="scroll-mt-32 text-2xl font-semibold text-[#0e2519] outline-none"
+            className="scroll-mt-32 text-2xl font-semibold text-[#14261a] outline-none"
           >
             {step === 4 && soon ? t("preorder.soonTitle") : steps[step - 1]}
           </h2>
@@ -771,7 +771,7 @@ export default function OrderWizard({
                 {t("quantity.speciesNote")}
               </p>
               {PRICING_VISIBLE && (
-                <div className="rounded-2xl bg-[#f8faf5] p-4">
+                <div className="rounded-xl bg-[#f6f6f1] p-4">
                   <p className="text-sm font-semibold">
                     {t("quantity.unit")}:{" "}
                     {formatTry(pricing.unitPriceKurus, locale)}
@@ -786,7 +786,7 @@ export default function OrderWizard({
           {step === 2 && (
             <SectionCard step={2} title={t("certificate.title")}>
               <fieldset className="space-y-1" aria-describedby="ow-certificate-note">
-                <legend className="mb-2 text-sm font-semibold text-[#0e2519]">{t("certificate.label")}</legend>
+                <legend className="mb-2 text-sm font-semibold text-[#14261a]">{t("certificate.label")}</legend>
                 {(mode === "order" ? (["own", "company", "anonymous"] as const) : (["own", "anonymous"] as const)).map((value) => (
                   <label key={value} className="flex min-h-11 cursor-pointer items-start gap-3 py-2 text-sm leading-relaxed">
                     <input
@@ -814,8 +814,8 @@ export default function OrderWizard({
               <p id="ow-certificate-note" className="text-sm text-[#3d5a3d]">
                 {t("certificate.thirdPartyNote")} {t("certificate.publicNote")}
               </p>
-              <div className="rounded-2xl border border-[#1B6B3A]/15 bg-[#f8faf5] p-5">
-                <p className="break-words font-semibold text-[#0e2519]">
+              <div className="rounded-xl border border-[#14261a]/12 bg-[#f6f6f1] p-5">
+                <p className="break-words font-semibold text-[#14261a]">
                   {t("certificate.preview", { name: finalName })}
                 </p>
               </div>
@@ -886,12 +886,12 @@ export default function OrderWizard({
               <div
                 role="status"
                 aria-live="polite"
-                className="space-y-4 rounded-3xl border border-[#1B6B3A]/15 p-6"
+                className="space-y-4 rounded-xl border border-[#14261a]/12 p-6"
               >
                 <p className="text-sm text-[#3d5a3d]">{t("review.loading")}</p>
-                <div className="h-8 rounded bg-[#edf4e9]" />
-                <div className="h-24 rounded bg-[#edf4e9]" />
-                <div className="h-40 rounded bg-[#edf4e9]" />
+                <div className="h-8 rounded bg-[#14261a]/8" />
+                <div className="h-24 rounded bg-[#14261a]/8" />
+                <div className="h-40 rounded bg-[#14261a]/8" />
               </div>
             ) : preview ? (
               <OrderReview
@@ -958,7 +958,7 @@ export default function OrderWizard({
                     : []),
                 ]}
               />
-              <p className="mt-6 rounded-2xl bg-[#f8faf5] p-4 text-sm leading-relaxed text-[#3d5a3d]">
+              <p className="mt-6 rounded-xl bg-[#f6f6f1] p-4 text-sm leading-relaxed text-[#3d5a3d]">
                 {t("request.note")}
               </p>
             </section>
@@ -1009,7 +1009,7 @@ export default function OrderWizard({
                   },
                 ]}
               />
-              <p className="mt-6 rounded-2xl bg-[#f8faf5] p-4 text-sm leading-relaxed text-[#3d5a3d]">
+              <p className="mt-6 rounded-xl bg-[#f6f6f1] p-4 text-sm leading-relaxed text-[#3d5a3d]">
                 {t("preorder.reviewNote")}
               </p>
             </section>
@@ -1019,7 +1019,7 @@ export default function OrderWizard({
               role="status"
               className="vitrin-card space-y-5 p-6 lg:p-8"
             >
-              <p className="leading-relaxed text-[#0e2519]">
+              <p className="leading-relaxed text-[#14261a]">
                 {t("preorder.soonBody")}
               </p>
               <p className="text-sm leading-relaxed text-[#3d5a3d]">
@@ -1099,7 +1099,7 @@ export default function OrderWizard({
         </form>
         <aside
           aria-label={t("review.summaryLabel")}
-          className="hidden min-w-0 space-y-5 rounded-3xl border border-[#1B6B3A]/15 bg-[#f8faf5] p-6 lg:sticky lg:top-32 lg:block"
+          className="hidden min-w-0 space-y-5 rounded-xl border border-[#14261a]/12 bg-[#f6f6f1] p-6 lg:sticky lg:top-32 lg:block"
         >
           <h2 className="text-lg font-semibold">{t("review.summaryLabel")}</h2>
           <p className="text-sm font-medium">{site.name}</p>
@@ -1115,11 +1115,11 @@ export default function OrderWizard({
             })}
           </p>
           {showPrice && (
-            <div className="border-t border-[#1B6B3A]/15 pt-5">
+            <div className="border-t border-[#14261a]/12 pt-5">
               <p className="text-xs text-[#3d5a3d]">
                 {t(inOrderReview ? "review.total" : "request.estimated")}
               </p>
-              <p className="mt-1 text-3xl font-semibold text-[#0e2519]">
+              <p className="mt-1 text-3xl font-semibold text-[#14261a]">
                 {price === null ? "—" : formatTry(price, locale)}
               </p>
               <p className="mt-2 text-xs text-[#3d5a3d]">
@@ -1144,13 +1144,13 @@ export default function OrderWizard({
           {actions(false)}
         </aside>
       </div>
-      <div className="fixed inset-x-0 bottom-0 z-40 max-h-[45svh] overflow-y-auto border-t border-[#1B6B3A]/20 bg-white px-5 pb-[max(1rem,env(safe-area-inset-bottom))] pt-3 shadow-[0_-6px_24px_#0e25190a] lg:hidden">
+      <div className="fixed inset-x-0 bottom-0 z-40 max-h-[45svh] overflow-y-auto border-t border-[#14261a]/12 bg-white px-5 pb-[max(1rem,env(safe-area-inset-bottom))] pt-3 lg:hidden">
         {showPrice && (
           <p className="mb-2 flex flex-wrap items-baseline justify-between gap-2 text-sm text-[#3d5a3d]">
             <span>
               {t(inOrderReview ? "review.total" : "request.estimated")}
             </span>
-            <strong className="text-lg text-[#0e2519]">
+            <strong className="text-lg text-[#14261a]">
               {price === null ? "—" : formatTry(price, locale)}
             </strong>
           </p>
@@ -1169,9 +1169,9 @@ function GuestChoice() {
   const t = useTranslations("orderWizard.guest");
   const pathname = usePathname();
   return (
-    <div className="flex flex-col gap-3 rounded-2xl border border-[#1B6B3A]/15 bg-[#f8faf5] p-5 sm:flex-row sm:items-center sm:justify-between">
+    <div className="flex flex-col gap-3 rounded-xl border border-[#14261a]/12 bg-[#f6f6f1] p-5 sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <p className="font-semibold text-[#0e2519]">{t("title")}</p>
+        <p className="font-semibold text-[#14261a]">{t("title")}</p>
         <p className="mt-1 text-sm leading-relaxed text-[#3d5a3d]">{t("body")}</p>
       </div>
       <div className="flex shrink-0 gap-4 text-sm font-semibold">

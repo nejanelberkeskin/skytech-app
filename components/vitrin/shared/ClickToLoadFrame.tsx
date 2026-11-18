@@ -43,17 +43,17 @@ export default function ClickToLoadFrame({
   }
 
   return (
-    <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-linear-to-br from-[#123222] to-[#0a1f12] px-6 pb-28 text-center sm:pb-6">
+    <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-[#e9ebe2] px-6 pb-28 text-center sm:pb-6">
       <button
         type="button"
         onClick={() => setLoaded(true)}
         aria-describedby={noteId}
-        className="inline-flex min-h-11 items-center gap-2 rounded-full border border-white/30 bg-white/10 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-white/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#a3e635]"
+        className="inline-flex min-h-11 items-center gap-2 rounded-[10px] bg-[#1B6B3A] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#14552d] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#14261a]"
       >
         {icon}
         {buttonLabel}
       </button>
-      <p id={noteId} className="max-w-xs text-xs leading-relaxed text-[#a7d4a7]">
+      <p id={noteId} className="max-w-xs text-xs leading-relaxed text-[#3d5a3d]">
         {note}
       </p>
     </div>

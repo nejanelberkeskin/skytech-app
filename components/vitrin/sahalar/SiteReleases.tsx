@@ -17,7 +17,7 @@ export default async function SiteReleases({ releases, dates, locale }: Props) {
       <div className="mb-8 max-w-3xl">
         <h2
           id="site-releases-title"
-          className="display-headline break-words text-3xl font-semibold text-[#0e2519] sm:text-4xl"
+          className="display-headline break-words text-3xl font-semibold text-[#14261a] sm:text-4xl"
         >
           {t("title")}
         </h2>
@@ -26,18 +26,18 @@ export default async function SiteReleases({ releases, dates, locale }: Props) {
       <ol className="space-y-6">
         {releases.map((release) => (
           <li key={release.id}>
-            <article className="grid gap-6 rounded-3xl border border-[#1B6B3A]/15 bg-[#f8faf5] p-5 sm:p-8 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.65fr)] lg:gap-10">
+            <article className="grid gap-6 rounded-xl border border-[#14261a]/12 bg-[#f6f6f1] p-5 sm:p-8 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.65fr)] lg:gap-10">
               <header className="min-w-0">
-                <h3 className="break-words text-xl font-semibold text-[#0e2519] [overflow-wrap:anywhere] sm:text-2xl">
+                <h3 className="break-words text-xl font-semibold text-[#14261a] [overflow-wrap:anywhere] sm:text-2xl">
                   <time dateTime={release.releasedOn}>
                     {dates[release.releasedOn]}
                   </time>
                 </h3>
-                <p className="mt-3 inline-block max-w-full break-words rounded-full border border-[#1B6B3A]/15 px-3 py-1 text-xs font-medium text-[#3d5a3d]">
+                <p className="mt-3 inline-block max-w-full break-words rounded-md border border-[#14261a]/12 bg-white px-2.5 py-1 text-xs font-medium text-[#3d5a3d]">
                   {t("season", { season: release.seasonLabel })}
                 </p>
                 {release.title && (
-                  <p className="mt-5 break-words text-base font-medium text-[#0e2519] [overflow-wrap:anywhere]">
+                  <p className="mt-5 break-words text-base font-medium text-[#14261a] [overflow-wrap:anywhere]">
                     {release.title}
                   </p>
                 )}
@@ -59,7 +59,7 @@ export default async function SiteReleases({ releases, dates, locale }: Props) {
                       note={t("consentNote")}
                     />
                     <div className="mt-4 flex flex-wrap items-center justify-between gap-x-5 gap-y-1 text-sm">
-                      <p className="text-[#526352]">
+                      <p className="text-[#3d5a3d]">
                         {t("publishedOn", {
                           date: dates[release.video.publishedOn],
                         })}
@@ -75,7 +75,7 @@ export default async function SiteReleases({ releases, dates, locale }: Props) {
                     </div>
                   </>
                 ) : (
-                  <p className="text-sm leading-relaxed text-[#526352]">
+                  <p className="text-sm leading-relaxed text-[#3d5a3d]">
                     {t("videoPending")}
                   </p>
                 )}

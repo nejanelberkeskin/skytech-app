@@ -40,10 +40,7 @@ export default async function VitrinFooter() {
   ];
 
   return (
-    <footer className="relative bg-[#0a1f12] text-[#e0f0e0] mt-20 overflow-hidden">
-      {/* Decorative orbs */}
-      <div className="absolute top-0 left-1/4 w-96 h-96 rounded-full bg-[#1B6B3A]/8 blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 right-0 w-80 h-80 rounded-full bg-[#22894a]/6 blur-3xl pointer-events-none" />
+    <footer className="relative bg-[#10241a] text-[#e0f0e0] mt-20 overflow-hidden">
 
       <div className="relative vitrin-container py-16 lg:py-20">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8">
@@ -71,7 +68,7 @@ export default async function VitrinFooter() {
 
           {/* Hizmetler */}
           <div className="lg:col-span-2">
-            <p className="text-sm font-bold text-white uppercase tracking-wider mb-4">{t("servicesTitle")}</p>
+            <p className="text-[12px] font-semibold text-white uppercase tracking-[0.16em] mb-4">{t("servicesTitle")}</p>
             <ul className="space-y-2.5">
               {HIZMETLER.map((item) => (
                 <li key={item.href}>
@@ -79,7 +76,7 @@ export default async function VitrinFooter() {
                     href={item.href}
                     className="text-sm text-[#a7d4a7] hover:text-white transition-colors inline-flex items-center gap-1.5 group"
                   >
-                    <ArrowRightIcon className="w-3 h-3 text-[#22894a] group-hover:translate-x-0.5 transition-transform" />
+                    <ArrowRightIcon className="w-3 h-3 text-[#a7d4a7]/60 group-hover:translate-x-0.5 transition-transform" />
                     {item.label}
                   </Link>
                 </li>
@@ -89,7 +86,7 @@ export default async function VitrinFooter() {
 
           {/* Hızlı Linkler */}
           <div className="lg:col-span-2">
-            <p className="text-sm font-bold text-white uppercase tracking-wider mb-4">{t("quickLinksTitle")}</p>
+            <p className="text-[12px] font-semibold text-white uppercase tracking-[0.16em] mb-4">{t("quickLinksTitle")}</p>
             <ul className="space-y-2.5">
               {HIZLI_LINKLER.map((item) => (
                 <li key={item.href}>
@@ -97,7 +94,7 @@ export default async function VitrinFooter() {
                     href={item.href}
                     className="text-sm text-[#a7d4a7] hover:text-white transition-colors inline-flex items-center gap-1.5 group"
                   >
-                    <ArrowRightIcon className="w-3 h-3 text-[#22894a] group-hover:translate-x-0.5 transition-transform" />
+                    <ArrowRightIcon className="w-3 h-3 text-[#a7d4a7]/60 group-hover:translate-x-0.5 transition-transform" />
                     {item.label}
                   </Link>
                 </li>
@@ -107,18 +104,18 @@ export default async function VitrinFooter() {
 
           {/* Newsletter + İletişim */}
           <div className="lg:col-span-4">
-            <p className="text-sm font-bold text-white uppercase tracking-wider mb-4">{t("contactTitle")}</p>
+            <p className="text-[12px] font-semibold text-white uppercase tracking-[0.16em] mb-4">{t("contactTitle")}</p>
             <div className="space-y-2.5 text-sm text-[#a7d4a7]">
               <p className="flex items-start gap-2">
-                <MailIcon className="w-4 h-4 text-[#22894a] mt-0.5 shrink-0" />
+                <MailIcon className="w-4 h-4 text-[#a7d4a7]/70 mt-0.5 shrink-0" />
                 <span>info@skytechgreen.com</span>
               </p>
               <p className="flex items-start gap-2">
-                <PhoneIcon className="w-4 h-4 text-[#22894a] mt-0.5 shrink-0" />
+                <PhoneIcon className="w-4 h-4 text-[#a7d4a7]/70 mt-0.5 shrink-0" />
                 <span>0850 308 2600<br />+90 530 127 64 35</span>
               </p>
               <p className="flex items-start gap-2">
-                <PinIcon className="w-4 h-4 text-[#22894a] mt-0.5 shrink-0" />
+                <PinIcon className="w-4 h-4 text-[#a7d4a7]/70 mt-0.5 shrink-0" />
                 <span>{COMPANY.address.line}<br />{COMPANY.address.district} / {COMPANY.address.province}, {COMPANY.address.country}</span>
               </p>
             </div>
@@ -128,7 +125,7 @@ export default async function VitrinFooter() {
 
       {/* Bottom bar — 1: yasal bağlantılar · 2: telif + marka | dil + geliştirici | ödeme bandı.
           Sağdaki boşluk sabit "yukarı çık" düğmesi banda binmesin diye. */}
-      <div className="relative border-t border-white/5">
+      <div className="relative border-t border-white/10">
         <div className="vitrin-container pt-6 pb-24 lg:pb-8">
           <ul className="flex flex-wrap justify-center lg:justify-start gap-x-5 gap-y-2 text-xs">
             {YASAL.map((item) => (
@@ -143,7 +140,7 @@ export default async function VitrinFooter() {
             </li>
           </ul>
 
-          <div className="mt-5 border-t border-white/5 pt-5 flex flex-col items-center gap-5 xl:flex-row xl:items-center xl:justify-between xl:gap-8 xl:pr-20">
+          <div className="mt-5 border-t border-white/10 pt-5 flex flex-col items-center gap-5 xl:flex-row xl:items-center xl:justify-between xl:gap-8 xl:pr-20">
             <div className="flex items-start gap-2.5 text-xs text-[#6b8f6b] max-w-xl text-center xl:max-w-md xl:text-left">
               <Image
                 src="/images/brand/logo-mark-light.webp"
@@ -158,7 +155,7 @@ export default async function VitrinFooter() {
                   &copy; {new Date().getFullYear()} {ORG_LEGAL_NAME} {t("rightsReserved")}
                 </p>
                 {/* Marka beyanı: Skytech Green bir marka, tüzel kişilik Skytech Havacılık A.Ş. */}
-                <p className="text-[11px] text-[#4f6b4f]">
+                <p className="text-[11px] text-[#6b8f6b]">
                   {t.rich("brandOf", {
                     company: ORG_LEGAL_NAME,
                     link: (chunks) => (
@@ -166,7 +163,7 @@ export default async function VitrinFooter() {
                         href={ORG_PARENT_URL}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="underline underline-offset-2 decoration-[#4f6b4f]/40 hover:text-[#a7d4a7] hover:decoration-[#a7d4a7] transition-colors"
+                        className="underline underline-offset-2 decoration-[#6b8f6b]/40 hover:text-[#a7d4a7] hover:decoration-[#a7d4a7] transition-colors"
                       >
                         {chunks}
                       </a>
@@ -203,7 +200,7 @@ function SocialIcon({ href, aria, children }: { href?: string; aria: string; chi
       <span
         aria-label={aria}
         aria-disabled="true"
-        className="w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-[#a7d4a7]/40 cursor-default"
+        className="w-9 h-9 rounded-lg border border-white/10 flex items-center justify-center text-[#a7d4a7]/40 cursor-default"
       >
         {children}
       </span>
@@ -215,7 +212,7 @@ function SocialIcon({ href, aria, children }: { href?: string; aria: string; chi
       aria-label={aria}
       target="_blank"
       rel="noopener noreferrer"
-      className="w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-[#a7d4a7] hover:bg-[#1B6B3A] hover:text-white hover:border-[#22894a] transition-all"
+      className="w-9 h-9 rounded-lg border border-white/15 flex items-center justify-center text-[#a7d4a7] hover:bg-[#1B6B3A] hover:text-white hover:border-[#1B6B3A] transition-colors"
     >
       {children}
     </a>

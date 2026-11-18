@@ -37,7 +37,7 @@ export default function ContactFields({
   return (
     <SectionCard step={step} title={t("contact.heading")} sub={t("contact.sub")} id="iletisim">
       {prefilled && (
-        <p className="text-xs text-[#1B6B3A] bg-[#1B6B3A]/8 rounded-xl px-4 py-2.5 font-medium">{t("prefilled")}</p>
+        <p className="text-xs text-[#1B6B3A] bg-[#1B6B3A]/8 rounded-lg px-4 py-2.5 font-medium">{t("prefilled")}</p>
       )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

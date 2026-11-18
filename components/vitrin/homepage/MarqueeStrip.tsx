@@ -15,39 +15,7 @@ export default function MarqueeStrip() {
     t("keywords.annualMonitoring"),
   ];
   return (
-    <div
-      className="relative overflow-hidden py-8 border-y border-[#1B6B3A]/20"
-      style={{
-        background:
-          "linear-gradient(90deg, #0e2519 0%, #1B6B3A 25%, #22894a 50%, #1B6B3A 75%, #0e2519 100%)",
-      }}
-    >
-      {/* Subtle inner glow */}
-      <div
-        aria-hidden
-        className="absolute inset-0 opacity-30 pointer-events-none"
-        style={{
-          background:
-            "radial-gradient(ellipse at center, rgba(163, 230, 53, 0.20) 0%, transparent 60%)",
-        }}
-      />
-
-      {/* Edge fade masks */}
-      <div
-        aria-hidden
-        className="absolute inset-y-0 left-0 w-32 z-10 pointer-events-none"
-        style={{
-          background: "linear-gradient(90deg, #0e2519 0%, transparent 100%)",
-        }}
-      />
-      <div
-        aria-hidden
-        className="absolute inset-y-0 right-0 w-32 z-10 pointer-events-none"
-        style={{
-          background: "linear-gradient(270deg, #0e2519 0%, transparent 100%)",
-        }}
-      />
-
+    <div className="relative overflow-hidden border-y border-[#14261a]/10 bg-white py-6">
       <div className="marquee-container">
         <div className="marquee-track">
           {/* Render twice for seamless loop */}
@@ -55,16 +23,7 @@ export default function MarqueeStrip() {
             <div key={repeat} className="flex items-center gap-14 pr-14 shrink-0">
               {KEYWORDS.map((word, i) => (
                 <div key={`${repeat}-${i}`} className="flex items-center gap-14 shrink-0">
-                  <span
-                    className="text-2xl sm:text-3xl lg:text-4xl font-bold whitespace-nowrap tracking-tight"
-                    style={{
-                      background:
-                        "linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.65) 100%)",
-                      WebkitBackgroundClip: "text",
-                      backgroundClip: "text",
-                      WebkitTextFillColor: "transparent",
-                    }}
-                  >
+                  <span className="whitespace-nowrap text-xl font-semibold tracking-tight text-[#14261a] sm:text-2xl lg:text-3xl">
                     {word}
                   </span>
                   <LeafDivider />
@@ -81,7 +40,7 @@ export default function MarqueeStrip() {
 function LeafDivider() {
   return (
     <svg
-      className="w-7 h-7 text-[#a3e635]/70 shrink-0"
+      className="h-5 w-5 shrink-0 text-[#1B6B3A]"
       viewBox="0 0 32 32"
       fill="currentColor"
     >

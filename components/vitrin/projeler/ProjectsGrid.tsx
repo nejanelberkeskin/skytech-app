@@ -5,19 +5,11 @@ import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { PROJECTS, type ProjectStatus } from "@/lib/projects-data";
 
-const STATUS_META: Record<ProjectStatus, { color: string; dot: string }> = {
-  active: {
-    color: "bg-[#22894a]/15 text-[#1B6B3A] border-[#22894a]/25",
-    dot: "bg-[#22894a] animate-pulse",
-  },
-  pilot: {
-    color: "bg-[#f59e0b]/15 text-[#b45309] border-[#f59e0b]/25",
-    dot: "bg-[#f59e0b]",
-  },
-  completed: {
-    color: "bg-black/5 text-[#3d5a3d] border-black/10",
-    dot: "bg-[#94b494]",
-  },
+// Durum etiketi: fotoğrafın üstünde okunması için dolu zeminli, düz renkli.
+const STATUS_META: Record<ProjectStatus, { color: string }> = {
+  active: { color: "bg-white text-[#1B6B3A] border-[#1B6B3A]/30" },
+  pilot: { color: "bg-amber-50 text-amber-800 border-amber-200" },
+  completed: { color: "bg-white text-[#3d5a3d] border-[#14261a]/15" },
 };
 
 export default function ProjectsGrid() {
@@ -49,41 +41,37 @@ export default function ProjectsGrid() {
               className="group vitrin-card overflow-hidden"
             >
               {/* Görsel yalnızca tamamlanmış projelerde. Pilot sahalarda
-                  saha görseli olmadığı için marka gradient placeholder gösterilir. */}
+                  saha görseli olmadığı için düz zeminli yer tutucu gösterilir. */}
               <div className="relative aspect-[16/10] overflow-hidden">
                 {hasImage ? (
-                  <>
-                    <Image
-                      src={project.image}
-                      alt={`${project.city} — ${region}`}
-                      fill
-                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                      className="object-cover transition-transform duration-700 group-hover:scale-105"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent pointer-events-none" />
-                  </>
+                  <Image
+                    src={project.image}
+                    alt={`${project.city} — ${region}`}
+                    fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
                 ) : (
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#0a1f12] via-[#0e2a18] to-[#123420] flex items-center justify-center">
-                    <MapPinIcon className="w-10 h-10 text-[#22894a]/50" />
-                    <div className="absolute inset-0 mesh-gradient opacity-20 pointer-events-none" />
+                  <div className="absolute inset-0 bg-[#e9ebe2] flex items-center justify-center">
+                    <MapPinIcon className="w-10 h-10 text-[#6b8f6b]" />
                   </div>
                 )}
                 <div
-                  className={`absolute top-3 right-3 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full backdrop-blur-md border text-[10px] font-bold uppercase tracking-[0.16em] ${meta.color}`}
+                  className={`absolute top-3 right-3 inline-flex items-center px-2.5 py-1 rounded-md border text-[10px] font-bold uppercase tracking-[0.16em] ${meta.color}`}
                 >
-                  <span className={`w-1.5 h-1.5 rounded-full ${meta.dot}`} />
                   {t(`status.${project.status}`)}
                 </div>
-                <div className="absolute bottom-3 left-3">
-                  <p className="text-xs text-white/70 font-medium">{project.year}</p>
+                {/* Yıl + şehir: geçişli karartma yerine düz, koyu bir künye plakası. */}
+                <div className="absolute bottom-3 left-3 rounded-md bg-[#10241a] px-3 py-2">
+                  <p className="text-xs text-[#a7d4a7] font-medium">{project.year}</p>
                   <p className="text-lg font-bold text-white tracking-tight">{project.city}</p>
                 </div>
               </div>
               <div className="p-6">
-                <p className="text-xs uppercase tracking-[0.18em] text-[#22894a] font-bold mb-1">
+                <p className="text-xs uppercase tracking-[0.18em] text-[#1B6B3A] font-bold mb-1">
                   {region}
                 </p>
-                <h3 className="text-lg font-bold text-[#0e2519] mb-2 tracking-tight">
+                <h3 className="text-lg font-bold text-[#14261a] mb-2 tracking-tight">
                   {project.city}
                 </h3>
                 <p className="text-sm text-[#3d5a3d] leading-relaxed">{t(`items.${project.id}.desc`)}</p>

@@ -102,7 +102,7 @@ export default function LandApplicationForm() {
       top={
         <Link
           href={REQUEST_ROUTES.openLand}
-          className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#1B6B3A] hover:text-[#22894a] transition-colors"
+          className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#1B6B3A] hover:text-[#14552d] transition-colors"
         >
           <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} aria-hidden="true">
             <path d="M19 12H5M11 5l-7 7 7 7" strokeLinecap="round" strokeLinejoin="round" />
@@ -201,7 +201,7 @@ export default function LandApplicationForm() {
             )}
           </Field>
           <div>
-            <span className="block text-xs font-semibold text-[#1a2e1a] mb-1.5 uppercase tracking-wider">{t("area.unit")}</span>
+            <span className="block text-xs font-semibold text-[#14261a] mb-1.5 uppercase tracking-wider">{t("area.unit")}</span>
             <ChipGroup
               label={t("area.unit")}
               options={L.unit}
@@ -250,7 +250,7 @@ export default function LandApplicationForm() {
           <p role="alert" className="text-xs font-medium text-[#dc2626]">{form.errorFor("details.ownership")}</p>
         )}
         <div className="pt-2">
-          <p className="text-sm font-bold text-[#0e2519] mb-3">{t("timing.heading")}</p>
+          <p className="text-sm font-bold text-[#14261a] mb-3">{t("timing.heading")}</p>
           <ChipGroup
             label={t("timing.heading")}
             options={L.timing}

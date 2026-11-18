@@ -56,10 +56,10 @@ export default async function WithdrawalPage({ params, searchParams }: Props) {
     <div className="vitrin-container pb-20 pt-32 sm:pt-40">
       <div className="mx-auto max-w-2xl space-y-7">
         <header>
-          <h1 className="display-headline text-3xl font-semibold text-[#0e2519] sm:text-5xl">
+          <h1 className="display-headline text-3xl font-semibold text-[#14261a] sm:text-5xl">
             {t("title")}
           </h1>
-          <p className="mt-4 text-sm leading-relaxed text-[#526352]">
+          <p className="mt-4 text-sm leading-relaxed text-[#3d5a3d]">
             {t("description")}
           </p>
         </header>
@@ -70,12 +70,12 @@ export default async function WithdrawalPage({ params, searchParams }: Props) {
         />
         <section
           aria-labelledby="written-notice-title"
-          className="border-t border-[#1B6B3A]/15 pt-6"
+          className="border-t border-[#14261a]/12 pt-6"
         >
           <h2 id="written-notice-title" className="text-lg font-semibold">
             {t("contact.title")}
           </h2>
-          <address className="mt-3 space-y-2 text-sm not-italic leading-relaxed text-[#526352]">
+          <address className="mt-3 space-y-2 text-sm not-italic leading-relaxed text-[#3d5a3d]">
             <p>{COMPANY.legalName}</p>
             <p>
               {COMPANY.address.line}

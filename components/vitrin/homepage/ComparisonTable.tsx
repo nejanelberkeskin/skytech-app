@@ -24,8 +24,6 @@ export default function ComparisonTable() {
   ];
   return (
     <SectionWrapper variant="light" className="relative overflow-hidden">
-      <div aria-hidden className="absolute inset-0 mesh-gradient opacity-40 pointer-events-none" />
-
       <div className="relative">
         <SectionHeading
           badge={t("badge")}
@@ -33,7 +31,7 @@ export default function ComparisonTable() {
             <>
               {t("title")}
               <br />
-              <span className="text-gradient-aurora">{t("titleAccent")}</span>
+              <span className="text-[#1B6B3A]">{t("titleAccent")}</span>
             </>
           }
           subtitle={t("subtitle")}
@@ -46,7 +44,7 @@ export default function ComparisonTable() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, margin: "-80px" }}
             transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-            className="relative bg-white border border-black/8 rounded-3xl overflow-hidden flex flex-col"
+            className="relative bg-white border border-[#14261a]/12 rounded-xl overflow-hidden flex flex-col"
           >
             <div className="relative aspect-[16/10] overflow-hidden">
               <Image
@@ -56,34 +54,32 @@ export default function ComparisonTable() {
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 className="object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-white via-white/10 to-transparent pointer-events-none" />
-              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#dc2626]/60 to-[#dc2626]/15 z-10" />
             </div>
             <div className="p-7 lg:p-9 flex-1 flex flex-col">
-            <div className="flex items-center gap-3 mb-7">
-              <div className="w-11 h-11 rounded-xl bg-[#dc2626]/8 flex items-center justify-center">
-                <svg className="w-5 h-5 text-[#dc2626]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-                  <circle cx="12" cy="12" r="10" />
-                  <line x1="8" y1="12" x2="16" y2="12" strokeLinecap="round" />
-                </svg>
+              <div className="flex items-center gap-3 pb-5 border-b border-[#14261a]/10">
+                <div className="w-11 h-11 rounded-lg bg-[#b42318]/8 flex items-center justify-center">
+                  <svg className="w-5 h-5 text-[#b42318]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="8" y1="12" x2="16" y2="12" strokeLinecap="round" />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-bold text-[#14261a] tracking-tight">{t("traditional.heading")}</h3>
               </div>
-              <h3 className="text-xl font-bold text-[#0e2519] tracking-tight">{t("traditional.heading")}</h3>
-            </div>
-            <ul className="space-y-4">
-              {TRADITIONAL.map((item, i) => (
-                <motion.li
-                  key={i}
-                  initial={{ opacity: 0, x: -8 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: 0.2 + i * 0.06 }}
-                  className="flex items-start gap-3 text-sm text-[#3d5a3d]"
-                >
-                  <CrossIcon className="w-5 h-5 text-[#dc2626] shrink-0 mt-0.5" />
-                  {item}
-                </motion.li>
-              ))}
-            </ul>
+              <ul>
+                {TRADITIONAL.map((item, i) => (
+                  <motion.li
+                    key={i}
+                    initial={{ opacity: 0, x: -8 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: 0.2 + i * 0.06 }}
+                    className="flex items-start gap-3 py-3.5 text-sm text-[#3d5a3d] border-b border-[#14261a]/10 last:border-b-0 last:pb-0"
+                  >
+                    <CrossIcon className="w-5 h-5 text-[#b42318] shrink-0 mt-0.5" />
+                    {item}
+                  </motion.li>
+                ))}
+              </ul>
             </div>
           </motion.div>
 
@@ -93,7 +89,7 @@ export default function ComparisonTable() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, margin: "-80px" }}
             transition={{ duration: 1, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
-            className="relative bg-gradient-to-br from-[#1B6B3A] via-[#22894a] to-[#1B6B3A] rounded-3xl overflow-hidden text-white shadow-2xl shadow-[#1B6B3A]/25 flex flex-col"
+            className="relative bg-white border-2 border-[#1B6B3A] rounded-xl overflow-hidden flex flex-col"
           >
             <div className="relative aspect-[16/10] overflow-hidden">
               <Image
@@ -103,51 +99,37 @@ export default function ComparisonTable() {
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 className="object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#1B6B3A]/95 via-[#1B6B3A]/30 to-transparent pointer-events-none" />
             </div>
-            <div className="relative p-7 lg:p-9 flex-1 flex flex-col">
-            {/* Shimmer band */}
-            <span
-              aria-hidden
-              className="absolute -top-20 -left-20 w-[200%] h-40 pointer-events-none rotate-[-12deg]"
-              style={{
-                background:
-                  "linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent)",
-                animation: "shimmer-flow 5s ease-in-out infinite",
-                backgroundSize: "200% 100%",
-              }}
-            />
-            <div className="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-white/10 blur-3xl pointer-events-none" />
-
-            <div className="relative flex items-center gap-3 mb-7">
-              <div className="w-11 h-11 rounded-xl bg-white/15 backdrop-blur-md flex items-center justify-center">
-                <svg
-                  className="w-5 h-5 text-white"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth={2.5}
-                >
-                  <polyline points="20 6 9 17 4 12" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
+            <div className="relative p-7 lg:p-9 flex-1 flex flex-col bg-[#1B6B3A]/5">
+              <div className="flex items-center gap-3 pb-5 border-b border-[#14261a]/10">
+                <div className="w-11 h-11 rounded-lg bg-[#1B6B3A] flex items-center justify-center">
+                  <svg
+                    className="w-5 h-5 text-white"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth={2.5}
+                  >
+                    <polyline points="20 6 9 17 4 12" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-bold text-[#14261a] tracking-tight">Skytech Green</h3>
               </div>
-              <h3 className="text-xl font-bold tracking-tight">Skytech Green</h3>
-            </div>
-            <ul className="relative space-y-4">
-              {SKYTECH.map((item, i) => (
-                <motion.li
-                  key={i}
-                  initial={{ opacity: 0, x: 8 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: 0.35 + i * 0.06 }}
-                  className="flex items-start gap-3 text-sm text-white/90"
-                >
-                  <CheckCircleIcon className="w-5 h-5 text-[#a3e635] shrink-0 mt-0.5" />
-                  {item}
-                </motion.li>
-              ))}
-            </ul>
+              <ul>
+                {SKYTECH.map((item, i) => (
+                  <motion.li
+                    key={i}
+                    initial={{ opacity: 0, x: 8 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: 0.35 + i * 0.06 }}
+                    className="flex items-start gap-3 py-3.5 text-sm text-[#14261a] border-b border-[#14261a]/10 last:border-b-0 last:pb-0"
+                  >
+                    <CheckCircleIcon className="w-5 h-5 text-[#1B6B3A] shrink-0 mt-0.5" />
+                    {item}
+                  </motion.li>
+                ))}
+              </ul>
             </div>
           </motion.div>
         </div>

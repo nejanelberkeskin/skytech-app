@@ -82,7 +82,7 @@ export default async function CertificatePage({ params }: Props) {
         <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-[#1B6B3A]">
           {t("verification")}
         </p>
-        <h1 className="display-headline text-3xl font-semibold text-[#0e2519] sm:text-5xl">
+        <h1 className="display-headline text-3xl font-semibold text-[#14261a] sm:text-5xl">
           {t("title")}
         </h1>
         <p className="mt-4 break-words text-xl text-[#3d5a3d]">
@@ -90,7 +90,7 @@ export default async function CertificatePage({ params }: Props) {
         </p>
       </header>
       <div
-        className={`mb-8 rounded-2xl border px-5 py-4 ${cert.status === "valid" ? "border-[#1B6B3A]/20 bg-[#edf4e9] text-[#1B6B3A]" : "border-[#e7cfb4] bg-[#fff7ed] text-[#633a17]"}`}
+        className={`mb-8 rounded-xl border px-5 py-4 ${cert.status === "valid" ? "border-[#1B6B3A]/25 bg-[#1B6B3A]/5 text-[#1B6B3A]" : "border-[#e7cfb4] bg-[#fff7ed] text-[#633a17]"}`}
       >
         <p className="font-semibold">
           {t(cert.status === "valid" ? "valid" : "cancelled")}
@@ -108,7 +108,7 @@ export default async function CertificatePage({ params }: Props) {
             height={1350}
             unoptimized
             priority
-            className="h-auto w-full rounded-2xl shadow-lg"
+            className="h-auto w-full rounded-xl border border-[#14261a]/12"
           />
           {cert.status === "valid" && (
             <CertificateActions
@@ -120,13 +120,13 @@ export default async function CertificatePage({ params }: Props) {
           )}
         </div>
         <div className="min-w-0">
-          <h2 className="text-2xl font-semibold text-[#0e2519]">
+          <h2 className="text-2xl font-semibold text-[#14261a]">
             {t("details")}
           </h2>
-          <dl className="mt-6 divide-y divide-[#1B6B3A]/15">
+          <dl className="mt-6 divide-y divide-[#14261a]/10">
             <div className="pb-4">
               <dt className="text-sm text-[#3d5a3d]">{t("facts.site")}</dt>
-              <dd className="mt-1 break-words font-medium text-[#0e2519]">
+              <dd className="mt-1 break-words font-medium text-[#14261a]">
                 {cert.siteSlug ? (
                   <Link
                     href={siteDetailHref({ slug: cert.siteSlug })}
@@ -142,14 +142,14 @@ export default async function CertificatePage({ params }: Props) {
             {facts.map((f) => (
               <div key={f.label} className="py-4">
                 <dt className="text-sm text-[#3d5a3d]">{f.label}</dt>
-                <dd className="mt-1 break-words font-medium text-[#0e2519]">
+                <dd className="mt-1 break-words font-medium text-[#14261a]">
                   {f.value}
                 </dd>
               </div>
             ))}
           </dl>
-          <section className="mt-8 rounded-3xl bg-[#f8faf5] p-6">
-            <h2 className="text-xl font-semibold text-[#0e2519]">
+          <section className="mt-8 rounded-xl bg-[#f6f6f1] p-6">
+            <h2 className="text-xl font-semibold text-[#14261a]">
               {t("meaning")}
             </h2>
             <ul className="mt-4 list-disc space-y-3 pl-5 text-sm leading-relaxed text-[#3d5a3d]">

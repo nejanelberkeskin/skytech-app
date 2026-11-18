@@ -10,8 +10,9 @@ import SectionHeading from "../SectionHeading";
  * MagicLens — fareyi/parmağı takip eden "Önce / Sonra" maskesi.
  *
  * Arka planda yanmış / çorak alan sahnesi; imlecin altında dairesel mercek
- * içinde yemyeşil orman görünür. CSS mask-image: radial-gradient +
- * Framer Motion useMotionTemplate.
+ * içinde yemyeşil orman görünür. CSS mask-image: radial-gradient (keskin
+ * kenarlı daire) + Framer Motion useMotionTemplate. Merceğin kenarı düz
+ * 2px beyaz çizgidir.
  *
  * Mercek yarıçapı konteyner genişliğine göre ölçeklenir (genişliğin ~%22'si,
  * 70–200px aralığında): masaüstünde eski 200px korunur, mobilde parmakla
@@ -44,7 +45,7 @@ export default function MagicLens() {
   const sy = useSpring(y, { damping: 24, stiffness: 280, mass: 0.4 });
 
   // mask-image string with live coordinates (percentage based)
-  const maskImage = useMotionTemplate`radial-gradient(circle ${radius}px at ${sx}% ${sy}%, black 0%, black 60%, transparent 100%)`;
+  const maskImage = useMotionTemplate`radial-gradient(circle ${radius}px at ${sx}% ${sy}%, black 0, black calc(100% - 1px), transparent 100%)`;
 
   const handleMove = (e: React.PointerEvent<HTMLDivElement>) => {
     const rect = containerRef.current?.getBoundingClientRect();
@@ -62,7 +63,7 @@ export default function MagicLens() {
             <>
               {t("title")}
               <br />
-              <span className="text-gradient-aurora">{t("titleAccent")}</span>
+              <span className="text-[#1B6B3A]">{t("titleAccent")}</span>
             </>
           }
           subtitle={t("subtitle")}
@@ -73,7 +74,7 @@ export default function MagicLens() {
           onPointerMove={handleMove}
           onPointerEnter={() => setActive(true)}
           onPointerLeave={() => setActive(false)}
-          className="relative aspect-[16/9] max-w-6xl mx-auto rounded-3xl overflow-hidden cursor-none shadow-2xl"
+          className="relative aspect-[16/9] max-w-6xl mx-auto rounded-xl overflow-hidden cursor-none border border-[#14261a]/12"
           data-cursor="magnetic"
         >
           {/* Background layer — burnt / barren scene */}
@@ -103,36 +104,25 @@ export default function MagicLens() {
             animate={{ opacity: active ? 1 : 0 }}
             transition={{ duration: 0.3 }}
           >
-            {/* Inner glow ring */}
-            <div
-              className="absolute rounded-full ring-2 ring-white/40 ring-offset-0 shadow-[0_0_60px_rgba(34,197,94,0.4)]"
-              style={{ inset: Math.round(radius * 0.3) }}
-            />
-            {/* Outer subtle ring */}
-            <div
-              className="absolute rounded-full ring-1 ring-white/15"
-              style={{ inset: Math.round(radius * 0.2) }}
-            />
+            {/* Mercek kenarı — maskenin sınırıyla aynı çapta düz çizgi */}
+            <div className="absolute inset-0 rounded-full border-2 border-white" />
           </motion.div>
 
           {/* Hint label */}
           <motion.div
-            className="absolute top-6 left-6 px-3.5 py-1.5 rounded-full premium-glass-dark text-[10px] font-bold uppercase tracking-[0.2em] text-[#a7d4a7] pointer-events-none"
+            className="absolute top-4 left-4 sm:top-6 sm:left-6 px-2.5 py-1.5 rounded-md bg-[#14261a]/80 text-white text-[10px] font-semibold uppercase tracking-[0.16em] pointer-events-none"
             animate={{ opacity: active ? 0 : 1 }}
             transition={{ duration: 0.3 }}
           >
-            <span className="inline-flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#34d399] animate-pulse" />
-              {t("hint")}
-            </span>
+            {t("hint")}
           </motion.div>
 
           {/* Labels */}
-          <div className="absolute bottom-6 left-6 right-6 flex items-center justify-between text-xs font-bold uppercase tracking-[0.2em] pointer-events-none">
-            <span className="px-3 py-1.5 rounded-full premium-glass-dark text-[#fda4af]">
+          <div className="absolute bottom-4 left-4 right-4 sm:bottom-6 sm:left-6 sm:right-6 flex items-center justify-between gap-3 text-[10px] sm:text-xs font-semibold uppercase tracking-[0.16em] pointer-events-none">
+            <span className="px-2.5 py-1.5 rounded-md bg-[#14261a]/80 text-white">
               {t("labelBefore")}
             </span>
-            <span className="px-3 py-1.5 rounded-full premium-glass-dark text-[#a3e635]">
+            <span className="px-2.5 py-1.5 rounded-md bg-[#1B6B3A] text-white">
               {t("labelAfter")}
             </span>
           </div>
@@ -153,13 +143,6 @@ function BarrenScene() {
         sizes="(max-width: 1024px) 100vw, 80vw"
         className="object-cover"
       />
-      <div
-        className="absolute inset-0 opacity-25 mix-blend-multiply pointer-events-none"
-        style={{
-          background:
-            "linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.5) 100%)",
-        }}
-      />
     </div>
   );
 }
@@ -174,29 +157,6 @@ function ForestScene() {
         fill
         sizes="(max-width: 1024px) 100vw, 80vw"
         className="object-cover"
-      />
-      <div
-        className="absolute inset-0 opacity-20 mix-blend-screen pointer-events-none"
-        style={{
-          background:
-            "radial-gradient(ellipse at 50% 0%, rgba(163, 230, 53, 0.4), transparent 60%)",
-        }}
-      />
-      {/* Misty highlights — kept for atmosphere */}
-      <div
-        className="absolute inset-0 opacity-15 pointer-events-none"
-        style={{
-          background:
-            "radial-gradient(circle at 20% 70%, rgba(255,255,255,0.4), transparent 30%), radial-gradient(circle at 75% 65%, rgba(255,255,255,0.3), transparent 30%)",
-        }}
-      />
-      {/* Grain */}
-      <div
-        className="absolute inset-0 opacity-20 mix-blend-overlay"
-        style={{
-          backgroundImage:
-            "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E\")",
-        }}
       />
     </div>
   );

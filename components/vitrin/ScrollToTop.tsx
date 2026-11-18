@@ -49,13 +49,9 @@ export default function ScrollToTop() {
       onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
       aria-label={t("scrollTop")}
       tabIndex={visible ? 0 : -1}
-      className={`fixed ${raised ? "bottom-28" : "bottom-6"} right-6 z-30 w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 ${
+      className={`fixed ${raised ? "bottom-28" : "bottom-6"} right-6 z-30 w-12 h-12 rounded-full border border-white/25 bg-[#1B6B3A] hover:bg-[#14552d] flex items-center justify-center transition-[opacity,translate,background-color] duration-300 ${
         visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4 pointer-events-none"
       }`}
-      style={{
-        background: "linear-gradient(135deg, #1B6B3A 0%, #22894a 100%)",
-        boxShadow: "0 8px 24px rgba(27, 107, 58, 0.35), 0 2px 4px rgba(0,0,0,0.1)",
-      }}
     >
       <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} aria-hidden="true">
         <polyline points="18 15 12 9 6 15" strokeLinecap="round" strokeLinejoin="round" />

@@ -46,7 +46,7 @@ export function LegalSection({
 }) {
   return (
     <section>
-      <h2 className="text-xl lg:text-2xl font-bold text-[#0e2519] mb-4">
+      <h2 className="text-xl lg:text-2xl font-bold text-[#14261a] mb-4">
         <span className="text-[#1B6B3A] mr-2">{no}.</span>
         {title}
       </h2>
@@ -64,7 +64,7 @@ export function LegalList({ items }: { items: React.ReactNode[] }) {
     <ul className="space-y-2.5">
       {items.map((item, i) => (
         <li key={i} className="flex items-start gap-2.5 text-[15px] text-[#3d5a3d] leading-relaxed">
-          <span className="shrink-0 w-1.5 h-1.5 rounded-full bg-[#22894a] mt-2.5" />
+          <span className="shrink-0 w-1.5 h-1.5 rounded-full bg-[#1B6B3A] mt-2.5" />
           <span>{item}</span>
         </li>
       ))}

@@ -132,7 +132,7 @@ export default function BuyerInvoiceFields({
       >
         <h3
           id="invoice-heading"
-          className="mb-5 text-lg font-bold text-[#0e2519]"
+          className="mb-5 text-lg font-bold text-[#14261a]"
         >
           {t("invoice.title")}
         </h3>
@@ -151,7 +151,7 @@ export default function BuyerInvoiceFields({
             {(["individual", "corporate"] as const).map((type) => (
               <label
                 key={type}
-                className={`flex min-h-14 cursor-pointer items-center gap-3 rounded-2xl border p-4 text-sm font-semibold ${invoice.type === type ? "border-[#1B6B3A] bg-[#edf4e9]" : "border-black/10"}`}
+                className={`flex min-h-14 cursor-pointer items-center gap-3 rounded-lg border-2 p-4 text-sm font-semibold text-[#14261a] transition-colors ${invoice.type === type ? "border-[#1B6B3A] bg-[#1B6B3A]/5" : "border-[#14261a]/12 hover:border-[#14261a]/25"}`}
               >
                 <input
                   type="radio"

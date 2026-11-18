@@ -27,13 +27,13 @@ export default async function SiteMedia({ links, locale }: { links: SiteMediaLin
               target="_blank"
               rel="noopener noreferrer nofollow"
               referrerPolicy="no-referrer"
-              className="group flex h-full flex-col rounded-2xl border border-[#1B6B3A]/15 bg-white p-5 transition-colors hover:border-[#1B6B3A]/40"
+              className="group flex h-full flex-col rounded-xl border border-[#14261a]/12 bg-white p-5 transition-colors hover:border-[#1B6B3A]/50"
             >
-              <span className="mb-3 inline-flex w-fit items-center gap-1.5 rounded-full bg-[#edf4e9] px-2.5 py-1 text-xs font-semibold text-[#1B6B3A]">
+              <span className="mb-3 inline-flex w-fit items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#6b8f6b]">
                 {link.kind === "video" ? "▶ " : ""}
                 {t(link.kind)}
               </span>
-              <span className="font-semibold leading-snug text-[#0e2519] group-hover:text-[#1B6B3A]">{link.title}</span>
+              <span className="font-semibold leading-snug text-[#14261a] group-hover:text-[#1B6B3A]">{link.title}</span>
               <span className="mt-auto pt-4 text-xs text-[#3d5a3d]">
                 {[link.source, link.date ? formatLongDay(link.date, locale) : null].filter(Boolean).join(" · ")}
               </span>

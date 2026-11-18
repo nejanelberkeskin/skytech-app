@@ -72,14 +72,14 @@ export default function CertificateActions({
           type="button"
           onClick={download}
           disabled={busy}
-          className="rounded-full bg-[#1B6B3A] px-5 py-3 text-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#1B6B3A] disabled:opacity-60"
+          className="min-h-11 rounded-[10px] bg-[#1B6B3A] px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#14552d] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#1B6B3A] disabled:opacity-60"
         >
           {t(busy ? "downloading" : "download")}
         </button>
         <button
           type="button"
           onClick={copy}
-          className="rounded-full border border-[#1B6B3A]/30 px-5 py-3 text-sm font-semibold text-[#1B6B3A] focus-visible:outline-2 focus-visible:outline-offset-4"
+          className="min-h-11 rounded-[10px] border border-[#14261a]/25 px-5 py-3 text-sm font-semibold text-[#14261a] transition-colors hover:border-[#1B6B3A] hover:text-[#1B6B3A] focus-visible:outline-2 focus-visible:outline-offset-4"
         >
           {t("copy")}
         </button>
@@ -87,7 +87,7 @@ export default function CertificateActions({
           <button
             type="button"
             onClick={share}
-            className="rounded-full border border-[#1B6B3A]/30 px-5 py-3 text-sm font-semibold text-[#1B6B3A] focus-visible:outline-2 focus-visible:outline-offset-4"
+            className="min-h-11 rounded-[10px] border border-[#14261a]/25 px-5 py-3 text-sm font-semibold text-[#14261a] transition-colors hover:border-[#1B6B3A] hover:text-[#1B6B3A] focus-visible:outline-2 focus-visible:outline-offset-4"
           >
             {t("share")}
           </button>

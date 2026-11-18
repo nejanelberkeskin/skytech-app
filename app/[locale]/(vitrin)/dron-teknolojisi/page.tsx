@@ -67,13 +67,13 @@ export default async function DronTeknolojisiPage({ params }: { params: Promise<
       <SectionWrapper variant="light">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center max-w-6xl mx-auto">
           <div>
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#1B6B3A]/8 text-[#1B6B3A] mb-5 text-xs font-semibold uppercase tracking-wider">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#1B6B3A]" />
+            <p className="mb-5 flex items-center gap-3 text-[12px] font-semibold uppercase tracking-[0.16em] text-[#1B6B3A]">
+              <span aria-hidden className="h-px w-8 bg-current" />
               {t("system.badge")}
-            </div>
-            <h2 className="text-3xl lg:text-4xl font-bold text-[#1a2e1a] leading-tight mb-5">
+            </p>
+            <h2 className="display-headline text-3xl sm:text-4xl lg:text-5xl font-bold text-[#14261a] mb-5">
               {t.rich("system.heading", {
-                grad: (chunks) => <span className="text-gradient-forest">{chunks}</span>,
+                grad: (chunks) => <span className="text-[#1B6B3A]">{chunks}</span>,
               })}
             </h2>
             <p className="text-base text-[#3d5a3d] leading-relaxed mb-5">
@@ -86,7 +86,7 @@ export default async function DronTeknolojisiPage({ params }: { params: Promise<
             </p>
           </div>
 
-          <div className="relative aspect-square rounded-3xl overflow-hidden bg-[#0a1f12]">
+          <div className="relative aspect-square rounded-xl overflow-hidden bg-[#dfe3d6]">
             <Image
               src="/images/dron-teknolojisi/hero.webp"
               alt={t("system.imageAlt")}
@@ -95,8 +95,8 @@ export default async function DronTeknolojisiPage({ params }: { params: Promise<
               sizes="(max-width: 1024px) 100vw, 50vw"
               className="object-cover"
             />
-            <div className="absolute bottom-6 left-6 right-6 liquid-glass-dark rounded-2xl p-5">
-              <div className="flex items-center justify-between text-xs text-[#a7d4a7]">
+            <div className="absolute bottom-4 left-4 right-4 rounded-lg border border-[#14261a]/10 bg-white px-4 py-3">
+              <div className="flex items-center justify-between text-xs font-medium text-[#3d5a3d]">
                 <span>RTK GPS</span><span>•</span>
                 <span>LiDAR</span><span>•</span>
                 <span>{t("system.thermalCamera")}</span>
@@ -111,17 +111,17 @@ export default async function DronTeknolojisiPage({ params }: { params: Promise<
         <SectionHeading
           badge={t("featuresSection.badge")}
           title={t.rich("featuresSection.title", {
-            grad: (chunks) => <span className="text-gradient-forest">{chunks}</span>,
+            grad: (chunks) => <span className="text-[#1B6B3A]">{chunks}</span>,
           })}
         />
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 max-w-6xl mx-auto stagger-children">
           {FEATURES.map((f) => (
             <div key={f.title} className="vitrin-card p-7 flex items-start gap-5">
-              <div className="shrink-0 w-12 h-12 rounded-2xl bg-gradient-to-br from-[#1B6B3A] to-[#22894a] flex items-center justify-center shadow-md shadow-[#1B6B3A]/15">
+              <div className="shrink-0 w-12 h-12 rounded-lg bg-[#1B6B3A] flex items-center justify-center">
                 <f.Icon className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h3 className="text-base font-bold text-[#1a2e1a] mb-2">{f.title}</h3>
+                <h3 className="text-base font-bold text-[#14261a] mb-2">{f.title}</h3>
                 <p className="text-sm text-[#3d5a3d] leading-relaxed">{f.desc}</p>
               </div>
             </div>
@@ -134,14 +134,14 @@ export default async function DronTeknolojisiPage({ params }: { params: Promise<
         <SectionHeading
           badge={t("processSection.badge")}
           title={t.rich("processSection.title", {
-            grad: (chunks) => <span className="text-gradient-forest">{chunks}</span>,
+            grad: (chunks) => <span className="text-[#1B6B3A]">{chunks}</span>,
           })}
         />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 max-w-6xl mx-auto stagger-children">
           {PROCESS.map((p) => (
             <div key={p.num} className="vitrin-card p-6">
-              <div className="text-3xl font-bold text-[#1B6B3A]/15 mb-3 tracking-tighter">{p.num}</div>
-              <h3 className="text-base font-bold text-[#1a2e1a] mb-2">{p.title}</h3>
+              <div className="text-xs font-bold tabular-nums tracking-[0.18em] text-[#1B6B3A] mb-3">{p.num}</div>
+              <h3 className="text-base font-bold text-[#14261a] mb-2">{p.title}</h3>
               <p className="text-sm text-[#3d5a3d] leading-relaxed">{p.desc}</p>
             </div>
           ))}
@@ -151,9 +151,9 @@ export default async function DronTeknolojisiPage({ params }: { params: Promise<
       {/* CTA */}
       <SectionWrapper variant="tinted">
         <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-3xl lg:text-4xl font-bold text-[#1a2e1a] leading-tight mb-5">
+          <h2 className="display-headline text-3xl sm:text-4xl lg:text-5xl font-bold text-[#14261a] mb-5">
             {t.rich("cta.title", {
-              grad: (chunks) => <span className="text-gradient-forest">{chunks}</span>,
+              grad: (chunks) => <span className="text-[#1B6B3A]">{chunks}</span>,
             })}
           </h2>
           <p className="text-base text-[#3d5a3d] mb-8 max-w-xl mx-auto">

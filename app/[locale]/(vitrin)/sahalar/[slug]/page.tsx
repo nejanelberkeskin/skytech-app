@@ -1,7 +1,8 @@
+import SiteZoomCover from "@/components/vitrin/sahalar/SiteZoomCover";
 import { unitPriceFor } from "@/lib/orders/settings-schema";
 import Image from "next/image";
 import { coverImageCredit } from "@/lib/sites/image-credit";
-import { siteBoundaryImage } from "@/lib/sites/boundary";
+import { siteBoundaryImage, siteZoomCover } from "@/lib/sites/boundary";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
@@ -52,6 +53,7 @@ export default async function SiteDetailPage({ params, searchParams }: Props) {
   // her istekte yeniden üretilir ve yukarıdaki `revalidate` (5 dakikalık önbellek) devre dışı kalır.
   const ornek = process.env.NODE_ENV === "production" ? null : (await searchParams).ornek;
   const boundary = siteBoundaryImage(site.slug);
+  const zoom = siteZoomCover(site.slug);
   const releases = await getSiteReleases(site.id, {
     sample: typeof ornek === "string" ? ornek : null,
   });
@@ -113,7 +115,19 @@ export default async function SiteDetailPage({ params, searchParams }: Props) {
             </div>
           ))}
         </dl>
-        {site.coverImage && (
+        {zoom ? (
+          <div className="group relative mb-12 aspect-[4/3] overflow-hidden rounded-xl bg-[#e9ebe2] lg:aspect-[16/9]">
+            <SiteZoomCover
+              cover={zoom}
+              alt={[site.name, site.district, site.province].filter(Boolean).join(" — ")}
+              sizes="(min-width: 1280px) 1200px, 100vw"
+              credit={`Contains modified Copernicus Sentinel data ${zoom.capturedOn.slice(0, 4)}`}
+              hint={seo.has("zoomHint") ? seo("zoomHint") : undefined}
+              tapToggle
+              priority
+            />
+          </div>
+        ) : site.coverImage && (
           <div className="relative mb-12 aspect-[4/3] overflow-hidden rounded-xl sm:aspect-[16/7]">
             <Image
               src={site.coverImage}

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link, redirect } from "@/i18n/navigation";
@@ -44,18 +45,9 @@ export default async function OwnLandPage({ params }: Props) {
               <Link href={SITES_HREF} className="max-w-full py-2 text-sm font-semibold text-[#1B6B3A] underline decoration-[#1B6B3A]/30 underline-offset-4">{t("sites")}</Link>
             </div>
           </div>
-          {/* K15 seçenek A: fotoğrafsız marka paneli. Süs; bilgi taşımaz, faaliyet ya da saha iddiası yok. Gerçek saha fotoğrafı gelince değiştirilir. */}
-          <div aria-hidden="true" className="relative min-h-64 overflow-hidden border-t border-[#14261a]/10 bg-white lg:min-h-full lg:border-l lg:border-t-0">
-            <svg className="absolute inset-0 h-full w-full text-[#1B6B3A]" viewBox="0 0 480 360" preserveAspectRatio="xMidYMid slice" fill="none" stroke="currentColor">
-              {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-                <path
-                  key={i}
-                  d={`M-40 ${70 + i * 34} C 60 ${40 + i * 34}, 150 ${110 + i * 34}, 250 ${78 + i * 34} S 420 ${36 + i * 34}, 520 ${66 + i * 34}`}
-                  strokeWidth={i % 3 === 0 ? 1.4 : 0.8}
-                  strokeOpacity={0.22 + (i % 3 === 0 ? 0.18 : 0)}
-                />
-              ))}
-            </svg>
+          <div className="relative min-h-64 overflow-hidden border-t border-[#14261a]/10 bg-[#e9ebe2] lg:min-h-full lg:border-l lg:border-t-0">
+            <Image src="/images/kendi-arazim/arazi-dron.webp" alt={t("imageAlt")} fill priority sizes="(min-width: 1024px) 45vw, 100vw" className="object-cover" />
+            <span className="absolute bottom-2 right-3 rounded bg-black/45 px-2 py-0.5 text-[10px] text-white/90">{t("imageNote")}</span>
           </div>
         </div>
       </header>

@@ -1,3 +1,5 @@
+import { siteZoomCover } from "@/lib/sites/boundary";
+import SiteZoomCover from "./SiteZoomCover";
 import Image from "next/image";
 import { coverImageCredit } from "@/lib/sites/image-credit";
 import { getTranslations } from "next-intl/server";
@@ -39,13 +41,21 @@ export default async function SiteCard({
   const seeds = await getTranslations({ locale, namespace: "ourSeeds" });
   const products = await getTranslations({ locale, namespace: "products" });
   const location = [site.district, site.province].filter(Boolean).join(", ");
+  const zoom = siteZoomCover(site.slug);
   return (
     <Link
       href={siteDetailHref(site)}
       className="group flex min-w-0 flex-col overflow-hidden rounded-xl border border-[#14261a]/12 bg-white transition-colors hover:border-[#1B6B3A]/50 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#1B6B3A]"
     >
       <div className="relative aspect-[4/3] overflow-hidden bg-[#e9ebe2]">
-        {site.coverImage ? (
+        {zoom ? (
+          <SiteZoomCover
+            cover={zoom}
+            alt={[site.name, site.district, site.province].filter(Boolean).join(" — ")}
+            sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+            credit={`Contains modified Copernicus Sentinel data ${zoom.capturedOn.slice(0, 4)}`}
+          />
+        ) : site.coverImage ? (
           <Image
             src={site.coverImage}
             unoptimized={/^https?:\/\//i.test(site.coverImage)}
@@ -69,7 +79,7 @@ export default async function SiteCard({
             </svg>
           </div>
         )}
-        {coverImageCredit(site.coverImage) && (
+        {!zoom && coverImageCredit(site.coverImage) && (
           <span className="absolute bottom-1.5 right-2 rounded bg-black/45 px-1.5 py-0.5 text-[9px] text-white/90">
             {coverImageCredit(site.coverImage)}
           </span>

@@ -1,3 +1,5 @@
+import { orderCtaHref } from "@/lib/site-config";
+import Image from "next/image";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
@@ -19,12 +21,29 @@ export default async function CoatedSeedPage({ params }: Props) {
   setRequestLocale(locale);
   const t = await getTranslations("coatedSeedPage");
   const seo = await getTranslations("seoContent");
+  const nav = await getTranslations("nav");
   return (
     <>
       <BreadcrumbSchema items={[{ name: t("title"), path: PATH }]} />
       <ServiceSchema name={t("serviceName")} description={t("serviceDescription")} serviceType="Drone seed release" path={PATH} />
       <BreadCrumb title={t("title")} subtitle={t("intro")} items={[{ label: t("title") }]} />
       <SectionWrapper>
+        <figure className="mx-auto mb-14 max-w-5xl">
+          <div className="grid gap-4 sm:grid-cols-[1.6fr_1fr]">
+            <div className="relative aspect-[4/3] overflow-hidden rounded-xl bg-[#e9ebe2]">
+              <Image src="/images/kaplamali-tohum/tohumlar.webp" alt={t("images.seeds")} fill priority sizes="(min-width: 640px) 60vw, 100vw" className="object-cover" />
+            </div>
+            <div className="grid grid-cols-3 gap-4 sm:grid-cols-1 sm:grid-rows-2">
+              <div className="relative col-span-2 aspect-[4/3] overflow-hidden rounded-xl bg-[#e9ebe2] sm:col-span-1 sm:aspect-auto">
+                <Image src="/images/kaplamali-tohum/dron-saha.webp" alt={t("images.drone")} fill sizes="(min-width: 640px) 35vw, 66vw" className="object-cover" />
+              </div>
+              <div className="relative aspect-[2/3] overflow-hidden rounded-xl bg-[#e9ebe2] sm:aspect-auto">
+                <Image src="/images/kaplamali-tohum/filiz.webp" alt={t("images.sprout")} fill sizes="(min-width: 640px) 35vw, 33vw" className="object-cover" />
+              </div>
+            </div>
+          </div>
+          <figcaption className="mt-3 text-xs text-[#6b8f6b]">{t("images.note")}</figcaption>
+        </figure>
         <div className="mx-auto max-w-3xl space-y-12">
           {(["definition", "difference", "selection", "service", "outcomes", "records"] as const).map((key) => (
             <section key={key} aria-labelledby={`coated-${key}`}>
@@ -35,7 +54,8 @@ export default async function CoatedSeedPage({ params }: Props) {
             </section>
           ))}
           <div className="flex flex-wrap gap-4 border-t border-[#14261a]/15 pt-8">
-            <Link href="/sahalar" className="vitrin-cta-primary">{t("sitesLink")}</Link>
+            <Link href={orderCtaHref("hub")} className="vitrin-cta-primary">{nav("orderSeeds")}</Link>
+            <Link href="/sahalar" className="vitrin-cta-secondary">{t("sitesLink")}</Link>
             <Link href="/tohumlarimiz" className="vitrin-cta-secondary">{t("speciesLink")}</Link>
           </div>
         </div>

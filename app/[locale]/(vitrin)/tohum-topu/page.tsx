@@ -87,20 +87,22 @@ export default async function TohumTopuPage({ params }: { params: Promise<{ loca
             </p>
           </div>
 
-          <div className="relative aspect-square rounded-xl overflow-hidden bg-[#dfe3d6]">
-            <Image
-              src="/images/tohum-topu/hero.webp"
-              alt={t("what.imageAlt")}
-              fill
-              priority
-              sizes="(max-width: 1024px) 100vw, 50vw"
-              className="object-cover"
-            />
-            <div className="absolute bottom-4 left-4 right-4 rounded-lg border border-[#14261a]/10 bg-white px-4 py-3 text-center">
+          <figure>
+            <div className="relative aspect-[7/6]">
+              <Image
+                src="/images/tohum-topu/tohum-topu.webp"
+                alt={t("what.imageAlt")}
+                fill
+                priority
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                className="object-contain object-bottom"
+              />
+            </div>
+            <figcaption className="border-t border-[#14261a]/10 pt-4">
               <p className="text-xs text-[#1B6B3A] uppercase tracking-wider font-semibold mb-1">{t("what.caption.eyebrow")}</p>
               <p className="text-sm text-[#14261a]">{t("what.caption.text")}</p>
-            </div>
-          </div>
+            </figcaption>
+          </figure>
         </div>
       </SectionWrapper>
 

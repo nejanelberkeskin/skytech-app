@@ -14,7 +14,7 @@ export function canonicalTurkishContentPath(pathname: string): string | null {
   if (!pathname.startsWith("/tr/")) return null;
   const path = pathname.slice(3);
   const root = "/" + path.split("/")[1];
-  const content = ["/kaplamali-tohum", "/tohum-topu", "/tohumlarimiz", "/dron-teknolojisi", "/karbon-programi", "/projeler", "/kurumsal-cozumler", "/hakkimizda", "/iletisim", "/bilgi-al", "/kendi-arazim", "/sahalar", ...TURKISH_LEGAL_PATHS];
+  const content = ["/kaplamali-tohum", "/tohum-topu", "/tohumlarimiz", "/dron-teknolojisi", "/karbon-programi", "/projeler", "/kurumsal-cozumler", "/hakkimizda", "/iletisim", "/bilgi-al", "/kendi-arazim", "/sahalar", "/satin-al", ...TURKISH_LEGAL_PATHS];
   return content.includes(root) ? path : null;
 }
 

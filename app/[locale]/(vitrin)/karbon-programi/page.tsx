@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Link } from "@/i18n/navigation";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
@@ -57,6 +58,12 @@ export default async function KarbonVeRaporlamaPage({ params }: { params: Promis
 
       {/* Faaliyet Raporu'nda neler var */}
       <SectionWrapper variant="light">
+        <figure className="mx-auto mb-14 max-w-4xl">
+          <div className="relative aspect-[16/9] overflow-hidden rounded-xl bg-[#e9ebe2]">
+            <Image src="/images/karbon/saha-kayitlari.webp" alt={t("imageAlt")} fill priority sizes="(min-width: 1024px) 900px, 100vw" className="object-cover" />
+          </div>
+          <figcaption className="mt-3 text-xs text-[#6b8f6b]">{t("imageNote")}</figcaption>
+        </figure>
         <SectionHeading
           badge={t("report.badge")}
           title={<>{t("report.title.pre")} <span className="text-[#1B6B3A]">{t("report.title.highlight")}</span></>}

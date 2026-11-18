@@ -31,6 +31,43 @@ const BOUNDARIES: Record<string, SiteBoundaryImage> = {
   },
 };
 
+/**
+ * Kapakta "uzaktan → yakına" geçiş: aynı merkezli iki 4:3 kare (outputs/saha-kmz-2/kapak.py). GENİŞ karede saha
+ * çerçevenin yaklaşık 1/10'unu kaplar; YAKIN karede çerçeveyi doldurur. `scale`, genişten yakına doğrusal orandır.
+ */
+export interface SiteZoomCover {
+  wide: string;
+  close: string;
+  scale: number;
+  capturedOn: string;
+}
+
+const ZOOM_SCALE = Math.sqrt(10);
+const ZOOM_COVERS: Record<string, SiteZoomCover> = {
+  "izmir-proje-uygulama-sahasi": {
+    wide: "/images/sahalar/izmir-aliaga-genis-2026-10.webp",
+    close: "/images/sahalar/izmir-aliaga-yakin-2026-10.webp",
+    scale: ZOOM_SCALE,
+    capturedOn: "2026-10-05",
+  },
+  "canakkale-proje-uygulama-sahasi": {
+    wide: "/images/sahalar/canakkale-saraycik-genis-2026-09.webp",
+    close: "/images/sahalar/canakkale-saraycik-yakin-2026-09.webp",
+    scale: ZOOM_SCALE,
+    capturedOn: "2026-09-21",
+  },
+  "bursa-proje-uygulama-sahasi": {
+    wide: "/images/sahalar/bursa-diskaya-genis-2026-10.webp",
+    close: "/images/sahalar/bursa-diskaya-yakin-2026-10.webp",
+    scale: ZOOM_SCALE,
+    capturedOn: "2026-10-10",
+  },
+};
+
+export function siteZoomCover(slug: string): SiteZoomCover | null {
+  return ZOOM_COVERS[slug] ?? null;
+}
+
 export function siteBoundaryImage(slug: string): SiteBoundaryImage | null {
   return BOUNDARIES[slug] ?? null;
 }

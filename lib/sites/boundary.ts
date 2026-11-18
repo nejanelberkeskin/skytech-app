@@ -23,6 +23,12 @@ const BOUNDARIES: Record<string, SiteBoundaryImage> = {
     height: 1476,
     capturedOn: "2026-09-21",
   },
+  "bursa-proje-uygulama-sahasi": {
+    src: "/images/sahalar/bursa-diskaya-sinir-sentinel2-2026-10.webp",
+    width: 1600,
+    height: 2610,
+    capturedOn: "2026-10-10",
+  },
 };
 
 export function siteBoundaryImage(slug: string): SiteBoundaryImage | null {

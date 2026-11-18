@@ -12,6 +12,8 @@ interface SectionHeadingProps {
   className?: string;
 }
 
+const EYE_BASE = "mb-5 flex items-center gap-3 text-[12px] font-semibold uppercase tracking-[0.16em]";
+
 const containerVariants: Variants = {
   hidden: {},
   show: { transition: { staggerChildren: 0.12, delayChildren: 0.05 } },
@@ -40,27 +42,23 @@ export default function SectionHeading({
       initial="hidden"
       whileInView="show"
       viewport={{ once: true, margin: "-80px" }}
-      className={`${align === "center" ? "text-center mx-auto" : ""} max-w-3xl mb-14 lg:mb-20 ${className}`}
+      className={`${align === "center" ? "text-center mx-auto" : ""} max-w-3xl mb-12 lg:mb-16 ${className}`}
     >
       {badge && (
         <motion.div variants={itemVariants}>
-          <div
-            className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full mb-6 text-[11px] font-bold uppercase tracking-[0.18em] ${
-              invert
-                ? "bg-white/10 border border-white/15 text-[#a7d4a7]"
-                : "bg-[#1B6B3A]/8 border border-[#1B6B3A]/15 text-[#1B6B3A]"
-            }`}
+          <p
+            className={`${EYE_BASE} ${align === "center" ? "justify-center" : ""} ${invert ? "text-[#a7d4a7]" : "text-[#1B6B3A]"}`}
           >
-            <span className="w-1.5 h-1.5 rounded-full bg-current animate-pulse" />
+            <span aria-hidden className="h-px w-8 bg-current" />
             {badge}
-          </div>
+          </p>
         </motion.div>
       )}
 
       <motion.h2
         variants={itemVariants}
-        className={`display-headline text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold mb-6 hyphens-auto wrap-break-word ${
-          invert ? "text-white" : "text-[#0e2519]"
+        className={`display-headline text-3xl sm:text-4xl lg:text-5xl font-bold mb-5 hyphens-auto wrap-break-word ${
+          invert ? "text-white" : "text-[#14261a]"
         }`}
       >
         {title}

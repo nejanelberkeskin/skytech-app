@@ -11,6 +11,10 @@
     {
       "path": "/api/cron/b2b-odeme-mutabakati",
       "schedule": "*/10 * * * *"
+    },
+    {
+      "path": "/api/cron/fatura",
+      "schedule": "*/30 * * * *"
     }
   ]
 }

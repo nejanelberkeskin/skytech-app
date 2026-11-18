@@ -127,6 +127,8 @@ export interface OrderDetailDto {
   invoices?: {
     id: string; kind: string; provider: string; status: string; invoiceNo: string | null; ettn: string | null;
     issuedAt: string | null; sentAt: string | null; error: string | null; createdAt: string;
+    /** e_archive | e_invoice (Paraşüt resmîleştirmesi gönderildiyse) */
+    documentType: string | null; attempts: number;
   }[];
   legal?: {
     documentsVersion: string;
@@ -307,6 +309,7 @@ export function invoicesOf(rows: Row[]): NonNullable<OrderDetailDto["invoices"]>
     id: textOr(r.id), kind: textOr(r.kind), provider: textOr(r.provider), status: textOr(r.status),
     invoiceNo: text(r.invoice_no), ettn: text(r.ettn), issuedAt: text(r.issued_at), sentAt: text(r.sent_at),
     error: text(r.error), createdAt: textOr(r.created_at),
+    documentType: text(r.document_type), attempts: typeof r.attempts === "number" ? r.attempts : 0,
   }));
 }
 

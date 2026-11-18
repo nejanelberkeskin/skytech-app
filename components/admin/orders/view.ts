@@ -11,7 +11,7 @@ export const orderAccessKey = (me: AdminMe | null) => JSON.stringify(me && {
 });
 export const ACTION_CAPABILITY: Record<string, keyof OrderCapabilities> = {
   note: "note", cancel_by_seller: "cancel", reserve_capacity: "reserveCapacity",
-  invoice_now: "invoiceQueue", invoice_issued: "invoiceIssue",
+  invoice_now: "invoiceQueue", invoice_issued: "invoiceIssue", invoice_retry: "invoiceIssue",
 };
 export const canAct = (detail: OrderDetailDto, action: unknown) =>
   typeof action === "string" && !!ACTION_CAPABILITY[action] && detail.capabilities[ACTION_CAPABILITY[action]] === true;

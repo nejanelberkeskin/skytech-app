@@ -13,7 +13,7 @@ export const IDS = {
   siteB: '20000000-0000-0000-0000-0000000000bb',
 };
 
-const MIGRATIONS = ['007_admin_audit_log.sql', '016_release_orders.sql', '017_sales_pause.sql', '019_audit_hardening.sql', '020_refund_reconciliation.sql', '021_permission_core.sql', '022_custom_roles.sql', '023_invitation_ownership.sql', '038_b2b_resolution_permission.sql', '042_corporate_review_permission.sql', '046_site_product_type.sql'];
+const MIGRATIONS = ['007_admin_audit_log.sql', '016_release_orders.sql', '017_sales_pause.sql', '019_audit_hardening.sql', '020_refund_reconciliation.sql', '021_permission_core.sql', '022_custom_roles.sql', '023_invitation_ownership.sql', '038_b2b_resolution_permission.sql', '042_corporate_review_permission.sql', '045_invoice_provider_tracking.sql', '046_site_product_type.sql'];
 
 export async function createDb({ upTo = '046_site_product_type.sql' } = {}) {
   const db = new PGlite();

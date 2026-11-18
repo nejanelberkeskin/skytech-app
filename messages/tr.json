@@ -27,13 +27,14 @@
     "comingSoon": "Yakında",
     "requests": "Talep Oluştur",
     "account": "Hesabım",
-    "register": "Üye Ol"
+    "register": "Üye Ol",
+    "coatedSeed": "Kaplamalı Tohum"
   },
   "hero": {
     "badge": "Ormanlaştırma · Gençleştirme · İzleme",
     "headlineLine1": "Doğayı Teknolojiyle",
     "headlineLine2": "Yeşertiyoruz",
-    "subtitle": "Yangından etkilenmiş ve ulaşılması zor sahalara dronla tohum bırakıyoruz. Araziye girmeden çalıştığımız için toprağı ve doğal yaşamı örselemiyoruz.",
+    "subtitle": "Yangından etkilenmiş ve ulaşılması zor sahalara dronla tohum bırakıyoruz. Saha seçimini, uygulama takvimini ve yayımlanan çalışma kayıtlarını inceleyebilirsiniz.",
     "ctaPrimary": "Satın Al",
     "ctaSecondary": "Kurumsal Çözümler",
     "trustForestRegions": "Orman Bölge Müdürlükleri ile koordineli",
@@ -48,22 +49,22 @@
     "subtitle": "Üç temel ilke üzerine kurulu, her adımı izlenebilir bir ormanlaştırma ve gençleştirme çalışması.",
     "items": {
       "zeroFootprint": {
-        "title": "Sıfır Saha İzi",
-        "description": "Tohumları sahaya dronla bırakıyoruz. Araziye iş makinesi ve ekip girmediği için toprak yapısı bozulmuyor; sarp ve yangından etkilenmiş bölgelerde doğal yaşam korunuyor.",
-        "stat": "%100",
-        "statLabel": "Doğa Korumalı"
+        "title": "Havadan Uygulama",
+        "description": "Dronla bırakma, tohumların hedef noktaya ulaştırılmasında yerde hareket etme ihtiyacını azaltmayı amaçlar. Saha hazırlığı ve izleme gereksinimleri ayrıca değerlendirilir.",
+        "stat": "Dron",
+        "statLabel": "Planlı bırakma"
       },
       "transparentSupply": {
         "title": "Şeffaf Tedarik Zinciri",
-        "description": "Yöreye uygun tohumlarımız ilgili Orman Bölge Müdürlüklerinden tedarik edilmekte; tohumların tür bilgisi, ağaçlardan toplanma tarihleri, orijin bilgileri blok zinciri teknolojisiyle güvenle doğrulanmaktadır.",
-        "stat": "%100",
-        "statLabel": "İzlenebilirlik"
+        "description": "Tohumun türü, orijini ve tedarik bilgileri saha ve çalışma kayıtlarıyla birlikte değerlendirilir. Yayımlanan bilgileri ilgili saha sayfasından izleyebilirsiniz.",
+        "stat": "Kayıt",
+        "statLabel": "Tür ve kaynak"
       },
       "annualReport": {
         "title": "Dronla Yıllık İzleme",
         "description": "Sahalar her yıl dronla yeniden görüntülenir. Gelişim verileri ve görüntüler Faaliyet Raporu'nda toplanır; kurumlar bu raporu sürdürülebilirlik raporlarında destekleyici belge olarak kullanabilir.",
-        "stat": "12 ay",
-        "statLabel": "İzleme"
+        "stat": "Takvim",
+        "statLabel": "Saha bazında izleme"
       }
     },
     "titleLine1": "Geleneksel Ağaçlandırmanın",
@@ -72,20 +73,20 @@
   "howItWorks": {
     "badge": "Süreç",
     "title": "Dört Adımda",
-    "titleAccent": "Tam Otomasyon",
+    "titleAccent": "Planlı Çalışma",
     "subtitle": "Tohum seçiminden izleme raporuna kadar her adımda bilim ve teknoloji.",
     "steps": {
       "research": {
         "title": "Tohum Teknolojisi Ar-Ge",
-        "description": "Ekosistem restorasyonu ile yanan alanların ve maden sahalarının rehabilitasyonu için uzman orman mühendislerimiz ve akademik danışmanlarımızla çalışıyoruz. Bölgenin iklim ve ekolojisine uygun seçtiğimiz tohumları, ormancılık bilimi ışığında en doğru materyallerle kaplayarak tohum kaplama ve tohum topu formüllerimizi geliştiriyoruz."
+        "description": "Kaplamalı tohum ve tohum topu ayrı uygulama seçenekleridir. Ürün ve tür seçimi, sahanın özellikleri ve uygulama planı çerçevesinde yapılır."
       },
       "analysis": {
         "title": "Hedef Alan Analizi",
-        "description": "Uygulamamız; uydu ve dron görüntülerini analiz ederek sahanın topografik yapısını, toprağın nem içeriğini ve ekosistemin yapısını inceler. Tohum bırakmak için en uygun hedef alanları yapay zekâ ile belirler. Orman Bölge Müdürlüğü koordinasyonuyla yasal izinler alınır; süreç bilimsel ve güvenli biçimde yürütülür."
+        "description": "Sahanın konumu, arazi yapısı ve çalışma koşulları değerlendirilir. Uygulama rotası ve gerekli izin süreçleri bu değerlendirmeye göre planlanır."
       },
       "distribution": {
         "title": "Dronla Bırakma",
-        "description": "Yüksek hassasiyetli GPS verileriyle yönlendirilen dron filomuz, tek bir uçuşta 200+ tohumu önceden belirlenmiş hedef noktalara bırakır. Araziye girilmediği için toprak ve bitki örtüsü zarar görmez."
+        "description": "Tohumlar planlanan rota boyunca dronla bırakılır. Uçuş süresi ve bırakılabilecek miktar, saha ve operasyon koşullarına göre değişir."
       },
       "monitoring": {
         "title": "Yıllık İzleme ve Raporlama",
@@ -97,98 +98,52 @@
     "badge": "Avantajlar",
     "titleLine1": "Nerelerde",
     "titleAccent": "Fark Yaratıyoruz",
-    "subtitle": "Üç kritik ekosistem alanında, bilimle ve teknolojiyle ölçülebilir değişim yaratıyoruz.",
+    "subtitle": "Farklı saha ihtiyaçları için uygulama ve izleme yaklaşımımız.",
     "tabs": {
       "fire": {
         "label": "Yangın Sonrası",
         "title": "Yanan Ormanları Yeniden Yeşertiyoruz",
-        "description": "Yanan orman arazilerinin ekolojik dinamiklerini geri kazandırmak için otonom dron filoları ve yüksek çimlenme oranlarına sahip tohumlarımızla, geniş ölçekli alanlarda hızlı ve sürdürülebilir biçimde yeniden ormanlaştırma sürdürüyoruz.",
+        "description": "Yangından etkilenmiş sahalarda uygulama, saha değerlendirmesi ve izin süreçlerine göre planlanır. Bırakma çalışması ile sonraki gelişim ve izleme kayıtları ayrı ayrı takip edilir.",
         "bullets": [
-          "İş güvenliği: Yangın sonrası gevşeyen toprak ve heyelan riskinde insan hayatını riske atmaz",
-          "Altın zaman dilimi: Toprak besin değerini kaybetmeden, erozyon başlamadan hızla müdahale",
-          "GIS ile homojen dağılım: m² başına düşen tohum miktarı hassas ayarlanır",
-          "Dijital izlenebilirlik: Her koordinat kayıt altında, çimlenme uydudan takip edilir"
+          "Saha koşullarına göre yöntem seçimi",
+          "Uygulama öncesi izin ve rota planlaması",
+          "Bırakma çalışmasının kaydı",
+          "Takvime bağlı izleme ve raporlama"
         ],
-        "stat": "%65+",
-        "statLabel": "Çimlenme oranı",
+        "stat": "Saha",
+        "statLabel": "Koşullarına göre planlama",
         "showDetails": "Detayları Göster",
         "hideDetails": "Detayları Gizle",
-        "detailIntro": "Yanan alanların rehabilitasyonunda İHA ile tohum bırakma yönteminin bilimsel temelleri:",
+        "detailIntro": "Uygulama planında değerlendirilen başlıklar:",
         "detailGroups": [
           {
-            "title": "Erişilebilirlik ve Lojistik Avantajlar",
+            "title": "Saha değerlendirmesi",
             "items": [
               {
-                "title": "İş Gücü Tasarrufu",
-                "description": "Geleneksel dikim yönteminde yüzlerce işçinin haftalarca süren çalışmasını, otonom dron filoları çok kısa sürede tamamlar."
-              },
-              {
-                "title": "İş Güvenliği",
-                "description": "Yangın sonrası gevşeyen toprak, devrilen ağaçlar ve heyelan riski barındıran tehlikeli arazilerde insan hayatını riske atmadan tohum bırakır."
+                "title": "Yöntem ve erişim",
+                "description": "Dronla bırakma, tohumların hedef noktaya ulaştırılmasında yerde hareket etme ihtiyacını azaltmayı amaçlar. Saha hazırlığı ve izleme gereksinimleri ayrıca değerlendirilir."
               }
             ]
           },
           {
-            "title": "Yüksek Çimlenme ve Hayatta Kalma Oranı",
+            "title": "Tohum ve sonuçlar",
             "items": [
               {
-                "title": "Koruyucu Katman",
-                "description": "Saha koşulları gerektirdiğinde kullanılan tohum toplarındaki kil, kompost ve besin maddeleri; tohumu kuşlar, kemirgenler ve karıncalardan korur."
+                "title": "Kaynak bilgisi",
+                "description": "Tohumun türü, orijini ve tedarik bilgileri saha ve çalışma kayıtlarıyla birlikte değerlendirilir. Yayımlanan bilgileri ilgili saha sayfasından izleyebilirsiniz."
               },
               {
-                "title": "Mikro Habitat Desteği",
-                "description": "Tohum topu, çimlenme için gereken nemi ve organik besini ilk aşamada kendi içinde barındırır."
-              },
-              {
-                "title": "Doğal Adaptasyon",
-                "description": "Tohumlar toprak derinliğine gömülmediği için yağmurlarla birlikte en doğru zamanda ve doğal döngüsünde çimlenir."
+                "title": "Doğal koşullar",
+                "description": "Çimlenme ve gelişim; türe, toprak, yağış ve diğer saha koşullarına bağlıdır. Belirli bir çimlenme oranı, ağaç sayısı veya yaşam süresi taahhüt edilmez."
               }
             ]
           },
           {
-            "title": "Zaman ve Maliyet Verimliliği",
+            "title": "Uygulama",
             "items": [
               {
-                "title": "Hız ve Geniş Alan Kapsamı",
-                "description": "Bir dron, günde binlerce tohumu çok geniş bir hektara homojen şekilde bırakır."
-              },
-              {
-                "title": "Düşük Maliyet",
-                "description": "Fidan yetiştirme, nakliye, çukur kazma ve dikim işçiliği maliyetlerini ortadan kaldırarak ormanlaştırma bütçesini optimize eder."
-              },
-              {
-                "title": "Kritik Zaman Yönetimi",
-                "description": "Yangından hemen sonra, toprağın besin değerini kaybetmediği ve erozyonun başlamadığı kritik 'altın zaman diliminde' hızla müdahale imkanı tanır."
-              }
-            ]
-          },
-          {
-            "title": "Teknolojik ve Bilimsel Hassasiyet",
-            "items": [
-              {
-                "title": "GIS ve Haritalama Entegrasyonu",
-                "description": "Alanın önceden çıkarılan 3 boyutlu haritaları sayesinde tohumlar rastgele değil, çimlenme olasılığı en yüksek mikro havzalara ve nemli noktalara hedefli olarak bırakılır."
-              },
-              {
-                "title": "Homojen Dağılım",
-                "description": "Sensörler ve otonom algoritmalarla m² başına düşecek tohum miktarı hassas ayarlanır; aşırı sıkışıklık veya boşluklar önlenir."
-              },
-              {
-                "title": "Dijital İzlenebilirlik",
-                "description": "Tohumların bırakıldığı koordinatlar sisteme kaydedildiği için, çimlenme başarısı ve bitki örtüsü gelişimi uydular veya dronlarla kolayca takip edilir."
-              }
-            ]
-          },
-          {
-            "title": "Minimum Çevresel Ayak İziyle Maksimum Restorasyon Etkisi",
-            "items": [
-              {
-                "title": "Toprak Koruması",
-                "description": "Ağır iş makineleri ve yoğun insan trafiğinin toprağı sıkıştırmasını, yangın sonrası hassaslaşan üst toprak tabakasının erozyona uğramasını engeller."
-              },
-              {
-                "title": "Ekosistem Dostu",
-                "description": "Yalnızca yerel floraya ait tohumlar kullanılarak bölgenin doğal gen kaynakları korunur ve ekolojik süksesyon bozulmadan desteklenir."
+                "title": "Bırakma planı",
+                "description": "Tohumlar planlanan rota boyunca dronla bırakılır. Uçuş süresi ve bırakılabilecek miktar, saha ve operasyon koşullarına göre değişir."
               }
             ]
           }
@@ -197,17 +152,15 @@
       "mining": {
         "label": "Maden Sahaları",
         "title": "Maden Sahalarının Ekolojik Restorasyonu",
-        "description": "Madencilik sonucu doğal yapısı, bitki örtüsü ve toprak kalitesi bozulmuş sahaların restorasyonunu İHA ve optimize edilmiş tohum metodolojileriyle hızlandırıyoruz. Uzaktan algılama ve yapay zekâ ile topoğrafyası bozulmuş arazilerde vejetasyon başarısını artırıyor; kademeli ve sürdürülebilir bir orman ekosistemi kuruyoruz.",
+        "description": "Maden sahaları için uygulama olanağı, arazinin mevcut durumu ve rehabilitasyon planı değerlendirilerek belirlenir. Tür seçimi, izinler ve izleme kapsamı sahaya özel ele alınır.",
         "bullets": [
-          "Bir dron uçuşunda 200+ tohum — geleneksel yöntemlere göre 10 kat daha hızlı",
-          "Sıfır saha tahribatı: minimum çevresel ayak iziyle maksimum restorasyon etkisi",
-          "Tam şeffaflık: tohumun türü, orijini, çimlenme oranı uçtan uca kayıt altında",
-          "Yıllık izleme: periyodik dron uçuşlarıyla yüksek çözünürlüklü dijital veri",
-          "Kurumsal raporlama: her çalışma için saha, alan, tür ve görüntü içeren Faaliyet Raporu",
-          "Yasal uyumluluk: Orman Bölge Müdürlükleri koordinasyonunda %100 yasal"
+          "Sahaya özel değerlendirme",
+          "Uygun tür ve ürün seçimi",
+          "İzin ve rota planlaması",
+          "Uygulama ve izleme kayıtları"
         ],
-        "stat": "10×",
-        "statLabel": "Geleneksele göre hız"
+        "stat": "Plan",
+        "statLabel": "Sahaya özel uygulama"
       },
       "carbon": {
         "label": "Kurumsal Katılım",
@@ -238,7 +191,8 @@
       "droneTech": "Dron Teknolojisi",
       "carbonProgram": "Karbon ve Raporlama",
       "ownLand": "Kendi Arazim İçin",
-      "corporate": "Kurumsal Çözümler"
+      "corporate": "Kurumsal Çözümler",
+      "coatedSeed": "Yosun Ekstraktı Kaplamalı Tohum"
     },
     "quickLinks": {
       "about": "Hakkımızda",
@@ -268,7 +222,7 @@
     "sectionTitleLine": "Dört Yerli",
     "sectionTitleAccent": "Türümüz",
     "sectionSubtitle": "Her tür, bırakıldığı bölgenin iklim ve toprak yapısına göre seçilir. Tohumlarımız Orman Bölge Müdürlükleri tedariklidir.",
-    "footnote": "Yöreye uygun tohumlarımız ilgili Orman Bölge Müdürlüklerinden tedarik edilmekte; tohumların tür bilgisi, ağaçlardan toplanma tarihleri ve orijin bilgileri blok zinciri teknolojisiyle güvenle doğrulanmaktadır.",
+    "footnote": "Tohumun türü, orijini ve tedarik bilgileri saha ve çalışma kayıtlarıyla birlikte değerlendirilir. Yayımlanan bilgileri ilgili saha sayfasından izleyebilirsiniz.",
     "typeLabel": "Tür {number}",
     "labels": {
       "region": "Bölge",
@@ -289,7 +243,7 @@
         "germination": "20–30 gün",
         "lifespan": "150–200 yıl",
         "ecologicalRole": "Yangın sonrası ilk kolonileyici tür. Toprağı stabilize eder, kuşlar ve böcekler için habitat sağlar.",
-        "description": "Türkiye orman alanının yaklaşık %25'ini kaplayan en yaygın iğne yapraklı türümüz. Akdeniz iklimine mükemmel uyum sağlar, hızlı büyür ve yangından sonra otomatik rejenerasyon kabiliyetiyle bilinir."
+        "description": "Kızılçam (Pinus brutia), saha planlamasında değerlendirilen türler arasındadır. Kullanılacak tür, ilgili sahanın yayımlanan tür bilgileri ve uygulama planına göre belirlenir."
       },
       "karacam": {
         "name": "Karaçam",
@@ -343,15 +297,15 @@
     "items": {
       "speed": {
         "title": "Hızlı Uygulama",
-        "description": "Bir dron uçuşunda 200+ tohum. Geleneksel yöntemlere kıyasla 10 kat hız."
+        "description": "Tohumlar planlanan rota boyunca dronla bırakılır. Uçuş süresi ve bırakılabilecek miktar, saha ve operasyon koşullarına göre değişir."
       },
       "noDamage": {
-        "title": "Sıfır Saha Tahribatı",
-        "description": "Tohumlar havadan bırakılır; ekosistem korunur. İnsan ayağının değmediği bölgelere bile ulaşılır."
+        "title": "Yerde Hareket İhtiyacı",
+        "description": "Dronla bırakma, tohumların hedef noktaya ulaştırılmasında yerde hareket etme ihtiyacını azaltmayı amaçlar. Saha hazırlığı ve izleme gereksinimleri ayrıca değerlendirilir."
       },
       "transparency": {
         "title": "Tam Şeffaflık",
-        "description": "Her tohumun ağaçtan toplanma tarihi, orijin bilgisi ve türü blok zinciriyle doğrulanır. Tedarik zinciri uçtan uca şeffaf."
+        "description": "Tohumun türü, orijini ve tedarik bilgileri saha ve çalışma kayıtlarıyla birlikte değerlendirilir. Yayımlanan bilgileri ilgili saha sayfasından izleyebilirsiniz."
       },
       "monitoring": {
         "title": "Yıllık İzleme",
@@ -363,7 +317,7 @@
       },
       "compliance": {
         "title": "Yasal Uyumluluk",
-        "description": "Orman Bölge Müdürlükleri koordinasyonunda, %100 yasal izin ve mevzuat uyumluluğu çerçevesinde projeler."
+        "description": "Çalışmanın izin ve koordinasyon gereksinimleri saha ve uygulama kapsamında değerlendirilir."
       }
     }
   },
@@ -371,26 +325,26 @@
     "badge": "Karşılaştırma",
     "title": "Geleneksel Yöntem vs.",
     "titleAccent": "Skytech Green",
-    "subtitle": "Ölçülebilir farkları yan yana koyduk. Karar sizin.",
+    "subtitle": "Yöntemlerin uygulama biçimleri farklıdır; uygun yöntem saha koşullarına göre seçilir.",
     "traditional": {
       "heading": "Geleneksel Ağaçlandırma",
       "imageAlt": "Geleneksel ağaçlandırma — elle fidan dikimi",
       "items": {
-        "manual": "İnsan gücüyle, zorlu coğrafyalarda yetersiz",
-        "damage": "Saha tahribatı kaçınılmaz",
-        "untraceable": "Tedarik zinciri belgesiz, izlenemez",
-        "reporting": "Manuel raporlama, denetim zayıf",
-        "speed": "Dakika başına 2-3 fidan dikim hızı"
+        "manual": "Fidanların sahaya taşınması ve yerde dikimi",
+        "damage": "Saha hazırlığı ve dikim noktalarının belirlenmesi",
+        "untraceable": "Fidanın tür ve tedarik kayıtları",
+        "reporting": "Çalışmaya göre belirlenen izleme ve raporlama",
+        "speed": "Süre; arazi, ekip ve yönteme bağlıdır"
       }
     },
     "skytech": {
       "imageAlt": "Skytech Green — dronla tohum bırakma",
       "items": {
-        "access": "Dron teknolojisiyle her bölgeye erişim",
-        "noTrace": "Sıfır saha izi, ekosistem korunur",
-        "verified": "Ağaçtan toplanma tarihi + orijin blok zinciri ile doğrulanır",
+        "access": "Planlanan saha üzerinde dronla bırakma",
+        "noTrace": "Tohumu ulaştırmak için yerde erişim ihtiyacının azaltılması",
+        "verified": "Tohumun tür ve tedarik bilgilerinin kaydı",
         "reporting": "Dronla yıllık izleme ve Faaliyet Raporu",
-        "distribution": "Bir uçuşta 200+ tohum"
+        "distribution": "Süre; saha, hava ve uçuş planına bağlıdır"
       }
     }
   },
@@ -398,10 +352,10 @@
     "badge": "Sihirli Lens",
     "title": "Çorak Bir Arazi.",
     "titleAccent": "Yeşil Bir Gelecek.",
-    "subtitle": "Fareyi gezdirin — yanmış toprağın altında nasıl bir orman büyüdüğünü kendi gözlerinizle görün.",
+    "subtitle": "Temsili görsel anlatım: bu etkileşim, tamamlanmış bir Skytech çalışmasının önce/sonra kaydı değildir.",
     "hint": "Fareyi gezdirin",
-    "labelBefore": "Önce — Yangın Sonrası",
-    "labelAfter": "Sonra — Skytech Green",
+    "labelBefore": "Yangın sonrası — temsili",
+    "labelAfter": "Yeşil orman — temsili",
     "barrenAlt": "Yangın sonrası çorak arazi",
     "forestAlt": "Yenilenmiş yeşil orman"
   },
@@ -435,15 +389,15 @@
     "faqs": {
       "seedBall": {
         "question": "Tohum Topu Teknolojisi nedir, nasıl çalışır?",
-        "answer": "Tohum Topu Teknolojisi; yerli tohumların kil ve organik besin maddeleriyle kapsüllenerek dış etkenlerden korunduğu, çimlenme başarısını %65+ üzerine çıkaran bir yöntemdir. Kapsül, tohumu kuraklık ve canlı tüketimi gibi risklerden korur; yağışla birlikte çözülür ve tohum doğal döngüsünde çimlenir. Tohum topu, saha koşullarının gerektirdiği yerlerde kullandığımız ayrı bir üründür; güncel Proje Uygulama Sahalarında yosun ekstraktı kaplamalı tohum bırakılır."
+        "answer": "Tohum topu, tohumun kil ve besleyici karışımla küre hâline getirilmesidir. Yosun ekstraktı kaplamalı tohum ise ayrı bir üründür. Kullanılan ürün saha sayfasında belirtilir. Çimlenme doğal koşullara bağlıdır; belirli bir başarı oranı taahhüt edilmez."
       },
       "sourcing": {
         "question": "Tohumlar nereden tedarik ediliyor?",
-        "answer": "Tüm tohumlar Orman Bölge Müdürlükleri iş birliğiyle tedarik edilir. Biyolojik çeşitliliğin korunması ve sürdürülebilirlik ilkeleri doğrultusunda; her tohum lotunun ağaçtan toplanma tarihi, genetik orijini ve taksonomik (tür) bilgisi blok zinciri teknolojisiyle kayıt altına alınır. Uçtan uca şeffaf yapılandırılan tedarik zincirimiz sayesinde müşterilerimiz tohum kimlik kartlarına ve sertifikasyon verilerine diledikleri an erişebilir."
+        "answer": "Tohumun türü, orijini ve tedarik bilgileri saha ve çalışma kayıtlarıyla birlikte değerlendirilir. Yayımlanan bilgileri ilgili saha sayfasından izleyebilirsiniz."
       },
       "droneEfficiency": {
         "question": "Dronla tohum bırakma ne kadar verimli?",
-        "answer": "Tek bir uçuşta 200'den fazla tohum bırakarak geleneksel yöntemlere kıyasla 10 kat hız ve yüksek maliyet etkinliği sunar. GPS hassasiyetli koordinatlar sayesinde insan ayağının ulaşamadığı eğimli ve yangından etkilenmiş alanlara erişir; araziye girilmediği için toprak ve bitki örtüsü korunur."
+        "answer": "Tohumlar planlanan rota boyunca dronla bırakılır. Uçuş süresi ve bırakılabilecek miktar, saha ve operasyon koşullarına göre değişir."
       },
       "tracking": {
         "question": "Bırakılan tohumların gelişimini nasıl takip edebilirim?",
@@ -514,7 +468,7 @@
     "acts": {
       "prepare": {
         "title": "Tohum Kaplanır",
-        "desc": "Yerli tohum, koruyucu bir karışımla kaplanır. Bu kaplama tohumun kuşlardan, kemirgenlerden ve kuruluktan korunmasına yardımcı olur."
+        "desc": "Sahanın ürün tipine göre tohum yüzeyi yosun ekstraktı içeren karışımla kaplanır veya tohum kil ve besleyici karışımla küre hâline getirilir."
       },
       "flight": {
         "title": "Dronla Sahaya",
@@ -589,9 +543,9 @@
     }
   },
   "beforeAfter": {
-    "badge": "Yangın Öncesi / Sonrası",
+    "badge": "Temsili görüntüler",
     "titleLine1": "Aşağı Kaydırın —",
-    "titleAccent": "Doğanın Geri Dönüşü",
+    "titleAccent": "Ormanın Farklı Görünümleri",
     "labelBefore": "Yangın Öncesi",
     "labelAfter": "Yangın Sonrası",
     "altBefore": "Yeşil orman görünümü",
@@ -600,7 +554,7 @@
   "aboutPage": {
     "meta": {
       "title": "Hakkımızda — Bilim, Teknoloji ve Doğa",
-      "description": "2021 Akdeniz yangınlarından doğan vizyon, orman mühendisleri + dron pilotları + yazılım ekibinden oluşan 36+ kişilik aile. Skytech Green'in kuruluş hikayesi ve değerleri."
+      "description": "Skytech Green markasının hikâyesi, dronla tohum bırakma yaklaşımı ve hizmeti sunan Skytech Havacılık ve Teknoloji Sanayi Ticaret A.Ş. hakkında bilgi."
     },
     "breadcrumb": {
       "label": "Hakkımızda"
@@ -614,7 +568,7 @@
       "badge": "Hikayemiz",
       "titleLead": "Yangın Sonrası",
       "titleAccent": "Bir Doğa Çağrısı",
-      "paragraph1": "2021 Akdeniz orman yangınları sonrası, dronların hızla tohum bırakabildiğini, insan adımının zor ulaştığı bölgelere erişebildiğini gördük. Bilimsel altyapı + havacılık teknolojisi + şeffaf yazılım altyapısı — bu üçlüyü birleştirdik.",
+      "paragraph1": "Skytech Green fikrinin başlangıcı 2021 Akdeniz orman yangınlarına uzanır. Hizmeti sunan SKYTECH HAVACILIK VE TEKNOLOJİ SANAYİ TİCARET A.Ş. ise 7 Mayıs 2024 tarihinde tescil edilmiştir.",
       "paragraph2": "Bugün <brand>Skytech Green</brand>, Türkiye'de üç bölgedeki Proje Uygulama Sahalarında dronla tohum bırakıyor; kurumların ve bireylerin, yangından etkilenmiş sahaların yeniden ormanlaşmasına katılmasını sağlıyor.",
       "imageCaption": "Saha Ekibimiz"
     },
@@ -662,7 +616,7 @@
     "team": {
       "badge": "Ekip",
       "title": "Disiplinler Arası <accent>Bir Aile</accent>",
-      "subtitle": "Orman mühendislerinden dron pilotlarına, yazılımcılardan proje koordinatörlerine — 36+ kişilik bir aile.",
+      "subtitle": "Çalışmanın planlanması, uygulanması ve kayıtlarının sunulmasındaki görev alanları.",
       "foresters": {
         "name": "Orman Mühendisleri",
         "desc": "Tohum türü seçimi, formülasyon ve toprak analizi"
@@ -673,7 +627,7 @@
       },
       "coordinators": {
         "name": "Proje Koordinatörleri",
-        "desc": "Orman Genel Müdürlüğü, Karadeniz Teknik Üniversitesi ve Artvin Çoruh Üniversitesi koordinasyonu"
+        "desc": "Saha planı, izin süreçleri ve operasyon koordinasyonu"
       },
       "software": {
         "name": "Yazılım & Veri Ekibi",
@@ -760,7 +714,7 @@
   "seedBallPage": {
     "meta": {
       "title": "Tohum Topu — Bir Kürede Koca Bir Orman",
-      "description": "Kil, organik gübre ve seçilmiş tohumlardan üretilen tohum topu nedir, nasıl yapılır? %65+ çimlenme oranı, üretim süreci ve bilimsel formülasyon.",
+      "description": "Tohum topunun bileşenleri, hazırlanması ve dronla bırakma hizmeti. Kaplamalı tohumdan farkını ve saha koşullarının önemini inceleyin.",
       "imageAlt": "Tohum topu yakın çekim — kil küre, çatlak ve filiz"
     },
     "breadcrumb": {
@@ -768,7 +722,7 @@
     },
     "schema": {
       "name": "Tohum Topu Üretimi ve Tedariki",
-      "description": "Orman Bölge Müdürlükleri koordineli yerli tohumlardan, kil ve organik gübreyle formüle edilmiş, %65+ çimlenme oranına sahip tohum topu üretimi."
+      "description": "Saha planına göre seçilen tohum toplarının dronla bırakılması hizmeti."
     },
     "hero": {
       "title": "Bir Kürede Koca Bir Orman",
@@ -777,8 +731,8 @@
     "what": {
       "badge": "Tohum Topu Nedir?",
       "heading": "Doğanın <grad>Akıllı Kapsülü</grad>",
-      "p1": "Tohum topu; bitki tohumlarının kil ve organik besin maddeleriyle kaplanarak dış etkenlerden korunduğu, çimlenme başarısını<strong>%65+</strong>seviyesine çıkaran yenilikçi bir yapay kapsülleme yöntemidir.",
-      "p2": "Doğa dostu bir biyoteknolojik yaklaşım olan tohum topu; tohumları kuraklık ve canlı tüketimi gibi risklerden koruyarak toprağa güvenle tutunmalarını sağlar. Yağmurla birlikte filizlenerek doğanın yenilenme hızını artırır.",
+      "p1": "Tohum topu, bitki tohumunun <strong>kil ve besleyici karışımla</strong> kaplanarak küre hâline getirilmesidir. Kullanılacağı saha ve tohum türü uygulama planında belirlenir.",
+      "p2": "Çimlenme ve gelişim; türe, toprak, yağış ve diğer saha koşullarına bağlıdır. Belirli bir çimlenme oranı, ağaç sayısı veya yaşam süresi taahhüt edilmez.",
       "imageAlt": "Tohum topu yakın çekim — kil küre, çatlak ve filiz",
       "caption": {
         "eyebrow": "Yakın Çekim",
@@ -787,8 +741,8 @@
     },
     "science": {
       "badge": "Bilimsel Tasarım",
-      "heading": "<grad>Akademik Literatür + Laboratuvar</grad> Analizleri",
-      "body": "Akademik literatür ve laboratuvar analizleriyle optimize edilen tohum topu teknolojimiz; uzman ekibimizin araştırmaları sonucunda, doğadaki en zorlu koşullarda bile maksimum çimlenme ve kök gelişimi başarısı sunmak üzere bilimsel olarak tasarlanmıştır."
+      "heading": "Saha Koşulları ve <grad>İzleme</grad>",
+      "body": "Çimlenme ve gelişim; türe, toprak, yağış ve diğer saha koşullarına bağlıdır. Belirli bir çimlenme oranı, ağaç sayısı veya yaşam süresi taahhüt edilmez."
     },
     "formulation": {
       "badge": "Formülasyon",
@@ -824,7 +778,7 @@
       },
       "drying": {
         "title": "Kurutma & Paketleme",
-        "desc": "48 saat doğal kurutma; nemden korunmuş paketlenir."
+        "desc": "Hazırlanan tohum topları, uygulama planına uygun şekilde kurutulur ve saklanır."
       }
     },
     "stats": {
@@ -835,7 +789,7 @@
         "label": "Tohum Topu / Dron Uçuşu"
       },
       "lifespan": {
-        "value": "25 yıl",
+        "value": "Sahaya bağlı",
         "label": "Ortalama Yaşam"
       },
       "season": {
@@ -854,8 +808,8 @@
   },
   "droneTechPage": {
     "meta": {
-      "title": "Dron Teknolojisi — Hassas Bırakma, Sıfır Ayak İzi",
-      "description": "GPS hassasiyetli dron filomuz, ulaşılması zor bölgelerde insan ayağının değmediği alanlara tohum bırakıyor. RTK GPS, LiDAR, otonom uçuş, 200+ tohum/uçuş.",
+      "title": "Dron Teknolojisi — Planlı Tohum Bırakma",
+      "description": "Tohumlar planlanan rota boyunca dronla bırakılır. Uçuş süresi ve bırakılabilecek miktar, saha ve operasyon koşullarına göre değişir.",
       "imageAlt": "Skytech Green tohum bırakma dronu"
     },
     "breadcrumb": {
@@ -863,36 +817,36 @@
     },
     "schema": {
       "name": "Dron ile Ağaçlandırma Hizmeti",
-      "description": "GPS hassasiyetli, otonom uçuşlu profesyonel dron filomuzla bir uçuşta 200+ tohum bırakma. Sıfır saha tahribatı, ulaşılması zor bölgelere erişim, tam izlenebilirlik."
+      "description": "Tohumlar planlanan rota boyunca dronla bırakılır. Uçuş süresi ve bırakılabilecek miktar, saha ve operasyon koşullarına göre değişir."
     },
     "hero": {
-      "title": "Hassas Bırakma, Sıfır Ayak İzi",
+      "title": "Dronla Planlı Tohum Bırakma",
       "subtitle": "GPS hassasiyetli dronlarla, insan adımının ulaşamadığı bölgelere tohum bırakıyoruz."
     },
     "system": {
       "badge": "Dron Sistemi",
       "heading": "<grad>Otonom Dron Filomuz</grad> Sahada",
-      "p1": "Otonom uçuş kabiliyetine sahip insansız hava araçları (İHA), önceden tanımlanmış hedef koordinatlara yüksek hassasiyetle ulaşır ve tek operasyonda 200+ tohumu başarıyla yerleştirir.",
-      "p2": "Yüksek hassasiyetli GPS verileriyle yönlendirilen İHA filomuz, <strong>sıfır ekolojik tahribat</strong> prensibiyle çalışır. Tüm uçuş kayıtları gerçek zamanlı olarak kurumsal panonuza işlenir — şeffaflık ve doğrulanabilirlik için.",
+      "p1": "Tohumlar planlanan rota boyunca dronla bırakılır. Uçuş süresi ve bırakılabilecek miktar, saha ve operasyon koşullarına göre değişir.",
+      "p2": "Dronla bırakma, tohumların hedef noktaya ulaştırılmasında yerde hareket etme ihtiyacını azaltmayı amaçlar. Saha hazırlığı ve izleme gereksinimleri ayrıca değerlendirilir.",
       "imageAlt": "Skytech Green dronu — tohum haznesiyle",
       "thermalCamera": "Termal Kamera"
     },
     "featuresSection": {
       "badge": "Teknik Özellikler",
-      "title": "Endüstri Lideri <grad>Dron Donanımı</grad>"
+      "title": "Dron Donanımı"
     },
     "features": {
       "gps": {
         "title": "GPS Hassasiyeti",
-        "desc": "Santimetre seviyesinde RTK GPS — her tohumun düştüğü nokta kayıtlı."
+        "desc": "Uçuş rotası ve uygulama alanı konum verileriyle planlanır."
       },
       "capacity": {
-        "title": "200+ Tohum / Uçuş",
-        "desc": "Gelişmiş kapasite ile büyük alanları tek seferde tarayabiliyoruz."
+        "title": "Sahaya Göre Planlama",
+        "desc": "Tohumlar planlanan rota boyunca dronla bırakılır. Uçuş süresi ve bırakılabilecek miktar, saha ve operasyon koşullarına göre değişir."
       },
       "speed": {
-        "title": "10x Hız",
-        "desc": "Geleneksel dikime göre on kat daha hızlı; uygulama süresini günlerden saatlere indirir."
+        "title": "Operasyon Planı",
+        "desc": "Tohumlar planlanan rota boyunca dronla bırakılır. Uçuş süresi ve bırakılabilecek miktar, saha ve operasyon koşullarına göre değişir."
       },
       "autonomous": {
         "title": "Otonom Görev",
@@ -939,7 +893,7 @@
   "corporatePage": {
     "meta": {
       "title": "Kurumsal Çözümler — ESG Ortaklığı",
-      "description": "Şirketinize özel kurumsal ormanlaştırma, çalışan başına otomatik PDF sertifika ve GRI/CDP/SASB uyumlu ESG raporlama."
+      "description": "Şirketler için dronla tohum bırakma hizmeti: toplu katılım, Katılım Sertifikası, saha izleme kayıtları ve Faaliyet Raporu."
     },
     "breadcrumb": {
       "label": "Kurumsal Çözümler"
@@ -949,7 +903,7 @@
       "description": "Şirketler için toplu katılım, çalışan başına Katılım Sertifikası, Faaliyet Raporu ve kurumsal faturalama."
     },
     "hero": {
-      "title": "Promosyon Ürünleri Çöpe Gider. Kurumsal Ormanınız Sonsuza Kadar Yaşar.",
+      "title": "Kurumunuz Adına Dronla Tohum Bırakma",
       "subtitle": "ESG hedeflerinize ölçülebilir katkı, çalışan deneyimine somut anlam — tek bir kurumsal partner."
     },
     "comparison": {
@@ -967,7 +921,7 @@
       },
       "forest": {
         "item": "Markanıza Özel Orman",
-        "impact": "25+ yıl yaşar, ekosistem yaratır",
+        "impact": "Saha çalışması ve izleme kayıtları",
         "esg": "Tam ESG entegrasyon"
       }
     },
@@ -1148,10 +1102,10 @@
   },
   "projectsPage": {
     "meta": {
-      "title": "Projeler & Harita — Sahadan Kanıt",
+      "title": "Projeler ve Saha Bilgileri",
       "description": "Çanakkale, İzmir ve Bursa'daki Proje Uygulama Sahalarımız. Etkileşimli Türkiye haritası ve il bazında saha bilgileri."
     },
-    "breadcrumbTitle": "Sahadan Kanıt",
+    "breadcrumbTitle": "Proje Uygulama Sahaları",
     "breadcrumbSubtitle": "Çanakkale, İzmir ve Bursa'daki Proje Uygulama Sahalarımızda çalışmalarımız sürüyor.",
     "breadcrumbSchemaName": "Projeler",
     "stats": {
@@ -1358,6 +1312,51 @@
       },
       "backToSites": "Proje Uygulama Sahalarına dön"
     }
+  },
+  "seoContent": {
+    "legalNotice": "Bu belgeler Türkçe yayımlanır. Dil seçimi gezinme arayüzünü değiştirir; aşağıdaki belge Türkçedir.",
+    "demo": "Örnek ekran — veriler temsilidir, gerçekleşmiş faaliyet sonuçları değildir.",
+    "illustration": "Temsili görsellerdir; aynı sahanın önce/sonra ölçümü veya sonuç garantisi değildir.",
+    "siteSummary": "{name}, {location} konumunda yayımlanan bir proje uygulama sahasıdır. Ürün: {product}. Güncel çalışma evresi: {phase}.",
+    "scopeTitle": "Uygulama ve izleme kapsamı",
+    "scope": "Bırakma çalışması, Katılım Sertifikası ve izleme kayıtları hizmetin parçalarıdır. Saha koşulları ve uygulama takvimi sipariş öncesinde gösterilen bilgilerle değerlendirilir. Çimlenme ve ağaç sayısı garantisi verilmez.",
+    "methodLink": "Bu sahada kullanılan yöntemi inceleyin",
+    "speciesPending": "Sahaya ilişkin tür bilgisi yayımlandığında burada gösterilir. Tür ve ürün seçimini müşteri yapmaz.",
+    "newsNote": "Bu bağlantılar sahanın geçmişiyle ilgilidir; tamamlanmış Skytech çalışmalarının kanıtı olarak sunulmaz.",
+    "reportsLink": "Faaliyet Raporu neleri içerir?",
+    "seedBallLink": "Tohum topuyla farkını inceleyin"
+  },
+  "coatedSeedPage": {
+    "title": "Yosun Ekstraktı Kaplamalı Tohum",
+    "intro": "Kaplamalı tohumun ne olduğunu, tohum topundan farkını ve sahada sunulan dronla bırakma hizmetini inceleyin.",
+    "serviceName": "Kaplamalı tohum bırakma hizmeti",
+    "serviceDescription": "Seçilen proje uygulama sahasına yosun ekstraktı kaplamalı tohumların dronla bırakılması hizmeti.",
+    "definition": {
+      "title": "Kaplamalı tohum nedir?",
+      "body": "Tohumun yüzeyi, yosun ekstraktı içeren bir karışımla kaplanır. Saha sayfasında bu ürün adıyla belirtilir. Sayılan birim tohumdur; ilgili ürün ve güncel birim bedel saha sayfasında gösterilir."
+    },
+    "difference": {
+      "title": "Tohum topundan farkı",
+      "body": "Tohum topu, tohumun kil ve besleyici karışımla küre hâline getirilmesidir. Kaplamalı tohum ve tohum topu iki ayrı üründür. Bir yöntem için verilen bilgi veya ölçüm, diğer ürünün sonucu olarak değerlendirilmemelidir."
+    },
+    "selection": {
+      "title": "Ürün ve tür nasıl seçilir?",
+      "body": "Ürün tipi, tür ve çalışma planı saha bazında belirlenir. Müşteri yayımlanan sahalar arasından katılacağı sahayı seçer; o sahada kullanılacak ürünü veya türü değiştirmez. Yayımlanmış tür bilgileri saha ayrıntısında yer alır."
+    },
+    "service": {
+      "title": "Satın alınan hizmet",
+      "body": "Satın alınan, seçilen sahaya müşteri adına dronla tohum bırakılması hizmetidir. Tohumlar müşterinin adresine kargolanmaz. Bırakma, sonrasında Katılım Sertifikası ve izleme kayıtları hizmetin parçalarıdır. Güncel bedel ve koşullar sipariş öncesinde gösterilir."
+    },
+    "outcomes": {
+      "title": "Sonuçlar ve sınırlar",
+      "body": "Kaplama, bırakma ve bir tohumun ağaca dönüşmesi farklı aşamalardır. Çimlenme ve gelişim; tür, toprak, yağış ve diğer doğal koşullara bağlıdır. Belirli bir çimlenme oranı, ağaç sayısı, karbon dengelemesi veya yaşam süresi taahhüt edilmez."
+    },
+    "records": {
+      "title": "Çalışmayı nasıl izleyebilirsiniz?",
+      "body": "Genel bırakma sezonu Kasım–Mart, izleme ve raporlama dönemi Nisan–Eylül’dür. Sahaya özel takvim ve teslim bilgileri sipariş öncesinde değerlendirilmelidir. Tamamlanan çalışma kayıtları yayımlandığında saha sayfasından izlenebilir; planlanan işler tamamlanmış sayılmaz."
+    },
+    "sitesLink": "Proje uygulama sahalarını inceleyin",
+    "speciesLink": "Tohum türlerini inceleyin"
   },
   "accountPages": {
     "loading": "Yükleniyor…",
@@ -2756,12 +2755,14 @@
     "coated_seed": {
       "name": "Yosun Ekstraktı Kaplamalı Tohum",
       "unit": "tohum",
-      "short": "Yosun ekstraktıyla kaplanan tohum, dronla sahaya bırakılır."
+      "short": "Yosun ekstraktıyla kaplanan tohum, dronla sahaya bırakılır.",
+      "unitSingular": "tohum"
     },
     "seed_ball": {
       "name": "Tohum Topu",
       "unit": "tohum topu",
-      "short": "Kil ve besleyici karışımla hazırlanan tohum topu, dronla sahaya bırakılır."
+      "short": "Kil ve besleyici karışımla hazırlanan tohum topu, dronla sahaya bırakılır.",
+      "unitSingular": "tohum topu"
     }
   }
 }

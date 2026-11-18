@@ -15,6 +15,7 @@ const sitemapUrls = async (config, linkModule, loader = loadSource) => {
   const sitemap = loader('app/sitemap.ts', {
     '@/lib/seo': { localeUrl: (path, locale) => `https://ornek.test${locale === 'tr' ? '' : `/${locale}`}${path === '/' ? '' : path}` },
     '@/lib/sites/data': { getProjectSites: async () => [] },
+    '@/lib/seo-policy': loadSource('lib/seo-policy.ts'),
     '@/lib/sites/links': linkModule,
     '@/lib/site-config': config,
     '@/lib/legal/visibility': { LEGAL_PAGES_ENABLED: false, SALES_LEGAL_PAGES: [] },
@@ -32,6 +33,7 @@ const withRequestsClosed = () => {
     const sitemap = loadSource('app/sitemap.ts', {
       '@/lib/seo': { localeUrl: (path, locale) => 'https://ornek.test' + (locale === 'tr' ? '' : '/' + locale) + (path === '/' ? '' : path) },
       '@/lib/sites/data': { getProjectSites: async () => [] },
+    '@/lib/seo-policy': loadSource('lib/seo-policy.ts'),
       '@/lib/sites/links': links,
       '@/lib/site-config': config,
       '@/lib/legal/visibility': { LEGAL_PAGES_ENABLED: false, SALES_LEGAL_PAGES: [] },

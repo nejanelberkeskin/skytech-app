@@ -33,9 +33,9 @@ export default async function TohumTopuPage({ params }: { params: Promise<{ loca
   const t = await getTranslations("seedBallPage");
 
   const COMPONENTS = [
-    { label: t("components.native.label"), desc: t("components.native.desc"), pct: "30%" },
-    { label: t("components.clay.label"), desc: t("components.clay.desc"), pct: "50%" },
-    { label: t("components.fertilizer.label"), desc: t("components.fertilizer.desc"), pct: "20%" },
+    { label: t("components.native.label"), desc: t("components.native.desc") },
+    { label: t("components.clay.label"), desc: t("components.clay.desc") },
+    { label: t("components.fertilizer.label"), desc: t("components.fertilizer.desc") },
   ];
 
   const STEPS = [
@@ -45,10 +45,7 @@ export default async function TohumTopuPage({ params }: { params: Promise<{ loca
   ];
 
   const STATS = [
-    { value: "%65+", label: t("stats.germination.label") },
-    { value: "200+", label: t("stats.perFlight.label") },
     { value: t("stats.season.value"), label: t("stats.season.label") },
-    { value: t("stats.lifespan.value"), label: t("stats.lifespan.label") },
   ];
 
   return (
@@ -137,9 +134,6 @@ export default async function TohumTopuPage({ params }: { params: Promise<{ loca
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 lg:gap-6 max-w-5xl mx-auto stagger-children">
           {COMPONENTS.map((c) => (
             <div key={c.label} className="vitrin-card p-7 text-center">
-              <div className="text-4xl font-bold tabular-nums text-[#1B6B3A] mb-2">
-                {c.pct}
-              </div>
               <h3 className="text-lg font-bold text-[#14261a] mb-2">{c.label}</h3>
               <p className="text-sm text-[#3d5a3d] leading-relaxed">{c.desc}</p>
             </div>
@@ -168,7 +162,7 @@ export default async function TohumTopuPage({ params }: { params: Promise<{ loca
 
       {/* İstatistikler */}
       <SectionWrapper variant="tinted">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 max-w-5xl mx-auto">
+        <div className="grid gap-5 max-w-xl mx-auto">
           {STATS.map((s) => (
             <div key={s.label} className="vitrin-card p-6 lg:p-7 text-center">
               <p className="text-3xl lg:text-4xl font-bold text-[#1B6B3A] mb-2 tabular-nums">

@@ -9,7 +9,7 @@ import { SITE_URL } from "@/lib/seo";
  * - AI search bot'ları (OpenAI ChatGPT Search, Perplexity) AÇIK — GEO için kritik.
  * - Auth-protected sayfalar (admin, hesabim, kurumsal/panel) ve checkout
  *   akışı disallow — index edilmemeli.
- * - API endpoint'leri ve _next internal yolları disallow.
+ * - API endpoint'leri disallow; public CSS, JS ve görseller taranabilir.
  */
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -29,7 +29,6 @@ export default function robots(): MetadataRoute.Robots {
           "/kurumsal/giris",
           "/auth/",
           "/api/",
-          "/_next/",
           "/fatura/",
         ],
       },
@@ -62,7 +61,7 @@ export default function robots(): MetadataRoute.Robots {
         ],
       },
 
-      // Google'ın AI Overviews / AI Mode için kullandığı bot
+      // Google Search dışındaki eğitim/grounding tercihi; Search erişimini Googlebot yönetir
       {
         userAgent: "Google-Extended",
         allow: "/",

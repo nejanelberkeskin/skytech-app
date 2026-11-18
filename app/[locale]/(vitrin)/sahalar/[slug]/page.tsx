@@ -6,6 +6,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
+import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
 import BreadCrumb from "@/components/vitrin/BreadCrumb";
 import SectionHeading from "@/components/vitrin/SectionHeading";
 import SectionWrapper from "@/components/vitrin/SectionWrapper";
@@ -70,6 +71,7 @@ export default async function SiteDetailPage({ params, searchParams }: Props) {
     getTranslations({ locale, namespace: "ourSeeds" }),
     getTranslations({ locale, namespace: "products" }),
   ]);
+  const seo = await getTranslations({ locale, namespace: "seoContent" });
   const location = [site.district, site.province].filter(Boolean).join(", ");
   const facts = [
     ...(location ? [{ label: t("location"), value: location }] : []),
@@ -89,6 +91,7 @@ export default async function SiteDetailPage({ params, searchParams }: Props) {
   ];
   return (
     <div className="[&_nav]:flex-wrap [&_nav>span]:min-w-0 [&_h1]:break-words [&_h1]:[overflow-wrap:anywhere]">
+      <BreadcrumbSchema items={[{ name: shared("title"), path: SITES_HREF }, { name: site.name, path: siteDetailHref(site) }]} />
       <BreadCrumb
         title={site.name}
         items={[
@@ -127,16 +130,25 @@ export default async function SiteDetailPage({ params, searchParams }: Props) {
             )}
           </div>
         )}
-        {site.summary && (
+        {(site.summary || location) && (
           <section className="mb-14 max-w-3xl">
             <h2 className="display-headline text-2xl font-semibold text-[#14261a]">
               {t("about")}
             </h2>
             <p className="mt-4 leading-relaxed text-[#3d5a3d]">
-              {site.summary}
+              {site.summary ?? seo("siteSummary", { name: site.name, location, product: products(`${site.productType}.name`), phase: shared(`phases.${site.phase}`) })}
             </p>
           </section>
         )}
+        <section className="mb-14 max-w-3xl space-y-4">
+          <h2 className="text-2xl font-semibold text-[#14261a]">{seo("scopeTitle")}</h2>
+          <p className="leading-relaxed text-[#3d5a3d]">{seo("scope")}</p>
+          {site.species.length === 0 && <p className="text-sm leading-relaxed text-[#3d5a3d]">{seo("speciesPending")}</p>}
+          <div className="flex flex-wrap gap-x-6 gap-y-3 text-sm font-semibold text-[#1B6B3A]">
+            <Link className="underline underline-offset-4" href={site.productType === "coated_seed" ? "/kaplamali-tohum" : "/tohum-topu"}>{seo("methodLink")}</Link>
+            <Link className="underline underline-offset-4" href="/karbon-programi">{seo("reportsLink")}</Link>
+          </div>
+        </section>
         {site.species.length > 0 && (
           <section className="mb-14">
             <SectionHeading
@@ -305,7 +317,7 @@ export default async function SiteDetailPage({ params, searchParams }: Props) {
             PRICING_VISIBLE
               ? t("stickyPrice", {
                   price: formatTry(unitPriceFor(site.productType, await getSalesSettings()), locale),
-                  unit: products(`${site.productType}.unit`),
+                  unit: products(`${site.productType}.unitSingular`),
                 })
               : null
           }

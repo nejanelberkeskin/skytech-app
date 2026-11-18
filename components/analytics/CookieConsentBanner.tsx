@@ -39,8 +39,8 @@ export default function CookieConsentBanner() {
 
   return (
     <div data-cookie-banner className="fixed inset-x-0 bottom-0 z-50 sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2 sm:bottom-6 sm:w-[calc(100%-3rem)] sm:max-w-md animate-fade-in">
-      <div className="rounded-none sm:rounded-xl bg-white p-5 sm:p-6 shadow-sm border-t sm:border border-[#14261a]/15">
-        <p className="text-sm text-[#3d5a3d] leading-relaxed mb-4">
+      <div className="rounded-none sm:rounded-xl bg-white p-4 sm:p-6 shadow-sm border-t sm:border border-[#14261a]/15">
+        <p className="text-sm text-[#3d5a3d] leading-relaxed mb-3">
           {t("message")}{" "}
           <Link
             href="/cerez-politikasi"

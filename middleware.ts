@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import createIntlMiddleware from "next-intl/middleware";
 import { routing } from "@/i18n/routing";
+import { canonicalTurkishContentPath, isSeoContentPath, isTurkishLegalPage } from "@/lib/seo-policy";
 import { updateSession } from "@/lib/supabase/middleware";
 import { ORDER_LINK_TARGET_HEADER, ORDER_LINK_TOKEN_HEADER, orderLinkRewrite } from "@/lib/orders/link-gate";
 import {
@@ -57,6 +58,7 @@ const PUBLIC_PAGE_PATTERNS: RegExp[] = [
   /^\/cayma$/,
   /^\/kendi-arazim$/,
   /^\/fatura(\/.*)?$/,
+  /^\/kaplamali-tohum$/,
   /^\/tohum-topu(\/.*)?$/,
   /^\/tohumlarimiz(\/.*)?$/,
   /^\/dron-teknolojisi(\/.*)?$/,
@@ -150,12 +152,41 @@ export async function middleware(request: NextRequest) {
     return NextResponse.rewrite(new URL(orderLink.path, request.url), { request: { headers } });
   }
 
+  // Normalize public content only. Account/order cookies are host-bound; those flows keep their host.
+  if ((request.headers.get("host")?.split(":")[0] ?? request.nextUrl.hostname) === "www.skytechgreen.com" && isSeoContentPath(pathname)) {
+    const canonical = request.nextUrl.clone();
+    canonical.hostname = "skytechgreen.com";
+    canonical.protocol = "https:";
+    canonical.port = "";
+    canonical.pathname = canonicalTurkishContentPath(pathname) ?? pathname;
+    return NextResponse.redirect(canonical, 308);
+  }
+
+  const canonicalTr = canonicalTurkishContentPath(pathname);
+  // next-intl rewrites / to /tr with this locale header. A rewritten internal request is
+  // already canonical to the visitor; redirecting it would loop / → internal /tr → /.
+  // This only controls URL presentation, never token/auth/permission checks.
+  // RSC prefetch/navigation must retain Next's internal locale route; redirecting a
+  // prefetched /tr URL prevents its cache entry from settling and repeats requests.
+  // Next can strip transport headers before middleware; browser fetch metadata
+  // still distinguishes background fetches from document navigation.
+  const backgroundFetch = request.headers.get("sec-fetch-dest") === "empty"
+    || ["cors", "same-origin"].includes(request.headers.get("sec-fetch-mode") ?? "");
+  if (canonicalTr && !request.headers.has("x-next-intl-locale") && request.headers.get("rsc") !== "1"
+    && !request.nextUrl.searchParams.has("_rsc") && !backgroundFetch) {
+    const canonical = request.nextUrl.clone();
+    canonical.pathname = canonicalTr;
+    return NextResponse.redirect(canonical, 308);
+  }
+
   /* ── 2. Sayfa rotaları: önce next-intl locale routing ───────────────── */
   const intlResponse = intlMiddleware(request);
 
   // Locale-aware path normalize: "/en/hesabim" → "/hesabim"
   const cleanPath = stripLocale(pathname);
   const locale = getLocaleFromPath(pathname);
+  // HTML metadata owns legal language alternatives: translated navigation is not a translated document.
+  if (isTurkishLegalPage(cleanPath)) intlResponse.headers.delete("link");
 
   // next-intl'in internal rewrite header'ı (ör. /admin/giris → /tr/admin/giris)
   // updateSession'ın döndürdüğü response'a taşınmalı; yoksa default-locale

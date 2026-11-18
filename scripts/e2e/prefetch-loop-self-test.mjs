@@ -71,6 +71,8 @@ const server = createServer((req, res) => {
     res.writeHead(200, { "content-type": "text/plain" });
     return res.end("");
   }
+  if (url.pathname === "/tr/tr-calisan") { res.writeHead(308, { location: "/tr-calisan" }); return res.end(); }
+  if (url.pathname === "/tr/yanlis-yon") { res.writeHead(308, { location: "/baska" }); return res.end(); }
   const page = PAGES[url.pathname] ?? { body: html({ lang: langOf(url.pathname), h1: "Hedef" }) };
   res.writeHead(page.status ?? 200, { "content-type": "text/html; charset=utf-8" });
   res.end(page.body);
@@ -81,6 +83,8 @@ const base = `http://127.0.0.1:${server.address().port}`;
 // [senaryo, beklenen durum]
 const CASES = [
   [{ kind: "doğrudan", start: "/tr-calisan" }, "geçti"],
+  [{ kind: "doğrudan", start: "/tr/tr-calisan" }, "geçti"],
+  [{ kind: "doğrudan", start: "/tr/yanlis-yon" }, "KALDI"],
   [{ kind: "doğrudan", start: "/500" }, "KALDI"],
   [{ kind: "doğrudan", start: "/404" }, "KALDI"],
   [{ kind: "doğrudan", start: "/next-404" }, "KALDI"],

@@ -48,17 +48,12 @@ export default async function HakkimizdaPage({
   ];
 
   const TEAM = [
-    { name: t("team.foresters.name"), desc: t("team.foresters.desc"), count: 8 },
-    { name: t("team.pilots.name"), desc: t("team.pilots.desc"), count: 12 },
-    { name: t("team.coordinators.name"), desc: t("team.coordinators.desc"), count: 6 },
-    { name: t("team.software.name"), desc: t("team.software.desc"), count: 10 },
+    { name: t("team.foresters.name"), desc: t("team.foresters.desc") },
+    { name: t("team.pilots.name"), desc: t("team.pilots.desc") },
+    { name: t("team.coordinators.name"), desc: t("team.coordinators.desc") },
+    { name: t("team.software.name"), desc: t("team.software.desc") },
   ];
 
-  const STATS = [
-    { value: "3", label: t("stats.regions.label") },
-    { value: "36+", label: t("stats.members.label") },
-    { value: "%100", label: t("stats.compliance.label") },
-  ];
 
   return (
     <>
@@ -142,29 +137,10 @@ export default async function HakkimizdaPage({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 max-w-4xl mx-auto stagger-children">
           {TEAM.map((t) => (
             <div key={t.name} className="vitrin-card p-7 flex items-start gap-5">
-              <div className="shrink-0 w-14 h-14 rounded-lg bg-[#1B6B3A] flex items-center justify-center">
-                <span className="text-xl font-bold text-white tabular-nums">{t.count}</span>
-              </div>
               <div>
                 <h3 className="text-base font-bold text-[#14261a] mb-1.5">{t.name}</h3>
                 <p className="text-sm text-[#3d5a3d] leading-relaxed">{t.desc}</p>
               </div>
-            </div>
-          ))}
-        </div>
-      </SectionWrapper>
-
-      {/* İstatistikler */}
-      <SectionWrapper variant="tinted">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 max-w-3xl mx-auto">
-          {STATS.map((s) => (
-            <div key={s.label} className="vitrin-card p-6 lg:p-7 text-center">
-              <p className="text-3xl lg:text-4xl font-bold text-[#1B6B3A] mb-2 tabular-nums">
-                {s.value}
-              </p>
-              <p className="text-xs uppercase tracking-wider text-[#6b8f6b] font-semibold">
-                {s.label}
-              </p>
             </div>
           ))}
         </div>

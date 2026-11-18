@@ -47,6 +47,7 @@ function useNavItems() {
       label: t("services"),
       href: "#",
       children: [
+        { label: t("coatedSeed"), href: "/kaplamali-tohum" },
         { label: t("seedBall"), href: "/tohum-topu" },
         { label: t("ourSeeds"), href: "/tohumlarimiz" },
         { label: t("droneTech"), href: "/dron-teknolojisi" },

@@ -2,6 +2,7 @@ import { getTranslations } from "next-intl/server";
 import JsonLd from "./JsonLd";
 import {
   ORG_ADDRESS,
+  ORG_FOUNDED,
   ORG_CONTACT,
   ORG_LEGAL_NAME,
   ORG_SAMEAS,
@@ -30,7 +31,7 @@ export default async function OrganizationSchema() {
         logo: absoluteUrl("/images/brand/logo.png"),
         image: absoluteUrl("/images/brand/logo.png"),
         description: t("description"),
-        foundingDate: "2021",
+        foundingDate: ORG_FOUNDED,
         areaServed: {
           "@type": "Country",
           name: "Türkiye",

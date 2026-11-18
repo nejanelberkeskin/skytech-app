@@ -14,6 +14,7 @@ export default async function VitrinFooter() {
   const t = await getTranslations("footer");
 
   const HIZMETLER = [
+    { label: t("services.coatedSeed"), href: "/kaplamali-tohum" },
     { label: t("services.seedBall"), href: "/tohum-topu" },
     { label: t("services.droneTech"), href: "/dron-teknolojisi" },
     { label: t("services.carbonProgram"), href: "/karbon-programi" },

@@ -21,6 +21,7 @@ import SectionHeading from "../SectionHeading";
  *   sağ yarı = yanık  → "Yangın Sonrası" rozeti (sağda)
  */
 export default function BeforeAfter() {
+  const seo = useTranslations("seoContent");
   const t = useTranslations("beforeAfter");
   const ref = useRef<HTMLDivElement>(null);
 
@@ -46,6 +47,7 @@ export default function BeforeAfter() {
   return (
     <section className="relative bg-[#f6f6f1] vitrin-section">
       <div className="vitrin-container">
+        <p className="mb-6 text-center text-sm leading-relaxed text-[#3d5a3d]">{seo("illustration")}</p>
         <SectionHeading
           badge={t("badge")}
           title={

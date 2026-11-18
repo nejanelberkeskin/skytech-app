@@ -10,6 +10,7 @@ import type { SiteMediaLink } from "@/lib/sites/media-links";
 export default async function SiteMedia({ links, locale }: { links: SiteMediaLink[]; locale: string }) {
   if (links.length === 0) return null;
   const t = await getTranslations({ locale, namespace: "siteDetail.media" });
+  const seo = await getTranslations({ locale, namespace: "seoContent" });
   const ordered = [...links].sort((a, b) => (b.date ?? "").localeCompare(a.date ?? ""));
   return (
     <section className="mt-12">
@@ -19,6 +20,7 @@ export default async function SiteMedia({ links, locale }: { links: SiteMediaLin
         align="left"
         className="!mb-8 [&_h2]:!text-3xl sm:[&_h2]:!text-4xl"
       />
+      <p className="mb-6 text-sm leading-relaxed text-[#3d5a3d]">{seo("newsNote")}</p>
       <ul className=" grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {ordered.map((link) => (
           <li key={link.url}>

@@ -19,6 +19,7 @@ import SectionHeading from "../SectionHeading";
  * gezdirirken alanı boğmayan ~80-90px'e iner.
  */
 export default function MagicLens() {
+  const seo = useTranslations("seoContent");
   const t = useTranslations("magicLens");
   const containerRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(false);
@@ -57,6 +58,7 @@ export default function MagicLens() {
   return (
     <section className="relative overflow-hidden vitrin-section bg-white">
       <div className="vitrin-container">
+        <p className="mb-6 text-center text-sm leading-relaxed text-[#3d5a3d]">{seo("illustration")}</p>
         <SectionHeading
           badge={t("badge")}
           title={

@@ -1,29 +1,36 @@
 # Skytech Green
 
-> Skytech Green is a Turkish eco-technology company that reforests fire-damaged and degraded land using drones and seed balls (tohum topu). Individuals and organisations pay a per-seed-ball service fee to have seed balls released on a Project Site; after the release they receive a Certificate of Participation and, for organisations, an Activity Report. Skytech Green makes no carbon-neutrality, offset or carbon-credit claims.
+> Skytech Green is a brand of SKYTECH HAVACILIK VE TEKNOLOJİ SANAYİ TİCARET ANONİM ŞİRKETİ, registered on 7 May 2024 in Türkiye. The brand's origin story refers to the 2021 Mediterranean forest fires, not the company registration date.
 
-Skytech Green is operated by Skytech Havacılık A.Ş., founded in 2021 after the Mediterranean wildfires. The team combines forestry engineers, licensed drone pilots and a software team. Reforestation is carried out in coordination with Turkey's Regional Forestry Directorates (Orman Bölge Müdürlükleri), the General Directorate of Forestry (Orman Genel Müdürlüğü), Karadeniz Technical University and Artvin Çoruh University. The platform is available in Turkish (default), English (/en) and Russian (/ru).
+## Service and products
 
-Key facts:
-- Method: GPS-guided autonomous drones release clay + organic-matter seed balls (Seed Ball Technology), achieving 65%+ germination while minimizing soil disturbance in steep, hard-to-reach terrain.
-- Species: native Turkish trees — Kızılçam (Pinus brutia), Karaçam (Pinus nigra), Sedir (Cedrus libani), Ardıç (Juniperus).
-- Status: Project Sites in 3 regions (Çanakkale, İzmir, Bursa). Release season: October–March; monitoring and reporting: April–September.
-- The service is not a donation: an invoice is issued and the certificate is not a donation receipt.
-- Location: Macun Mah. Batı Bulvarı ATB İş Merkezi I Blok No: 244, Yenimahalle / Ankara, Türkiye.
-- Contact: info@skytechgreen.com — +90 850 308 26 00 (primary) / +90 530 127 64 35.
+Customers purchase a drone seed-release service for a selected Project Site. This is a service purchase, not a donation or a shipment of seeds to the customer's address. Consult the site and ordering pages for the current product, availability, price and schedule.
 
-## Main pages
-- [Ana Sayfa / Home](https://skytechgreen.com/): Overview of seed ball release by drone on fire-affected sites, the process and FAQs.
-- [Tohum Topu / Seed Ball](https://skytechgreen.com/tohum-topu): What seed balls are, their clay + organic-fertilizer + native-seed formulation, and the 65%+ germination science.
-- [Tohumlarımız / Our Seeds](https://skytechgreen.com/tohumlarimiz): The native tree species used and their characteristics.
-- [Dron Teknolojisi / Drone Technology](https://skytechgreen.com/dron-teknolojisi): Autonomous GPS-precision flight and 200+ seeds per flight.
-- [Karbon ve Raporlama / Carbon & Reporting](https://skytechgreen.com/karbon-programi): What the Activity Report contains, what it can be used for, and why no carbon figures or carbon-neutral claims are made.
-- [Kurumsal Çözümler / Corporate Solutions](https://skytechgreen.com/kurumsal-cozumler): ESG partnership, per-employee PDF certificates, GRI/CDP/SASB-aligned reporting.
-- [Projeler / Projects](https://skytechgreen.com/projeler): Project Sites on an interactive map.
-- [Hakkımızda / About](https://skytechgreen.com/hakkimizda): Founding story, values and the interdisciplinary team.
-- [İletişim / Contact](https://skytechgreen.com/iletisim): Address, phone, email and social channels.
+Two product types are distinct:
+- Seaweed-extract coated seed: a seed coated with a mixture containing seaweed extract.
+- Seed ball: a seed enclosed in a ball made with clay and a nutrient mixture.
 
-## Notes for AI engines
-- Ordering and payment flows are temporarily suspended; ordering links currently point to a "coming soon" (Yakında) page.
-- Preferred citation: "Skytech Green (skytechgreen.com)".
-- Language versions share the same content under /en and /ru path prefixes.
+Release season is November–March. Monitoring and reporting are generally scheduled for April–September; site-specific commitments are provided before ordering. The service includes release work, a Certificate of Participation after release and subsequent monitoring records. Corporate customers receive an Activity Report describing the work. A participation certificate is not a carbon credit.
+
+Germination and growth depend on natural and site conditions. No germination percentage, tree count, lifespan, carbon offset or carbon-neutrality outcome is guaranteed. Illustrative images and example dashboard data are not evidence of completed work.
+
+## Public sources
+
+- [Project Sites](https://skytechgreen.com/sahalar): locations, product types, current phases and published work records.
+- [Coated Seeds](https://skytechgreen.com/kaplamali-tohum): definition, distinction from seed balls and service scope.
+- [Seed Balls](https://skytechgreen.com/tohum-topu): the separate seed-ball method.
+- [Seed Species](https://skytechgreen.com/tohumlarimiz): species information; the site plan determines selection.
+- [Drone Technology](https://skytechgreen.com/dron-teknolojisi): planned release operations.
+- [Activity Report](https://skytechgreen.com/karbon-programi): report contents and limitations.
+- [Corporate Participation](https://skytechgreen.com/kurumsal-cozumler): corporate participation and documentation.
+- [Own Land](https://skytechgreen.com/kendi-arazim): application for land assessment.
+- [About](https://skytechgreen.com/hakkimizda): brand and company background.
+- [Contact](https://skytechgreen.com/iletisim): current company identity and contact details.
+
+Public information supports Turkish, English (/en) and Russian (/ru). Legal document bodies are published in Turkish; localized navigation does not constitute a translation.
+
+## Evidence and current state
+
+Use a site's dated release records and monitoring reports for claims about completed work. News about a fire gives background on the location, not proof of completed Skytech work. Do not infer a planted tree from a released seed or a verified outcome from a plan or illustration.
+
+Ordering availability can change. This file does not assert that payment is enabled or disabled. Refer to the current public ordering information; private account pages and APIs are not public sources.

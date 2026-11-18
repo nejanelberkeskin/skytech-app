@@ -1,3 +1,4 @@
+import { getLocale, getTranslations } from "next-intl/server";
 import BreadCrumb from "@/components/vitrin/BreadCrumb";
 import SectionWrapper from "@/components/vitrin/SectionWrapper";
 import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
@@ -8,7 +9,7 @@ import { ORG_LEGAL_NAME } from "@/lib/seo";
  * kabuk: BreadCrumb başlığı + okunaklı doküman gövdesi + yürürlük tarihi.
  * İçerik Türkçe hukuk metni olduğundan tüm locale'lerde aynı gövde sunulur.
  */
-export default function LegalLayout({
+export default async function LegalLayout({
   title,
   path,
   effectiveDate,
@@ -19,12 +20,15 @@ export default function LegalLayout({
   effectiveDate: string;
   children: React.ReactNode;
 }) {
+  const locale = await getLocale();
+  const t = await getTranslations("seoContent");
   return (
     <>
       <BreadcrumbSchema items={[{ name: title, path }]} />
-      <BreadCrumb title={title} items={[{ label: title }]} />
+      <BreadCrumb title={title} contentLanguage="tr" items={[{ label: title }]} />
+      {locale !== "tr" && <p className="vitrin-container mt-6 text-sm leading-relaxed text-[#3d5a3d]">{t("legalNotice")}</p>}
       <SectionWrapper variant="light">
-        <div className="max-w-3xl mx-auto">
+        <div lang="tr" className="max-w-3xl mx-auto">
           <p className="text-xs uppercase tracking-[0.18em] text-[#6b8f6b] font-bold mb-8">
             {ORG_LEGAL_NAME} · Yürürlük tarihi: {effectiveDate}
           </p>

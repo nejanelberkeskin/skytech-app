@@ -10,13 +10,14 @@ interface BreadCrumbItem {
 
 interface BreadCrumbProps {
   title: string;
+  contentLanguage?: string;
   subtitle?: string;
   items?: BreadCrumbItem[];
   /* GORSEL: opsiyonel arka plan görseli (örn: /images/echofy/breadcrumb-bg.jpg) */
   backgroundImage?: string;
 }
 
-export default function BreadCrumb({ title, subtitle, items = [], backgroundImage }: BreadCrumbProps) {
+export default function BreadCrumb({ title, subtitle, items = [], backgroundImage, contentLanguage }: BreadCrumbProps) {
   const t = useTranslations("nav");
   return (
     <div className="relative overflow-hidden border-b border-[#14261a]/10 bg-[#f6f6f1]">
@@ -36,7 +37,7 @@ export default function BreadCrumb({ title, subtitle, items = [], backgroundImag
       <div className="relative vitrin-container py-14 lg:py-20">
         {/* Breadcrumb trail */}
         <nav
-          className="flex items-center gap-2 flex-wrap text-xs font-medium text-[#6b8f6b] mb-6 motion-safe:animate-fade-in"
+          className="flex items-center gap-2 flex-wrap text-xs font-medium text-[#6b8f6b] mb-6"
         >
           <Link href="/" className="hover:text-[#1B6B3A] transition-colors">
             {t("home")}
@@ -56,42 +57,18 @@ export default function BreadCrumb({ title, subtitle, items = [], backgroundImag
         </nav>
 
         {/* CSS keeps text readable without hydration and honors reduced motion. */}
-        <h1 className="display-headline text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 max-w-4xl wrap-break-word">
-          <WordReveal text={title} className="text-[#14261a]" />
+        <h1 lang={contentLanguage} className="display-headline text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 max-w-4xl wrap-break-word">
+          <span className="text-[#14261a]">{title}</span>
         </h1>
 
         {subtitle && (
           <p
-            style={{ animationDuration: "0.9s", animationDelay: "0.45s" }}
-            className="text-base lg:text-xl text-[#3d5a3d] max-w-2xl leading-relaxed motion-safe:animate-fade-in-up"
+            className="text-base lg:text-xl text-[#3d5a3d] max-w-2xl leading-relaxed"
           >
             {subtitle}
           </p>
         )}
       </div>
     </div>
-  );
-}
-
-function WordReveal({ text, className = "" }: { text: string; className?: string }) {
-  const words = text.split(" ");
-  return (
-    <span className={className}>
-      {words.map((word, i) => (
-        <span key={i}>
-          {/* Kırpma kutusu satır kutusundan uzun olmalı; yoksa harflerin üst/alt
-              uzantıları kesilir. Padding kutuyu büyütür, negatif margin yerleşimi korur. */}
-          <span className="inline-block overflow-hidden align-bottom py-[0.16em] -my-[0.16em]">
-            <span
-              className="inline-block motion-safe:animate-fade-in-up"
-              style={{ animationDuration: "0.85s", animationDelay: `${0.15 + i * 0.07}s` }}
-            >
-              {word}
-            </span>
-          </span>
-          {i < words.length - 1 && " "}
-        </span>
-      ))}
-    </span>
   );
 }

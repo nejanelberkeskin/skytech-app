@@ -1147,3 +1147,10 @@ body:has([data-sticky-cta]) [data-cookie-banner] {
 /* Mobil menü paneli: sağdan kısa kayma (hareket azaltma tercihinde yok). */
 @keyframes menu-in { from { transform: translateX(24px); opacity: 0.6; } to { transform: none; opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { #vitrin-mobile-menu * { animation: none !important; } }
+
+/* On narrow screens show one bottom action surface while cookie preferences are open.
+   The ordinary in-page participation link remains available. */
+@media (max-width: 639px) {
+  body:has([data-cookie-banner]) [data-sticky-cta] { display: none; }
+  body:has([data-sticky-cta]) [data-cookie-banner] { bottom: 0; }
+}

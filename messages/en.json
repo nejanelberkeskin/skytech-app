@@ -2808,6 +2808,6 @@
       "secure": "Secure 3D Secure payment with iyzico",
       "certificate": "Certificate of Participation in your name and monitoring footage"
     },
-    "empty": "No site open for purchase can be listed right now. Please try again shortly or explore the sites."
+    "empty": "No site open for purchase can be listed right now. Please reload the page or explore the sites."
   }
 }

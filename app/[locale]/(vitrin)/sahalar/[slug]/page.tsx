@@ -1,3 +1,4 @@
+import { unitPriceFor } from "@/lib/orders/settings-schema";
 import Image from "next/image";
 import { coverImageCredit } from "@/lib/sites/image-credit";
 import { siteBoundaryImage } from "@/lib/sites/boundary";
@@ -63,10 +64,11 @@ export default async function SiteDetailPage({ params, searchParams }: Props) {
       );
     }
   }
-  const [t, shared, seeds] = await Promise.all([
+  const [t, shared, seeds, products] = await Promise.all([
     getTranslations({ locale, namespace: "siteDetail" }),
     getTranslations({ locale, namespace: "sitesPage" }),
     getTranslations({ locale, namespace: "ourSeeds" }),
+    getTranslations({ locale, namespace: "products" }),
   ]);
   const location = [site.district, site.province].filter(Boolean).join(", ");
   const facts = [
@@ -82,6 +84,7 @@ export default async function SiteDetailPage({ params, searchParams }: Props) {
         ]
       : []),
     { label: t("workType"), value: shared(`workTypes.${site.workType}`) },
+    { label: products("label"), value: products(`${site.productType}.name`) },
     { label: t("phase"), value: shared(`phases.${site.phase}`) },
   ];
   return (
@@ -300,7 +303,10 @@ export default async function SiteDetailPage({ params, searchParams }: Props) {
           siteName={site.name}
           priceNote={
             PRICING_VISIBLE
-              ? t("stickyPrice", { price: formatTry((await getSalesSettings()).unitPriceKurus, locale) })
+              ? t("stickyPrice", {
+                  price: formatTry(unitPriceFor(site.productType, await getSalesSettings()), locale),
+                  unit: products(`${site.productType}.unit`),
+                })
               : null
           }
         />

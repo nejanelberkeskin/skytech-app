@@ -18,7 +18,7 @@ test('admin notification job requires permission and explicit all scope; it neve
   '@/lib/jobs/runs':{isJobName:x=>x==='bildirimler',jobHealth:async()=>null,runRecorded:async(_db,job,trigger,scope,actor,fn)=>{
    assert.deepEqual([job,trigger,scope,actor],['bildirimler','admin','all','test-admin']);return {status:'done',runId:'fixture',report:await fn()};}},
   '@/lib/orders/notification-outbox':{runConfiguredNotifications:async()=>{worker++;return {sent:1,health:{pending:0,needsReview:2}};}},
-  '@/lib/mail':{publicOrigin:()=> 'https://local.invalid'},'@/lib/b2b/reconcile':{reconcileB2bPayments:forbidden},
+  '@/lib/mail':{publicOrigin:()=> 'https://local.invalid'},'@/lib/b2b/reconcile':{reconcileB2bPayments:forbidden},'@/lib/invoicing/job':{runInvoiceJob:forbidden},
   '@/lib/orders/admin-actions':{confirmDueOrders:forbidden},'@/lib/orders/create':{expireStaleOrders:forbidden},
   '@/lib/orders/jobs':{runScheduledJobs:forbidden,startMonitoringDue:forbidden},
   '@/lib/supabase/server':{createServiceRoleClient:()=>{clients++;return {};}}

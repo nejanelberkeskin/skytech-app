@@ -21,6 +21,12 @@ export const JOBS = {
     scheduleText: "Her 10 dakikada bir (Vercel Cron; CRON_SECRET gerekir)",
     staleAfterHours: 1,
   },
+  "fatura-parasut": {
+    label: "Paraşüt fatura kesimi",
+    schedule: "*/30 * * * *",
+    scheduleText: "Her 30 dakikada bir (Vercel Cron; CRON_SECRET ve PARASUT_* gerekir)",
+    staleAfterHours: 2,
+  },
   "siparis-isleri": {
     label: "Sipariş işleri",
     schedule: "0 3 * * *",

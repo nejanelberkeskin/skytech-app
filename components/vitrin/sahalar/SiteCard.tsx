@@ -37,6 +37,7 @@ export default async function SiteCard({
 }) {
   const t = await getTranslations({ locale, namespace: "sitesPage" });
   const seeds = await getTranslations({ locale, namespace: "ourSeeds" });
+  const products = await getTranslations({ locale, namespace: "products" });
   const location = [site.district, site.province].filter(Boolean).join(", ");
   return (
     <Link
@@ -89,6 +90,7 @@ export default async function SiteCard({
             </p>
           )}
           <p>{t(`workTypes.${site.workType}`)}</p>
+          <p className="font-semibold text-[#1B6B3A]">{products(`${site.productType}.name`)}</p>
           {site.species.length > 0 && (
             <p>
               {site.species

@@ -33,14 +33,14 @@
     "badge": "Reforestation · Regeneration · Monitoring",
     "headlineLine1": "We Are Greening Nature",
     "headlineLine2": "with Technology",
-    "subtitle": "We release seed balls by drone over fire-affected and hard-to-reach sites. Because we work without entering the land, the soil and wildlife are left undisturbed.",
+    "subtitle": "We release seeds by drone over fire-affected and hard-to-reach sites. Because we work without entering the land, the soil and wildlife are left undisturbed.",
     "ctaPrimary": "Buy Now",
     "ctaSecondary": "Corporate Solutions",
     "trustForestRegions": "Coordinated with Regional Forestry Directorates",
     "trustAnnualReport": "Annual drone monitoring",
     "trustCertificate": "Certificate of Participation",
     "discover": "Explore",
-    "backgroundAlt": "Forest site where seed balls are released by drone",
+    "backgroundAlt": "Forest site where seeds are released by drone",
     "ctaRequest": "Submit a Request"
   },
   "valueCards": {
@@ -49,7 +49,7 @@
     "items": {
       "zeroFootprint": {
         "title": "Zero Ground Footprint",
-        "description": "We release seed balls over the site by drone. With no machinery or crews entering the land, the soil structure stays intact and wildlife is protected on steep and fire-affected terrain.",
+        "description": "We release seeds over the site by drone. With no machinery or crews entering the land, the soil structure stays intact and wildlife is protected on steep and fire-affected terrain.",
         "stat": "100%",
         "statLabel": "Nature-Safe"
       },
@@ -76,16 +76,16 @@
     "subtitle": "Science and technology at every step, from seed selection to the monitoring report.",
     "steps": {
       "research": {
-        "title": "Seed Ball R&D",
-        "description": "We work with our expert forest engineers and academic advisors to drive ecosystem restoration and the rehabilitation of burned areas and mining sites. We develop our seed ball formulas in line with forestry science — selecting seeds suited to the region's climate and ecology and coating them with the most appropriate materials."
+        "title": "Seed Technology R&D",
+        "description": "We work with our expert forest engineers and academic advisors to drive ecosystem restoration and the rehabilitation of burned areas and mining sites. We develop our seed coating and seed ball formulas in line with forestry science — selecting seeds suited to the region's climate and ecology and coating them with the most appropriate materials."
       },
       "analysis": {
         "title": "Target Site Analysis",
-        "description": "Our application analyses satellite and drone imagery to study the site's topography, soil moisture and ecosystem structure. It uses artificial intelligence to determine the most suitable target points for releasing seed balls. Legal permits are obtained in coordination with the Regional Forestry Directorate, and the process is run scientifically and safely."
+        "description": "Our application analyses satellite and drone imagery to study the site's topography, soil moisture and ecosystem structure. It uses artificial intelligence to determine the most suitable target points for releasing seeds. Legal permits are obtained in coordination with the Regional Forestry Directorate, and the process is run scientifically and safely."
       },
       "distribution": {
         "title": "Release by Drone",
-        "description": "Guided by high-precision GPS data, our drone fleet releases 200+ seed balls in a single flight at pre-determined target points. Because no one enters the land, soil and vegetation are left undamaged."
+        "description": "Guided by high-precision GPS data, our drone fleet releases 200+ seeds in a single flight at pre-determined target points. Because no one enters the land, soil and vegetation are left undamaged."
       },
       "monitoring": {
         "title": "Annual Monitoring & Reporting",
@@ -102,18 +102,18 @@
       "fire": {
         "label": "Post-Fire",
         "title": "Regreening Burned Forests",
-        "description": "To restore the ecological dynamics of burned forest land, we run large-scale, fast and sustainable reforestation campaigns using autonomous drone fleets and high-germination seed balls.",
+        "description": "To restore the ecological dynamics of burned forest land, we run large-scale, fast and sustainable reforestation campaigns using autonomous drone fleets and high-germination seeds.",
         "bullets": [
           "Worker safety: Avoids risking lives on loose, landslide-prone terrain after fires",
           "Golden time window: Rapid intervention before topsoil loses nutrients or erosion begins",
-          "Even distribution with GIS: the number of seed balls per m² is precisely tuned",
+          "Even distribution with GIS: the number of seeds per m² is precisely tuned",
           "Digital traceability: Every coordinate is logged, germination is monitored from satellites"
         ],
         "stat": "65%+",
         "statLabel": "Germination rate",
         "showDetails": "Show Details",
         "hideDetails": "Hide Details",
-        "detailIntro": "The scientific foundation of UAV + seed ball rehabilitation in burned areas:",
+        "detailIntro": "The scientific foundation of UAV seed release in the rehabilitation of burned areas:",
         "detailGroups": [
           {
             "title": "Accessibility and Logistical Advantages",
@@ -124,7 +124,7 @@
               },
               {
                 "title": "Worker Safety",
-                "description": "Seed balls are released without risking human life on dangerous terrain with loosened soil, fallen trees and landslide risk after a fire."
+                "description": "Seeds are released without risking human life on dangerous terrain with loosened soil, fallen trees and landslide risk after a fire."
               }
             ]
           },
@@ -133,7 +133,7 @@
             "items": [
               {
                 "title": "Protective Coating",
-                "description": "The clay, compost and nutrients inside seed balls shield the seed from birds, rodents and ants."
+                "description": "In seed balls, which are used where site conditions call for them, the clay, compost and nutrients shield the seed from birds, rodents and ants."
               },
               {
                 "title": "Micro-Habitat Support",
@@ -150,7 +150,7 @@
             "items": [
               {
                 "title": "Speed and Wide-Area Coverage",
-                "description": "A single drone can drop thousands of seed balls homogeneously over a wide hectarage in a day."
+                "description": "A single drone can release thousands of seeds homogeneously over a wide hectarage in a day."
               },
               {
                 "title": "Lower Cost",
@@ -167,15 +167,15 @@
             "items": [
               {
                 "title": "GIS and Mapping Integration",
-                "description": "Thanks to 3D maps of the area prepared in advance, seed balls are not scattered at random but released at micro-basins and moist spots where germination is most likely."
+                "description": "Thanks to 3D maps of the area prepared in advance, seeds are not scattered at random but released at micro-basins and moist spots where germination is most likely."
               },
               {
                 "title": "Homogeneous Distribution",
-                "description": "Sensors and autonomous algorithms precisely tune the number of seed balls per m², preventing overcrowding or gaps."
+                "description": "Sensors and autonomous algorithms precisely tune the number of seeds per m², preventing overcrowding or gaps."
               },
               {
                 "title": "Digital Traceability",
-                "description": "Because the coordinates where seed balls are released are recorded, germination success and vegetation development can easily be tracked by satellite or drone."
+                "description": "Because the coordinates where seeds are released are recorded, germination success and vegetation development can easily be tracked by satellite or drone."
               }
             ]
           },
@@ -199,7 +199,7 @@
         "title": "Ecological Restoration of Mining Sites",
         "description": "We accelerate the restoration of sites whose natural structure, vegetation and soil quality have been disturbed by mining. Using remote sensing and AI, we boost vegetation success in degraded topographies, building a gradual and sustainable forest ecosystem.",
         "bullets": [
-          "200+ seed balls in a single drone flight — 10 times faster than traditional methods",
+          "200+ seeds in a single drone flight — 10 times faster than traditional methods",
           "Zero ground footprint: maximum restoration with the smallest environmental footprint",
           "Full transparency: seed species, origin and germination rates logged end-to-end",
           "Annual monitoring: high-resolution digital data via periodic drone flights",
@@ -212,7 +212,7 @@
       "carbon": {
         "label": "Corporate Participation",
         "title": "Group Participation and Reporting for Organisations",
-        "description": "Have seed balls released on Project Sites on behalf of your company. Use the Activity Report — covering the site, area, species, date and footage of the work — as supporting evidence in the nature and social-contribution sections of your sustainability reports.",
+        "description": "Have seeds released on Project Sites on behalf of your company. Use the Activity Report — covering the site, area, species, date and footage of the work — as supporting evidence in the nature and social-contribution sections of your sustainability reports.",
         "bullets": [
           "A Certificate of Participation issued in your company's name",
           "An Activity Report with site, hectares, species, date and footage",
@@ -225,7 +225,7 @@
     }
   },
   "footer": {
-    "tagline": "With Seed Ball Technology, drones and forestry science, we work to bring forest back to fire-affected sites.",
+    "tagline": "With seed technology, drones and forestry science, we work to bring forest back to fire-affected sites.",
     "servicesTitle": "Services",
     "quickLinksTitle": "Quick Links",
     "newsletterTitle": "Join Our Newsletter",
@@ -259,10 +259,10 @@
   "ourSeeds": {
     "meta": {
       "title": "Our Seeds — Native Species and Their Characteristics",
-      "description": "The native species we use in Skytech Green seed ball projects: Turkish Red Pine, Black Pine, Cedar and Juniper. Each species' climate adaptation, root system, germination time and ecological role."
+      "description": "The native species we use in Skytech Green projects: Turkish Red Pine, Black Pine, Cedar and Juniper. Each species' climate adaptation, root system, germination time and ecological role."
     },
     "breadcrumbTitle": "Our Native Seeds",
-    "breadcrumbSubtitle": "Every seed is selected to suit the region's climate and ecosystem. The characteristics of the four native species used in Skytech Green seed ball projects.",
+    "breadcrumbSubtitle": "Every seed is selected to suit the region's climate and ecosystem. The characteristics of the four native species used in Skytech Green projects.",
     "breadcrumbSchemaName": "Our Seeds",
     "sectionBadge": "Species",
     "sectionTitleLine": "Four Native",
@@ -339,15 +339,15 @@
     "badge": "Advantages",
     "title": "The Skytech Green Difference",
     "titleAccent": "Six Core Strengths",
-    "subtitle": "From traditional tree planting to seed ball release by drone, we deliver a measurable advantage at every point.",
+    "subtitle": "From traditional tree planting to seed release by drone, we deliver a measurable advantage at every point.",
     "items": {
       "speed": {
         "title": "Fast Operation",
-        "description": "200+ seed balls in a single drone flight. 10 times faster than traditional methods."
+        "description": "200+ seeds in a single drone flight. 10 times faster than traditional methods."
       },
       "noDamage": {
         "title": "Zero Site Damage",
-        "description": "Seed balls are released from the air, so the ecosystem is protected — even areas untouched by human feet can be reached."
+        "description": "Seeds are released from the air, so the ecosystem is protected — even areas untouched by human feet can be reached."
       },
       "transparency": {
         "title": "Full Transparency",
@@ -384,13 +384,13 @@
       }
     },
     "skytech": {
-      "imageAlt": "Skytech Green — seed ball release by drone",
+      "imageAlt": "Skytech Green — seed release by drone",
       "items": {
         "access": "Access to every region with drone technology",
         "noTrace": "Zero site footprint, the ecosystem is protected",
         "verified": "Harvest date + origin verified on the blockchain",
         "reporting": "Annual drone monitoring and an Activity Report",
-        "distribution": "200+ seed balls per flight"
+        "distribution": "200+ seeds per flight"
       }
     }
   },
@@ -431,31 +431,31 @@
     "badge": "Frequently Asked",
     "titleLine1": "All the Questions",
     "titleAccent": "On Your Mind",
-    "subtitle": "From Seed Ball Technology to release by drone, from the certificate to reporting — the questions people ask.",
+    "subtitle": "From coated seeds to release by drone, from the certificate to reporting — the questions people ask.",
     "faqs": {
       "seedBall": {
         "question": "What is Seed Ball Technology and how does it work?",
-        "answer": "Seed Ball Technology is a method in which native seeds are encapsulated in clay and organic nutrients, protecting them from external factors and raising germination success above 65%+. The capsule shields the seed from drought and from being eaten; it dissolves with rainfall and the seed germinates in its natural cycle."
+        "answer": "Seed Ball Technology is a method in which native seeds are encapsulated in clay and organic nutrients, protecting them from external factors and raising germination success above 65%+. The capsule shields the seed from drought and from being eaten; it dissolves with rainfall and the seed germinates in its natural cycle. The seed ball is a separate product that we use where site conditions call for it; on the current Project Sites, seaweed-extract coated seeds are released."
       },
       "sourcing": {
         "question": "Where are the seeds sourced from?",
         "answer": "All seeds are sourced in cooperation with the Regional Forestry Directorates. In line with the principles of preserving biodiversity and sustainability, the collection date, genetic origin, and taxonomic (species) information of every seed lot is recorded using blockchain technology. Thanks to our end-to-end transparent supply chain, our customers can access seed ID cards and certification data at any time."
       },
       "droneEfficiency": {
-        "question": "How efficient is seed ball release by drone?",
-        "answer": "By releasing more than 200 seed balls in a single flight, it is 10 times faster than traditional methods and highly cost-effective. GPS-precise coordinates make it possible to reach steep and fire-affected areas that people cannot access, and because no one enters the land, soil and vegetation are protected."
+        "question": "How efficient is seed release by drone?",
+        "answer": "By releasing more than 200 seeds in a single flight, it is 10 times faster than traditional methods and highly cost-effective. GPS-precise coordinates make it possible to reach steep and fire-affected areas that people cannot access, and because no one enters the land, soil and vegetation are protected."
       },
       "tracking": {
-        "question": "How can I follow the development of the released seed balls?",
+        "question": "How can I follow the development of the released seeds?",
         "answer": "Sites are re-surveyed by drone every year. On the agreed monitoring schedule we publish footage of the work as a public video and send you the link by email. For organisations, the results are also compiled in the Activity Report."
       },
       "certificate": {
         "question": "What is the Certificate of Participation?",
-        "answer": "After the seed balls have been released on the site, we email you a Certificate of Participation. It shows the name you chose, the site, the date and the number of seed balls, and you can share it on social media. The certificate is not a donation receipt and does not provide any tax deduction."
+        "answer": "After the seeds have been released on the site, we email you a Certificate of Participation. It shows the name you chose, the site, the date and the number of seeds, and you can share it on social media. The certificate is not a donation receipt and does not provide any tax deduction."
       },
       "minOrder": {
-        "question": "What is the minimum number of seed balls?",
-        "answer": "The minimum number of seed balls is {min}. You can use one of the preset options or set the quantity yourself; the current fee is shown in the participation steps after you choose a site."
+        "question": "What is the minimum number of seeds?",
+        "answer": "The minimum number of seeds is {min}. You can use one of the preset options or set the quantity yourself; the current fee is shown in the participation steps after you choose a site."
       },
       "b2bIntegration": {
         "question": "How does B2B corporate integration work?",
@@ -470,7 +470,7 @@
         "answer": "No. The species is determined by our specialists according to the site's climate, soil and natural vegetation. On each site's page you can see which species is released and why."
       },
       "calendar": {
-        "question": "When are the seed balls released?",
+        "question": "When are the seeds released?",
         "answer": "Release work takes place between November and March — the best period for the seed to meet rainfall. From April to September the sites are inspected, monitored and reported on. On the agreed monitoring schedule we share footage of the work."
       },
       "hectare": {
@@ -483,7 +483,7 @@
       },
       "notDonation": {
         "question": "Is this a donation?",
-        "answer": "No. What you buy from Skytech Green is a service: the release by drone of the number of seed balls you choose on the site you select. An invoice is issued for the service fee; your payment is not a donation and does not provide any tax deduction."
+        "answer": "No. What you buy from Skytech Green is a service: the release by drone of the number of seaweed-extract coated seeds you choose on the site you select. An invoice is issued for the service fee; your payment is not a donation and does not provide any tax deduction."
       },
       "payment": {
         "question": "How do I pay?",
@@ -491,7 +491,7 @@
       },
       "withdrawal": {
         "question": "Can I withdraw from my order?",
-        "answer": "Yes. You may withdraw within 14 days of the date your payment is approved, without giving any reason. Simply send the notice through the withdrawal form on the site or by e-mail; the full amount you paid is refunded within 14 days, in a single payment, to the payment method you used. Seed balls are not released before the withdrawal period ends."
+        "answer": "Yes. You may withdraw within 14 days of the date your payment is approved, without giving any reason. Simply send the notice through the withdrawal form on the site or by e-mail; the full amount you paid is refunded within 14 days, in a single payment, to the payment method you used. Seeds are not released before the withdrawal period ends."
       },
       "invoice": {
         "question": "When will I receive my invoice?",
@@ -509,20 +509,20 @@
   },
   "seedJourney": {
     "heading": "The Journey of a Seed",
-    "intro": "Our seed balls are prepared in the lab, delivered to the field by drone and blend into the soil with rainfall.",
+    "intro": "Our seeds are prepared in the lab, delivered to the field by drone and blend into the soil with rainfall.",
     "stepLabel": "Step",
     "acts": {
       "prepare": {
-        "title": "The Seed Ball Is Prepared",
-        "desc": "Native seed is coated with clay and organic matter. The shell helps protect it from birds, rodents and drying out."
+        "title": "The Seed Is Coated",
+        "desc": "Native seed is coated with a protective mixture. The coating helps protect it from birds, rodents and drying out."
       },
       "flight": {
         "title": "To the Field by Drone",
-        "desc": "The drone flies a planned route and releases seed balls at the designated points, including slopes that are hard to reach on foot."
+        "desc": "The drone flies a planned route and releases seeds at the designated points, including slopes that are hard to reach on foot."
       },
       "soil": {
         "title": "Meeting the Soil",
-        "desc": "The seed ball settles on the ground and waits for rain. With rainfall the clay dissolves and the seed blends into the soil."
+        "desc": "The seed settles on the ground and waits for rain. With rainfall the coating dissolves and the seed blends into the soil."
       },
       "sprout": {
         "title": "Germination and Monitoring",
@@ -554,7 +554,7 @@
         "tag": "Organisations",
         "description": "Group participation on behalf of your organisation: Certificates of Participation for employees and partners, an Activity Report for the organisation.",
         "features": [
-          "Seed ball release in bulk quantities",
+          "Seed release in bulk quantities",
           "Separate Certificates of Participation for employees and partners",
           "An Activity Report with site, area, species and date",
           "Footage of the work and a site video",
@@ -563,12 +563,12 @@
         "cta": "Get Info"
       },
       "site": {
-        "name": "Have Seed Balls Released on a Site",
+        "name": "Have Seeds Released on a Site",
         "tag": "Individuals and organisations",
-        "description": "Choose a fire-affected Project Site and our drone team releases seed balls there on your behalf.",
+        "description": "Choose a fire-affected Project Site and our drone team releases seaweed-extract coated seeds there on your behalf.",
         "features": [
           "You choose the site; the species is set by the site",
-          "From {min} seed balls, any quantity you like",
+          "From {min} seeds, any quantity you like",
           "A Certificate of Participation in your name",
           "Release November–March, monitoring April–September",
           "Footage of the work on the agreed monitoring schedule"
@@ -578,11 +578,11 @@
       "ownLand": {
         "name": "For My Own Land",
         "tag": "Landowners",
-        "description": "Apply for your burnt, degraded or idle land; our team plans the survey, the species selection and the drone seed ball release.",
+        "description": "Apply for your burnt, degraded or idle land; our team plans the survey, the species selection and the drone seed release.",
         "features": [
           "Survey and planning for your land",
           "Native species matched to climate and soil",
-          "Drone seed ball release",
+          "Drone seed release",
           "A quote prepared for your land"
         ],
         "cta": "Apply"
@@ -615,8 +615,8 @@
       "badge": "Our Story",
       "titleLead": "After the Wildfires,",
       "titleAccent": "A Call from Nature",
-      "paragraph1": "After the 2021 Mediterranean forest fires, we saw that drones could rapidly disperse seed balls and reach areas where human footsteps struggle to arrive. We combined three things: scientific foundation + aviation technology + a transparent software infrastructure.",
-      "paragraph2": "Today <brand>Skytech Green</brand> releases seed balls by drone on Project Sites in three regions of Türkiye, enabling organisations and individuals to take part in bringing forest back to fire-affected sites.",
+      "paragraph1": "After the 2021 Mediterranean forest fires, we saw that drones could rapidly release seeds and reach areas where human footsteps struggle to arrive. We combined three things: scientific foundation + aviation technology + a transparent software infrastructure.",
+      "paragraph2": "Today <brand>Skytech Green</brand> releases seeds by drone on Project Sites in three regions of Türkiye, enabling organisations and individuals to take part in bringing forest back to fire-affected sites.",
       "imageCaption": "Our Field Team"
     },
     "timeline": {
@@ -694,7 +694,7 @@
     },
     "cta": {
       "title": "Join <accent>Us on This Journey</accent>",
-      "subtitle": "Choose a site, have seed balls released there, and follow the work through reports and footage.",
+      "subtitle": "Choose a site, have seeds released there, and follow the work through reports and footage.",
       "primaryEnabled": "Buy Now",
       "primaryDisabled": "Coming Soon",
       "secondary": "Contact Us",
@@ -845,9 +845,9 @@
       }
     },
     "cta": {
-      "title": "Have <grad>Seed Balls</grad> Released on a Site",
-      "titleRequest": "Have <grad>Seed Balls</grad> Released on a Site",
-      "subtitle": "Choose a Project Site or apply for your own land — we release the seed balls by drone.",
+      "title": "Have <grad>Seeds</grad> Released on a Site",
+      "titleRequest": "Have <grad>Seeds</grad> Released on a Site",
+      "subtitle": "Choose a Project Site or apply for your own land — we release the seeds by drone.",
       "buttonOrder": "Buy Now",
       "buttonSoon": "Coming Soon",
       "buttonRequest": "Submit a Request"
@@ -856,26 +856,26 @@
   "droneTechPage": {
     "meta": {
       "title": "Drone Technology — Precision Release, Zero Footprint",
-      "description": "Our GPS-precise drone fleet releases seed balls over hard-to-reach areas untouched by human feet. RTK GPS, LiDAR, autonomous flight, 200+ seed balls per flight.",
-      "imageAlt": "Skytech Green seed ball release drone"
+      "description": "Our GPS-precise drone fleet releases seeds over hard-to-reach areas untouched by human feet. RTK GPS, LiDAR, autonomous flight, 200+ seeds per flight.",
+      "imageAlt": "Skytech Green seed release drone"
     },
     "breadcrumb": {
       "label": "Drone Technology"
     },
     "schema": {
       "name": "Drone Reforestation Service",
-      "description": "Releasing 200+ seed balls per flight with our GPS-precise, autonomous professional drone fleet. Zero site disturbance, access to hard-to-reach areas, full traceability."
+      "description": "Releasing 200+ seeds per flight with our GPS-precise, autonomous professional drone fleet. Zero site disturbance, access to hard-to-reach areas, full traceability."
     },
     "hero": {
       "title": "Precision Release, Zero Footprint",
-      "subtitle": "With GPS-precise drones, we release seed balls over areas no human step can reach."
+      "subtitle": "With GPS-precise drones, we release seeds over areas no human step can reach."
     },
     "system": {
       "badge": "Drone System",
       "heading": "<grad>Our Autonomous Drone Fleet</grad> in the Field",
-      "p1": "Unmanned aerial vehicles (UAVs) with autonomous flight capability reach predefined target coordinates with high precision and successfully place 200+ seed balls in a single operation.",
+      "p1": "Unmanned aerial vehicles (UAVs) with autonomous flight capability reach predefined target coordinates with high precision and successfully place 200+ seeds in a single operation.",
       "p2": "Guided by high-precision GPS data, our UAV fleet operates on the principle of <strong>zero ecological disturbance</strong>. All flight records are logged to your corporate dashboard in real time — for transparency and verifiability.",
-      "imageAlt": "Skytech Green drone with its seed ball hopper",
+      "imageAlt": "Skytech Green drone with its seed hopper",
       "thermalCamera": "Thermal Camera"
     },
     "featuresSection": {
@@ -923,7 +923,7 @@
       },
       "seeding": {
         "title": "Autonomous Release",
-        "desc": "The drone flies autonomously along the planned route, dropping seed balls at calculated points."
+        "desc": "The drone flies autonomously along the planned route, releasing seeds at calculated points."
       },
       "reporting": {
         "title": "Reporting",
@@ -1098,7 +1098,7 @@
       }
     },
     "topics": {
-      "individual": "Seed Ball Release on a Project Site",
+      "individual": "Seed Release on a Project Site",
       "corporate": "Corporate Reforestation",
       "esg": "ESG / Reporting",
       "drone": "Drone Operation",
@@ -1194,7 +1194,7 @@
       },
       "izmir": {
         "region": "Project Site",
-        "desc": "Seed ball release by drone and site analysis work."
+        "desc": "Seed release by drone and site analysis work."
       },
       "bursa": {
         "region": "Project Site",
@@ -1203,8 +1203,8 @@
     }
   },
   "homeMeta": {
-    "title": "Reforestation with Seed Ball Technology",
-    "description": "We release seed balls by drone over fire-affected sites. Join a Project Site or apply for your own land, and follow the work through reports and footage."
+    "title": "Reforestation with Drone and Seed Technology",
+    "description": "We release seeds by drone over fire-affected sites. Join a Project Site or apply for your own land, and follow the work through reports and footage."
   },
   "cookieConsent": {
     "message": "We use optional cookies to measure site usage. You can change your choice at any time.",
@@ -1273,8 +1273,8 @@
         "contactRequired": "Enter at least one of phone or e-mail.",
         "consentRequired": "Tick the contact request so we can get back to you.",
         "quantityInvalid": "Quantity must be a whole number.",
-        "quantityMin": "The minimum is {min} seed balls.",
-        "quantityMax": "You can choose at most {max} seed balls per order; write to us for more.",
+        "quantityMin": "The minimum is {min}.",
+        "quantityMax": "You can choose at most {max} per order; write to us for more.",
         "provinceRequired": "Select a province.",
         "provinceInvalid": "Invalid province.",
         "areaRequired": "Enter the area size.",
@@ -1314,8 +1314,8 @@
     },
     "land": {
       "meta": {
-        "title": "For My Own Land — Drone Seed Ball Release Application",
-        "description": "Apply for a drone seed ball release on your burnt, degraded or idle land. Share the location, area and land condition; survey and planning are on us."
+        "title": "For My Own Land — Drone Seed Release Application",
+        "description": "Apply for a drone seed release on your burnt, degraded or idle land. Share the location, area and land condition; survey and planning are on us."
       },
       "breadcrumb": {
         "label": "For My Own Land",
@@ -1403,13 +1403,13 @@
       "recent": "Recent records",
       "seeAll": "View all →",
       "empty": "No records are linked to your account.",
-      "firstRequest": "Release seed balls →",
-      "seedBalls": "{count, plural, one {# seed ball} other {# seed balls}}",
+      "firstRequest": "Release seeds →",
+      "seedBalls": "{count, number} units",
       "actions": {
-        "openLandTitle": "Have Seed Balls Released on a Site",
+        "openLandTitle": "Have Seeds Released on a Site",
         "openLandDesc": "Choose a Project Site and set the quantity",
         "ownLandTitle": "For My Own Land",
-        "ownLandDesc": "Application for drone seed ball release on your land"
+        "ownLandDesc": "Application for drone seed release on your land"
       }
     },
     "requests": {
@@ -1418,8 +1418,8 @@
       "newRequest": "+ Buy",
       "empty": "No records are linked to your account.",
       "emptyHint": "If you left an order record without signing in, you can link it to your account with the link in the confirmation email.",
-      "firstRequest": "Release seed balls →",
-      "seeds": "{count, plural, one {# seed ball} other {# seed balls}}",
+      "firstRequest": "Release seeds →",
+      "seeds": "{count, number} units",
       "contact": "Contact",
       "yourNote": "Your note",
       "hints": {
@@ -1433,7 +1433,7 @@
     },
     "orders": {
       "title": "My Orders",
-      "subtitle": "Your seed ball release orders for Project Sites.",
+      "subtitle": "Your release orders for Project Sites.",
       "sitesCta": "Project Sites",
       "linked": "{count, plural, one {# order you previously placed with this email address has been linked to your account.} other {# orders you previously placed with this email address have been linked to your account.}}",
       "loadError": "Your orders could not be loaded right now. Please refresh the page.",
@@ -1442,7 +1442,7 @@
       "browseSites": "Explore the sites →",
       "testBadge": "TEST",
       "rows": {
-        "quantity": "Seed ball quantity",
+        "quantity": "Quantity",
         "total": "Total service fee (VAT included)",
         "certificateName": "Name on certificate",
         "releasedOn": "Release date",
@@ -1453,7 +1453,7 @@
         "paid": "Your order is placed; the 14-day withdrawal period is running.",
         "confirmed": "The withdrawal period has ended; your order can be added to the release plan.",
         "scheduled": "Your order has been assigned to a release operation.",
-        "released": "Your seed balls have been released on the site; your Certificate of Participation has been issued.",
+        "released": "Your seeds have been released on the site; your Certificate of Participation has been issued.",
         "monitoring": "The site is being inspected, monitored and reported on.",
         "completed": "Footage of the work has been shared.",
         "withdrawal_requested": "Your withdrawal notice has been received; the full amount will be refunded within 14 days.",
@@ -1605,7 +1605,7 @@
         },
         "paid": {
           "label": "Payment Completed",
-          "desc": "Your payment has been received. Your seed ball release process will be started."
+          "desc": "Your payment has been received. Your seed release process will be started."
         },
         "rejected": {
           "label": "Rejected",
@@ -1623,7 +1623,7 @@
         "readyTitle": "Your Quote Is Ready!",
         "reviewTitle": "Your Quote Is Under Review",
         "total": "Total Amount",
-        "seedCount": "Seed balls",
+        "seedCount": "Seeds",
         "seedUnit": "{count, number} pcs",
         "adminNote": "Manager's Note",
         "review": "Review the Quote",
@@ -1634,7 +1634,7 @@
         "activeSub": "pending",
         "paid": "Paid Quotes",
         "paidSub": "completed",
-        "seeds": "Seed balls",
+        "seeds": "Seeds",
         "seedsSub": "to be released (paid)",
         "invested": "Amount paid",
         "investedSub": "paid"
@@ -1709,7 +1709,7 @@
       "need": {
         "orman": {
           "label": "Site participation for your company",
-          "desc": "Seed balls are released at the Project Site you choose, on behalf of your company."
+          "desc": "Seeds are released at the Project Site you choose, on behalf of your company."
         },
         "sertifika": {
           "label": "Employee and customer certificates",
@@ -1892,7 +1892,7 @@
     "breadcrumb": "My land",
     "breadcrumbLabel": "Breadcrumb",
     "eyebrow": "For landowners",
-    "title": "Drone seed ball release on your land",
+    "title": "Drone seed release on your land",
     "description": "Apply for your fire-affected, degraded or unused land; our team will assess the land and contact you.",
     "apply": "Go to the application form",
     "sites": "No land of your own? Take part in a Project Site",
@@ -1925,7 +1925,7 @@
       },
       "release": {
         "title": "Release and monitoring",
-        "body": "Seed balls are released by drone from November to March, and the land is monitored from April to September."
+        "body": "Seeds are released by drone from November to March, and the land is monitored from April to September."
       }
     },
     "information": {
@@ -1951,7 +1951,7 @@
       },
       "season": {
         "question": "When will the work take place?",
-        "answer": "Seed ball release is planned between November and March, subject to land suitability and the necessary permits."
+        "answer": "Seed release is planned between November and March, subject to land suitability and the necessary permits."
       }
     },
     "contact": "For your questions:"
@@ -2034,7 +2034,7 @@
   },
   "siteReleases": {
     "title": "Work at this site",
-    "intro": "Completed seed ball releases at this site. Footage is published during the monitoring period following each release.",
+    "intro": "Completed releases at this site. Footage is published during the monitoring period following each release.",
     "season": "{season} season",
     "play": "Play video",
     "playNamed": "Play the video of the release on {date}",
@@ -2087,8 +2087,8 @@
         "description": "Your order has been assigned to a release operation."
       },
       "released": {
-        "title": "Seed balls released",
-        "description": "Your seed balls have been released at the site; your Certificate of Participation has been issued."
+        "title": "Release completed",
+        "description": "Your seeds have been released at the site; your Certificate of Participation has been issued."
       },
       "monitoring": {
         "title": "Monitoring period",
@@ -2105,7 +2105,7 @@
       "location": "Location",
       "workType": "Type of work",
       "species": "Species",
-      "quantity": "Seed ball quantity",
+      "quantity": "Quantity",
       "unitPrice": "Service fee per seed ball",
       "total": "Total service fee (VAT included)",
       "certificateName": "Name on certificate"
@@ -2154,7 +2154,7 @@
       "ready": "Your Certificate of Participation is ready.",
       "cancelled": "The Certificate of Participation for this order has been cancelled.",
       "view": "View certificate",
-      "pending": "Your certificate will be emailed when seed ball release is complete.",
+      "pending": "Your certificate will be emailed when the release is complete.",
       "publication": {
         "visible": "Your name may appear on the public certificate with your separate permission.",
         "hidden": "Your name is hidden on the public certificate. Copies previously saved by others are not deleted by this action.",
@@ -2249,7 +2249,7 @@
     },
     "schema": {
       "name": "Activity Report and Monitoring",
-      "description": "An Activity Report covering site, area, species, date, coordinates and footage for seed ball release by drone, together with annual monitoring."
+      "description": "An Activity Report covering site, area, species, date, coordinates and footage for seed release by drone, together with annual monitoring."
     },
     "hero": {
       "title": "Carbon & Reporting",
@@ -2261,7 +2261,7 @@
         "pre": "Every Job",
         "highlight": "On Record"
       },
-      "subtitle": "We issue an Activity Report for every site where seed balls are released. It contains:",
+      "subtitle": "We issue an Activity Report for every site where seeds are released. It contains:",
       "items": {
         "site": {
           "title": "Site and location",
@@ -2281,7 +2281,7 @@
         },
         "coordinates": {
           "title": "Coordinates",
-          "desc": "The coordinates of the area where the seed balls were released."
+          "desc": "The coordinates of the area where the seeds were released."
         },
         "footage": {
           "title": "Footage and monitoring",
@@ -2344,7 +2344,7 @@
         },
         "individual": {
           "question": "Can I take part as an individual?",
-          "answer": "Yes. You can choose a Project Site and have seed balls released there. After the release you receive your Certificate of Participation by email, and on the agreed monitoring schedule the footage of the work."
+          "answer": "Yes. You can choose a Project Site and have seeds released there. After the release you receive your Certificate of Participation by email, and on the agreed monitoring schedule the footage of the work."
         },
         "future": {
           "question": "Will there be a carbon verification in the future?",
@@ -2366,12 +2366,12 @@
   },
   "sitesPage": {
     "title": "Project Sites",
-    "intro": "Take part in the recovery of fire-affected forests. Choose a site and have seed balls released there on your behalf.",
+    "intro": "Take part in the recovery of fire-affected forests. Choose a site and have seeds released there on your behalf.",
     "description": "Explore the area, work type and species of each project site below.",
     "ownLand": "I would like work carried out on my own land",
     "fire": "Fire-affected site",
     "hectares": "{value} hectares",
-    "participate": "Release Seed Balls",
+    "participate": "Release Seeds",
     "details": "Explore the site",
     "info": "Get information",
     "empty": {
@@ -2392,7 +2392,7 @@
     }
   },
   "siteDetail": {
-    "meta": "Explore the area, species and seed ball release schedule for {name}.",
+    "meta": "Explore the area, species and release schedule for {name}.",
     "location": "Location",
     "area": "Area",
     "workType": "Work type",
@@ -2403,7 +2403,7 @@
     "gallery": "Site images",
     "galleryAlt": "{name} — {location} — site image {number}",
     "video": "Footage of the work",
-    "order": "Have seed balls released at this site",
+    "order": "Have seeds released at this site",
     "back": "Back to all sites",
     "reasons": {
       "kizilcam": "Native to the Mediterranean climate, it tolerates heat and drought. It is among the species that naturally return after forest fires.",
@@ -2415,11 +2415,11 @@
       "open": "This site is not currently accepting new participation.",
       "full": "This site is fully subscribed. You can explore other sites.",
       "scheduled": "The release date has been scheduled for this site.",
-      "released": "Seed ball release at this site has been completed.",
+      "released": "The release at this site has been completed.",
       "monitoring": "Monitoring and reporting continue at this site."
     },
-    "sticky": "Release seed balls at this site",
-    "stickyPrice": "{price} per seed ball",
+    "sticky": "Release seeds at this site",
+    "stickyPrice": "{price} per {unit}",
     "media": {
       "title": "News and videos",
       "subtitle": "News coverage and footage about this site.",
@@ -2436,8 +2436,8 @@
   },
   "seasonTimeline": {
     "title": "Work schedule",
-    "description": "Seed balls are released from November to March. Sites are surveyed and monitored, with reporting from April to September.",
-    "release": "Seed ball release",
+    "description": "Releases take place from November to March. Sites are surveyed and monitored, with reporting from April to September.",
+    "release": "Release",
     "monitoring": "Monitoring and reporting",
     "offSeason": "Outside release season",
     "current": "Current month",
@@ -2460,17 +2460,17 @@
     "copyError": "The link could not be copied. You can copy it from your browser’s address bar.",
     "share": "Share",
     "shareError": "Sharing could not be opened. You can copy the link instead.",
-    "shareText": "I had {quantity} seed balls released at {site}. #SkytechGreen",
-    "quantity": "{quantity} seed balls",
+    "shareText": "I had {quantity} {unit} released at {site}. #SkytechGreen",
+    "quantity": "{quantity} {unit}",
     "details": "Record of the work",
     "meaning": "What does this certificate document?",
-    "records": "It documents the release by drone of the stated number of seed balls at the specified site.",
+    "records": "It documents the release by drone of the stated quantity of the stated product at the specified site.",
     "monitoring": "The site is monitored in the following seasons.",
     "video": "Footage of the work",
     "sites": "Project Sites",
     "notes": {
       "document": "This is a Certificate of Participation, not a donation receipt. It does not provide a tax deduction.",
-      "nature": "The seed balls have been released into nature. Germination and growth depend on natural conditions and are not guaranteed."
+      "nature": "The seeds have been released into nature. Germination and growth depend on natural conditions and are not guaranteed."
     },
     "facts": {
       "site": "Site",
@@ -2483,7 +2483,7 @@
       "code": "Certificate code"
     },
     "image": {
-      "quantity": "{quantity} seed balls",
+      "quantity": "{quantity} {unit}",
       "site": "were released by drone at {site}",
       "date": "on {date}."
     },
@@ -2501,15 +2501,15 @@
     "rows": {
       "orderNo": "Order number",
       "site": "Project Site",
-      "quantity": "Seed balls",
+      "quantity": "Quantity",
       "total": "Total (VAT included)"
     },
     "success": {
       "badge": "Payment approved",
       "title": "Your order is confirmed",
-      "body": "Your payment has been approved and your contract is concluded. Your seed ball release order has been recorded.",
+      "body": "Your payment has been approved and your contract is concluded. Your release order has been recorded.",
       "email": "Your order confirmation is sent by e-mail to {email} together with the Preliminary Information Form, the Distance Service Agreement, the Withdrawal Form and the Personal Data Notice (KVKK). If it does not arrive within a few minutes, please check your spam folder.",
-      "deadline": "The seed balls will be released no later than {date}.",
+      "deadline": "The release will be carried out no later than {date}.",
       "withdrawal": "You may withdraw, without giving any reason, until the end of {date}.",
       "cta": "View my order",
       "sites": "Project Sites"
@@ -2558,8 +2558,8 @@
     "cta": "Project Sites"
   },
   "orderWizard": {
-    "title": "Have seed balls released at this site",
-    "description": "Choose the quantity, enter the certificate name and your billing details; we release your seed balls on site by drone.",
+    "title": "Have seeds released at this site",
+    "description": "Choose the quantity, enter the certificate name and your billing details; we release your seeds on site by drone.",
     "orderMode": "Order",
     "requestMode": "Participation request",
     "next": "Continue",
@@ -2579,13 +2579,13 @@
       "review": "Review and confirm"
     },
     "quantity": {
-      "title": "Seed balls to release",
+      "title": "Quantity to release",
       "description": "Choose a preset or enter a quantity.",
-      "label": "Seed ball quantity",
+      "label": "Quantity",
       "speciesNote": "Our specialists select the species for the site's climate and soil; you do not need to choose.",
       "unit": "Service price per seed ball",
       "vatIncluded": "VAT included",
-      "selected": "{count} seed balls",
+      "selected": "{count} units",
       "change": "Change quantity"
     },
     "certificate": {
@@ -2596,7 +2596,7 @@
       "fallback": "If left blank, your first and last name will be used.",
       "placeholder": "Your full name",
       "preview": "Participation Certificate — {name}",
-      "delivery": "The certificate is emailed when seed ball release is complete.",
+      "delivery": "The certificate is emailed when the release is complete.",
       "mode": {
         "own": "My own name (as entered in the buyer details)",
         "company": "Company name (with a corporate invoice)",
@@ -2649,7 +2649,7 @@
       "monitoringDeadline": "Monitoring content is shared by {date} at the latest.",
       "rolled": "The preparation window for this season has closed, so your order is scheduled for the {season} season.",
       "withdrawalTitle": "Right of withdrawal",
-      "withdrawal": "You may withdraw without giving a reason within 14 days of payment. The full amount will be refunded to your original payment method within 14 days of your notice. Seed ball release will not take place before the withdrawal period ends.",
+      "withdrawal": "You may withdraw without giving a reason within 14 days of payment. The full amount will be refunded to your original payment method within 14 days of your notice. The release will not take place before the withdrawal period ends.",
       "loading": "Preparing total and documents…",
       "retryNote": "Try again to load the summary. Your details have been retained.",
       "pay": "Confirm Order and Pay ({total})",
@@ -2717,8 +2717,8 @@
       "contractRequired": "Accept the agreement to continue.",
       "corporateAuthorityRequired": "Confirm your authority to continue.",
       "certificatePublicationSelfOnly": "You can give publication consent only for your own name.",
-      "quantityMin": "Select at least {min} seed balls.",
-      "quantityMax": "Select up to {max} seed balls per order; contact us for larger quantities.",
+      "quantityMin": "Select at least {min}.",
+      "quantityMax": "Select up to {max} per order; contact us for larger quantities.",
       "quantityInvalid": "Quantity must be a whole number.",
       "certificateNameShort": "The name on the certificate must be at least {min} characters.",
       "certificateNameLong": "The name on the certificate can be at most {max} characters.",
@@ -2751,5 +2751,18 @@
   "institutionLogos": {
     "label": "Institution logos",
     "open": "{name} website (opens in a new tab)"
+  },
+  "products": {
+    "label": "Product",
+    "coated_seed": {
+      "name": "Seaweed-Extract Coated Seed",
+      "unit": "seeds",
+      "short": "Seeds coated with seaweed extract, released on site by drone."
+    },
+    "seed_ball": {
+      "name": "Seed Ball",
+      "unit": "seed balls",
+      "short": "Seed balls prepared with clay and nutrients, released on site by drone."
+    }
   }
 }

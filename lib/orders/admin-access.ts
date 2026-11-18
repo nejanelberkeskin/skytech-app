@@ -8,7 +8,7 @@
 import { accessibleScope, hasFullScope, type EffectiveAccess, type Permission } from "@/lib/admin/permissions";
 
 export const ORDER_ACTIONS = [
-  "note", "cancel_by_seller", "refund", "refund_duplicate", "invoice_now", "invoice_issued", "reserve_capacity",
+  "note", "cancel_by_seller", "refund", "refund_duplicate", "invoice_now", "invoice_issued", "invoice_retry", "reserve_capacity",
 ] as const;
 export type OrderAction = (typeof ORDER_ACTIONS)[number];
 
@@ -20,6 +20,7 @@ export const ACTION_PERMISSION: Record<OrderAction, Permission> = {
   refund_duplicate: "refunds.execute",
   invoice_now: "invoices.manage",
   invoice_issued: "invoices.manage",
+  invoice_retry: "invoices.manage",
   reserve_capacity: "sites.capacity.manage",
 };
 

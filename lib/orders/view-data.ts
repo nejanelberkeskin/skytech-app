@@ -10,6 +10,7 @@
  *
  * Geliştirmede `?t=ornek` ile lib/orders/view.ts içindeki örnek siparişler döner.
  */
+import { productTypeOf } from "@/lib/products";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { verifyOrderToken } from "./access";
 import { publicCertificateName, HIDDEN_CERTIFICATE_NAME } from "@/lib/certificates/publication";
@@ -100,6 +101,7 @@ export async function getOrderView(orderNo: string, access: OrderViewAccess = {}
       slug: landRow?.is_public && landRow.slug ? landRow.slug : null,
       location,
       workType: site.workType,
+      productType: productTypeOf(site.productType),
     },
     species: site.species.map((s) => ({ slug: s.slug, name: s.name })),
     quantity: order.quantity,

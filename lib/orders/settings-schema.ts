@@ -7,11 +7,15 @@
  */
 import { z } from "zod";
 import { QTY_HARD_LIMITS, type PublicPricing } from "@/lib/pricing";
+import { DEFAULT_PRODUCT_TYPE, type ProductType } from "@/lib/products";
 
 export type InvoiceTiming = "on_payment" | "on_performance";
 
 export interface SalesSettings {
+  /** Yosun ekstraktı kaplamalı tohum birim bedeli (KDV dâhil, kuruş). */
   unitPriceKurus: number;
+  /** Tohum topu birim bedeli (KDV dâhil, kuruş). */
+  seedBallUnitPriceKurus: number;
   minQuantity: number;
   maxQuantity: number;
   quantityPresets: number[];
@@ -44,6 +48,7 @@ const whole = (min: number, max: number) => z.number("invalid").int("invalid").m
 export const salesSettingsSchema = z
   .object({
     unitPriceKurus: whole(L.unitPriceKurus.min, L.unitPriceKurus.max),
+    seedBallUnitPriceKurus: whole(L.unitPriceKurus.min, L.unitPriceKurus.max),
     minQuantity: whole(L.minQuantity.min, L.minQuantity.max),
     maxQuantity: whole(L.maxQuantity.min, L.maxQuantity.max),
     quantityPresets: z
@@ -90,9 +95,14 @@ export function settingsFieldErrors(error: z.ZodError): Record<string, string> {
   return fields;
 }
 
-export function publicPricing(s: SalesSettings): PublicPricing {
+/** Ürün tipine göre birim bedel (kuruş, KDV dâhil). Bağlayıcı hesaplar da bunu kullanır. */
+export function unitPriceFor(productType: ProductType, s: Pick<SalesSettings, "unitPriceKurus" | "seedBallUnitPriceKurus">): number {
+  return productType === "seed_ball" ? s.seedBallUnitPriceKurus : s.unitPriceKurus;
+}
+
+export function publicPricing(s: SalesSettings, productType: ProductType = DEFAULT_PRODUCT_TYPE): PublicPricing {
   return {
-    unitPriceKurus: s.unitPriceKurus,
+    unitPriceKurus: unitPriceFor(productType, s),
     minQuantity: s.minQuantity,
     maxQuantity: s.maxQuantity,
     quantityPresets: [...s.quantityPresets],
@@ -117,4 +127,4 @@ export function diffSettings(before: SalesSettings | Record<string, unknown>, af
  * Teklif sürümünü (`quoteVersion`) değiştiren alanlar: bunlardan biri değişirse ödeme adımındaki
  * müşteri güncel tutarı / takvimi görüp yeniden onaylar (`documents_stale`).
  */
-export const QUOTE_FIELDS: readonly (keyof SalesSettings)[] = ["unitPriceKurus", "vatRate", "prepDays"];
+export const QUOTE_FIELDS: readonly (keyof SalesSettings)[] = ["unitPriceKurus", "seedBallUnitPriceKurus", "vatRate", "prepDays"];

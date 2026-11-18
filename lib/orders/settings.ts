@@ -9,9 +9,10 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { createServiceRoleClient } from "@/lib/supabase/server";
 import { LEGAL_DOCUMENTS_VERSION } from "@/lib/legal/version";
-import { QUANTITY_PRESETS, RELEASE_QTY, UNIT_PRICE_KURUS } from "@/lib/pricing";
+import { QUANTITY_PRESETS, RELEASE_QTY, SEED_BALL_UNIT_PRICE_KURUS, UNIT_PRICE_KURUS } from "@/lib/pricing";
+import { DEFAULT_PRODUCT_TYPE, type ProductType } from "@/lib/products";
 import { DEFAULT_PREP_DAYS } from "./schedule";
-import { salesSettingsSchema, settingsFieldErrors } from "./settings-schema";
+import { salesSettingsSchema, settingsFieldErrors, unitPriceFor } from "./settings-schema";
 import type { SalesSettings } from "./settings-schema";
 
 export type { SalesSettings } from "./settings-schema";
@@ -21,6 +22,7 @@ export const SALES_SETTINGS_TAG = "sales-settings";
 
 export const DEFAULT_SALES_SETTINGS: SalesSettings = {
   unitPriceKurus: UNIT_PRICE_KURUS,
+  seedBallUnitPriceKurus: SEED_BALL_UNIT_PRICE_KURUS,
   minQuantity: RELEASE_QTY.min,
   maxQuantity: RELEASE_QTY.max,
   quantityPresets: [...QUANTITY_PRESETS],
@@ -32,12 +34,13 @@ export const DEFAULT_SALES_SETTINGS: SalesSettings = {
 };
 
 const COLUMNS =
-  "unit_price_kurus, min_quantity, max_quantity, quantity_presets, vat_rate, invoice_timing, prep_days, payment_ttl_minutes, orders_paused, updated_at, updated_by";
+  "unit_price_kurus, seed_ball_unit_price_kurus, min_quantity, max_quantity, quantity_presets, vat_rate, invoice_timing, prep_days, payment_ttl_minutes, orders_paused, updated_at, updated_by";
 
 /** Preserve malformed values for the authorized repair screen; never silently default them. */
 function rowToSettings(data: Record<string, unknown>): Record<string, unknown> {
   return {
     unitPriceKurus: data.unit_price_kurus,
+    seedBallUnitPriceKurus: data.seed_ball_unit_price_kurus,
     minQuantity: data.min_quantity,
     maxQuantity: data.max_quantity,
     quantityPresets: data.quantity_presets,
@@ -119,6 +122,7 @@ export async function updateSalesSettings(
     .from("sales_settings")
     .update({
       unit_price_kurus: next.unitPriceKurus,
+      seed_ball_unit_price_kurus: next.seedBallUnitPriceKurus,
       min_quantity: next.minQuantity,
       max_quantity: next.maxQuantity,
       quantity_presets: next.quantityPresets,
@@ -149,15 +153,20 @@ export async function updateSalesSettings(
  * (Alanlar `settings-schema.ts` → `QUOTE_FIELDS` ile aynı tutulmalı.)
  */
 export function quoteVersion(settings: SalesSettings): string {
-  return `${LEGAL_DOCUMENTS_VERSION}~${settings.unitPriceKurus}.${settings.vatRate}.${settings.prepDays}`;
+  return `${LEGAL_DOCUMENTS_VERSION}~${settings.unitPriceKurus}.${settings.seedBallUnitPriceKurus}.${settings.vatRate}.${settings.prepDays}`;
 }
 
 /** Birim fiyat ve KDV oranına göre KESİN tutar (hepsi kuruş; KDV dâhil toplamın içindeki vergi ayrılır). */
-export function orderTotals(quantity: number, settings: Pick<SalesSettings, "unitPriceKurus" | "vatRate">) {
-  const totalKurus = quantity * settings.unitPriceKurus;
+export function orderTotals(
+  quantity: number,
+  settings: Pick<SalesSettings, "unitPriceKurus" | "seedBallUnitPriceKurus" | "vatRate">,
+  productType: ProductType = DEFAULT_PRODUCT_TYPE,
+) {
+  const unitPriceKurus = unitPriceFor(productType, settings);
+  const totalKurus = quantity * unitPriceKurus;
   return {
     quantity,
-    unitPriceKurus: settings.unitPriceKurus,
+    unitPriceKurus,
     totalKurus,
     vatKurus: vatPortion(totalKurus, settings.vatRate),
     vatRate: settings.vatRate,

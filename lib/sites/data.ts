@@ -21,11 +21,12 @@ import {
   type WorkType,
 } from "./types";
 import { readMediaLinks } from "./media-links";
+import { productTypeOf } from "@/lib/products";
 
 const SITE_COLUMNS =
   "id, slug, name, region, province, district, area_hectares, is_fire_affected, fire_year, " +
   "work_type, species_slugs, name_i18n, summary_i18n, cover_image, gallery, video_url, media_links, " +
-  "status, lat, lng, sort_order";
+  "status, lat, lng, sort_order, product_type";
 const LEGACY_COLUMNS = "id, name, region, status, lat, lng";
 
 /** Vitrinde listelenen DB durumları (`closed` listelenmez). */
@@ -114,6 +115,7 @@ function toSite(row: Row, locale: SiteLocale, species: Map<string, SiteSpecies>)
     isFireAffected: row.is_fire_affected === true,
     fireYear: typeof row.fire_year === "number" ? row.fire_year : null,
     workType: asWorkType(row.work_type),
+    productType: productTypeOf(row.product_type),
     species: strings(row.species_slugs)
       .map((s) => species.get(s))
       .filter((s): s is SiteSpecies => Boolean(s)),

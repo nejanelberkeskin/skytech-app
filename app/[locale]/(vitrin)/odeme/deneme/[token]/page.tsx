@@ -48,7 +48,7 @@ export default async function MockPaymentPage({ params }: { params: Promise<{ lo
           <dl className="mt-6 divide-y divide-[#14261a]/10 text-sm">
             <Row label="Sipariş numarası" value={<span className="whitespace-nowrap font-mono">{order.order_no}</span>} />
             <Row label="Proje Uygulama Sahası" value={order.site_snapshot.name} />
-            <Row label="Tohum topu adedi" value={formatCount(order.quantity, "tr")} />
+            <Row label="Adet" value={formatCount(order.quantity, "tr")} />
             <Row label="Ödenecek tutar (KDV dâhil)" value={<strong>{formatTry(parsed.amountKurus, "tr")}</strong>} />
           </dl>
           <MockPaymentActions

@@ -594,7 +594,7 @@ export async function sendServiceRequestConfirmation({ request, landName, accoun
 }
 
 // ═════════════════════════════════════════════════════════════════════
-// SİPARİŞ TEYİDİ — tohum topu bıraktırma siparişi (satış modeli v2)
+// SİPARİŞ TEYİDİ — bıraktırma siparişi (ürün: kaplamalı tohum ya da tohum topu; metinler ürün tipinden bağımsız) (satış modeli v2)
 // ═════════════════════════════════════════════════════════════════════
 // İşlemsel e-postadır (izin gerektirmez, tanıtım içermez). Ödeme onaylanınca gider;
 // Ön Bilgilendirme Formu, Mesafeli Hizmet Sözleşmesi ve Cayma Formu PDF olarak eklenir —
@@ -626,9 +626,9 @@ const ORDER_TEXT = {
     sub: "Ödemeniz onaylandı; sözleşmeniz kuruldu",
     hello: (n: string) => `Merhaba <strong>${n}</strong>,`,
     intro: (no: string) =>
-      `Tohum topu bıraktırma siparişiniz kesinleşti. Sipariş numaranız: <strong style="font-family:monospace;font-size:16px;color:#059669;">${no}</strong>.`,
-    rows: { site: "Proje Uygulama Sahası", quantity: "Tohum topu adedi", total: "Toplam bedel (KDV dâhil)", certificate: "Sertifikadaki ad", deadline: "En geç bırakılacağı tarih", withdrawal: "Cayma hakkının son günü" },
-    next: "Tohum topu bırakma, cayma süresi dolduktan sonra ve yukarıdaki son tarihi aşmadan yapılır. Katılım Sertifikanız ve izleme içeriği sipariş belgelerinde kararlaştırılan sürelerde sunulur. Faturanız vergi mevzuatına uygun yasal sürede düzenlenir ve e-postayla gönderilir.",
+      `Tohum bıraktırma siparişiniz kesinleşti. Sipariş numaranız: <strong style="font-family:monospace;font-size:16px;color:#059669;">${no}</strong>.`,
+    rows: { site: "Proje Uygulama Sahası", quantity: "Adet", total: "Toplam bedel (KDV dâhil)", certificate: "Sertifikadaki ad", deadline: "En geç bırakılacağı tarih", withdrawal: "Cayma hakkının son günü" },
+    next: "Bırakma, cayma süresi dolduktan sonra ve yukarıdaki son tarihi aşmadan yapılır. Katılım Sertifikanız ve izleme içeriği sipariş belgelerinde kararlaştırılan sürelerde sunulur. Faturanız vergi mevzuatına uygun yasal sürede düzenlenir ve e-postayla gönderilir.",
     docs: "Ön Bilgilendirme Formu, Mesafeli Hizmet Sözleşmesi, Cayma Formu ve KVKK Aydınlatma Metni bu e-postanın ekindedir. Lütfen saklayın.",
     withdraw: (d: string) => `Cayma hakkınızı ${d} günü sonuna kadar, hiçbir gerekçe göstermeden kullanabilirsiniz; bedelin tamamı 14 gün içinde ödemede kullandığınız araca iade edilir.`,
     cta: "Siparişimi görüntüle",
@@ -641,9 +641,9 @@ const ORDER_TEXT = {
     sub: "Your payment is approved and your contract is concluded",
     hello: (n: string) => `Hello <strong>${n}</strong>,`,
     intro: (no: string) =>
-      `Your seed ball release order is confirmed. Your order number is <strong style="font-family:monospace;font-size:16px;color:#059669;">${no}</strong>.`,
-    rows: { site: "Project Site", quantity: "Seed balls", total: "Total (VAT included)", certificate: "Name on certificate", deadline: "Released no later than", withdrawal: "Last day to withdraw" },
-    next: "The seed balls are released after the withdrawal period ends and no later than the date above. Your Certificate of Participation and monitoring content are provided within the agreed periods. Your invoice is issued within the statutory period under tax rules and emailed to you.",
+      `Your seed release order is confirmed. Your order number is <strong style="font-family:monospace;font-size:16px;color:#059669;">${no}</strong>.`,
+    rows: { site: "Project Site", quantity: "Quantity", total: "Total (VAT included)", certificate: "Name on certificate", deadline: "Released no later than", withdrawal: "Last day to withdraw" },
+    next: "The release is carried out after the withdrawal period ends and no later than the date above. Your Certificate of Participation and monitoring content are provided within the agreed periods. Your invoice is issued within the statutory period under tax rules and emailed to you.",
     docs: "The Preliminary Information Form, the Distance Service Agreement, the Withdrawal Form and the Personal Data Notice (KVKK) are attached (issued in Turkish). Please keep them.",
     withdraw: (d: string) => `You may withdraw without giving any reason until the end of ${d}; the full amount is refunded to your payment method within 14 days.`,
     cta: "View my order",
@@ -702,7 +702,7 @@ export function prepareOrderNotification(input: Pick<OrderConfirmationInput, "or
   const html = emailLayout(subject, `
     <div class="header"><h1>Yeni Sipariş</h1><p>${esc(input.orderNo)}</p></div>
     <div class="body">
-      <p><strong>${esc(input.buyerName)}</strong> (${esc(input.buyerType === "corporate" ? "kurumsal" : "bireysel")}) — ${esc(input.siteName)} sahasına <strong>${input.quantity}</strong> tohum topu, toplam <strong>${esc(input.totalText)}</strong>.</p>
+      <p><strong>${esc(input.buyerName)}</strong> (${esc(input.buyerType === "corporate" ? "kurumsal" : "bireysel")}) — ${esc(input.siteName)} sahasına <strong>${input.quantity}</strong> adet, toplam <strong>${esc(input.totalText)}</strong>.</p>
       <p style="text-align:center;margin:24px 0;"><a href="${esc(adminOrderUrl(input.orderNo))}" class="btn">Yönetim panelinde aç</a></p>
     </div>
   `);
@@ -838,7 +838,7 @@ const NOTICE_TEXT = {
       title: "Siparişiniz İptal Edildi",
       sub: "Bedelin tamamı iade edilecek",
       intro: (no: string) =>
-        `<strong style="font-family:monospace;">${no}</strong> numaralı siparişinize konu tohum topu bırakma hizmetini sözleşmede belirtilen koşullarda ifa edemeyeceğimiz için siparişiniz tarafımızca iptal edilmiştir. Bu durum için özür dileriz.`,
+        `<strong style="font-family:monospace;">${no}</strong> numaralı siparişinize konu bırakma hizmetini sözleşmede belirtilen koşullarda ifa edemeyeceğimiz için siparişiniz tarafımızca iptal edilmiştir. Bu durum için özür dileriz.`,
       rows: { total: "İade edilecek tutar", date: "İadenin en geç yapılacağı tarih" },
       note: "Bedelin tamamı, ödemede kullandığınız araca tek seferde ve masrafsız olarak iade edilir. Sizden herhangi bir işlem beklenmez.",
     },
@@ -847,7 +847,7 @@ const NOTICE_TEXT = {
       title: "Your Order Has Been Cancelled",
       sub: "The full amount will be refunded",
       intro: (no: string) =>
-        `As we are unable to perform the seed ball release service under order <strong style="font-family:monospace;">${no}</strong> on the terms set out in the contract, we have cancelled your order. We apologise for this.`,
+        `As we are unable to perform the release service under order <strong style="font-family:monospace;">${no}</strong> on the terms set out in the contract, we have cancelled your order. We apologise for this.`,
       rows: { total: "Amount to be refunded", date: "Refund will be made no later than" },
       note: "The full amount is refunded in a single payment, free of charge, to the payment method you used. No action is required from you.",
     },
@@ -938,7 +938,7 @@ export const sendRefundCompleted = (input: OrderNoticeInput) => sendOrderNotice(
 // ═════════════════════════════════════════════════════════════════════
 // BIRAKMA TAMAMLANDI (Katılım Sertifikası) ve ÇALIŞMA VİDEOSU — müşteri bildirimleri
 // ═════════════════════════════════════════════════════════════════════
-// Sonuç vaadi içermez: yapılan iş bildirilir (tohum topları bırakıldı / görüntüler yayımlandı).
+// Sonuç vaadi içermez: yapılan iş bildirilir (bırakma yapıldı / görüntüler yayımlandı).
 
 export interface ReleaseCertificateInput {
   orderId: string;
@@ -959,12 +959,12 @@ export interface ReleaseCertificateInput {
 
 const RELEASE_TEXT = {
   tr: {
-    subject: (no: string) => `Tohum toplarınız bırakıldı — Katılım Sertifikanız hazır (${no})`,
-    title: "Tohum Toplarınız Bırakıldı",
+    subject: (no: string) => `Tohumlarınız bırakıldı — Katılım Sertifikanız hazır (${no})`,
+    title: "Tohumlarınız Bırakıldı",
     sub: "Katılım Sertifikanız düzenlendi",
     hello: (n: string) => `Merhaba <strong>${n}</strong>,`,
-    intro: (no: string) => `<strong style="font-family:monospace;">${no}</strong> numaralı siparişinize konu tohum topları, seçtiğiniz Proje Uygulama Sahasına dronla bırakılmıştır.`,
-    rows: { site: "Proje Uygulama Sahası", quantity: "Bırakılan tohum topu", date: "Bırakma tarihi", name: "Sertifikadaki ad" },
+    intro: (no: string) => `<strong style="font-family:monospace;">${no}</strong> numaralı siparişinize konu tohumlar, seçtiğiniz Proje Uygulama Sahasına dronla bırakılmıştır.`,
+    rows: { site: "Proje Uygulama Sahası", quantity: "Bırakılan adet", date: "Bırakma tarihi", name: "Sertifikadaki ad" },
     certificate: "Katılım Sertifikanız çevrim içi olarak düzenlendi. Bağlantıyı dilediğiniz kişilerle paylaşabilirsiniz; sertifikada yalnız seçtiğiniz ad görünür.",
     cta: "Sertifikamı görüntüle",
     next: "Faturanız ayrıca e-postayla gönderilir. Saha, izleme döneminde incelenir; çalışmanın görüntüleri yayımlandığında size haber veririz.",
@@ -973,12 +973,12 @@ const RELEASE_TEXT = {
     test: "DENEME SİPARİŞİ — gerçek bir bırakma yapılmamıştır.",
   },
   en: {
-    subject: (no: string) => `Your seed balls have been released — your certificate is ready (${no})`,
-    title: "Your Seed Balls Have Been Released",
+    subject: (no: string) => `Your seeds have been released — your certificate is ready (${no})`,
+    title: "Your Seeds Have Been Released",
     sub: "Your Certificate of Participation has been issued",
     hello: (n: string) => `Hello <strong>${n}</strong>,`,
-    intro: (no: string) => `The seed balls under order <strong style="font-family:monospace;">${no}</strong> have been released by drone at the Project Site you chose.`,
-    rows: { site: "Project Site", quantity: "Seed balls released", date: "Release date", name: "Name on certificate" },
+    intro: (no: string) => `The seeds under order <strong style="font-family:monospace;">${no}</strong> have been released by drone at the Project Site you chose.`,
+    rows: { site: "Project Site", quantity: "Quantity released", date: "Release date", name: "Name on certificate" },
     certificate: "Your Certificate of Participation has been issued online. You can share the link with anyone you wish; only the name you chose appears on the certificate.",
     cta: "View my certificate",
     next: "Your invoice is sent separately by e-mail. The site is inspected during the monitoring period; we will let you know when footage of the work is published.",
@@ -1049,7 +1049,7 @@ const VIDEO_TEXT = {
     title: "Çalışmanın Görüntüleri Yayımlandı",
     sub: "Katıldığınız bırakma çalışmasının videosu",
     hello: (n: string) => `Merhaba <strong>${n}</strong>,`,
-    intro: (site: string, d: string) => `<strong>${site}</strong> sahasında <strong>${d}</strong> tarihinde yapılan ve sizin de katıldığınız tohum topu bırakma çalışmasının görüntüleri yayımlandı.`,
+    intro: (site: string, d: string) => `<strong>${site}</strong> sahasında <strong>${d}</strong> tarihinde yapılan ve sizin de katıldığınız bırakma çalışmasının görüntüleri yayımlandı.`,
     cta: "Videoyu izle",
     note: "Video YouTube'da herkese açık yayımlanmıştır; bağlantıyı dilediğiniz kişilerle paylaşabilirsiniz.",
     site: "Saha sayfası",
@@ -1062,7 +1062,7 @@ const VIDEO_TEXT = {
     title: "Footage of the Work Has Been Published",
     sub: "Video of the release operation you took part in",
     hello: (n: string) => `Hello <strong>${n}</strong>,`,
-    intro: (site: string, d: string) => `Footage of the seed ball release carried out at <strong>${site}</strong> on <strong>${d}</strong>, in which you took part, has been published.`,
+    intro: (site: string, d: string) => `Footage of the release carried out at <strong>${site}</strong> on <strong>${d}</strong>, in which you took part, has been published.`,
     cta: "Watch the video",
     note: "The video is published publicly on YouTube; you can share the link with anyone you wish.",
     site: "Site page",

@@ -45,10 +45,11 @@ export default async function ParticipatePage({ params }: Props) {
   const mode = canOrder ? "order" : PAYMENT_SOON ? "preorder" : "request";
   // Satış açıkken sipariş alımı yönetimden durdurulduysa müşteriye kısa bir açıklama gösterilir.
   const paused = SALES_ENABLED && settings.ordersPaused;
-  const [t, sites, seeds] = await Promise.all([
+  const [t, sites, seeds, products] = await Promise.all([
     getTranslations({ locale, namespace: "orderWizard" }),
     getTranslations({ locale, namespace: "sitesPage" }),
     getTranslations({ locale, namespace: "ourSeeds" }),
+    getTranslations({ locale, namespace: "products" }),
   ]);
   const now = new Date();
   const schedule = scheduleFor(now, settings.prepDays);
@@ -111,6 +112,7 @@ export default async function ParticipatePage({ params }: Props) {
             ? `${sites("fire")}${site.fireYear === null ? "" : ` · ${site.fireYear}`}`
             : null,
           workType: sites(`workTypes.${site.workType}`),
+          product: products(`${site.productType}.name`),
           species: site.species.map((s) =>
             seeds.has(`seeds.${s.slug}.name`)
               ? seeds(`seeds.${s.slug}.name`)
@@ -119,7 +121,7 @@ export default async function ParticipatePage({ params }: Props) {
           cover: site.coverImage,
         }}
         schedule={schedule}
-        pricing={publicPricing(settings)}
+        pricing={publicPricing(settings, site.productType)}
         dateLabels={dateLabels}
         // Çalışma takvimi saha sayfasında; satın alma ekranı sade kalır.
         timeline={null}

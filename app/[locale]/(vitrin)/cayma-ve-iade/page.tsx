@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     {
       title: TITLE,
       description:
-        "Skytech Green tohum topu bıraktırma siparişlerinde 14 günlük cayma hakkı, cayma bildiriminin nasıl yapılacağı ve bedelin iade koşulları.",
+        "Skytech Green bıraktırma siparişlerinde 14 günlük cayma hakkı, cayma bildiriminin nasıl yapılacağı ve bedelin iade koşulları.",
       path: PATH,
       noindex: isDraftLegalVersion(),
     },

@@ -47,11 +47,11 @@ test('accountPages ve corporatePages iletileri üç dilde ICU olarak derlenir', 
       }
     }
   }
-  // Çoğul biçimleri: RU'da one/few/many ayrımı gerçekten uygulanıyor.
+  // Adet iletisi ürün tipinden bağımsızdır (kaplamalı tohum ve tohum topu siparişleri birlikte sayılır).
   const fmt = (m, v) => new IntlMessageFormat(m, 'ru').format(v);
   const seed = messages.ru.accountPages.overview.seedBalls;
-  assert.deepEqual([1, 3, 5, 21].map((count) => fmt(seed, { count })), ['1 семенной шар', '3 семенных шара', '5 семенных шаров', '21 семенной шар']);
-  assert.equal(new IntlMessageFormat(messages.tr.accountPages.overview.seedBalls, 'tr').format({ count: 12500 }), '12.500 tohum topu');
+  assert.deepEqual([1, 3, 5, 21].map((count) => fmt(seed, { count })), ['1 шт.', '3 шт.', '5 шт.', '21 шт.']);
+  assert.equal(new IntlMessageFormat(messages.tr.accountPages.overview.seedBalls, 'tr').format({ count: 12500 }), '12.500 adet');
   assert.ok(sayi > 900, `derlenen ileti ${sayi}`);
 });
 

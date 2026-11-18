@@ -10,6 +10,8 @@ export function loadSource(file,mocks={}) {
  new Function('require','module','exports',js)((name)=>{
    if(name in mocks)return mocks[name];
    if(name==='node:crypto')return require(name);
+   // Saf, bağımlılıksız sabit modülü: her testte ayrıca taklit etmek yerine gerçeği yüklenir.
+   if(name==='@/lib/products')return loadSource('lib/products.ts');
    throw new Error('Unmocked dependency: '+name);
  },mod,mod.exports);
  return mod.exports;

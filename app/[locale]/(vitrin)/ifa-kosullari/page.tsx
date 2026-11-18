@@ -4,6 +4,7 @@ import { setRequestLocale } from "next-intl/server";
 import LegalLayout, { LegalList, LegalP, LegalSection } from "@/components/vitrin/LegalLayout";
 import { buildPageMetadata } from "@/lib/seo";
 import { TEXT } from "@/lib/legal/templates/shared";
+import { PRODUCT_ANY_TR } from "@/lib/products";
 import { LEGAL_EFFECTIVE_LABEL, isDraftLegalVersion } from "@/lib/legal/version";
 import { legalPagesVisible } from "@/lib/legal/visibility";
 
@@ -19,7 +20,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     {
       title: TITLE,
       description:
-        "Skytech Green tohum topu bıraktırma hizmetinin nasıl ve ne zaman ifa edildiği: bırakma sezonu, kesin son tarih, bildirimler, Katılım Sertifikası ve çalışma görüntüleri.",
+        "Skytech Green bıraktırma hizmetinin nasıl ve ne zaman ifa edildiği: bırakma sezonu, kesin son tarih, bildirimler, Katılım Sertifikası ve çalışma görüntüleri.",
       path: PATH,
       noindex: isDraftLegalVersion(),
     },
@@ -36,8 +37,8 @@ export default async function IfaKosullariPage({ params }: { params: Promise<{ l
     <LegalLayout title={TITLE} path={PATH} effectiveDate={LEGAL_EFFECTIVE_LABEL}>
       <LegalSection no="1" title="Hizmetin konusu">
         <LegalP>
-          Skytech Green&apos;den satın alınan hizmet; seçtiğiniz Proje Uygulama Sahasına, sipariş ettiğiniz adette tohum
-          topunun insansız hava aracı (dron) ile bırakılması, bırakma tamamlandığında adınıza bir Katılım Sertifikası
+          Skytech Green&apos;den satın alınan hizmet; seçtiğiniz Proje Uygulama Sahasına, sipariş ettiğiniz adette kaplamalı
+          tohumun ya da tohum topunun insansız hava aracı (dron) ile bırakılması, bırakma tamamlandığında adınıza bir Katılım Sertifikası
           düzenlenmesi ve izleme döneminde çalışmaya ilişkin görüntülerin sizinle paylaşılmasıdır.
         </LegalP>
         <LegalP>
@@ -51,7 +52,7 @@ export default async function IfaKosullariPage({ params }: { params: Promise<{ l
         <LegalList
           items={[
             <>
-              <strong>Kesin son tarih:</strong> Her siparişte tohum topu bırakmanın son tarihi, siparişi onaylamadan önce
+              <strong>Kesin son tarih:</strong> Her siparişte bırakmanın son tarihi, siparişi onaylamadan önce
               ekranda gösterilir; Ön Bilgilendirme Formu&apos;na ve sözleşmeye tarih olarak yazılır. Bu tarih, siparişin
               yazıldığı bırakma sezonunun son günüdür (31 Mart). Katılım Sertifikası ve izleme içeriği için her sahaya göre ayrı bir teslim ayı belirlenir ve sipariş belgesine yazılır; kesin son tarih o ayın son günüdür. Bırakma tarihi bu edimlerin son tarihi sayılmaz.
             </>,
@@ -78,7 +79,7 @@ export default async function IfaKosullariPage({ params }: { params: Promise<{ l
 
       <LegalSection no="4" title="Tür seçimi ve hizmetin sınırları">
         <LegalP>{TEXT.speciesBySeller}</LegalP>
-        <LegalP>{TEXT.noResultGuarantee}</LegalP>
+        <LegalP>{TEXT.noResultGuarantee(PRODUCT_ANY_TR)}</LegalP>
         <LegalP>{TEXT.notADonation}</LegalP>
       </LegalSection>
 

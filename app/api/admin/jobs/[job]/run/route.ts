@@ -10,6 +10,7 @@ import { confirmDueOrders } from "@/lib/orders/admin-actions";
 import { expireStaleOrders } from "@/lib/orders/create";
 import { runScheduledJobs, startMonitoringDue } from "@/lib/orders/jobs";
 import { createServiceRoleClient } from "@/lib/supabase/server";
+import { runInvoiceJob } from "@/lib/invoicing/job";
 
 /**
  * POST /api/admin/jobs/{job}/run — zamanlanmış işi yetkili kişi elle çalıştırır (web-brifler/18).
@@ -37,11 +38,11 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
   const body = bodySchema.safeParse(raw);
   if (!body.success) return fail(400, "invalid_body", "Geçersiz istek: scope \"status\" ya da \"all\" olmalı.");
 
-  if (job === "bildirimler" && body.data.scope !== "all") return fail(400, "invalid_body", "Bildirim işi e-posta gönderir; kapsam all olmalı.");
+  if ((job === "bildirimler" || job === "fatura-parasut") && body.data.scope !== "all") return fail(400, "invalid_body", "Bildirim işi e-posta gönderir; kapsam all olmalı.");
   const db = createServiceRoleClient();
   const scope = body.data.scope;
   const run = await runRecorded(db, job, "admin", scope, guard.admin.user_id, async () =>
-    job === "bildirimler" ? { ...(await runConfiguredNotifications(publicOrigin(request.nextUrl.origin), db)) } : job === "b2b-odeme-mutabakati" ? { ...(await reconcileB2bPayments(db)) } : scope === "status"
+    job === "bildirimler" ? { ...(await runConfiguredNotifications(publicOrigin(request.nextUrl.origin), db)) } : job === "fatura-parasut" ? { ...(await runInvoiceJob(db, publicOrigin(request.nextUrl.origin))) } : job === "b2b-odeme-mutabakati" ? { ...(await reconcileB2bPayments(db)) } : scope === "status"
       ? { expired: await expireStaleOrders(db), confirmed: await confirmDueOrders(db), monitoring: await startMonitoringDue(db) }
       : { ...(await runScheduledJobs(publicOrigin(request.nextUrl.origin), db)) }
   );

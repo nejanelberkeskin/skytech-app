@@ -92,7 +92,7 @@ export async function loadOrderDetail(
         ? supabase.from("order_refunds").select("id, amount_kurus, reason, status, provider, provider_ref, error, created_at, completed_at").eq("order_id", id).order("created_at", { ascending: true })
         : skip,
       covered.has("invoices")
-        ? supabase.from("order_invoices").select("id, kind, provider, status, invoice_no, ettn, issued_at, sent_at, error, created_at").eq("order_id", id).order("created_at", { ascending: true })
+        ? supabase.from("order_invoices").select("id, kind, provider, status, invoice_no, ettn, issued_at, sent_at, error, created_at, document_type, attempts").eq("order_id", id).order("created_at", { ascending: true })
         : skip,
     ]);
     if (extra.error || batch.error) throw new Unavailable();

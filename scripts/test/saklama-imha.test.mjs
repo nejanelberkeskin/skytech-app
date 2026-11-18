@@ -179,7 +179,7 @@ test('saklama (a6): repo migrationlarındaki auth.users FK kuralları canlı kop
   const deleteUser = files.filter((f) => /auth\.admin\.deleteUser|deleteUser\(/.test(readFileSync(f, 'utf8')));
   assert.deepEqual(deleteUser, [], 'uygulamada hesap silme yolu yok (bugün yalnız Supabase panelinden elle)');
   const cronJobs = JSON.parse(read('vercel.json')).crons.map((c) => c.path).sort();
-  assert.deepEqual(cronJobs, ['/api/cron/b2b-odeme-mutabakati', '/api/cron/bildirimler', '/api/cron/siparis-isleri'], 'saklama/imha görevi yok; yeni kalıcı silme görevi eklenmedi');
+  assert.deepEqual(cronJobs, ['/api/cron/b2b-odeme-mutabakati', '/api/cron/bildirimler', '/api/cron/fatura', '/api/cron/siparis-isleri'], 'saklama/imha görevi yok; yeni kalıcı silme görevi eklenmedi');
   const personalTables = /from\("(profiles|service_requests|release_orders|email_logs|order_notification_outbox|admin_audit_logs|corporate_quotes|payments)"\)\s*\.delete\(/;
   assert.deepEqual(files.filter((f) => personalTables.test(readFileSync(f, 'utf8'))), [], 'kişisel veri tablolarında uygulama içi silme yok');
 });

@@ -41,10 +41,12 @@ export default async function CertificatePage({ params }: Props) {
   setRequestLocale(locale);
   const cert = await getPublicCertificate(kod);
   if (!cert) notFound();
-  const [t, seeds] = await Promise.all([
+  const [t, seeds, products] = await Promise.all([
     getTranslations({ locale, namespace: "certificatePage" }),
     getTranslations({ locale, namespace: "ourSeeds" }),
+    getTranslations({ locale, namespace: "products" }),
   ]);
+  const unit = products(`${cert.productType}.unit`);
   const date = (value: string) =>
     new Intl.DateTimeFormat(locale === "en" ? "en-GB" : locale, {
       day: "numeric",
@@ -70,7 +72,8 @@ export default async function CertificatePage({ params }: Props) {
         .join(" · "),
     },
     { label: t("facts.workType"), value: t(`workTypes.${cert.workType}`) },
-    { label: t("facts.quantity"), value: t("quantity", { quantity }) },
+    { label: t("facts.quantity"), value: t("quantity", { quantity, unit }) },
+    { label: products("label"), value: products(`${cert.productType}.name`) },
     { label: t("facts.code"), value: cert.code },
   ];
   return (
@@ -112,7 +115,7 @@ export default async function CertificatePage({ params }: Props) {
               imageUrl={imageHref(cert.code, locale, "dikey")}
               pageUrl={localeUrl(`/sertifika/${cert.code}`, locale)}
               filename={`${cert.code}-${locale}.png`}
-              text={t("shareText", { site: cert.siteName, quantity })}
+              text={t("shareText", { site: cert.siteName, quantity, unit })}
             />
           )}
         </div>

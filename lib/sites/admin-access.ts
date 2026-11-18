@@ -11,7 +11,7 @@
 import type { Permission } from "@/lib/admin/permissions";
 
 export const SITE_COLUMNS = [
-  "name", "slug", "region", "province", "district", "area_hectares", "is_fire_affected", "fire_year", "work_type",
+  "name", "slug", "region", "province", "district", "area_hectares", "is_fire_affected", "fire_year", "work_type", "product_type",
   "species_slugs", "name_i18n", "summary_i18n", "cover_image", "video_url", "media_links", "sort_order", "status", "is_public",
   "capacity_seeds", "certificate_month", "monitoring_month",
   "permit_reference", "permit_valid_until", "permit_status", "permit_verified_by", "permit_verified_at",
@@ -66,7 +66,8 @@ export function requiredSitePermissions(before: Row, changes: SiteChanges): Perm
   const need = new Set<Permission>();
   for (const column of Object.keys(changes) as SiteColumn[]) {
     // Teslim ayları sözleşme koşulu, izin kararı satışın ön şartı: ikisi de yayın yetkisi (MFA) ister.
-    if (column === "is_public" || column === "certificate_month" || column === "monitoring_month" ||
+    // Ürün tipi birim bedeli ve sözleşme konusunu belirler: yayın yetkisi (MFA) ister.
+    if (column === "is_public" || column === "product_type" || column === "certificate_month" || column === "monitoring_month" ||
         column === "permit_status" || column === "permit_verified_by" || column === "permit_verified_at") need.add("sites.publish");
     else if (column === "capacity_seeds") need.add("sites.capacity.manage");
     else if (column === "status") {

@@ -69,7 +69,7 @@ export default async function ParticipatePage({ params }: Props) {
         <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-[#1B6B3A]">
           {t(mode === "request" ? "requestMode" : "orderMode")}
         </p>
-        <h1 className="display-headline text-3xl font-semibold text-[#0e2519] sm:text-5xl">
+        <h1 className="display-headline text-3xl font-semibold text-[#14261a] sm:text-5xl">
           {t("title")}
         </h1>
         <p className="mt-4 leading-relaxed text-[#3d5a3d]">
@@ -79,7 +79,7 @@ export default async function ParticipatePage({ params }: Props) {
           // Ödemede dur: ilk adımdan (mobilde de) görünür; süre vaadi yok.
           <p
             role="status"
-            className="mt-5 rounded-2xl border border-[#1B6B3A]/20 bg-[#f0f7ec] px-5 py-4 text-sm leading-relaxed text-[#0e2519]"
+            className="mt-5 rounded-xl border border-[#14261a]/12 bg-[#f6f6f1] px-5 py-4 text-sm leading-relaxed text-[#14261a]"
           >
             {t("preorder.notice")}
           </p>
@@ -87,7 +87,7 @@ export default async function ParticipatePage({ params }: Props) {
         {paused && (
           <p
             role="status"
-            className="mt-5 rounded-2xl border border-[#fed7aa] bg-[#fff7ed] px-5 py-4 text-sm leading-relaxed text-[#7c2d12]"
+            className="mt-5 rounded-xl border border-[#fed7aa] bg-[#fff7ed] px-5 py-4 text-sm leading-relaxed text-[#7c2d12]"
           >
             {t("pausedNotice")}
           </p>

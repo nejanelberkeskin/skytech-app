@@ -65,7 +65,7 @@ export default function RequestFormShell({
               </div>
             )}
           </div>
-          <div className="rounded-2xl bg-[#f8faf5] border border-[#1B6B3A]/10 p-5">
+          <div className="rounded-xl bg-[#f6f6f1] border border-[#14261a]/10 p-5">
             <p className="text-xs text-[#3d5a3d] leading-relaxed">{t("noPayment")}</p>
           </div>
         </div>

@@ -62,7 +62,7 @@ export default function SuccessCard({
   return (
     <div ref={cardRef} className="vitrin-card p-7 lg:p-10 max-w-3xl mx-auto scroll-mt-28">
       <div className="text-center">
-        <div className="w-16 h-16 mx-auto rounded-2xl bg-[#1B6B3A]/10 flex items-center justify-center mb-5">
+        <div className="w-16 h-16 mx-auto rounded-full bg-[#1B6B3A]/10 flex items-center justify-center mb-5">
           <svg className="w-8 h-8 text-[#1B6B3A]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
             <polyline points="20 6 9 17 4 12" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
@@ -70,21 +70,21 @@ export default function SuccessCard({
         <h2
           ref={headingRef}
           tabIndex={scroll === "self" ? -1 : undefined}
-          className="text-2xl lg:text-3xl font-bold text-[#0e2519] mb-2 focus:outline-none"
+          className="text-2xl lg:text-3xl font-bold text-[#14261a] mb-2 focus:outline-none"
         >
           {t("title")}
         </h2>
         <p className="text-sm lg:text-base text-[#3d5a3d]">{t("desc")}</p>
       </div>
 
-      <div className="mt-8 rounded-2xl bg-[#f8faf5] border border-[#1B6B3A]/15 p-5 text-center">
+      <div className="mt-8 rounded-xl bg-[#f6f6f1] border border-[#14261a]/10 p-5 text-center">
         <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#6b8f6b] mb-2">{t("numberLabel")}</p>
         <div className="flex items-center justify-center gap-3 flex-wrap">
           <span className="font-mono text-2xl lg:text-3xl font-bold tracking-wider text-[#1B6B3A]">{result.requestNo}</span>
           <button
             type="button"
             onClick={copy}
-            className="px-3 py-1.5 rounded-lg text-xs font-semibold border border-black/10 bg-white text-[#1a2e1a] hover:border-[#1B6B3A]/40 transition-colors"
+            className="min-h-11 sm:min-h-0 px-3 py-1.5 rounded-md text-xs font-semibold border border-[#14261a]/20 bg-white text-[#14261a] hover:border-[#1B6B3A] hover:text-[#1B6B3A] transition-colors"
           >
             {copied ? t("copied") : t("copy")}
           </button>
@@ -96,8 +96,8 @@ export default function SuccessCard({
         <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#6b8f6b] mb-3">{t("nextTitle")}</p>
         <ol className="space-y-2.5">
           {steps.map((s, i) => (
-            <li key={i} className="flex items-start gap-3 text-sm text-[#1a2e1a]">
-              <span className="shrink-0 w-6 h-6 rounded-lg bg-[#1B6B3A]/10 text-[#1B6B3A] text-xs font-bold flex items-center justify-center">
+            <li key={i} className="flex items-start gap-3 text-sm text-[#14261a]">
+              <span className="shrink-0 w-6 h-6 rounded-full bg-[#1B6B3A]/10 text-[#1B6B3A] text-xs font-bold flex items-center justify-center">
                 {i + 1}
               </span>
               <span className="pt-0.5">{s}</span>
@@ -107,9 +107,9 @@ export default function SuccessCard({
       </div>
 
       {ACCOUNTS_ENABLED && (
-        <div className="mt-8 rounded-2xl border border-black/5 bg-white p-5 flex flex-col sm:flex-row sm:items-center gap-4">
+        <div className="mt-8 rounded-xl border border-[#14261a]/12 bg-white p-5 flex flex-col sm:flex-row sm:items-center gap-4">
           <div className="flex-1">
-            <p className="font-bold text-[#0e2519]">{t("accountTitle")}</p>
+            <p className="font-bold text-[#14261a]">{t("accountTitle")}</p>
             {!isLoggedIn && <p className="text-sm text-[#3d5a3d] mt-1">{t("accountDesc")}</p>}
           </div>
           {isLoggedIn ? (
@@ -128,7 +128,7 @@ export default function SuccessCard({
         <Link href={REQUEST_ROUTES.hub} className="vitrin-cta-secondary !py-2.5 !px-5 !text-sm justify-center">
           {t("another")}
         </Link>
-        <Link href="/" className="px-5 py-2.5 font-semibold text-[#1B6B3A] hover:text-[#22894a] text-center transition-colors">
+        <Link href="/" className="px-5 py-2.5 font-semibold text-[#1B6B3A] hover:text-[#14552d] text-center transition-colors">
           {t("home")}
         </Link>
       </div>

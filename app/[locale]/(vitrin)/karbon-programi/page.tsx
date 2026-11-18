@@ -59,16 +59,16 @@ export default async function KarbonVeRaporlamaPage({ params }: { params: Promis
       <SectionWrapper variant="light">
         <SectionHeading
           badge={t("report.badge")}
-          title={<>{t("report.title.pre")} <span className="text-gradient-forest">{t("report.title.highlight")}</span></>}
+          title={<>{t("report.title.pre")} <span className="text-[#1B6B3A]">{t("report.title.highlight")}</span></>}
           subtitle={t("report.subtitle")}
         />
         <ol className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 max-w-6xl mx-auto stagger-children">
           {REPORT_ITEMS.map((key, i) => (
             <li key={key} className="vitrin-card p-6 lg:p-7">
-              <p className="text-xs font-bold tabular-nums tracking-[0.18em] text-[#22894a] mb-3">
+              <p className="text-xs font-bold tabular-nums tracking-[0.18em] text-[#1B6B3A] mb-3">
                 {String(i + 1).padStart(2, "0")}
               </p>
-              <h3 className="text-lg font-bold text-[#1a2e1a] mb-2">{t(`report.items.${key}.title`)}</h3>
+              <h3 className="text-lg font-bold text-[#14261a] mb-2">{t(`report.items.${key}.title`)}</h3>
               <p className="text-sm text-[#3d5a3d] leading-relaxed">{t(`report.items.${key}.desc`)}</p>
             </li>
           ))}
@@ -79,22 +79,22 @@ export default async function KarbonVeRaporlamaPage({ params }: { params: Promis
       <SectionWrapper variant="tinted">
         <SectionHeading
           badge={t("usage.badge")}
-          title={<>{t("usage.title.pre")} <span className="text-gradient-forest">{t("usage.title.highlight")}</span></>}
+          title={<>{t("usage.title.pre")} <span className="text-[#1B6B3A]">{t("usage.title.highlight")}</span></>}
         />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
-          <div className="rounded-3xl p-7 lg:p-9 bg-gradient-to-br from-[#1B6B3A] to-[#22894a] text-white shadow-2xl shadow-[#1B6B3A]/20">
-            <h3 className="text-xl font-bold mb-5">{t("usage.can.heading")}</h3>
-            <ul className="space-y-3 text-sm text-white/90">
+          <div className="vitrin-card p-7 lg:p-9">
+            <h3 className="text-xl font-bold text-[#14261a] mb-5">{t("usage.can.heading")}</h3>
+            <ul className="space-y-3 text-sm text-[#3d5a3d]">
               {canItems.map((item) => (
                 <li key={item} className="flex gap-3">
-                  <CheckIcon className="w-5 h-5 shrink-0 text-[#a3e635] mt-0.5" />
+                  <CheckIcon className="w-5 h-5 shrink-0 text-[#1B6B3A] mt-0.5" />
                   <span className="leading-relaxed">{item}</span>
                 </li>
               ))}
             </ul>
           </div>
           <div className="vitrin-card p-7 lg:p-9">
-            <h3 className="text-xl font-bold text-[#1a2e1a] mb-5">{t("usage.cannot.heading")}</h3>
+            <h3 className="text-xl font-bold text-[#14261a] mb-5">{t("usage.cannot.heading")}</h3>
             <ul className="space-y-3 text-sm text-[#3d5a3d]">
               {cannotItems.map((item) => (
                 <li key={item} className="flex gap-3">
@@ -111,7 +111,7 @@ export default async function KarbonVeRaporlamaPage({ params }: { params: Promis
       <SectionWrapper variant="light">
         <SectionHeading
           badge={t("why.badge")}
-          title={<>{t("why.title.pre")} <span className="text-gradient-forest">{t("why.title.highlight")}</span></>}
+          title={<>{t("why.title.pre")} <span className="text-[#1B6B3A]">{t("why.title.highlight")}</span></>}
         />
         <div className="max-w-3xl mx-auto">
           <p className="text-base lg:text-lg text-[#3d5a3d] leading-relaxed mb-8">{t("why.body")}</p>
@@ -132,12 +132,12 @@ export default async function KarbonVeRaporlamaPage({ params }: { params: Promis
       <SectionWrapper variant="tinted">
         <SectionHeading
           badge={t("faq.badge")}
-          title={<>{t("faq.title.pre")} <span className="text-gradient-forest">{t("faq.title.highlight")}</span></>}
+          title={<>{t("faq.title.pre")} <span className="text-[#1B6B3A]">{t("faq.title.highlight")}</span></>}
         />
         <div className="max-w-3xl mx-auto space-y-3">
           {FAQ_ITEMS.map((key) => (
-            <details key={key} className="group bg-white border border-black/8 rounded-2xl overflow-hidden">
-              <summary className="flex items-center justify-between p-5 cursor-pointer text-base font-semibold text-[#1a2e1a] hover:text-[#1B6B3A] transition-colors list-none">
+            <details key={key} className="group rounded-xl border border-[#14261a]/12 bg-white overflow-hidden">
+              <summary className="flex items-center justify-between p-5 cursor-pointer text-base font-semibold text-[#14261a] hover:text-[#1B6B3A] transition-colors list-none">
                 <span className="pr-4">{t(`faq.items.${key}.question`)}</span>
                 <span className="shrink-0 w-7 h-7 rounded-full bg-[#1B6B3A]/8 text-[#1B6B3A] flex items-center justify-center group-open:bg-[#1B6B3A] group-open:text-white group-open:rotate-45 transition-all">
                   <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3} aria-hidden="true">
@@ -155,8 +155,8 @@ export default async function KarbonVeRaporlamaPage({ params }: { params: Promis
       {/* CTA */}
       <SectionWrapper variant="light">
         <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-3xl lg:text-4xl font-bold text-[#1a2e1a] leading-tight mb-5">
-            {t("cta.title.pre")} <span className="text-gradient-forest">{t("cta.title.highlight")}</span>
+          <h2 className="display-headline text-3xl sm:text-4xl lg:text-5xl font-bold text-[#14261a] mb-5">
+            {t("cta.title.pre")} <span className="text-[#1B6B3A]">{t("cta.title.highlight")}</span>
           </h2>
           <p className="text-base text-[#3d5a3d] mb-8 max-w-xl mx-auto">{t("cta.subtitle")}</p>
           <div className="flex flex-col sm:flex-row gap-3 items-center justify-center">

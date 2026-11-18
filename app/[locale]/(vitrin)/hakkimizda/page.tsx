@@ -73,11 +73,12 @@ export default async function HakkimizdaPage({
       <SectionWrapper variant="light">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center max-w-6xl mx-auto">
           <div>
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#1B6B3A]/8 text-[#1B6B3A] mb-5 text-xs font-semibold uppercase tracking-wider">
+            <p className="mb-5 flex items-center gap-3 text-[12px] font-semibold uppercase tracking-[0.16em] text-[#1B6B3A]">
+              <span aria-hidden className="h-px w-8 bg-current" />
               {t("story.badge")}
-            </div>
-            <h2 className="text-3xl lg:text-4xl font-bold text-[#1a2e1a] leading-tight mb-5">
-              {t("story.titleLead")} <span className="text-gradient-forest">{t("story.titleAccent")}</span>
+            </p>
+            <h2 className="display-headline text-3xl sm:text-4xl lg:text-5xl font-bold text-[#14261a] mb-5">
+              {t("story.titleLead")} <span className="text-[#1B6B3A]">{t("story.titleAccent")}</span>
             </h2>
             <p className="text-base text-[#3d5a3d] leading-relaxed mb-5">
               {t("story.paragraph1")}
@@ -89,7 +90,7 @@ export default async function HakkimizdaPage({
             </p>
           </div>
 
-          <div className="relative aspect-square rounded-3xl overflow-hidden bg-[#0a1f12]">
+          <div className="relative aspect-square rounded-xl overflow-hidden bg-[#dfe3d6]">
             <Image
               src="/images/hakkimizda/saha.webp"
               alt={t("hero.imageAlt")}
@@ -98,8 +99,8 @@ export default async function HakkimizdaPage({
               sizes="(max-width: 1024px) 100vw, 50vw"
               className="object-cover"
             />
-            <div className="absolute bottom-6 left-6 right-6 liquid-glass-dark rounded-2xl p-4 text-center">
-              <p className="text-xs text-[#a7d4a7] uppercase tracking-wider font-semibold">{t("story.imageCaption")}</p>
+            <div className="absolute bottom-4 left-4 right-4 rounded-lg border border-[#14261a]/10 bg-white px-4 py-3 text-center">
+              <p className="text-xs text-[#14261a] uppercase tracking-wider font-semibold">{t("story.imageCaption")}</p>
             </div>
           </div>
         </div>
@@ -113,16 +114,16 @@ export default async function HakkimizdaPage({
         <SectionHeading
           badge={t("values.badge")}
           title={t.rich("values.title", {
-            accent: (chunks) => <span className="text-gradient-forest">{chunks}</span>,
+            accent: (chunks) => <span className="text-[#1B6B3A]">{chunks}</span>,
           })}
         />
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 max-w-6xl mx-auto stagger-children">
           {VALUES.map((v) => (
             <div key={v.title} className="vitrin-card p-7 text-center">
-              <div className="w-14 h-14 mx-auto rounded-2xl bg-gradient-to-br from-[#1B6B3A] to-[#22894a] flex items-center justify-center shadow-md shadow-[#1B6B3A]/15 mb-5">
+              <div className="w-14 h-14 mx-auto rounded-lg bg-[#1B6B3A] flex items-center justify-center mb-5">
                 <v.Icon className="w-6 h-6 text-white" />
               </div>
-              <h3 className="text-base font-bold text-[#1a2e1a] mb-2">{v.title}</h3>
+              <h3 className="text-base font-bold text-[#14261a] mb-2">{v.title}</h3>
               <p className="text-sm text-[#3d5a3d] leading-relaxed">{v.desc}</p>
             </div>
           ))}
@@ -134,18 +135,18 @@ export default async function HakkimizdaPage({
         <SectionHeading
           badge={t("team.badge")}
           title={t.rich("team.title", {
-            accent: (chunks) => <span className="text-gradient-forest">{chunks}</span>,
+            accent: (chunks) => <span className="text-[#1B6B3A]">{chunks}</span>,
           })}
           subtitle={t("team.subtitle")}
         />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 max-w-4xl mx-auto stagger-children">
           {TEAM.map((t) => (
             <div key={t.name} className="vitrin-card p-7 flex items-start gap-5">
-              <div className="shrink-0 w-14 h-14 rounded-2xl bg-gradient-to-br from-[#1B6B3A] to-[#22894a] flex items-center justify-center shadow-md shadow-[#1B6B3A]/15">
+              <div className="shrink-0 w-14 h-14 rounded-lg bg-[#1B6B3A] flex items-center justify-center">
                 <span className="text-xl font-bold text-white tabular-nums">{t.count}</span>
               </div>
               <div>
-                <h3 className="text-base font-bold text-[#1a2e1a] mb-1.5">{t.name}</h3>
+                <h3 className="text-base font-bold text-[#14261a] mb-1.5">{t.name}</h3>
                 <p className="text-sm text-[#3d5a3d] leading-relaxed">{t.desc}</p>
               </div>
             </div>
@@ -158,7 +159,7 @@ export default async function HakkimizdaPage({
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 max-w-3xl mx-auto">
           {STATS.map((s) => (
             <div key={s.label} className="vitrin-card p-6 lg:p-7 text-center">
-              <p className="text-3xl lg:text-4xl font-bold bg-gradient-to-br from-[#1B6B3A] to-[#22894a] bg-clip-text text-transparent mb-2 tabular-nums">
+              <p className="text-3xl lg:text-4xl font-bold text-[#1B6B3A] mb-2 tabular-nums">
                 {s.value}
               </p>
               <p className="text-xs uppercase tracking-wider text-[#6b8f6b] font-semibold">
@@ -172,9 +173,9 @@ export default async function HakkimizdaPage({
       {/* CTA */}
       <SectionWrapper variant="light">
         <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-3xl lg:text-4xl font-bold text-[#1a2e1a] leading-tight mb-5">
+          <h2 className="display-headline text-3xl sm:text-4xl lg:text-5xl font-bold text-[#14261a] mb-5">
             {t.rich("cta.title", {
-              accent: (chunks) => <span className="text-gradient-forest">{chunks}</span>,
+              accent: (chunks) => <span className="text-[#1B6B3A]">{chunks}</span>,
             })}
           </h2>
           <p className="text-base text-[#3d5a3d] mb-8 max-w-xl mx-auto">

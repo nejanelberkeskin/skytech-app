@@ -48,24 +48,24 @@ export default function DashboardParallax() {
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-10 items-center max-w-6xl mx-auto">
           {/* Text */}
           <div className="lg:col-span-2">
-            <motion.div
+            <motion.p
               initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.7 }}
-              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#1B6B3A]/8 border border-[#1B6B3A]/15 mb-5 text-[11px] font-bold uppercase tracking-[0.18em] text-[#1B6B3A]"
+              className="mb-5 flex items-center gap-3 text-[12px] font-semibold uppercase tracking-[0.16em] text-[#1B6B3A]"
             >
-              <span className="w-1.5 h-1.5 rounded-full bg-[#1B6B3A]" />
+              <span aria-hidden className="h-px w-8 bg-current" />
               {t("badge")}
-            </motion.div>
+            </motion.p>
             <motion.h2
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.9, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-              className="display-headline text-3xl lg:text-5xl font-bold text-[#0e2519] mb-5"
+              className="display-headline text-3xl sm:text-4xl lg:text-5xl font-bold text-[#14261a] mb-5"
             >
-              <span className="text-gradient-aurora">{t("title.highlight")}</span>
+              <span className="text-[#1B6B3A]">{t("title.highlight")}</span>
               <br />
               {t("title.rest")}
             </motion.h2>
@@ -123,25 +123,21 @@ export default function DashboardParallax() {
                   ? { y: yBack, rotate: rotateBack, transformStyle: "preserve-3d" }
                   : undefined
               }
-              className="relative w-full lg:absolute lg:top-8 lg:right-0 lg:w-[78%] aspect-[4/3] rounded-3xl mesh-dark grain-overlay overflow-hidden shadow-2xl"
+              className="relative w-full lg:absolute lg:top-8 lg:right-0 lg:w-[78%] aspect-[4/3] rounded-xl border border-[#14261a]/12 bg-[#f6f6f1] overflow-hidden"
             >
-              <div className="aurora-bg">
-                <div className="aurora-blob aurora-blob-1" />
-                <div className="aurora-blob aurora-blob-2" />
-              </div>
               <div className="relative p-6 h-full flex flex-col">
                 <div className="flex items-center gap-2 mb-4">
-                  <span className="w-2 h-2 rounded-full bg-[#34d399] animate-pulse" />
-                  <span className="text-[10px] uppercase tracking-[0.18em] text-[#a7d4a7] font-bold">
+                  <span className="w-2 h-2 rounded-full bg-[#1B6B3A]" />
+                  <span className="text-[10px] uppercase tracking-[0.18em] text-[#1B6B3A] font-bold">
                     {t("mockup.droneLabel")}
                   </span>
                 </div>
                 <div className="flex-1 grid grid-cols-3 gap-2">
                   {Array.from({ length: 9 }).map((_, i) => (
-                    <div key={i} className="rounded-xl bg-white/5 border border-white/10" />
+                    <div key={i} className="rounded-md bg-white border border-[#14261a]/10" />
                   ))}
                 </div>
-                <div className="mt-4 flex items-center justify-between text-[10px] text-[#a7d4a7]">
+                <div className="mt-4 flex items-center justify-between text-[10px] text-[#6b8f6b]">
                   <span>{t("mockup.gpsStatus")}</span>
                   <span className="font-mono">36.78° N · 31.43° E</span>
                 </div>
@@ -155,40 +151,40 @@ export default function DashboardParallax() {
                   ? { y: yMid, rotate: rotateMid, transformStyle: "preserve-3d" }
                   : undefined
               }
-              className="relative w-full lg:absolute lg:top-32 lg:left-0 lg:w-[68%] rounded-3xl premium-glass overflow-hidden shadow-2xl p-5"
+              className="relative w-full lg:absolute lg:top-32 lg:left-0 lg:w-[68%] rounded-xl border border-[#14261a]/12 bg-white overflow-hidden shadow-sm p-5"
             >
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <p className="text-[10px] uppercase tracking-[0.18em] text-[#1B6B3A] font-bold mb-1">
                     {t("mockup.carbonLabel")}
                   </p>
-                  <p className="text-2xl font-bold text-[#0e2519] tabular-nums">{t("mockup.carbonValue")}</p>
+                  <p className="text-2xl font-bold text-[#14261a] tabular-nums">{t("mockup.carbonValue")}</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-[10px] text-[#22894a] font-bold">{t("mockup.quarterDelta")}</p>
+                  <p className="text-[10px] text-[#1B6B3A] font-bold">{t("mockup.quarterDelta")}</p>
                 </div>
               </div>
-              <div className="h-2 rounded-full bg-black/5 overflow-hidden">
+              <div className="h-2 rounded-full bg-[#14261a]/8 overflow-hidden">
                 <motion.div
                   initial={{ width: 0 }}
                   whileInView={{ width: "72%" }}
                   viewport={{ once: true }}
                   transition={{ duration: 1.2, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                  className="h-full bg-gradient-to-r from-[#1B6B3A] via-[#22894a] to-[#34d399] rounded-full"
+                  className="h-full bg-[#1B6B3A] rounded-full"
                 />
               </div>
               <div className="mt-4 grid grid-cols-3 gap-2 text-xs">
                 <div>
                   <p className="text-[#6b8f6b]">{t("mockup.treesLabel")}</p>
-                  <p className="text-[#0e2519] font-bold tabular-nums">128K</p>
+                  <p className="text-[#14261a] font-bold tabular-nums">128K</p>
                 </div>
                 <div>
                   <p className="text-[#6b8f6b]">{t("mockup.employeesLabel")}</p>
-                  <p className="text-[#0e2519] font-bold tabular-nums">2.450</p>
+                  <p className="text-[#14261a] font-bold tabular-nums">2.450</p>
                 </div>
                 <div>
                   <p className="text-[#6b8f6b]">{t("mockup.regionsLabel")}</p>
-                  <p className="text-[#0e2519] font-bold tabular-nums">{t("mockup.regionsValue")}</p>
+                  <p className="text-[#14261a] font-bold tabular-nums">{t("mockup.regionsValue")}</p>
                 </div>
               </div>
             </motion.div>
@@ -205,10 +201,10 @@ export default function DashboardParallax() {
                     }
                   : undefined
               }
-              className="relative w-full lg:absolute lg:bottom-0 lg:right-12 lg:w-[60%] rounded-3xl premium-glass overflow-hidden shadow-2xl p-5"
+              className="relative w-full lg:absolute lg:bottom-0 lg:right-12 lg:w-[60%] rounded-xl border border-[#14261a]/12 bg-white overflow-hidden shadow-sm p-5"
             >
               <div className="flex items-start gap-3 mb-3">
-                <div className="shrink-0 w-10 h-10 rounded-xl bg-gradient-to-br from-[#1B6B3A] to-[#22894a] flex items-center justify-center">
+                <div className="shrink-0 w-10 h-10 rounded-lg bg-[#1B6B3A] flex items-center justify-center">
                   <svg
                     className="w-5 h-5 text-white"
                     viewBox="0 0 24 24"
@@ -221,14 +217,14 @@ export default function DashboardParallax() {
                   </svg>
                 </div>
                 <div className="min-w-0">
-                  <p className="text-sm font-bold text-[#0e2519] truncate">{t("mockup.certTitle")}</p>
+                  <p className="text-sm font-bold text-[#14261a] truncate">{t("mockup.certTitle")}</p>
                   <p className="text-xs text-[#3d5a3d] truncate">
                     {t("mockup.certDesc")}
                   </p>
                 </div>
               </div>
               <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.16em]">
-                <span className="text-[#22894a] font-bold">{t("mockup.certStatus")}</span>
+                <span className="text-[#1B6B3A] font-bold">{t("mockup.certStatus")}</span>
                 <span className="text-[#6b8f6b]">{t("mockup.certTime")}</span>
               </div>
             </motion.div>

@@ -17,14 +17,14 @@ export function ReviewRows({
   rows: { label: string; value: ReactNode }[];
 }) {
   return (
-    <dl className="divide-y divide-[#1B6B3A]/10">
+    <dl className="divide-y divide-[#14261a]/10">
       {rows.map(({ label, value }) => (
         <div
           key={label}
           className="grid gap-1 py-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] sm:gap-5"
         >
           <dt className="text-sm text-[#3d5a3d]">{label}</dt>
-          <dd className="break-words text-sm font-semibold text-[#0e2519] sm:text-right">
+          <dd className="break-words text-sm font-semibold text-[#14261a] sm:text-right">
             {value}
           </dd>
         </div>
@@ -184,7 +184,7 @@ export default function OrderReview({
           {dateLabels[preview.schedule.season.endsOn] ??
             preview.schedule.season.endsOn}
         </p>
-        <p className="font-semibold text-[#0e2519]">
+        <p className="font-semibold text-[#14261a]">
           {t("review.deadline", {
             date:
               dateLabels[preview.schedule.performanceDeadline] ??
@@ -219,9 +219,9 @@ export default function OrderReview({
       <section className="vitrin-card p-6 lg:p-8">
         <h3 className="mb-5 text-lg font-bold">{t("documents.title")}</h3>
         {locale !== "tr" && (
-          <p className="-mt-2 mb-4 text-sm text-[#526352]">{t("documents.languageNote")}</p>
+          <p className="-mt-2 mb-4 text-sm text-[#3d5a3d]">{t("documents.languageNote")}</p>
         )}
-        <ul className="divide-y divide-[#1B6B3A]/10">
+        <ul className="divide-y divide-[#14261a]/10">
           {preview.documents.map((doc) => (
             <li
               key={doc.kind}
@@ -232,7 +232,7 @@ export default function OrderReview({
                 <button
                   type="button"
                   onClick={() => onDocument(doc)}
-                  className="min-h-11 rounded-xl border border-[#1B6B3A]/25 px-4 text-sm font-semibold text-[#1B6B3A]"
+                  className="min-h-11 rounded-[10px] border border-[#14261a]/25 px-4 text-sm font-semibold text-[#14261a] transition-colors hover:border-[#1B6B3A] hover:text-[#1B6B3A]"
                   aria-label={t("documents.readNamed", { title: doc.title })}
                 >
                   {t("documents.read")}
@@ -240,7 +240,7 @@ export default function OrderReview({
                 <button
                   type="button"
                   onClick={() => downloadDocument(doc)}
-                  className="min-h-11 rounded-xl border border-[#1B6B3A]/25 px-4 text-sm font-semibold text-[#1B6B3A]"
+                  className="min-h-11 rounded-[10px] border border-[#14261a]/25 px-4 text-sm font-semibold text-[#14261a] transition-colors hover:border-[#1B6B3A] hover:text-[#1B6B3A]"
                   aria-label={t("documents.downloadNamed", {
                     title: doc.title,
                   })}
@@ -257,7 +257,7 @@ export default function OrderReview({
         {/* KVKK aydınlatması bir onay kutusu değildir; veri alınırken bildirim olarak gösterilir. */}
         <PrivacyNotice />
         {requiredKeys.map(checkbox)}
-        <div className="mt-5 rounded-2xl border border-[#1B6B3A]/10 bg-[#f8faf5] px-4 py-3">
+        <div className="mt-5 rounded-xl border border-[#14261a]/12 bg-[#f6f6f1] px-4 py-3">
           <p className="text-xs font-semibold uppercase tracking-wider text-[#3d5a3d]">
             {t("optional")}
           </p>

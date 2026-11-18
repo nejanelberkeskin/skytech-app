@@ -86,9 +86,6 @@ export default function ImpactTabs() {
 
   return (
     <SectionWrapper variant="light" className="relative overflow-hidden">
-      {/* Soft mesh wash */}
-      <div aria-hidden className="absolute inset-0 mesh-gradient opacity-40 pointer-events-none" />
-
       <div className="relative">
         <SectionHeading
           badge={tSection("badge")}
@@ -96,7 +93,7 @@ export default function ImpactTabs() {
             <>
               {tSection("titleLine1")}
               <br />
-              <span className="text-gradient-aurora">{tSection("titleAccent")}</span>
+              <span className="text-[#1B6B3A]">{tSection("titleAccent")}</span>
             </>
           }
           subtitle={tSection("subtitle")}
@@ -118,21 +115,21 @@ export default function ImpactTabs() {
                 onClick={() => setActive(t.id)}
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.97 }}
-                className={`relative inline-flex items-center gap-2 px-4 lg:px-5 py-2.5 lg:py-3 rounded-2xl text-sm font-bold transition-colors ${
+                className={`relative inline-flex items-center gap-2 px-4 lg:px-5 py-2.5 lg:py-3 rounded-[10px] text-sm font-semibold transition-colors ${
                   isActive
                     ? "text-white"
-                    : "bg-white border border-black/8 text-[#3d5a3d] hover:border-[#1B6B3A]/20 hover:text-[#1B6B3A]"
+                    : "bg-white border border-[#14261a]/12 text-[#3d5a3d] hover:border-[#1B6B3A]/50 hover:text-[#1B6B3A]"
                 }`}
               >
                 {isActive && (
                   <motion.span
                     layoutId="impact-tab-active"
-                    className="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#1B6B3A] to-[#22894a] shadow-lg shadow-[#1B6B3A]/25"
+                    className="absolute inset-0 rounded-[10px] bg-[#1B6B3A]"
                     transition={{ type: "spring", stiffness: 380, damping: 32 }}
                   />
                 )}
                 <span className="relative inline-flex items-center gap-2">
-                  <t.Icon className={`w-4 h-4 ${isActive ? "text-white" : "text-[#22894a]"}`} />
+                  <t.Icon className={`w-4 h-4 ${isActive ? "text-white" : "text-[#1B6B3A]"}`} />
                   {t.label}
                 </span>
               </motion.button>
@@ -152,7 +149,7 @@ export default function ImpactTabs() {
           >
             {/* Visual */}
             <div className="lg:col-span-2 relative">
-              <div className="relative aspect-square rounded-3xl overflow-hidden bg-[#0a1f12]">
+              <div className="relative aspect-square rounded-xl overflow-hidden bg-[#14261a]">
                 <Image
                   src={tab.image}
                   alt={tab.title}
@@ -160,14 +157,13 @@ export default function ImpactTabs() {
                   sizes="(max-width: 1024px) 100vw, 40vw"
                   className="object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent pointer-events-none" />
                 {/* Icon top-left */}
-                <div className="absolute top-4 left-4 w-12 h-12 rounded-2xl bg-white/15 backdrop-blur-md ring-2 ring-white/25 flex items-center justify-center">
+                <div className="absolute top-4 left-4 w-11 h-11 rounded-lg bg-[#1B6B3A] flex items-center justify-center">
                   <tab.Icon className="w-6 h-6 text-white" />
                 </div>
-                <div className="absolute bottom-6 left-6 right-6 liquid-glass-dark rounded-2xl p-5 text-center">
-                  <p className="text-4xl font-bold text-white tracking-tight mb-1 tabular-nums">{tab.stat}</p>
-                  <p className="text-[10px] uppercase tracking-[0.18em] text-[#a7d4a7] font-bold">
+                <div className="absolute bottom-4 left-4 right-4 rounded-lg bg-white p-5 text-center">
+                  <p className="text-4xl font-bold text-[#1B6B3A] tracking-tight mb-1 tabular-nums">{tab.stat}</p>
+                  <p className="text-[10px] uppercase tracking-[0.18em] text-[#6b8f6b] font-bold">
                     {tab.statLabel}
                   </p>
                 </div>
@@ -176,7 +172,7 @@ export default function ImpactTabs() {
 
             {/* Text */}
             <div className="lg:col-span-3 flex flex-col justify-center">
-              <h3 className="text-2xl lg:text-4xl font-bold text-[#0e2519] leading-tight mb-5 tracking-tight">
+              <h3 className="text-2xl lg:text-4xl font-bold text-[#14261a] leading-tight mb-5 tracking-tight">
                 {tab.title}
               </h3>
               <p className="text-base text-[#3d5a3d] leading-relaxed mb-6">{tab.description}</p>
@@ -189,7 +185,7 @@ export default function ImpactTabs() {
                     transition={{ duration: 0.5, delay: 0.15 + i * 0.06 }}
                     className="flex items-start gap-3 text-sm text-[#3d5a3d]"
                   >
-                    <span className="shrink-0 w-5 h-5 rounded-full bg-[#1B6B3A]/10 flex items-center justify-center mt-0.5">
+                    <span className="shrink-0 w-5 h-5 rounded-full bg-[#1B6B3A]/8 flex items-center justify-center mt-0.5">
                       <svg
                         className="w-3 h-3 text-[#1B6B3A]"
                         viewBox="0 0 24 24"
@@ -211,12 +207,12 @@ export default function ImpactTabs() {
 
               {/* Yangın tab'ı için detaylı 5 başlık × 14 alt madde accordion */}
               {fireDetailGroups && (
-                <div className="mt-8 pt-6 border-t border-[#1B6B3A]/15">
+                <div className="mt-8 pt-6 border-t border-[#14261a]/10">
                   <button
                     type="button"
                     onClick={() => setDetailsOpen((v) => !v)}
                     aria-expanded={detailsOpen}
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#1B6B3A]/8 hover:bg-[#1B6B3A]/12 text-[#1B6B3A] text-xs font-bold uppercase tracking-[0.14em] transition-colors"
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-[10px] border border-[#14261a]/25 text-[#14261a] hover:border-[#1B6B3A] hover:text-[#1B6B3A] text-xs font-semibold uppercase tracking-[0.14em] transition-colors"
                   >
                     {detailsOpen ? fireHide : fireShow}
                     <svg
@@ -242,14 +238,14 @@ export default function ImpactTabs() {
                         <p className="text-sm italic text-[#3d5a3d]/80 mt-5 mb-4">{fireIntro}</p>
                         <div className="space-y-5">
                           {fireDetailGroups.map((group, gi) => (
-                            <div key={group.title} className="vitrin-card p-5">
+                            <div key={group.title} className="rounded-xl border border-[#14261a]/12 bg-white p-5">
                               <h4 className="text-sm font-bold uppercase tracking-[0.14em] text-[#1B6B3A] mb-3">
                                 {gi + 1}. {group.title}
                               </h4>
                               <ul className="space-y-2.5">
                                 {group.items.map((item) => (
                                   <li key={item.title} className="text-sm">
-                                    <strong className="text-[#1a2e1a]">{item.title}:</strong>{" "}
+                                    <strong className="text-[#14261a]">{item.title}:</strong>{" "}
                                     <span className="text-[#3d5a3d] leading-relaxed">{item.description}</span>
                                   </li>
                                 ))}

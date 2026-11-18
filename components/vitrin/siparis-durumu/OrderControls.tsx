@@ -24,7 +24,7 @@ export default function CopyOrderNumber({ orderNo }: { orderNo: string }) {
       <button
         type="button"
         onClick={copy}
-        className="min-h-11 rounded-xl border border-[#1B6B3A]/25 px-4 text-sm font-semibold text-[#1B6B3A]"
+        className="min-h-11 rounded-[10px] border border-[#14261a]/25 px-4 text-sm font-semibold text-[#14261a] transition-colors hover:border-[#1B6B3A] hover:text-[#1B6B3A]"
       >
         {t("copy")}
       </button>

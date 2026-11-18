@@ -39,7 +39,7 @@ export default function MockPaymentActions({ token, signatures }: { token: strin
         type="button"
         onClick={() => complete("success")}
         disabled={busy !== null}
-        className="w-full rounded-xl bg-[#1B6B3A] px-5 py-3.5 text-sm font-bold text-white transition hover:bg-[#22894a] disabled:opacity-60"
+        className="w-full rounded-[10px] bg-[#1B6B3A] px-5 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-[#14552d] disabled:opacity-60"
       >
         {busy === "success" ? "İşleniyor…" : "Ödemeyi onayla (başarılı)"}
       </button>
@@ -47,7 +47,7 @@ export default function MockPaymentActions({ token, signatures }: { token: strin
         type="button"
         onClick={() => complete("failure")}
         disabled={busy !== null}
-        className="w-full rounded-xl border border-black/10 bg-white px-5 py-3.5 text-sm font-bold text-[#0e2519] transition hover:bg-black/[0.03] disabled:opacity-60"
+        className="w-full rounded-[10px] border border-[#14261a]/25 bg-white px-5 py-3.5 text-sm font-semibold text-[#14261a] transition-colors hover:border-[#1B6B3A] hover:text-[#1B6B3A] disabled:opacity-60"
       >
         {busy === "failure" ? "İşleniyor…" : "Ödemeyi reddet (başarısız)"}
       </button>

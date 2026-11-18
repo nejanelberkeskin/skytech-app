@@ -43,8 +43,6 @@ export default function Timeline() {
 
   return (
     <SectionWrapper variant="tinted" className="relative overflow-hidden">
-      <div aria-hidden className="absolute inset-0 mesh-gradient opacity-40 pointer-events-none" />
-
       <div className="relative">
         <SectionHeading
           badge={t("badge")}
@@ -52,7 +50,7 @@ export default function Timeline() {
             <>
               {t("titleLine1")}
               <br />
-              <span className="text-gradient-aurora">{t("titleLine2")}</span>
+              <span className="text-[#1B6B3A]">{t("titleLine2")}</span>
             </>
           }
           subtitle={t("subtitle")}
@@ -72,9 +70,9 @@ export default function Timeline() {
             className="absolute left-5 lg:left-1/2 -translate-x-px top-0 w-px"
           >
             <div className="relative h-full">
-              <div className="absolute inset-0 bg-gradient-to-b from-[#1B6B3A] via-[#22894a] to-[#34d399]" />
-              {/* Glow at the leading edge */}
-              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3 h-3 rounded-full bg-[#34d399] shadow-[0_0_18px_6px_rgba(52,211,153,0.6)]" />
+              <div className="absolute inset-0 bg-[#1B6B3A]" />
+              {/* Leading-edge marker */}
+              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-[#1B6B3A]" />
             </div>
           </motion.div>
 
@@ -109,7 +107,7 @@ function Milestone({
       transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
       className="relative grid grid-cols-1 lg:grid-cols-2 lg:gap-10"
     >
-      {/* Glowing dot — mobile: left-5, desktop: center */}
+      {/* Dot — mobile: left-5, desktop: center */}
       <motion.div
         aria-hidden
         initial={{ scale: 0, opacity: 0 }}
@@ -118,7 +116,7 @@ function Milestone({
         transition={{ duration: 0.6, delay: 0.25, type: "spring", stiffness: 200 }}
         className="absolute top-3 left-5 lg:left-1/2 -translate-x-1/2 z-10"
       >
-        <div className="relative w-5 h-5 rounded-full bg-gradient-to-br from-[#1B6B3A] to-[#22894a] shadow-[0_0_16px_4px_rgba(34,197,94,0.4)] flex items-center justify-center">
+        <div className="relative w-5 h-5 rounded-full bg-[#1B6B3A] flex items-center justify-center">
           <div className="w-2 h-2 rounded-full bg-white" />
         </div>
       </motion.div>
@@ -130,10 +128,10 @@ function Milestone({
         } pl-10 lg:pl-0`}
       >
         <div className="vitrin-card p-6 lg:p-8">
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#22894a] mb-2">
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#1B6B3A] mb-2">
             {label}
           </p>
-          <h3 className="text-2xl lg:text-3xl font-bold text-[#0e2519] mb-3 tracking-tight">
+          <h3 className="text-2xl lg:text-3xl font-bold text-[#14261a] mb-3 tracking-tight">
             {milestone.title}
           </h3>
           <p className="text-sm text-[#3d5a3d] leading-relaxed">{milestone.description}</p>
@@ -151,7 +149,7 @@ function Milestone({
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.7, delay: 0.3 }}
-          className="display-headline text-5xl lg:text-7xl font-bold text-gradient-aurora tabular-nums leading-none"
+          className="display-headline text-5xl lg:text-7xl font-bold text-[#1B6B3A] tabular-nums leading-none"
         >
           {milestone.year}
         </motion.p>

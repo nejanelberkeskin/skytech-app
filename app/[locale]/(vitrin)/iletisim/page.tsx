@@ -94,13 +94,13 @@ export default async function IletisimPage({
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 max-w-5xl mx-auto stagger-children">
           {CONTACTS.map((c) => (
             <div key={c.title} className="vitrin-card p-7">
-              <div className="w-12 h-12 rounded-2xl bg-[#1B6B3A]/8 flex items-center justify-center mb-5">
+              <div className="w-12 h-12 rounded-lg bg-[#1B6B3A]/8 flex items-center justify-center mb-5">
                 <c.Icon className="w-5 h-5 text-[#1B6B3A]" />
               </div>
               <p className="text-xs uppercase tracking-wider text-[#6b8f6b] font-semibold mb-1.5">
                 {c.title}
               </p>
-              <p className="text-base font-bold text-[#1a2e1a] mb-2">{c.primary}</p>
+              <p className="text-base font-bold text-[#14261a] mb-2">{c.primary}</p>
               <p className="text-sm text-[#3d5a3d] leading-relaxed whitespace-pre-line">
                 {c.secondary}
               </p>
@@ -109,11 +109,11 @@ export default async function IletisimPage({
         </div>
         {/* Şirket künyesi — 6563 / e-ticaret yönetmeliği m.5; değerler lib/company.ts tek kaynağından. */}
         <div className="vitrin-card p-7 max-w-5xl mx-auto mt-5">
-          <h2 className="text-lg font-bold text-[#1a2e1a] mb-4">{t("registry.title")}</h2>
+          <h2 className="text-lg font-bold text-[#14261a] mb-4">{t("registry.title")}</h2>
           <dl className="grid sm:grid-cols-[minmax(0,14rem)_1fr] gap-x-6 gap-y-2 text-sm">
             {registryRows.map(([label, value]) => (
               <div key={label} className="contents">
-                <dt className="font-semibold text-[#1a2e1a]">{label}</dt>
+                <dt className="font-semibold text-[#14261a]">{label}</dt>
                 <dd className="text-[#3d5a3d] break-words">{value}</dd>
               </div>
             ))}
@@ -126,21 +126,22 @@ export default async function IletisimPage({
       <SectionWrapper variant="tinted">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-8">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#1B6B3A]/8 text-[#1B6B3A] mb-3 text-xs font-semibold uppercase tracking-wider">
+            <p className="mb-5 flex items-center justify-center gap-3 text-[12px] font-semibold uppercase tracking-[0.16em] text-[#1B6B3A]">
+              <span aria-hidden className="h-px w-8 bg-current" />
               {t("map.badge")}
-            </div>
-            <h2 className="text-2xl lg:text-3xl font-bold text-[#1a2e1a]">{t("map.title")}</h2>
+            </p>
+            <h2 className="display-headline text-3xl sm:text-4xl lg:text-5xl font-bold text-[#14261a]">{t("map.title")}</h2>
           </div>
 
-          <div className="mx-auto max-w-3xl rounded-3xl bg-[#0a1f12] p-8 text-white sm:p-12">
-            <PinIcon className="mb-5 h-8 w-8 text-[#34d399]" />
+          <div className="mx-auto max-w-3xl rounded-xl border border-[#14261a]/12 bg-white p-8 text-[#14261a] sm:p-12">
+            <PinIcon className="mb-5 h-8 w-8 text-[#1B6B3A]" />
             <p className="text-lg font-bold">{COMPANY.address.line}</p>
-            <p className="mt-2 text-[#a7d4a7]">{COMPANY.address.district} / {COMPANY.address.province}, {COMPANY.address.country}</p>
+            <p className="mt-2 text-[#3d5a3d]">{COMPANY.address.district} / {COMPANY.address.province}, {COMPANY.address.country}</p>
             <a
               href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(companyAddressLine())}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-6 inline-flex min-h-11 items-center rounded-xl border border-white/30 px-5 font-semibold text-[#a3e635] hover:text-white"
+              className="mt-6 inline-flex min-h-11 items-center rounded-[10px] border border-[#14261a]/25 px-5 font-semibold text-[#14261a] transition-colors hover:border-[#1B6B3A] hover:text-[#1B6B3A]"
             >
               {t("map.directions")} →
             </a>
@@ -151,10 +152,11 @@ export default async function IletisimPage({
       {/* Sosyal Medya */}
       <SectionWrapper variant="light">
         <div className="max-w-3xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#1B6B3A]/8 text-[#1B6B3A] mb-4 text-xs font-semibold uppercase tracking-wider">
+          <p className="mb-5 flex items-center justify-center gap-3 text-[12px] font-semibold uppercase tracking-[0.16em] text-[#1B6B3A]">
+            <span aria-hidden className="h-px w-8 bg-current" />
             {t("social.badge")}
-          </div>
-          <h2 className="text-2xl lg:text-3xl font-bold text-[#1a2e1a] mb-3">{t("social.title")}</h2>
+          </p>
+          <h2 className="display-headline text-3xl sm:text-4xl lg:text-5xl font-bold text-[#14261a] mb-4">{t("social.title")}</h2>
           <p className="text-base text-[#3d5a3d] mb-8">
             {t("social.subtitle")}
           </p>
@@ -167,7 +169,7 @@ export default async function IletisimPage({
                   href={s.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group inline-flex items-center gap-2.5 px-5 py-3 rounded-2xl bg-white border border-black/8 text-[#1a2e1a] hover:bg-[#1B6B3A] hover:text-white hover:border-[#1B6B3A] transition-all"
+                  className="group inline-flex min-h-11 items-center gap-2.5 px-5 py-3 rounded-[10px] bg-white border border-[#14261a]/25 text-[#14261a] hover:border-[#1B6B3A] hover:text-[#1B6B3A] transition-colors"
                 >
                   <s.Icon className="w-4 h-4" />
                   <span className="text-sm font-semibold">{s.name}</span>
@@ -176,7 +178,7 @@ export default async function IletisimPage({
                 <span
                   key={s.name}
                   aria-disabled="true"
-                  className="inline-flex items-center gap-2.5 px-5 py-3 rounded-2xl bg-white/60 border border-black/5 text-[#1a2e1a]/35 cursor-default"
+                  className="inline-flex min-h-11 items-center gap-2.5 px-5 py-3 rounded-[10px] bg-white border border-[#14261a]/10 text-[#14261a]/35 cursor-default"
                 >
                   <s.Icon className="w-4 h-4" />
                   <span className="text-sm font-semibold">{s.name}</span>
@@ -190,9 +192,9 @@ export default async function IletisimPage({
       {/* CTA */}
       <SectionWrapper variant="tinted">
         <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-3xl lg:text-4xl font-bold text-[#1a2e1a] leading-tight mb-5">
+          <h2 className="display-headline text-3xl sm:text-4xl lg:text-5xl font-bold text-[#14261a] mb-5">
             {t.rich("cta.title", {
-              accent: (chunks) => <span className="text-gradient-forest">{chunks}</span>,
+              accent: (chunks) => <span className="text-[#1B6B3A]">{chunks}</span>,
             })}
           </h2>
           <p className="text-base text-[#3d5a3d] mb-8">

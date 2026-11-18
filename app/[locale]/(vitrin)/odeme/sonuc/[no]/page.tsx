@@ -63,17 +63,17 @@ export default async function PaymentResultPage({ params }: { params: Promise<Pa
           <p className="mb-6 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-900">{t("test")}</p>
         ) : null}
 
-        <div className="rounded-3xl border border-black/5 bg-white p-7 shadow-sm sm:p-10">
+        <div className="rounded-xl border border-[#14261a]/12 bg-white p-7 sm:p-10">
           <p
-            className={`inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-xs font-bold uppercase tracking-[0.14em] ${
+            className={`inline-flex items-center gap-2 rounded-md px-3 py-1.5 text-xs font-bold uppercase tracking-[0.14em] ${
               view === "success" ? "bg-[#1B6B3A]/10 text-[#1B6B3A]" : "bg-[#b45309]/10 text-[#92400e]"
             }`}
           >
             {t(`${view}.badge`)}
           </p>
-          <h1 className="mt-5 text-3xl font-bold leading-tight tracking-tight text-[#0e2519] sm:text-4xl">{t(`${view}.title`)}</h1>
+          <h1 className="mt-5 text-3xl font-bold leading-tight tracking-tight text-[#14261a] sm:text-4xl">{t(`${view}.title`)}</h1>
 
-          <dl className="mt-7 divide-y divide-black/5 rounded-2xl border border-black/5 bg-[#f7faf7] px-5 text-sm">
+          <dl className="mt-7 divide-y divide-[#14261a]/10 rounded-xl border border-[#14261a]/10 bg-[#f6f6f1] px-5 text-sm">
             <Row label={t("rows.orderNo")} value={<span className="whitespace-nowrap font-mono tracking-wide">{order.order_no}</span>} />
             <Row label={t("rows.site")} value={site.name} />
             <Row label={t("rows.quantity")} value={formatCount(order.quantity, priceLocale)} />
@@ -144,7 +144,7 @@ function Row({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div className="flex items-baseline justify-between gap-6 py-3">
       <dt className="text-[#6b8f6b]">{label}</dt>
-      <dd className="text-right font-semibold text-[#0e2519]">{value}</dd>
+      <dd className="text-right font-semibold text-[#14261a]">{value}</dd>
     </div>
   );
 }

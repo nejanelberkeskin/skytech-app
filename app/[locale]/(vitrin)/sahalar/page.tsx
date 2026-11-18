@@ -34,7 +34,7 @@ export default async function SitesPage({ params }: Props) {
         items={[{ label: t("title") }]}
       />
       <SectionWrapper>
-        <div className="mb-10 flex flex-col justify-between gap-5 border-b border-[#1B6B3A]/15 pb-6 lg:flex-row lg:items-center">
+        <div className="mb-10 flex flex-col justify-between gap-5 border-b border-[#14261a]/12 pb-6 lg:flex-row lg:items-center">
           <p className="max-w-xl text-[#3d5a3d]">{t("description")}</p>
           <Link
             href={OWN_LAND_HREF}
@@ -50,8 +50,8 @@ export default async function SitesPage({ params }: Props) {
             ))}
           </div>
         ) : (
-          <div className="rounded-3xl border border-[#1B6B3A]/15 bg-[#f8faf5] p-7 sm:p-12">
-            <h2 className="text-2xl font-semibold text-[#0e2519]">
+          <div className="rounded-xl border border-[#14261a]/12 bg-[#f6f6f1] p-7 sm:p-12">
+            <h2 className="text-2xl font-semibold text-[#14261a]">
               {t("empty.title")}
             </h2>
             <p className="mt-4 max-w-xl leading-relaxed text-[#3d5a3d]">

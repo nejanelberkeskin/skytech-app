@@ -21,11 +21,11 @@ export default async function PaymentErrorPage({ params }: { params: Promise<{ l
 
   return (
     <SectionWrapper variant="light" className="!py-20 lg:!py-28">
-      <div className="mx-auto max-w-2xl rounded-3xl border border-black/5 bg-white p-7 shadow-sm sm:p-10">
-        <p className="inline-flex rounded-full bg-[#b45309]/10 px-3.5 py-1.5 text-xs font-bold uppercase tracking-[0.14em] text-[#92400e]">
+      <div className="mx-auto max-w-2xl rounded-xl border border-[#14261a]/12 bg-white p-7 sm:p-10">
+        <p className="inline-flex rounded-md bg-[#b45309]/10 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.14em] text-[#92400e]">
           {t("badge")}
         </p>
-        <h1 className="mt-5 text-3xl font-bold leading-tight tracking-tight text-[#0e2519] sm:text-4xl">{t("title")}</h1>
+        <h1 className="mt-5 text-3xl font-bold leading-tight tracking-tight text-[#14261a] sm:text-4xl">{t("title")}</h1>
         <div className="mt-6 space-y-3 text-[15px] leading-relaxed text-[#3d5a3d]">
           <p>{t("body")}</p>
           <p>{t("charged")}</p>

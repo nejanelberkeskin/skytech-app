@@ -75,10 +75,10 @@ export default async function BilgiAlPage({
 function InfoCard({ icon, title, desc }: { icon: React.ReactNode; title: string; desc: string }) {
   return (
     <div className="vitrin-card p-6">
-      <div className="w-12 h-12 rounded-2xl bg-[#1B6B3A]/8 flex items-center justify-center mb-4">
+      <div className="w-12 h-12 rounded-lg bg-[#1B6B3A]/8 flex items-center justify-center mb-4">
         {icon}
       </div>
-      <p className="text-base font-bold text-[#1a2e1a] mb-1.5">{title}</p>
+      <p className="text-base font-bold text-[#14261a] mb-1.5">{title}</p>
       <p className="text-sm text-[#3d5a3d] leading-relaxed">{desc}</p>
     </div>
   );

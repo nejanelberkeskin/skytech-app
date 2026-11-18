@@ -30,8 +30,8 @@ export default async function KurumsalCozumlerPage({ params }: { params: Promise
   const t = await getTranslations("corporatePage");
 
   const COMPARISON = [
-    { item: t("comparison.promo.item"), impact: t("comparison.promo.impact"), esg: t("comparison.promo.esg"), icon: "🎁", verdict: false, image: "/images/kurumsal/promosyon-urunu.webp" },
-    { item: t("comparison.forest.item"), impact: t("comparison.forest.impact"), esg: t("comparison.forest.esg"), icon: "🌳", verdict: true, image: "/images/kurumsal/hatira-ormani.webp" },
+    { item: t("comparison.promo.item"), impact: t("comparison.promo.impact"), esg: t("comparison.promo.esg"), verdict: false, image: "/images/kurumsal/promosyon-urunu.webp" },
+    { item: t("comparison.forest.item"), impact: t("comparison.forest.impact"), esg: t("comparison.forest.esg"), verdict: true, image: "/images/kurumsal/hatira-ormani.webp" },
   ];
 
   const FEATURES = [
@@ -60,16 +60,14 @@ export default async function KurumsalCozumlerPage({ params }: { params: Promise
       <SectionWrapper variant="light">
         <SectionHeading
           badge={t("comparison.badge")}
-          title={<>{t("comparison.title.pre")} <span className="text-gradient-forest">{t("comparison.title.highlight")}</span></>}
+          title={<>{t("comparison.title.pre")} <span className="text-[#1B6B3A]">{t("comparison.title.highlight")}</span></>}
         />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
           {COMPARISON.map((c) => (
             <div
               key={c.item}
-              className={`relative rounded-3xl overflow-hidden flex flex-col ${
-                c.verdict
-                  ? "bg-gradient-to-br from-[#1B6B3A] to-[#22894a] text-white shadow-2xl shadow-[#1B6B3A]/20"
-                  : "vitrin-card"
+              className={`relative rounded-xl overflow-hidden flex flex-col border bg-white ${
+                c.verdict ? "border-[#1B6B3A]" : "border-[#14261a]/12"
               }`}
             >
               <div className="relative aspect-square overflow-hidden">
@@ -80,21 +78,17 @@ export default async function KurumsalCozumlerPage({ params }: { params: Promise
                   sizes="(max-width: 768px) 100vw, 50vw"
                   className="object-cover"
                 />
-                <div className={`absolute inset-0 bg-gradient-to-t ${
-                  c.verdict ? "from-[#1B6B3A]/95 via-[#1B6B3A]/30" : "from-white via-white/15"
-                } to-transparent pointer-events-none`} />
-                <div className="absolute top-4 left-4 text-4xl">{c.icon}</div>
               </div>
               <div className="p-7 lg:p-8 flex-1 flex flex-col">
-              <h3 className={`text-xl font-bold mb-4 ${c.verdict ? "text-white" : "text-[#1a2e1a]"}`}>
+              <h3 className={`text-xl font-bold mb-4 ${c.verdict ? "text-[#1B6B3A]" : "text-[#14261a]"}`}>
                 {c.item}
               </h3>
               <ul className="space-y-3 text-sm">
-                <li className={c.verdict ? "text-white/85" : "text-[#3d5a3d]"}>
-                  <strong className={c.verdict ? "text-[#a3e635]" : "text-[#1B6B3A]"}>{t("comparison.impactLabel")}</strong> {c.impact}
+                <li className="text-[#3d5a3d]">
+                  <strong className="text-[#14261a]">{t("comparison.impactLabel")}</strong> {c.impact}
                 </li>
-                <li className={c.verdict ? "text-white/85" : "text-[#3d5a3d]"}>
-                  <strong className={c.verdict ? "text-[#a3e635]" : "text-[#1B6B3A]"}>{t("comparison.esgLabel")}</strong> {c.esg}
+                <li className="text-[#3d5a3d]">
+                  <strong className="text-[#14261a]">{t("comparison.esgLabel")}</strong> {c.esg}
                 </li>
               </ul>
               </div>
@@ -107,16 +101,16 @@ export default async function KurumsalCozumlerPage({ params }: { params: Promise
       <SectionWrapper variant="tinted">
         <SectionHeading
           badge={t("features.badge")}
-          title={<>{t("features.title.pre")} <span className="text-gradient-forest">{t("features.title.highlight")}</span></>}
+          title={<>{t("features.title.pre")} <span className="text-[#1B6B3A]">{t("features.title.highlight")}</span></>}
           subtitle={t("features.subtitle")}
         />
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 max-w-4xl mx-auto stagger-children">
           {FEATURES.map((f) => (
             <div key={f.title} className="vitrin-card p-7">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#1B6B3A] to-[#22894a] flex items-center justify-center shadow-md shadow-[#1B6B3A]/15 mb-5">
+              <div className="w-12 h-12 rounded-lg bg-[#1B6B3A] flex items-center justify-center mb-5">
                 <f.Icon className="w-5 h-5 text-white" />
               </div>
-              <h3 className="text-base font-bold text-[#1a2e1a] mb-2">{f.title}</h3>
+              <h3 className="text-base font-bold text-[#14261a] mb-2">{f.title}</h3>
               <p className="text-sm text-[#3d5a3d] leading-relaxed">{f.desc}</p>
             </div>
           ))}
@@ -129,8 +123,8 @@ export default async function KurumsalCozumlerPage({ params }: { params: Promise
       {/* Lead form CTA */}
       <SectionWrapper variant="tinted">
         <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-3xl lg:text-4xl font-bold text-[#1a2e1a] leading-tight mb-5">
-            {t("cta.title.pre")} <span className="text-gradient-forest">{t("cta.title.highlight")}</span>
+          <h2 className="display-headline text-3xl sm:text-4xl lg:text-5xl font-bold text-[#14261a] mb-5">
+            {t("cta.title.pre")} <span className="text-[#1B6B3A]">{t("cta.title.highlight")}</span>
           </h2>
           <p className="text-base text-[#3d5a3d] mb-8 max-w-xl mx-auto">
             {t("cta.subtitle")}

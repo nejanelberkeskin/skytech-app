@@ -19,18 +19,12 @@ interface BreadCrumbProps {
 export default function BreadCrumb({ title, subtitle, items = [], backgroundImage }: BreadCrumbProps) {
   const t = useTranslations("nav");
   return (
-    <div className="relative overflow-hidden mesh-dark grain-overlay">
-      {/* Aurora */}
-      <div className="aurora-bg">
-        <div className="aurora-blob aurora-blob-1" />
-        <div className="aurora-blob aurora-blob-2" />
-        <div className="aurora-blob aurora-blob-3" />
-      </div>
+    <div className="relative overflow-hidden border-b border-[#14261a]/10 bg-[#f6f6f1]">
 
       {/* Optional background image */}
       {backgroundImage && (
         <div
-          className="absolute inset-0 opacity-25 mix-blend-overlay"
+          className="absolute inset-0 opacity-15"
           style={{
             backgroundImage: `url(${backgroundImage})`,
             backgroundSize: "cover",
@@ -39,49 +33,37 @@ export default function BreadCrumb({ title, subtitle, items = [], backgroundImag
         />
       )}
 
-      {/* Subtle grid pattern */}
-      <div
-        className="absolute inset-0 opacity-[0.05] pointer-events-none"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)",
-          backgroundSize: "64px 64px",
-          maskImage: "radial-gradient(ellipse at center, black 30%, transparent 75%)",
-          WebkitMaskImage: "radial-gradient(ellipse at center, black 30%, transparent 75%)",
-        }}
-      />
-
-      <div className="relative vitrin-container py-24 lg:py-32">
+      <div className="relative vitrin-container py-14 lg:py-20">
         {/* Breadcrumb trail */}
         <nav
-          className="flex items-center gap-2 text-xs font-medium text-[#a7d4a7] mb-6 motion-safe:animate-fade-in"
+          className="flex items-center gap-2 flex-wrap text-xs font-medium text-[#6b8f6b] mb-6 motion-safe:animate-fade-in"
         >
-          <Link href="/" className="hover:text-white transition-colors">
+          <Link href="/" className="hover:text-[#1B6B3A] transition-colors">
             {t("home")}
           </Link>
           {items.map((item, idx) => (
             <span key={idx} className="flex items-center gap-2">
-              <span className="text-[#22894a]">/</span>
+              <span className="text-[#14261a]/25">/</span>
               {item.href ? (
-                <Link href={item.href} className="hover:text-white transition-colors">
+                <Link href={item.href} className="hover:text-[#1B6B3A] transition-colors">
                   {item.label}
                 </Link>
               ) : (
-                <span className="text-white">{item.label}</span>
+                <span className="text-[#14261a]">{item.label}</span>
               )}
             </span>
           ))}
         </nav>
 
         {/* CSS keeps text readable without hydration and honors reduced motion. */}
-        <h1 className="display-headline text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold mb-6 max-w-4xl">
-          <WordReveal text={title} className="text-white" />
+        <h1 className="display-headline text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 max-w-4xl wrap-break-word">
+          <WordReveal text={title} className="text-[#14261a]" />
         </h1>
 
         {subtitle && (
           <p
             style={{ animationDuration: "0.9s", animationDelay: "0.45s" }}
-            className="text-base lg:text-xl text-[#a7d4a7] max-w-2xl leading-relaxed font-light motion-safe:animate-fade-in-up"
+            className="text-base lg:text-xl text-[#3d5a3d] max-w-2xl leading-relaxed motion-safe:animate-fade-in-up"
           >
             {subtitle}
           </p>

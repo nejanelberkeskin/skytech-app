@@ -95,20 +95,20 @@ export default async function SiteDetailPage({ params, searchParams }: Props) {
       />
       <SectionWrapper>
         <SiteBadges site={site} locale={locale} />
-        <dl className="my-8 grid grid-cols-1 gap-6 rounded-3xl border border-[#1B6B3A]/15 bg-[#f8faf5] p-6 sm:grid-cols-2 lg:grid-cols-4 lg:p-8">
+        <dl className="my-8 grid grid-cols-1 gap-6 rounded-xl border border-[#14261a]/12 bg-[#f6f6f1] p-6 sm:grid-cols-2 lg:grid-cols-4 lg:p-8">
           {facts.map((fact) => (
             <div key={fact.label} className="min-w-0">
               <dt className="text-xs font-medium uppercase tracking-wider text-[#3d5a3d]">
                 {fact.label}
               </dt>
-              <dd className="mt-2 break-words text-lg font-semibold text-[#0e2519]">
+              <dd className="mt-2 break-words text-lg font-semibold text-[#14261a]">
                 {fact.value}
               </dd>
             </div>
           ))}
         </dl>
         {site.coverImage && (
-          <div className="relative mb-12 aspect-[4/3] overflow-hidden rounded-3xl sm:aspect-[16/7]">
+          <div className="relative mb-12 aspect-[4/3] overflow-hidden rounded-xl sm:aspect-[16/7]">
             <Image
               src={site.coverImage}
               unoptimized={/^https?:\/\//i.test(site.coverImage)}
@@ -126,7 +126,7 @@ export default async function SiteDetailPage({ params, searchParams }: Props) {
         )}
         {site.summary && (
           <section className="mb-14 max-w-3xl">
-            <h2 className="display-headline text-2xl font-semibold text-[#0e2519]">
+            <h2 className="display-headline text-2xl font-semibold text-[#14261a]">
               {t("about")}
             </h2>
             <p className="mt-4 leading-relaxed text-[#3d5a3d]">
@@ -146,10 +146,10 @@ export default async function SiteDetailPage({ params, searchParams }: Props) {
               {site.species.map((species) => (
                 <article
                   key={species.slug}
-                  className="flex flex-col gap-5 rounded-3xl border border-[#1B6B3A]/15 p-5 sm:flex-row sm:p-6"
+                  className="flex flex-col gap-5 rounded-xl border border-[#14261a]/12 p-5 sm:flex-row sm:p-6"
                 >
                   {species.image && (
-                    <div className="relative aspect-square w-28 shrink-0 overflow-hidden rounded-2xl bg-[#f8faf5]">
+                    <div className="relative aspect-square w-28 shrink-0 overflow-hidden rounded-xl bg-[#f6f6f1]">
                       <Image
                         src={species.image}
                         unoptimized={/^https?:\/\//i.test(species.image)}
@@ -165,7 +165,7 @@ export default async function SiteDetailPage({ params, searchParams }: Props) {
                     </div>
                   )}
                   <div className="min-w-0">
-                    <h3 className="text-xl font-semibold text-[#0e2519]">
+                    <h3 className="text-xl font-semibold text-[#14261a]">
                       {seeds.has(`seeds.${species.slug}.name`)
                         ? seeds(`seeds.${species.slug}.name`)
                         : species.name}
@@ -186,14 +186,14 @@ export default async function SiteDetailPage({ params, searchParams }: Props) {
         )}
         {site.gallery.length > 0 && (
           <section className="mb-14">
-            <h2 className="mb-6 text-2xl font-semibold text-[#0e2519]">
+            <h2 className="mb-6 text-2xl font-semibold text-[#14261a]">
               {t("gallery")}
             </h2>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {site.gallery.map((src, i) => (
                 <div
                   key={`${src}-${i}`}
-                  className="relative aspect-[4/3] overflow-hidden rounded-2xl"
+                  className="relative aspect-[4/3] overflow-hidden rounded-xl"
                 >
                   <Image
                     src={src}
@@ -213,7 +213,7 @@ export default async function SiteDetailPage({ params, searchParams }: Props) {
           </section>
         )}
         {site.lat !== null && site.lng !== null && location && (
-          <section className="mb-10 flex items-center gap-4 rounded-2xl bg-[#f8faf5] p-5">
+          <section className="mb-10 flex items-center gap-4 rounded-xl bg-[#f6f6f1] p-5">
             <svg
               aria-hidden="true"
               className="h-8 w-8 shrink-0 text-[#1B6B3A]"
@@ -227,20 +227,20 @@ export default async function SiteDetailPage({ params, searchParams }: Props) {
             </svg>
             <div>
               <h2 className="text-sm text-[#3d5a3d]">{t("location")}</h2>
-              <p className="font-semibold text-[#0e2519]">{location}</p>
+              <p className="font-semibold text-[#14261a]">{location}</p>
             </div>
           </section>
         )}
         {boundary && (
           <section className="mb-14" aria-labelledby="site-boundary-title">
-            <h2 id="site-boundary-title" className="mb-2 text-2xl font-semibold text-[#0e2519]">
+            <h2 id="site-boundary-title" className="mb-2 text-2xl font-semibold text-[#14261a]">
               {t("boundary.title")}
             </h2>
             <p className="mb-5 text-sm text-[#3d5a3d]">
               {t("boundary.caption", { date: formatLongDay(boundary.capturedOn, locale) })}
             </p>
             <figure>
-              <a href={boundary.src} target="_blank" rel="noopener" className="block overflow-hidden rounded-2xl border border-[#1B6B3A]/15">
+              <a href={boundary.src} target="_blank" rel="noopener" className="block overflow-hidden rounded-xl border border-[#14261a]/12">
                 <Image
                   src={boundary.src}
                   alt={t("boundary.alt", { name: site.name })}
@@ -272,7 +272,7 @@ export default async function SiteDetailPage({ params, searchParams }: Props) {
               {t("video")} ↗
             </a>
           )}
-        <section className="mt-12 flex flex-col items-start justify-between gap-6 rounded-3xl bg-[#edf4e9] p-6 sm:p-8 lg:flex-row lg:items-center">
+        <section className="mt-12 flex flex-col items-start justify-between gap-6 rounded-xl border border-[#14261a]/12 bg-[#f6f6f1] p-6 sm:p-8 lg:flex-row lg:items-center">
           {site.acceptsOrders ? (
             <Link
               href={siteOrderHref(site)}
@@ -281,7 +281,7 @@ export default async function SiteDetailPage({ params, searchParams }: Props) {
               {t("order")}
             </Link>
           ) : (
-            <p className="max-w-xl font-medium text-[#0e2519]">
+            <p className="max-w-xl font-medium text-[#14261a]">
               {t(`phaseInfo.${site.phase}`)}
             </p>
           )}

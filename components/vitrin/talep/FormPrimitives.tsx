@@ -13,8 +13,8 @@ import { formatCount, type PriceLocale } from "@/lib/pricing";
    ═══════════════════════════════════════════════════════════════════════ */
 
 export const inputClass =
-  "w-full min-h-[46px] px-4 py-3 rounded-xl bg-white border text-sm text-[#1a2e1a] placeholder:text-[#94b494] transition-all disabled:opacity-60 focus:outline-none focus:ring-2";
-export const inputOk = "border-black/10 focus:border-[#1B6B3A]/40 focus:ring-[#1B6B3A]/15";
+  "w-full min-h-[46px] px-4 py-3 rounded-lg bg-white border text-sm text-[#14261a] placeholder:text-[#6b8f6b] transition-colors disabled:opacity-60 focus:outline-none focus:ring-2";
+export const inputOk = "border-[#14261a]/20 focus:border-[#1B6B3A] focus:ring-[#1B6B3A]/20";
 export const inputBad = "border-[#dc2626]/60 focus:border-[#dc2626] focus:ring-[#dc2626]/15";
 
 export function inputCls(error?: string | null, extra = "") {
@@ -39,11 +39,11 @@ export function SectionCard({
   return (
     <section id={id} className="vitrin-card p-6 lg:p-8" aria-labelledby={id ? `${id}-title` : undefined}>
       <div className="flex items-start gap-4 mb-6">
-        <span className="shrink-0 w-9 h-9 rounded-xl bg-[#1B6B3A] text-white text-sm font-bold flex items-center justify-center shadow-md shadow-[#1B6B3A]/25">
+        <span className="shrink-0 w-9 h-9 rounded-full bg-[#1B6B3A] text-white text-sm font-bold flex items-center justify-center">
           {step}
         </span>
         <div>
-          <h2 id={id ? `${id}-title` : undefined} className="text-lg lg:text-xl font-bold text-[#0e2519] leading-tight">
+          <h2 id={id ? `${id}-title` : undefined} className="text-lg lg:text-xl font-bold text-[#14261a] leading-tight">
             {title}
           </h2>
           {sub && <p className="text-sm text-[#3d5a3d] mt-1 leading-relaxed">{sub}</p>}
@@ -80,10 +80,10 @@ export function Field({
   const describedBy = [error ? errId : null, hint ? hintId : null].filter(Boolean).join(" ") || undefined;
   return (
     <div className={className}>
-      <label htmlFor={id} className="block text-xs font-semibold text-[#1a2e1a] mb-1.5 uppercase tracking-wider">
+      <label htmlFor={id} className="block text-xs font-semibold text-[#14261a] mb-1.5 uppercase tracking-wider">
         {label}
         {required && <span className="text-[#dc2626] ml-0.5" aria-hidden="true">*</span>}
-        {optional && <span className="ml-1.5 normal-case tracking-normal font-medium text-[#94b494]">({t("optional")})</span>}
+        {optional && <span className="ml-1.5 normal-case tracking-normal font-medium text-[#6b8f6b]">({t("optional")})</span>}
       </label>
       {children({ id, describedBy, invalid: !!error })}
       {error ? (
@@ -147,12 +147,12 @@ export function ChipGroup<V extends string>({
             aria-checked={active}
             disabled={disabled}
             onClick={() => toggle(o.value)}
-            className={`px-4 py-2.5 rounded-xl text-sm font-semibold border transition-all disabled:opacity-60 ${
+            className={`min-h-11 px-4 py-2.5 rounded-lg text-sm font-semibold border transition-colors disabled:opacity-60 ${
               active
-                ? "bg-[#1B6B3A] border-[#1B6B3A] text-white shadow-md shadow-[#1B6B3A]/20"
+                ? "bg-[#1B6B3A] border-[#1B6B3A] text-white"
                 : error
-                  ? "bg-white border-[#dc2626]/40 text-[#1a2e1a] hover:border-[#dc2626]/60"
-                  : "bg-white border-black/10 text-[#1a2e1a] hover:border-[#1B6B3A]/40 hover:text-[#1B6B3A]"
+                  ? "bg-white border-[#dc2626]/40 text-[#14261a] hover:border-[#dc2626]/60"
+                  : "bg-white border-[#14261a]/20 text-[#14261a] hover:border-[#1B6B3A] hover:text-[#1B6B3A]"
             }`}
           >
             {o.label}
@@ -197,7 +197,7 @@ export function QuantityInput({
     onChange(clamp(base + dir * inc));
   };
   const btn =
-    "w-11 shrink-0 rounded-xl border border-black/10 bg-white text-[#1a2e1a] text-lg font-bold hover:border-[#1B6B3A]/40 hover:text-[#1B6B3A] disabled:opacity-40 transition-colors";
+    "w-11 shrink-0 rounded-lg border border-[#14261a]/20 bg-white text-[#14261a] text-lg font-bold hover:border-[#1B6B3A] hover:text-[#1B6B3A] disabled:opacity-40 transition-colors";
   return (
     <div className="space-y-2.5">
       <div className="flex gap-2">
@@ -236,10 +236,10 @@ export function QuantityInput({
               type="button"
               disabled={disabled}
               onClick={() => onChange(q)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors ${
+              className={`min-h-11 sm:min-h-0 px-3 py-1.5 rounded-md text-xs font-semibold border transition-colors ${
                 value === q
-                  ? "bg-[#1B6B3A]/10 border-[#1B6B3A]/40 text-[#1B6B3A]"
-                  : "bg-white border-black/10 text-[#3d5a3d] hover:border-[#1B6B3A]/40"
+                  ? "bg-[#1B6B3A]/10 border-[#1B6B3A] text-[#1B6B3A]"
+                  : "bg-white border-[#14261a]/20 text-[#3d5a3d] hover:border-[#1B6B3A]"
               }`}
             >
               {formatCount(q, locale)}
@@ -256,7 +256,7 @@ export function QuantityInput({
 export function ErrorBanner({ message }: { message: string | null }) {
   if (!message) return null;
   return (
-    <p role="alert" className="text-sm text-[#dc2626] bg-[#fef2f2] border border-[#fecaca] rounded-xl px-4 py-3">
+    <p role="alert" className="text-sm text-[#dc2626] bg-[#fef2f2] border border-[#fecaca] rounded-lg px-4 py-3">
       {message}
     </p>
   );
@@ -266,9 +266,9 @@ export function ErrorBanner({ message }: { message: string | null }) {
 
 export function SummaryRowItem({ label, value }: { label: string; value: ReactNode }) {
   return (
-    <div className="flex items-start justify-between gap-4 py-2.5 border-b border-black/5 last:border-0">
+    <div className="flex items-start justify-between gap-4 py-2.5 border-b border-[#14261a]/10 last:border-0">
       <span className="text-xs font-semibold uppercase tracking-wider text-[#6b8f6b] pt-0.5">{label}</span>
-      <span className="text-sm font-semibold text-[#0e2519] text-right">{value}</span>
+      <span className="text-sm font-semibold text-[#14261a] text-right">{value}</span>
     </div>
   );
 }

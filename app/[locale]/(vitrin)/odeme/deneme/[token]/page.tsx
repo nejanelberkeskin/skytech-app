@@ -43,9 +43,9 @@ export default async function MockPaymentPage({ params }: { params: Promise<{ lo
           DENEME ORTAMI — bu sayfa sanal POS&apos;un yerini tutar. Gerçek kart bilgisi istenmez, para hareketi olmaz;
           oluşan sipariş &quot;deneme siparişi&quot; olarak işaretlenir.
         </p>
-        <div className="rounded-3xl border border-black/5 bg-white p-7 shadow-sm sm:p-9">
-          <h1 className="text-2xl font-bold tracking-tight text-[#0e2519]">Deneme ödeme sayfası</h1>
-          <dl className="mt-6 divide-y divide-black/5 text-sm">
+        <div className="rounded-xl border border-[#14261a]/12 bg-white p-7 sm:p-9">
+          <h1 className="text-2xl font-bold tracking-tight text-[#14261a]">Deneme ödeme sayfası</h1>
+          <dl className="mt-6 divide-y divide-[#14261a]/10 text-sm">
             <Row label="Sipariş numarası" value={<span className="whitespace-nowrap font-mono">{order.order_no}</span>} />
             <Row label="Proje Uygulama Sahası" value={order.site_snapshot.name} />
             <Row label="Tohum topu adedi" value={formatCount(order.quantity, "tr")} />
@@ -65,7 +65,7 @@ function Row({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div className="flex items-baseline justify-between gap-6 py-3">
       <dt className="text-[#6b8f6b]">{label}</dt>
-      <dd className="text-right font-semibold text-[#0e2519]">{value}</dd>
+      <dd className="text-right font-semibold text-[#14261a]">{value}</dd>
     </div>
   );
 }

@@ -17,9 +17,9 @@ export default function SectionWrapper({
 }: SectionWrapperProps) {
   const bgClass =
     variant === "dark"
-      ? "bg-[#0a1f12] text-[#e0f0e0]"
+      ? "bg-[#10241a] text-[#e0f0e0]"
       : variant === "tinted"
-      ? "bg-[#f8faf5]"
+      ? "bg-[#f6f6f1]"
       : "bg-white";
 
   return (

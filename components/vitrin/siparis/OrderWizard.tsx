@@ -102,6 +102,15 @@ export default function OrderWizard({
   const [quantity, setQuantity] = useState<number | null>(() =>
     initialQuantity(pricing),
   );
+  // Hızlı satın alma sayfasından gelen adet (`?adet=`): sınırlar içindeyse başlangıç değeri olur.
+  useEffect(() => {
+    const raw = new URL(window.location.href).searchParams.get("adet");
+    if (!raw || !/^\d{1,7}$/.test(raw)) return;
+    const wanted = Number(raw);
+    if (wanted >= pricing.minQuantity && wanted <= pricing.maxQuantity) setQuantity(wanted);
+    // Yalnız ilk açılışta okunur.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   // Sertifikadaki ad: kendi adı, kurum unvanı ya da adsız; başka bir kişinin adı alınmaz (KVKK 2026-10.5).
   const [certificateMode, setCertificateMode] = useState<CertificateMode>("own");
   // Siparişte sunucu kipe göre doldurur; talepte yalnız adsız seçimi metin olarak gider.

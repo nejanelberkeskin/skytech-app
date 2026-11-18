@@ -28,7 +28,8 @@
     "requests": "Submit a Request",
     "account": "My Account",
     "register": "Sign Up",
-    "coatedSeed": "Coated Seeds"
+    "coatedSeed": "Coated Seeds",
+    "sites": "Sites"
   },
   "hero": {
     "badge": "Reforestation · Regeneration · Monitoring",
@@ -1324,7 +1325,8 @@
     "speciesPending": "Species information will appear here when published for this site. Customers do not select the species or product.",
     "newsNote": "These links provide background on the site; they are not presented as evidence of completed Skytech work.",
     "reportsLink": "What does the Activity Report contain?",
-    "seedBallLink": "Compare with seed balls"
+    "seedBallLink": "Compare with seed balls",
+    "zoomHint": "Tap to zoom in"
   },
   "coatedSeedPage": {
     "title": "Seaweed-Extract Coated Seeds",
@@ -1356,7 +1358,13 @@
       "body": "The general release season is November–March; monitoring and reporting are scheduled for April–September. Check the site-specific schedule and delivery information before ordering. Published records of completed work appear on the site page; planned work is not completed work."
     },
     "sitesLink": "Explore project sites",
-    "speciesLink": "Explore seed species"
+    "speciesLink": "Explore seed species",
+    "images": {
+      "seeds": "Forest tree seeds sorted by species on plates",
+      "drone": "Seed release drone over a fire-affected slope",
+      "sprout": "Pine seedling sprouting in burnt soil",
+      "note": "Representative images; not a record of a specific site or a guarantee of results."
+    }
   },
   "accountPages": {
     "loading": "Loading…",
@@ -1952,7 +1960,9 @@
         "answer": "Seed release is planned between November and March, subject to land suitability and the necessary permits."
       }
     },
-    "contact": "For your questions:"
+    "contact": "For your questions:",
+    "imageAlt": "Drone flying over terraced land",
+    "imageNote": "Representative image"
   },
   "authPages": {
     "home": "Skytech Green home",
@@ -2360,7 +2370,9 @@
       "request": "Submit a Request",
       "soon": "Coming Soon",
       "corporate": "Corporate Enquiry"
-    }
+    },
+    "imageAlt": "Work records prepared with a field notebook, map and photographs",
+    "imageNote": "Representative image; report content is prepared for each site."
   },
   "sitesPage": {
     "title": "Project Sites",
@@ -2764,5 +2776,38 @@
       "short": "Seed balls prepared with clay and nutrients, released on site by drone.",
       "unitSingular": "seed ball"
     }
+  },
+  "quickBuy": {
+    "metaTitle": "Buy — Have Seeds Released at a Site",
+    "metaDescription": "Choose a Project Site and a quantity; seaweed-extract coated seeds are released there by drone. 14-day right of withdrawal, secure 3D Secure payment.",
+    "eyebrow": "Buy",
+    "title": "Have seeds released in three steps",
+    "intro": "Choose the site and quantity, then enter your details. The seeds are released at the site by drone on your behalf.",
+    "siteTitle": "Choose a site",
+    "quantityTitle": "Choose a quantity",
+    "quantityLabel": "Quantity",
+    "quantityHelp": "Minimum {min}. You can type any quantity.",
+    "decrease": "Decrease quantity",
+    "increase": "Increase quantity",
+    "unitPrice": "{price} per {unit}",
+    "product": "Product",
+    "inspectSites": "Explore the sites",
+    "summaryTitle": "Order summary",
+    "summarySite": "Site",
+    "summaryUnit": "Unit price",
+    "total": "Estimated total",
+    "vatIncluded": "VAT included. The final amount is shown at the last step.",
+    "continue": "Continue",
+    "errors": {
+      "min": "Select at least {min}.",
+      "max": "Select up to {max} per order.",
+      "invalid": "Enter a valid quantity."
+    },
+    "trust": {
+      "withdrawal": "Unconditional right of withdrawal within 14 days",
+      "secure": "Secure 3D Secure payment with iyzico",
+      "certificate": "Certificate of Participation in your name and monitoring footage"
+    },
+    "empty": "No site open for purchase can be listed right now. Please try again shortly or explore the sites."
   }
 }

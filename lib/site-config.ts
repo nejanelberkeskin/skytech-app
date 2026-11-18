@@ -86,7 +86,7 @@ export const GOOGLE_AUTH_ENABLED =
  * /kendi-arazim'e yönlenir.
  */
 export const REQUEST_ROUTES = {
-  hub: "/sahalar",
+  hub: "/satin-al",
   land: OWN_LAND_HREF,
   openLand: "/sahalar",
 } as const;

@@ -65,7 +65,7 @@ test('kendi arazi bağlantısının tek kaynağı /kendi-arazim; bütün çağr�
   assert.equal(siteConfig.REQUEST_ROUTES.land, links.OWN_LAND_HREF);
   assert.equal(siteConfig.REQUESTS_ENABLED, true, 'test ortamında talep akışı varsayılan olarak açık');
   assert.equal(siteConfig.orderCtaHref('land'), '/kendi-arazim');
-  assert.equal(siteConfig.orderCtaHref('hub'), '/sahalar', 'genel talep çağrısı değişmedi');
+  assert.equal(siteConfig.orderCtaHref('hub'), '/satin-al', 'genel satın alma çağrısı hızlı satın alma sayfasına gider');
 });
 
 test('eski başvuru adresi kalıcı olarak yeni sayfaya yönlenir; komşu adresler etkilenmez', () => {

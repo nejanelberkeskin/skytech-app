@@ -28,7 +28,8 @@
     "requests": "Talep Oluştur",
     "account": "Hesabım",
     "register": "Üye Ol",
-    "coatedSeed": "Kaplamalı Tohum"
+    "coatedSeed": "Kaplamalı Tohum",
+    "sites": "Sahalar"
   },
   "hero": {
     "badge": "Ormanlaştırma · Gençleştirme · İzleme",
@@ -1324,7 +1325,8 @@
     "speciesPending": "Sahaya ilişkin tür bilgisi yayımlandığında burada gösterilir. Tür ve ürün seçimini müşteri yapmaz.",
     "newsNote": "Bu bağlantılar sahanın geçmişiyle ilgilidir; tamamlanmış Skytech çalışmalarının kanıtı olarak sunulmaz.",
     "reportsLink": "Faaliyet Raporu neleri içerir?",
-    "seedBallLink": "Tohum topuyla farkını inceleyin"
+    "seedBallLink": "Tohum topuyla farkını inceleyin",
+    "zoomHint": "Yaklaşmak için dokunun"
   },
   "coatedSeedPage": {
     "title": "Yosun Ekstraktı Kaplamalı Tohum",
@@ -1356,7 +1358,13 @@
       "body": "Genel bırakma sezonu Kasım–Mart, izleme ve raporlama dönemi Nisan–Eylül’dür. Sahaya özel takvim ve teslim bilgileri sipariş öncesinde değerlendirilmelidir. Tamamlanan çalışma kayıtları yayımlandığında saha sayfasından izlenebilir; planlanan işler tamamlanmış sayılmaz."
     },
     "sitesLink": "Proje uygulama sahalarını inceleyin",
-    "speciesLink": "Tohum türlerini inceleyin"
+    "speciesLink": "Tohum türlerini inceleyin",
+    "images": {
+      "seeds": "Tabaklarda tür tür ayrılmış orman ağacı tohumları",
+      "drone": "Yangın görmüş yamaç üzerinde tohum bırakma dronu",
+      "sprout": "Yanmış toprakta filizlenen çam fidanı",
+      "note": "Temsili görsellerdir; belirli bir sahanın kaydı ya da sonuç garantisi değildir."
+    }
   },
   "accountPages": {
     "loading": "Yükleniyor…",
@@ -1952,7 +1960,9 @@
         "answer": "Tohum bırakma Kasım–Mart döneminde, arazinin uygunluğu ve gerekli izinlere göre planlanır."
       }
     },
-    "contact": "Sorularınız için:"
+    "contact": "Sorularınız için:",
+    "imageAlt": "Teraslanmış arazi üzerinde uçan dron",
+    "imageNote": "Temsili görsel"
   },
   "authPages": {
     "home": "Skytech Green ana sayfa",
@@ -2360,7 +2370,9 @@
       "request": "Talep Oluştur",
       "soon": "Yakında",
       "corporate": "Kurumsal Bilgi Al"
-    }
+    },
+    "imageAlt": "Saha defteri, harita ve fotoğraflarla hazırlanan çalışma kayıtları",
+    "imageNote": "Temsili görseldir; rapor içeriği sahaya göre hazırlanır."
   },
   "sitesPage": {
     "title": "Proje Uygulama Sahaları",
@@ -2764,5 +2776,38 @@
       "short": "Kil ve besleyici karışımla hazırlanan tohum topu, dronla sahaya bırakılır.",
       "unitSingular": "tohum topu"
     }
+  },
+  "quickBuy": {
+    "metaTitle": "Satın Al — Sahaya Tohum Bıraktırın",
+    "metaDescription": "Bir Proje Uygulama Sahası ve adet seçin; yosun ekstraktı kaplamalı tohumlar dronla sahaya bırakılsın. 14 gün cayma hakkı, 3D Secure ile güvenli ödeme.",
+    "eyebrow": "Satın Al",
+    "title": "Üç adımda tohum bıraktırın",
+    "intro": "Sahayı ve adedi seçin, bilgilerinizi girin. Tohumlar sizin adınıza dronla sahaya bırakılır.",
+    "siteTitle": "Saha seçin",
+    "quantityTitle": "Adet seçin",
+    "quantityLabel": "Adet",
+    "quantityHelp": "En az {min} {unit}. İstediğiniz adedi yazabilirsiniz.",
+    "decrease": "Adedi azalt",
+    "increase": "Adedi artır",
+    "unitPrice": "{price} / {unit}",
+    "product": "Ürün",
+    "inspectSites": "Sahaları incele",
+    "summaryTitle": "Sipariş özeti",
+    "summarySite": "Saha",
+    "summaryUnit": "Birim bedel",
+    "total": "Tahmini tutar",
+    "vatIncluded": "KDV dâhil. Kesin tutar son adımda gösterilir.",
+    "continue": "Devam et",
+    "errors": {
+      "min": "En az {min} adet seçebilirsiniz.",
+      "max": "Tek siparişte en çok {max} adet seçebilirsiniz.",
+      "invalid": "Geçerli bir adet yazın."
+    },
+    "trust": {
+      "withdrawal": "14 gün içinde koşulsuz cayma hakkı",
+      "secure": "iyzico ile 3D Secure güvenli ödeme",
+      "certificate": "Adınıza Katılım Sertifikası ve izleme görüntüleri"
+    },
+    "empty": "Şu anda satışa açık saha listelenemiyor. Lütfen biraz sonra yeniden deneyin ya da sahaları inceleyin."
   }
 }

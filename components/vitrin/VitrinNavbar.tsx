@@ -9,7 +9,7 @@ import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 import LanguageSwitcher from "./LanguageSwitcher";
 import { ACCOUNTS_ENABLED, CTA_MODE, REQUESTS_ENABLED, orderCtaHref } from "@/lib/site-config";
-import { OWN_LAND_HREF } from "@/lib/sites/links";
+import { OWN_LAND_HREF, SITES_HREF } from "@/lib/sites/links";
 
 /**
  * Oturum var mı? Supabase'in auth çerezi ("sb-<ref>-auth-token[.N]")
@@ -56,6 +56,7 @@ function useNavItems() {
         ...(REQUESTS_ENABLED ? [{ label: t("ownLand"), href: OWN_LAND_HREF }] : []),
       ],
     },
+    { label: t("sites"), href: SITES_HREF },
     { label: t("projects"), href: "/projeler" },
     { label: t("corporate"), href: "/kurumsal-cozumler" },
     { label: t("about"), href: "/hakkimizda" },

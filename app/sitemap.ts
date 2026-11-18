@@ -25,6 +25,7 @@ interface SitemapEntry {
 
 const VITRIN_PAGES: SitemapEntry[] = [
   { path: "/", changeFrequency: "weekly", priority: 1.0 },
+  { path: "/satin-al", changeFrequency: "weekly", priority: 0.9 },
   { path: "/kaplamali-tohum", changeFrequency: "monthly", priority: 0.9 },
   { path: "/tohum-topu", changeFrequency: "monthly", priority: 0.9 },
   { path: "/tohumlarimiz", changeFrequency: "monthly", priority: 0.85 },

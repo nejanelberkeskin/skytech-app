@@ -59,6 +59,7 @@ const PUBLIC_PAGE_PATTERNS: RegExp[] = [
   /^\/kendi-arazim$/,
   /^\/fatura(\/.*)?$/,
   /^\/kaplamali-tohum$/,
+  /^\/satin-al$/,
   /^\/tohum-topu(\/.*)?$/,
   /^\/tohumlarimiz(\/.*)?$/,
   /^\/dron-teknolojisi(\/.*)?$/,

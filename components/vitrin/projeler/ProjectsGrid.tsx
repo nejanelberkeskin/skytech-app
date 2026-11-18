@@ -46,7 +46,7 @@ export default function ProjectsGrid() {
                 {hasImage ? (
                   <Image
                     src={project.image}
-                    alt={`${project.city} — ${region}`}
+                    alt={`${project.city}, ${project.district} — ${region}`}
                     fill
                     sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                     className="object-cover transition-transform duration-700 group-hover:scale-105"
@@ -65,15 +65,17 @@ export default function ProjectsGrid() {
                 <div className="absolute bottom-3 left-3 rounded-md bg-[#10241a] px-3 py-2">
                   <p className="text-xs text-[#a7d4a7] font-medium">{project.year}</p>
                   <p className="text-lg font-bold text-white tracking-tight">{project.city}</p>
+                  <p className="text-xs text-white/80">{project.district}</p>
                 </div>
               </div>
               <div className="p-6">
                 <p className="text-xs uppercase tracking-[0.18em] text-[#1B6B3A] font-bold mb-1">
                   {region}
                 </p>
-                <h3 className="text-lg font-bold text-[#14261a] mb-2 tracking-tight">
+                <h3 className="text-lg font-bold text-[#14261a] tracking-tight">
                   {project.city}
                 </h3>
+                <p className="mb-2 text-sm font-medium text-[#3d5a3d]">{project.district}</p>
                 <p className="text-sm text-[#3d5a3d] leading-relaxed">{t(`items.${project.id}.desc`)}</p>
               </div>
             </motion.article>

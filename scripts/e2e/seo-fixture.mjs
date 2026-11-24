@@ -4,7 +4,7 @@ import fs from 'node:fs';
 const port = Number(process.env.FIXTURE_PORT || 4828);
 const sites = [
   ['Bursa', 'bursa', 'Gürsu (Dışkaya)', 92.8, 'coated_seed'],
-  ['Çanakkale', 'canakkale', 'Merkez (Saraycık)', 382.4, 'seed_ball'],
+  ['Çanakkale', 'canakkale', 'Merkez (Saraycık)', 95, 'seed_ball'],
   ['İzmir', 'izmir', 'Aliağa', 93.8, 'coated_seed'],
 ].map(([name, slug, district, area, product], index) => ({
   id: `00000000-0000-4000-8000-00000000000${index + 1}`,
@@ -28,7 +28,10 @@ http.createServer((req, res) => {
   if (!['GET', 'HEAD'].includes(req.method)) { res.writeHead(405); res.end('{}'); return; }
   const url = new URL(req.url, 'http://localhost');
   let result;
-  if (url.pathname === '/rest/v1/lands') result = sites;
+  if (url.pathname === '/rest/v1/lands') {
+    const id = url.searchParams.get('id');
+    result = id?.startsWith('eq.') ? sites.filter(site => site.id === id.slice(3)) : sites;
+  }
   else if (url.pathname === '/rest/v1/sales_settings') result = settings;
   else if (url.pathname === '/rest/v1/seed_catalog') result = [{ slug: 'kizilcam', name: 'Kızılçam', latin_name: 'Pinus brutia' }];
   else if (url.pathname === '/rest/v1/release_batches') result = [];

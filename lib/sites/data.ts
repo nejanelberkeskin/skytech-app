@@ -22,6 +22,7 @@ import {
 } from "./types";
 import { readMediaLinks } from "./media-links";
 import { localizeSiteName } from "./localization";
+import { operationClosesParticipation } from "./operations";
 import { productTypeOf } from "@/lib/products";
 
 const SITE_COLUMNS =
@@ -125,8 +126,8 @@ function toSite(row: Row, locale: SiteLocale, species: Map<string, SiteSpecies>)
     gallery: strings(row.gallery),
     lat: approx(row.lat),
     lng: approx(row.lng),
-    phase,
-    acceptsOrders: phase === "open",
+    phase: operationClosesParticipation(slug) && phase !== "monitoring" ? "released" : phase,
+    acceptsOrders: phase === "open" && !operationClosesParticipation(slug),
     videoUrl: typeof row.video_url === "string" && row.video_url ? row.video_url : null,
     mediaLinks: readMediaLinks(row.media_links),
   };

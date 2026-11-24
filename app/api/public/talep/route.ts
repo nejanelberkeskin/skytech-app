@@ -1,3 +1,4 @@
+import { operationClosesParticipation } from "@/lib/sites/operations";
 import { unitPriceFor } from "@/lib/orders/settings-schema";
 import { productTypeOf } from "@/lib/products";
 import { NextRequest, NextResponse } from "next/server";
@@ -138,11 +139,11 @@ export async function POST(req: NextRequest) {
     }
     const { data: land, error } = await supabase
       .from("lands")
-      .select("id, name, region, is_public, status, species_slugs, product_type")
+      .select("id, slug, name, region, is_public, status, species_slugs, product_type")
       .eq("id", details.landId)
       .maybeSingle();
     if (error) return dbError("land");
-    if (!land || !land.is_public || land.status !== "open") {
+    if (!land || !land.is_public || land.status !== "open" || operationClosesParticipation(land.slug ?? "")) {
       return NextResponse.json(
         { error: "validation", fields: { "details.landId": "landInvalid" } },
         { status: 400 }

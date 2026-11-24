@@ -1,3 +1,5 @@
+import SiteOperation from "@/components/vitrin/sahalar/SiteOperation";
+import { siteOperation, operationMonth } from "@/lib/sites/operations";
 import { unitPriceFor } from "@/lib/orders/settings-schema";
 import Image from "next/image";
 import { coverImageCredit } from "@/lib/sites/image-credit";
@@ -72,19 +74,22 @@ export default async function SiteDetailPage({ params, searchParams }: Props) {
     getTranslations({ locale, namespace: "products" }),
   ]);
   const seo = await getTranslations({ locale, namespace: "seoContent" });
+  const operation = siteOperation(site.slug);
+  const operationT = await getTranslations({ locale, namespace: "siteOperation" });
   const location = [site.district, site.province].filter(Boolean).join(", ");
   const facts = [
     ...(location ? [{ label: t("location"), value: location }] : []),
     ...(site.areaHectares !== null
       ? [
           {
-            label: t("area"),
+            label: operation ? operationT(operation.completed ? "releasedArea" : "plannedArea", { month: operationMonth(operation.releaseMonth, locale) }) : t("area"),
             value: shared("hectares", {
               value: new Intl.NumberFormat(locale).format(site.areaHectares),
             }),
           },
         ]
       : []),
+    ...(operation?.totalAreaHectares ? [{ label: operationT("totalArea"), value: shared("hectares", { value: new Intl.NumberFormat(locale).format(operation.totalAreaHectares) }) }] : []),
     { label: t("workType"), value: shared(`workTypes.${site.workType}`) },
     { label: products("label"), value: products(`${site.productType}.name`) },
     { label: t("phase"), value: shared(`phases.${site.phase}`) },
@@ -130,6 +135,7 @@ export default async function SiteDetailPage({ params, searchParams }: Props) {
             )}
           </div>
         )}
+        <SiteOperation site={site} locale={locale} />
         {(site.summary || location) && (
           <section className="mb-14 max-w-3xl">
             <h2 className="display-headline text-2xl font-semibold text-[#14261a]">

@@ -1,3 +1,4 @@
+import { siteOperation, operationMonth } from "@/lib/sites/operations";
 import Image from "next/image";
 import { coverImageCredit } from "@/lib/sites/image-credit";
 import { getTranslations } from "next-intl/server";
@@ -38,6 +39,8 @@ export default async function SiteCard({
   const t = await getTranslations({ locale, namespace: "sitesPage" });
   const seeds = await getTranslations({ locale, namespace: "ourSeeds" });
   const products = await getTranslations({ locale, namespace: "products" });
+  const operation = siteOperation(site.slug);
+  const operationT = await getTranslations({ locale, namespace: "siteOperation" });
   const location = [site.district, site.province].filter(Boolean).join(", ");
   return (
     <Link
@@ -84,11 +87,14 @@ export default async function SiteCard({
         <div className="my-5 space-y-2 border-y border-[#14261a]/10 py-4 text-sm text-[#3d5a3d]">
           {site.areaHectares !== null && (
             <p className="font-semibold text-[#14261a]">
+              {operation && <span className="block text-xs font-normal text-[#3d5a3d]">{operationT(operation.completed ? "releasedArea" : "plannedArea", { month: operationMonth(operation.releaseMonth, locale) })}</span>}
               {t("hectares", {
                 value: new Intl.NumberFormat(locale).format(site.areaHectares),
               })}
             </p>
           )}
+          {operation && <p>{operationT(operation.completed ? "completed" : "planned", { month: operationMonth(operation.releaseMonth, locale) })}</p>}
+          {operation?.totalAreaHectares && <p>{operationT("totalArea")}: {t("hectares", { value: new Intl.NumberFormat(locale).format(operation.totalAreaHectares) })}</p>}
           <p>{t(`workTypes.${site.workType}`)}</p>
           <p className="font-semibold text-[#1B6B3A]">{products(`${site.productType}.name`)}</p>
           {site.species.length > 0 && (
